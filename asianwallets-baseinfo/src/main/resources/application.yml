@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: asianwallet-institution
+  profiles:
+    active: @profileActive@
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml     #mapper文件路径
+  type-aliases-package: com.asianwallets.institution.entity   #实体类的包路径
+
+#pagehelper分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: false
+  params: count=countSql
+
+#==================== 日志  ============================
+logging:
+  config: classpath:logback.xml
