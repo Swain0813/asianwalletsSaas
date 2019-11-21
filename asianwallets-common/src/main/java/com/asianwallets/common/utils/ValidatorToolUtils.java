@@ -77,7 +77,7 @@ public final class ValidatorToolUtils {
      * <blockquote>
      * <ol>
      * <li>{@link CharSequence},支持子类有 {@link String},{@link StringBuffer},{@link StringBuilder},使用
-     * {@link org.apache.commons.lang3.StringUtils#isBlank(CharSequence)};</li>
+     * {@link StringUtils#isBlank(CharSequence)};</li>
      * <li>{@link Collection},使用其 {@link Collection#isEmpty()};</li>
      * <li>{@link Map},使用其 {@link Map#isEmpty()};</li>
      * <li>{@link Enumeration},使用 {@link Enumeration#hasMoreElements()};</li>
@@ -85,7 +85,7 @@ public final class ValidatorToolUtils {
      * 如果是empty也返回true<br>
      * 其他情况返回false<br>
      * @see CollectionUtils#sizeIsEmpty(Object)
-     * @see org.apache.commons.lang3.StringUtils#isBlank(CharSequence)
+     * @see StringUtils#isBlank(CharSequence)
      */
     public static boolean isNullOrEmpty(Object value) {
         if (null == value) {
@@ -112,7 +112,7 @@ public final class ValidatorToolUtils {
      * <blockquote>
      * <ol>
      * <li>{@link CharSequence},支持子类有 {@link String},{@link StringBuffer},{@link StringBuilder},使用
-     * {@link org.apache.commons.lang3.StringUtils#isBlank(CharSequence)};</li>
+     * {@link StringUtils#isBlank(CharSequence)};</li>
      * <li>{@link Collection},使用其 {@link Collection#isEmpty()};</li>
      * <li>{@link Map},使用其 {@link Map#isEmpty()};</li>
      * <li>{@link Enumeration},使用 {@link Enumeration#hasMoreElements()};</li>

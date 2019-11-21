@@ -1,9 +1,11 @@
 package com.asianwallets.common.base;
+
 import com.asianwallets.common.constant.AsianWalletConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;

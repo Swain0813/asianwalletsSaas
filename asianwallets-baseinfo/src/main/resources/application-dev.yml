@@ -1,17 +1,17 @@
 server:
-  port: 9001
+  port: 5001
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:5000/eureka/
     registerWithEureka: true
     fetchRegistry: true
 
 spring:
   # 数据库配置
   datasource:
-    url: jdbc:mysql://47.90.37.64:3306/asianwallet_institution?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://47.90.37.64:3306/asianwallets_saas?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
     password: zhongha-2019
     # 使用druid数据源
@@ -57,7 +57,7 @@ spring:
     jdbc:
       initialize-schema: NEVER
 redis:
-  database: 0
+  database: 1
   password: h3m9aMVHC1GiCkTnLH9J
   host: 127.0.0.1
   port: 6379

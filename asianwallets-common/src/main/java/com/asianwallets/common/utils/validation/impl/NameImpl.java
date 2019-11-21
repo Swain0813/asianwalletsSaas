@@ -1,9 +1,10 @@
-package com.asianwallets.asianwalletcommon.common.utils.validation.impl;
+package com.asianwallets.common.utils.validation.impl;
 
 import com.asianwallets.asianwalletcommon.common.utils.validation.Name;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorContextImpl;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.io.UnsupportedEncodingException;

@@ -1,8 +1,10 @@
 package com.asianwallets.common.utils;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.multipart.FilePartSource;
 import org.apache.commons.httpclient.methods.multipart.PartSource;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,7 +25,7 @@ import java.util.*;
  */
 
 public class AlipayCore {
-	
+
 	   /**
      * 生成要请求给支付宝的参数数组
      * @param sParaTemp 请求前的参数数组
@@ -39,7 +41,7 @@ public class AlipayCore {
         sPara.put("sign_type", "MD5");
         return sPara;
     }
-    
+
     /**
      * 生成签名结果
      * @param sPara 要签名的数组
@@ -52,7 +54,7 @@ public class AlipayCore {
         return mysign;
     }
 
-    /** 
+    /**
      * 除去数组中的空值和签名参数
      * @param sArray 签名参数组
      * @return 去掉空值与签名参数后的新签名参数组
@@ -72,8 +74,8 @@ public class AlipayCore {
         }
         return result;
     }
-    
-    /** 
+
+    /**
      * 除去数组中的空值和签名参数
      * @param sArray 签名参数组
      * @return 去掉空值与签名参数后的新签名参数组
@@ -95,7 +97,7 @@ public class AlipayCore {
         return result;
     }
 
-    /** 
+    /**
      * 把数组所有元素排序，并按照“参数=参数值”的模式用“&”字符拼接成字符串
      * @param params 需要排序并参与字符拼接的参数组
      * @return 拼接后字符串
@@ -118,7 +120,7 @@ public class AlipayCore {
         return prestr;
     }
 
-    /** 
+    /**
      * 写日志，方便测试（看网站需求，也可以改成把记录存入数据库）
      * @param sWord 要写入日志里的文本内容
      */
@@ -140,7 +142,7 @@ public class AlipayCore {
         }
     }
 
-    /** 
+    /**
      * 生成文件摘要
      * @param strFilePath 文件路径
      * @param file_digest_type 摘要算法
@@ -158,7 +160,7 @@ public class AlipayCore {
     		return "";
     	}
     }
-    
+
     /**
      * MAP类型数组转换成NameValuePair类型
      * @param properties  MAP类型数组
@@ -173,14 +175,14 @@ public class AlipayCore {
 
         return nameValuePair;
     }
-    
-    /** 
+
+    /**
      * html转义
      * @param content 转义前字符串
      * @return 转义后字符串
      */
     public static String html(String content) {
-    	 if(content==null) return "";        
+    	 if(content==null) return "";
     	     String html = content;
     	     html = html.replaceAll( "&", "&amp;");
     	     html = html.replace( "\"", "&quot;");  //"
@@ -191,6 +193,6 @@ public class AlipayCore {
     	     html = html.replace("&gt;&lt;","&gt;<br>&lt;");
     	     return html;
     	 }
-    
-    
+
+
 }

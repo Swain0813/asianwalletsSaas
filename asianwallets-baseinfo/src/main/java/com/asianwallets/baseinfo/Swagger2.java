@@ -1,4 +1,4 @@
-package com.asianwallets.institution;
+package com.asianwallets.baseinfo;
 
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.google.common.collect.Lists;

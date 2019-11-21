@@ -1,9 +1,8 @@
 package com.asianwallets.common.aspect;
+
 import com.asianwallets.common.config.AuditorProvider;
-import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -14,6 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 

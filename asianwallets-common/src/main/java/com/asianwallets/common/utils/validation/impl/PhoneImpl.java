@@ -1,4 +1,4 @@
-package com.asianwallets.asianwalletcommon.common.utils.validation.impl;
+package com.asianwallets.common.utils.validation.impl;
 
 import com.asianwallets.asianwalletcommon.common.utils.validation.Phone;
 import com.asianwallets.asianwalletcommon.common.utils.validation.regexp.PlatformRegexp;

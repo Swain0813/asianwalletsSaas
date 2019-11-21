@@ -1,5 +1,7 @@
 package com.asianwallets.common.response;
+
 import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 
 /**
@@ -50,7 +52,7 @@ public class ResultUtil {
         response.setMsg(msg);
         return response;
     }
-    public static BaseResponse error(String code, String msg,Object object) {
+    public static BaseResponse error(String code, String msg, Object object) {
         BaseResponse response = new BaseResponse();
         response.setCode(code);
         response.setMsg(msg);

@@ -1,4 +1,4 @@
-package com.asianwallets.asianwalletcommon.common.utils.validation.regexp;
+package com.asianwallets.common.utils.validation.regexp;
 
 import org.apache.commons.lang3.StringUtils;
 

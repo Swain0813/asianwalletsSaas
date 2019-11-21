@@ -1,7 +1,9 @@
 package com.asianwallets.common.utils;
+
 import com.asianwallets.common.utils.validation.impl.DateFormatImpl;
 import com.asianwallets.common.utils.validation.impl.DecimalFormatImpl;
 import com.google.common.collect.ImmutableList;
+
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.Calendar;
