@@ -3,14 +3,12 @@ package com.asianwallets.common.base;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
-import com.asianwallets.common.dto.OperationLogDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.GetIpAddr;
 import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.utils.ValidatorToolUtils;
-import com.asianwallets.common.vo.SysUserVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -93,14 +91,14 @@ public class BaseController {
      *
      * @return
      */
-    public SysUserVO getSysUserVO() {
-        HttpServletRequest request = getRequest();
-        String token = request.getHeader(AsianWalletConstant.tokenHeader);
-        if (redisService.get(token) == null) {
-            throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
-        }
-        return JSON.parseObject(redisService.get(token), SysUserVO.class);
-    }
+//    public SysUserVO getSysUserVO() {
+//        HttpServletRequest request = getRequest();
+//        String token = request.getHeader(AsianWalletConstant.tokenHeader);
+//        if (redisService.get(token) == null) {
+//            throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
+//        }
+//        return JSON.parseObject(redisService.get(token), SysUserVO.class);
+//    }
 
     /**
      * 获取用户ip
@@ -121,16 +119,16 @@ public class BaseController {
      * @param functionPoint    功能点
      * @return
      */
-    public OperationLogDTO setOperationLog(String userName, Byte operationType, String operationContext, String functionPoint) {
-        OperationLogDTO operationLogDTO = new OperationLogDTO();
-        operationLogDTO.setUserName(userName);//用户名
-        operationLogDTO.setOperationIp(GetIpAddr.getIpAddr(this.getRequest()));//操作ip
-        operationLogDTO.setOperationType(operationType);//操作类型
-        operationLogDTO.setOperationContext(operationContext);//操作内容
-        operationLogDTO.setFunctionPoint(functionPoint);//功能点
-        operationLogDTO.setCreator(userName);//创建人
-        return operationLogDTO;
-    }
+//    public OperationLogDTO setOperationLog(String userName, Byte operationType, String operationContext, String functionPoint) {
+//        OperationLogDTO operationLogDTO = new OperationLogDTO();
+//        operationLogDTO.setUserName(userName);//用户名
+//        operationLogDTO.setOperationIp(GetIpAddr.getIpAddr(this.getRequest()));//操作ip
+//        operationLogDTO.setOperationType(operationType);//操作类型
+//        operationLogDTO.setOperationContext(operationContext);//操作内容
+//        operationLogDTO.setFunctionPoint(functionPoint);//功能点
+//        operationLogDTO.setCreator(userName);//创建人
+//        return operationLogDTO;
+//    }
 
     /**
      * 根据errcode返回message

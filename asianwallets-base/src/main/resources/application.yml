@@ -1,13 +1,13 @@
 spring:
   application:
-    name: asianwallets-baseinfo
+    name: asianwallets-base
   profiles:
     active: @profileActive@
 
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml     #mapper文件路径
-  type-aliases-package: com.asianwallets.baseinfo.entity   #实体类的包路径
+  type-aliases-package: com.asianwallets.base.entity   #实体类的包路径
 
 #pagehelper分页插件
 pagehelper:
