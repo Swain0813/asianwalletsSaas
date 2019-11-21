@@ -17,15 +17,17 @@
 
 
     <dependencies>
-        <dependency>
-            <groupId>com.asianwallets</groupId>
-            <artifactId>asianwallet-common</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
+
         <!--quartz-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-quartz</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.asianwallets</groupId>
+            <artifactId>asianwallets-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>
