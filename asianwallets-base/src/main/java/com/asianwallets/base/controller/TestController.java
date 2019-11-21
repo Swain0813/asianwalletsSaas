@@ -1,4 +1,4 @@
-package com.asianwallets.baseinfo.controller;
+package com.asianwallets.base.controller;
 
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;

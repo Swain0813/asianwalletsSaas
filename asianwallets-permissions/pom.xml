@@ -11,7 +11,7 @@
 
     <groupId>com.asianwallets</groupId>
     <artifactId>asianwallets-permissions</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>asianwallets-permissions</name>
     <description>Demo project for Spring Boot</description>
     <packaging>jar</packaging>
@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>com.asianwallets</groupId>
-            <artifactId>asianwallet-common</artifactId>
+            <artifactId>asianwallets-common</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <!--scurity-->

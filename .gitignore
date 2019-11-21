@@ -43,3 +43,4 @@ mvnw
 asianwallets-baseinfo/mvnw.cmd
 asianwallets-common/mvnw.cmd
 mvnw.cmd
+asianwallets-baseinfo/target/

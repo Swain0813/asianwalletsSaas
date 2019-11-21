@@ -9,9 +9,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>com.asianwallets</groupId>
-    <artifactId>asianwallets-baseinfo</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>asianwallets-baseinfo</name>
+    <artifactId>asianwallets-base</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>asianwallets-base</name>
     <description>Demo project for Spring Boot</description>
     <packaging>jar</packaging>
 
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>com.asianwallets</groupId>
             <artifactId>asianwallets-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
