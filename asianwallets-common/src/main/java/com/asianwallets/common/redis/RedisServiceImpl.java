@@ -280,8 +280,9 @@ public class RedisServiceImpl implements RedisService {
             jedis = getResource();
             if (!jedis.exists(key)) {
                 jedis.set(key, "1");
-                if (-1 != expire)
+                if (-1 != expire){
                     jedis.expire(key, expire);
+                }
             } else {
                 value = jedis.incr(key);
             }
