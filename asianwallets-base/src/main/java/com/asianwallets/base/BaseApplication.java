@@ -1,4 +1,4 @@
-package com.asianwallets.baseinfo;
+package com.asianwallets.base;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,12 +18,12 @@ import java.util.Properties;
 @EnableEurekaClient
 @EnableDiscoveryClient
 @EnableFeignClients
-public class BaseinfoApplication extends SpringBootServletInitializer {
+public class BaseApplication extends SpringBootServletInitializer {
 
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(BaseinfoApplication.class);
+        return application.sources(BaseApplication.class);
     }
 
     @Bean
@@ -38,7 +38,7 @@ public class BaseinfoApplication extends SpringBootServletInitializer {
         return msc;
     }
     public static void main(String[] args) {
-        SpringApplication.run(BaseinfoApplication.class, args);
+        SpringApplication.run(BaseApplication.class, args);
     }
 
 }
