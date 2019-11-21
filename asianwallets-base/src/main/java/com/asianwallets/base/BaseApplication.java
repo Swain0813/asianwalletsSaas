@@ -34,7 +34,7 @@ public class BaseApplication extends SpringBootServletInitializer {
 
         MapperScannerConfigurer msc = new MapperScannerConfigurer();
         msc.getMapperHelper().setProperties(properties);
-        msc.setBasePackage("com.asianwallets.baseinfo.dao");
+        msc.setBasePackage("com.asianwallets.base.dao");
         return msc;
     }
     public static void main(String[] args) {
