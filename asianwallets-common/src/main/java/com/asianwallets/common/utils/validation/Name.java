@@ -1,6 +1,6 @@
 package com.asianwallets.common.utils.validation;
 
-import com.asianwallets.asianwalletcommon.common.utils.validation.impl.NameImpl;
+import com.asianwallets.common.utils.validation.impl.NameImpl;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
