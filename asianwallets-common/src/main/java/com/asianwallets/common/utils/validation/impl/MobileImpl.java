@@ -1,7 +1,7 @@
 package com.asianwallets.common.utils.validation.impl;
 
-import com.asianwallets.asianwalletcommon.common.utils.validation.Mobile;
-import com.asianwallets.asianwalletcommon.common.utils.validation.regexp.PlatformRegexp;
+import com.asianwallets.common.utils.validation.Mobile;
+import com.asianwallets.common.utils.validation.regexp.PlatformRegexp;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.ConstraintValidator;
