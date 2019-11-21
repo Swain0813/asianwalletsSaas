@@ -1,6 +1,5 @@
 package com.asianwallets.common.aspect;
 
-import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -32,8 +31,8 @@ public class LogAspectController {
     @Autowired
     private RedisService redisService;
 
-    @Autowired
-    private AuditorProvider auditorProvider;
+    //@Autowired
+    //private AuditorProvider auditorProvider;
 
 
     //接口消费时间
@@ -76,7 +75,7 @@ public class LogAspectController {
         log.info("--------------返回内容----------------");
         try {
             //log.info("SPEND TIME :{},Response内容:{}", (System.currentTimeMillis() - startTime.get()), JSON.toJSONString(o));
-            log.info("请求服务的ip:{}",this.auditorProvider.getReqIp());//请求ip
+            //log.info("请求服务的ip:{}",this.auditorProvider.getReqIp());//请求ip
             log.info("SPEND TIME :{}", (System.currentTimeMillis() - startTime.get()));//请求接口的耗时，单位是毫秒
 
         } catch (Exception e) {
