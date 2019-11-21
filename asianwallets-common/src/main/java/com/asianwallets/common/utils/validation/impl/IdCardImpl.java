@@ -1,7 +1,7 @@
 package com.asianwallets.common.utils.validation.impl;
 
-import com.asianwallets.asianwalletcommon.common.utils.validation.IdCard;
-import com.asianwallets.asianwalletcommon.common.utils.validation.regexp.IdCardUtils;
+import com.asianwallets.common.utils.validation.IdCard;
+import com.asianwallets.common.utils.validation.regexp.IdCardUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
