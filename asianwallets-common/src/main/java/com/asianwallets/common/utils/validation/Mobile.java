@@ -1,6 +1,5 @@
 package com.asianwallets.common.utils.validation;
 
-
 import com.asianwallets.common.utils.validation.impl.MobileImpl;
 
 import javax.validation.Constraint;
