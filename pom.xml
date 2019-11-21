@@ -18,8 +18,7 @@
         <module>asianwallets-eureka</module>
         <module>asianwallets-common</module>
         <module>asianwallets-baseinfo</module>
-        <!--<module>asianwallet-institution</module>-->
-        <!--<module>asianwallet-permission</module>-->
+        <module>asianwallets-permissions</module>
         <!--<module>asianwallet-message</module>-->
         <!--<module>asianwallet-trade</module>-->
         <!--<module>asianwallet-finance</module>-->

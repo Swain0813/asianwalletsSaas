@@ -33,3 +33,13 @@ gen
 hs_err_pid*
 
 .idea/
+asianwallets-permissions/.mvn/wrapper/maven-wrapper.properties
+asianwallets-permissions/mvnw
+asianwallets-permissions/mvnw.cmd
+asianwallets-permissions/.mvn/
+HELP.md
+mvnw
+.mvn/
+asianwallets-baseinfo/mvnw.cmd
+asianwallets-common/mvnw.cmd
+mvnw.cmd
