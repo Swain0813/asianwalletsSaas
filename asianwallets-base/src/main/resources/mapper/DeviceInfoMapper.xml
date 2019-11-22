@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.institution.dao.DeviceInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.DeviceInfo">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="vendor_id" property="vendorId" jdbcType="VARCHAR"/>
+        <result column="model_id" property="modelId" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="imei" property="imei" jdbcType="VARCHAR"/>
+        <result column="sn" property="sn" jdbcType="VARCHAR"/>
+        <result column="mac" property="mac" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="binding_status" property="bindingStatus" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="NewResultMap" type="com.asianwallets.common.vo.DeviceInfoVO">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="vendor_id" property="vendorId" jdbcType="VARCHAR"/>
+        <result column="vendor_name" property="vendorName" jdbcType="VARCHAR"/>
+        <result column="model_id" property="modelId" jdbcType="VARCHAR"/>
+        <result column="model_name" property="modelName" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="imei" property="imei" jdbcType="VARCHAR"/>
+        <result column="sn" property="sn" jdbcType="VARCHAR"/>
+        <result column="mac" property="mac" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="binding_status" property="bindingStatus" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, vendor_id, model_id, name, imei, sn, mac, enabled, create_time, update_time,
+        creator, modifier, remark
+    </sql>
+    <select id="pageDeviceInfo" resultType="com.asianwallets.common.vo.DeviceInfoVO" resultMap="NewResultMap">
+        select i.id,
+        i.vendor_id,
+        i.model_id,
+        i.name,
+        i.imei,
+        i.sn,
+        i.mac,
+        i.enabled,
+        i.create_time,
+        i.update_time,
+        i.creator,
+        i.modifier,
+        i.remark,
+        i.binding_status,v.vendor_cn_name as vendor_name,m.device_name as model_name
+        from device_info i
+        left join device_vendor v on i.vendor_id = v.id
+        left join device_model m on i.model_id = m.id
+        <where>
+            <if test="id != null and id != ''">and i.id =
+                #{id}
+            </if>
+            <if test="vendorId != null and vendorId != ''">and i.vendor_id =
+                #{vendorId}
+            </if>
+            <if test="modelId != null and modelId != ''">and i.model_id =
+                #{modelId}
+            </if>
+            <if test="name != null and name != ''">
+                and i.name LIKE CONCAT(CONCAT('%', #{name}), '%' )
+            </if>
+            <if test="vendorName != null and vendorName != ''">
+                and v.vendor_cn_name LIKE CONCAT(CONCAT('%', #{vendorName} ), '%' )
+            </if>
+            <if test="imei != null and imei != ''">
+                and i.imei LIKE CONCAT(CONCAT('%', #{imei} ), '%' )
+            </if>
+            <if test="sn != null and sn != ''">and i.sn =
+                #{sn}
+            </if>
+            <if test="mac != null and mac != ''">and i.mac =
+                #{mac}
+            </if>
+            <if test="enabled != null">and i.enabled =
+                #{enabled}
+            </if>
+            <if test="createTime != null and createTime != ''">and i.create_time =
+                #{createTime}
+            </if>
+            <if test="updateTime != null and updateTime != ''">and i.update_time =
+                #{updateTime}
+            </if>
+            <if test="creator != null and creator != ''">and i.creator =
+                #{creator}
+            </if>
+            <if test="modifier != null and modifier != ''">and i.modifier =
+                #{modifier}
+            </if>
+            <if test="remark != null and remark != ''">and i.remark =
+                #{remark}
+            </if>
+            <if test="bindingStatus != null">and i.binding_status = #{bindingStatus}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectModelAndVendorAndInfoById" resultType="com.asianwallets.common.vo.DeviceInfoVO"
+            resultMap="NewResultMap">
+        select i.id,
+               i.vendor_id,
+               i.model_id,
+               i.name,
+               i.imei,
+               i.sn,
+               i.mac,
+               i.enabled,
+               i.create_time,
+               i.update_time,
+               i.creator,
+               i.modifier,
+               i.remark,
+               i.binding_status,
+               v.vendor_cn_name as vendor_name,
+               m.device_name    as model_name
+        from device_info i
+                 left join device_vendor v on i.vendor_id = v.id
+                 left join device_model m on i.model_id = m.id
+        where i.id = #{id}
+          and i.binding_status = 0
+          and i.enabled = 1
+    </select>
+
+
+    <select id="selectByVendorId" resultType="java.lang.Integer">
+        select COUNT(*)
+        from device_info
+        where vendor_id = #{id}
+          AND binding_status = 1;
+    </select>
+
+    <select id="selectByModelId" resultType="java.lang.Integer">
+        select COUNT(*)
+        from device_info
+        where model_id = #{id}
+          AND binding_status = 1;
+    </select>
+
+    <select id="selectByInfoId" resultType="java.lang.Integer">
+        select COUNT(*)
+        from device_info
+        where id = #{id}
+          AND binding_status = 1;
+    </select>
+
+    <select id="selectByModelIdAndStatus" resultType="java.lang.Integer">
+        select count(*)
+        from device_info
+        where model_id = #{id}
+          and enabled = #{enabled};
+    </select>
+
+    <select id="selectByInfoIMEI" resultType="java.lang.Integer">
+        select count(*)
+        from device_info
+        where imei = #{imei};
+    </select>
+
+    <update id="updateById">
+        update device_info
+        set binding_status = #{bindingStatus},
+            update_time    = #{updateTime},
+            modifier       = #{modifier}
+        where id = #{id};
+    </update>
+
+    <update id="updateByModelId">
+        update device_info
+        set enabled = #{enabled}
+        where vendor_id = #{id}
+          and enabled != #{enabled}
+    </update>
+
+</mapper>

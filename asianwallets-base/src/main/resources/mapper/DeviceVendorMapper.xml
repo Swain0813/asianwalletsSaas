@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.DeviceVendorMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.DeviceVendor">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="vendor_cn_name" property="vendorCnName" jdbcType="VARCHAR"/>
+        <result column="vendor_en_name" property="vendorEnName" jdbcType="VARCHAR"/>
+        <result column="business_contact" property="businessContact" jdbcType="VARCHAR"/>
+        <result column="contact_information" property="contactInformation" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="extend1" property="extend1" jdbcType="VARCHAR"/>
+        <result column="extend2" property="extend2" jdbcType="VARCHAR"/>
+        <result column="extend3" property="extend3" jdbcType="VARCHAR"/>
+        <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
+        <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
+        <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, vendor_cn_name, vendor_en_name, business_contact, contact_information, enabled,
+    create_time, update_time, creator, modifier, remark, extend1,
+    extend2, extend3, extend4, extend5, extend6
+    </sql>
+    <select id="pageDeviceVendor" resultType="com.asianwallets.common.entity.DeviceVendor"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from device_vendor
+        <where>
+            <if test="id != null and id!=''">and id =#{id}</if>
+            <if test="vendorCnName != null and vendorCnName!=''">
+                and vendor_cn_name LIKE CONCAT(CONCAT('%',#{vendorCnName}),'%')
+            </if>
+            <if test="vendorEnName != null and vendorEnName!=''">
+                and vendor_en_name LIKE CONCAT(CONCAT('%',#{vendorEnName}),'%')
+            </if>
+            <if test="businessContact != null and businessContact!=''">and business_contact =#{businessContact}</if>
+            <if test="contactInformation != null and contactInformation!=''">and
+                contact_information=#{contactInformation}
+            </if>
+            <if test="enabled != null">and enabled =#{enabled}</if>
+            <if test="createTime != null and createTime!=''">and create_time =#{createTime}</if>
+            <if test="updateTime != null and updateTime!=''">and update_time =#{updateTime}</if>
+            <if test="creator != null and creator!=''">and creator =#{creator}</if>
+            <if test="modifier != null and modifier!=''">and modifier =#{modifier}</if>
+            <if test="remark != null and remark!=''">and remark =#{remark}</if>
+        </where>
+    </select>
+    <select id="selectByVendorId" resultType="java.lang.Integer">
+        select COUNT(*)
+        from device_vendor
+        where id = #{vendorId};
+    </select>
+
+    <select id="queryVendorCategory" resultMap="BaseResultMap" resultType="com.asianwallets.common.entity.DeviceVendor">
+        select vendor_cn_name, id
+        from device_vendor
+        where enabled = 1
+        group by vendor_cn_name
+    </select>
+    <select id="selectCountByCnNameAndEnName" resultType="java.lang.Integer">
+        select count(*) from device_vendor where vendor_cn_name = #{vendorCnName} or vendor_en_name = #{vendorEnName} ;
+    </select>
+
+</mapper>

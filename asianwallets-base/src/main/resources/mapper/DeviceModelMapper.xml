@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.institution.dao.DeviceModelMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.DeviceModel">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="vendor_id" property="vendorId" jdbcType="VARCHAR"/>
+        <result column="device_type" property="deviceType" jdbcType="VARCHAR"/>
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="ram" property="ram" jdbcType="VARCHAR"/>
+        <result column="system" property="system" jdbcType="VARCHAR"/>
+        <result column="network" property="network" jdbcType="VARCHAR"/>
+        <result column="printer" property="printer" jdbcType="VARCHAR"/>
+        <result column="resolution_ratio" property="resolutionRatio" jdbcType="VARCHAR"/>
+        <result column="access_permit" property="accessPermit" jdbcType="VARCHAR"/>
+        <result column="card_reader" property="cardReader" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="NewResultMap" type="com.asianwallets.common.vo.DeviceModelVO">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="vendor_id" property="vendorId" jdbcType="VARCHAR"/>
+        <result column="vendor_name" property="vendorName" jdbcType="VARCHAR"/>
+        <result column="vendor_en_name" property="vendorEnName" jdbcType="VARCHAR"/>
+        <result column="device_type" property="deviceType" jdbcType="VARCHAR"/>
+        <result column="devicetypename" property="deviceTypeName" jdbcType="VARCHAR"/>
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="ram" property="ram" jdbcType="VARCHAR"/>
+        <result column="system" property="system" jdbcType="VARCHAR"/>
+        <result column="network" property="network" jdbcType="VARCHAR"/>
+        <result column="networkname" property="networkName" jdbcType="VARCHAR"/>
+        <result column="printer" property="printer" jdbcType="VARCHAR"/>
+        <result column="resolution_ratio" property="resolutionRatio" jdbcType="VARCHAR"/>
+        <result column="access_permit" property="accessPermit" jdbcType="VARCHAR"/>
+        <result column="card_reader" property="cardReader" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, vendor_id, device_type, device_name, ram, system, network, printer, resolution_ratio,
+        access_permit, card_reader, enabled, create_time, update_time, creator, modifier,
+        remark
+    </sql>
+
+    <select id="pageDeviceModel" resultType="com.asianwallets.common.vo.DeviceModelVO" resultMap="NewResultMap">
+        select
+        m.id,
+        m.vendor_id,
+        m.device_type,
+        m.device_name,
+        m.ram,
+        m.system,
+        m.network,
+        m.printer,
+        m.resolution_ratio,
+        m.access_permit,
+        m.card_reader,
+        m.enabled,
+        m.create_time,
+        m.update_time,
+        m.creator,
+        m.modifier,
+        m.remark,
+        v.vendor_cn_name as vendor_name,
+        d.name as networkname,
+        a.name as devicetypename
+        from device_model m left join device_vendor v on m.vendor_id = v.id
+        left join dictionary d on m.network = d.code and d.language=#{language}
+        left join dictionary a on m.device_type = a.code and a.language=#{language}
+        <where>
+            <if test="id != null and id != ''">AND m.id = #{id}</if>
+            <if test="vendorId != null and vendorId != ''">AND m.vendor_id = #{vendorId}</if>
+            <if test="deviceType != null and deviceType != ''">AND m.device_type = #{deviceType}</if>
+            <if test="deviceName != null and deviceName != ''">AND m.device_name = #{deviceName}</if>
+            <if test="vendorName != null and vendorName !=''">
+                AND v.vendor_cn_name LIKE CONCAT(CONCAT('%',#{vendorName}),'%')
+            </if>
+            <if test="ram != null and ram != ''">AND m.ram = #{ram}</if>
+            <if test="system != null and system != ''">AND m.system = #{system}</if>
+            <if test="network != null and network != ''">AND m.network = #{network}</if>
+            <if test="printer != null and printer != ''">AND m.printer = #{printer}</if>
+            <if test=" resolutionRatio != null and  resolutionRatio != ''">AND m.resolution_ratio =
+                #{ resolutionRatio}
+            </if>
+            <if test="accessPermit != null and accessPermit != ''">AND m.access_permit = #{accessPermit}</if>
+            <if test="cardReader != null and cardReader != ''">AND m.card_reader = #{cardReader}</if>
+            <if test="enabled != null">AND m.enabled = #{enabled}</if>
+            <if test="createTime != null and createTime != ''">AND m.create_time = #{createTime}</if>
+            <if test="updateTime != null and updateTime != ''">AND m.update_time = #{updateTime}</if>
+            <if test="creator != null and creator != ''">AND m.creator = #{creator}</if>
+            <if test="modifier != null and  modifier != ''">AND m.modifier = #{ modifier}</if>
+            <if test="remark != null and  remark != ''">AND m.remark = #{ remark}</if>
+        </where>
+    </select>
+
+
+    <select id="selectByModelId" resultType="java.lang.Integer">
+        select COUNT(*)
+        from device_model
+        where id = #{modelId};
+    </select>
+
+
+    <select id="selectByVendorId" resultType="java.lang.Integer">
+        select COUNT(*)
+        from device_model
+        where vendor_id = #{id}
+          and enabled = #{enabled};
+    </select>
+
+    <select id="queryModelCategory" resultType="com.asianwallets.common.vo.DeviceModelVO" resultMap="NewResultMap">
+        select m.id,
+               m.vendor_id,
+               m.device_type,
+               m.device_name,
+               m.ram,
+               m.system,
+               m.network,
+               m.printer,
+               m.resolution_ratio,
+               m.access_permit,
+               m.card_reader,
+               m.enabled,
+               m.create_time,
+               m.update_time,
+               m.creator,
+               m.modifier,
+               m.remark,
+               v.vendor_cn_name as vendor_name,
+               v.vendor_en_name as vendor_en_name
+        from device_model m
+                 left join device_vendor v on m.vendor_id = v.id
+        where m.enabled = 1
+        group by device_name
+    </select>
+
+    <update id="updateByVendorId">
+        update device_model
+        set enabled = #{enabled}
+        where vendor_id = #{id}
+          and enabled != #{enabled};
+    </update>
+</mapper>
