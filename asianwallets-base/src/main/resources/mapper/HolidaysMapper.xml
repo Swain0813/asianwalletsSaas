@@ -29,7 +29,7 @@
                 AND id = #{id}
             </if>
             <if test="country != null and country != ''">
-                AND country = #{country}
+                AND country_name = #{countryName}
             </if>
             <if test="beginDate != null and beginDate != ''">
                 AND date &gt;= #{beginDate}
