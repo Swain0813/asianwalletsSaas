@@ -61,10 +61,10 @@ redis:
     max-total: 100
     max-wait-millis: -1
 
-#security:
-#  jwt:
-#    secret: uplus0000a1ed52710d4533bde25be6da0
-#    token_expire_hour: 24
+security:
+  jwt:
+    secret: uplus0000a1ed52710d4533bde25be6da0
+    token_expire_hour: 24
 
 #项目自定义配置
 file:
