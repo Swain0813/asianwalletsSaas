@@ -1,5 +1,4 @@
 package com.asianwallets.common.base;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -9,20 +8,19 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.GetIpAddr;
 import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.utils.ValidatorToolUtils;
+import com.asianwallets.common.vo.SysUserVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
 /**
- * @author Wu, Hua-Zheng
  * @version v1.0.0
  * @classDesc: 功能描述: 功能描述:(控制器类父类)
  * @createTime 2018年6月29日 上午10:54:07
@@ -35,7 +33,6 @@ public class BaseController {
 
     /**
      * @methodDesc: 功能描述: 功能描述:(使用valid注解进行字段校验)
-     * @author Wu, Hua-Zheng
      * @createTime 2018年6月29日 上午10:54:45
      * @version v1.0.0
      */
@@ -65,7 +62,6 @@ public class BaseController {
     /**
      * @param req
      * @methodDesc: 功能描述: 功能描述:(获取项目根目录地址)
-     * @author Wu, Hua-Zheng
      * @createTime 2018年6月29日 上午10:54:26
      * @version v1.0.0
      */
@@ -91,14 +87,14 @@ public class BaseController {
      *
      * @return
      */
-//    public SysUserVO getSysUserVO() {
-//        HttpServletRequest request = getRequest();
-//        String token = request.getHeader(AsianWalletConstant.tokenHeader);
-//        if (redisService.get(token) == null) {
-//            throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
-//        }
-//        return JSON.parseObject(redisService.get(token), SysUserVO.class);
-//    }
+    public SysUserVO getSysUserVO() {
+        HttpServletRequest request = getRequest();
+        String token = request.getHeader(AsianWalletConstant.tokenHeader);
+        if (redisService.get(token) == null) {
+            throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
+        }
+        return JSON.parseObject(redisService.get(token), SysUserVO.class);
+    }
 
     /**
      * 获取用户ip
