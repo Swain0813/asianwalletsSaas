@@ -28,7 +28,7 @@
             <if test="id != null and id != ''">
                 AND id = #{id}
             </if>
-            <if test="country != null and country != ''">
+            <if test="countryName != null and countryName != ''">
                 AND country_name = #{countryName}
             </if>
             <if test="beginDate != null and beginDate != ''">
@@ -47,7 +47,7 @@
     <select id="selectByCountryAndDate" resultType="int">
         SELECT count(1)
         FROM holidays
-        WHERE country = #{country}
+        WHERE country_name = #{countryName}
           AND date = #{date}
     </select>
 
