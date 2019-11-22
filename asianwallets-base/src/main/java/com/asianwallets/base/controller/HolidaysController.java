@@ -26,6 +26,12 @@ public class HolidaysController extends BaseController {
     @Autowired
     private HolidaysService holidaysService;
 
+    @ApiOperation(value = "分页多条件查询节假日信息")
+    @PostMapping("getByMultipleConditions")
+    public BaseResponse getByMultipleConditions(@RequestBody @ApiParam HolidaysDTO holidaysDTO) {
+        return ResultUtil.success(holidaysService.getByMultipleConditions(holidaysDTO));
+    }
+
     @ApiOperation(value = "添加节假日信息")
     @PostMapping("addHolidays")
     public BaseResponse addHolidays(@RequestBody @ApiParam HolidaysDTO holidaysDTO) {
@@ -36,12 +42,6 @@ public class HolidaysController extends BaseController {
     @PostMapping("banHolidays")
     public BaseResponse updateHolidays(@RequestBody @ApiParam HolidaysDTO holidaysDTO) {
         return ResultUtil.success(holidaysService.banHolidays(holidaysDTO, this.getSysUserVO().getUsername()));
-    }
-
-    @ApiOperation(value = "分页多条件查询节假日信息")
-    @PostMapping("getByMultipleConditions")
-    public BaseResponse getByMultipleConditions(@RequestBody @ApiParam HolidaysDTO holidaysDTO) {
-        return ResultUtil.success(holidaysService.getByMultipleConditions(holidaysDTO));
     }
 
     @ApiOperation(value = "导入节假日信息")

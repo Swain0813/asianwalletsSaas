@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.asianwallets.institution.dao.HolidaysMapper">
+<mapper namespace="com.asianwallets.base.dao.HolidaysMapper">
     <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Holidays">
         <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="country_code" jdbcType="VARCHAR" property="countryCode"/>
@@ -28,8 +28,8 @@
             <if test="id != null and id != ''">
                 AND id = #{id}
             </if>
-            <if test="country != null and country != ''">
-                AND country = #{country}
+            <if test="countryName != null and countryName != ''">
+                AND country_name = #{countryName}
             </if>
             <if test="beginDate != null and beginDate != ''">
                 AND date &gt;= #{beginDate}
@@ -47,7 +47,7 @@
     <select id="selectByCountryAndDate" resultType="int">
         SELECT count(1)
         FROM holidays
-        WHERE country = #{country}
+        WHERE country_name = #{countryName}
           AND date = #{date}
     </select>
 

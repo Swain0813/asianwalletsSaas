@@ -25,9 +25,9 @@ public interface HolidaysMapper extends BaseMapper<Holidays> {
     /**
      * 根据国家和日期查询节假日信息
      *
-     * @param country 节假日输入实体
+     * @param countryName 节假日输入实体
      * @param date    日期
      * @return 节假日信息条数
      */
-    int selectByCountryAndDate(@Param("country") String country, @Param("date") Date date);
+    int selectByCountryAndDate(@Param("countryName") String countryName, @Param("date") Date date);
 }
