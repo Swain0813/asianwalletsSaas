@@ -23,7 +23,7 @@ import com.asianwallets.common.base.BaseController;
  */
 @RestController
 @RequestMapping("/institution")
-@Api(description = "机构")
+@Api(description = "机构管理")
 public class InstitutionController extends BaseController {
 
     @Autowired

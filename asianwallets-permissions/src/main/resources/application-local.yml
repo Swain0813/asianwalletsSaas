@@ -72,7 +72,7 @@ security:
 #项目自定义配置
 file:
   http:
-    server: http://192.168.124.31:8080
+    server: http://192.168.124.16:8080
   upload:
     path: C:\apache-tomcat-8.5.38\webapps
   tmpfile: C:\apache-tomcat-8.5.38\webapps\tmp
