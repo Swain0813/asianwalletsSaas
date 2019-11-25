@@ -23,7 +23,7 @@
     <select id="findDuplicatesCount" resultType="java.lang.Integer">
         select count(1)
         from holidays
-        where country = #{country}
+        where country_name = #{countryName}
           and name = #{name}
           and date = #{date};
     </select>
