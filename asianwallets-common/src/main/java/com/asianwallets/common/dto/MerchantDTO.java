@@ -9,38 +9,65 @@ import javax.persistence.Column;
 /**
  * @description:
  * @author: YangXu
- * @create: 2019-11-25 10:35
+ * @create: 2019-11-25 14:35
  **/
 @Data
-@ApiModel(value = "机构实体", description = "机构实体")
-public class InstitutionDTO {
+@ApiModel(value = "商户实体", description = "商户实体")
+public class MerchantDTO {
 
-    /**
-     * 机构id
-     */
+    @ApiModelProperty(value = "商户id")
+    private String merchantId;
+
     @ApiModelProperty(value = "机构id")
     private String institutionId;
 
-    /**
-     * 机构中文名称
-     */
-    @ApiModelProperty(value = "机构中文名称")
+    @ApiModelProperty(value = "代理商id")
+    @Column(name = "agent_id")
+    private String agentId;
+
+    @ApiModelProperty(value = "上级商户id")
+    private String parentId;
+
+    @ApiModelProperty(value = "商户中文名称")
     private String cnName;
     /**
-     * 机构英文名称
+     * 商户英文名称
      */
-    @ApiModelProperty(value = "机构英文名称")
+    @ApiModelProperty(value = "商户英文名称")
     private String enName;
     /**
      * 国别类型 0 境外 1 中国境内
      */
-    @ApiModelProperty(value = "国别类型")
+    @ApiModelProperty(value = "国别类型 0 境外 1 中国境内")
     private Integer countryType;
-    /**
-     * 所属国家
-     */
-    @ApiModelProperty(value = "所属国家")
+
+    @ApiModelProperty(value = "国家")
     private String country;
+    /**
+     * 地区
+     */
+    @ApiModelProperty(value = "地区")
+    private String region;
+    /**
+     * mcc
+     */
+    @ApiModelProperty(value = "mcc")
+    private String mcc;
+    /**
+     * 商户类型
+     */
+    @ApiModelProperty(value = "商户类型")
+    private String merchantType;
+    /**
+     * 集团主账户
+     */
+    @ApiModelProperty(value = "集团主账户")
+    private String groupMasterAccount;
+    /**
+     * 拓展销售
+     */
+    @ApiModelProperty(value = "拓展销售")
+    private String developSales;
     /**
      * 公司注册号
      */
@@ -54,8 +81,7 @@ public class InstitutionDTO {
     /**
      * 法人证件编号
      */
-    @ApiModelProperty(value = "公司证件有效期")
-    @Column(name = "legal_passport_code")
+    @ApiModelProperty(value = "法人证件编号")
     private String legalPassportCode;
     /**
      * 证件有效期
@@ -76,7 +102,6 @@ public class InstitutionDTO {
      * 法人证件照片
      */
     @ApiModelProperty(value = "法人证件照片")
-    @Column(name = "legal_passport_img")
     private String legalPassportImg;
     /**
      * 机构协议
@@ -119,20 +144,20 @@ public class InstitutionDTO {
     @ApiModelProperty(value = "行业类别")
     private String industryCategory;
     /**
-     * 机构邮编
+     * 邮编
      */
-    @ApiModelProperty(value = "机构邮编")
-    private String institutionPostalCode;
+    @ApiModelProperty(value = "邮编")
+    private String merchantPostalCode;
     /**
      * 邮箱
      */
     @ApiModelProperty(value = "邮箱")
-    private String institutionEmail;
+    private String merchantEmail;
     /**
-     * 机构网站url
+     * 网站url
      */
-    @ApiModelProperty(value = "机构网站url")
-    private String institutionWebUrl;
+    @ApiModelProperty(value = "网站url")
+    private String merchantWebUrl;
     /**
      * 联系人地址
      */
@@ -151,7 +176,11 @@ public class InstitutionDTO {
     /**
      * 审核状态 1-待审核 2-审核通过 3-审核不通过
      */
-    @ApiModelProperty(value = "审核状态")
+    @ApiModelProperty(value = "审核状态 1-待审核 2-审核通过 3-审核不通过")
     private Integer auditStatus;
+
+
+    @ApiModelProperty(value = "启用禁用")
+    private Boolean enabled;
 
 }

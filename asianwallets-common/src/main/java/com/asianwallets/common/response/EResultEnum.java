@@ -19,7 +19,7 @@ public enum EResultEnum {
     USER_OR_PASSWORD_INCORRECT("52004"),//用户名或密码不正确
     USER_NOT_ENABLE("52005"),//用户名已禁用
     TRADE_PASSWORD_ERROR("52006"),//交易密码不正确
-    INSTITUTION_NAME_EXIST("52007"),//机构名称已存在
+    NAME_EXIST("52007"),//机构名称已存在
     SIGNATURE_CANNOT_BE_EMPTY("52008"),//签名不能为空
     SIGNATURE_ERROR("52009"),//签名错误
     PERMISSION_NOT_FULL("52010"),//用户权限不足

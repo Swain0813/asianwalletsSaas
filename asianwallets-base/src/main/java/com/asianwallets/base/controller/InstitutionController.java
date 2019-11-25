@@ -23,7 +23,7 @@ import com.asianwallets.common.base.BaseController;
  */
 @RestController
 @RequestMapping("/institution")
-@Api(description = "机构")
+@Api(description = "机构管理")
 public class InstitutionController extends BaseController {
 
     @Autowired
@@ -62,7 +62,7 @@ public class InstitutionController extends BaseController {
     }
 
 
-    @ApiOperation(value = "根据机构Id查询机构信息详情")
+    @ApiOperation(value = "根据机构Id查询机构审核信息详情")
     @GetMapping("/getInstitutionInfoAudit")
     public BaseResponse getInstitutionInfoAudit(String id) {
         return ResultUtil.success(institutionService.getInstitutionInfoAudit(id));
