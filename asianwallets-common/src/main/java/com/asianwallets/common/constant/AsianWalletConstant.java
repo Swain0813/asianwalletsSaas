@@ -136,8 +136,11 @@ public class AsianWalletConstant {
     public static final Byte SETTLE_ACCORD = 2;//手动结算
 
     //登录类型
-    public static final int POS = 3;// post机
-    public static final int AGENCY = 4;// 代理系统
+    public static final Integer OPERATION = 1;//运维系统
+    public static final Integer INSTITUTION = 2;//机构系统
+    public static final Integer MERCHANT = 3;//商户系统
+    public static final Integer AGENCY = 4;//代理
+    public static final Integer POS = 5;//Pos机
 
     //前端发布版本控制字段Key
     public static final String VERSION_CONTROL = "VERSION_CONTROL";

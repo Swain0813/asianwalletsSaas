@@ -27,7 +27,7 @@ public class SysUser extends BaseEntity {
     @Column(name = "sys_type")
     private Integer sysType;
 
-    @ApiModelProperty(value = "权限类型(1-运营,2-机构,3-商户,4-POS机)")
+    @ApiModelProperty(value = "权限类型(1-运营,2-机构,3-商户,4-代理商,5-pos机)")
     @Column(name = "permission_type")
     private Integer permissionType;
 

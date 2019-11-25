@@ -20,7 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.*;
 
 /**
- * SpringSecurity配置类
+ * SpringSecurity获取用户信息配置类
  **/
 @Configuration
 @Slf4j
@@ -31,7 +31,7 @@ public class UserDetailsServiceConfig implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        SysUserVO user = sysUserService.getSysUser(userName);
+        SysUserVO user = sysUserService.getSysUser(userName, null);
         if (user == null) {
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }

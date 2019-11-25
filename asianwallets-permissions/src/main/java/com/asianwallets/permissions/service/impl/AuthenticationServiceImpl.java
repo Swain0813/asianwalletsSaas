@@ -1,6 +1,7 @@
 package com.asianwallets.permissions.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
@@ -71,7 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         String username = request.getUsername();
-        SysUserVO sysUserVO = sysUserService.getSysUser(username);
+        SysUserVO sysUserVO = sysUserService.getSysUser(username, AsianWalletConstant.OPERATION);
         if (sysUserVO == null) {
             log.info("===========【运营系统登录】==========【用户名不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
@@ -105,11 +106,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("===========【机构系统登录】==========【密码为空!】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        if (StringUtils.isEmpty(request.getInstitutionId())) {
+        if (StringUtils.isEmpty(request.getSysId())) {
             log.info("===========【机构系统登录】==========【机构ID为空!】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(request.getInstitutionId());
+        BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(request.getSysId());
         Object institutionData = baseResponse.getData();
         if (institutionData == null) {
             //机构信息不存在
@@ -121,9 +122,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             //机构已禁用
             throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
         }
-        //拼接机构ID与用户名
-        String username = request.getInstitutionId().concat(request.getUsername());
-        SysUserVO sysUserVO = sysUserService.getSysUser(username);
+        String username = request.getUsername();
+        SysUserVO sysUserVO = sysUserService.getSysUser(username, AsianWalletConstant.INSTITUTION);
         if (sysUserVO == null) {
             log.info("===========【机构系统登录】==========【用户名不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
@@ -150,7 +150,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponse merchantLogin(AuthenticationRequest request) {
         log.info("===========【商户系统登录】==========【请求参数】 request: {}", JSON.toJSONString(request));
         String username = request.getUsername();
-        SysUserVO sysUserVO = sysUserService.getSysUser(username);
+        SysUserVO sysUserVO = sysUserService.getSysUser(username, AsianWalletConstant.MERCHANT);
         if (sysUserVO == null) {
             log.info("===========【商户系统登录】==========【用户名不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
@@ -177,7 +177,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponse agentLogin(AuthenticationRequest request) {
         log.info("===========【代理系统登录】==========【请求参数】 request: {}", JSON.toJSONString(request));
         String username = request.getUsername();
-        SysUserVO sysUserVO = sysUserService.getSysUser(username);
+        SysUserVO sysUserVO = sysUserService.getSysUser(username, AsianWalletConstant.AGENCY);
         if (sysUserVO == null) {
             log.info("===========【代理系统登录】==========【用户名不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
@@ -204,7 +204,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponse posLogin(AuthenticationRequest request) {
         log.info("===========【Pos机系统登录】==========【请求参数】 request: {}", JSON.toJSONString(request));
         String username = request.getUsername();
-        SysUserVO sysUserVO = sysUserService.getSysUser(username);
+        SysUserVO sysUserVO = sysUserService.getSysUser(username, AsianWalletConstant.POS);
         if (sysUserVO == null) {
             log.info("===========【Pos机系统登录】==========【用户名不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
@@ -231,7 +231,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponse terminalLogin(AuthenticationRequest request) {
         log.info("===========【对外API线下交易登录】==========【请求参数】 request: {}", JSON.toJSONString(request));
         String username = request.getUsername();
-        SysUserVO sysUserVO = sysUserService.getSysUser(username);
+        SysUserVO sysUserVO = sysUserService.getSysUser(username, AsianWalletConstant.POS);
         if (sysUserVO == null) {
             log.info("===========【对外API线下交易登录】==========【用户名不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
