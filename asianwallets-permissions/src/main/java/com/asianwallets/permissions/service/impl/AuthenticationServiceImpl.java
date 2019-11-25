@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.*;
@@ -15,14 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,10 +37,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    @Qualifier(value = "userDetailsServiceConfig")
-    private UserDetailsService userDetailsService;
-
-    @Autowired
     private SysUserService sysUserService;
 
     @Autowired
@@ -55,35 +49,44 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private int time;
 
     /**
-     * 登陆
+     * 登录
      *
      * @param request 登陆输入实体
+     * @return 登录响应实体
      */
     @Override
     public AuthenticationResponse login(AuthenticationRequest request) {
+        log.info("===========【登录接口】==========【请求参数】 request: {}", JSON.toJSONString(request));
         String username = request.getUsername();
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
         if (sysUserVO == null) {
+            log.info("===========【登录接口】==========【用户不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken
-                (username, request.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, request.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return getAuthenticationResponse(username);
+        //封装登录响应实体
+        AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
+        if (StringUtils.isNotBlank(response.getToken())) {
+            //将用户信息存入Redis
+            redisService.set(response.getToken(), JSON.toJSONString(sysUserVO), time * 60 * 60);
+        }
+        return response;
     }
 
-    private AuthenticationResponse getAuthenticationResponse(String username) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        SysUserVO sysUser = sysUserService.getSysUser(username);
-        String token = tokenUtils.generateToken(userDetails);
-        AuthenticationResponse response = new AuthenticationResponse(token);
-        response.setUserId(sysUser.getId());
-        response.setInstitutionId(sysUser.getInstitutionId());
-        response.setUsername(sysUser.getUsername());
-        response.setName(sysUser.getName());
+    /**
+     * 封装登录响应实体
+     *
+     * @param sysUserVO 用户信息输出实体
+     * @return 登录响应实体
+     */
+    private AuthenticationResponse getAuthenticationResponse(SysUserVO sysUserVO) {
+        AuthenticationResponse response = new AuthenticationResponse();
+        //生成Token
+        String token = tokenUtils.generateToken(sysUserVO.getUsername());
         List<ResRole> roles = Lists.newArrayList();
         Set<ResPermissions> permissions = Sets.newHashSet();
-        for (SysRoleVO sysRoleVO : sysUser.getRole()) {
+        for (SysRoleVO sysRoleVO : sysUserVO.getRole()) {
             ResRole resRole = new ResRole();
             if (StringUtils.isNotBlank(sysRoleVO.getRoleName())) {
                 BeanUtils.copyProperties(sysRoleVO, resRole);
@@ -95,8 +98,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 permissions.add(resPermissions);
             }
         }
+        response.setUserId(sysUserVO.getId());
+        response.setInstitutionId(sysUserVO.getInstitutionId());
+        response.setUsername(sysUserVO.getUsername());
+        response.setName(sysUserVO.getName());
         response.setRole(roles);
         response.setPermissions(permissions);
+        response.setToken(token);
         return response;
     }
 }
