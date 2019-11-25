@@ -1,12 +1,8 @@
 package com.asianwallets.task.dao;
-
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.ExchangeRate;
-import com.asianwallets.common.vo.ExchangeRateVO;
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +30,7 @@ public interface ExchangeRateMapper extends BaseMapper<ExchangeRate> {
      * @param date 创建日期
      * @return 汇率实体集合
      */
-    List<ExchangeRateVO> selectByCreateTimeAndCreator(@Param("date") String date, @Param("creator") String creator);
+    List<ExchangeRate> selectByCreateTimeAndCreator(@Param("date") String date, @Param("creator") String creator);
 
 
     /**
