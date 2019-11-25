@@ -1,6 +1,6 @@
 spring:
   application:
-    name: asianwallet-task
+    name: asianwallets-task
   profiles:
     active: @profileActive@
   main:
