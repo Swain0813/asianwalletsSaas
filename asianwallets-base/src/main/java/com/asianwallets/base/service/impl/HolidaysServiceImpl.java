@@ -4,6 +4,7 @@ import com.asianwallets.common.dto.HolidaysDTO;
 import com.asianwallets.common.entity.Holidays;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.HolidaysVO;
 import com.asianwallets.base.dao.HolidaysMapper;
@@ -53,7 +54,7 @@ public class HolidaysServiceImpl extends BaseServiceImpl<Holidays> implements Ho
             throw new BusinessException(EResultEnum.HOLIDAYS_NAME_IS_NOT_NULL.getCode());
         }
         //判断添加的时间是否过期
-        if (compareTime(holidaysDTO.getDate(), new Date())) {
+        if (DateToolUtils.compareTime(holidaysDTO.getDate(), new Date())) {
             throw new BusinessException(EResultEnum.HOLIDAYS_ADD_TIME_EXPIRED.getCode());
         }
         //判断节假日信息是否存在
@@ -116,19 +117,5 @@ public class HolidaysServiceImpl extends BaseServiceImpl<Holidays> implements Ho
     @Override
     public int uploadFiles(List<Holidays> fileList) {
         return holidaysMapper.insertList(fileList);
-    }
-
-    /**
-     * 比较两个时间的前后, time1 > time2 ，false,反之为true
-     *
-     * @param time1
-     * @param time2
-     * @return true or false
-     */
-    private boolean compareTime(Date time1, Date time2) {
-        if (time1.getTime() > time2.getTime()) {
-            return false;
-        }
-        return true;
     }
 }

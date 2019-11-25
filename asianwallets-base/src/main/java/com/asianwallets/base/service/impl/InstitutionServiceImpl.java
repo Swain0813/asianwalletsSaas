@@ -56,10 +56,10 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
 
         //判断机构名称是否存在
         if (institutionMapper.selectCountByInsName(institutionDTO.getCnName()) > 0) {
-            throw new BusinessException(EResultEnum.INSTITUTION_NAME_EXIST.getCode());
+            throw new BusinessException(EResultEnum.NAME_EXIST.getCode());
         }
         if (institutionMapper.selectCountByInsName(institutionDTO.getEnName()) > 0) {
-            throw new BusinessException(EResultEnum.INSTITUTION_NAME_EXIST.getCode());
+            throw new BusinessException(EResultEnum.NAME_EXIST.getCode());
         }
 
         String id = "I"+IDS.uniqueID().toString();

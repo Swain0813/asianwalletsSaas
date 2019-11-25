@@ -46,7 +46,6 @@ public class HolidaysFeignImpl implements HolidaysFeign {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
-
     /**
      * 导入节假日信息
      * @param list
@@ -54,6 +53,16 @@ public class HolidaysFeignImpl implements HolidaysFeign {
      */
     @Override
     public BaseResponse uploadFiles(List<Holidays> list) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
+     * 查询节假日信息
+     * @param holidays
+     * @return
+     */
+    @Override
+    public BaseResponse getHolidaysInfo(Holidays holidays) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 

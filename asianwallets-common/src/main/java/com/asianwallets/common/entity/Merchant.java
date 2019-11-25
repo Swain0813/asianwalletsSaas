@@ -223,7 +223,8 @@ public class Merchant extends BaseEntity {
      */
     @ApiModelProperty(value = "审核状态 1-待审核 2-审核通过 3-审核不通过")
     @Column(name = "audit_status")
-    private Integer auditStatus;
+    private Byte auditStatus;
+
     @ApiModelProperty(value = "ext7")
     @Column(name = "ext7")
     private String ext7;

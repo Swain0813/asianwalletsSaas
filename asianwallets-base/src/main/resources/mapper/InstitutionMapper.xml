@@ -56,7 +56,7 @@
 		from institution i
 		<where>
 			<if test="institutionCode!=null and institutionCode != ''">
-				and i.institution_code=#{institutionCode}
+				and i.id=#{institutionId}
 			</if>
 			<if test="institutionType!=null and institutionType != ''">
 				and i.institution_type=#{institutionType}

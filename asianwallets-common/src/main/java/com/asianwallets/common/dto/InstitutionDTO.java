@@ -12,7 +12,7 @@ import javax.persistence.Column;
  * @create: 2019-11-25 10:35
  **/
 @Data
-@ApiModel(value = "添加机构实体", description = "添加机构实体")
+@ApiModel(value = "机构实体", description = "机构实体")
 public class InstitutionDTO {
 
     /**

@@ -1519,4 +1519,15 @@ public class DateToolUtils extends DateUtils {
         c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) - temp);
         return c.getTime();
     }
+
+    /**
+     * 比较两个时间的前后, time1 > time2 ，false,反之为true
+     *
+     * @param time1
+     * @param time2
+     * @return true or false
+     */
+    public static boolean compareTime(Date time1, Date time2) {
+        return time1.getTime() <= time2.getTime();
+    }
 }
