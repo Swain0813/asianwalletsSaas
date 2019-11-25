@@ -17,7 +17,7 @@ public class BankCardDTO {
     private String bankCardId;
 
     @ApiModelProperty(value = "机构code")
-    private String institutionId;
+    private String merchantId;
 
     @ApiModelProperty(value = "账户编号")
     private String accountCode;
