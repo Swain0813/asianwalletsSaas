@@ -30,7 +30,7 @@ public class Institution extends BaseEntity {
     /**
      * 机构中文名称
      */
-	@ApiModelProperty(value = "国家编号")
+	@ApiModelProperty(value = "机构中文名称")
 	@Column(name = "cn_name")
 	private String cnName;
     /**
