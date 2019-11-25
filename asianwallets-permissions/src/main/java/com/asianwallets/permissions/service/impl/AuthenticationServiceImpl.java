@@ -13,6 +13,7 @@ import com.asianwallets.permissions.feign.base.InstitutionFeign;
 import com.asianwallets.permissions.service.AuthenticationService;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.utils.TokenUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Autowired
     private InstitutionFeign institutionFeign;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${security.jwt.token_expire_hour}")
     private int time;
@@ -111,13 +115,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(request.getSysId());
-        Object institutionData = baseResponse.getData();
-        if (institutionData == null) {
+        Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
+        if (institution == null) {
             //机构信息不存在
             throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
         }
-        Institution institution = (Institution) institutionData;
-        //机构已禁用
         if (!institution.getEnabled()) {
             //机构已禁用
             throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
