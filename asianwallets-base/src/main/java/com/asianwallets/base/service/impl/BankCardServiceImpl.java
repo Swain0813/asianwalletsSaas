@@ -135,4 +135,74 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
     public PageInfo<BankCard> pageBankCard(BankCardSearchDTO bankCardSearchDTO) {
         return new PageInfo<BankCard>(bankCardMapper.pageBankCard(bankCardSearchDTO));
     }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/2/27
+     * @Descripate 启用禁用银行卡
+     **/
+    @Override
+    public int banBankCard(String name, String bankCardId, Boolean enabled) {
+        //查询银行卡信息是不是存在
+        BankCard bankCardInfo = bankCardMapper.getBankCard(bankCardId);
+        if (bankCardInfo == null) {//银行卡信息不存在
+            throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
+        }
+        //根据启用禁用状态判断
+        if (enabled) {//启用时判断是不是已经存在
+            BankCard checkbankCard = bankCardMapper.checkBankCard(bankCardInfo.getMerchantId(), bankCardInfo.getBankAccountCode(),
+                    bankCardInfo.getBankCurrency(), bankCardInfo.getSettleCurrency());
+            if (checkbankCard != null) {
+                throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());//信息已存在
+            }
+        }
+        BankCard bankCard = new BankCard();
+        bankCard.setId(bankCardId);
+        bankCard.setEnabled(enabled);
+        if (!enabled) {//禁用的场合，取消默认银行卡
+            bankCard.setDefaultFlag(false);
+        }
+        bankCard.setUpdateTime(new Date());
+        bankCard.setModifier(name);
+        return bankCardMapper.updateByPrimaryKeySelective(bankCard);
+    }
+
+    /**
+     * 设置默认银行卡
+     *
+     * @param name
+     * @param bankCardId
+     * @param defaultFlag
+     * @return
+     */
+    @Override
+    public int defaultBankCard(String name, String bankCardId, Boolean defaultFlag) {
+        //查询银行卡信息是不是存在
+        BankCard bankCardInfo = bankCardMapper.getBankCard(bankCardId);
+        if (bankCardInfo == null) {//银行卡信息不存在
+            throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
+        }
+        //已经禁用的银行卡信息不能设置为默认银行卡
+        if (!bankCardInfo.getEnabled()) {
+            //已经禁用的银行卡信息不能设置成默认银行卡
+            throw new BusinessException(EResultEnum.ENABLED_BANK_ACCOUT_CODE_IS_ERROR.getCode());
+        }
+        //根据是否设为默认银行卡判断
+        if (defaultFlag) {//默认银行卡是否已经存在判断是不是已经存在
+            List<BankCard> bankCards = bankCardMapper.checkDefaultBankCard(bankCardInfo.getMerchantId(), bankCardInfo.getSettleCurrency());
+            if (bankCards != null && !bankCards.isEmpty()) {
+                //该机构相同的银行卡币种和结算币种的默认银行卡已存在
+                throw new BusinessException(EResultEnum.DEFALUT_BANK_ACCOUT_CODE_IS_EXISTS.getCode());
+            }
+        }
+        BankCard bankCard = new BankCard();
+        bankCard.setId(bankCardId);
+        bankCard.setDefaultFlag(defaultFlag);
+        bankCard.setUpdateTime(new Date());
+        bankCard.setModifier(name);
+        return bankCardMapper.updateByPrimaryKeySelective(bankCard);
+    }
+
+
 }
