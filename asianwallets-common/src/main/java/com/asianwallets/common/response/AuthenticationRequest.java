@@ -14,6 +14,16 @@ public class AuthenticationRequest {
     @ApiModelProperty("密码")
     private String password;
 
-    @ApiModelProperty("机构编号")
-    private String institutionCode;
+    @ApiModelProperty("机构ID")
+    private String institutionId;
+
+    @ApiModelProperty("商户ID")
+    private String merchantId;
+
+    @ApiModelProperty("代理商ID")
+    private String agentId;
+
+    @ApiModelProperty("设备编号")
+    private String imei;
+
 }

@@ -19,55 +19,56 @@ import java.util.List;
 public class SysUserVO implements Serializable {
 
     @ApiModelProperty("用户ID")
-    public String id;
+    private String id;
 
-    @ApiModelProperty("用户ID")
-    public String institutionId;
+    @ApiModelProperty("系统ID")
+    private String SysId;
 
-    @ApiModelProperty("用户ID")
-    public String username;
+    @ApiModelProperty("用户名")
+    private String username;
 
-    @ApiModelProperty("用户ID")
-    public Integer type;//1-运维 2-机构  3-pos机 4-代理商
+    @ApiModelProperty("权限类型")
+    private Integer permissionType;//1-运维 2-机构  3-pos机 4-代理商
 
-    @ApiModelProperty("用户ID")
-    public String password;
+    @ApiModelProperty("登录密码")
+    private String password;
 
-    @ApiModelProperty("用户ID")
-    public String tradePassword;
+    @ApiModelProperty("交易密码")
+    private String tradePassword;
 
-    @ApiModelProperty("用户ID")
-    public String name;
+    @ApiModelProperty("名称")
+    private String name;
 
-    @ApiModelProperty("用户ID")
-    public String mobile;
+    @ApiModelProperty("手机")
+    private String mobile;
 
-    public String email;
+    @ApiModelProperty("邮箱")
+    private String email;
 
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    public Date createTime;
+    private Date createTime;
 
     @ApiModelProperty(value = "修改时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    public Date updateTime;
+    private Date updateTime;
 
     @ApiModelProperty(value = "创建者")
-    public String creator;
+    private String creator;
 
     @ApiModelProperty(value = "更改者")
-    public String modifier;
+    private String modifier;
 
     @ApiModelProperty(value = "备注")
-    public String remark;
+    private String remark;
 
-    public boolean accountNonExpired = true;
+    private boolean accountNonExpired = true;
 
-    public boolean accountNonLocked = true;
+    private boolean accountNonLocked = true;
 
-    public boolean enabled;
+    private boolean enabled;
 
-    public Date lastPasswordReset;
+    private Date lastPasswordReset;
 
     @ApiModelProperty("角色集合")
     private List<SysRoleVO> role;

@@ -19,9 +19,17 @@ public class SysUser extends BaseEntity {
     @Column(name = "username")
     private String username;
 
-    @ApiModelProperty(value = "机构id")
-    @Column(name = "institution_id")
-    private String institutionId;
+    @ApiModelProperty(value = "系统id")
+    @Column(name = "sys_id")
+    private String sysId;
+
+    @ApiModelProperty(value = "系统类型(1-机构,2-商户)")
+    @Column(name = "sys_type")
+    private Integer sysType;
+
+    @ApiModelProperty(value = "权限类型(1-运营,2-机构,3-商户,4-POS机)")
+    @Column(name = "permission_type")
+    private Integer permissionType;
 
     @ApiModelProperty(value = "密码")
     @Column(name = "password")
@@ -34,14 +42,6 @@ public class SysUser extends BaseEntity {
     @ApiModelProperty(value = "用户名称")
     @Column(name = "name")
     private String name;
-
-    @ApiModelProperty(value = "系统类型(1-机构,2-商户,3-pos机,4-代理商)")
-    @Column(name = "sys_type")
-    private Integer sysType;
-
-    @ApiModelProperty(value = "用户类型")
-    @Column(name = "type")
-    private Integer type;
 
     @ApiModelProperty(value = "手机")
     @Column(name = "mobile")

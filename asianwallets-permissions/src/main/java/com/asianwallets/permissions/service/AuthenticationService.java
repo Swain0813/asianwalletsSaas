@@ -9,10 +9,44 @@ import com.asianwallets.common.response.AuthenticationResponse;
 public interface AuthenticationService {
 
     /**
-     * 登陆
+     * 运营系统登录
      *
      * @param request 登陆输入实体
      */
-    AuthenticationResponse login(AuthenticationRequest request);
+    AuthenticationResponse operationLogin(AuthenticationRequest request);
 
+    /**
+     * 机构系统登录
+     *
+     * @param request 登陆输入实体
+     */
+    AuthenticationResponse institutionLogin(AuthenticationRequest request);
+
+    /**
+     * 商户系统登录
+     *
+     * @param request 登陆输入实体
+     */
+    AuthenticationResponse merchantLogin(AuthenticationRequest request);
+
+    /**
+     * 代理系统登录
+     *
+     * @param request 登陆输入实体
+     */
+    AuthenticationResponse agentLogin(AuthenticationRequest request);
+
+    /**
+     * Pos机系统登录
+     *
+     * @param request 登陆输入实体
+     */
+    AuthenticationResponse posLogin(AuthenticationRequest request);
+
+    /**
+     * 对外API线下交易登录
+     *
+     * @param request 登陆输入实体
+     */
+    AuthenticationResponse terminalLogin(AuthenticationRequest request);
 }
