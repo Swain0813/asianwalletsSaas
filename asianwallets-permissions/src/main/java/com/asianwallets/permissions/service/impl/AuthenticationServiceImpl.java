@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 权限认证业务接口实现类
+ * 认证业务接口实现类
  */
 @Service
 @Slf4j
@@ -63,7 +63,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("===========【登录接口】==========【用户不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }
+        //调用SpringSecurity底层AuthenticationManager(实际工作的类-DaoAuthenticationProvider)校验用户名与密码
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, request.getPassword()));
+        //将Authentication对象放入SpringSecurity安全上下文环境中
         SecurityContextHolder.getContext().setAuthentication(authentication);
         //封装登录响应实体
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
