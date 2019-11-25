@@ -33,4 +33,8 @@ public interface HolidaysFeign {
     @ApiOperation(value = "导入节假日信息")
     @PostMapping(value = "/holidays/uploadFiles")
     BaseResponse uploadFiles(@RequestBody @ApiParam List<Holidays> list);
+
+    @ApiOperation(value = "查询节假日信息")
+    @PostMapping("/holidays/getHolidaysInfo")
+    BaseResponse getHolidaysInfo(@RequestBody @ApiParam Holidays holidays);
 }
