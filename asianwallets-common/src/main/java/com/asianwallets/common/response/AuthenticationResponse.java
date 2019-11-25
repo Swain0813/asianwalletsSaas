@@ -1,32 +1,40 @@
 package com.asianwallets.common.response;
 
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 import java.util.Set;
 
 @Data
+@ApiModel(value = "登录响应实体", description = "登录响应实体")
 public class AuthenticationResponse {
-    public AuthenticationResponse(String token) {
-        this.token = token;
-    }
 
-    public AuthenticationResponse() {
+    @ApiModelProperty("用户ID")
+    private String userId;
 
-    }
+    @ApiModelProperty("机构ID")
+    private String institutionId;
 
-    String userId;
-    String institutionId;
+    @ApiModelProperty("token")
+    private String token;
 
-    String token;
-    String username;
-    String name;
-    String publicKey;
-    List<ResRole> role;
-    Set<ResPermissions> permissions;
+    @ApiModelProperty("用户账户")
+    private String username;
 
-//    String role;
-//    Set<String> permissions;
+    @ApiModelProperty("用户名")
+    private String name;
+
+    @ApiModelProperty("公钥")
+    private String publicKey;
+
+    @ApiModelProperty("角色集合")
+    private List<ResRole> role;
+
+    @ApiModelProperty("权限集合")
+    private Set<ResPermissions> permissions;
+
 }
 
