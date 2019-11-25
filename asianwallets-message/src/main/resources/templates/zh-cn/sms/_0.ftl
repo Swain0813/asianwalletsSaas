@@ -1,0 +1,1 @@
+【VNBIG】验证码：${verificationcode}，该验证码30分钟后失效，请勿透露他人。

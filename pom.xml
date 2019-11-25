@@ -20,7 +20,7 @@
         <module>asianwallets-base</module>
         <module>asianwallets-permissions</module>
         <module>asianwallets-task</module>
-        <!--<module>asianwallet-message</module>-->
+        <module>asianwallets-message</module>
         <!--<module>asianwallet-trade</module>-->
         <!--<module>asianwallet-finance</module>-->
         <!--<module>asianwallet-channels</module>-->
