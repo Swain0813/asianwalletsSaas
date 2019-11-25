@@ -63,10 +63,9 @@ public class RedisServiceImpl implements RedisService {
                 nxxx = "XX";
             }
             jedis.set(key, value, nxxx, "EX", expire);
-            //log.info("Redis set success - " + key + ", value:" + value + ", expire:" + expire);
+            log.info("==========【Redis Set Success】========== key: {}, value: {}, expire: {}", key, value, expire);
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Redis set error: " + e.getMessage() + " - " + key + ", value:" + value + ", expire:" + expire);
+            log.info("Redis set error: " + e.getMessage() + " - " + key + ", value:" + value + ", expire:" + expire);
         } finally {
             returnResource(jedis);
         }
@@ -280,7 +279,7 @@ public class RedisServiceImpl implements RedisService {
             jedis = getResource();
             if (!jedis.exists(key)) {
                 jedis.set(key, "1");
-                if (-1 != expire){
+                if (-1 != expire) {
                     jedis.expire(key, expire);
                 }
             } else {
@@ -326,7 +325,7 @@ public class RedisServiceImpl implements RedisService {
                     return true;
                 }
             } catch (Exception e) {
-                log.error("tryGetDistributedLock->key: {} ;error msg: {}" + lockKey ,e.getMessage());
+                log.error("tryGetDistributedLock->key: {} ;error msg: {}" + lockKey, e.getMessage());
                 return false;
             } finally {
                 returnResource(jedis);
@@ -349,7 +348,7 @@ public class RedisServiceImpl implements RedisService {
         try {
             jedis = getResource();
             if (!jedis.exists(lockKey)) {
-                log.error("releaseDistributedLock-> key: {},不存在" ,lockKey );
+                log.error("releaseDistributedLock-> key: {},不存在", lockKey);
                 return true;
             }
             if (jedis.del(lockKey) == 1) {
@@ -357,7 +356,7 @@ public class RedisServiceImpl implements RedisService {
             }
             return false;
         } catch (Exception e) {
-            log.error("releaseDistributedLock-> key:{}; error msg:{}" , lockKey , e.getMessage());
+            log.error("releaseDistributedLock-> key:{}; error msg:{}", lockKey, e.getMessage());
             return false;
         } finally {
             returnResource(jedis);

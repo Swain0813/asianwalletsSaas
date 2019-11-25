@@ -113,6 +113,14 @@ public class TokenUtils {
         return this.generateToken(claims);
     }
 
+    public String generateToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("sub", username);
+        claims.put("audience", "web");
+        claims.put("created", this.generateCurrentDate());
+        return this.generateToken(claims);
+    }
+
     private String generateToken(Map<String, Object> claims) {
         return Jwts.builder()
                 .setClaims(claims)
