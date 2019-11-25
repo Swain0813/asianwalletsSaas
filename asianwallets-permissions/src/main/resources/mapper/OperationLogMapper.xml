@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.permissions.dao.OperationLogMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.OperationLog">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="operation_ip" property="operationIp" jdbcType="VARCHAR"/>
+        <result column="operation_type" property="operationType" jdbcType="TINYINT"/>
+        <result column="operation_context" property="operationContext" jdbcType="VARCHAR"/>
+        <result column="function_point" property="functionPoint" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_name, operation_ip, operation_type,operation_context, function_point,create_time,creator,update_time,modifier
+    remark
+    </sql>
+
+    <select id="pageOperLog" resultMap="BaseResultMap" resultType="com.asianwallets.common.dto.OperationLogDTO">
+        select
+        <include refid="Base_Column_List"/>
+        from operation_log
+        <where>
+            <if test="id!=null and id!= ''">
+                and id=#{id}
+            </if>
+            <if test="userName != null and userName != ''">
+                and user_name LIKE CONCAT(CONCAT('%', #{userName}), '%')
+            </if>
+            <if test="operationType != null and operationType != ''">
+                and operation_type=#{operationType}
+            </if>
+        </where>
+    </select>
+</mapper>
