@@ -51,4 +51,20 @@ public interface BankCardService extends BaseService<BankCard> {
      **/
     PageInfo<BankCard> pageBankCard(BankCardSearchDTO bankCardSearchDTO);
 
+    /**
+     * @Author YangXu
+     * @Date 2019/2/27
+     * @Descripate 启用禁用银行卡
+     * @return
+     **/
+    int  banBankCard(String name,String bankCardId , Boolean enabled);
+
+    /**
+     * 设置默认银行卡
+     * @param name
+     * @param bankCardId
+     * @param defaultFlag
+     * @return
+     */
+    int  defaultBankCard(String name,String bankCardId , Boolean defaultFlag);
 }

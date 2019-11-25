@@ -52,4 +52,25 @@ public interface BankCardMapper extends  BaseMapper<BankCard> {
      */
     @Select("SELECT id,merchant_id as merchantId,settle_currency as settleCurrency,bank_currency as bankCurrency,bank_account_code as bankAccountCode from bank_card WHERE merchant_id = #{merchantId} and settle_currency = #{settleCurrency} and default_flag=true")
     List<BankCard> selectUpdateBankCard(@Param("merchantId") String merchantId, @Param("settleCurrency") String settleCurrency);
+
+    /**
+     * 根据银行卡id查询银行卡信息
+     * @param bankCardId
+     * @return
+     */
+    @Select("SELECT id,merchant_id as merchantId,bank_account_code as bankAccountCode,settle_currency as settleCurrency,bank_currency as bankCurrency,enabled FROM bank_card WHERE id=#{bankCardId}")
+    BankCard getBankCard(@Param("bankCardId") String bankCardId);
+
+    /**
+     * 根据机构code，银行卡卡号，银行卡币种以及结算币种查询银行卡信息
+     * @param bankAccountCode
+     * @param bankCurrency
+     * @return
+     */
+    @Select("SELECT id,merchant_id as merchantId,account_code as accountCode,bank_account_code as bankAccountCode,settle_currency as settleCurrency,bank_currency as bankCurrency FROM bank_card WHERE merchant_id = #{merchantId} and bank_account_code = #{bankAccountCode} and settle_currency = #{settleCurrency} " +
+            "and bank_currency = #{bankCurrency} and enabled=true")
+    BankCard checkBankCard(@Param("merchantId") String merchantId, @Param("bankAccountCode") String bankAccountCode, @Param("bankCurrency") String bankCurrency, @Param("settleCurrency") String settleCurrency);
+
+    @Select("SELECT id,merchant_id as merchantId,account_code as accountCode,bank_account_code as bankAccountCode,settle_currency as settleCurrency,bank_currency as bankCurrency FROM bank_card WHERE merchant_id = #{merchantId}  and settle_currency = #{settleCurrency} and default_flag=true")
+    List<BankCard> checkDefaultBankCard(@Param("merchantId") String merchantId, @Param("settleCurrency") String settleCurrency);
 }

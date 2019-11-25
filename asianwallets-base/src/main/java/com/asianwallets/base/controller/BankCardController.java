@@ -55,4 +55,17 @@ public class BankCardController extends BaseController {
         return ResultUtil.success(bankCardService.pageBankCard(bankCardSearchDTO));
     }
 
+    @ApiOperation(value = "启用禁用银行卡")
+    @GetMapping("/banBankCard")
+    public BaseResponse banBankCard(@RequestParam @ApiParam String bankCardId, @RequestParam @ApiParam Boolean enabled) {
+        return ResultUtil.success(bankCardService.banBankCard(this.getSysUserVO().getUsername(), bankCardId, enabled));
+    }
+
+    @ApiOperation(value = "设置默认银行卡")
+    @GetMapping("/defaultBankCard")
+    public BaseResponse defaultBankCard(@RequestParam @ApiParam String bankCardId, @RequestParam @ApiParam Boolean defaultFlag) {
+        return ResultUtil.success(bankCardService.defaultBankCard(this.getSysUserVO().getUsername(), bankCardId, defaultFlag));
+    }
+
+
 }
