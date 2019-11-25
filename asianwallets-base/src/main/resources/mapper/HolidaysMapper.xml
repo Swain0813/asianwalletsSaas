@@ -44,11 +44,31 @@
         ORDER BY date DESC
     </select>
 
-    <select id="selectByCountryAndDate" resultType="int">
+    <select id="selectByCountryAndDate" resultType="java.lang.Integer">
         SELECT count(1)
         FROM holidays
         WHERE country_name = #{countryName}
           AND date = #{date}
     </select>
 
+
+    <select id="getHolidaysInfo" resultMap="BaseResultMap">
+        SELECT
+        <include refid="commonSql"></include>
+        FROM holidays
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="countryName != null and countryName != ''">
+                AND country_name = #{countryName}
+            </if>
+            <if test="date != null and date != ''">
+                AND date = #{date}
+            </if>
+            <if test="enabled != null">
+                AND enabled= #{enabled}
+            </if>
+        </where>
+    </select>
 </mapper>
