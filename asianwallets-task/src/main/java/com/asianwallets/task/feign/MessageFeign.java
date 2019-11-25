@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-@FeignClient(value = "asianwallet-message", fallback = MessageFeignImpl.class)
+@FeignClient(value = "asianwallets-message", fallback = MessageFeignImpl.class)
 public interface MessageFeign {
 
     @ApiOperation(value = "发送简单邮件")
