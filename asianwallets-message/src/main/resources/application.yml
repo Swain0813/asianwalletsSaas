@@ -1,6 +1,6 @@
 spring:
   application:
-    name: asianwallet-message
+    name: asianwallets-message
   profiles:
     active: @profileActive@
 
