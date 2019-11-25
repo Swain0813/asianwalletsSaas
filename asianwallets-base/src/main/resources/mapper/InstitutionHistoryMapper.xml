@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.base.dao.InstitutionHistoryMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.InstitutionHistory">
+	<result column="id" property="id" />
+		<result column="institution_id" property="institutionId" />
+		<result column="cn_name" property="cnName" />
+		<result column="en_name" property="enName" />
+		<result column="country_type" property="countryType" />
+		<result column="country" property="country" />
+		<result column="company_regist_number" property="companyRegistNumber" />
+		<result column="company_validity" property="companyValidity" />
+		<result column="legal_passport_code" property="legalPassportCode" />
+		<result column="legal_passport_validity" property="legalPassportValidity" />
+		<result column="country_code" property="countryCode" />
+		<result column="institution_adress" property="institutionAdress" />
+		<result column="legal_passport_img" property="legalPassportImg" />
+		<result column="institution_contract" property="institutionContract" />
+		<result column="company_articles" property="companyArticles" />
+		<result column="business_certificate" property="businessCertificate" />
+		<result column="institution_phone" property="institutionPhone" />
+		<result column="legal_name" property="legalName" />
+		<result column="business_category" property="businessCategory" />
+		<result column="business_license" property="businessLicense" />
+		<result column="industry_category" property="industryCategory" />
+		<result column="institution_postal_code" property="institutionPostalCode" />
+		<result column="institution_email" property="institutionEmail" />
+		<result column="institution_web_url" property="institutionWebUrl" />
+		<result column="contact_address" property="contactAddress" />
+		<result column="contact_people" property="contactPeople" />
+		<result column="contact_phone" property="contactPhone" />
+		<result column="audit_status" property="auditStatus" />
+		<result column="ext7" property="ext7" />
+		<result column="ext6" property="ext6" />
+		<result column="ext5" property="ext5" />
+		<result column="ext4" property="ext4" />
+		<result column="ext3" property="ext3" />
+		<result column="ext2" property="ext2" />
+		<result column="ext1" property="ext1" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator" property="creator" />
+		<result column="modifier" property="modifier" />
+		<result column="remark" property="remark" />
+		<result column="enabled" property="enabled" />
+	</resultMap>
+
+</mapper>
