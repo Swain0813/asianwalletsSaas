@@ -27,7 +27,7 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
     private TokenUtils tokenUtils;
 
     @Autowired
-    @Qualifier(value = "userDetailsServiceConfig")
+    @Qualifier(value = "sysUserVoServiceImpl")
     private UserDetailsService userDetailsService;
 
     @Override

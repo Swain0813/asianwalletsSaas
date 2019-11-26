@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    @Qualifier(value = "userDetailsServiceConfig")
+    @Qualifier(value = "sysUserVoServiceImpl")
     private UserDetailsService userDetailsService;
 
     @Autowired
