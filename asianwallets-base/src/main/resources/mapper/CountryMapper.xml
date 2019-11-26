@@ -25,6 +25,28 @@
         <result column="enabled" property="enabled" jdbcType="BIT"/>
     </resultMap>
 
+    <resultMap id="CountryVOResultMap" type="com.asianwallets.common.vo.CountryVO">
+        <id column="country_id" property="countryId" jdbcType="VARCHAR"/>
+        <result column="cn_country_name" property="cnCountryName" jdbcType="VARCHAR"/>
+        <result column="en_country_name" property="enCountryName" jdbcType="VARCHAR"/>
+        <result column="area_code" property="areaCode" jdbcType="VARCHAR"/>
+        <collection javaType="list" property="stateVOS" resultMap="StateVOResultMap"/>
+    </resultMap>
+
+    <resultMap id="StateVOResultMap" type="com.asianwallets.common.vo.StateVO">
+        <result column="state_id" property="stateId" jdbcType="VARCHAR"/>
+        <result column="state_parent_id" property="stateParentId" jdbcType="VARCHAR"/>
+        <result column="cn_state_name" property="cnStateName" jdbcType="VARCHAR"/>
+        <result column="en_state_name" property="enStateName" jdbcType="VARCHAR"/>
+        <!--        <collection javaType="list" property="cityVOS" resultMap="CityVOResultMap"/>-->
+    </resultMap>
+
+    <!-- <resultMap id="CityVOResultMap" type="com.asianwallets.common.vo.CityVO">
+         <id column="city_id" property="cityId" jdbcType="VARCHAR"/>
+         <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+         <result column="cn_city_name" property="cnCityName" jdbcType="VARCHAR"/>
+         <result column="en_city_name" property="enCityName" jdbcType="VARCHAR"/>
+     </resultMap>-->
 
     <sql id="Base_Column_List">
         id, parent_id, en_country, en_state, en_city, cn_country, cn_state, cn_city, create_time,
@@ -127,9 +149,9 @@
     </select>
 
     <select id="selectNewestCountryCode" resultType="java.lang.String">
-        select country_code
+        select area_code
         from country
-        order by country_code DESC
+        order by area_code DESC
         LIMIT 1;
     </select>
 
@@ -145,6 +167,21 @@
                 and parent_id is null
             </if>
         </where>
+    </select>
+
+    <select id="inquireAllCountry" resultMap="CountryVOResultMap">
+        select a.id         as country_id,
+               a.area_code  as area_code,
+               a.en_country as en_country_name,
+               a.cn_country as cn_country_name,
+               b.id         as state_id,
+               b.parent_id  as state_parent_id,
+               b.en_state   as en_state_name,
+               b.cn_state   as cn_state_name
+        from country a
+                 left join country b on a.id = b.parent_id
+        where a.cn_country is not null
+#         where a.id = b.parent_id order by a.create_time DESC
     </select>
 
 

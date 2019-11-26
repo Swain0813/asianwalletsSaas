@@ -1,6 +1,5 @@
-package com.asianwallets.common.dto;
+package com.asianwallets.common.vo;
 
-import com.asianwallets.common.base.BasePageHelper;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,7 +9,7 @@ import java.util.Date;
 
 @Data
 @ApiModel(value = "币种", description = "币种")
-public class CurrencyDTO extends BasePageHelper {
+public class CurrencyVO {
 
     @ApiModelProperty(value = "id")
     private String id;
@@ -49,8 +48,5 @@ public class CurrencyDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "国家")
     private String country;
-
-
-
 
 }

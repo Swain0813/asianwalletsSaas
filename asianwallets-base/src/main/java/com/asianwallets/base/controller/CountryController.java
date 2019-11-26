@@ -34,7 +34,7 @@ public class CountryController extends BaseController {
     }
 
     @ApiOperation(value = "修改国家")
-    @PutMapping("updateCountry")
+    @PostMapping("updateCountry")
     public BaseResponse updateCountry(@RequestBody @ApiParam CountryDTO country) {
         country.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(countryService.updateCountry(country));
@@ -47,7 +47,7 @@ public class CountryController extends BaseController {
     }
 
     @ApiOperation(value = "启用禁用国家")
-    @PutMapping("banCountry")
+    @PostMapping("banCountry")
     public BaseResponse banCountry(@RequestBody @ApiParam CountryDTO country) {
         country.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(countryService.banCountry(country));

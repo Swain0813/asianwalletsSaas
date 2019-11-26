@@ -1,11 +1,10 @@
 package com.asianwallets.base.service;
 
 import com.asianwallets.common.dto.CountryDTO;
-import com.asianwallets.common.entity.Country;
+import com.asianwallets.common.vo.CountryVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 国家地区
@@ -49,5 +48,5 @@ public interface CountryService {
      *
      * @return
      */
-    List<Map<Country, Map<Country, List<Country>>>> inquireAllCountry();
+    List<CountryVO> inquireAllCountry();
 }

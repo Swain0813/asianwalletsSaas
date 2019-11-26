@@ -20,6 +20,21 @@
         <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
         <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <resultMap id="CurrencyVOResultMap" type="com.asianwallets.common.vo.CurrencyVO">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="icon" property="icon" jdbcType="VARCHAR"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="defaults" property="defaults" jdbcType="VARCHAR"/>
+        <result column="country" property="country" jdbcType="VARCHAR"/>
+    </resultMap>
     <sql id="Base_Column_List">
         id, icon, code, name, create_time, update_time, creator, modifier, remark,defaults, extend1,
     extend2, extend3, extend4, extend5, extend6,enabled
@@ -37,7 +52,7 @@
         <include refid="Base_Column_List"/>
         from currency where id = #{id};
     </select>
-    <select id="pageCurrency" resultMap="BaseResultMap">
+    <select id="pageCurrency" resultMap="CurrencyVOResultMap">
         select
         <include refid="Base_Column_List"/>
         from currency

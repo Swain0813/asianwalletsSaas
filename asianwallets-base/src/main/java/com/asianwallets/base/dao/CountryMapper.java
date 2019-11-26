@@ -3,6 +3,7 @@ package com.asianwallets.base.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.CountryDTO;
 import com.asianwallets.common.entity.Country;
+import com.asianwallets.common.vo.CountryVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -104,4 +105,11 @@ public interface CountryMapper extends BaseMapper<Country> {
      * @return
      */
     List<Country> selectAllByParentId(@Param("parentId") String parentId);
+
+    /**
+     * 查询所有的国家地区
+     *
+     * @return
+     */
+    List<CountryVO> inquireAllCountry();
 }

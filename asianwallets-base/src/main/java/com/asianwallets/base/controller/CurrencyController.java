@@ -34,7 +34,7 @@ public class CurrencyController extends BaseController {
     }
 
     @ApiOperation(value = "修改币种")
-    @PutMapping("updateCurrency")
+    @PostMapping("updateCurrency")
     public BaseResponse updateCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
         currencyDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(currencyService.updateCurrency(currencyDTO));
@@ -47,7 +47,7 @@ public class CurrencyController extends BaseController {
     }
 
     @ApiOperation(value = "启用禁用币种")
-    @PutMapping("banCurrency")
+    @PostMapping("banCurrency")
     public BaseResponse banCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
         currencyDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(currencyService.banCurrency(currencyDTO));

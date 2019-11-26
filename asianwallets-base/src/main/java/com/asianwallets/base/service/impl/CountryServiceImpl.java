@@ -7,13 +7,16 @@ import com.asianwallets.common.entity.Country;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.CountryVO;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -370,8 +373,8 @@ public class CountryServiceImpl implements CountryService {
      * @return
      */
     @Override
-    public List<Map<Country, Map<Country, List<Country>>>> inquireAllCountry() {
-        List<Country> countries = countryMapper.selectAllByParentId(null);
+    public List<CountryVO> inquireAllCountry() {
+        /*List<Country> countries = countryMapper.selectAllByParentId(null);
         ArrayList<Map<Country, Map<Country, List<Country>>>> lists = new ArrayList<>();
         IdentityHashMap<Country, Map<Country, List<Country>>> countryMap = new IdentityHashMap<>();
         IdentityHashMap<Country, List<Country>> stateMap = new IdentityHashMap<>();
@@ -387,7 +390,8 @@ public class CountryServiceImpl implements CountryService {
             countryMap.put(country, stateMap);
             lists.add(countryMap);
         }
-        return lists;
+        return lists;*/
+        return countryMapper.inquireAllCountry();
     }
 
 }

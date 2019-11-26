@@ -41,7 +41,7 @@ public class CurrencyFeignController extends BaseController {
     }
 
     @ApiOperation(value = "修改币种")
-    @PutMapping("updateCurrency")
+    @PostMapping("updateCurrency")
     public BaseResponse updateCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(currencyDTO),
                 "修改币种"));
@@ -57,7 +57,7 @@ public class CurrencyFeignController extends BaseController {
     }
 
     @ApiOperation(value = "启用禁用币种")
-    @PutMapping("banCurrency")
+    @PostMapping("banCurrency")
     public BaseResponse banDeviceVendor(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(currencyDTO),
                 "启用禁用币种"));
