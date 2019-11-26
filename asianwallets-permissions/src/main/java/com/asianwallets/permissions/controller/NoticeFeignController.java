@@ -59,12 +59,12 @@ public class NoticeFeignController extends BaseController {
         return noticeFeign.pageNotice(noticeDTO);
     }
 
-    @ApiOperation(value = "根据语言和公告类别查询公告信息")
+    @ApiOperation(value = "根据公告类别,机构编号以及语言查询公告信息")
     @PostMapping("/pageNoticeByLanguageAndCategory")
     public BaseResponse pageNoticeByLanguageAndCategory(@RequestBody @ApiParam NoticeDTO noticeDTO) {
         //添加操作日志
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(noticeDTO),
-                "根据语言和公告类别查询公告信息"));
+                "根据公告类别,机构编号以及语言查询公告信息"));
         return noticeFeign.pageNoticeByLanguageAndCategory(noticeDTO);
     }
 
