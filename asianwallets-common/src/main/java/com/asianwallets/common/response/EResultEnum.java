@@ -176,6 +176,8 @@ public enum EResultEnum {
     KEY_GENERATION_FAILED("30028"),//密钥生成失败
     ACCOUNT_TYPE_IS_NULL("30029"),//入账账户类型不能为空
     PRODUCT_CHANNEL_CURRENCY_NO_SAME("30030"),//通道与产品币种不一致
+    INFORMATION_DOES_NOT_EXIST("30031"),//信息不存在
+
 
 
     /****汇率模块的错误信息从40001开始--许文奇*****/

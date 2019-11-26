@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.CountryMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Country">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="area_code" property="areaCode" jdbcType="VARCHAR"/>
+        <result column="en_country" property="enCountry" jdbcType="VARCHAR"/>
+        <result column="en_state" property="enState" jdbcType="VARCHAR"/>
+        <result column="en_city" property="enCity" jdbcType="VARCHAR"/>
+        <result column="cn_country" property="cnCountry" jdbcType="VARCHAR"/>
+        <result column="cn_state" property="cnState" jdbcType="VARCHAR"/>
+        <result column="cn_city" property="cnCity" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="extend1" property="extend1" jdbcType="VARCHAR"/>
+        <result column="extend2" property="extend2" jdbcType="VARCHAR"/>
+        <result column="extend3" property="extend3" jdbcType="VARCHAR"/>
+        <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
+        <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
+        <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+    </resultMap>
+
+    <resultMap id="CountryVOResultMap" type="com.asianwallets.common.vo.CountryVO">
+        <id column="country_id" property="countryId" jdbcType="VARCHAR"/>
+        <result column="cn_country_name" property="cnCountryName" jdbcType="VARCHAR"/>
+        <result column="en_country_name" property="enCountryName" jdbcType="VARCHAR"/>
+        <result column="area_code" property="areaCode" jdbcType="VARCHAR"/>
+        <collection javaType="list" property="stateVOS" resultMap="StateVOResultMap"/>
+    </resultMap>
+
+    <resultMap id="StateVOResultMap" type="com.asianwallets.common.vo.StateVO">
+        <result column="state_id" property="stateId" jdbcType="VARCHAR"/>
+        <result column="state_parent_id" property="stateParentId" jdbcType="VARCHAR"/>
+        <result column="cn_state_name" property="cnStateName" jdbcType="VARCHAR"/>
+        <result column="en_state_name" property="enStateName" jdbcType="VARCHAR"/>
+        <!--        <collection javaType="list" property="cityVOS" resultMap="CityVOResultMap"/>-->
+    </resultMap>
+
+    <!-- <resultMap id="CityVOResultMap" type="com.asianwallets.common.vo.CityVO">
+         <id column="city_id" property="cityId" jdbcType="VARCHAR"/>
+         <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+         <result column="cn_city_name" property="cnCityName" jdbcType="VARCHAR"/>
+         <result column="en_city_name" property="enCityName" jdbcType="VARCHAR"/>
+     </resultMap>-->
+
+    <sql id="Base_Column_List">
+        id, parent_id, en_country, en_state, en_city, cn_country, cn_state, cn_city, create_time,
+    update_time, creator, modifier, remark, extend1, extend2, extend3, extend4, extend5, 
+    extend6,enabled,area_code
+    </sql>
+
+    <update id="banCountry">
+        update country c1,country c2,country c3
+        set c1.enabled = #{enabled},
+            c2.enabled = #{enabled},
+            c3.enabled = #{enabled}
+        where c1.id = c2.parent_id
+          and c2.id = c3.parent_id;
+    </update>
+    <update id="updateEnabledById">
+        update asianwallets_saas.country
+        set enabled = #{enabled}
+        where id = #{id};
+    </update>
+
+    <select id="selectByCnAndEnCountry" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from country where en_country = #{enCountry} or cn_country = #{cnCountry};
+    </select>
+
+    <select id="selectByCnAndEnState" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from country where cn_state = #{cnState} or en_state = #{enState};
+    </select>
+
+    <select id="selectByCnAndEnCity" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from country where cn_city = #{cnCity} or en_city = #{enCity};
+    </select>
+
+    <select id="selectByParentId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from country where id = #{parentId};
+    </select>
+
+    <select id="selectByCountry" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from country
+        <where>
+            <if test="enCountry != null">
+                en_country = #{enCountry,jdbcType=VARCHAR},
+            </if>
+            <if test="enState != null">
+                or en_state = #{enState,jdbcType=VARCHAR},
+            </if>
+            <if test="enCity != null">
+                or en_city = #{enCity,jdbcType=VARCHAR},
+            </if>
+            <if test="cnCountry != null">
+                or cn_country = #{cnCountry,jdbcType=VARCHAR},
+            </if>
+            <if test="cnState != null">
+                or cn_state = #{cnState,jdbcType=VARCHAR},
+            </if>
+            <if test="cnCity != null">
+                or cn_city = #{cnCity,jdbcType=VARCHAR},
+            </if>
+        </where>
+    </select>
+
+    <select id="pageCountry" resultMap="BaseResultMap">
+        select
+        a.id, a.parent_id, a.en_country, b.en_state, c.en_city, a.cn_country, b.cn_state, c.cn_city, a.enabled,
+        a.create_time, a.update_time, a.creator, a.modifier, a.remark, a.extend1, a.extend2, a.extend3, a.extend4,
+        a.extend5, a.extend6
+        from country a left join country b on a.id = b.parent_id left join country c on b.id = c.parent_id
+
+        <where>
+            <if test="enCountry != null and enCountry != ''">
+                and a.en_country = #{enCountry}
+            </if>
+            <if test="enCity != null and enCity != ''">
+                and c.en_city = #{enCity}
+            </if>
+            <if test="enState != null and enState != ''">
+                and b.en_state = #{enState}
+            </if>
+            <if test="cnCountry != null and cnCountry != ''">
+                and a.cn_country = #{cnCountry}
+            </if>
+            <if test="cnCity != null and cnCity != ''">
+                and c.cn_city = #{cnCity}
+            </if>
+            <if test="enState != null and enState != ''">
+                and b.cn_state = #{cnState}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="selectNewestCountryCode" resultType="java.lang.String">
+        select area_code
+        from country
+        order by area_code DESC
+        LIMIT 1;
+    </select>
+
+    <select id="selectAllByParentId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from country
+        <where>
+            <if test="parentId != null and parentId !=''">
+                and parent_id = #{parentId}
+            </if>
+            <if test="parentId ==null">
+                and parent_id is null
+            </if>
+        </where>
+    </select>
+
+    <select id="inquireAllCountry" resultMap="CountryVOResultMap">
+        select a.id         as country_id,
+               a.area_code  as area_code,
+               a.en_country as en_country_name,
+               a.cn_country as cn_country_name,
+               b.id         as state_id,
+               b.parent_id  as state_parent_id,
+               b.en_state   as en_state_name,
+               b.cn_state   as cn_state_name
+        from country a
+                 left join country b on a.id = b.parent_id
+        where a.cn_country is not null
+#         where a.id = b.parent_id order by a.create_time DESC
+    </select>
+
+
+    <!--
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select
+      <include refid="Base_Column_List" />
+      from country
+      where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+      delete from country
+      where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.asianwallets.common.entity.Country" >
+      insert into country (id, parent_id, en_country,
+        en_state, en_city, cn_country,
+        cn_state, cn_city, create_time,
+        update_time, creator, modifier,
+        remark, extend1, extend2,
+        extend3, extend4, extend5,
+        extend6)
+      values (#{id,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, #{enCountry,jdbcType=VARCHAR},
+        #{enState,jdbcType=VARCHAR}, #{enCity,jdbcType=VARCHAR}, #{cnCountry,jdbcType=VARCHAR},
+        #{cnState,jdbcType=VARCHAR}, #{cnCity,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+        #{updateTime,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR}, #{extend1,jdbcType=VARCHAR}, #{extend2,jdbcType=VARCHAR},
+        #{extend3,jdbcType=VARCHAR}, #{extend4,jdbcType=VARCHAR}, #{extend5,jdbcType=VARCHAR},
+        #{extend6,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.asianwallets.common.entity.Country" >
+      insert into country
+      <trim prefix="(" suffix=")" suffixOverrides="," >
+        <if test="id != null" >
+          id,
+        </if>
+        <if test="parentId != null" >
+          parent_id,
+        </if>
+        <if test="enCountry != null" >
+          en_country,
+        </if>
+        <if test="enState != null" >
+          en_state,
+        </if>
+        <if test="enCity != null" >
+          en_city,
+        </if>
+        <if test="cnCountry != null" >
+          cn_country,
+        </if>
+        <if test="cnState != null" >
+          cn_state,
+        </if>
+        <if test="cnCity != null" >
+          cn_city,
+        </if>
+        <if test="createTime != null" >
+          create_time,
+        </if>
+        <if test="updateTime != null" >
+          update_time,
+        </if>
+        <if test="creator != null" >
+          creator,
+        </if>
+        <if test="modifier != null" >
+          modifier,
+        </if>
+        <if test="remark != null" >
+          remark,
+        </if>
+        <if test="extend1 != null" >
+          extend1,
+        </if>
+        <if test="extend2 != null" >
+          extend2,
+        </if>
+        <if test="extend3 != null" >
+          extend3,
+        </if>
+        <if test="extend4 != null" >
+          extend4,
+        </if>
+        <if test="extend5 != null" >
+          extend5,
+        </if>
+        <if test="extend6 != null" >
+          extend6,
+        </if>
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides="," >
+        <if test="id != null" >
+          #{id,jdbcType=VARCHAR},
+        </if>
+        <if test="parentId != null" >
+          #{parentId,jdbcType=VARCHAR},
+        </if>
+        <if test="enCountry != null" >
+          #{enCountry,jdbcType=VARCHAR},
+        </if>
+        <if test="enState != null" >
+          #{enState,jdbcType=VARCHAR},
+        </if>
+        <if test="enCity != null" >
+          #{enCity,jdbcType=VARCHAR},
+        </if>
+        <if test="cnCountry != null" >
+          #{cnCountry,jdbcType=VARCHAR},
+        </if>
+        <if test="cnState != null" >
+          #{cnState,jdbcType=VARCHAR},
+        </if>
+        <if test="cnCity != null" >
+          #{cnCity,jdbcType=VARCHAR},
+        </if>
+        <if test="createTime != null" >
+          #{createTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="updateTime != null" >
+          #{updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="creator != null" >
+          #{creator,jdbcType=VARCHAR},
+        </if>
+        <if test="modifier != null" >
+          #{modifier,jdbcType=VARCHAR},
+        </if>
+        <if test="remark != null" >
+          #{remark,jdbcType=VARCHAR},
+        </if>
+        <if test="extend1 != null" >
+          #{extend1,jdbcType=VARCHAR},
+        </if>
+        <if test="extend2 != null" >
+          #{extend2,jdbcType=VARCHAR},
+        </if>
+        <if test="extend3 != null" >
+          #{extend3,jdbcType=VARCHAR},
+        </if>
+        <if test="extend4 != null" >
+          #{extend4,jdbcType=VARCHAR},
+        </if>
+        <if test="extend5 != null" >
+          #{extend5,jdbcType=VARCHAR},
+        </if>
+        <if test="extend6 != null" >
+          #{extend6,jdbcType=VARCHAR},
+        </if>
+      </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.asianwallets.common.entity.Country" >
+      update country
+      <set >
+        <if test="parentId != null" >
+          parent_id = #{parentId,jdbcType=VARCHAR},
+        </if>
+        <if test="enCountry != null" >
+          en_country = #{enCountry,jdbcType=VARCHAR},
+        </if>
+        <if test="enState != null" >
+          en_state = #{enState,jdbcType=VARCHAR},
+        </if>
+        <if test="enCity != null" >
+          en_city = #{enCity,jdbcType=VARCHAR},
+        </if>
+        <if test="cnCountry != null" >
+          cn_country = #{cnCountry,jdbcType=VARCHAR},
+        </if>
+        <if test="cnState != null" >
+          cn_state = #{cnState,jdbcType=VARCHAR},
+        </if>
+        <if test="cnCity != null" >
+          cn_city = #{cnCity,jdbcType=VARCHAR},
+        </if>
+        <if test="createTime != null" >
+          create_time = #{createTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="updateTime != null" >
+          update_time = #{updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="creator != null" >
+          creator = #{creator,jdbcType=VARCHAR},
+        </if>
+        <if test="modifier != null" >
+          modifier = #{modifier,jdbcType=VARCHAR},
+        </if>
+        <if test="remark != null" >
+          remark = #{remark,jdbcType=VARCHAR},
+        </if>
+        <if test="extend1 != null" >
+          extend1 = #{extend1,jdbcType=VARCHAR},
+        </if>
+        <if test="extend2 != null" >
+          extend2 = #{extend2,jdbcType=VARCHAR},
+        </if>
+        <if test="extend3 != null" >
+          extend3 = #{extend3,jdbcType=VARCHAR},
+        </if>
+        <if test="extend4 != null" >
+          extend4 = #{extend4,jdbcType=VARCHAR},
+        </if>
+        <if test="extend5 != null" >
+          extend5 = #{extend5,jdbcType=VARCHAR},
+        </if>
+        <if test="extend6 != null" >
+          extend6 = #{extend6,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.asianwallets.common.entity.Country" >
+      update country
+      set parent_id = #{parentId,jdbcType=VARCHAR},
+        en_country = #{enCountry,jdbcType=VARCHAR},
+        en_state = #{enState,jdbcType=VARCHAR},
+        en_city = #{enCity,jdbcType=VARCHAR},
+        cn_country = #{cnCountry,jdbcType=VARCHAR},
+        cn_state = #{cnState,jdbcType=VARCHAR},
+        cn_city = #{cnCity,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        creator = #{creator,jdbcType=VARCHAR},
+        modifier = #{modifier,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        extend1 = #{extend1,jdbcType=VARCHAR},
+        extend2 = #{extend2,jdbcType=VARCHAR},
+        extend3 = #{extend3,jdbcType=VARCHAR},
+        extend4 = #{extend4,jdbcType=VARCHAR},
+        extend5 = #{extend5,jdbcType=VARCHAR},
+        extend6 = #{extend6,jdbcType=VARCHAR}
+      where id = #{id,jdbcType=VARCHAR}
+    </update>-->
+</mapper>
