@@ -92,7 +92,7 @@ public class CurrencyServiceImpl implements CurrencyService {
      */
     @Override
     public int banCurrency(CurrencyDTO currencyDTO) {
-        if (StringUtils.isBlank(currencyDTO.getId()) || currencyDTO.getEnabled() != null) {
+        if (StringUtils.isBlank(currencyDTO.getId()) || currencyDTO.getEnabled() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         Currency currency = new Currency();
