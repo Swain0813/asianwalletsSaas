@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: asianwallets-eureka-5000
+  profiles:
+    active: server

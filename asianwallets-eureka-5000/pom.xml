@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.asianwallets</groupId>
-    <artifactId>asianwallets-eureka</artifactId>
+    <artifactId>asianwallets-eureka-5000</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>asianwallets-eureka</name>
+    <name>asianwallets-eureka-5000</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
