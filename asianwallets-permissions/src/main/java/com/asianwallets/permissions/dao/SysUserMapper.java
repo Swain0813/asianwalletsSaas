@@ -3,7 +3,7 @@ package com.asianwallets.permissions.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.SysUser;
 import com.asianwallets.common.vo.SysUserVO;
-import org.springframework.data.repository.query.Param;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository

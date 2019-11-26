@@ -43,6 +43,10 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
         String authToken = httpRequest.getHeader(AsianWalletConstant.tokenHeader);
         String username = tokenUtils.getUsernameFromToken(authToken);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            String jsonRequest = "";
+            if (request.getContentLength() != -1) {
+                jsonRequest = GetRequestJsonUtils.getRequestJsonString(httpRequest);
+            }
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (tokenUtils.validateToken(authToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -50,11 +54,7 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-        String jsonRequest = "";
-        if (request.getContentLength() != -1) {
-            jsonRequest = GetRequestJsonUtils.getRequestJsonString(httpRequest);
-        }
-        username = jsonRequest;
+
         chain.doFilter(request, response);
     }
 }
