@@ -54,8 +54,11 @@
     </select>
     <select id="pageCurrency" resultMap="CurrencyVOResultMap">
         select
-        <include refid="Base_Column_List"/>
-        from currency
+        cu.id, cu.icon, cu.code, cu.name, cu.create_time, cu.update_time, cu.creator, cu.modifier,cu.
+        remark,cu.defaults, cu.extend1,
+        cu.enabled,
+        co.cn_name as country
+        from currency cu left join country co on cu.extend1 = co.id
         <where>
             <if test="code != null and code != ''">
                 AND code LIKE CONCAT(CONCAT('%',#{code}),'%')
@@ -64,8 +67,9 @@
                 AND name LIKE CONCAT(CONCAT('%',#{name}),'%')
             </if>
             <if test="enabled != null">
-                AND enabled = #{enabled}
+                AND cu.enabled = #{enabled}
             </if>
+            and co.enabled = 1
         </where>
 
     </select>
