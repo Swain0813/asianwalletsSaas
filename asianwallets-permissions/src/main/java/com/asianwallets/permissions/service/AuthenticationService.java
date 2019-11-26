@@ -48,5 +48,5 @@ public interface AuthenticationService {
      *
      * @param request 登陆输入实体
      */
-    AuthenticationResponse terminalLogin(AuthenticationRequest request);
+    String terminalLogin(AuthenticationRequest request);
 }

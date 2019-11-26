@@ -3,6 +3,7 @@ package com.asianwallets.permissions.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.Institution;
+import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.*;
@@ -10,6 +11,7 @@ import com.asianwallets.common.vo.SysMenuVO;
 import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
+import com.asianwallets.permissions.feign.base.MerchantFeign;
 import com.asianwallets.permissions.service.AuthenticationService;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.utils.TokenUtils;
@@ -53,6 +55,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private InstitutionFeign institutionFeign;
 
     @Autowired
+    private MerchantFeign merchantFeign;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     @Value("${security.jwt.token_expire_hour}")
@@ -67,14 +72,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse operationLogin(AuthenticationRequest request) {
         log.info("===========【运营系统登录】==========【请求参数】 request: {}", JSON.toJSONString(request));
-        if (StringUtils.isEmpty(request.getUsername())) {
-            log.info("===========【运营系统登录】==========【用户名为空!】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
-        if (StringUtils.isEmpty(request.getPassword())) {
-            log.info("===========【运营系统登录】==========【密码为空!】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
         String username = request.getUsername();
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
         if (sysUserVO == null) {
@@ -102,26 +99,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse institutionLogin(AuthenticationRequest request) {
         log.info("===========【机构系统登录】==========【请求参数】 request: {}", JSON.toJSONString(request));
-        if (StringUtils.isEmpty(request.getUsername())) {
-            log.info("===========【机构系统登录】==========【用户名为空!】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
-        if (StringUtils.isEmpty(request.getPassword())) {
-            log.info("===========【机构系统登录】==========【密码为空!】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
         if (StringUtils.isEmpty(request.getSysId())) {
             log.info("===========【机构系统登录】==========【机构ID为空!】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
+        //校验机构信息
         BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(request.getSysId());
         Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
         if (institution == null) {
-            //机构信息不存在
+            log.info("===========【机构系统登录】==========【机构信息不存在!】");
             throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
         }
         if (!institution.getEnabled()) {
-            //机构已禁用
+            log.info("===========【机构系统登录】==========【机构已禁用!】");
             throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
         }
         //拼接用户名
@@ -152,7 +142,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse merchantLogin(AuthenticationRequest request) {
         log.info("===========【商户系统登录】==========【请求参数】 request: {}", JSON.toJSONString(request));
-        String username = request.getUsername();
+        if (StringUtils.isEmpty(request.getSysId())) {
+            log.info("===========【商户系统登录】==========【商户ID为空!】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        //校验商户信息
+        BaseResponse baseResponse = merchantFeign.getMerchantInfo(request.getSysId());
+        Merchant merchant = objectMapper.convertValue(baseResponse.getData(), Merchant.class);
+        if (merchant == null) {
+            log.info("===========【商户系统登录】==========【商户信息不存在!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
+        if (!merchant.getEnabled()) {
+            log.info("===========【商户系统登录】==========【商户已禁用!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+        }
+        //拼接用户名
+        String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
         if (sysUserVO == null) {
             log.info("===========【商户系统登录】==========【用户名不存在!】");
@@ -172,17 +178,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     /**
-     * 代理系统登录
+     * 代理商系统登录
      *
      * @param request 登陆输入实体
      */
     @Override
     public AuthenticationResponse agentLogin(AuthenticationRequest request) {
-        log.info("===========【代理系统登录】==========【请求参数】 request: {}", JSON.toJSONString(request));
-        String username = request.getUsername();
+        log.info("===========【代理商系统登录】==========【请求参数】 request: {}", JSON.toJSONString(request));
+        //校验商户信息
+        BaseResponse baseResponse = merchantFeign.getMerchantInfo(request.getSysId());
+        Merchant merchant = objectMapper.convertValue(baseResponse.getData(), Merchant.class);
+        if (merchant == null) {
+            log.info("===========【代理商系统登录】==========【代理商商信息不存在!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
+        if (!merchant.getEnabled()) {
+            log.info("===========【代理商系统登录】==========【代理商已禁用!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+        }
+        //拼接用户名
+        String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
         if (sysUserVO == null) {
-            log.info("===========【代理系统登录】==========【用户名不存在!】");
+            log.info("===========【代理商系统登录】==========【用户名不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }
         //调用SpringSecurity底层AuthenticationManager(实际工作的类-DaoAuthenticationProvider)校验用户名与密码
@@ -206,7 +224,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse posLogin(AuthenticationRequest request) {
         log.info("===========【Pos机系统登录】==========【请求参数】 request: {}", JSON.toJSONString(request));
-        String username = request.getUsername();
+        if (StringUtils.isEmpty(request.getSysId())) {
+            log.info("===========【Pos机系统登录】==========【机构ID为空!】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        //校验机构信息
+        BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(request.getSysId());
+        Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
+        if (institution == null) {
+            log.info("===========【Pos机系统登录】==========【机构信息不存在!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
+        if (!institution.getEnabled()) {
+            log.info("===========【Pos机系统登录】==========【机构已禁用!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+        }
+        //校验设备信息 TODO
+        //拼接用户名
+        String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
         if (sysUserVO == null) {
             log.info("===========【Pos机系统登录】==========【用户名不存在!】");
@@ -231,9 +266,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @param request 登陆输入实体
      */
     @Override
-    public AuthenticationResponse terminalLogin(AuthenticationRequest request) {
+    public String terminalLogin(AuthenticationRequest request) {
         log.info("===========【对外API线下交易登录】==========【请求参数】 request: {}", JSON.toJSONString(request));
-        String username = request.getUsername();
+        if (StringUtils.isEmpty(request.getSysId())) {
+            log.info("===========【对外API线下交易登录】==========【机构ID为空!】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        //校验机构信息
+        BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(request.getSysId());
+        Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
+        if (institution == null) {
+            log.info("===========【对外API线下交易登录】==========【机构信息不存在!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
+        if (!institution.getEnabled()) {
+            log.info("===========【对外API线下交易登录】==========【机构已禁用!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+        }
+        //校验设备信息 TODO
+        //拼接用户名
+        String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
         if (sysUserVO == null) {
             log.info("===========【对外API线下交易登录】==========【用户名不存在!】");
@@ -243,13 +295,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, request.getPassword()));
         //将Authentication对象放入SpringSecurity安全上下文环境中
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        //封装登录响应实体
-        AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
-        if (StringUtils.isNotBlank(response.getToken())) {
-            //将用户信息存入Redis
-            redisService.set(response.getToken(), JSON.toJSONString(sysUserVO));
-        }
-        return response;
+        //生成Token
+        return tokenUtils.generateToken(sysUserVO.getUsername());
     }
 
     /**
