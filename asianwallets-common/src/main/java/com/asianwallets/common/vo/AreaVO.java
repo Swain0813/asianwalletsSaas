@@ -3,7 +3,7 @@ package com.asianwallets.common.vo;
 import lombok.Data;
 
 /**
- * @ClassName StateVO
+ * @ClassName AreaVO
  * @Description TODO
  * @Author abc
  * @Date 2019/11/26 15:05
@@ -11,10 +11,10 @@ import lombok.Data;
  */
 
 @Data
-public class StateVO {
-    private String stateId;
-    private String stateParentId;
-    private String cnStateName;
-    private String enStateName;
+public class AreaVO {
+    private String areaId;
+    private String areaParentId;
+    private String cnAreaName;
+    private String enAreaName;
 //    private List<CityVO> cityVOS;
 }

@@ -14,57 +14,6 @@ import java.util.List;
  */
 @Repository
 public interface CountryMapper extends BaseMapper<Country> {
-   /* int deleteByPrimaryKey(String id);
-
-    int insert(Country record);
-
-    int insertSelective(Country record);
-
-    Country selectByPrimaryKey(String id);
-
-    int updateByPrimaryKeySelective(Country record);
-
-    int updateByPrimaryKey(Country record);*/
-
-    /**
-     * 通过国家名称去查询国家
-     *
-     * @param countryDTO
-     * @return
-     */
-    Country selectByCnAndEnCountry(CountryDTO countryDTO);
-
-    /**
-     * 查询省份
-     *
-     * @param countryDTO
-     * @return
-     */
-    Country selectByCnAndEnState(CountryDTO countryDTO);
-
-    /**
-     * 查询城市
-     *
-     * @param countryDTO
-     * @return
-     */
-    Country selectByCnAndEnCity(CountryDTO countryDTO);
-
-    /**
-     * 通过ParentId 查询
-     *
-     * @param parentId
-     * @return
-     */
-    Country selectByParentId(@Param("parentId") String parentId);
-
-    /**
-     * 查询国家
-     *
-     * @param countryDTO
-     * @return
-     */
-    Country selectByCountry(CountryDTO countryDTO);
 
     /**
      * 分页查询国家
@@ -75,41 +24,26 @@ public interface CountryMapper extends BaseMapper<Country> {
     List<Country> pageCountry(CountryDTO countryDTO);
 
     /**
-     * 禁用国家
-     *
-     * @param countryDTO
-     * @return
-     */
-    int banCountry(CountryDTO countryDTO);
-
-    /**
-     * 修改国家的Enabled
-     *
-     * @param id
-     * @param enabled
-     * @return
-     */
-    int updateEnabledById(@Param("id") String id, @Param("enabled") Boolean enabled);
-
-    /**
-     * 查询最新的countryCode
-     *
-     * @return
-     */
-    String selectNewestCountryCode();
-
-    /**
-     * 查询所有的国家
-     *
-     * @param parentId
-     * @return
-     */
-    List<Country> selectAllByParentId(@Param("parentId") String parentId);
-
-    /**
      * 查询所有的国家地区
      *
      * @return
      */
     List<CountryVO> inquireAllCountry();
+
+    /**
+     * 通过名称查询国家地区
+     *
+     * @param cnName
+     * @param enName
+     * @return
+     */
+    Country selectByCnOrEnName(@Param("cnName") String cnName, @Param("enName") String enName);
+
+    /**
+     * 禁用地区
+     *
+     * @param countryDTO
+     * @return
+     */
+    int banCountry(CountryDTO countryDTO);
 }

@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
@@ -21,7 +20,7 @@ public interface CountryFeign {
     public BaseResponse addCountry(@RequestBody @ApiParam CountryDTO country);
 
     @ApiOperation(value = "修改国家")
-    @PutMapping("/country/updateCountry")
+    @PostMapping("/country/updateCountry")
     public BaseResponse updateCountry(@RequestBody @ApiParam CountryDTO country);
 
     @ApiOperation(value = "查询国家")
@@ -29,7 +28,7 @@ public interface CountryFeign {
     public BaseResponse pageCountry(@RequestBody @ApiParam CountryDTO country);
 
     @ApiOperation(value = "启用禁用国家")
-    @PutMapping("/country/banCountry")
+    @PostMapping("/country/banCountry")
     public BaseResponse banCountry(@RequestBody @ApiParam CountryDTO country);
 
     @ApiOperation(value = "查询所有国家地区")
