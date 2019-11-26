@@ -1,10 +1,7 @@
 package com.asianwallets.common.vo;
 
-import com.asianwallets.common.entity.Country;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @ClassName CountryVO
@@ -16,6 +13,5 @@ import java.util.List;
 @Data
 @ApiModel(value = "国家输出VO", description = "国家输出VO")
 public class CountryVO {
-    List<List<List<Country>>> i;
 
 }

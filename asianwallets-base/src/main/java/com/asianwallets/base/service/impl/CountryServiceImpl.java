@@ -255,7 +255,7 @@ public class CountryServiceImpl implements CountryService {
             result = countryMapper.insert(state);
             if (!StringUtils.isBlank(countryDTO.getCnCity()) && !StringUtils.isBlank(countryDTO.getEnCity()) && StringUtils.isBlank(parentId)) {
                 result = addCityIF(countryDTO, addCountryInterface2, null);
-            } else {
+            } else if (!StringUtils.isBlank(countryDTO.getCnCity()) && !StringUtils.isBlank(countryDTO.getEnCity())) {
                 result = addCityIF(countryDTO, addCountryInterface2, sid);
             }
         }
@@ -332,16 +332,16 @@ public class CountryServiceImpl implements CountryService {
         if (country != null) {
             ids.add(country.getId());
             if (StringUtils.isBlank(countryDTO.getParentId()) && !StringUtils.isBlank(countryDTO.getId())) {
-                List<Country> state = getCountry(country);
+                List<Country> state = getCountry(country.getId());
                 for (Country s : state) {
                     ids.add(s.getId());
-                    List<Country> c = getCountry(s);
+                    List<Country> c = getCountry(s.getParentId());
                     for (Country city : c) {
                         ids.add(city.getId());
                     }
                 }
             } else {
-                List<Country> city = getCountry(country);
+                List<Country> city = getCountry(country.getParentId());
                 for (Country c : city) {
                     ids.add(c.getId());
                 }
@@ -356,11 +356,12 @@ public class CountryServiceImpl implements CountryService {
     /**
      * 查询子country
      *
-     * @param country
+     *
+     * @param id
      * @return
      */
-    private List<Country> getCountry(Country country) {
-        return countryMapper.selectAllByParentId(country.getParentId());
+    private List<Country> getCountry(String id) {
+        return countryMapper.selectAllByParentId(id);
     }
 
     /**
@@ -372,13 +373,16 @@ public class CountryServiceImpl implements CountryService {
     public List<Map<Country, Map<Country, List<Country>>>> inquireAllCountry() {
         List<Country> countries = countryMapper.selectAllByParentId(null);
         ArrayList<Map<Country, Map<Country, List<Country>>>> lists = new ArrayList<>();
-        HashMap<Country, Map<Country, List<Country>>> countryMap = new HashMap<>();
-        HashMap<Country, List<Country>> stateMap = new HashMap<>();
+        IdentityHashMap<Country, Map<Country, List<Country>>> countryMap = new IdentityHashMap<>();
+        IdentityHashMap<Country, List<Country>> stateMap = new IdentityHashMap<>();
         for (Country country : countries) {
-            List<Country> state = getCountry(country);
-            for (Country c : state) {
-                List<Country> cityList = getCountry(c);
-                stateMap.put(c, cityList);
+            System.out.println("country----" + country);
+            List<Country> state = getCountry(country.getId());
+            System.out.println("state----" + state);
+            for (Country s : state) {
+                List<Country> cityList = getCountry(s.getId());
+                System.out.println("cityList----" + cityList);
+                stateMap.put(s, cityList);
             }
             countryMap.put(country, stateMap);
             lists.add(countryMap);

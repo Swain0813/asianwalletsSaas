@@ -24,6 +24,8 @@
         <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
         <result column="enabled" property="enabled" jdbcType="BIT"/>
     </resultMap>
+
+
     <sql id="Base_Column_List">
         id, parent_id, en_country, en_state, en_city, cn_country, cn_state, cn_city, create_time,
     update_time, creator, modifier, remark, extend1, extend2, extend3, extend4, extend5, 
@@ -65,7 +67,7 @@
     <select id="selectByParentId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from country where parent_id = #{parentId};
+        from country where id = #{parentId};
     </select>
 
     <select id="selectByCountry" resultMap="BaseResultMap">
@@ -99,28 +101,27 @@
         a.id, a.parent_id, a.en_country, b.en_state, c.en_city, a.cn_country, b.cn_state, c.cn_city, a.enabled,
         a.create_time, a.update_time, a.creator, a.modifier, a.remark, a.extend1, a.extend2, a.extend3, a.extend4,
         a.extend5, a.extend6
-        from country a ,country b,country c
+        from country a left join country b on a.id = b.parent_id left join country c on b.id = c.parent_id
 
         <where>
             <if test="enCountry != null and enCountry != ''">
-                and en_country = #{enCountry}
+                and a.en_country = #{enCountry}
             </if>
             <if test="enCity != null and enCity != ''">
-                and en_city = #{enCity}
+                and c.en_city = #{enCity}
             </if>
             <if test="enState != null and enState != ''">
-                and en_state = #{enState}
+                and b.en_state = #{enState}
             </if>
             <if test="cnCountry != null and cnCountry != ''">
-                and cn_country = #{cnCountry}
+                and a.cn_country = #{cnCountry}
             </if>
             <if test="cnCity != null and cnCity != ''">
-                and cn_city = #{cnCity}
+                and c.cn_city = #{cnCity}
             </if>
             <if test="enState != null and enState != ''">
-                and cn_state = #{cnState}
+                and b.cn_state = #{cnState}
             </if>
-            and a.id = b.parent_id and b.id = c.parent_id
         </where>
 
     </select>

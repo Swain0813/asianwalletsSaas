@@ -48,7 +48,7 @@ public class CurrencyController extends BaseController {
 
     @ApiOperation(value = "启用禁用币种")
     @PutMapping("banCurrency")
-    public BaseResponse banDeviceVendor(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
+    public BaseResponse banCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
         currencyDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(currencyService.banCurrency(currencyDTO));
     }
