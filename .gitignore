@@ -65,3 +65,5 @@ asianwallets-base/target/
 asianwallets-permissions/target/
 asianwallets-task/target/
 asianwallets-message/target/
+asianwallets-eureka/target/classes/application-server1.yml
+asianwallets-eureka/target/

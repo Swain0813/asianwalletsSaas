@@ -1,19 +1,21 @@
-package com.asianwallets.permissions.service.impl;
+package com.asianwallets.base.service.impl;
+
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.dto.NoticeDTO;
+import com.asianwallets.common.entity.Notice;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
-import com.asianwallets.permissions.dao.NoticeMapper;
-import com.asianwallets.common.entity.Notice;
-import com.asianwallets.permissions.service.NoticeService;
+import com.asianwallets.base.dao.NoticeMapper;
+import com.asianwallets.base.service.NoticeService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
 import java.util.Date;
 
 /**

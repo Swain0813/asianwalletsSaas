@@ -15,8 +15,8 @@ public class AuthenticationResponse {
     @ApiModelProperty("用户ID")
     private String userId;
 
-    @ApiModelProperty("机构ID")
-    private String institutionId;
+    @ApiModelProperty("系统")
+    private String sysId;
 
     @ApiModelProperty("token")
     private String token;

@@ -16,7 +16,7 @@
     </resultMap>
 
     <sql id="commonSql">
-        id, countryCode, countryName,date,name,create_time,update_time,modifier,creator,enabled,remark
+        id,country_code, country_name,date,name,create_time,update_time,modifier,creator,enabled,remark
     </sql>
 
 

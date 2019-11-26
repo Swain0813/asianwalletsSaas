@@ -14,21 +14,16 @@ import java.util.List;
  **/
 @Data
 public class SysRoleVO {
-    public String id;
 
-    @ApiModelProperty(value = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    public Date createTime;
-
-    @ApiModelProperty(value = "修改时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    public Date updateTime;
+    @ApiModelProperty(value = "角色id")
+    private String id;
 
     @ApiModelProperty(value = "创建者")
-    public String creator;
+    private String creator;
 
     @ApiModelProperty(value = "更改者")
-    public String modifier;
+    private String modifier;
+
     @ApiModelProperty(value = "备注")
     private String remark;
 
@@ -50,10 +45,15 @@ public class SysRoleVO {
     @ApiModelProperty(value = "优先级")
     private Integer sort;
 
+    @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime;
+
+    @ApiModelProperty(value = "修改时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateTime;
+
     @ApiModelProperty(value = "权限")
-    List<SysMenuVO> menus;
-
-
-
+    private List<SysMenuVO> menus;
 
 }

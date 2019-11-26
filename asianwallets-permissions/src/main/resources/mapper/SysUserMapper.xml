@@ -3,30 +3,30 @@
 <mapper namespace="com.asianwallets.permissions.dao.SysUserMapper">
     <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.SysUser">
         <id column="id" property="id" jdbcType="VARCHAR"/>
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
-        <result column="institution_id" property="institutionId" jdbcType="TIMESTAMP"/>
+        <result column="sys_id" property="sysId" jdbcType="VARCHAR"/>
+        <result column="permission_type" property="permissionType" jdbcType="INTEGER"/>
+        <result column="sys_type" property="sysType" jdbcType="INTEGER"/>
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
         <result column="username" property="username" jdbcType="VARCHAR"/>
         <result column="password" property="password" jdbcType="VARCHAR"/>
         <result column="trade_password" property="tradePassword" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
-        <result column="type" property="type" jdbcType="INTEGER"/>
-        <result column="sys_type" property="sysType" jdbcType="INTEGER"/>
         <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
         <result column="email" property="email" jdbcType="VARCHAR"/>
         <result column="creator" property="creator" jdbcType="VARCHAR"/>
         <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
         <result column="language" property="language" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="enabled" property="enabled" jdbcType="BIT"/>
     </resultMap>
 
     <resultMap id="SysUserVOMap" type="com.asianwallets.common.vo.SysUserVO">
         <id column="id" property="id"/>
-        <id column="institution_id" property="institutionId"/>
+        <id column="sys_id" property="sysId"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
-        <result column="type" property="type"/>
+        <result column="permission_type" property="permissionType"/>
         <result column="remark" property="remark"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
@@ -64,10 +64,10 @@
 
     <select id="getSysUser" resultMap="SysUserVOMap">
         select DISTINCT u.id,
-                        u.institution_id,
+                        u.sys_id,
                         u.create_time,
                         u.update_time,
-                        u.type,
+                        u.permission_type,
                         u.remark,
                         u.username,
                         u.password,
@@ -112,10 +112,10 @@
           and u.username = #{userName}
         union
         select DISTINCT u.id,
-                        u.institution_id,
+                        u.sys_id,
                         u.create_time,
                         u.update_time,
-                        u.type,
+                        u.permission_type,
                         u.remark,
                         u.username,
                         u.password,

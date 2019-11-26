@@ -15,7 +15,8 @@
     </parent>
 
     <modules>
-        <module>asianwallets-eureka</module>
+        <module>asianwallets-eureka-5000</module>
+        <module>asianwallets-eureka-5100</module>
         <module>asianwallets-common</module>
         <module>asianwallets-base</module>
         <module>asianwallets-permissions</module>

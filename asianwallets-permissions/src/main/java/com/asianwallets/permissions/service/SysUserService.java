@@ -10,7 +10,7 @@ public interface SysUserService {
     /**
      * 根据用户名查询用户关联角色,权限信息
      *
-     * @param userName 用户名
+     * @param userName       用户名
      * @return SysUserVO
      */
     SysUserVO getSysUser(String userName);
