@@ -25,8 +25,8 @@
     create_time, update_time, creator, modifier, remark, extend1,
     extend2, extend3, extend4, extend5, extend6
     </sql>
-    <select id="pageDeviceVendor" resultType="com.asianwallets.common.entity.DeviceVendor"
-            resultMap="BaseResultMap">
+
+    <select id="pageDeviceVendor" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from device_vendor
@@ -50,10 +50,11 @@
             <if test="remark != null and remark!=''">and remark =#{remark}</if>
         </where>
     </select>
+
     <select id="selectByVendorId" resultType="java.lang.Integer">
         select COUNT(*)
         from device_vendor
-        where id = #{vendorId};
+        where id = #{vendorId} and enabled = 1;
     </select>
 
     <select id="queryVendorCategory" resultMap="BaseResultMap" resultType="com.asianwallets.common.entity.DeviceVendor">
@@ -62,8 +63,12 @@
         where enabled = 1
         group by vendor_cn_name
     </select>
+
     <select id="selectCountByCnNameAndEnName" resultType="java.lang.Integer">
         select count(*) from device_vendor where vendor_cn_name = #{vendorCnName} or vendor_en_name = #{vendorEnName} ;
     </select>
 
+    <update id="banDeviceVendorById">
+        update device_vendor set enabled = #{enabled} where id = #{id};
+    </update>
 </mapper>

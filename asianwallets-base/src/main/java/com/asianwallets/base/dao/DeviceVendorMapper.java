@@ -15,10 +15,16 @@ import java.util.List;
 @Repository
 public interface DeviceVendorMapper extends BaseMapper<DeviceVendor> {
 
+    /**
+     * 分页查询厂商信息
+     *
+     * @param deviceVendorDTO
+     * @return
+     */
     List<DeviceVendor> pageDeviceVendor(DeviceVendorDTO deviceVendorDTO);
 
     /**
-     * 通过厂商id查询厂商个数
+     * 通过厂商id查询未禁用厂商个数
      *
      * @param vendorId
      * @return
@@ -40,4 +46,14 @@ public interface DeviceVendorMapper extends BaseMapper<DeviceVendor> {
      * @return
      */
     int selectCountByCnNameAndEnName(DeviceVendor deviceVendor);
+
+    /**
+     * 启用禁用厂商
+     *
+     * @param id
+     * @param enabled
+     * @return
+     */
+    int banDeviceVendorById(@Param("id") String id, @Param("enabled") Boolean enabled);
+
 }
