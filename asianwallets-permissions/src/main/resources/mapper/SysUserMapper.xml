@@ -113,6 +113,9 @@
         <if test="permissionType !=null">
             and u.permission_type=#{permissionType}
         </if>
+        <if test="sysId !=null and sysId != ''">
+            and u.sys_id=#{sysId}
+        </if>
         union
         select DISTINCT u.id,
                         u.sys_id,
@@ -152,6 +155,9 @@
           and u.username = #{userName}
         <if test="permissionType !=null">
             and u.permission_type=#{permissionType}
+        </if>
+        <if test="sysId !=null and sysId != ''">
+            and u.sys_id=#{sysId}
         </if>
     </select>
 

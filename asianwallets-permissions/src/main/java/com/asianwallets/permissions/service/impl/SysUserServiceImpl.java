@@ -23,7 +23,7 @@ public class SysUserServiceImpl implements SysUserService {
      * @param permissionType 权限类型
      * @return SysUserVO
      */
-    public SysUserVO getSysUser(String userName, Integer permissionType) {
-        return sysUserMapper.getSysUser(userName, permissionType);
+    public SysUserVO getSysUser(String userName, String sysId, Integer permissionType) {
+        return sysUserMapper.getSysUser(userName, sysId, permissionType);
     }
 }

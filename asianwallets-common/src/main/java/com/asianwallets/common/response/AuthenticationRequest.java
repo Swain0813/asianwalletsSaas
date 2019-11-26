@@ -20,4 +20,7 @@ public class AuthenticationRequest {
     @ApiModelProperty("设备编号")
     private String imei;
 
+    @ApiModelProperty("权限类型")
+    private Integer permissionType;
+
 }

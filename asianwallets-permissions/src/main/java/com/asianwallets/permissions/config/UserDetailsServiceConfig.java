@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.config;
 
+import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.SysMenuVO;
@@ -8,6 +9,7 @@ import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.utils.SpringSecurityUser;
 import com.google.common.collect.Sets;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -30,8 +32,12 @@ public class UserDetailsServiceConfig implements UserDetailsService {
     private SysUserService sysUserService;
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        SysUserVO user = sysUserService.getSysUser(userName, null);
+    public UserDetails loadUserByUsername(String jsonRequest) throws UsernameNotFoundException {
+        JSONObject jsonObject = JSONObject.parseObject(jsonRequest);
+        String username = jsonObject.getString("username");
+        String sysId = jsonObject.getString("sysId");
+        Integer permissionType = jsonObject.getInteger("permissionType");
+        SysUserVO user = sysUserService.getSysUser(username, sysId, permissionType);
         if (user == null) {
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }

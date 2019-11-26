@@ -1,6 +1,5 @@
 package com.asianwallets.permissions.config;
 
-import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.permissions.utils.GetRequestJsonUtils;
 import com.asianwallets.permissions.utils.TokenUtils;
@@ -43,10 +42,12 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String authToken = httpRequest.getHeader(AsianWalletConstant.tokenHeader);
         String username = tokenUtils.getUsernameFromToken(authToken);
-        String json = GetRequestJsonUtils.getRequestJsonString(httpRequest);
-        JSONObject jsonObject = JSONObject.parseObject(json);
+        String jsonRequest = "";
+        if (request.getContentLength() != -1) {
+            jsonRequest = GetRequestJsonUtils.getRequestJsonString(httpRequest);
+        }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(jsonRequest);
             if (tokenUtils.validateToken(authToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));

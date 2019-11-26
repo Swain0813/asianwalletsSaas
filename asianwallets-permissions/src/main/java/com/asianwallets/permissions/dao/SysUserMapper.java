@@ -16,5 +16,5 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @param permissionType 权限类型
      * @return SysUserVO
      */
-    SysUserVO getSysUser(@Param("userName") String userName, @Param("permissionType") Integer permissionType);
+    SysUserVO getSysUser(@Param("userName") String userName, @Param("sysId") String sysId, @Param("permissionType") Integer permissionType);
 }
