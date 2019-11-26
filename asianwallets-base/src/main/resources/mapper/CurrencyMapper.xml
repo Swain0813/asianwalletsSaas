@@ -58,10 +58,10 @@
         from currency
         <where>
             <if test="code != null and code != ''">
-                AND sn LIKE CONCAT(CONCAT('%',#{code}),'%')
+                AND code LIKE CONCAT(CONCAT('%',#{code}),'%')
             </if>
             <if test="name != null and name != ''">
-                AND sn LIKE CONCAT(CONCAT('%',#{name}),'%')
+                AND name LIKE CONCAT(CONCAT('%',#{name}),'%')
             </if>
             <if test="enabled != null">
                 AND enabled = #{enabled}
