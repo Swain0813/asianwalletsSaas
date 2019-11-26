@@ -27,13 +27,11 @@ public class PermissionsApplication extends SpringBootServletInitializer {
 
     @Bean
     public MapperScannerConfigurer mapperScannerConfigurer() {
-
         Properties properties = new Properties();
         properties.put("mappers", "tk.mybatis.mapper.common.Mapper,tk.mybatis.mapper.common.MySqlMapper,com.asianwallets.common.base.IdInserListMapper");
-
         MapperScannerConfigurer msc = new MapperScannerConfigurer();
         msc.getMapperHelper().setProperties(properties);
-        msc.setBasePackage("com.asianwallets.perminssions.dao");
+        msc.setBasePackage("com.asianwallets.permissions.dao");
         return msc;
     }
     public static void main(String[] args) {

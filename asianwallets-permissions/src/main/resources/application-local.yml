@@ -7,6 +7,9 @@ eureka:
       defaultZone: http://localhost:5000/eureka/
     registerWithEureka: true
     fetchRegistry: true
+  instance:
+    instance-id: asianwallets-permissions5002
+    prefer-ip-address: true
 
 ribbon:
   ReadTimeout: 10000
@@ -61,15 +64,15 @@ redis:
     max-total: 100
     max-wait-millis: -1
 
-#security:
-#  jwt:
-#    secret: uplus0000a1ed52710d4533bde25be6da0
-#    token_expire_hour: 24
+security:
+  jwt:
+    secret: uplus0000a1ed52710d4533bde25be6da0de
+    token_expire_hour: 24
 
 #项目自定义配置
 file:
   http:
-    server: http://192.168.124.31:8080
+    server: http://192.168.124.16:8080
   upload:
     path: C:\apache-tomcat-8.5.38\webapps
   tmpfile: C:\apache-tomcat-8.5.38\webapps\tmp

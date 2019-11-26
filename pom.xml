@@ -19,10 +19,10 @@
         <module>asianwallets-common</module>
         <module>asianwallets-base</module>
         <module>asianwallets-permissions</module>
-        <!--<module>asianwallet-message</module>-->
+        <module>asianwallets-task</module>
+        <module>asianwallets-message</module>
         <!--<module>asianwallet-trade</module>-->
         <!--<module>asianwallet-finance</module>-->
-        <!--<module>asianwallet-task</module>-->
         <!--<module>asianwallet-channels</module>-->
         <!--<module>asianwallet-clearing</module>-->
     </modules>
@@ -161,6 +161,18 @@
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>${org.mybatis.boot}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib -->
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>4.4.5</version>
         </dependency>
     </dependencies>
 

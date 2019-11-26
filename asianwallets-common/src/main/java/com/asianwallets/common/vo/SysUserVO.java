@@ -17,20 +17,29 @@ import java.util.List;
 @Data
 @ApiModel(value = "用户VO", description = "用户VO")
 public class SysUserVO implements Serializable {
+
+    @ApiModelProperty("用户ID")
     public String id;
 
+    @ApiModelProperty("用户ID")
     public String institutionId;
 
+    @ApiModelProperty("用户ID")
     public String username;
 
+    @ApiModelProperty("用户ID")
     public Integer type;//1-运维 2-机构  3-pos机 4-代理商
 
+    @ApiModelProperty("用户ID")
     public String password;
 
+    @ApiModelProperty("用户ID")
     public String tradePassword;
 
+    @ApiModelProperty("用户ID")
     public String name;
 
+    @ApiModelProperty("用户ID")
     public String mobile;
 
     public String email;
@@ -56,12 +65,12 @@ public class SysUserVO implements Serializable {
 
     public boolean accountNonLocked = true;
 
-    public boolean enabled ;
+    public boolean enabled;
 
     public Date lastPasswordReset;
 
-
-    List<SysRoleVO> role;
+    @ApiModelProperty("角色集合")
+    private List<SysRoleVO> role;
 
 
 }

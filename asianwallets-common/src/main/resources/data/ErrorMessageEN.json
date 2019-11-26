@@ -152,7 +152,7 @@
   "52004": "Incorrect user name or password",
   "52005": "The user name is disabled",
   "52006": "Incorrect transaction password",
-  "52007": "The name of the institution already exists",
+  "52007": "The name already exists",
   "52008": "Signature cannot be empty",
   "52009": "Signature error",
   "52010": "Insufficient user permissions",

@@ -1,0 +1,1 @@
+Congratulations! You have transferred out a ${amount} digital ${cointype} currency successfully at ${date}. Corresponding services will be provided for you. If it is not your own operation, please reset password.
