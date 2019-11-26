@@ -71,7 +71,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers("/auth/**", "/permission/setAdmin", "/permission/checkPassword").permitAll()
+                .antMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated();
         //Custom JWT based authentication
         httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
