@@ -33,13 +33,14 @@ public interface MerchantFeign {
 
     @ApiOperation(value = "根据商户Id查询商户信息详情")
     @GetMapping("/merchant/getMerchantInfo")
-    BaseResponse getMerchantInfo(@RequestParam @ApiParam String id);
+    BaseResponse getMerchantInfo(@RequestParam("id") @ApiParam String id);
 
     @ApiOperation(value = "根据商户Id查询商户审核信息详情")
     @GetMapping("/merchant/getMerchantAuditInfo")
-    BaseResponse getMerchantAuditInfo(@RequestParam @ApiParam String id);
+    BaseResponse getMerchantAuditInfo(@RequestParam("id") @ApiParam String id);
 
     @ApiOperation(value = "审核商户信息接口")
     @GetMapping("/merchant/auditMerchant")
-    BaseResponse auditMerchant(@RequestParam @ApiParam String merchantId, @RequestParam @ApiParam Boolean enabled, @RequestParam(required = false) @ApiParam String remark);
+    BaseResponse auditMerchant(@RequestParam("merchantId") @ApiParam String merchantId, @RequestParam("enabled") @ApiParam Boolean enabled,
+                               @RequestParam("remark") @ApiParam String remark);
 }

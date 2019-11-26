@@ -55,13 +55,14 @@ public interface InstitutionFeign {
 
     @ApiOperation(value = "根据机构Id查询机构信息详情")
     @GetMapping("/institution/getInstitutionInfo")
-    BaseResponse getInstitutionInfo(@RequestParam @ApiParam String id);
+    BaseResponse getInstitutionInfo(@RequestParam("id") @ApiParam String id);
 
     @ApiOperation(value = "根据机构Id查询机构审核信息详情")
     @GetMapping("/institution/getInstitutionInfoAudit")
-    BaseResponse getInstitutionInfoAudit(String id);
+    BaseResponse getInstitutionInfoAudit(@RequestParam("id") String id);
 
     @ApiOperation(value = "审核机构信息接口")
     @GetMapping("/institution/auditInstitution")
-    BaseResponse auditInstitution(@RequestParam @ApiParam String institutionId, @RequestParam @ApiParam Boolean enabled, @RequestParam(required = false) @ApiParam String remark);
+    BaseResponse auditInstitution(@RequestParam("institutionId") @ApiParam String institutionId, @RequestParam("enabled") @ApiParam Boolean enabled,
+                                  @RequestParam("remark") @ApiParam String remark);
 }
