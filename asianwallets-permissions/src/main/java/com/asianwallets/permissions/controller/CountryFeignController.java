@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/country")
-@Api("国家地区")
+@Api(description = "国家地区")
 public class CountryFeignController extends BaseController {
 
 

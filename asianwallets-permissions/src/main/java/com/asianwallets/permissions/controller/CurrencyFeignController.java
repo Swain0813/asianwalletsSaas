@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/currency")
-@Api("币种管理")
+@Api(description = "币种管理")
 public class CurrencyFeignController extends BaseController {
 
     @Autowired
