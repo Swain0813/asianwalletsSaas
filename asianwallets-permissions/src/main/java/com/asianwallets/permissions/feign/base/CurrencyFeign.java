@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
@@ -23,7 +22,7 @@ public interface CurrencyFeign {
     BaseResponse addCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO);
 
     @ApiOperation(value = "修改币种")
-    @PutMapping("/currency/updateCurrency")
+    @PostMapping("/currency/updateCurrency")
     BaseResponse updateCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO);
 
     @ApiOperation(value = "查询币种")
@@ -31,7 +30,7 @@ public interface CurrencyFeign {
     BaseResponse pageCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO);
 
     @ApiOperation(value = "启用禁用币种")
-    @PutMapping("/currency/banCurrency")
+    @PostMapping("/currency/banCurrency")
     BaseResponse banCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO);
 
     @ApiOperation(value = "查询所有币种")
