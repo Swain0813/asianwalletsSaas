@@ -15,4 +15,12 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @return SysUserVO
      */
     SysUserVO getSysUser(String userName);
+
+    /**
+     * 根据用户名查询用户信息
+     *
+     * @param username 用户名
+     * @return SysUser
+     */
+    SysUser getSysUserByUsername(String username);
 }

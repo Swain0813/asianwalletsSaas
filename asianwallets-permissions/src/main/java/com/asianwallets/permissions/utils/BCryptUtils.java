@@ -12,7 +12,7 @@ public class BCryptUtils {
      *
      * @return 密文
      */
-    public String encode(String str) {
+    public static String encode(String str) {
         return BCrypt.hashpw(str, BCrypt.gensalt());
     }
 }
