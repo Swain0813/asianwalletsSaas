@@ -2,4 +2,4 @@ spring:
   application:
     name: asianwallets-eureka
   profiles:
-    active: server1
+    active: server
