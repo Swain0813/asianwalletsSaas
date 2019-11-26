@@ -1,7 +1,6 @@
 package com.asianwallets.permissions.config;
 
 import com.asianwallets.common.constant.AsianWalletConstant;
-import com.asianwallets.permissions.utils.GetRequestJsonUtils;
 import com.asianwallets.permissions.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +26,7 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
     private TokenUtils tokenUtils;
 
     @Autowired
-    @Qualifier(value = "sysUserVoServiceImpl")
+    @Qualifier(value = "userDetailServiceConfig")
     private UserDetailsService userDetailsService;
 
     @Override
@@ -43,10 +42,6 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
         String authToken = httpRequest.getHeader(AsianWalletConstant.tokenHeader);
         String username = tokenUtils.getUsernameFromToken(authToken);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String jsonRequest = "";
-            if (request.getContentLength() != -1) {
-                jsonRequest = GetRequestJsonUtils.getRequestJsonString(httpRequest);
-            }
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (tokenUtils.validateToken(authToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -54,7 +49,6 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-
         chain.doFilter(request, response);
     }
 }

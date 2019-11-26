@@ -17,13 +17,12 @@ public class SysUserServiceImpl implements SysUserService {
     private SysUserMapper sysUserMapper;
 
     /**
-     * 根据用户名,权限类型查询用户关联角色,权限信息
+     * 根据用户名查询用户关联角色,权限信息
      *
      * @param userName       用户名
-     * @param permissionType 权限类型
      * @return SysUserVO
      */
-    public SysUserVO getSysUser(String userName, String sysId, Integer permissionType) {
-        return sysUserMapper.getSysUser(userName, sysId, permissionType);
+    public SysUserVO getSysUser(String userName) {
+        return sysUserMapper.getSysUser(userName);
     }
 }
