@@ -1,6 +1,7 @@
 package com.asianwallets.permissions.service;
 
 import com.asianwallets.common.vo.SysUserVO;
+import com.asianwallets.permissions.dto.SysRoleMenuDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
 
 /**
@@ -33,4 +34,13 @@ public interface SysUserService {
      * @return 修改条数
      */
     int updateSysUser(String username, SysUserRoleDto sysUserRoleDto);
+
+    /**
+     * 新增角色权限信息
+     *
+     * @param username       用户名
+     * @param sysRoleMenuDto 角色权限输入实体
+     * @return 修改条数
+     */
+    int addSysRole(String username, SysRoleMenuDto sysRoleMenuDto);
 }

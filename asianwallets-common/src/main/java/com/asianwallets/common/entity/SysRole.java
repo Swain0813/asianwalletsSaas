@@ -15,13 +15,13 @@ import javax.persistence.Table;
 @ApiModel(value = "角色表", description = "角色表")
 public class SysRole extends BaseEntity {
 
-    @ApiModelProperty(value = "机构ID")
-    @Column(name = "institution_id")
-    private String institutionId;
+    @ApiModelProperty(value = "系统ID")
+    @Column(name = "sys_id")
+    private String sysId;
 
-    @ApiModelProperty(value = "角色类型(1-机构,2-商户,3-pos机,4-代理商)")
-    @Column(name = "type")
-    private Integer type;
+    @ApiModelProperty(value = "权限类型(1-运营,2-机构,3-商户,4-代理商,5-pos机)")
+    @Column(name = "permission_type")
+    private Integer permissionType;
 
     @ApiModelProperty(value = "角色名称")
     @Column(name = "role_name")
@@ -37,10 +37,10 @@ public class SysRole extends BaseEntity {
 
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")
-    private boolean enabled = true;
+    private Boolean enabled;
 
     @ApiModelProperty(value = "权重")
     @Column(name = "sort")
-    private Integer sort = 0;
+    private Integer sort;
 
 }

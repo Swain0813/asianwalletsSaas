@@ -1,22 +1,20 @@
 package com.asianwallets.permissions.service.impl;
 
 import com.asianwallets.common.config.AuditorProvider;
-import com.asianwallets.common.entity.SysUser;
-import com.asianwallets.common.entity.SysUserMenu;
-import com.asianwallets.common.entity.SysUserRole;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.SysUserVO;
-import com.asianwallets.permissions.dao.SysUserMapper;
-import com.asianwallets.permissions.dao.SysUserMenuMapper;
-import com.asianwallets.permissions.dao.SysUserRoleMapper;
+import com.asianwallets.permissions.dao.*;
+import com.asianwallets.permissions.dto.SysRoleMenuDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.utils.BCryptUtils;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +34,16 @@ public class SysUserServiceImpl implements SysUserService {
     private SysUserMapper sysUserMapper;
 
     @Autowired
+    private SysRoleMapper sysRoleMapper;
+
+    @Autowired
+    private SysMenuMapper sysMenuMapper;
+
+    @Autowired
     private SysUserRoleMapper sysUserRoleMapper;
+
+    @Autowired
+    private SysRoleMenuMapper sysRoleMenuMapper;
 
     @Autowired
     private SysUserMenuMapper sysUserMenuMapper;
@@ -161,5 +168,44 @@ public class SysUserServiceImpl implements SysUserService {
             sysUserMenuMapper.insertList(userMenuList);
         }
         return sysUserMapper.updateByPrimaryKeySelective(dbSysUser);
+    }
+
+    /**
+     * 新增角色权限信息
+     *
+     * @param username       用户名
+     * @param sysRoleMenuDto 角色权限输入实体
+     * @return 修改条数
+     */
+    @Override
+    @Transactional
+    public int addSysRole(String username, SysRoleMenuDto sysRoleMenuDto) {
+        SysRole dbSysRole = sysRoleMapper.getSysRoleByNameAndSysId(sysRoleMenuDto.getRoleName(), sysRoleMenuDto.getSysId());
+        if (dbSysRole != null) {
+            log.info("=========【新增角色权限信息】==========【角色名已存在!】");
+            throw new BusinessException(EResultEnum.ROLE_EXIST.getCode());
+        }
+        SysRole sysRole = new SysRole();
+        sysRole.setId(IDS.uuid2());
+        sysRole.setSysId(sysRoleMenuDto.getSysId());
+        sysRole.setPermissionType(sysRoleMenuDto.getPermissionType());
+        sysRole.setRoleName(sysRoleMenuDto.getRoleName());
+        sysRole.setDescription(sysRoleMenuDto.getDescription());
+        sysRole.setCreator(username);
+        sysRole.setCreateTime(new Date());
+        sysRole.setSort(0);
+        sysRole.setEnabled(true);
+        List<SysRoleMenu> list = Lists.newArrayList();
+        for (String menuId : sysRoleMenuDto.getMenuIdList()) {
+            SysRoleMenu sysRoleMenu = new SysRoleMenu();
+            sysRoleMenu.setId(IDS.uuid());
+            sysRoleMenu.setRoleId(sysRole.getId());
+            sysRoleMenu.setMenuId(menuId);
+            sysRoleMenu.setCreator(username);
+            sysRoleMenu.setCreateTime(new Date());
+            list.add(sysRoleMenu);
+        }
+        sysRoleMenuMapper.insertList(list);
+        return sysRoleMapper.insert(sysRole);
     }
 }

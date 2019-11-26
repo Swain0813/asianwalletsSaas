@@ -5,6 +5,7 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.permissions.dto.SysRoleMenuDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
 import com.asianwallets.permissions.service.OperationLogService;
 import com.asianwallets.permissions.service.SysUserService;
@@ -43,5 +44,13 @@ public class SysUserController extends BaseController {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysUserRoleDto),
                 "修改用户信息"));
         return ResultUtil.success(sysUserService.updateSysUser(getSysUserVO().getUsername(), sysUserRoleDto));
+    }
+
+    @ApiOperation(value = "添加角色权限信息")
+    @PostMapping("/addSysRole")
+    public BaseResponse addSysRole(@RequestBody @ApiParam SysRoleMenuDto sysRoleMenuDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysRoleMenuDto),
+                "添加角色权限信息"));
+        return ResultUtil.success(sysUserService.addSysRole(getSysUserVO().getUsername(), sysRoleMenuDto));
     }
 }
