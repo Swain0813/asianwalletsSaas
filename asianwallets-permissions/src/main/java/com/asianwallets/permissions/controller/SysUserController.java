@@ -31,9 +31,17 @@ public class SysUserController extends BaseController {
 
     @ApiOperation(value = "添加用户角色,用户权限信息")
     @PostMapping("/addSysUser")
-    public BaseResponse addSysUser(@RequestBody @ApiParam @Valid SysUserRoleDto sysUserRoleDto) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysUserRoleDto),
+    public BaseResponse addSysUser(@RequestBody @ApiParam SysUserRoleDto sysUserRoleDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysUserRoleDto),
                 "添加用户信息"));
-        return ResultUtil.success(sysUserService.addSysUser(this.getSysUserVO().getUsername(), sysUserRoleDto));
+        return ResultUtil.success(sysUserService.addSysUser(getSysUserVO().getUsername(), sysUserRoleDto));
+    }
+
+    @ApiOperation(value = "修改用户角色,用户权限信息")
+    @PostMapping("/updateSysUser")
+    public BaseResponse updateSysUser(@RequestBody @ApiParam SysUserRoleDto sysUserRoleDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysUserRoleDto),
+                "修改用户信息"));
+        return ResultUtil.success(sysUserService.updateSysUser(getSysUserVO().getUsername(), sysUserRoleDto));
     }
 }
