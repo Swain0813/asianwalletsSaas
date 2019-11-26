@@ -4,6 +4,7 @@
     <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Country">
         <id column="id" property="id" jdbcType="VARCHAR"/>
         <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="area_code" property="areaCode" jdbcType="VARCHAR"/>
         <result column="en_country" property="enCountry" jdbcType="VARCHAR"/>
         <result column="en_state" property="enState" jdbcType="VARCHAR"/>
         <result column="en_city" property="enCity" jdbcType="VARCHAR"/>
@@ -26,7 +27,7 @@
     <sql id="Base_Column_List">
         id, parent_id, en_country, en_state, en_city, cn_country, cn_state, cn_city, create_time,
     update_time, creator, modifier, remark, extend1, extend2, extend3, extend4, extend5, 
-    extend6,enabled
+    extend6,enabled,area_code
     </sql>
 
     <update id="banCountry">
@@ -36,6 +37,11 @@
             c3.enabled = #{enabled}
         where c1.id = c2.parent_id
           and c2.id = c3.parent_id;
+    </update>
+    <update id="updateEnabledById">
+        update asianwallets_saas.country
+        set enabled = #{enabled}
+        where id = #{id};
     </update>
 
     <select id="selectByCnAndEnCountry" resultMap="BaseResultMap">
@@ -117,6 +123,27 @@
             and a.id = b.parent_id and b.id = c.parent_id
         </where>
 
+    </select>
+
+    <select id="selectNewestCountryCode" resultType="java.lang.String">
+        select country_code
+        from country
+        order by country_code DESC
+        LIMIT 1;
+    </select>
+
+    <select id="selectAllByParentId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from country
+        <where>
+            <if test="parentId != null and parentId !=''">
+                and parent_id = #{parentId}
+            </if>
+            <if test="parentId ==null">
+                and parent_id is null
+            </if>
+        </where>
     </select>
 
 

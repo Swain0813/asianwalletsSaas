@@ -17,6 +17,10 @@ public class Country extends BaseEntity {
     @Column(name = "parent_id")
     private String parentId;
 
+    @ApiModelProperty(value = "国家编号")
+    @Column(name = "area_code")
+    private String areaCode;
+
     @ApiModelProperty(value = "英语国家")
     @Column(name = "en_country")
     private String enCountry;

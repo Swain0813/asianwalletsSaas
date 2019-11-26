@@ -18,6 +18,9 @@ public class CountryDTO extends BasePageHelper {
     @ApiModelProperty(value = "父id")
     private String parentId;
 
+    @ApiModelProperty(value = "国家区号")
+    private String areaCode;
+
     @ApiModelProperty(value = "英语国家")
     private String enCountry;
 

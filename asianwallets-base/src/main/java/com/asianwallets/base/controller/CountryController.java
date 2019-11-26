@@ -56,6 +56,6 @@ public class CountryController extends BaseController {
     @ApiOperation(value = "查询所有国家地区")
     @GetMapping("inquireAllCountry")
     public BaseResponse inquireAllCountry() {
-        return ResultUtil.success(/*countryService.inquireAllCountry()*/);
+        return ResultUtil.success(countryService.inquireAllCountry());
     }
 }

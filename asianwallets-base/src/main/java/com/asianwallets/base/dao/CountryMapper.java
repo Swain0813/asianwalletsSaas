@@ -80,4 +80,28 @@ public interface CountryMapper extends BaseMapper<Country> {
      * @return
      */
     int banCountry(CountryDTO countryDTO);
+
+    /**
+     * 修改国家的Enabled
+     *
+     * @param id
+     * @param enabled
+     * @return
+     */
+    int updateEnabledById(@Param("id") String id, @Param("enabled") Boolean enabled);
+
+    /**
+     * 查询最新的countryCode
+     *
+     * @return
+     */
+    String selectNewestCountryCode();
+
+    /**
+     * 查询所有的国家
+     *
+     * @param parentId
+     * @return
+     */
+    List<Country> selectAllByParentId(@Param("parentId") String parentId);
 }

@@ -1,7 +1,11 @@
 package com.asianwallets.base.service;
 
 import com.asianwallets.common.dto.CountryDTO;
+import com.asianwallets.common.entity.Country;
 import com.github.pagehelper.PageInfo;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 国家地区
@@ -39,4 +43,11 @@ public interface CountryService {
      * @return
      */
     int banCountry(CountryDTO country);
+
+    /**
+     * 查询所有的国家地区
+     *
+     * @return
+     */
+    List<Map<Country, Map<Country, List<Country>>>> inquireAllCountry();
 }

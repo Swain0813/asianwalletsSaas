@@ -13,7 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -215,8 +215,10 @@ public class CountryServiceImpl implements CountryService {
                              AddCountryInterface addCountryInterface2, AddCountryInterface addCountryInterface3) {
         int result = 0;
         if (addCountryInterface1.accept(countryDTO)) {
+            /* String code = countryMapper.selectNewestCountryCode();*/
             String cid = IDS.uuid2();
             Country country = new Country();
+            country.setAreaCode(countryDTO.getAreaCode());
             country.setId(cid);
             country.setEnabled(true);
             country.setCnCountry(countryDTO.getCnCountry());
@@ -295,10 +297,10 @@ public class CountryServiceImpl implements CountryService {
         if (countryMapper.selectByCountry(countryDTO) != null) {
             throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
         }
-        Country country = new Country();
-        BeanUtils.copyProperties(countryDTO, country);
-        country.setUpdateTime(new Date());
-        return countryMapper.updateByPrimaryKeySelective(country);
+        Country c = countryMapper.selectByPrimaryKey(countryDTO.getId());
+        BeanUtils.copyProperties(countryDTO, c);
+        c.setUpdateTime(new Date());
+        return countryMapper.updateByPrimaryKeySelective(c);
     }
 
     /**
@@ -321,14 +323,67 @@ public class CountryServiceImpl implements CountryService {
      */
     @Override
     public int banCountry(CountryDTO countryDTO) {
+        ArrayList<String> ids = new ArrayList<>();
         if (StringUtils.isBlank(countryDTO.getId()) || countryDTO.getEnabled() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        if (StringUtils.isBlank(countryDTO.getParentId())) {
-            return countryMapper.banCountry(countryDTO);
+        Country country = countryMapper.selectByPrimaryKey(countryDTO.getId());
+        int result = 0;
+        if (country != null) {
+            ids.add(country.getId());
+            if (StringUtils.isBlank(countryDTO.getParentId()) && !StringUtils.isBlank(countryDTO.getId())) {
+                List<Country> state = getCountry(country);
+                for (Country s : state) {
+                    ids.add(s.getId());
+                    List<Country> c = getCountry(s);
+                    for (Country city : c) {
+                        ids.add(city.getId());
+                    }
+                }
+            } else {
+                List<Country> city = getCountry(country);
+                for (Country c : city) {
+                    ids.add(c.getId());
+                }
+            }
+            for (String id : ids) {
+                result += countryMapper.updateEnabledById(id, countryDTO.getEnabled());
+            }
         }
-        /*  *//*int i = countryMapper.banCountry(countryDTO);*//*
-        int i = countryMapper.banState(countryDTO);*/
-        return 0;
+        return result;
     }
+
+    /**
+     * 查询子country
+     *
+     * @param country
+     * @return
+     */
+    private List<Country> getCountry(Country country) {
+        return countryMapper.selectAllByParentId(country.getParentId());
+    }
+
+    /**
+     * 查询所有的国家地区
+     *
+     * @return
+     */
+    @Override
+    public List<Map<Country, Map<Country, List<Country>>>> inquireAllCountry() {
+        List<Country> countries = countryMapper.selectAllByParentId(null);
+        ArrayList<Map<Country, Map<Country, List<Country>>>> lists = new ArrayList<>();
+        HashMap<Country, Map<Country, List<Country>>> countryMap = new HashMap<>();
+        HashMap<Country, List<Country>> stateMap = new HashMap<>();
+        for (Country country : countries) {
+            List<Country> state = getCountry(country);
+            for (Country c : state) {
+                List<Country> cityList = getCountry(c);
+                stateMap.put(c, cityList);
+            }
+            countryMap.put(country, stateMap);
+            lists.add(countryMap);
+        }
+        return lists;
+    }
+
 }
