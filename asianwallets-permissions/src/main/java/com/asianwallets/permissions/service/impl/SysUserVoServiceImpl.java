@@ -44,8 +44,8 @@ public class SysUserVoServiceImpl implements SysUserVoService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        JSONObject jsonObject = JSONObject.parseObject(userName);
+    public UserDetails loadUserByUsername(String json) throws UsernameNotFoundException {
+        JSONObject jsonObject = JSONObject.parseObject(json);
         String username = jsonObject.getString("username");
         String sysId = jsonObject.getString("sysId");
         Integer permissionType = jsonObject.getInteger("permissionType");
