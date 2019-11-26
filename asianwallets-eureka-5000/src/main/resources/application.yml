@@ -1,5 +1,5 @@
 spring:
   application:
-    name: asianwallets-eureka
+    name: asianwallets-eureka-5000
   profiles:
     active: server
