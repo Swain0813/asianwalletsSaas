@@ -124,7 +124,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             //机构已禁用
             throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
         }
-        String username = request.getUsername();
+        //拼接用户名
+        String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
         if (sysUserVO == null) {
             log.info("===========【机构系统登录】==========【用户名不存在!】");

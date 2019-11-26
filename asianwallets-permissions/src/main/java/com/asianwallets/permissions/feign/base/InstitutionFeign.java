@@ -11,25 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-/**
- * 机构接口Feign端
-=======
-import com.asianwallets.common.dto.HolidaysDTO;
-import com.asianwallets.common.dto.InstitutionDTO;
-import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.permissions.feign.base.impl.InstitutionFeignImpl;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
-/**
- * InstitutionFeignImpl
->>>>>>> 7d33d5febbe8aeecc7bdeacea6cc8f1c507bab55
- */
 @FeignClient(value = "asianwallets-base", fallback = InstitutionFeignImpl.class)
 public interface InstitutionFeign {
 
