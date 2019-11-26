@@ -62,6 +62,26 @@
         <result column="url" property="url"/>
     </resultMap>
 
+    <select id="getSysUserByUsername" resultMap="BaseResultMap">
+        select id,
+               sys_id,
+               create_time,
+               update_time,
+               permission_type,
+               remark,
+               username,
+               password,
+               trade_password,
+               modifier,
+               email,
+               mobile,
+               creator,
+               name,
+               enabled
+        from sys_user
+        where username = #{username};
+    </select>
+
     <select id="getSysUser" resultMap="SysUserVOMap">
         select DISTINCT u.id,
                         u.sys_id,

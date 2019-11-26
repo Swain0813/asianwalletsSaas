@@ -1,7 +1,6 @@
 package com.asianwallets.permissions.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.exception.BusinessException;
