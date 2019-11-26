@@ -1,8 +1,10 @@
-package com.asianwallets.permissions.dao;
+package com.asianwallets.base.dao;
+
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.NoticeDTO;
 import com.asianwallets.common.entity.Notice;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Repository

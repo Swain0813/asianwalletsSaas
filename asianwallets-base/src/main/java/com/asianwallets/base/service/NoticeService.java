@@ -1,4 +1,4 @@
-package com.asianwallets.permissions.service;
+package com.asianwallets.base.service;
 import com.asianwallets.common.dto.NoticeDTO;
 import com.asianwallets.common.entity.Notice;
 import com.github.pagehelper.PageInfo;
