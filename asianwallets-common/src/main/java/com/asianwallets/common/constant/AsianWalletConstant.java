@@ -152,4 +152,9 @@ public class AsianWalletConstant {
     public static final String SGD = "SGD";
     public static final String HKD = "HKD";
 
+    //国家地区类型
+    //国家
+    public static final Byte COUNTRY = 0;
+    //地区
+    public static final Byte AREA = 1;
 }

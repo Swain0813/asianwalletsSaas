@@ -45,6 +45,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
         Currency currency = new Currency();
         BeanUtils.copyProperties(currencyDTO, currency);
+        //国家ID
         currency.setExtend1(currencyDTO.getCountry());
         currency.setId(IDS.uuid2());
         currency.setCreateTime(new Date());

@@ -21,29 +21,17 @@ public class Country extends BaseEntity {
     @Column(name = "area_code")
     private String areaCode;
 
-    @ApiModelProperty(value = "英语国家")
-    @Column(name = "en_country")
-    private String enCountry;
+    @ApiModelProperty(value = "英语名称")
+    @Column(name = "en_name")
+    private String enName;
 
-    @ApiModelProperty(value = "英语省份")
-    @Column(name = "en_state")
-    private String enState;
+    @ApiModelProperty(value = "中文名称")
+    @Column(name = "cn_name")
+    private String cnName;
 
-    @ApiModelProperty(value = "英语城市")
-    @Column(name = "en_city")
-    private String enCity;
-
-    @ApiModelProperty(value = "国家")
-    @Column(name = "cn_country")
-    private String cnCountry;
-
-    @ApiModelProperty(value = "省份")
-    @Column(name = "cn_state")
-    private String cnState;
-
-    @ApiModelProperty(value = "城市")
-    @Column(name = "cn_city")
-    private String cnCity;
+    @ApiModelProperty(value = "类型")
+    @Column(name = "type")
+    private Byte type;
 
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")

@@ -20,23 +20,5 @@ public class CountryVO {
     private String cnCountryName;
     private String enCountryName;
     private String areaCode;
-    private List<StateVO> stateVOS;
+    private List<AreaVO> areaVOS;
 }
-
-/*@Data
-class StateVO {
-    private String stateId;
-    private String stateParentId;
-    private String cnStateName;
-    private String enStateName;
-//    private List<CityVO> cityVOS;
-}*/
-
-/*@Data
-class CityVO {
-    private String cityId;
-    private String parentId;
-    private String cnCityName;
-    private String enCityName;
-}*/
-

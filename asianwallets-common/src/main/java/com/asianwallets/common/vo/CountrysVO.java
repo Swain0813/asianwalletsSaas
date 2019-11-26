@@ -1,6 +1,5 @@
-package com.asianwallets.common.dto;
+package com.asianwallets.common.vo;
 
-import com.asianwallets.common.base.BasePageHelper;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,9 +7,16 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * @ClassName CountryVO
+ * @Description 国家输出VO
+ * @Author abc
+ * @Date 2019/11/25 14:23
+ * @Version 1.0
+ */
 @Data
-@ApiModel(value = "国家", description = "国家")
-public class CountryDTO extends BasePageHelper {
+@ApiModel(value = "国家输出VO", description = "国家输出VO")
+public class CountrysVO {
 
     @ApiModelProperty(value = "id")
     private String id;
@@ -54,3 +60,6 @@ public class CountryDTO extends BasePageHelper {
     private String remark;
 
 }
+
+
+
