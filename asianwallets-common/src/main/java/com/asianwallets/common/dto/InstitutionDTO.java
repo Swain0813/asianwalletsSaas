@@ -22,6 +22,12 @@ public class InstitutionDTO {
     private String institutionId;
 
     /**
+     * 机构logo
+     */
+    @ApiModelProperty(value = "机构logo")
+    private String institutionLogo;
+
+    /**
      * 机构中文名称
      */
     @ApiModelProperty(value = "机构中文名称")

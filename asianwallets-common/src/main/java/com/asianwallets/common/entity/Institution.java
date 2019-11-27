@@ -27,6 +27,13 @@ public class Institution extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+	/**
+	 * 机构logo
+	 */
+	@ApiModelProperty(value = "机构logo")
+	@Column(name = "institution_logo")
+	private String institutionLogo;
+
     /**
      * 机构中文名称
      */
