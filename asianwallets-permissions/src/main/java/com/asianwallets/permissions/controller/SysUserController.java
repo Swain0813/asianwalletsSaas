@@ -139,14 +139,18 @@ public class SysUserController extends BaseController {
     @ApiOperation(value = "查询用户详情")
     @GetMapping("/getSysUserDetail")
     public BaseResponse getSysUserDetail(@RequestParam @ApiParam String username) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(username),
+                "查询用户详情"));
         return ResultUtil.success(sysUserService.getSysUserDetail(username));
     }
 
     @ApiOperation(value = "发送开户邮件")
     @PostMapping(value = "/sendInstitutionEmail")
     public BaseResponse sendInstitutionEmail(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
-        institutionDTO.setLanguage(this.getLanguage());//设置语言
-        sysUserService.openAccountEamin(institutionDTO);
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(institutionDTO),
+                "发送开户邮件"));
+        institutionDTO.setLanguage(getLanguage());
+        sysUserService.openAccountEmail(institutionDTO);
         return ResultUtil.success();
     }
 }

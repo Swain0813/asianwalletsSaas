@@ -112,5 +112,5 @@ public interface SysUserService {
      * 机构开户后发送邮件
      * @param institutionDTO
      */
-    void openAccountEamin(InstitutionDTO institutionDTO);
+    void openAccountEmail(InstitutionDTO institutionDTO);
 }

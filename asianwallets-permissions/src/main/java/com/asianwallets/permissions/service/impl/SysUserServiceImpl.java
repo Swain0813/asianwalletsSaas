@@ -1,6 +1,5 @@
 package com.asianwallets.permissions.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
@@ -290,7 +289,6 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     /**
-     * <<<<<<< HEAD
      * 重置登录密码
      *
      * @param username 用户名
@@ -317,11 +315,11 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setModifier(username);
         sysUser.setUpdateTime(new Date());
         //重置密码后邮件告知用户
-        JSONObject sendEmailRequest = new JSONObject();
-        sendEmailRequest.put("date", DateToolUtils.getReqDateG(new Date()));
-        sendEmailRequest.put("pwd", randomPassword);
-        sendEmailRequest.put("twd", randomTradePassword);
-        //TODO messageFeign.sendTemplateMail(sysUser.getEmail(), auditorProvider.getLanguage(), Status._0, map);
+        Map<String, Object> map = new HashMap<>();
+        map.put("date", DateToolUtils.getReqDateG(new Date()));
+        map.put("pwd", randomPassword);
+        map.put("twd", randomTradePassword);
+        messageFeign.sendTemplateMail(sysUser.getEmail(), auditorProvider.getLanguage(), Status._0, map);
         return sysUserMapper.updateByPrimaryKeySelective(sysUser);
     }
 
@@ -407,27 +405,30 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     /**
-     * 查询用户详情
+     * 开户发送邮件
      *
-     * @param username 用户名
+     * @param institutionDTO 机构实体
      * @return 用户详情实体
      */
     @Override
-    public void openAccountEamin(InstitutionDTO institutionDTO) {
-        log.info("*********************开户发送邮件 Start*************************************");
+    public void openAccountEmail(InstitutionDTO institutionDTO) {
+        log.info("=========【开户发送邮件】==========【START】");
         try {
             if (!StringUtils.isEmpty(institutionDTO.getInstitutionEmail())) {
-                log.info("*******************发送的机构邮箱是：*******************", institutionDTO.getInstitutionEmail());
+                log.info("=========【开户发送邮件】==========【发送的机构邮箱】 institutionEmail: {}", institutionDTO.getInstitutionEmail());
                 Map<String, Object> map = new HashMap<>();
-                SimpleDateFormat sf = new SimpleDateFormat("yyyy.MM.dd");//日期格式
-                map.put("dateTime", sf.format(new Date()));//发送日期
-                map.put("institutionName", institutionDTO.getCnName());//机构名称
-                map.put("institutionCode", institutionDTO.getInstitutionId());//机构code
+                SimpleDateFormat sf = new SimpleDateFormat("yyyy.MM.dd");
+                //发送日期
+                map.put("dateTime", sf.format(new Date()));
+                //机构名称
+                map.put("institutionName", institutionDTO.getCnName());
+                //机构code
+                map.put("institutionCode", institutionDTO.getInstitutionId());
                 messageFeign.sendTemplateMail(institutionDTO.getInstitutionEmail(), institutionDTO.getLanguage(), Status._3, map);
             }
         } catch (Exception e) {
-            log.error("开户发送邮件失败：{}==={}", institutionDTO.getInstitutionEmail(), e.getMessage());
+            log.error("=========【开户发送邮件】==========【开户发送邮件失败】 institutionEmail: {} | errorMessage: {}", institutionDTO.getInstitutionEmail(), e.getMessage());
         }
-        log.info("*********************开户发送邮件 End*************************************");
+        log.info("=========【开户发送邮件】==========【END】");
     }
 }
