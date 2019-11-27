@@ -34,5 +34,5 @@ public interface CountryFeign {
 
     @ApiOperation(value = "查询所有国家地区")
     @GetMapping("/country/inquireAllCountry")
-    BaseResponse inquireAllCountry(@RequestParam @ApiParam String language);
+    BaseResponse inquireAllCountry(@RequestParam("language") @ApiParam String language);
 }
