@@ -17,8 +17,6 @@ import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.dao.*;
 import com.asianwallets.permissions.dto.*;
-import com.asianwallets.permissions.dto.SysRoleDto;
-import com.asianwallets.permissions.dto.SysRoleMenuDto;
 import com.asianwallets.permissions.dto.SysUserDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
 import com.asianwallets.permissions.feign.message.MessageFeign;
@@ -50,16 +48,10 @@ public class SysUserServiceImpl implements SysUserService {
     private SysUserMapper sysUserMapper;
 
     @Autowired
-    private SysRoleMapper sysRoleMapper;
-
-    @Autowired
     private MessageFeign messageFeign;
 
     @Autowired
     private SysUserRoleMapper sysUserRoleMapper;
-
-    @Autowired
-    private SysRoleMenuMapper sysRoleMenuMapper;
 
     @Autowired
     private SysUserMenuMapper sysUserMenuMapper;
