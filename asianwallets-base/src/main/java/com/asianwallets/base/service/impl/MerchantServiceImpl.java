@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.MerchantAuditMapper;
 import com.asianwallets.base.dao.MerchantHistoryMapper;
 import com.asianwallets.base.dao.MerchantMapper;
+import com.asianwallets.base.dao.SysUserMapper;
 import com.asianwallets.base.service.MerchantService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -18,6 +19,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -45,6 +47,16 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
 
     @Autowired
     private MerchantHistoryMapper merchantHistoryMapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    public String encryptPassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
 
     /**
      * @Author YangXu
@@ -82,9 +94,47 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
         merchantAudit.setAuditStatus(TradeConstant.AUDIT_WAIT);
         merchantAudit.setEnabled(false);
 
-        merchantMapper.insert(merchant);
+
+        if(merchantMapper.insert(merchant)>0){
+            //账号信息
+            SysUser sysUser = new SysUser();
+            String userId = IDS.uuid2();
+            sysUser.setId(userId);
+            sysUser.setUsername(id + "admin");
+            sysUser.setPassword(encryptPassword("123456"));
+            sysUser.setTradePassword(encryptPassword("123456"));//交易密码
+            sysUser.setSysId(id);
+            if(merchantDTO.getMerchantType().equals(AsianWalletConstant.MERCHANT_USER)){
+                //普通商户
+                sysUser.setPermissionType(AsianWalletConstant.MERCHANT);
+                sysUser.setSysType(AsianWalletConstant.MERCHANT_USER);
+            }else if(merchantDTO.getMerchantType().equals(AsianWalletConstant.AGENCY_USER)){
+                //代理商户
+                sysUser.setPermissionType(AsianWalletConstant.AGENCY);
+                sysUser.setSysType(AsianWalletConstant.AGENCY_USER);
+            }else{
+                //集团商户
+                sysUser.setPermissionType(AsianWalletConstant.MERCHANT);
+                sysUser.setSysType(AsianWalletConstant.GROUP_USER);
+            }
+            sysUser.setName("admin");
+            sysUser.setCreateTime(new Date());
+            sysUser.setCreator(name);
+            sysUserMapper.insert(sysUser);
+        }
 
         return merchantAuditMapper.insert(merchantAudit);
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/25
+     * @Descripate 分页查询商户信息列表
+     * @return
+     **/
+    @Override
+    public PageInfo<Merchant> pageFindMerchant(MerchantDTO merchantDTO) {
+        return new PageInfo<>(merchantMapper.pageFindMerchant(merchantDTO));
     }
 
     /**
@@ -112,17 +162,6 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
         merchantAudit.setCreator(name);
         merchantAudit.setAuditStatus(TradeConstant.AUDIT_WAIT);
         return merchantAuditMapper.insert(merchantAudit);
-    }
-
-    /**
-     * @Author YangXu
-     * @Date 2019/11/25
-     * @Descripate 分页查询商户信息列表
-     * @return
-     **/
-    @Override
-    public PageInfo<Merchant> pageFindMerchant(MerchantDTO merchantDTO) {
-        return new PageInfo<>(merchantMapper.pageFindMerchant(merchantDTO));
     }
 
     /**

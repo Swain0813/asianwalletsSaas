@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.InstitutionAuditMapper;
 import com.asianwallets.base.dao.InstitutionHistoryMapper;
 import com.asianwallets.base.dao.InstitutionMapper;
+import com.asianwallets.base.dao.SysUserMapper;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
@@ -12,6 +13,7 @@ import com.asianwallets.base.service.InstitutionService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.entity.InstitutionAudit;
 import com.asianwallets.common.entity.InstitutionHistory;
+import com.asianwallets.common.entity.SysUser;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
@@ -20,6 +22,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -45,14 +48,23 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    public String encryptPassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 添加机构
-     * @return
      **/
     @Override
-    public int addInstitution(String name,InstitutionDTO institutionDTO) {
+    public int addInstitution(String name, InstitutionDTO institutionDTO) {
 
         //判断机构名称是否存在
         if (institutionMapper.selectCountByInsName(institutionDTO.getCnName()) > 0) {
@@ -62,13 +74,13 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
             throw new BusinessException(EResultEnum.NAME_EXIST.getCode());
         }
 
-        String id = "I"+IDS.uniqueID().toString();
+        String id = "I" + IDS.uniqueID().toString();
 
         Institution institution = new Institution();
         InstitutionAudit institutionAudit = new InstitutionAudit();
 
-        BeanUtils.copyProperties(institutionDTO,institution);
-        BeanUtils.copyProperties(institutionDTO,institutionAudit);
+        BeanUtils.copyProperties(institutionDTO, institution);
+        BeanUtils.copyProperties(institutionDTO, institutionAudit);
 
         institution.setId(id);
         institution.setCreateTime(new Date());
@@ -82,16 +94,32 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
         institutionAudit.setAuditStatus(TradeConstant.AUDIT_WAIT);
         institutionAudit.setEnabled(false);
 
-        institutionMapper.insert(institution);
+        if (institutionMapper.insert(institution) > 0) {
+            //账号信息
+            SysUser sysUser = new SysUser();
+            String userId = IDS.uuid2();
+            sysUser.setId(userId);
+            sysUser.setUsername(id + "admin");
+            sysUser.setPassword(encryptPassword("123456"));
+            sysUser.setTradePassword(encryptPassword("123456"));//交易密码
+            sysUser.setSysId(id);
+            sysUser.setPermissionType(AsianWalletConstant.INSTITUTION);
+            sysUser.setSysType(AsianWalletConstant.INSTITUTION_USER);
+            sysUser.setName("admin");
+            sysUser.setCreateTime(new Date());
+            sysUser.setCreator(name);
+            sysUserMapper.insert(sysUser);
+
+        }
 
         return institutionAuditMapper.insert(institutionAudit);
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 修改机构
-     * @return
      **/
     @Override
     public int updateInstitution(String name, InstitutionDTO institutionDTO) {
@@ -128,10 +156,10 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 分页查询机构审核信息列表
-     * @return
      **/
     @Override
     public PageInfo<InstitutionAudit> pageFindInstitutionAudit(InstitutionDTO institutionDTO) {
@@ -139,10 +167,10 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 根据机构Id查询机构信息详情
-     * @return
      **/
     @Override
     public Institution getInstitutionInfo(String id) {
@@ -151,10 +179,10 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 根据机构Id查询机构信息详情
-     * @return
      **/
     @Override
     public InstitutionAudit getInstitutionInfoAudit(String id) {
@@ -162,10 +190,10 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 审核机构信息
-     * @return
      **/
     @Override
     public int auditInstitution(String username, String institutionId, Boolean enabled, String remark) {

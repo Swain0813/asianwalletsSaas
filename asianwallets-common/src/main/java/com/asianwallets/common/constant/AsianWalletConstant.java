@@ -142,6 +142,13 @@ public class AsianWalletConstant {
     public static final Integer AGENCY = 4;//代理
     public static final Integer POS = 5;//Pos机
 
+    //账户类型
+    public static final Integer OPERATION_USER = 1;//运维
+    public static final Integer INSTITUTION_USER = 2;//机构
+    public static final Integer MERCHANT_USER = 3;//普通商户
+    public static final Integer AGENCY_USER= 4;//代理商户
+    public static final Integer GROUP_USER = 5;//集团商户
+
     //前端发布版本控制字段Key
     public static final String VERSION_CONTROL = "VERSION_CONTROL";
 
