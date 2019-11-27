@@ -61,30 +61,12 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     /**
-     * 新增用户角色,用户权限信息
+     * 分配用户角色,用户权限信息
      *
-     * @param username       用户名
+     * @param sysUser        用户实体
      * @param sysUserRoleDto 用户角色输入实体
-     * @return 修改条数
      */
-    @Override
-    @Transactional
-    public int addSysUser(String username, SysUserRoleDto sysUserRoleDto) {
-        SysUser dbSysUser = sysUserMapper.getSysUserByUsername(sysUserRoleDto.getUsername());
-        if (dbSysUser != null) {
-            log.info("=========【新增用户角色,用户权限信息】==========【用户名已存在!】");
-            throw new BusinessException(EResultEnum.USER_EXIST.getCode());
-        }
-        //新增角色
-        SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(sysUserRoleDto, sysUser);
-        sysUser.setId(IDS.uuid2());
-        sysUser.setPassword(BCryptUtils.encode(sysUserRoleDto.getPassword()));
-        sysUser.setTradePassword(BCryptUtils.encode(sysUserRoleDto.getTradePassword()));
-        sysUser.setLanguage(auditorProvider.getLanguage());
-        sysUser.setCreator(username);
-        sysUser.setCreateTime(new Date());
-        sysUser.setEnabled(true);
+    private void allotSysRoleAndSysMenu(SysUser sysUser, SysUserRoleDto sysUserRoleDto) {
         //用户分配角色
         if (!ArrayUtil.isEmpty(sysUserRoleDto.getRoleIdList())) {
             List<SysUserRole> userRoleList = Lists.newArrayList();
@@ -93,8 +75,10 @@ public class SysUserServiceImpl implements SysUserService {
                 sysUserRole.setId(IDS.uuid2());
                 sysUserRole.setUserId(sysUser.getId());
                 sysUserRole.setRoleId(roleId);
-                sysUserRole.setCreator(username);
+                sysUserRole.setCreator(sysUser.getCreator());
+                sysUserRole.setModifier(sysUser.getCreator());
                 sysUserRole.setCreateTime(new Date());
+                sysUserRole.setUpdateTime(new Date());
                 userRoleList.add(sysUserRole);
             }
             sysUserRoleMapper.insertList(userRoleList);
@@ -107,17 +91,18 @@ public class SysUserServiceImpl implements SysUserService {
                 sysUserMenu.setId(IDS.uuid2());
                 sysUserMenu.setUserId(sysUser.getId());
                 sysUserMenu.setMenuId(menuId);
-                sysUserMenu.setCreator(username);
+                sysUserMenu.setCreator(sysUser.getCreator());
+                sysUserMenu.setMenuId(sysUser.getCreator());
                 sysUserMenu.setCreateTime(new Date());
+                sysUserMenu.setUpdateTime(new Date());
                 userMenuList.add(sysUserMenu);
             }
             sysUserMenuMapper.insertList(userMenuList);
         }
-        return sysUserMapper.insert(sysUser);
     }
 
     /**
-     * 修改用户角色,用户权限信息
+     * 运营后台新增用户角色,用户权限信息
      *
      * @param username       用户名
      * @param sysUserRoleDto 用户角色输入实体
@@ -125,10 +110,40 @@ public class SysUserServiceImpl implements SysUserService {
      */
     @Override
     @Transactional
-    public int updateSysUser(String username, SysUserRoleDto sysUserRoleDto) {
+    public int addSysUserByOperation(String username, SysUserRoleDto sysUserRoleDto) {
+        SysUser dbSysUser = sysUserMapper.getSysUserByUsername(sysUserRoleDto.getUsername());
+        if (dbSysUser != null) {
+            log.info("=========【运营后台新增用户角色,用户权限信息】==========【用户名已存在!】");
+            throw new BusinessException(EResultEnum.USER_EXIST.getCode());
+        }
+        //新增角色
+        SysUser sysUser = new SysUser();
+        BeanUtils.copyProperties(sysUserRoleDto, sysUser);
+        sysUser.setId(IDS.uuid2());
+        sysUser.setPassword(BCryptUtils.encode(sysUserRoleDto.getPassword()));
+        sysUser.setTradePassword(BCryptUtils.encode(sysUserRoleDto.getTradePassword()));
+        sysUser.setLanguage(auditorProvider.getLanguage());
+        sysUser.setCreator(username);
+        sysUser.setCreateTime(new Date());
+        sysUser.setEnabled(true);
+        //分配用户角色,用户权限信息
+        allotSysRoleAndSysMenu(sysUser, sysUserRoleDto);
+        return sysUserMapper.insert(sysUser);
+    }
+
+    /**
+     * 运营后台修改用户角色,用户权限信息
+     *
+     * @param username       用户名
+     * @param sysUserRoleDto 用户角色输入实体
+     * @return 修改条数
+     */
+    @Override
+    @Transactional
+    public int updateSysUserByOperation(String username, SysUserRoleDto sysUserRoleDto) {
         SysUser dbSysUser = sysUserMapper.getSysUserByUsername(sysUserRoleDto.getUsername());
         if (dbSysUser == null) {
-            log.info("=========【修改用户角色,用户权限信息】==========【用户名不存在!】");
+            log.info("=========【运营后台修改用户角色,用户权限信息】==========【用户名不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }
         //修改角色
@@ -138,36 +153,13 @@ public class SysUserServiceImpl implements SysUserService {
         dbSysUser.setModifier(username);
         //用户分配角色
         sysUserRoleMapper.deleteByUserId(sysUserRoleDto.getUserId());
-        if (!ArrayUtil.isEmpty(sysUserRoleDto.getRoleIdList())) {
-            List<SysUserRole> userRoleList = Lists.newArrayList();
-            for (String roleId : sysUserRoleDto.getRoleIdList()) {
-                SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setId(IDS.uuid2());
-                sysUserRole.setUserId(dbSysUser.getId());
-                sysUserRole.setRoleId(roleId);
-                sysUserRole.setCreator(username);
-                sysUserRole.setCreateTime(new Date());
-                userRoleList.add(sysUserRole);
-            }
-            sysUserRoleMapper.insertList(userRoleList);
-        }
         //用户分配权限
         sysUserMenuMapper.deleteByUserId(sysUserRoleDto.getUserId());
-        if (!ArrayUtil.isEmpty(sysUserRoleDto.getMenuIdList())) {
-            List<SysUserMenu> userMenuList = Lists.newArrayList();
-            for (String menuId : sysUserRoleDto.getMenuIdList()) {
-                SysUserMenu sysUserMenu = new SysUserMenu();
-                sysUserMenu.setId(IDS.uuid2());
-                sysUserMenu.setUserId(dbSysUser.getId());
-                sysUserMenu.setMenuId(menuId);
-                sysUserMenu.setCreator(username);
-                sysUserMenu.setCreateTime(new Date());
-                userMenuList.add(sysUserMenu);
-            }
-            sysUserMenuMapper.insertList(userMenuList);
-        }
+        //分配用户角色,用户权限信息
+        allotSysRoleAndSysMenu(dbSysUser, sysUserRoleDto);
         return sysUserMapper.updateByPrimaryKeySelective(dbSysUser);
     }
+
 
     /**
      * 新增角色权限信息
@@ -201,10 +193,51 @@ public class SysUserServiceImpl implements SysUserService {
             sysRoleMenu.setRoleId(sysRole.getId());
             sysRoleMenu.setMenuId(menuId);
             sysRoleMenu.setCreator(username);
+            sysRoleMenu.setModifier(username);
             sysRoleMenu.setCreateTime(new Date());
+            sysRoleMenu.setUpdateTime(new Date());
             list.add(sysRoleMenu);
         }
         sysRoleMenuMapper.insertList(list);
         return sysRoleMapper.insert(sysRole);
+    }
+
+    /**
+     * 修改角色权限信息
+     *
+     * @param username       用户名
+     * @param sysRoleMenuDto 角色权限输入实体
+     * @return 修改条数
+     */
+    @Override
+    @Transactional
+    public int updateSysRole(String username, SysRoleMenuDto sysRoleMenuDto) {
+        SysRole dbSysRole = sysRoleMapper.selectByPrimaryKey(sysRoleMenuDto.getRoleId());
+        if (dbSysRole == null) {
+            log.info("=========【修改角色权限信息】==========【角色不存在!】");
+            throw new BusinessException(EResultEnum.ROLE_NO_EXIST.getCode());
+        }
+        dbSysRole.setModifier(username);
+        dbSysRole.setUpdateTime(new Date());
+        sysRoleMapper.updateByPrimaryKeySelective(dbSysRole);
+        //根据角色ID删除角色权限表信息
+        sysRoleMenuMapper.deleteByRoleId(dbSysRole.getId());
+        List<SysRoleMenu> roleMenuList = Lists.newArrayList();
+        for (String menuId : sysRoleMenuDto.getMenuIdList()) {
+            SysRoleMenu sysRoleMenu = new SysRoleMenu();
+            sysRoleMenu.setId(IDS.uuid());
+            sysRoleMenu.setMenuId(menuId);
+            sysRoleMenu.setRoleId(dbSysRole.getId());
+            sysRoleMenu.setCreator(username);
+            sysRoleMenu.setModifier(username);
+            sysRoleMenu.setCreateTime(new Date());
+            sysRoleMenu.setUpdateTime(new Date());
+            roleMenuList.add(sysRoleMenu);
+        }
+        if (roleMenuList.size() == 0) {
+            log.info("=========【修改角色权限信息】==========【角色权限不能为空!】");
+            throw new BusinessException(EResultEnum.ROLE_PERMISSION_IS_NOT_NULL.getCode());
+        }
+        return sysRoleMenuMapper.insertList(roleMenuList);
     }
 }
