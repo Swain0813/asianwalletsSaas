@@ -62,7 +62,7 @@ public class CountryController extends BaseController {
 
     @ApiOperation(value = "查询国家地区")
     @GetMapping("inquireAllCountry")
-    public BaseResponse inquireAllCountry(@RequestParam @ApiParam String language) {
+    public BaseResponse inquireAllCountry(@RequestParam("language") @ApiParam String language) {
         if (StringUtils.isBlank(language)) {
             language = this.getLanguage();
         }

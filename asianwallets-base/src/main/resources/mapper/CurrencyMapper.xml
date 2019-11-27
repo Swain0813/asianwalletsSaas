@@ -57,7 +57,7 @@
         cu.id, cu.icon, cu.code, cu.name, cu.create_time, cu.update_time, cu.creator, cu.modifier,cu.
         remark,cu.defaults, cu.extend1,
         cu.enabled,
-        co.cn_name as country
+        co.name as country
         from currency cu left join country co on cu.extend1 = co.id
         <where>
             <if test="code != null and code != ''">
