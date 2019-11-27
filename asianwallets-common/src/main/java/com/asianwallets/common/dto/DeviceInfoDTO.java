@@ -22,6 +22,12 @@ public class DeviceInfoDTO extends BasePageHelper {
     @ApiModelProperty(value = "厂商ID")
     private String vendorId;
 
+    @ApiModelProperty(value = "机构Code")
+    private String institutionId;
+
+    @ApiModelProperty(value = "机构名称")
+    private String institutionName;
+
     @ApiModelProperty(value = "厂商名称")
     private String vendorName;
 

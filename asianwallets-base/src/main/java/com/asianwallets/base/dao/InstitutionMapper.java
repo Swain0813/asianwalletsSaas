@@ -1,8 +1,8 @@
 package com.asianwallets.base.dao;
 
+import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.Institution;
-import com.asianwallets.common.base. BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
@@ -44,4 +44,5 @@ public interface InstitutionMapper extends  BaseMapper<Institution> {
      * @return
      **/
     Institution getInstitutionInfo(@Param("id") String id);
+
 }

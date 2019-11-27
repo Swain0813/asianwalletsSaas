@@ -20,6 +20,14 @@ public class DeviceInfo extends BaseEntity {
     @Column(name = "vendor_id")
     private String vendorId;
 
+    @ApiModelProperty(value = "机构CODE")
+    @Column(name = "institution_id")
+    private String institutionId;
+
+    @ApiModelProperty(value = "机构名称")
+    @Column(name = "institution_name")
+    private String institutionName;
+
     @ApiModelProperty(value = "型号ID")
     @Column(name = "model_id")
     private String modelId;

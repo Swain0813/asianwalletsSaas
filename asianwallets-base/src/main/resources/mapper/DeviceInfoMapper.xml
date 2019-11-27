@@ -25,6 +25,8 @@
         <result column="vendor_name" property="vendorName" jdbcType="VARCHAR"/>
         <result column="model_id" property="modelId" jdbcType="VARCHAR"/>
         <result column="model_name" property="modelName" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
         <result column="imei" property="imei" jdbcType="VARCHAR"/>
         <result column="sn" property="sn" jdbcType="VARCHAR"/>
@@ -56,19 +58,22 @@
         i.creator,
         i.modifier,
         i.remark,
+        ins.id as institution_id,
+        ins.cn_name as institution_name,
         i.binding_status,v.vendor_cn_name as vendor_name,m.device_name as model_name
         from device_info i
         left join device_vendor v on i.vendor_id = v.id
         left join device_model m on i.model_id = m.id
+        left join institution ins on ins.id = i.institution_id
         <where>
-            <if test="id != null and id != ''">and i.id =
-                #{id}
+            <if test="id != null and id != ''">
+                and i.id = #{id}
             </if>
-            <if test="vendorId != null and vendorId != ''">and i.vendor_id =
-                #{vendorId}
+            <if test="vendorId != null and vendorId != ''">
+                and i.vendor_id = #{vendorId}
             </if>
-            <if test="modelId != null and modelId != ''">and i.model_id =
-                #{modelId}
+            <if test="modelId != null and modelId != ''">
+                and i.model_id = #{modelId}
             </if>
             <if test="name != null and name != ''">
                 and i.name LIKE CONCAT(CONCAT('%', #{name}), '%' )
@@ -76,34 +81,41 @@
             <if test="vendorName != null and vendorName != ''">
                 and v.vendor_cn_name LIKE CONCAT(CONCAT('%', #{vendorName} ), '%' )
             </if>
+            <if test="institutionId != null and institutionId != ''">
+                and i.institution_id LIKE CONCAT(CONCAT('%', #{institutionId}), '%' )
+            </if>
+            <if test="institutionName != null and institutionName != ''">
+                and i.institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%' )
+            </if>
             <if test="imei != null and imei != ''">
                 and i.imei LIKE CONCAT(CONCAT('%', #{imei} ), '%' )
             </if>
-            <if test="sn != null and sn != ''">and i.sn =
-                #{sn}
+            <if test="sn != null and sn != ''">
+                and i.sn =#{sn}
             </if>
-            <if test="mac != null and mac != ''">and i.mac =
-                #{mac}
+            <if test="mac != null and mac != ''">
+                and i.mac = #{mac}
             </if>
-            <if test="enabled != null">and i.enabled =
-                #{enabled}
+            <if test="enabled != null">
+                and i.enabled = #{enabled}
             </if>
-            <if test="createTime != null and createTime != ''">and i.create_time =
-                #{createTime}
+            <if test="createTime != null and createTime != ''">
+                and i.create_time = #{createTime}
             </if>
-            <if test="updateTime != null and updateTime != ''">and i.update_time =
-                #{updateTime}
+            <if test="updateTime != null and updateTime != ''">
+                and i.update_time = #{updateTime}
             </if>
-            <if test="creator != null and creator != ''">and i.creator =
-                #{creator}
+            <if test="creator != null and creator != ''">
+                and i.creator = #{creator}
             </if>
-            <if test="modifier != null and modifier != ''">and i.modifier =
-                #{modifier}
+            <if test="modifier != null and modifier != ''">
+                and i.modifier =#{modifier}
             </if>
-            <if test="remark != null and remark != ''">and i.remark =
-                #{remark}
+            <if test="remark != null and remark != ''">
+                and i.remark = #{remark}
             </if>
-            <if test="bindingStatus != null">and i.binding_status = #{bindingStatus}
+            <if test="bindingStatus != null">
+                and i.binding_status = #{bindingStatus}
             </if>
 
         </where>

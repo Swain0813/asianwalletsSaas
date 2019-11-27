@@ -1,6 +1,5 @@
 package com.asianwallets.common.vo;
 
-import com.asianwallets.common.base.BasePageHelper;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +14,7 @@ import java.util.Date;
  */
 @Data
 @ApiModel(value = "设备信息输出实体", description = "设备信息输出实体")
-public class DeviceInfoVO extends BasePageHelper {
+public class DeviceInfoVO {
 
     @ApiModelProperty("设备信息id")
     private String id;
@@ -25,6 +24,12 @@ public class DeviceInfoVO extends BasePageHelper {
 
     @ApiModelProperty(value = "厂商名称")
     private String vendorName;
+
+    @ApiModelProperty(value = "机构ID")
+    private String institutionId;
+
+    @ApiModelProperty(value = "机构名称")
+    private String institutionName;
 
     @ApiModelProperty(value = "型号ID")
     private String modelId;

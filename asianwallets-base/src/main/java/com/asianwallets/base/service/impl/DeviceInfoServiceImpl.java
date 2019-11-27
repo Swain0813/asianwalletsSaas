@@ -1,12 +1,11 @@
 package com.asianwallets.base.service.impl;
 
-import com.asianwallets.base.dao.DeviceInfoMapper;
-import com.asianwallets.base.dao.DeviceModelMapper;
-import com.asianwallets.base.dao.DeviceVendorMapper;
+import com.asianwallets.base.dao.*;
 import com.asianwallets.base.service.DeviceInfoService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.dto.DeviceInfoDTO;
 import com.asianwallets.common.entity.DeviceInfo;
+import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.DeviceInfoVO;
@@ -37,6 +36,11 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
     @Autowired
     private DeviceModelMapper deviceModelMapper;
 
+    @Autowired
+    private InstitutionMapper institutionMapper;
+
+    @Autowired
+    private OrdersMapper ordersMapper;
     /**
      * 新增设备信息
      *
@@ -47,7 +51,7 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
     public int addDeviceInfo(DeviceInfoDTO deviceInfoDTO) {
         //判断数据是否存在
         if (deviceInfoDTO.getImei() == null || deviceInfoDTO.getMac() == null || deviceInfoDTO.getSn()
-                == null || deviceInfoDTO.getVendorId() == null || deviceInfoDTO.getModelId() == null) {
+                == null || deviceInfoDTO.getVendorId() == null || deviceInfoDTO.getModelId() == null || deviceInfoDTO.getInstitutionId() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         //判断名字是否为空
@@ -58,11 +62,14 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
             //设置默认名称 厂商_型号
             deviceInfoDTO.setName(deviceInfoDTO.getVendorName() + "_" + deviceInfoDTO.getModelName());
         }
+        Institution institutionInfo = institutionMapper.getInstitutionInfo(deviceInfoDTO.getInstitutionId());
+        if (institutionInfo == null || !institutionInfo.getEnabled()) {
+            throw new BusinessException(EResultEnum.INSTITUTION_STATUS_ABNORMAL.getCode());
+        }
         //判断设备厂商是否存在
         DeviceInfo deviceInfo = getDeviceInfo(deviceInfoDTO);
         deviceInfo.setEnabled(true);
         deviceInfo.setBindingStatus(false);
-
         if (deviceInfoMapper.selectOne(deviceInfo) != null) {
             throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
         }
@@ -126,6 +133,10 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
         //判断设备厂商是否存在
         DeviceInfo deviceInfo = getDeviceInfo(deviceInfoDTO);
         deviceInfo.setUpdateTime(new Date());
+        //未绑定是否走过交易
+        if (ordersMapper.selectByDeviceCode(deviceInfoDTO.getImei()).size() != 0) {
+            throw new BusinessException(EResultEnum.DEVICE_UNBIND_FAILED.getCode());
+        }
         return deviceInfoMapper.updateByPrimaryKeySelective(deviceInfo);
     }
 
