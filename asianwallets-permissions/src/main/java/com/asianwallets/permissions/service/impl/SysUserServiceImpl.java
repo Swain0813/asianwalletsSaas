@@ -3,7 +3,9 @@ package com.asianwallets.permissions.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.*;
+import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResPermissions;
@@ -16,6 +18,11 @@ import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.dao.*;
 import com.asianwallets.permissions.dto.*;
+import com.asianwallets.permissions.dto.SysRoleDto;
+import com.asianwallets.permissions.dto.SysRoleMenuDto;
+import com.asianwallets.permissions.dto.SysUserDto;
+import com.asianwallets.permissions.dto.SysUserRoleDto;
+import com.asianwallets.permissions.feign.message.MessageFeign;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.utils.BCryptUtils;
 import com.asianwallets.permissions.vo.SysUserDetailVO;
@@ -27,10 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -47,7 +54,7 @@ public class SysUserServiceImpl implements SysUserService {
     private SysRoleMapper sysRoleMapper;
 
     @Autowired
-    private SysMenuMapper sysMenuMapper;
+    private MessageFeign messageFeign;
 
     @Autowired
     private SysUserRoleMapper sysUserRoleMapper;
@@ -283,6 +290,7 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     /**
+     * <<<<<<< HEAD
      * 重置登录密码
      *
      * @param username 用户名
@@ -396,5 +404,30 @@ public class SysUserServiceImpl implements SysUserService {
         sysUserDetailVO.setRoleList(roleList);
         sysUserDetailVO.setPermissionList(permissionList);
         return sysUserDetailVO;
+    }
+
+    /**
+     * 查询用户详情
+     *
+     * @param username 用户名
+     * @return 用户详情实体
+     */
+    @Override
+    public void openAccountEamin(InstitutionDTO institutionDTO) {
+        log.info("*********************开户发送邮件 Start*************************************");
+        try {
+            if (!StringUtils.isEmpty(institutionDTO.getInstitutionEmail())) {
+                log.info("*******************发送的机构邮箱是：*******************", institutionDTO.getInstitutionEmail());
+                Map<String, Object> map = new HashMap<>();
+                SimpleDateFormat sf = new SimpleDateFormat("yyyy.MM.dd");//日期格式
+                map.put("dateTime", sf.format(new Date()));//发送日期
+                map.put("institutionName", institutionDTO.getCnName());//机构名称
+                map.put("institutionCode", institutionDTO.getInstitutionId());//机构code
+                messageFeign.sendTemplateMail(institutionDTO.getInstitutionEmail(), institutionDTO.getLanguage(), Status._3, map);
+            }
+        } catch (Exception e) {
+            log.error("开户发送邮件失败：{}==={}", institutionDTO.getInstitutionEmail(), e.getMessage());
+        }
+        log.info("*********************开户发送邮件 End*************************************");
     }
 }

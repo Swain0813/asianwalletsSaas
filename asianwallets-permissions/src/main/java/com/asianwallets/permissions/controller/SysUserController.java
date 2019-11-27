@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.dto.*;
@@ -139,5 +140,13 @@ public class SysUserController extends BaseController {
     @GetMapping("/getSysUserDetail")
     public BaseResponse getSysUserDetail(@RequestParam @ApiParam String username) {
         return ResultUtil.success(sysUserService.getSysUserDetail(username));
+    }
+
+    @ApiOperation(value = "发送开户邮件")
+    @PostMapping(value = "/sendInstitutionEmail")
+    public BaseResponse sendInstitutionEmail(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
+        institutionDTO.setLanguage(this.getLanguage());//设置语言
+        sysUserService.openAccountEamin(institutionDTO);
+        return ResultUtil.success();
     }
 }

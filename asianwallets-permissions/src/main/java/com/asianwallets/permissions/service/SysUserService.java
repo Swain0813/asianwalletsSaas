@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.service;
 
+import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.SysRole;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.dto.*;
@@ -106,4 +107,10 @@ public interface SysUserService {
      * @return 用户详情实体
      */
     SysUserDetailVO getSysUserDetail(String username);
+
+    /**
+     * 机构开户后发送邮件
+     * @param institutionDTO
+     */
+    void openAccountEamin(InstitutionDTO institutionDTO);
 }
