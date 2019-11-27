@@ -121,8 +121,8 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
      * @return
      **/
     @Override
-    public PageInfo<Merchant> pageFindInstitution(MerchantDTO merchantDTO) {
-        return new PageInfo<>(merchantMapper.pageFindInstitution(merchantDTO));
+    public PageInfo<Merchant> pageFindMerchant(MerchantDTO merchantDTO) {
+        return new PageInfo<>(merchantMapper.pageFindMerchant(merchantDTO));
     }
 
     /**
@@ -165,7 +165,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
      * @return
      **/
     @Override
-    public int auditInstitution(String username, String merchantId, Boolean enabled, String remark) {
+    public int auditMerchant(String username, String merchantId, Boolean enabled, String remark) {
         int num;
         Merchant oleMerchant = merchantMapper.selectByPrimaryKey(merchantId);
         if (TradeConstant.AUDIT_SUCCESS.equals(oleMerchant.getAuditStatus())) {
