@@ -2,18 +2,19 @@ package com.asianwallets.base.service.impl;
 
 import com.asianwallets.base.dao.CountryMapper;
 import com.asianwallets.base.service.CountryService;
-import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.CountryDTO;
 import com.asianwallets.common.entity.Country;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.AreaVO;
 import com.asianwallets.common.vo.CountryVO;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,57 +40,34 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public int addCountry(CountryDTO countryDTO) {
         int result = 0;
-        if (StringUtils.isBlank(countryDTO.getParentId()) && !StringUtils.isBlank(countryDTO.getCountry())) {
+        Country country = new Country();
+        if (StringUtils.isBlank(countryDTO.getId()) && !StringUtils.isBlank(countryDTO.getCountry())) {
             if (countryMapper.selectByName(countryDTO.getCountry()) == null) {
                 //新增国家
-                Country country = new Country();
                 country.setAreaCode(countryDTO.getAreaCode());
                 country.setName(countryDTO.getCountry());
                 country.setLanguage(countryDTO.getLanguage());
-                country.setType(AsianWalletConstant.COUNTRY);
                 country.setEnabled(true);
-                //国家ID
-                String cid = IDS.getRandomInt(20);
-                country.setId(cid);
+                String randomInt = IDS.getRandomInt(20);
+                country.setId(randomInt);
                 country.setCreateTime(new Date());
                 country.setCreator(countryDTO.getCreator());
                 country.setRemark(countryDTO.getRemark());
-                result = countryMapper.insert(country);
                 if (!StringUtils.isBlank(countryDTO.getArea())) {
                     //新增地区
-                    Country areas = countryMapper.selectByName(countryDTO.getArea());
+                    Country areas = countryMapper.selectByAreaName(countryDTO.getArea());
                     if (areas == null) {
-                        //只新增地区
-                        Country area = new Country();
-                        area.setParentId(cid);
-                        area.setName(countryDTO.getArea());
-                        area.setLanguage(countryDTO.getLanguage());
-                        area.setType(AsianWalletConstant.AREA);
-                        area.setEnabled(true);
-                        area.setId(IDS.getRandomInt(20));
-                        area.setCreateTime(new Date());
-                        area.setCreator(countryDTO.getCreator());
-                        area.setRemark(countryDTO.getRemark());
-                        result = countryMapper.insert(area);
+                        country.setAreaName(countryDTO.getArea() + ",");
                     }
                 }
+                result = countryMapper.insertSelective(country);
             }
-        } else if (!StringUtils.isBlank(countryDTO.getArea()) && !StringUtils.isBlank(countryDTO.getParentId())) {
-            Country country = countryMapper.selectByPrimaryKey(countryDTO.getParentId());
-            Country areas = countryMapper.selectByName(countryDTO.getArea());
-            if (country != null && country.getType().equals(AsianWalletConstant.COUNTRY) && areas == null) {
-                //只新增地区
-                Country area = new Country();
-                area.setParentId(country.getId());
-                area.setName(countryDTO.getArea());
-                area.setLanguage(countryDTO.getLanguage());
-                area.setType(AsianWalletConstant.AREA);
-                area.setEnabled(true);
-                area.setId(IDS.getRandomInt(20));
-                area.setCreateTime(new Date());
-                area.setCreator(countryDTO.getCreator());
-                area.setRemark(countryDTO.getRemark());
-                result = countryMapper.insert(area);
+        } else if (!StringUtils.isBlank(countryDTO.getArea()) && !StringUtils.isBlank(countryDTO.getId()) || !StringUtils.isBlank(countryDTO.getParentId())) {
+            country = countryMapper.selectById(countryDTO);
+            if (country != null) {
+                //第一次新增地区
+                country.setAreaName(country.getAreaName() + countryDTO.getArea() + ",");
+                result = countryMapper.updateByPrimaryKeySelective(country);
             }
         }
         return result;
@@ -148,12 +126,33 @@ public class CountryServiceImpl implements CountryService {
     /**
      * 查询所有的国家地区
      *
-     * @return
      * @param language
+     * @return
      */
     @Override
     public List<CountryVO> inquireAllCountry(String language) {
-        return countryMapper.inquireAllCountry(language);
+        ArrayList<CountryVO> countryVOS = new ArrayList<>();
+        List<Country> countries = countryMapper.selectByLanguage(language);
+        for (Country country : countries) {
+            CountryVO countryVO = new CountryVO();
+            ArrayList<AreaVO> areaVOS = new ArrayList<>();
+            countryVO.setCountryName(country.getName());
+            countryVO.setCountryId(country.getId());
+            countryVO.setAreaCode(country.getAreaCode());
+            if (!StringUtils.isBlank(country.getAreaName())) {
+                String[] areas = country.getAreaName().split(",");
+                for (String area : areas) {
+                    AreaVO areaVO = new AreaVO();
+                    areaVO.setAreaId(country.getId());
+                    areaVO.setAreaParentId(country.getId());
+                    areaVO.setAreaName(area);
+                    areaVOS.add(areaVO);
+                }
+            }
+            countryVO.setAreaVOS(areaVOS);
+            countryVOS.add(countryVO);
+        }
+        return countryVOS;
     }
 
 }

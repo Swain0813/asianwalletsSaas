@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.base.dao.DictionaryTypeMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.DictionaryType">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="dic_code" jdbcType="VARCHAR" property="dicCode"/>
+        <result column="dic_value" jdbcType="VARCHAR" property="dicValue"/>
+        <result column="enabled" jdbcType="BIT" property="enabled"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="creator" jdbcType="VARCHAR" property="creator"/>
+        <result column="modifier" jdbcType="VARCHAR" property="modifier"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+    </resultMap>
+
+
+    <update id="banDictionaryType">
+        update dictionary_type
+        set enabled  = #{enabled},
+            modifier = #{modifierName}
+        where dic_code = #{typeId};
+    </update>
+
+
+    <select id="findDicTypeCode" resultType="java.lang.String">
+        select dic_value
+        from dictionary_type
+        where dic_code = #{dictypeCode};
+    </select>
+
+
+    <select id="findDicTypeCodeByValue" resultType="java.lang.String">
+        select dic_code
+        from dictionary_type
+        where dic_value = #{value};
+    </select>
+
+    <select id="findCount" resultType="java.lang.String">
+        select distinct SUBSTR(dic_code FROM 5)
+        from dictionary_type
+        order by SUBSTR(dic_code FROM 5) + 0 desc
+        limit 1
+    </select>
+
+
+</mapper>

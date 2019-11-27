@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.DictionaryMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Dictionary">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="dictype_code" property="dictypeCode" jdbcType="VARCHAR"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="icon" property="icon" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="language" property="language" jdbcType="VARCHAR"/>
+        <result column="default_value" property="defaultValue" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,
+        dictype_code,
+        code,
+        name,
+        icon,
+        enabled,
+        create_time,
+        update_time,
+        creator,
+        modifier,
+        remark,
+        language,
+        default_value
+    </sql>
+
+    <update id="banDictionaryWithType">
+        update dictionary
+        set enabled     = #{enabled},
+            modifier    = #{modifierName},
+            update_time = now()
+        where (dictype_code = #{typeId})
+           or (code = #{typeId})
+    </update>
+
+
+    <select id="checkValue" resultType="java.lang.Integer">
+        select count(*)
+        from dictionary
+        where (code = #{code})
+          and (name = #{name})
+          and dictype_code = #{dictypeCode}
+          and language = #{language};
+    </select>
+
+    <select id="pageDictionaryInfo" resultMap="BaseResultMap"
+            resultType="com.asianwallets.common.entity.Dictionary">
+        select id, dictype_code, code, name, icon, enabled, create_time, update_time, creator, modifier, remark,
+        language, default_value from dictionary
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="code != null and code != ''">
+                AND code LIKE CONCAT(CONCAT('%',#{code}),'%')
+            </if>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT(CONCAT('%',#{name}),'%')
+            </if>
+            <if test="icon != null and icon != ''">
+                AND icon = #{icon}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                AND create_time = #{createTime}
+            </if>
+            <if test="updateTime != null and updateTime != ''">
+                AND update_time = #{updateTime}
+            </if>
+            <if test="creator != null and creator != ''">
+                AND creator LIKE CONCAT(CONCAT('%', #{creator}), '%')
+            </if>
+            <if test="modifier != null and modifier != ''">
+                AND modifier LIKE CONCAT(CONCAT('%', #{modifier}), '%')
+            </if>
+            <if test="remark != null and remark != ''">
+                AND remark LIKE CONCAT(CONCAT('%', #{remark}), '%')
+            </if>
+            <if test="defaultValue != null and defaultValue != ''">
+                AND default_value = #{defaultValue}
+            </if>
+            <if test="language != null and language !=''">
+                AND language = #{language}
+            </if>
+            <if test="dictypeCode != null and dictypeCode !=''">
+                AND dictype_code = #{dictypeCode}
+            </if>
+            <if test="enabled != null">
+                AND enabled = #{enabled}
+            </if>
+        </where>
+    </select>
+
+    <select id="getNameAndLanguage" resultType="java.lang.String">
+        select code
+        from dictionary
+        where name = #{type}
+          and language = #{language};
+    </select>
+
+    <select id="getLatestCodeBydictypeCodeAndLanguage" resultType="java.lang.String">
+        SELECT DISTINCT
+        SUBSTR( d2.CODE FROM ( d2.fog + 1 ) )
+        FROM
+        dictionary AS d1,
+        ( SELECT LOCATE( '_', `code`, 5 ) AS fog, CODE FROM dictionary
+        <where>
+            <if test="dictypeCode != null and dictypeCode !=''">
+                AND dictype_code = #{dictypeCode}
+            </if>
+            <if test="language!=null and language!=''">
+                AND language = #{language}
+            </if>
+        </where>
+        ) AS d2
+        WHERE
+        d2.fog != 0
+        ORDER BY
+        SUBSTR( d2.CODE FROM ( d2.fog + 1 ) ) * 1 DESC
+        LIMIT 1;
+    </select>
+
+    <select id="selectDicCodeAndLanguage" resultType="java.lang.Integer">
+        select count(*)
+        from dictionary
+        where code = #{code}
+          and language = #{language};
+    </select>
+
+    <select id="selectByCode" resultMap="BaseResultMap">
+        select id,
+               dictype_code,
+               code,
+               name,
+               icon,
+               enabled,
+               create_time,
+               update_time,
+               creator,
+               modifier,
+               remark,
+               language,
+               default_value
+        from dictionary
+        where code = #{code}
+        order by create_time
+        limit 1;
+    </select>
+
+
+    <select id="pageDictionaryInfos" resultMap="BaseResultMap">
+        select id, dictype_code, code, name, icon, enabled, create_time, update_time, creator, modifier, remark,
+        language, default_value from dictionary
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="code != null and code != ''">
+                AND code LIKE CONCAT(CONCAT('%',#{code}),'%')
+            </if>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT(CONCAT('%',#{name}),'%')
+            </if>
+            <if test="remark != null and remark != ''">
+                AND remark LIKE CONCAT(CONCAT('%', #{remark}), '%')
+            </if>
+            <if test="defaultValue != null and defaultValue != ''">
+                AND default_value = #{defaultValue}
+            </if>
+            <if test="language != null and language !=''">
+                AND language = #{language}
+            </if>
+            <if test="dictypeCode != null and dictypeCode !=''">
+                AND dictype_code = #{dictypeCode}
+            </if>
+            AND enabled=1
+        </where>
+        order by create_time desc
+    </select>
+</mapper>

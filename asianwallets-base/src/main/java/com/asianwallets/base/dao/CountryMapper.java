@@ -46,4 +46,28 @@ public interface CountryMapper extends BaseMapper<Country> {
      * @return
      */
     int banCountry(CountryDTO countryDTO);
+
+    /**
+     * 查询省名
+     *
+     * @param area
+     * @return
+     */
+    Country selectByAreaName(@Param("area") String area);
+
+    /**
+     * 通过ID与area查询
+     *
+     * @param countryDTO
+     * @return
+     */
+    Country selectById(CountryDTO countryDTO);
+
+    /**
+     * 根据语言查询
+     *
+     * @param language
+     * @return
+     */
+    List<Country> selectByLanguage(@Param("language") String language);
 }

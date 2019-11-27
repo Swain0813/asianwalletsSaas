@@ -30,10 +30,10 @@ public class CountryController extends BaseController {
     @ApiOperation(value = "新增国家")
     @PostMapping("addCountry")
     public BaseResponse addCountry(@RequestBody @ApiParam CountryDTO country) {
-        if (StringUtils.isBlank(country.getLanguage())) {
+       /* if (StringUtils.isBlank(country.getLanguage())) {
             country.setLanguage(this.getLanguage());
         }
-        country.setCreator(this.getSysUserVO().getUsername());
+        country.setCreator(this.getSysUserVO().getUsername());*/
         return ResultUtil.success(countryService.addCountry(country));
     }
 

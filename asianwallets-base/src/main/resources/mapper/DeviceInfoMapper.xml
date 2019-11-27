@@ -121,8 +121,7 @@
         </where>
     </select>
 
-    <select id="selectModelAndVendorAndInfoById" resultType="com.asianwallets.common.vo.DeviceInfoVO"
-            resultMap="NewResultMap">
+    <select id="selectModelAndVendorAndInfoById" resultMap="NewResultMap">
         select i.id,
                i.vendor_id,
                i.model_id,
@@ -145,6 +144,7 @@
         where i.id = #{id}
           and i.binding_status = 0
           and i.enabled = 1
+
     </select>
 
 

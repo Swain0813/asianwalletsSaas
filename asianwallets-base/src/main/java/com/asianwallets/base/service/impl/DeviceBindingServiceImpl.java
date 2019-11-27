@@ -49,12 +49,12 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
     @Override
     public int addDeviceBinding(DeviceBindingDTO deviceBindingDTO) {
         //判断参数
-        if (deviceBindingDTO.getInstitutionCode() == null
+        if (deviceBindingDTO.getInstitutionId() == null
                 || deviceBindingDTO.getUseType() == null
                 || deviceBindingDTO.getInstitutionName() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        String institutionCode = deviceBindingDTO.getInstitutionCode();
+        String institutionCode = deviceBindingDTO.getInstitutionId();
         ArrayList<DeviceBinding> bindings = new ArrayList<>();
         List<String> infoId = deviceBindingDTO.getInfoId();
 

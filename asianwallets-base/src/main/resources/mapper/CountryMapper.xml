@@ -6,8 +6,8 @@
         <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
         <result column="area_code" property="areaCode" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="area_name" property="areaName" jdbcType="VARCHAR"/>
         <result column="language" property="language" jdbcType="VARCHAR"/>
-        <result column="type" property="type" jdbcType="BIT"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="creator" property="creator" jdbcType="VARCHAR"/>
@@ -51,27 +51,26 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, parent_id, name, type ,area_code, language,  create_time,
+        id, name, area_name,area_code, language,  create_time,
     update_time, creator, modifier, remark, extend1, extend2, extend3, extend4, extend5, 
     extend6,enabled
     </sql>
 
 
     <select id="inquireAllCountry" resultMap="CountryVOResultMap">
-        select a.id        as country_id,
-               a.area_code as area_code,
-               a.name      as country_name,
-               b.id        as area_id,
-               b.parent_id as area_parent_id,
-               b.name      as area_name
-        from country a
-                 left join country b on a.id = b.parent_id
-        where a.id is not null
-          and b.id is not null
-          and a.enabled = 1
-          and b.enabled = 1
-          and a.language = #{language}
-          and b.language = #{language}
+        select id        as country_id,
+               area_code as area_code,
+               name      as country_name,
+               id        as area_id,
+               id        as area_parent_id,
+               name      as area_name
+        from country
+        where id is not null
+          and id is not null
+          and enabled = 1
+          and enabled = 1
+          and language = #{language}
+          and language = #{language}
     </select>
 
     <select id="selectByName" resultMap="BaseResultMap">
@@ -84,33 +83,51 @@
 
     <select id="pageCountry" resultMap="CountrysVOMap">
         select
-        a.id as parent_id,
-        b.id as id,
-        a.area_code as area_code,
-        a.name as country,
-        b.name as area,
-        b.language,
-        b.create_time,
-        b.update_time,
-        b.remark,
-        b.enabled
-        from country a left join country b on a.id = b.parent_id
+        id as parent_id,
+        id as id,
+        area_code as area_code,
+        name as country,
+        area_name as area,
+        language,
+        create_time,
+        update_time,
+        remark,
+        enabled
+        from country
         <where>
             <if test="country != null and country != ''">
-                and a.name LIKE CONCAT(CONCAT('%',#{country}),'%')
+                and name LIKE CONCAT(CONCAT('%',#{country}),'%')
             </if>
             <if test="area != null and area != ''">
-                and b.name LIKE CONCAT(CONCAT('%',#{area}),'%')
+                and name LIKE CONCAT(CONCAT('%',#{area}),'%')
             </if>
             <if test="enabled != null">
-                and b.enabled =#{enabled}
+                and enabled =#{enabled}
             </if>
             <if test="language != null and language != ''">
-                and a.language=#{language}
+                and language=#{language}
             </if>
-            and a.id is not null and b.id is not null and a.language=b.language
         </where>
 
+    </select>
+
+    <select id="selectByAreaName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from country where area_name LIKE CONCAT(CONCAT('%',#{area}),'%') ;
+    </select>
+    <select id="selectById" resultMap="BaseResultMap">
+        select *
+        from country
+        where id = #{id}
+          and area_name not LIKE CONCAT(CONCAT('%', #{area}), '%');
+    </select>
+
+    <select id="selectByLanguage" resultMap="BaseResultMap">
+        select *
+        from asianwallets_saas.country
+        where enabled = 1
+          and language = #{language};
     </select>
 
     <update id="banCountry">
