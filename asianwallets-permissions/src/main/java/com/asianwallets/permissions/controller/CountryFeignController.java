@@ -67,9 +67,9 @@ public class CountryFeignController extends BaseController {
 
     @ApiOperation(value = "查询所有国家地区")
     @GetMapping("inquireAllCountry")
-    public BaseResponse inquireAllCountry(@RequestParam @ApiParam String language) {
+    public BaseResponse inquireAllCountry() {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, null,
                 "查询所有国家地区"));
-        return ResultUtil.success(countryFeign.inquireAllCountry(language));
+        return ResultUtil.success(countryFeign.inquireAllCountry());
     }
 }
