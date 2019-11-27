@@ -154,4 +154,7 @@ public class InstitutionDTO {
     @ApiModelProperty(value = "审核状态")
     private Integer auditStatus;
 
+    @ApiModelProperty(value = "语言")
+    private String language;
+
 }

@@ -2,7 +2,9 @@ package com.asianwallets.permissions.service.impl;
 
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.*;
+import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
@@ -13,20 +15,21 @@ import com.asianwallets.permissions.dto.SysRoleDto;
 import com.asianwallets.permissions.dto.SysRoleMenuDto;
 import com.asianwallets.permissions.dto.SysUserDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
+import com.asianwallets.permissions.feign.message.MessageFeign;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.utils.BCryptUtils;
 import com.asianwallets.permissions.vo.SysUserSecVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 用户业务接口实现类
@@ -42,7 +45,7 @@ public class SysUserServiceImpl implements SysUserService {
     private SysRoleMapper sysRoleMapper;
 
     @Autowired
-    private SysMenuMapper sysMenuMapper;
+    private MessageFeign messageFeign;
 
     @Autowired
     private SysUserRoleMapper sysUserRoleMapper;
@@ -274,5 +277,29 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public PageInfo<SysRole> pageGetSysRole(SysRoleDto sysRoleDto) {
         return new PageInfo<>(sysRoleMapper.pageGetSysRole(sysRoleDto));
+    }
+
+    /**
+     * 机构开户后发送邮件
+     *
+     * @param institutionDTO
+     */
+    @Override
+    public void openAccountEamin(InstitutionDTO institutionDTO) {
+        log.info("*********************开户发送邮件 Start*************************************");
+        try {
+            if (!StringUtils.isEmpty(institutionDTO.getInstitutionEmail())) {
+                log.info("*******************发送的机构邮箱是：*******************", institutionDTO.getInstitutionEmail());
+                Map<String, Object> map = new HashMap<>();
+                SimpleDateFormat sf = new SimpleDateFormat("yyyy.MM.dd");//日期格式
+                map.put("dateTime", sf.format(new Date()));//发送日期
+                map.put("institutionName", institutionDTO.getCnName());//机构名称
+                map.put("institutionCode", institutionDTO.getInstitutionId());//机构code
+                messageFeign.sendTemplateMail(institutionDTO.getInstitutionEmail(), institutionDTO.getLanguage(), Status._3, map);
+            }
+        } catch (Exception e) {
+            log.error("开户发送邮件失败：{}==={}", institutionDTO.getInstitutionEmail(), e.getMessage());
+        }
+        log.info("*********************开户发送邮件 End*************************************");
     }
 }
