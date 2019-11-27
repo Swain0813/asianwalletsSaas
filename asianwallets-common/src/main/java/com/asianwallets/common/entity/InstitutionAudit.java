@@ -29,6 +29,7 @@ public class InstitutionAudit extends BaseEntity {
 	@ApiModelProperty(value = "机构中文名称")
 	@Column(name ="cn_name")
 	private String cnName;
+
     /**
      * 机构英文名称
      */
@@ -208,9 +209,8 @@ public class InstitutionAudit extends BaseEntity {
 	@Column(name = "ext1")
 	private String ext1;
 
-    /**
-     * 启用禁用
-     */
+	@ApiModelProperty(value = "启用禁用")
+	@Column(name = "enabled")
 	private Boolean enabled;
 
 
