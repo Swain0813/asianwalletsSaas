@@ -3,7 +3,6 @@ package com.asianwallets.permissions.controller;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
