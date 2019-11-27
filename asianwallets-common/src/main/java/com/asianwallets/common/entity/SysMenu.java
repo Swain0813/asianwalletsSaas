@@ -27,9 +27,9 @@ public class SysMenu extends BaseEntity {
     @Column(name = "cn_name")
     private String cnName;
 
-    @ApiModelProperty(value = "类型(1-机构,2-商户,3-pos机,4-代理商)")
-    @Column(name = "type")
-    private Integer type;
+    @ApiModelProperty(value = "权限类型(1-运营,2-机构,3-商户,4-代理商,5-pos机)")
+    @Column(name = "permission_type")
+    private Integer permissionType;
 
     @ApiModelProperty(value = "路径")
     @Column(name = "url")
@@ -45,7 +45,7 @@ public class SysMenu extends BaseEntity {
 
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")
-    private Boolean enabled = true;
+    private Boolean enabled;
 
     @ApiModelProperty(value = "排序")
     @Column(name = "sort")
