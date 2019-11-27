@@ -51,11 +51,10 @@
         <include refid="Base_Column_List"/>
         from currency where id = #{id};
     </select>
+
     <select id="pageCurrency" resultMap="CurrencyVOResultMap">
         select
-        id, icon, code, name, create_time, update_time, creator, modifier,
-        remark,defaults, extend1,
-        enabled
+        <include refid="Base_Column_List"></include>
         from currency
         <where>
             <if test="code != null and code != ''">
