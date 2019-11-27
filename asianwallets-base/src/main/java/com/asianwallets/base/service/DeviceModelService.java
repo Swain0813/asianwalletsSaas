@@ -1,53 +1,17 @@
 package com.asianwallets.base.service;
 
+import com.asianwallets.common.base.BaseService;
 import com.asianwallets.common.dto.DeviceModelDTO;
-import com.asianwallets.common.dto.DeviceVendorDTO;
-import com.asianwallets.common.entity.DeviceVendor;
+import com.asianwallets.common.entity.DeviceModel;
 import com.asianwallets.common.vo.DeviceModelVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
 /**
- * 设备管理
+ * 设备型号管理接口
  */
-public interface DeviceService {
-
-    //-------------------------厂商-------------------------//
-
-    /**
-     * 新增厂商
-     *
-     * @param deviceVendorDTO
-     * @return 条数
-     */
-    int addDeviceVendor(DeviceVendorDTO deviceVendorDTO);
-
-    /**
-     * 修改厂商
-     *
-     * @param deviceVendorDTO
-     * @return 影响条数
-     */
-    int updateDeviceVendor(DeviceVendorDTO deviceVendorDTO);
-
-    /**
-     * 查询厂商信息
-     *
-     * @param deviceVendorDTO
-     * @return
-     */
-    PageInfo<DeviceVendor> pageDeviceVendor(DeviceVendorDTO deviceVendorDTO);
-
-    /**
-     * 启用禁用厂商
-     *
-     * @param deviceVendorDTO
-     * @return
-     */
-    int banDeviceVendor(DeviceVendorDTO deviceVendorDTO);
-
-    //-------------------------型号-------------------------//
+public interface DeviceModelService extends BaseService<DeviceModel> {
 
     /**
      * 新增设备型号
@@ -88,5 +52,4 @@ public interface DeviceService {
      * @return
      */
     List<DeviceModelVO> queryModelCategory();
-
 }

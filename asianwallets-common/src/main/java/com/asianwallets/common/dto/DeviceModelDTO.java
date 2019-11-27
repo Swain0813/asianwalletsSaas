@@ -25,7 +25,7 @@ public class DeviceModelDTO extends BasePageHelper {
     @ApiModelProperty(value = "设备类型")
     private String deviceType;
 
-    @ApiModelProperty(value = "设备型号名称")
+    @ApiModelProperty(value = "设备型号")
     private String deviceName;
 
     @ApiModelProperty(value = "设备厂商名称")
@@ -72,6 +72,4 @@ public class DeviceModelDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "备注")
     private String remark;
-
-
 }

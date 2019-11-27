@@ -17,8 +17,7 @@ import java.util.List;
 public class CountryVO {
 
     private String countryId;
-    private String cnCountryName;
-    private String enCountryName;
+    private String countryName;
     private String areaCode;
     private List<AreaVO> areaVOS;
 }

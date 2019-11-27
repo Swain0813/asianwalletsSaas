@@ -13,22 +13,15 @@
         <result column="creator" property="creator" jdbcType="VARCHAR"/>
         <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
-        <result column="extend1" property="extend1" jdbcType="VARCHAR"/>
-        <result column="extend2" property="extend2" jdbcType="VARCHAR"/>
-        <result column="extend3" property="extend3" jdbcType="VARCHAR"/>
-        <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
-        <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
-        <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
         id, vendor_cn_name, vendor_en_name, business_contact, contact_information, enabled,
-    create_time, update_time, creator, modifier, remark, extend1,
-    extend2, extend3, extend4, extend5, extend6
+    create_time, update_time, creator, modifier, remark
     </sql>
-
-    <select id="pageDeviceVendor" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
+    <select id="pageDeviceVendor" resultType="com.asianwallets.common.entity.DeviceVendor"
+            resultMap="BaseResultMap">
+        select ID, VENDOR_CN_NAME, VENDOR_EN_NAME, BUSINESS_CONTACT, CONTACT_INFORMATION, ENABLED, CREATE_TIME,
+        UPDATE_TIME, CREATOR, MODIFIER, REMARK
         from device_vendor
         <where>
             <if test="id != null and id!=''">and id =#{id}</if>
@@ -50,11 +43,10 @@
             <if test="remark != null and remark!=''">and remark =#{remark}</if>
         </where>
     </select>
-
     <select id="selectByVendorId" resultType="java.lang.Integer">
         select COUNT(*)
         from device_vendor
-        where id = #{vendorId} and enabled = 1;
+        where id = #{vendorId};
     </select>
 
     <select id="queryVendorCategory" resultMap="BaseResultMap" resultType="com.asianwallets.common.entity.DeviceVendor">
@@ -64,11 +56,4 @@
         group by vendor_cn_name
     </select>
 
-    <select id="selectCountByCnNameAndEnName" resultType="java.lang.Integer">
-        select count(*) from device_vendor where vendor_cn_name = #{vendorCnName} or vendor_en_name = #{vendorEnName} ;
-    </select>
-
-    <update id="banDeviceVendorById">
-        update device_vendor set enabled = #{enabled} where id = #{id};
-    </update>
 </mapper>
