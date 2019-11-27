@@ -4,14 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
-import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.service.OperationLogService;
-import com.asianwallets.permissions.service.SysMenuService;
 import com.asianwallets.permissions.service.SysRoleService;
-import com.asianwallets.permissions.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,7 +28,6 @@ public class SysRoleController extends BaseController {
 
     @Autowired
     private SysRoleService sysRoleService;
-
 
     @ApiOperation(value = "添加角色权限信息")
     @PostMapping("/addSysRole")

@@ -9,8 +9,6 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.service.OperationLogService;
-import com.asianwallets.permissions.service.SysMenuService;
-import com.asianwallets.permissions.service.SysRoleService;
 import com.asianwallets.permissions.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

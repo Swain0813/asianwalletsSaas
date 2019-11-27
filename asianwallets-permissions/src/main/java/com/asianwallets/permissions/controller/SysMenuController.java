@@ -4,14 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
-import com.asianwallets.common.dto.InstitutionDTO;
+import com.asianwallets.common.entity.SysMenu;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
-import com.asianwallets.permissions.dto.*;
+import com.asianwallets.permissions.dto.SysMenuDto;
 import com.asianwallets.permissions.service.OperationLogService;
 import com.asianwallets.permissions.service.SysMenuService;
-import com.asianwallets.permissions.service.SysRoleService;
-import com.asianwallets.permissions.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -32,6 +30,29 @@ public class SysMenuController extends BaseController {
     @Autowired
     private SysMenuService sysMenuService;
 
+    @ApiOperation(value = "添加权限信息")
+    @PostMapping("/addMenu")
+    public BaseResponse addMenu(@RequestBody @ApiParam SysMenuDto sysMenuDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysMenuDto),
+                "添加权限信息"));
+        return ResultUtil.success(sysMenuService.addMenu(getSysUserVO().getUsername(), sysMenuDto));
+    }
+
+    @ApiOperation(value = "删除权限信息")
+    @PostMapping("/deleteMenu")
+    public BaseResponse deleteMenu(@RequestBody @ApiParam SysMenuDto sysMenuDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysMenuDto),
+                "删除权限信息"));
+        return ResultUtil.success(sysMenuService.deleteMenu(getSysUserVO().getUsername(), sysMenuDto));
+    }
+
+    @ApiOperation(value = "修改权限信息")
+    @PostMapping("/updateMenu")
+    public BaseResponse updateMenu(@RequestBody @ApiParam SysMenuDto sysMenuDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysMenuDto),
+                "修改权限信息"));
+        return ResultUtil.success(sysMenuService.updateMenu(getSysUserVO().getUsername(), sysMenuDto));
+    }
 
     @ApiOperation(value = "查询用户所有权限信息（userId可不传）")
     @GetMapping("/getAllMenuByUserId")

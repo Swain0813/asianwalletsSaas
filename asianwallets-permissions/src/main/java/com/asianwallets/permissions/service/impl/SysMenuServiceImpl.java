@@ -1,6 +1,7 @@
 package com.asianwallets.permissions.service.impl;
 
 import com.asianwallets.permissions.dao.SysMenuMapper;
+import com.asianwallets.permissions.dto.SysMenuDto;
 import com.asianwallets.permissions.service.SysMenuService;
 import com.asianwallets.permissions.vo.FirstMenuVO;
 import com.asianwallets.permissions.vo.SecondMenuVO;
@@ -17,6 +18,42 @@ public class SysMenuServiceImpl implements SysMenuService {
 
     @Autowired
     private SysMenuMapper sysMenuMapper;
+
+    /**
+     * 添加权限信息
+     *
+     * @param username   用户名
+     * @param sysMenuDto 权限输入实体
+     * @return 修改条数
+     */
+    @Override
+    public int addMenu(String username, SysMenuDto sysMenuDto) {
+        return 0;
+    }
+
+    /**
+     * 删除权限信息
+     *
+     * @param username   用户名
+     * @param sysMenuDto 权限输入实体
+     * @return 修改条数
+     */
+    @Override
+    public int deleteMenu(String username, SysMenuDto sysMenuDto) {
+        return 0;
+    }
+
+    /**
+     * 修改权限信息
+     *
+     * @param username   用户名
+     * @param sysMenuDto 权限输入实体
+     * @return 修改条数
+     */
+    @Override
+    public int updateMenu(String username, SysMenuDto sysMenuDto) {
+        return 0;
+    }
 
     /**
      * 查询用户所有权限信息
