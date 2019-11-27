@@ -4,7 +4,7 @@
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Institution">
-	<result column="id" property="id" />
+	    <result column="id" property="id" />
 		<result column="cn_name" property="cnName" />
 		<result column="en_name" property="enName" />
 		<result column="country_type" property="countryType" />
@@ -55,7 +55,7 @@
 		i.creator,i.modifier,i.remark,i.enabled
 		from institution i
 		<where>
-			<if test="institutionCode!=null and institutionCode != ''">
+			<if test="institutionId!=null and institutionId != ''">
 				and i.id=#{institutionId}
 			</if>
 			<if test="institutionType!=null and institutionType != ''">
