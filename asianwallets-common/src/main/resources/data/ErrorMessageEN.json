@@ -1,7 +1,7 @@
 {
   "10001": "Account already exists",
   "10002": "Role already exists",
-  "10003": "The organization number cannot be blank",
+  "10003": "Role does not exist",
   "10004": "User does not exist",
   "10005": "Institutional information does not exist",
   "10006": "Key information does not exist",

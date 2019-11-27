@@ -28,7 +28,7 @@ public enum EResultEnum {
 
     USER_EXIST("10001"),//账号已存在
     ROLE_EXIST("10002"),//角色已存在
-    INSTITUTIONCODE_IS_NULL("10003"),//机构编号不能为空
+    ROLE_NO_EXIST("10003"),//角色不存在
     USER_NOT_EXIST("10004"),//用户不存在
     INSTITUTION_NOT_EXIST("10005"),//机构信息不存在
     SECRET_IS_NOT_EXIST("10006"),//密钥信息不存在
@@ -177,7 +177,6 @@ public enum EResultEnum {
     ACCOUNT_TYPE_IS_NULL("30029"),//入账账户类型不能为空
     PRODUCT_CHANNEL_CURRENCY_NO_SAME("30030"),//通道与产品币种不一致
     INFORMATION_DOES_NOT_EXIST("30031"),//信息不存在
-
 
 
     /****汇率模块的错误信息从40001开始--许文奇*****/
