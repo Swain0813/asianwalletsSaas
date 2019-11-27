@@ -2,7 +2,7 @@ package com.asianwallets.permissions.dao;
 
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.SysRole;
-import com.asianwallets.permissions.dto.SysRoleSecDto;
+import com.asianwallets.permissions.dto.SysRoleDto;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,5 +26,5 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      * @param sysRoleSecDto 角色查询实体
      * @return 角色集合
      */
-    List<SysRole> pageGetSysRole(SysRoleSecDto sysRoleSecDto);
+    List<SysRole> pageGetSysRole(SysRoleDto sysRoleSecDto);
 }

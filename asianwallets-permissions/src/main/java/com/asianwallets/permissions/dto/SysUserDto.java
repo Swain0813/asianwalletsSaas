@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(value = "用户查询实体", description = "用户查询实体")
-public class SysUserSecDto extends BasePageHelper {
+@ApiModel(value = "用户输入实体", description = "用户输入实体")
+public class SysUserDto extends BasePageHelper {
 
     @ApiModelProperty(value = "系统ID")
     private String sysId;

@@ -20,7 +20,7 @@
     <sql id="Base_Column_List">
         id,create_time,update_time, sys_id, permission_type, remark, creator, modifier,
         role_name, role_code,description,enabled,sort
-  </sql>
+    </sql>
 
     <select id="getSysRoleByNameAndSysId" resultMap="BaseResultMap">
         select

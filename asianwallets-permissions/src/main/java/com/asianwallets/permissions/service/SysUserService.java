@@ -2,10 +2,10 @@ package com.asianwallets.permissions.service;
 
 import com.asianwallets.common.entity.SysRole;
 import com.asianwallets.common.vo.SysUserVO;
+import com.asianwallets.permissions.dto.SysRoleDto;
 import com.asianwallets.permissions.dto.SysRoleMenuDto;
-import com.asianwallets.permissions.dto.SysRoleSecDto;
+import com.asianwallets.permissions.dto.SysUserDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
-import com.asianwallets.permissions.dto.SysUserSecDto;
 import com.asianwallets.permissions.vo.SysUserSecVO;
 import com.github.pagehelper.PageInfo;
 
@@ -64,7 +64,7 @@ public interface SysUserService {
      * @param sysUserSecDto 角色权限输入实体
      * @return 修改条数
      */
-    PageInfo<SysUserSecVO> pageGetSysUser(SysUserSecDto sysUserSecDto);
+    PageInfo<SysUserSecVO> pageGetSysUser(SysUserDto sysUserSecDto);
 
     /**
      * 分页查询角色信息
@@ -72,5 +72,5 @@ public interface SysUserService {
      * @param sysRoleSecDto 角色权限输入实体
      * @return 修改条数
      */
-    PageInfo<SysRole> pageGetSysRole(SysRoleSecDto sysRoleSecDto);
+    PageInfo<SysRole> pageGetSysRole(SysRoleDto sysRoleSecDto);
 }

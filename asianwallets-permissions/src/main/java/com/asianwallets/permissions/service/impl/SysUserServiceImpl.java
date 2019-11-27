@@ -9,10 +9,10 @@ import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.dao.*;
+import com.asianwallets.permissions.dto.SysRoleDto;
 import com.asianwallets.permissions.dto.SysRoleMenuDto;
-import com.asianwallets.permissions.dto.SysRoleSecDto;
+import com.asianwallets.permissions.dto.SysUserDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
-import com.asianwallets.permissions.dto.SysUserSecDto;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.utils.BCryptUtils;
 import com.asianwallets.permissions.vo.SysUserSecVO;
@@ -251,16 +251,16 @@ public class SysUserServiceImpl implements SysUserService {
     /**
      * 分页查询用户信息
      *
-     * @param sysUserSecDto 用户查询实体
+     * @param sysUserDto 用户查询实体
      * @return 修改条数
      */
     @Override
-    public PageInfo<SysUserSecVO> pageGetSysUser(SysUserSecDto sysUserSecDto) {
+    public PageInfo<SysUserSecVO> pageGetSysUser(SysUserDto sysUserDto) {
         List<SysUserSecVO> sysUserList = new ArrayList<>();
-        if (AsianWalletConstant.OPERATION.equals(sysUserSecDto.getPermissionType())) {
+        if (AsianWalletConstant.OPERATION.equals(sysUserDto.getPermissionType())) {
             //运营系统
-            sysUserSecDto.setSort("s.create_time");
-            sysUserList = sysUserMapper.pageGetSysUserByOperation(sysUserSecDto);
+            sysUserDto.setSort("s.create_time");
+            sysUserList = sysUserMapper.pageGetSysUserByOperation(sysUserDto);
         }
         return new PageInfo<>(sysUserList);
     }
@@ -268,11 +268,11 @@ public class SysUserServiceImpl implements SysUserService {
     /**
      * 分页查询角色信息
      *
-     * @param sysRoleSecDto 角色查询实体
+     * @param sysRoleDto 角色查询实体
      * @return 修改条数
      */
     @Override
-    public PageInfo<SysRole> pageGetSysRole(SysRoleSecDto sysRoleSecDto) {
-        return new PageInfo<>(sysRoleMapper.pageGetSysRole(sysRoleSecDto));
+    public PageInfo<SysRole> pageGetSysRole(SysRoleDto sysRoleDto) {
+        return new PageInfo<>(sysRoleMapper.pageGetSysRole(sysRoleDto));
     }
 }

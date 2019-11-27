@@ -3,7 +3,7 @@ package com.asianwallets.permissions.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.SysUser;
 import com.asianwallets.common.vo.SysUserVO;
-import com.asianwallets.permissions.dto.SysUserSecDto;
+import com.asianwallets.permissions.dto.SysUserDto;
 import com.asianwallets.permissions.vo.SysUserSecVO;
 import org.springframework.stereotype.Repository;
 
@@ -31,8 +31,8 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     /**
      * 运营系统查询用户信息
      *
-     * @param sysUserSecDto 用户查询实体
+     * @param sysUserDto 用户查询实体
      * @return 用户集合
      */
-    List<SysUserSecVO> pageGetSysUserByOperation(SysUserSecDto sysUserSecDto);
+    List<SysUserSecVO> pageGetSysUserByOperation(SysUserDto sysUserDto);
 }
