@@ -22,7 +22,7 @@ import java.util.UUID;
 @Slf4j
 public class FileUploadServiceImpl implements FileUploadService {
 
-    public static final String IMAGES_DIR = "/images/";
+    public static final String IMAGES_DIR = "/imagesaas/";
 
     @Value("${file.http.server}")//已经不用了
     private String fileHttpServer;//图片上传返回的url比如：http://img.asianwallets.com/images/
