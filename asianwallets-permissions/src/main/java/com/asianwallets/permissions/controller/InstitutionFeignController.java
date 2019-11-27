@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * @create: 2019-11-27 10:02
  **/
 @RestController
-@Api(description = "商户管理接口")
+@Api(description = "机构管理接口")
 @RequestMapping("/institution")
 public class InstitutionFeignController extends BaseController {
 
