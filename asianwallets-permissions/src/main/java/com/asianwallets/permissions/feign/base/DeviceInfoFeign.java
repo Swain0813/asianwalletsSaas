@@ -6,7 +6,6 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.impl.DeviceInfoFeignImpl;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -17,7 +16,7 @@ import java.util.List;
  * @Date: 2019/3/6 18:04
  * @Description: 设备信息Feign
  */
-@Component
+
 @FeignClient(value = "asianwallets-base", fallback = DeviceInfoFeignImpl.class)
 public interface DeviceInfoFeign {
     /**

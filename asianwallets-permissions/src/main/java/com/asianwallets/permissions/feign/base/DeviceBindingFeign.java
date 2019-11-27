@@ -5,14 +5,12 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.impl.DeviceBindingFeignImpl;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 设备绑定Feign
  */
-@Component
 @FeignClient(value = "asianwallets-base", fallback = DeviceBindingFeignImpl.class)
 public interface DeviceBindingFeign {
 
