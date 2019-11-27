@@ -1,32 +1,31 @@
 package com.asianwallets.permissions.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
+import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.dao.*;
-import com.asianwallets.permissions.dto.SysRoleDto;
-import com.asianwallets.permissions.dto.SysRoleMenuDto;
-import com.asianwallets.permissions.dto.SysUserDto;
-import com.asianwallets.permissions.dto.SysUserRoleDto;
+import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.utils.BCryptUtils;
 import com.asianwallets.permissions.vo.SysUserSecVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 用户业务接口实现类
@@ -55,6 +54,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
     private AuditorProvider auditorProvider;
+
 
     /**
      * 根据用户名查询用户关联角色,权限信息
@@ -274,5 +274,91 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public PageInfo<SysRole> pageGetSysRole(SysRoleDto sysRoleDto) {
         return new PageInfo<>(sysRoleMapper.pageGetSysRole(sysRoleDto));
+    }
+
+    /**
+     * 重置登录密码
+     *
+     * @param username 用户名
+     * @param userId   用户ID
+     * @return 修改条数
+     */
+    @Override
+    @Transactional
+    public int resetPassword(String username, String userId) {
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
+        if (sysUser == null) {
+            log.info("=========【重置登录密码】==========【用户信息不存在!】");
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        if (StringUtils.isBlank(sysUser.getEmail())) {
+            log.info("=========【重置登录密码】==========【用户邮箱为空!】");
+            throw new BusinessException(EResultEnum.USER_EMAIL_IS_NOT_NULL.getCode());
+        }
+        //随机生成六位登录密码与交易密码
+        String randomPassword = IDS.randomNumber(6);
+        String randomTradePassword = IDS.randomNumber(6);
+        sysUser.setPassword(BCryptUtils.encode(randomPassword));
+        sysUser.setTradePassword(BCryptUtils.encode(randomTradePassword));
+        sysUser.setModifier(username);
+        sysUser.setUpdateTime(new Date());
+        //重置密码后邮件告知用户
+        JSONObject sendEmailRequest = new JSONObject();
+        sendEmailRequest.put("date", DateToolUtils.getReqDateG(new Date()));
+        sendEmailRequest.put("pwd", randomPassword);
+        sendEmailRequest.put("twd", randomTradePassword);
+        //TODO messageFeign.sendTemplateMail(sysUser.getEmail(), auditorProvider.getLanguage(), Status._0, map);
+        return sysUserMapper.updateByPrimaryKeySelective(sysUser);
+    }
+
+    /**
+     * 修改登录密码
+     *
+     * @param username          用户名
+     * @param updatePasswordDto 修改密码实体
+     * @return 修改条数
+     */
+    @Override
+    @Transactional
+    public int updatePassword(String username, UpdatePasswordDto updatePasswordDto) {
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(updatePasswordDto.getUserId());
+        if (sysUser == null) {
+            log.info("=========【修改登录密码】==========【用户不存在!】");
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        if (BCryptUtils.matches(updatePasswordDto.getOldPassword(), sysUser.getPassword())) {
+            sysUser.setPassword(BCryptUtils.encode(updatePasswordDto.getPassword()));
+            sysUser.setModifier(username);
+            sysUser.setUpdateTime(new Date());
+        } else {
+            log.info("=========【修改登录密码】==========【原始密码错误!】");
+            throw new BusinessException(EResultEnum.ORIGINAL_PASSWORD_ERROR.getCode());
+        }
+        return sysUserMapper.updateByPrimaryKeySelective(sysUser);
+    }
+
+    /**
+     * 修改交易密码
+     *
+     * @param username          用户名
+     * @param updatePasswordDto 修改密码实体
+     * @return 修改条数
+     */
+    @Override
+    public int updateTradePassword(String username, UpdatePasswordDto updatePasswordDto) {
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(updatePasswordDto.getUserId());
+        if (sysUser == null) {
+            log.info("=========【修改交易密码】==========【用户不存在!】");
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        if (BCryptUtils.matches(updatePasswordDto.getOldPassword(), sysUser.getTradePassword())) {
+            sysUser.setTradePassword(BCryptUtils.encode(updatePasswordDto.getPassword()));
+            sysUser.setModifier(username);
+            sysUser.setUpdateTime(new Date());
+        } else {
+            log.info("=========【修改交易密码】==========【原始密码错误!】");
+            throw new BusinessException(EResultEnum.ORIGINAL_PASSWORD_ERROR.getCode());
+        }
+        return sysUserMapper.updateByPrimaryKeySelective(sysUser);
     }
 }

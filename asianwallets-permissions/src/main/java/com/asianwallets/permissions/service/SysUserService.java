@@ -2,10 +2,7 @@ package com.asianwallets.permissions.service;
 
 import com.asianwallets.common.entity.SysRole;
 import com.asianwallets.common.vo.SysUserVO;
-import com.asianwallets.permissions.dto.SysRoleDto;
-import com.asianwallets.permissions.dto.SysRoleMenuDto;
-import com.asianwallets.permissions.dto.SysUserDto;
-import com.asianwallets.permissions.dto.SysUserRoleDto;
+import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.vo.SysUserSecVO;
 import com.github.pagehelper.PageInfo;
 
@@ -73,4 +70,31 @@ public interface SysUserService {
      * @return 修改条数
      */
     PageInfo<SysRole> pageGetSysRole(SysRoleDto sysRoleSecDto);
+
+    /**
+     * 重置登录密码
+     *
+     * @param username 用户名
+     * @param userId   用户ID
+     * @return 修改条数
+     */
+    int resetPassword(String username, String userId);
+
+    /**
+     * 修改登录密码
+     *
+     * @param username          用户名
+     * @param updatePasswordDto 修改密码实体
+     * @return 修改条数
+     */
+    int updatePassword(String username, UpdatePasswordDto updatePasswordDto);
+
+    /**
+     * 修改交易密码
+     *
+     * @param username          用户名
+     * @param updatePasswordDto 修改密码实体
+     * @return 修改条数
+     */
+    int updateTradePassword(String username, UpdatePasswordDto updatePasswordDto);
 }

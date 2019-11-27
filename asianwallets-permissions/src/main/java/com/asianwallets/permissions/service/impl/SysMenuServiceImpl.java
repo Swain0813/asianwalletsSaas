@@ -18,7 +18,6 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Autowired
     private SysMenuMapper sysMenuMapper;
 
-
     /**
      * 查询用户所有权限信息
      *
@@ -28,26 +27,26 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public List<FirstMenuVO> getAllMenuByUserId(String userId, Integer permissionType) {
-        List<FirstMenuVO> list = sysMenuMapper.getAllMenuByPermissionType(permissionType);
+        List<FirstMenuVO> menuList = sysMenuMapper.getAllMenuByPermissionType(permissionType);
         if (StringUtils.isNotBlank(userId)) {
-            Set<String> set = sysMenuMapper.getUserMenu(userId);
-            for (FirstMenuVO firstMenuVO : list) {
-                if (set.contains(firstMenuVO.getId())) {
+            Set<String> menuSet = sysMenuMapper.getUserMenu(userId);
+            for (FirstMenuVO firstMenuVO : menuList) {
+                if (menuSet.contains(firstMenuVO.getId())) {
                     firstMenuVO.setFlag(true);
                 }
                 for (SecondMenuVO secondMenuVO : firstMenuVO.getSecondMenuVOS()) {
-                    if (set.contains(secondMenuVO.getId())) {
+                    if (menuSet.contains(secondMenuVO.getId())) {
                         secondMenuVO.setFlag(true);
                     }
                     for (ThreeMenuVO threeMenuVO : secondMenuVO.getThreeMenuVOS()) {
-                        if (set.contains(threeMenuVO.getId())) {
+                        if (menuSet.contains(threeMenuVO.getId())) {
                             threeMenuVO.setFlag(true);
                         }
                     }
                 }
             }
         }
-        return list;
+        return menuList;
     }
 
     /**
@@ -59,25 +58,26 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public List<FirstMenuVO> getAllMenuByRoleId(String roleId, Integer permissionType) {
-        List<FirstMenuVO> list = sysMenuMapper.getAllMenuByPermissionType(permissionType);
+        //根据权限类型查询所有权限
+        List<FirstMenuVO> menuList = sysMenuMapper.getAllMenuByPermissionType(permissionType);
         if (StringUtils.isNotBlank(roleId)) {
-            Set<String> set = sysMenuMapper.getRoleMenu(roleId);
-            for (FirstMenuVO firstMenuVO : list) {
-                if (set.contains(firstMenuVO.getId())) {
+            Set<String> menuSet = sysMenuMapper.getRoleMenu(roleId);
+            for (FirstMenuVO firstMenuVO : menuList) {
+                if (menuSet.contains(firstMenuVO.getId())) {
                     firstMenuVO.setFlag(true);
                 }
                 for (SecondMenuVO secondMenuVO : firstMenuVO.getSecondMenuVOS()) {
-                    if (set.contains(secondMenuVO.getId())) {
+                    if (menuSet.contains(secondMenuVO.getId())) {
                         secondMenuVO.setFlag(true);
                     }
                     for (ThreeMenuVO threeMenuVO : secondMenuVO.getThreeMenuVOS()) {
-                        if (set.contains(threeMenuVO.getId())) {
+                        if (menuSet.contains(threeMenuVO.getId())) {
                             threeMenuVO.setFlag(true);
                         }
                     }
                 }
             }
         }
-        return list;
+        return menuList;
     }
 }
