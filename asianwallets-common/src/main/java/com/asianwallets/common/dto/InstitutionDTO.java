@@ -157,4 +157,7 @@ public class InstitutionDTO {
     @ApiModelProperty(value = "语言")
     private String language;
 
+    @ApiModelProperty(value = "启用禁用")
+    private Boolean enabled;
+
 }
