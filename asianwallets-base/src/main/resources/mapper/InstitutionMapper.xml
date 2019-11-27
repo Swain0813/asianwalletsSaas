@@ -58,9 +58,6 @@
 			<if test="institutionId!=null and institutionId != ''">
 				and i.id=#{institutionId}
 			</if>
-			<if test="institutionType!=null and institutionType != ''">
-				and i.institution_type=#{institutionType}
-			</if>
 			<if test="cnName != null and cnName != ''">
 				and i.cn_name LIKE CONCAT(CONCAT('%', #{cnName}), '%')
 			</if>
