@@ -2,31 +2,40 @@ package com.asianwallets.permissions.service.impl;
 
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.*;
+import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.response.ResPermissions;
+import com.asianwallets.common.response.ResRole;
 import com.asianwallets.common.utils.ArrayUtil;
+import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.SysMenuVO;
+import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.dao.*;
-import com.asianwallets.permissions.dto.SysRoleDto;
-import com.asianwallets.permissions.dto.SysRoleMenuDto;
+import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.dto.SysUserDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
+import com.asianwallets.permissions.feign.message.MessageFeign;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.utils.BCryptUtils;
+import com.asianwallets.permissions.vo.SysUserDetailVO;
 import com.asianwallets.permissions.vo.SysUserSecVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 用户业务接口实现类
@@ -39,16 +48,10 @@ public class SysUserServiceImpl implements SysUserService {
     private SysUserMapper sysUserMapper;
 
     @Autowired
-    private SysRoleMapper sysRoleMapper;
-
-    @Autowired
-    private SysMenuMapper sysMenuMapper;
+    private MessageFeign messageFeign;
 
     @Autowired
     private SysUserRoleMapper sysUserRoleMapper;
-
-    @Autowired
-    private SysRoleMenuMapper sysRoleMenuMapper;
 
     @Autowired
     private SysUserMenuMapper sysUserMenuMapper;
@@ -56,12 +59,14 @@ public class SysUserServiceImpl implements SysUserService {
     @Autowired
     private AuditorProvider auditorProvider;
 
+
     /**
      * 根据用户名查询用户关联角色,权限信息
      *
      * @param userName 用户名
      * @return SysUserVO
      */
+    @Override
     public SysUserVO getSysUser(String userName) {
         return sysUserMapper.getSysUser(userName);
     }
@@ -167,87 +172,6 @@ public class SysUserServiceImpl implements SysUserService {
         return sysUserMapper.updateByPrimaryKeySelective(dbSysUser);
     }
 
-
-    /**
-     * 新增角色权限信息
-     *
-     * @param username       用户名
-     * @param sysRoleMenuDto 角色权限输入实体
-     * @return 修改条数
-     */
-    @Override
-    @Transactional
-    public int addSysRole(String username, SysRoleMenuDto sysRoleMenuDto) {
-        SysRole dbSysRole = sysRoleMapper.getSysRoleByNameAndSysId(sysRoleMenuDto.getRoleName(), sysRoleMenuDto.getSysId());
-        if (dbSysRole != null) {
-            log.info("=========【新增角色权限信息】==========【角色名已存在!】");
-            throw new BusinessException(EResultEnum.ROLE_EXIST.getCode());
-        }
-        SysRole sysRole = new SysRole();
-        sysRole.setId(IDS.uuid2());
-        sysRole.setSysId(sysRoleMenuDto.getSysId());
-        sysRole.setPermissionType(sysRoleMenuDto.getPermissionType());
-        sysRole.setRoleName(sysRoleMenuDto.getRoleName());
-        sysRole.setDescription(sysRoleMenuDto.getDescription());
-        sysRole.setCreator(username);
-        sysRole.setCreateTime(new Date());
-        sysRole.setSort(0);
-        sysRole.setEnabled(true);
-        List<SysRoleMenu> list = Lists.newArrayList();
-        for (String menuId : sysRoleMenuDto.getMenuIdList()) {
-            SysRoleMenu sysRoleMenu = new SysRoleMenu();
-            sysRoleMenu.setId(IDS.uuid());
-            sysRoleMenu.setRoleId(sysRole.getId());
-            sysRoleMenu.setMenuId(menuId);
-            sysRoleMenu.setCreator(username);
-            sysRoleMenu.setModifier(username);
-            sysRoleMenu.setCreateTime(new Date());
-            sysRoleMenu.setUpdateTime(new Date());
-            list.add(sysRoleMenu);
-        }
-        sysRoleMenuMapper.insertList(list);
-        return sysRoleMapper.insert(sysRole);
-    }
-
-    /**
-     * 修改角色权限信息
-     *
-     * @param username       用户名
-     * @param sysRoleMenuDto 角色权限输入实体
-     * @return 修改条数
-     */
-    @Override
-    @Transactional
-    public int updateSysRole(String username, SysRoleMenuDto sysRoleMenuDto) {
-        SysRole dbSysRole = sysRoleMapper.selectByPrimaryKey(sysRoleMenuDto.getRoleId());
-        if (dbSysRole == null) {
-            log.info("=========【修改角色权限信息】==========【角色不存在!】");
-            throw new BusinessException(EResultEnum.ROLE_NO_EXIST.getCode());
-        }
-        dbSysRole.setModifier(username);
-        dbSysRole.setUpdateTime(new Date());
-        sysRoleMapper.updateByPrimaryKeySelective(dbSysRole);
-        //根据角色ID删除角色权限表信息
-        sysRoleMenuMapper.deleteByRoleId(dbSysRole.getId());
-        List<SysRoleMenu> roleMenuList = Lists.newArrayList();
-        for (String menuId : sysRoleMenuDto.getMenuIdList()) {
-            SysRoleMenu sysRoleMenu = new SysRoleMenu();
-            sysRoleMenu.setId(IDS.uuid());
-            sysRoleMenu.setMenuId(menuId);
-            sysRoleMenu.setRoleId(dbSysRole.getId());
-            sysRoleMenu.setCreator(username);
-            sysRoleMenu.setModifier(username);
-            sysRoleMenu.setCreateTime(new Date());
-            sysRoleMenu.setUpdateTime(new Date());
-            roleMenuList.add(sysRoleMenu);
-        }
-        if (roleMenuList.size() == 0) {
-            log.info("=========【修改角色权限信息】==========【角色权限不能为空!】");
-            throw new BusinessException(EResultEnum.ROLE_PERMISSION_IS_NOT_NULL.getCode());
-        }
-        return sysRoleMenuMapper.insertList(roleMenuList);
-    }
-
     /**
      * 分页查询用户信息
      *
@@ -265,14 +189,148 @@ public class SysUserServiceImpl implements SysUserService {
         return new PageInfo<>(sysUserList);
     }
 
+
     /**
-     * 分页查询角色信息
+     * 重置登录密码
      *
-     * @param sysRoleDto 角色查询实体
+     * @param username 用户名
+     * @param userId   用户ID
      * @return 修改条数
      */
     @Override
-    public PageInfo<SysRole> pageGetSysRole(SysRoleDto sysRoleDto) {
-        return new PageInfo<>(sysRoleMapper.pageGetSysRole(sysRoleDto));
+    @Transactional
+    public int resetPassword(String username, String userId) {
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
+        if (sysUser == null) {
+            log.info("=========【重置登录密码】==========【用户信息不存在!】");
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        if (StringUtils.isBlank(sysUser.getEmail())) {
+            log.info("=========【重置登录密码】==========【用户邮箱为空!】");
+            throw new BusinessException(EResultEnum.USER_EMAIL_IS_NOT_NULL.getCode());
+        }
+        //随机生成六位登录密码与交易密码
+        String randomPassword = IDS.randomNumber(6);
+        String randomTradePassword = IDS.randomNumber(6);
+        sysUser.setPassword(BCryptUtils.encode(randomPassword));
+        sysUser.setTradePassword(BCryptUtils.encode(randomTradePassword));
+        sysUser.setModifier(username);
+        sysUser.setUpdateTime(new Date());
+        //重置密码后邮件告知用户
+        Map<String, Object> map = new HashMap<>();
+        map.put("date", DateToolUtils.getReqDateG(new Date()));
+        map.put("pwd", randomPassword);
+        map.put("twd", randomTradePassword);
+        messageFeign.sendTemplateMail(sysUser.getEmail(), auditorProvider.getLanguage(), Status._0, map);
+        return sysUserMapper.updateByPrimaryKeySelective(sysUser);
+    }
+
+    /**
+     * 修改登录密码
+     *
+     * @param username          用户名
+     * @param updatePasswordDto 修改密码实体
+     * @return 修改条数
+     */
+    @Override
+    @Transactional
+    public int updatePassword(String username, UpdatePasswordDto updatePasswordDto) {
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(updatePasswordDto.getUserId());
+        if (sysUser == null) {
+            log.info("=========【修改登录密码】==========【用户不存在!】");
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        if (BCryptUtils.matches(updatePasswordDto.getOldPassword(), sysUser.getPassword())) {
+            sysUser.setPassword(BCryptUtils.encode(updatePasswordDto.getPassword()));
+            sysUser.setModifier(username);
+            sysUser.setUpdateTime(new Date());
+        } else {
+            log.info("=========【修改登录密码】==========【原始密码错误!】");
+            throw new BusinessException(EResultEnum.ORIGINAL_PASSWORD_ERROR.getCode());
+        }
+        return sysUserMapper.updateByPrimaryKeySelective(sysUser);
+    }
+
+    /**
+     * 修改交易密码
+     *
+     * @param username          用户名
+     * @param updatePasswordDto 修改密码实体
+     * @return 修改条数
+     */
+    @Override
+    public int updateTradePassword(String username, UpdatePasswordDto updatePasswordDto) {
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(updatePasswordDto.getUserId());
+        if (sysUser == null) {
+            log.info("=========【修改交易密码】==========【用户不存在!】");
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        if (BCryptUtils.matches(updatePasswordDto.getOldPassword(), sysUser.getTradePassword())) {
+            sysUser.setTradePassword(BCryptUtils.encode(updatePasswordDto.getPassword()));
+            sysUser.setModifier(username);
+            sysUser.setUpdateTime(new Date());
+        } else {
+            log.info("=========【修改交易密码】==========【原始密码错误!】");
+            throw new BusinessException(EResultEnum.ORIGINAL_PASSWORD_ERROR.getCode());
+        }
+        return sysUserMapper.updateByPrimaryKeySelective(sysUser);
+    }
+
+    /**
+     * 查询用户详情
+     *
+     * @param username 用户名
+     * @return 用户详情实体
+     */
+    @Override
+    public SysUserDetailVO getSysUserDetail(String username) {
+        SysUserVO sysUser = sysUserMapper.getSysUser(username);
+        SysUserDetailVO sysUserDetailVO = new SysUserDetailVO();
+        BeanUtils.copyProperties(sysUser, sysUserDetailVO);
+        List<ResRole> roleList = Lists.newArrayList();
+        Set<ResPermissions> permissionList = Sets.newHashSet();
+        for (SysRoleVO sysRoleVO : sysUser.getRole()) {
+            ResRole resRole = new ResRole();
+            if (StringUtils.isNotBlank(sysRoleVO.getRoleName())) {
+                BeanUtils.copyProperties(sysRoleVO, resRole);
+                roleList.add(resRole);
+            }
+            for (SysMenuVO sysMenuVO : sysRoleVO.getMenus()) {
+                ResPermissions resPermissions = new ResPermissions();
+                BeanUtils.copyProperties(sysMenuVO, resPermissions);
+                permissionList.add(resPermissions);
+            }
+        }
+        sysUserDetailVO.setRoleList(roleList);
+        sysUserDetailVO.setPermissionList(permissionList);
+        return sysUserDetailVO;
+    }
+
+    /**
+     * 开户发送邮件
+     *
+     * @param institutionDTO 机构实体
+     * @return 用户详情实体
+     */
+    @Override
+    public void openAccountEmail(InstitutionDTO institutionDTO) {
+        log.info("=========【开户发送邮件】==========【START】");
+        try {
+            if (!StringUtils.isEmpty(institutionDTO.getInstitutionEmail())) {
+                log.info("=========【开户发送邮件】==========【发送的机构邮箱】 institutionEmail: {}", institutionDTO.getInstitutionEmail());
+                Map<String, Object> map = new HashMap<>();
+                SimpleDateFormat sf = new SimpleDateFormat("yyyy.MM.dd");
+                //发送日期
+                map.put("dateTime", sf.format(new Date()));
+                //机构名称
+                map.put("institutionName", institutionDTO.getCnName());
+                //机构code
+                map.put("institutionCode", institutionDTO.getInstitutionId());
+                messageFeign.sendTemplateMail(institutionDTO.getInstitutionEmail(), institutionDTO.getLanguage(), Status._3, map);
+            }
+        } catch (Exception e) {
+            log.error("=========【开户发送邮件】==========【开户发送邮件失败】 institutionEmail: {} | errorMessage: {}", institutionDTO.getInstitutionEmail(), e.getMessage());
+        }
+        log.info("=========【开户发送邮件】==========【END】");
     }
 }

@@ -6,6 +6,7 @@
 	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.InstitutionHistory">
 	<result column="id" property="id" />
 		<result column="institution_id" property="institutionId" />
+		<result column="institution_logo" property="institutionLogo" />
 		<result column="cn_name" property="cnName" />
 		<result column="en_name" property="enName" />
 		<result column="country_type" property="countryType" />

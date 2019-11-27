@@ -22,6 +22,12 @@ public class InstitutionDTO {
     private String institutionId;
 
     /**
+     * 机构logo
+     */
+    @ApiModelProperty(value = "机构logo")
+    private String institutionLogo;
+
+    /**
      * 机构中文名称
      */
     @ApiModelProperty(value = "机构中文名称")
@@ -153,5 +159,17 @@ public class InstitutionDTO {
      */
     @ApiModelProperty(value = "审核状态")
     private Integer auditStatus;
+
+    @ApiModelProperty(value = "语言")
+    private String language;
+
+    @ApiModelProperty(value = "启用禁用")
+    private Boolean enabled;
+
+    @ApiModelProperty(value = "起始时间")
+    private String startTime;
+
+    @ApiModelProperty(value = "结束时间")
+    private String endTime;
 
 }

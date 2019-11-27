@@ -1,31 +1,29 @@
 package com.asianwallets.common.entity;
-
-import java.io.Serializable;
-import java.util.Date;
 import com.asianwallets.common.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * <p>
  * 机构表
- * </p>
- *
- * @author yx
- * @since 2019-11-22
  */
 @Data
 @Entity
 @Table(name = "institution")
-@ApiModel(value = "节假日", description = "节假日")
+@ApiModel(value = "机构表", description = "机构表")
 public class Institution extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
+
+	/**
+	 * 机构logo
+	 */
+	@ApiModelProperty(value = "机构logo")
+	@Column(name = "institution_logo")
+	private String institutionLogo;
 
     /**
      * 机构中文名称

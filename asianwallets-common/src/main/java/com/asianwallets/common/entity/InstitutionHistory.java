@@ -23,6 +23,13 @@ public class InstitutionHistory extends BaseEntity{
 
     private static final long serialVersionUID = 1L;
 
+	/**
+	 * 机构logo
+	 */
+	@ApiModelProperty(value = "机构logo")
+	@Column(name = "institution_logo")
+	private String institutionLogo;
+
     /**
      * 机构ID
      */
@@ -214,9 +221,8 @@ public class InstitutionHistory extends BaseEntity{
 	@Column(name = "ext1")
 	private String ext1;
 
-    /**
-     * 启用禁用
-     */
+	@ApiModelProperty(value = "启用禁用")
+	@Column(name = "enabled")
 	private Boolean enabled;
 
 
