@@ -1,7 +1,6 @@
 package com.asianwallets.permissions.service;
 
 import com.asianwallets.common.dto.InstitutionDTO;
-import com.asianwallets.common.entity.SysRole;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.vo.SysUserDetailVO;
