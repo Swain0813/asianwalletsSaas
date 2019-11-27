@@ -37,7 +37,7 @@ public class CountryFeignImpl implements CountryFeign {
     }
 
     @Override
-    public BaseResponse inquireAllCountry(String language) {
+    public BaseResponse inquireAllCountry() {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

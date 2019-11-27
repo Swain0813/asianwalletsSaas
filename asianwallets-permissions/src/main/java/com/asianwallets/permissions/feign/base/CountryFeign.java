@@ -9,7 +9,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 国家模块Feign端
@@ -34,5 +33,5 @@ public interface CountryFeign {
 
     @ApiOperation(value = "查询所有国家地区")
     @GetMapping("/country/inquireAllCountry")
-    BaseResponse inquireAllCountry(@RequestParam("language") @ApiParam String language);
+    BaseResponse inquireAllCountry();
 }
