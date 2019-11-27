@@ -46,14 +46,6 @@ public class SysUserController extends BaseController {
         return ResultUtil.success(sysUserService.updateSysUserByOperation(getSysUserVO().getUsername(), sysUserRoleDto));
     }
 
-    @ApiOperation(value = "分页查询用户信息")
-    @PostMapping("/pageGetSysUser")
-    public BaseResponse pageGetSysUser(@RequestBody @ApiParam SysUserDto sysUserDto) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(sysUserDto),
-                "分页查询用户信息"));
-        return ResultUtil.success(sysUserService.pageGetSysUser(sysUserDto));
-    }
-
     @ApiOperation(value = "重置密码")
     @GetMapping("/resetPassword")
     public BaseResponse resetPassword(@RequestParam @ApiParam String userId) {
@@ -86,6 +78,14 @@ public class SysUserController extends BaseController {
         return ResultUtil.success(sysUserService.getSysUserDetail(username));
     }
 
+    @ApiOperation(value = "分页查询用户信息")
+    @PostMapping("/pageGetSysUser")
+    public BaseResponse pageGetSysUser(@RequestBody @ApiParam SysUserDto sysUserDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(sysUserDto),
+                "分页查询用户信息"));
+        return ResultUtil.success(sysUserService.pageGetSysUser(sysUserDto));
+    }
+
     @ApiOperation(value = "发送开户邮件")
     @PostMapping(value = "/sendInstitutionEmail")
     public BaseResponse sendInstitutionEmail(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
@@ -95,4 +95,5 @@ public class SysUserController extends BaseController {
         sysUserService.openAccountEmail(institutionDTO);
         return ResultUtil.success();
     }
+
 }
