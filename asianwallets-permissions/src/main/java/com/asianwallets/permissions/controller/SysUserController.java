@@ -7,10 +7,7 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
-import com.asianwallets.permissions.dto.SysRoleDto;
-import com.asianwallets.permissions.dto.SysRoleMenuDto;
-import com.asianwallets.permissions.dto.SysUserDto;
-import com.asianwallets.permissions.dto.SysUserRoleDto;
+import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.service.OperationLogService;
 import com.asianwallets.permissions.service.SysMenuService;
 import com.asianwallets.permissions.service.SysRoleService;
@@ -97,6 +94,30 @@ public class SysUserController extends BaseController {
         return ResultUtil.success(sysRoleService.banRole(getSysUserVO().getUsername(), sysRoleDto));
     }
 
+    @ApiOperation(value = "重置密码")
+    @GetMapping("/resetPassword")
+    public BaseResponse resetPassword(@RequestParam @ApiParam String userId) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(userId),
+                "重置密码"));
+        return ResultUtil.success(sysUserService.resetPassword(getSysUserVO().getUsername(), userId));
+    }
+
+    @ApiOperation(value = "修改密码")
+    @PostMapping("/updatePassword")
+    public BaseResponse updatePassword(@RequestBody @ApiParam UpdatePasswordDto updatePasswordDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(getRequest().getParameterMap()),
+                "修改密码"));
+        return ResultUtil.success(sysUserService.updatePassword(getSysUserVO().getUsername(), updatePasswordDto));
+    }
+
+    @ApiOperation(value = "修改交易密码")
+    @PostMapping("/updateTradePassword")
+    public BaseResponse updateTradePassword(@RequestBody @ApiParam UpdatePasswordDto updatePasswordDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(getRequest().getParameterMap()),
+                "修改交易密码"));
+        return ResultUtil.success(sysUserService.updateTradePassword(getSysUserVO().getUsername(), updatePasswordDto));
+    }
+
     @ApiOperation(value = "查询用户所有权限信息（userId可不传）")
     @GetMapping("/getAllMenuByUserId")
     public BaseResponse getAllMenuByUserId(@RequestParam(value = "userId", required = false) @ApiParam String userId,
@@ -110,16 +131,26 @@ public class SysUserController extends BaseController {
     @GetMapping("/getAllMenuByRoleId")
     public BaseResponse getAllMenuByRoleId(@RequestParam(value = "roleId", required = false) @ApiParam String roleId,
                                            @RequestParam("permissionType") @ApiParam Integer permissionType) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(getRequest().getParameterMap()),
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(getRequest().getParameterMap()),
                 "查询角色所有权限信息"));
         return ResultUtil.success(sysMenuService.getAllMenuByRoleId(roleId, permissionType));
+    }
+
+    @ApiOperation(value = "查询用户详情")
+    @GetMapping("/getSysUserDetail")
+    public BaseResponse getSysUserDetail(@RequestParam @ApiParam String username) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(username),
+                "查询用户详情"));
+        return ResultUtil.success(sysUserService.getSysUserDetail(username));
     }
 
     @ApiOperation(value = "发送开户邮件")
     @PostMapping(value = "/sendInstitutionEmail")
     public BaseResponse sendInstitutionEmail(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
-        institutionDTO.setLanguage(this.getLanguage());//设置语言
-        sysUserService.openAccountEamin(institutionDTO);
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(institutionDTO),
+                "发送开户邮件"));
+        institutionDTO.setLanguage(getLanguage());
+        sysUserService.openAccountEmail(institutionDTO);
         return ResultUtil.success();
     }
 }
