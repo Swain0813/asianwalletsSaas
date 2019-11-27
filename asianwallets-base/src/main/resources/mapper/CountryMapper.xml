@@ -102,7 +102,7 @@
             <if test="area != null and area != ''">
                 and b.name LIKE CONCAT(CONCAT('%',#{area}),'%')
             </if>
-            <if test="enabled != null and enabled != ''">
+            <if test="enabled != null">
                 and b.enabled =#{enabled}
             </if>
             <if test="language != null and language != ''">
