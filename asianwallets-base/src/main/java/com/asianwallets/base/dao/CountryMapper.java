@@ -27,17 +27,17 @@ public interface CountryMapper extends BaseMapper<Country> {
      * 查询所有的国家地区
      *
      * @return
+     * @param language
      */
-    List<CountryVO> inquireAllCountry();
+    List<CountryVO> inquireAllCountry(@Param("language") String language);
 
     /**
-     * 通过名称查询国家地区
+     * 通过名称查询
      *
-     * @param cnName
-     * @param enName
+     * @param name
      * @return
      */
-    Country selectByCnOrEnName(@Param("cnName") String cnName, @Param("enName") String enName);
+    Country selectByName(@Param("name") String name);
 
     /**
      * 禁用地区

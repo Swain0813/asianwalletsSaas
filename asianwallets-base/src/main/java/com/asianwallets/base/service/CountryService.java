@@ -47,6 +47,7 @@ public interface CountryService {
      * 查询所有的国家地区
      *
      * @return
+     * @param language
      */
-    List<CountryVO> inquireAllCountry();
+    List<CountryVO> inquireAllCountry(String language);
 }

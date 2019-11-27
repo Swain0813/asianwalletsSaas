@@ -3,36 +3,31 @@ package com.asianwallets.base.service.impl;
 import com.asianwallets.base.dao.DeviceInfoMapper;
 import com.asianwallets.base.dao.DeviceModelMapper;
 import com.asianwallets.base.dao.DeviceVendorMapper;
-import com.asianwallets.base.service.DeviceService;
+import com.asianwallets.base.service.DeviceModelService;
+import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.dto.DeviceModelDTO;
-import com.asianwallets.common.dto.DeviceVendorDTO;
 import com.asianwallets.common.entity.DeviceModel;
-import com.asianwallets.common.entity.DeviceVendor;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.DeviceModelVO;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 
 /**
- * @ClassName DeviceServiceImpl
- * @Description 新增厂商
- * @Author abc
- * @Date 2019/11/22 15:28
- * @Version 1.0
+ * @author shenxinran
+ * @Date: 2019/3/6 11:10
+ * @Description: 设备型号管理 Service
  */
 @Service
-public class DeviceServiceImpl implements DeviceService {
-
-    @Autowired
-    private AuditorProvider auditorProvider;
+@Transactional
+public class DeviceModelServiceImpl extends BaseServiceImpl<DeviceModel> implements DeviceModelService {
 
     @Autowired
     private DeviceVendorMapper deviceVendorMapper;
@@ -43,78 +38,8 @@ public class DeviceServiceImpl implements DeviceService {
     @Autowired
     private DeviceInfoMapper deviceInfoMapper;
 
-    /**
-     * 新增厂商
-     *
-     * @param deviceVendorDTO
-     * @return 条数
-     */
-    @Override
-
-    public int addDeviceVendor(DeviceVendorDTO deviceVendorDTO) {
-        //数据校验
-        if (deviceVendorDTO.getBusinessContact() == null || deviceVendorDTO.getContactInformation() == null
-                || deviceVendorDTO.getVendorCnName() == null || deviceVendorDTO.getVendorEnName() == null) {
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
-        DeviceVendor deviceVendor = new DeviceVendor();
-        BeanUtils.copyProperties(deviceVendorDTO, deviceVendor);
-        //判断重复
-        if (deviceVendorMapper.selectCountByCnNameAndEnName(deviceVendor) > 0) {
-            throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
-        }
-        deviceVendor.setCreateTime(new Date());
-        deviceVendor.setEnabled(true);
-        deviceVendor.setId(IDS.getRandomInt(15));
-        return deviceVendorMapper.insertSelective(deviceVendor);
-    }
-
-    /**
-     * 修改厂商
-     *
-     * @param deviceVendorDTO
-     * @return 影响条数
-     */
-    @Override
-    public int updateDeviceVendor(DeviceVendorDTO deviceVendorDTO) {
-        if (deviceVendorDTO.getId() == null) {
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
-        //TODO 修改的时候需要去看是否被绑定
-        DeviceVendor deviceVendor = new DeviceVendor();
-        BeanUtils.copyProperties(deviceVendorDTO, deviceVendor);
-        return deviceVendorMapper.updateByPrimaryKeySelective(deviceVendor);
-    }
-
-    /**
-     * 查询厂商信息
-     *
-     * @param deviceVendorDTO
-     * @return
-     */
-    @Override
-    public PageInfo<DeviceVendor> pageDeviceVendor(DeviceVendorDTO deviceVendorDTO) {
-        return new PageInfo<DeviceVendor>(deviceVendorMapper.pageDeviceVendor(deviceVendorDTO));
-    }
-
-    /**
-     * 启用禁用厂商
-     *
-     * @param deviceVendorDTO
-     * @return
-     */
-    @Override
-    public int banDeviceVendor(DeviceVendorDTO deviceVendorDTO) {
-        //数据校验
-        if (deviceVendorDTO.getId() == null || deviceVendorDTO.getEnabled() == null
-        ) {
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
-        //TODO 禁用前，该厂商下的设备应当没有绑定的。
-        return deviceVendorMapper.banDeviceVendorById(deviceVendorDTO.getId(), deviceVendorDTO.getEnabled());
-    }
-
-    //-------------------------型号-------------------------//
+    @Autowired
+    private AuditorProvider auditorProvider;
 
     /**
      * 新增设备型号
@@ -129,10 +54,7 @@ public class DeviceServiceImpl implements DeviceService {
                 deviceModelDTO.getSystem() == null || deviceModelDTO.getVendorId() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        /*//判断设备厂商是否存在
-        if (deviceVendorMapper.selectByVendorId(deviceModelDTO.getVendorId()) == 0) {
-            //todo 厂商不存在
-        }*/
+        //判断设备厂商是否存在
         DeviceModel deviceModel = getDeviceModel(deviceModelDTO);
         deviceModel.setEnabled(true);
         //判断是否重复

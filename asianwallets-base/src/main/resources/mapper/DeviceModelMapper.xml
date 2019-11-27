@@ -19,7 +19,6 @@
         <result column="creator" property="creator" jdbcType="VARCHAR"/>
         <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
-
     </resultMap>
 
     <resultMap id="NewResultMap" type="com.asianwallets.common.vo.DeviceModelVO">
@@ -48,7 +47,7 @@
     <sql id="Base_Column_List">
         id, vendor_id, device_type, device_name, ram, system, network, printer, resolution_ratio,
         access_permit, card_reader, enabled, create_time, update_time, creator, modifier,
-        remark, extend1, extend2, extend3, extend4, extend5, extend6
+        remark
     </sql>
 
     <select id="pageDeviceModel" resultType="com.asianwallets.common.vo.DeviceModelVO" resultMap="NewResultMap">

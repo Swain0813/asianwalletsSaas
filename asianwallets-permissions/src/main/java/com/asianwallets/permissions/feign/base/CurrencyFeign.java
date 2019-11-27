@@ -6,6 +6,7 @@ import com.asianwallets.permissions.feign.base.impl.CurrencyFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 /**
  * 国家模块Feign端
  */
+@Component
 @FeignClient(value = "asianwallets-base", fallback = CurrencyFeignImpl.class)
 public interface CurrencyFeign {
 

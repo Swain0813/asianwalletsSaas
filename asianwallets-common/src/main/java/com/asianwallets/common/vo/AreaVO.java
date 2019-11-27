@@ -14,7 +14,5 @@ import lombok.Data;
 public class AreaVO {
     private String areaId;
     private String areaParentId;
-    private String cnAreaName;
-    private String enAreaName;
-//    private List<CityVO> cityVOS;
+    private String areaName;
 }

@@ -27,17 +27,14 @@ public class CountrysVO {
     @ApiModelProperty(value = "国家区号")
     private String areaCode;
 
-    @ApiModelProperty(value = "英语国家")
-    private String enCountry;
+    @ApiModelProperty(value = "国家")
+    private String country;
 
-    @ApiModelProperty(value = "中文国家")
-    private String cnCountry;
+    @ApiModelProperty(value = "地区")
+    private String area;
 
-    @ApiModelProperty(value = "英语地区")
-    private String enArea;
-
-    @ApiModelProperty(value = "中文地区")
-    private String cnArea;
+    @ApiModelProperty(value = "语言")
+    private String language;
 
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

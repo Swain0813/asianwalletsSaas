@@ -21,13 +21,13 @@ public class Country extends BaseEntity {
     @Column(name = "area_code")
     private String areaCode;
 
-    @ApiModelProperty(value = "英语名称")
-    @Column(name = "en_name")
-    private String enName;
+    @ApiModelProperty(value = "名称")
+    @Column(name = "name")
+    private String name;
 
-    @ApiModelProperty(value = "中文名称")
-    @Column(name = "cn_name")
-    private String cnName;
+    @ApiModelProperty(value = "语言")
+    @Column(name = "language")
+    private String language;
 
     @ApiModelProperty(value = "类型")
     @Column(name = "type")
