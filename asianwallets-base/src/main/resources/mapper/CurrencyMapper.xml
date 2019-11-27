@@ -54,8 +54,7 @@
     <select id="pageCurrency" resultMap="CurrencyVOResultMap">
         select
         id, icon, code, name, create_time, update_time, creator, modifier,
-        remark,defaults, extend1,
-        enabled
+        remark,defaults,enabled
         from currency
         <where>
             <if test="code != null and code != ''">

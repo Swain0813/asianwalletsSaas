@@ -47,8 +47,6 @@ public class CurrencyDTO extends BasePageHelper {
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ApiModelProperty(value = "国家")
-    private String country;
 
 
 
