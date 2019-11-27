@@ -6,7 +6,9 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.dto.SysRoleMenuDto;
+import com.asianwallets.permissions.dto.SysRoleSecDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
+import com.asianwallets.permissions.dto.SysUserSecDto;
 import com.asianwallets.permissions.service.OperationLogService;
 import com.asianwallets.permissions.service.SysUserService;
 import io.swagger.annotations.Api;
@@ -53,12 +55,27 @@ public class SysUserController extends BaseController {
         return ResultUtil.success(sysUserService.addSysRole(getSysUserVO().getUsername(), sysRoleMenuDto));
     }
 
-
     @ApiOperation(value = "修改角色权限信息")
     @PostMapping("/updateSysRole")
     public BaseResponse updateSysRole(@RequestBody @ApiParam SysRoleMenuDto sysRoleMenuDto) {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(sysRoleMenuDto),
                 "修改角色权限信息"));
         return ResultUtil.success(sysUserService.updateSysRole(getSysUserVO().getUsername(), sysRoleMenuDto));
+    }
+
+    @ApiOperation(value = "分页查询用户信息")
+    @PostMapping("/pageGetSysUser")
+    public BaseResponse pageGetSysUser(@RequestBody @ApiParam SysUserSecDto sysUserSecDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(sysUserSecDto),
+                "分页查询用户信息"));
+        return ResultUtil.success(sysUserService.pageGetSysUser(sysUserSecDto));
+    }
+
+    @ApiOperation(value = "分页查询角色信息")
+    @PostMapping("/pageGetSysRole")
+    public BaseResponse pageGetSysRole(@RequestBody @ApiParam SysRoleSecDto sysRoleSecDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(sysRoleSecDto),
+                "分页查询角色信息"));
+        return ResultUtil.success(sysUserService.pageGetSysRole(sysRoleSecDto));
     }
 }

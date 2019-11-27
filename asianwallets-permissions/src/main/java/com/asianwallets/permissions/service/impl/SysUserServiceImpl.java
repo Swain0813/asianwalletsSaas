@@ -1,6 +1,7 @@
 package com.asianwallets.permissions.service.impl;
 
 import com.asianwallets.common.config.AuditorProvider;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
@@ -9,9 +10,13 @@ import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.dao.*;
 import com.asianwallets.permissions.dto.SysRoleMenuDto;
+import com.asianwallets.permissions.dto.SysRoleSecDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
+import com.asianwallets.permissions.dto.SysUserSecDto;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.utils.BCryptUtils;
+import com.asianwallets.permissions.vo.SysUserSecVO;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -118,11 +124,12 @@ public class SysUserServiceImpl implements SysUserService {
         }
         //新增角色
         SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(sysUserRoleDto, sysUser);
         sysUser.setId(IDS.uuid2());
         sysUser.setPassword(BCryptUtils.encode(sysUserRoleDto.getPassword()));
         sysUser.setTradePassword(BCryptUtils.encode(sysUserRoleDto.getTradePassword()));
         sysUser.setLanguage(auditorProvider.getLanguage());
+        sysUser.setName(sysUserRoleDto.getName());
+        sysUser.setEmail(sysUserRoleDto.getEmail());
         sysUser.setCreator(username);
         sysUser.setCreateTime(new Date());
         sysUser.setEnabled(true);
@@ -151,9 +158,9 @@ public class SysUserServiceImpl implements SysUserService {
         dbSysUser.setId(sysUserRoleDto.getUserId());
         dbSysUser.setUpdateTime(new Date());
         dbSysUser.setModifier(username);
-        //用户分配角色
+        //删除用户角色表中的信息
         sysUserRoleMapper.deleteByUserId(sysUserRoleDto.getUserId());
-        //用户分配权限
+        //删除用户权限表中的信息
         sysUserMenuMapper.deleteByUserId(sysUserRoleDto.getUserId());
         //分配用户角色,用户权限信息
         allotSysRoleAndSysMenu(dbSysUser, sysUserRoleDto);
@@ -239,5 +246,33 @@ public class SysUserServiceImpl implements SysUserService {
             throw new BusinessException(EResultEnum.ROLE_PERMISSION_IS_NOT_NULL.getCode());
         }
         return sysRoleMenuMapper.insertList(roleMenuList);
+    }
+
+    /**
+     * 分页查询用户信息
+     *
+     * @param sysUserSecDto 用户查询实体
+     * @return 修改条数
+     */
+    @Override
+    public PageInfo<SysUserSecVO> pageGetSysUser(SysUserSecDto sysUserSecDto) {
+        List<SysUserSecVO> sysUserList = new ArrayList<>();
+        if (AsianWalletConstant.OPERATION.equals(sysUserSecDto.getPermissionType())) {
+            //运营系统
+            sysUserSecDto.setSort("s.create_time");
+            sysUserList = sysUserMapper.pageGetSysUserByOperation(sysUserSecDto);
+        }
+        return new PageInfo<>(sysUserList);
+    }
+
+    /**
+     * 分页查询角色信息
+     *
+     * @param sysRoleSecDto 角色查询实体
+     * @return 修改条数
+     */
+    @Override
+    public Object pageGetSysRole(SysRoleSecDto sysRoleSecDto) {
+        return null;
     }
 }

@@ -62,6 +62,21 @@
         <result column="url" property="url"/>
     </resultMap>
 
+    <resultMap id="SysUserSecMap" type="com.asianwallets.permissions.vo.SysUserSecVO">
+        <id column="id" property="userId" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="VARCHAR"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="sysId" property="sysId" jdbcType="TIMESTAMP"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="roleName" property="roleName" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <select id="getSysUserByUsername" resultMap="BaseResultMap">
         select id,
                sys_id,
@@ -169,5 +184,34 @@
           and u.username = #{userName}
     </select>
 
+    <select id="pageGetSysUserByOperation" resultMap="SysUserSecMap">
+        select
+        s.id,
+        s.sys_id as sysId,
+        s.update_time as updateTime,
+        s.create_time as createTime,
+        s.username,
+        s.creator,
+        s.modifier,
+        s.name,
+        s.mobile,
+        s.email,
+        s.enabled,
+        sr.role_name as roleName
+        from sys_user s
+        left join sys_user_role sur on sur.user_id = s.id
+        left join sys_role sr on sr.id = sur.role_id
+        <where>
+            <if test="permissionType!=null">
+                and s.permission_type=#{permissionType}
+            </if>
+            <if test="username!=null and username != ''">
+                and s.username LIKE CONCAT(CONCAT('%', #{username}), '%')
+            </if>
+            <if test="roleId!=null and roleId != ''">
+                and sur.role_id=#{roleId}
+            </if>
+        </where>
+    </select>
 
 </mapper>
