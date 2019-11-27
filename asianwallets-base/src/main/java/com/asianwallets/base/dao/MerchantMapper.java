@@ -26,7 +26,7 @@ public interface MerchantMapper extends  BaseMapper<Merchant> {
      * @Descripate 分页查询商户信息列表
      * @return
      **/
-    List<Merchant> pageFindInstitution(MerchantDTO merchantDTO);
+    List<Merchant> pageFindMerchant(MerchantDTO merchantDTO);
 
     /**
      * @Author YangXu

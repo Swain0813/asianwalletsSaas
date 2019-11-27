@@ -41,7 +41,7 @@ public interface MerchantService extends BaseService<Merchant> {
      * @Descripate 分页查询商户信息列表
      * @return
      **/
-    PageInfo<Merchant> pageFindInstitution(MerchantDTO merchantDTO);
+    PageInfo<Merchant> pageFindMerchant(MerchantDTO merchantDTO);
 
     /**
      * @Author YangXu
@@ -73,5 +73,5 @@ public interface MerchantService extends BaseService<Merchant> {
      * @Descripate 审核商户信息接口
      * @return
      **/
-    int auditInstitution(String username, String merchantId, Boolean enabled, String remark);
+    int auditMerchant(String username, String merchantId, Boolean enabled, String remark);
 }

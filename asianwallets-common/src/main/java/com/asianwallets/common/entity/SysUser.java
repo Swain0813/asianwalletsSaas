@@ -57,6 +57,6 @@ public class SysUser extends BaseEntity {
 
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")
-    private Boolean enabled = true;
+    private Boolean enabled;
 
 }

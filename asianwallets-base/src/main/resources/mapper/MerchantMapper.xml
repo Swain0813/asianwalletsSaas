@@ -53,7 +53,7 @@
 		<result column="remark" property="remark" />
 		<result column="enabled" property="enabled" />
 	</resultMap>
-	<select id="pageFindInstitution" resultMap="BaseResultMap">
+	<select id="pageFindMerchant" resultMap="BaseResultMap">
 
 		select
 		i.cn_name as institution_id,
