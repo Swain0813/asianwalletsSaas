@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.permissions.dao.SysMenuMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.SysMenu">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="en_name" property="enName" jdbcType="VARCHAR"/>
+        <result column="cn_name" property="cnName" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="sort" property="sort" jdbcType="INTEGER"/>
+        <result column="permission_type" property="permissionType" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="FirstMenuMap" type="com.asianwallets.permissions.vo.FirstMenuVO">
+        <id column="fid" property="id" jdbcType="VARCHAR"/>
+        <result column="feName" property="eName" jdbcType="VARCHAR"/>
+        <result column="fcName" property="cName" jdbcType="VARCHAR"/>
+        <collection javaType="list" property="secondMenuVOS" resultMap="SecondMenuMap"/>
+    </resultMap>
+    <resultMap id="SecondMenuMap" type="com.asianwallets.permissions.vo.SecondMenuVO">
+        <id column="sid" property="id" jdbcType="VARCHAR"/>
+        <result column="seName" property="eName" jdbcType="VARCHAR"/>
+        <result column="scName" property="cName" jdbcType="VARCHAR"/>
+        <collection javaType="list" property="threeMenuVOS" resultMap="ThreeMenuMap"/>
+    </resultMap>
+    <resultMap id="ThreeMenuMap" type="com.asianwallets.permissions.vo.ThreeMenuVO">
+        <id column="tid" property="id" jdbcType="VARCHAR"/>
+        <result column="teName" property="eName" jdbcType="VARCHAR"/>
+        <result column="tcName" property="cName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getAllMenuByPermissionType" resultMap="FirstMenuMap">
+
+      select   f.id      as fid,
+               f.en_name as feName,
+               f.cn_name as fcName,
+               s.id      as sid,
+               s.en_name as seName,
+               s.cn_name as scName,
+               t.id      as tid,
+               t.en_name as teName,
+               t.cn_name as tcName
+        from (select id, en_name, cn_name, parent_id from sys_menu where level = 0 and enabled=1 and permission_type = #{permissionType}) as f left join
+             (select id, en_name, cn_name, parent_id from sys_menu where level = 1 and enabled=1 and permission_type = #{permissionType}) as s on  s.parent_id = f.id left join
+             (select id, en_name, cn_name, parent_id from sys_menu where level = 2 and enabled=1 and permission_type = #{permissionType}) as t on t.parent_id = s.id
+    </select>
+
+    <select id="getUserMenu" resultType="String" >
+        select DISTINCT(menu_id)
+        from sys_role_menu
+        where role_id in (select role_id from sys_user_role where user_id = #{id})
+        UNION
+        select menu_id
+        from sys_user_menu
+        where user_id = #{id}
+    </select>
+
+    <select id="getRoleMenu" resultType="String" >
+        select DISTINCT(menu_id)
+        from sys_role_menu
+        where role_id = #{id}
+    </select>
+
+</mapper>

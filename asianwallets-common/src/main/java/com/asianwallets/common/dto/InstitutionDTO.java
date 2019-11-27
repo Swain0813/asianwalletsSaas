@@ -160,4 +160,16 @@ public class InstitutionDTO {
     @ApiModelProperty(value = "审核状态")
     private Integer auditStatus;
 
+    @ApiModelProperty(value = "语言")
+    private String language;
+
+    @ApiModelProperty(value = "启用禁用")
+    private Boolean enabled;
+
+    @ApiModelProperty(value = "起始时间")
+    private String startTime;
+
+    @ApiModelProperty(value = "结束时间")
+    private String endTime;
+
 }

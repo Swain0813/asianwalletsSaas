@@ -33,7 +33,6 @@
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
         <result column="enabled" property="enabled" jdbcType="BIT"/>
         <result column="defaults" property="defaults" jdbcType="VARCHAR"/>
-        <result column="country" property="country" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
         id, icon, code, name, create_time, update_time, creator, modifier, remark,defaults, extend1,
@@ -52,13 +51,11 @@
         <include refid="Base_Column_List"/>
         from currency where id = #{id};
     </select>
+
     <select id="pageCurrency" resultMap="CurrencyVOResultMap">
         select
-        cu.id, cu.icon, cu.code, cu.name, cu.create_time, cu.update_time, cu.creator, cu.modifier,cu.
-        remark,cu.defaults, cu.extend1,
-        cu.enabled,
-        co.cn_name as country
-        from currency cu left join country co on cu.extend1 = co.id
+        <include refid="Base_Column_List"></include>
+        from currency
         <where>
             <if test="code != null and code != ''">
                 AND code LIKE CONCAT(CONCAT('%',#{code}),'%')
@@ -67,11 +64,9 @@
                 AND name LIKE CONCAT(CONCAT('%',#{name}),'%')
             </if>
             <if test="enabled != null">
-                AND cu.enabled = #{enabled}
+                AND enabled = #{enabled}
             </if>
-            and co.enabled = 1
         </where>
-
     </select>
 
 </mapper>

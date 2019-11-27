@@ -17,6 +17,7 @@ import com.asianwallets.common.entity.SysUser;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +66,6 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
      **/
     @Override
     public int addInstitution(String name, InstitutionDTO institutionDTO) {
-
         //判断机构名称是否存在
         if (institutionMapper.selectCountByInsName(institutionDTO.getCnName()) > 0) {
             throw new BusinessException(EResultEnum.NAME_EXIST.getCode());
@@ -73,8 +73,9 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
         if (institutionMapper.selectCountByInsName(institutionDTO.getEnName()) > 0) {
             throw new BusinessException(EResultEnum.NAME_EXIST.getCode());
         }
-
-        String id = "I" + IDS.uniqueID().toString();
+        //机构编号
+        String str = IDS.uniqueID().toString();
+        String institutionId = DateToolUtils.getReqDateE().concat(str.substring(str.length() - 4));
 
         Institution institution = new Institution();
         InstitutionAudit institutionAudit = new InstitutionAudit();
@@ -82,13 +83,13 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
         BeanUtils.copyProperties(institutionDTO, institution);
         BeanUtils.copyProperties(institutionDTO, institutionAudit);
 
-        institution.setId(id);
+        institution.setId(institutionId);
         institution.setCreateTime(new Date());
         institution.setCreator(name);
         institution.setAuditStatus(TradeConstant.AUDIT_WAIT);
         institution.setEnabled(false);
 
-        institutionAudit.setId(id);
+        institutionAudit.setId(institutionId);
         institutionAudit.setCreateTime(new Date());
         institutionAudit.setCreator(name);
         institutionAudit.setAuditStatus(TradeConstant.AUDIT_WAIT);
@@ -99,10 +100,10 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
             SysUser sysUser = new SysUser();
             String userId = IDS.uuid2();
             sysUser.setId(userId);
-            sysUser.setUsername(id + "admin");
+            sysUser.setUsername(institutionId + "admin");
             sysUser.setPassword(encryptPassword("123456"));
             sysUser.setTradePassword(encryptPassword("123456"));//交易密码
-            sysUser.setSysId(id);
+            sysUser.setSysId(institutionId);
             sysUser.setPermissionType(AsianWalletConstant.INSTITUTION);
             sysUser.setSysType(AsianWalletConstant.INSTITUTION_USER);
             sysUser.setName("admin");
