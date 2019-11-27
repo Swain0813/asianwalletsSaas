@@ -21,6 +21,7 @@
         id,create_time,update_time, sys_id, permission_type, remark, creator, modifier,
         role_name, role_code,description,enabled,sort
   </sql>
+
     <select id="getSysRoleByNameAndSysId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -31,4 +32,25 @@
         </if>
     </select>
 
+    <select id="pageGetSysRole" resultMap="BaseResultMap">
+        select
+        id,create_time,update_time,remark,creator,modifier,role_name,role_code,description,enabled,sort
+        from sys_role
+        <where>
+            <if test="roleName != null and roleName != ''">
+                and role_name LIKE CONCAT(CONCAT('%', #{roleName}), '%')
+            </if>
+            <if test="permissionType != null">
+                and permission_type = #{permissionType}
+            </if>
+            <choose>
+                <when test="sysId != null and sysId != ''">
+                    and sys_id = #{sysId}
+                </when>
+                <otherwise>
+                    and sys_id is null
+                </otherwise>
+            </choose>
+        </where>
+    </select>
 </mapper>

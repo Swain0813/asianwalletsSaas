@@ -272,7 +272,7 @@ public class SysUserServiceImpl implements SysUserService {
      * @return 修改条数
      */
     @Override
-    public Object pageGetSysRole(SysRoleSecDto sysRoleSecDto) {
-        return null;
+    public PageInfo<SysRole> pageGetSysRole(SysRoleSecDto sysRoleSecDto) {
+        return new PageInfo<>(sysRoleMapper.pageGetSysRole(sysRoleSecDto));
     }
 }
