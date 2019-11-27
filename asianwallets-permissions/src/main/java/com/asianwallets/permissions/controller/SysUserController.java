@@ -93,24 +93,6 @@ public class SysUserController extends BaseController {
         return ResultUtil.success(sysRoleService.banRole(getSysUserVO().getUsername(), sysRoleDto));
     }
 
-    @ApiOperation(value = "查询用户所有权限信息（userId可不传）")
-    @GetMapping("/getAllMenuByUserId")
-    public BaseResponse getAllMenuByUserId(@RequestParam(value = "userId", required = false) @ApiParam String userId,
-                                           @RequestParam("permissionType") @ApiParam Integer permissionType) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(getRequest().getParameterMap()),
-                "查询用户所有权限信息"));
-        return ResultUtil.success(sysMenuService.getAllMenuByUserId(userId, permissionType));
-    }
-
-    @ApiOperation(value = "查询角色所有权限信息（roleId可不传）")
-    @GetMapping("/getAllMenuByRoleId")
-    public BaseResponse getAllMenuByRoleId(@RequestParam(value = "roleId", required = false) @ApiParam String roleId,
-                                           @RequestParam("permissionType") @ApiParam Integer permissionType) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(getRequest().getParameterMap()),
-                "查询角色所有权限信息"));
-        return ResultUtil.success(sysMenuService.getAllMenuByRoleId(roleId, permissionType));
-    }
-
     @ApiOperation(value = "重置密码")
     @GetMapping("/resetPassword")
     public BaseResponse resetPassword(@RequestParam @ApiParam String userId) {
@@ -133,5 +115,29 @@ public class SysUserController extends BaseController {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(getRequest().getParameterMap()),
                 "修改交易密码"));
         return ResultUtil.success(sysUserService.updateTradePassword(getSysUserVO().getUsername(), updatePasswordDto));
+    }
+
+    @ApiOperation(value = "查询用户所有权限信息（userId可不传）")
+    @GetMapping("/getAllMenuByUserId")
+    public BaseResponse getAllMenuByUserId(@RequestParam(value = "userId", required = false) @ApiParam String userId,
+                                           @RequestParam("permissionType") @ApiParam Integer permissionType) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(getRequest().getParameterMap()),
+                "查询用户所有权限信息"));
+        return ResultUtil.success(sysMenuService.getAllMenuByUserId(userId, permissionType));
+    }
+
+    @ApiOperation(value = "查询角色所有权限信息（roleId可不传）")
+    @GetMapping("/getAllMenuByRoleId")
+    public BaseResponse getAllMenuByRoleId(@RequestParam(value = "roleId", required = false) @ApiParam String roleId,
+                                           @RequestParam("permissionType") @ApiParam Integer permissionType) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(getRequest().getParameterMap()),
+                "查询角色所有权限信息"));
+        return ResultUtil.success(sysMenuService.getAllMenuByRoleId(roleId, permissionType));
+    }
+
+    @ApiOperation(value = "查询用户详情")
+    @GetMapping("/getSysUserDetail")
+    public BaseResponse getSysUserDetail(@RequestParam @ApiParam String username) {
+        return ResultUtil.success(sysUserService.getSysUserDetail(username));
     }
 }

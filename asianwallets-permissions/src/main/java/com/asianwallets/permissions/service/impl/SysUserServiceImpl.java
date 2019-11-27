@@ -6,17 +6,23 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.response.ResPermissions;
+import com.asianwallets.common.response.ResRole;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.SysMenuVO;
+import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.dao.*;
 import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.utils.BCryptUtils;
+import com.asianwallets.permissions.vo.SysUserDetailVO;
 import com.asianwallets.permissions.vo.SysUserSecVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -360,5 +366,35 @@ public class SysUserServiceImpl implements SysUserService {
             throw new BusinessException(EResultEnum.ORIGINAL_PASSWORD_ERROR.getCode());
         }
         return sysUserMapper.updateByPrimaryKeySelective(sysUser);
+    }
+
+    /**
+     * 查询用户详情
+     *
+     * @param username 用户名
+     * @return 用户详情实体
+     */
+    @Override
+    public SysUserDetailVO getSysUserDetail(String username) {
+        SysUserVO sysUser = sysUserMapper.getSysUser(username);
+        SysUserDetailVO sysUserDetailVO = new SysUserDetailVO();
+        BeanUtils.copyProperties(sysUser, sysUserDetailVO);
+        List<ResRole> roleList = Lists.newArrayList();
+        Set<ResPermissions> permissionList = Sets.newHashSet();
+        for (SysRoleVO sysRoleVO : sysUser.getRole()) {
+            ResRole resRole = new ResRole();
+            if (StringUtils.isNotBlank(sysRoleVO.getRoleName())) {
+                BeanUtils.copyProperties(sysRoleVO, resRole);
+                roleList.add(resRole);
+            }
+            for (SysMenuVO sysMenuVO : sysRoleVO.getMenus()) {
+                ResPermissions resPermissions = new ResPermissions();
+                BeanUtils.copyProperties(sysMenuVO, resPermissions);
+                permissionList.add(resPermissions);
+            }
+        }
+        sysUserDetailVO.setRoleList(roleList);
+        sysUserDetailVO.setPermissionList(permissionList);
+        return sysUserDetailVO;
     }
 }

@@ -3,6 +3,7 @@ package com.asianwallets.permissions.service;
 import com.asianwallets.common.entity.SysRole;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.dto.*;
+import com.asianwallets.permissions.vo.SysUserDetailVO;
 import com.asianwallets.permissions.vo.SysUserSecVO;
 import com.github.pagehelper.PageInfo;
 
@@ -97,4 +98,12 @@ public interface SysUserService {
      * @return 修改条数
      */
     int updateTradePassword(String username, UpdatePasswordDto updatePasswordDto);
+
+    /**
+     * 查询用户详情
+     *
+     * @param username 用户名
+     * @return 用户详情实体
+     */
+    SysUserDetailVO getSysUserDetail(String username);
 }
