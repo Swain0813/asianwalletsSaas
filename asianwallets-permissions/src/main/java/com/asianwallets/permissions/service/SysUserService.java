@@ -40,24 +40,6 @@ public interface SysUserService {
     int updateSysUserByOperation(String username, SysUserRoleDto sysUserRoleDto);
 
     /**
-     * 新增角色权限信息
-     *
-     * @param username       用户名
-     * @param sysRoleMenuDto 角色权限输入实体
-     * @return 修改条数
-     */
-    int addSysRole(String username, SysRoleMenuDto sysRoleMenuDto);
-
-    /**
-     * 修改角色权限信息
-     *
-     * @param username       用户名
-     * @param sysRoleMenuDto 角色权限输入实体
-     * @return 修改条数
-     */
-    int updateSysRole(String username, SysRoleMenuDto sysRoleMenuDto);
-
-    /**
      * 分页查询用户信息
      *
      * @param sysUserSecDto 角色权限输入实体
@@ -65,13 +47,6 @@ public interface SysUserService {
      */
     PageInfo<SysUserSecVO> pageGetSysUser(SysUserDto sysUserSecDto);
 
-    /**
-     * 分页查询角色信息
-     *
-     * @param sysRoleSecDto 角色权限输入实体
-     * @return 修改条数
-     */
-    PageInfo<SysRole> pageGetSysRole(SysRoleDto sysRoleSecDto);
 
     /**
      * 重置登录密码
