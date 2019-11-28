@@ -13,12 +13,15 @@ import javax.persistence.Column;
 @Data
 public class InstitutionExportVO {
 
+    @ApiModelProperty(value = "机构编号")
+    public String id;
+
     /**
      * 机构中文名称
      */
     @ApiModelProperty(value = "机构中文名称")
-    @Column(name = "cn_name")
     private String cnName;
+
     /**
      * 所属国家
      */
@@ -59,6 +62,10 @@ public class InstitutionExportVO {
      */
     @ApiModelProperty(value = "邮箱")
     private String institutionEmail;
+
+    @ApiModelProperty(value = "机构网站url")
+    private String institutionWebUrl;
+    
     /**
      * 联系人地址
      */
