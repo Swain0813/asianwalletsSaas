@@ -103,7 +103,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             SysUser sysUser = new SysUser();
             String userId = IDS.uuid2();
             sysUser.setId(userId);
-            sysUser.setUsername(id + "admin");
+            sysUser.setUsername("admin"+id);
             sysUser.setPassword(encryptPassword("123456"));
             sysUser.setTradePassword(encryptPassword("123456"));//交易密码
             sysUser.setSysId(id);

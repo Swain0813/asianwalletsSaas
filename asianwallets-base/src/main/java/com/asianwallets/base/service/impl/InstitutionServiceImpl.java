@@ -103,7 +103,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
             SysUser sysUser = new SysUser();
             String userId = IDS.uuid2();
             sysUser.setId(userId);
-            sysUser.setUsername(institutionId + "admin");
+            sysUser.setUsername("admin"+institutionId);
             sysUser.setPassword(encryptPassword("123456"));
             sysUser.setTradePassword(encryptPassword("123456"));//交易密码
             sysUser.setSysId(institutionId);
