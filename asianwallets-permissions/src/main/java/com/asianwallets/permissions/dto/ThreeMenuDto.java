@@ -8,6 +8,12 @@ import lombok.Data;
 @ApiModel(value = "三级权限输入实体", description = "三级权限输入实体")
 public class ThreeMenuDto {
 
+    @ApiModelProperty(value = "权限ID")
+    private String menuId;
+
+    @ApiModelProperty(value = "父级ID")
+    private String parentId;
+
     @ApiModelProperty(value = "英文名称")
     private String eName;
 

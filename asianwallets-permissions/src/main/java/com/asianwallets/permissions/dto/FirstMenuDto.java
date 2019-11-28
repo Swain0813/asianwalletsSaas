@@ -10,6 +10,9 @@ import java.util.List;
 @ApiModel(value = "一级权限实体输入实体", description = "一级权限实体输入实体")
 public class FirstMenuDto {
 
+    @ApiModelProperty(value = "权限ID")
+    private String menuId;
+
     @ApiModelProperty(value = "英文名称")
     private String eName;
 

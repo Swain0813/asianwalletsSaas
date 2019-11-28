@@ -12,6 +12,14 @@ import java.util.Set;
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
 
     /**
+     * 删除指定ID与指定父ID的权限
+     *
+     * @param menuId 权限ID
+     * @return 修改条数
+     */
+    int deleteByIdAndParentId(String menuId);
+
+    /**
      * 查询所有权限
      *
      * @param permissionType 权限类型

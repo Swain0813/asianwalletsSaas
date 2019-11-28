@@ -1,7 +1,9 @@
 package com.asianwallets.permissions.service;
 
 import com.asianwallets.permissions.dto.FirstMenuDto;
+import com.asianwallets.permissions.dto.SecondMenuDto;
 import com.asianwallets.permissions.dto.SysMenuDto;
+import com.asianwallets.permissions.dto.ThreeMenuDto;
 import com.asianwallets.permissions.vo.FirstMenuVO;
 
 import java.util.List;
@@ -9,22 +11,40 @@ import java.util.List;
 public interface SysMenuService {
 
     /**
-     * 添加权限信息
+     * 添加一二三级菜单权限信息
      *
-     * @param username   用户名
-     * @param firstMenuDto 权限输入实体
+     * @param username     用户名
+     * @param firstMenuDto 一级权限输入实体
      * @return 修改条数
      */
-    int addMenu(String username, FirstMenuDto firstMenuDto);
+    int addThreeLayerMenu(String username, FirstMenuDto firstMenuDto);
+
+    /**
+     * 添加二三级菜单权限信息
+     *
+     * @param username      用户名
+     * @param secondMenuDto 二级权限输入实体
+     * @return 修改条数
+     */
+    int addTwoLayerMenu(String username, SecondMenuDto secondMenuDto);
+
+    /**
+     * 添加三级菜单权限信息
+     *
+     * @param username     用户名
+     * @param threeMenuDto 三级权限输入实体
+     * @return 修改条数
+     */
+    int addOneLayerMenu(String username, ThreeMenuDto threeMenuDto);
 
     /**
      * 删除权限信息
      *
-     * @param username   用户名
-     * @param sysMenuDto 权限输入实体
+     * @param username 用户名
+     * @param menuId   权限ID
      * @return 修改条数
      */
-    int deleteMenu(String username, SysMenuDto sysMenuDto);
+    int deleteMenu(String username, String menuId);
 
     /**
      * 修改权限信息
