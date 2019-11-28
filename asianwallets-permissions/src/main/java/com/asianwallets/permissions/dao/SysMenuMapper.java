@@ -12,7 +12,15 @@ import java.util.Set;
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
 
     /**
-     * 删除指定ID与指定父ID的权限
+     * 删除ID与父ID为指定权限ID集合的权限信息
+     *
+     * @param menuIdList 权限ID集合
+     * @return 修改条数
+     */
+    int deleteByIdAndParentIdList(List<String> menuIdList);
+
+    /**
+     * 删除ID与父ID为指定权限ID的权限信息
      *
      * @param menuId 权限ID
      * @return 修改条数
@@ -42,4 +50,12 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      * @return 权限集合
      */
     Set<String> getRoleMenu(String roleId);
+
+    /**
+     * 根据父级ID查询权限ID信息
+     *
+     * @param parentId 父级ID
+     * @return 权限集合
+     */
+    List<String> getMenuByParentId(String parentId);
 }

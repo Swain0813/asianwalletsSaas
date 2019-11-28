@@ -59,15 +59,15 @@ public class SysMenuController extends BaseController {
     @ApiOperation(value = "删除权限信息")
     @GetMapping("/deleteMenu")
     public BaseResponse deleteMenu(@RequestParam @ApiParam String menuId) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(menuId),
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.DELETE, JSON.toJSONString(menuId),
                 "删除权限信息"));
-        return ResultUtil.success(sysMenuService.deleteMenu(getSysUserVO().getUsername(), menuId));
+        return ResultUtil.success(sysMenuService.deleteMenu(menuId));
     }
 
     @ApiOperation(value = "修改权限信息")
     @PostMapping("/updateMenu")
     public BaseResponse updateMenu(@RequestBody @ApiParam SysMenuDto sysMenuDto) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysMenuDto),
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(sysMenuDto),
                 "修改权限信息"));
         return ResultUtil.success(sysMenuService.updateMenu(getSysUserVO().getUsername(), sysMenuDto));
     }

@@ -31,7 +31,7 @@ public enum EResultEnum {
     ROLE_NO_EXIST("10003"),//角色不存在
     USER_NOT_EXIST("10004"),//用户不存在
     INSTITUTION_NOT_EXIST("10005"),//机构信息不存在
-    SECRET_IS_NOT_EXIST("10006"),//密钥信息不存在
+    MENU_NOT_EXIST("10006"),//权限不存在
     TOKEN_IS_INVALID("10007"),//Token不合法
     ORDER_NOT_EXIST("10008"),//订单不存在
     ORDER_STATUS_IS_WRONG("10009"),//订单交易状态不合法

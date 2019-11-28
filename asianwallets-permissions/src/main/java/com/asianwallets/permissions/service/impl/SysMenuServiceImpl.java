@@ -2,8 +2,10 @@ package com.asianwallets.permissions.service.impl;
 
 import java.util.Date;
 
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.SysMenu;
-import com.asianwallets.common.entity.SysRoleMenu;
+import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.permissions.dao.*;
@@ -15,6 +17,7 @@ import com.asianwallets.permissions.service.SysMenuService;
 import com.asianwallets.permissions.vo.FirstMenuVO;
 import com.asianwallets.permissions.vo.SecondMenuVO;
 import com.asianwallets.permissions.vo.ThreeMenuVO;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@Slf4j
 public class SysMenuServiceImpl implements SysMenuService {
 
     @Autowired
@@ -168,15 +172,34 @@ public class SysMenuServiceImpl implements SysMenuService {
     /**
      * 删除权限信息
      *
-     * @param username 用户名
-     * @param menuId   权限ID
+     * @param menuId 权限ID
      * @return 修改条数
      */
     @Override
     @Transactional
-    public int deleteMenu(String username, String menuId) {
-        //sysMenuMapper.
-        return 0;
+    public int deleteMenu(String menuId) {
+        SysMenu sysMenu = sysMenuMapper.selectByPrimaryKey(menuId);
+        if (sysMenu == null) {
+            log.info("=========【删除权限信息】==========【权限信息不存在!】");
+            throw new BusinessException(EResultEnum.MENU_NOT_EXIST.getCode());
+        }
+        switch (sysMenu.getLevel()) {
+            case AsianWalletConstant.ZERO:
+                //Level为0时,查询下级权限ID
+                List<String> menuIdList = sysMenuMapper.getMenuByParentId(sysMenu.getId());
+                menuIdList.add(sysMenu.getId());
+                //删除一级权限关联的所有权限
+                return sysMenuMapper.deleteByIdAndParentIdList(menuIdList);
+            case AsianWalletConstant.ONE:
+                //Level为1时,删除二级权限关联的所有权限
+                return sysMenuMapper.deleteByIdAndParentId(menuId);
+            case AsianWalletConstant.TWO:
+                //Level为2时,删除三级权限自身
+                return sysMenuMapper.deleteByPrimaryKey(menuId);
+            default:
+                log.info("=========【删除权限信息】==========【层级信息不存在!】 Level: {}", sysMenu.getLevel());
+                throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+        }
     }
 
     /**
@@ -189,7 +212,17 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Override
     @Transactional
     public int updateMenu(String username, SysMenuDto sysMenuDto) {
-        return 0;
+        SysMenu sysMenu = sysMenuMapper.selectByPrimaryKey(sysMenuDto.getMenuId());
+        if (sysMenu == null) {
+            log.info("=========【修改权限信息】==========【权限信息不存在!】");
+            throw new BusinessException(EResultEnum.MENU_NOT_EXIST.getCode());
+        }
+        sysMenu.setCnName(sysMenuDto.getCnName());
+        sysMenu.setEnName(sysMenuDto.getEnName());
+        sysMenu.setEnabled(sysMenuDto.getEnabled());
+        sysMenu.setModifier(username);
+        sysMenu.setUpdateTime(new Date());
+        return sysMenuMapper.updateByPrimaryKeySelective(sysMenu);
     }
 
     /**
