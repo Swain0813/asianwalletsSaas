@@ -45,6 +45,6 @@ public interface MerchantFeign {
                                @RequestParam("remark") @ApiParam String remark);
 
     @ApiOperation(value = "代理商下拉框")
-    @GetMapping("/getAllAgent")
+    @GetMapping("/merchant/getAllAgent")
     BaseResponse getAllAgent(@RequestParam("merchantType") @ApiParam String merchantType);
 }

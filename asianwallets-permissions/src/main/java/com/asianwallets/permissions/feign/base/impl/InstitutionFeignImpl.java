@@ -60,4 +60,9 @@ public class InstitutionFeignImpl implements InstitutionFeign {
     public BaseResponse getAllInstitution() {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BaseResponse exportInstitution(InstitutionDTO institutionDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }
