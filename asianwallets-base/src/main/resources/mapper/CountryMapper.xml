@@ -62,7 +62,7 @@
                c2.area_code    as area_code,
                c2.country_name as country_name,
                c2.extend1      as area_id,
-               c2.parent_id    as area_parent_id,
+               c1.extend1      as area_parent_id,
                c2.area_name    as area_name
         from country c1
                  left join country c2
