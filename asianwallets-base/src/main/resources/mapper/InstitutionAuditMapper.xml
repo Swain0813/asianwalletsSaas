@@ -59,7 +59,7 @@
         ia.contact_address,ia.contact_people,ia.contact_phone,ia.audit_status,ia.ext7,ia.ext6,ia.ext5,ia.ext4,ia.ext3,
         ia.ext2,ia.ext1,ia.create_time,ia.institution_logo,ia.develop_sales,
         ia.update_time,ia.creator,ia.modifier,ia.remark,ia.enabled
-        from institution_audit ia left join country co on ia.country = co.area_code and co.language = #{language}
+        from institution_audit ia left join country co on ia.country = co.extend1 and co.language = #{language}
         <where>
             <if test="institutionId!=null and institutionId != ''">
                 and ia.institution_id=#{institutionId}
