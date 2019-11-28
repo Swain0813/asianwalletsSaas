@@ -321,16 +321,5 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
     public List<Institution> exportInstitution(InstitutionDTO institutionDTO) {
         return institutionMapper.exportInstitution(institutionDTO);
     }
-
-
-    /**
-     * @Author YangXu
-     * @Date 2019/11/28
-     * @Descripate  导出机构
-     * @return
-     **/
-    @Override
-    public List<Institution> exportInstitution() {
-        return null;
-    }
+    
 }
