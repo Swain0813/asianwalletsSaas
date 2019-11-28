@@ -40,11 +40,10 @@ public interface SysMenuService {
     /**
      * 删除权限信息
      *
-     * @param username 用户名
      * @param menuId   权限ID
      * @return 修改条数
      */
-    int deleteMenu(String username, String menuId);
+    int deleteMenu(String menuId);
 
     /**
      * 修改权限信息

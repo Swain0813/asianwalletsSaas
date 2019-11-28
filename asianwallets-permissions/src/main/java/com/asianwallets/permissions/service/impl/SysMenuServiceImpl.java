@@ -172,13 +172,12 @@ public class SysMenuServiceImpl implements SysMenuService {
     /**
      * 删除权限信息
      *
-     * @param username 用户名
-     * @param menuId   权限ID
+     * @param menuId 权限ID
      * @return 修改条数
      */
     @Override
     @Transactional
-    public int deleteMenu(String username, String menuId) {
+    public int deleteMenu(String menuId) {
         SysMenu sysMenu = sysMenuMapper.selectByPrimaryKey(menuId);
         if (sysMenu == null) {
             log.info("=========【删除权限信息】==========【权限信息不存在!】");
@@ -213,7 +212,17 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Override
     @Transactional
     public int updateMenu(String username, SysMenuDto sysMenuDto) {
-        return 0;
+        SysMenu sysMenu = sysMenuMapper.selectByPrimaryKey(sysMenuDto.getMenuId());
+        if (sysMenu == null) {
+            log.info("=========【修改权限信息】==========【权限信息不存在!】");
+            throw new BusinessException(EResultEnum.MENU_NOT_EXIST.getCode());
+        }
+        sysMenu.setCnName(sysMenuDto.getCnName());
+        sysMenu.setEnName(sysMenuDto.getEnName());
+        sysMenu.setEnabled(sysMenuDto.getEnabled());
+        sysMenu.setModifier(username);
+        sysMenu.setUpdateTime(new Date());
+        return sysMenuMapper.updateByPrimaryKeySelective(sysMenu);
     }
 
     /**

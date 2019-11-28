@@ -61,7 +61,7 @@ public class SysMenuController extends BaseController {
     public BaseResponse deleteMenu(@RequestParam @ApiParam String menuId) {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(menuId),
                 "删除权限信息"));
-        return ResultUtil.success(sysMenuService.deleteMenu(getSysUserVO().getUsername(), menuId));
+        return ResultUtil.success(sysMenuService.deleteMenu(menuId));
     }
 
     @ApiOperation(value = "修改权限信息")
