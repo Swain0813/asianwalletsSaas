@@ -323,14 +323,4 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
     }
 
 
-    /**
-     * @Author YangXu
-     * @Date 2019/11/28
-     * @Descripate  导出机构
-     * @return
-     **/
-    @Override
-    public List<Institution> exportInstitution() {
-        return null;
-    }
 }
