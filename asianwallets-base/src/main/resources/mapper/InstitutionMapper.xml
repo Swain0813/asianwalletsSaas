@@ -95,4 +95,41 @@
 		where i.id = #{id}
 	</select>
 
+
+	<select id="exportInstitution" resultMap="BaseResultMap" >
+		select
+		i.id,i.cn_name,i.en_name,i.country_type,co.country_name as country,i.company_regist_number,i.company_validity,i.legal_passport_code,i.legal_passport_validity,
+		co.area_code as country_code,i.institution_adress,i.legal_passport_img,i.institution_contract,i.company_articles,i.business_certificate,i.institution_phone,
+		i.legal_name,i.business_category,i.business_license,i.industry_category,i.institution_postal_code,i.institution_email,i.institution_web_url,
+		i.contact_address,i.contact_people,i.contact_phone,i.audit_status,i.ext7,i.ext6,i.ext5,i.ext4,i.ext3,i.ext2,i.ext1,i.create_time,i.update_time,
+		i.creator,i.modifier,i.remark,i.enabled,i.institution_logo,i.develop_sales
+		from institution i left join country co on i.country = co.extend1 and co.language = #{language}
+		<where>
+			<if test="institutionId!=null and institutionId!= ''">
+				and i.id=#{institutionId}
+			</if>
+			<if test="cnName != null and cnName != ''">
+				and i.cn_name LIKE CONCAT(CONCAT('%', #{cnName}), '%')
+			</if>
+			<if test="enabled != null">
+				and i.enabled=#{enabled}
+			</if>
+			<if test="country != null and country != ''">
+				and i.country=#{country}
+			</if>
+			<if test="auditStatus != null and auditStatus != ''">
+				and i.audit_status=#{auditStatus}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				AND DATE_FORMAT(i.create_time,'%Y-%m-%d') &gt;= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(i.create_time,'%Y-%m-%d') &lt;= #{endTime}
+			</if>
+			<if test="enabled != null and enabled != ''">
+				and i.enabled=#{enabled}
+			</if>
+		</where>
+	</select>
+
 </mapper>

@@ -49,6 +49,11 @@ public interface InstitutionFeign {
                                   @RequestParam("remark") @ApiParam String remark);
 
     @ApiOperation(value = "机构下拉框")
-    @GetMapping("/getAllInstitution")
+    @GetMapping("/institution/getAllInstitution")
     BaseResponse getAllInstitution();
+
+    @ApiOperation(value = "导出机构")
+    @GetMapping("/institution/exportInstitution")
+    BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO);
+
 }

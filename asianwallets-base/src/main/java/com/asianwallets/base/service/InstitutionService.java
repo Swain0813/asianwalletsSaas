@@ -86,4 +86,13 @@ public interface InstitutionService extends BaseService<Institution> {
      * @return
      **/
     List<Institution> getAllInstitution();
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 导出机构
+     * @return
+     **/
+    List<Institution>  exportInstitution(InstitutionDTO institutionDTO);
 }

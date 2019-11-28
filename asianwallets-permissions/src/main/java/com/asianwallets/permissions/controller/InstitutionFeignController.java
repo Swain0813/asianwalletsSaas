@@ -102,4 +102,11 @@ public class InstitutionFeignController extends BaseController {
         return institutionFeign.getAllInstitution();
     }
 
+    @ApiOperation(value = "导出机构")
+    @GetMapping("/exportInstitution")
+    public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO){
+        return institutionFeign.exportInstitution(institutionDTO);
+    }
+
+
 }
