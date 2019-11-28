@@ -69,4 +69,7 @@
         where role_id = #{id}
     </select>
 
+    <delete id="deleteByIdAndParentId">
+        delete from sys_menu where id = #{menuId} or parent_id = #{menuId}
+    </delete>
 </mapper>
