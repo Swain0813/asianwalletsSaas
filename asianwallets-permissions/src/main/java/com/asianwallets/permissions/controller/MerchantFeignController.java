@@ -141,4 +141,10 @@ public class MerchantFeignController extends BaseController {
     public BaseResponse getAllAgent(@RequestParam("merchantType") @ApiParam String merchantType) {
         return merchantFeign.getAllAgent(merchantType);
     }
+
+    @ApiOperation(value = "禁用启用商户")
+    @GetMapping("/banMerchant")
+    public BaseResponse banMerchant(@RequestParam @ApiParam String merchantId, @RequestParam @ApiParam Boolean enabled) {
+        return  merchantFeign.banMerchant(merchantId, enabled);
+    }
 }

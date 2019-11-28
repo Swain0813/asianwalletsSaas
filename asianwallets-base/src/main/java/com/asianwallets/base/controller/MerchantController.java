@@ -84,4 +84,10 @@ public class MerchantController extends BaseController {
         return ResultUtil.success(merchantService.getAllAgent(merchantType));
     }
 
+    @ApiOperation(value = "禁用启用商户")
+    @GetMapping("/banMerchant")
+    public BaseResponse banMerchant(@RequestParam @ApiParam String merchantId, @RequestParam @ApiParam Boolean enabled) {
+        return ResultUtil.success(merchantService.banMerchant(this.getSysUserVO().getUsername(), merchantId, enabled));
+    }
+
 }

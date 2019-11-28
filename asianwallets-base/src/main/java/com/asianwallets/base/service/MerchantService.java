@@ -92,4 +92,12 @@ public interface MerchantService extends BaseService<Merchant> {
      * @return
      **/
     List<Merchant> exportMerchant(MerchantDTO merchantDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 禁用启用商户
+     * @return
+     **/
+    int banMerchant(String username, String merchantId, Boolean enabled);
 }

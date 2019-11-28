@@ -60,5 +60,10 @@ public class MerchantFeignImpl implements MerchantFeign {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
+    @Override
+    public BaseResponse banMerchant(String merchantId, Boolean enabled) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
 
 }
