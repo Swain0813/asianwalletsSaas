@@ -49,12 +49,13 @@
 
 	<select id="pageFindInstitutionAudit" resultMap="BaseResultMap" >
 		select
-		ia.id,i.cn_name,ia.en_name,ia.country_type,ia.country,ia.company_regist_number,ia.company_validity,ia.legal_passport_code,ia.legal_passport_validity,
+		ia.id,i.cn_name,ia.en_name,ia.country_type,co.country_name as country,ia.company_regist_number,ia.company_validity,
+		ia.legal_passport_code,ia.legal_passport_validity,
 		ia.country_code,ia.institution_adress,ia.legal_passport_img,ia.institution_contract,ia.company_articles,ia.business_certificate,ia.institution_phone,
 		ia.legal_name,ia.business_category,ia.business_license,ia.industry_category,ia.institution_postal_code,ia.institution_email,ia.institution_web_url,
 		ia.contact_address,ia.contact_people,ia.contact_phone,ia.audit_status,ia.ext7,ia.ext6,ia.ext5,ia.ext4,ia.ext3,ia.ext2,ia.ext1,ia.create_time,ia.institution_logo,
 		ia.update_time,ia.creator,ia.modifier,ia.remark,ia.enabled
-		from institution_audit ia
+		from institution_audit ia left join country co on ia.country = co.extend1 and co.language = #{language}
 		<where>
 			<if test="institutionCode!=null and institutionCode != ''">
 				and ia.institution_code=#{institutionCode}
@@ -87,12 +88,12 @@
 	</select>
 	<select id="getInstitutionInfoAudit"  resultMap="BaseResultMap" >
 			select
-        i.id,i.cn_name,i.en_name,i.country_type,i.country,i.company_regist_number,i.company_validity,i.legal_passport_code,i.legal_passport_validity,
+        i.id,i.cn_name,i.en_name,i.country_type,co.country_name as country,i.company_regist_number,i.company_validity,i.legal_passport_code,i.legal_passport_validity,
 		i.country_code,i.institution_adress,i.legal_passport_img,i.institution_contract,i.company_articles,i.business_certificate,i.institution_phone,
 		i.legal_name,i.business_category,i.business_license,i.industry_category,i.institution_postal_code,i.institution_email,i.institution_web_url,
 		i.contact_address,i.contact_people,i.contact_phone,i.audit_status,i.ext7,i.ext6,i.ext5,i.ext4,i.ext3,i.ext2,i.ext1,i.create_time,i.update_time,
 		i.creator,i.modifier,i.remark,i.enabled,i.institution_logo
-		from institution_audit i
+		from institution_audit i left join country co on i.country = co.extend1 and co.language = #{language}
 		where i.id = #{id}
 	</select>
 
