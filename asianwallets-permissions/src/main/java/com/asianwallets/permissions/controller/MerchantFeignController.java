@@ -74,7 +74,7 @@ public class MerchantFeignController extends BaseController {
     }
 
     @ApiOperation(value = "导出商户")
-    @GetMapping("/exportMerchant")
+    @PostMapping("/exportMerchant")
     public BaseResponse exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO){
         BaseResponse baseResponse = merchantFeign.exportMerchant(merchantDTO);
         ArrayList<LinkedHashMap> data = (ArrayList<LinkedHashMap>) baseResponse.getData();
