@@ -1,10 +1,7 @@
 package com.asianwallets.base.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.asianwallets.base.dao.MerchantAuditMapper;
-import com.asianwallets.base.dao.MerchantHistoryMapper;
-import com.asianwallets.base.dao.MerchantMapper;
-import com.asianwallets.base.dao.SysUserMapper;
+import com.asianwallets.base.dao.*;
 import com.asianwallets.base.service.MerchantService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.config.AuditorProvider;
@@ -52,7 +49,8 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
     private MerchantHistoryMapper merchantHistoryMapper;
     @Autowired
     private AuditorProvider auditorProvider;
-
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
     @Autowired
     private SysUserMapper sysUserMapper;
 
@@ -115,7 +113,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
                 //代理商户
                 sysUser.setPermissionType(AsianWalletConstant.AGENCY);
                 sysUser.setSysType(AsianWalletConstant.AGENCY_USER);
-            } else {
+            } else if (merchantDTO.getMerchantType().equals(AsianWalletConstant.GROUP_USER)) {
                 //集团商户
                 sysUser.setPermissionType(AsianWalletConstant.MERCHANT);
                 sysUser.setSysType(AsianWalletConstant.GROUP_USER);
@@ -125,6 +123,32 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             sysUser.setCreator(name);
             sysUser.setEnabled(true);
             sysUserMapper.insert(sysUser);
+
+            if (merchantDTO.getMerchantType().equals(AsianWalletConstant.MERCHANT_USER)) {
+                //分配普通商户角色
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setRoleId(sysUserRoleMapper.getInstitutionRoleId());
+                sysUserRole.setUserId(userId);
+                sysUserRole.setCreateTime(new Date());
+                sysUserRole.setCreator(name);
+                sysUserRoleMapper.insert(sysUserRole);
+            } else if (merchantDTO.getMerchantType().equals(AsianWalletConstant.AGENCY_USER)) {
+                //分配代理商户角色
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setRoleId(sysUserRoleMapper.getAgencyRoleId());
+                sysUserRole.setUserId(userId);
+                sysUserRole.setCreateTime(new Date());
+                sysUserRole.setCreator(name);
+                sysUserRoleMapper.insert(sysUserRole);
+            } else if (merchantDTO.getMerchantType().equals(AsianWalletConstant.GROUP_USER)) {
+                //分配集团商户角色
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setRoleId(sysUserRoleMapper.getGroupRoleId());
+                sysUserRole.setUserId(userId);
+                sysUserRole.setCreateTime(new Date());
+                sysUserRole.setCreator(name);
+                sysUserRoleMapper.insert(sysUserRole);
+            }
         }
 
         return merchantAuditMapper.insert(merchantAudit);
