@@ -6,6 +6,7 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.permissions.dto.FirstMenuDto;
 import com.asianwallets.permissions.dto.SysMenuDto;
 import com.asianwallets.permissions.service.OperationLogService;
 import com.asianwallets.permissions.service.SysMenuService;
@@ -31,10 +32,10 @@ public class SysMenuController extends BaseController {
 
     @ApiOperation(value = "添加权限信息")
     @PostMapping("/addMenu")
-    public BaseResponse addMenu(@RequestBody @ApiParam SysMenuDto sysMenuDto) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysMenuDto),
+    public BaseResponse addMenu(@RequestBody @ApiParam FirstMenuDto firstMenuDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(firstMenuDto),
                 "添加权限信息"));
-        return ResultUtil.success(sysMenuService.addMenu(getSysUserVO().getUsername(), sysMenuDto));
+        return ResultUtil.success(sysMenuService.addMenu(getSysUserVO().getUsername(), firstMenuDto));
     }
 
     @ApiOperation(value = "删除权限信息")
