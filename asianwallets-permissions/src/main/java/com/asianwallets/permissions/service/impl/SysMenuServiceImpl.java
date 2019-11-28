@@ -1,7 +1,16 @@
 package com.asianwallets.permissions.service.impl;
 
-import com.asianwallets.permissions.dao.SysMenuMapper;
+import java.util.Date;
+
+import com.asianwallets.common.entity.SysMenu;
+import com.asianwallets.common.entity.SysRoleMenu;
+import com.asianwallets.common.utils.ArrayUtil;
+import com.asianwallets.common.utils.IDS;
+import com.asianwallets.permissions.dao.*;
+import com.asianwallets.permissions.dto.FirstMenuDto;
+import com.asianwallets.permissions.dto.SecondMenuDto;
 import com.asianwallets.permissions.dto.SysMenuDto;
+import com.asianwallets.permissions.dto.ThreeMenuDto;
 import com.asianwallets.permissions.service.SysMenuService;
 import com.asianwallets.permissions.vo.FirstMenuVO;
 import com.asianwallets.permissions.vo.SecondMenuVO;
@@ -9,7 +18,9 @@ import com.asianwallets.permissions.vo.ThreeMenuVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -19,27 +30,152 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Autowired
     private SysMenuMapper sysMenuMapper;
 
+    @Autowired
+    private SysUserMenuMapper sysUserMenuMapper;
+
+    @Autowired
+    private SysRoleMenuMapper sysRoleMenuMapper;
+
     /**
-     * 添加权限信息
+     * 添加一二三级菜单权限信息
      *
-     * @param username   用户名
-     * @param sysMenuDto 权限输入实体
+     * @param username     用户名
+     * @param firstMenuDto 一级权限输入实体
      * @return 修改条数
      */
     @Override
-    public int addMenu(String username, SysMenuDto sysMenuDto) {
-        return 0;
+    @Transactional
+    public int addThreeLayerMenu(String username, FirstMenuDto firstMenuDto) {
+        List<SysMenu> menuList = new ArrayList<>();
+        SysMenu firstMenu = new SysMenu();
+        firstMenu.setId(IDS.uuid2());
+        firstMenu.setLevel(0);
+        firstMenu.setEnName(firstMenuDto.getEName());
+        firstMenu.setCnName(firstMenuDto.getCName());
+        firstMenu.setPermissionType(firstMenuDto.getPermissionType());
+        firstMenu.setDescription(firstMenuDto.getDescription());
+        firstMenu.setSort(0);
+        firstMenu.setCreateTime(new Date());
+        firstMenu.setCreator(username);
+        firstMenu.setEnabled(true);
+        menuList.add(firstMenu);
+        if (!ArrayUtil.isEmpty(firstMenuDto.getSecondMenuDtoList())) {
+            for (SecondMenuDto secondMenuDto : firstMenuDto.getSecondMenuDtoList()) {
+                SysMenu secondMenu = new SysMenu();
+                secondMenu.setId(IDS.uuid2());
+                secondMenu.setLevel(1);
+                secondMenu.setParentId(firstMenu.getId());
+                secondMenu.setEnName(secondMenuDto.getEName());
+                secondMenu.setCnName(secondMenuDto.getCName());
+                secondMenu.setPermissionType(secondMenuDto.getPermissionType());
+                secondMenu.setDescription(secondMenuDto.getDescription());
+                secondMenu.setSort(0);
+                secondMenu.setCreateTime(new Date());
+                secondMenu.setCreator(username);
+                secondMenu.setEnabled(true);
+                menuList.add(secondMenu);
+                if (!ArrayUtil.isEmpty(secondMenuDto.getThreeMenuDtoList())) {
+                    for (ThreeMenuDto threeMenuDto : secondMenuDto.getThreeMenuDtoList()) {
+                        SysMenu threeMenu = new SysMenu();
+                        threeMenu.setId(IDS.uuid2());
+                        threeMenu.setLevel(2);
+                        threeMenu.setParentId(secondMenu.getId());
+                        threeMenu.setEnName(threeMenuDto.getEName());
+                        threeMenu.setCnName(threeMenuDto.getCName());
+                        threeMenu.setPermissionType(threeMenuDto.getPermissionType());
+                        threeMenu.setDescription(threeMenuDto.getDescription());
+                        threeMenu.setSort(0);
+                        threeMenu.setCreateTime(new Date());
+                        threeMenu.setCreator(username);
+                        threeMenu.setEnabled(true);
+                        menuList.add(threeMenu);
+                    }
+                }
+            }
+        }
+        return sysMenuMapper.insertList(menuList);
+    }
+
+    /**
+     * 添加二三级菜单权限信息
+     *
+     * @param username      用户名
+     * @param secondMenuDto 二级权限输入实体
+     * @return 修改条数
+     */
+    @Override
+    @Transactional
+    public int addTwoLayerMenu(String username, SecondMenuDto secondMenuDto) {
+        List<SysMenu> menuList = new ArrayList<>();
+        SysMenu secondMenu = new SysMenu();
+        secondMenu.setId(IDS.uuid2());
+        secondMenu.setLevel(1);
+        secondMenu.setParentId(secondMenuDto.getParentId());
+        secondMenu.setEnName(secondMenuDto.getEName());
+        secondMenu.setCnName(secondMenuDto.getCName());
+        secondMenu.setPermissionType(secondMenuDto.getPermissionType());
+        secondMenu.setDescription(secondMenuDto.getDescription());
+        secondMenu.setSort(0);
+        secondMenu.setCreateTime(new Date());
+        secondMenu.setCreator(username);
+        secondMenu.setEnabled(true);
+        menuList.add(secondMenu);
+        if (!ArrayUtil.isEmpty(secondMenuDto.getThreeMenuDtoList())) {
+            for (ThreeMenuDto threeMenuDto : secondMenuDto.getThreeMenuDtoList()) {
+                SysMenu threeMenu = new SysMenu();
+                threeMenu.setId(IDS.uuid2());
+                threeMenu.setLevel(2);
+                threeMenu.setParentId(secondMenu.getId());
+                threeMenu.setEnName(threeMenuDto.getEName());
+                threeMenu.setCnName(threeMenuDto.getCName());
+                threeMenu.setPermissionType(threeMenuDto.getPermissionType());
+                threeMenu.setDescription(threeMenuDto.getDescription());
+                threeMenu.setSort(0);
+                threeMenu.setCreateTime(new Date());
+                threeMenu.setCreator(username);
+                threeMenu.setEnabled(true);
+                menuList.add(threeMenu);
+            }
+        }
+        return sysMenuMapper.insertList(menuList);
+    }
+
+    /**
+     * 添加三级菜单权限信息
+     *
+     * @param username     用户名
+     * @param threeMenuDto 三级权限输入实体
+     * @return 修改条数
+     */
+    @Override
+    @Transactional
+    public int addOneLayerMenu(String username, ThreeMenuDto threeMenuDto) {
+        SysMenu threeMenu = new SysMenu();
+        threeMenu.setId(IDS.uuid2());
+        threeMenu.setLevel(2);
+        threeMenu.setParentId(threeMenuDto.getParentId());
+        threeMenu.setEnName(threeMenuDto.getEName());
+        threeMenu.setCnName(threeMenuDto.getCName());
+        threeMenu.setPermissionType(threeMenuDto.getPermissionType());
+        threeMenu.setDescription(threeMenuDto.getDescription());
+        threeMenu.setSort(0);
+        threeMenu.setCreateTime(new Date());
+        threeMenu.setCreator(username);
+        threeMenu.setEnabled(true);
+        return sysMenuMapper.insert(threeMenu);
     }
 
     /**
      * 删除权限信息
      *
-     * @param username   用户名
-     * @param sysMenuDto 权限输入实体
+     * @param username 用户名
+     * @param menuId   权限ID
      * @return 修改条数
      */
     @Override
-    public int deleteMenu(String username, SysMenuDto sysMenuDto) {
+    @Transactional
+    public int deleteMenu(String username, String menuId) {
+        //sysMenuMapper.
         return 0;
     }
 
@@ -51,6 +187,7 @@ public class SysMenuServiceImpl implements SysMenuService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int updateMenu(String username, SysMenuDto sysMenuDto) {
         return 0;
     }

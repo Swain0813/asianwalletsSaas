@@ -55,4 +55,14 @@ public class InstitutionFeignImpl implements InstitutionFeign {
     public BaseResponse auditInstitution(String institutionId, Boolean enabled, String remark) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BaseResponse getAllInstitution() {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse exportInstitution(InstitutionDTO institutionDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

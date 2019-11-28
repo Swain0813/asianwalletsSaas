@@ -91,6 +91,12 @@ public class Institution extends BaseEntity {
 	@ApiModelProperty(value = "法人证件照片")
 	@Column(name = "legal_passport_img")
 	private String legalPassportImg;
+	/**
+	 * 拓展销售
+	 */
+	@ApiModelProperty(value = "拓展销售")
+	@Column(name = "develop_sales")
+	private String developSales;
     /**
      * 机构协议
      */

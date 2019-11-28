@@ -2,6 +2,7 @@ package com.asianwallets.permissions.feign.base;
 
 import com.asianwallets.common.dto.MerchantDTO;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.feign.base.impl.MerchantFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -42,4 +43,13 @@ public interface MerchantFeign {
     @GetMapping("/merchant/auditMerchant")
     BaseResponse auditMerchant(@RequestParam("merchantId") @ApiParam String merchantId, @RequestParam("enabled") @ApiParam Boolean enabled,
                                @RequestParam("remark") @ApiParam String remark);
+
+    @ApiOperation(value = "代理商下拉框")
+    @GetMapping("/merchant/getAllAgent")
+    BaseResponse getAllAgent(@RequestParam("merchantType") @ApiParam String merchantType);
+
+    @ApiOperation(value = "导出商户")
+    @PostMapping("/merchant/exportMerchant")
+    BaseResponse exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO);
+
 }

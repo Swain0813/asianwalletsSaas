@@ -49,6 +49,13 @@ public class InstitutionController extends BaseController {
         return ResultUtil.success(institutionService.pageFindInstitution(institutionDTO));
     }
 
+    @ApiOperation(value = "导出机构")
+    @PostMapping("/exportInstitution")
+    public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO){
+        return ResultUtil.success(institutionService.exportInstitution(institutionDTO));
+    }
+
+
     @ApiOperation(value = "分页查询机构审核信息列表")
     @PostMapping("/pageFindInstitutionAudit")
     public BaseResponse pageFindInstitutionAudit(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
@@ -73,6 +80,13 @@ public class InstitutionController extends BaseController {
     public BaseResponse auditInstitution(@RequestParam @ApiParam String institutionId, @RequestParam @ApiParam Boolean enabled, @RequestParam(required = false) @ApiParam String remark) {
         return ResultUtil.success(institutionService.auditInstitution(this.getSysUserVO().getUsername(), institutionId, enabled, remark));
     }
+
+    @ApiOperation(value = "机构下拉框")
+    @GetMapping("/getAllInstitution")
+    public BaseResponse getAllInstitution() {
+        return ResultUtil.success(institutionService.getAllInstitution());
+    }
+
 
 
 

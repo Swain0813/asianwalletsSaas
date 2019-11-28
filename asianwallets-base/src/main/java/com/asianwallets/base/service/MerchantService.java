@@ -7,6 +7,8 @@ import com.asianwallets.common.entity.MerchantAudit;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -74,4 +76,20 @@ public interface MerchantService extends BaseService<Merchant> {
      * @return
      **/
     int auditMerchant(String username, String merchantId, Boolean enabled, String remark);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 代理商下拉框
+     * @return
+     **/
+    List<Merchant> getAllAgent(String merchantType);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 导出商户
+     * @return
+     **/
+    List<Merchant> exportMerchant(MerchantDTO merchantDTO);
 }

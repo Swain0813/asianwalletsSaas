@@ -45,4 +45,20 @@ public interface InstitutionMapper extends  BaseMapper<Institution> {
      **/
     Institution getInstitutionInfo(@Param("id") String id, @Param("language") String language);
 
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 机构下拉框
+     * @return
+     **/
+    @Select("select id as id ,cn_name as cnName ,en_name as enName from institution")
+    List<Institution> getAllInstitution();
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/11/25
+     * @Descripate 导出机构
+     **/
+    List<Institution> exportInstitution(InstitutionDTO institutionDTO);
 }

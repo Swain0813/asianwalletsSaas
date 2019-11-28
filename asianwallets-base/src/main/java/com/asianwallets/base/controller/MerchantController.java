@@ -47,6 +47,13 @@ public class MerchantController extends BaseController {
         return ResultUtil.success(merchantService.pageFindMerchant(merchantDTO));
     }
 
+    @ApiOperation(value = "导出商户")
+    @PostMapping("/exportMerchant")
+    public BaseResponse exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO){
+        return ResultUtil.success(merchantService.exportMerchant(merchantDTO));
+    }
+
+
     @ApiOperation(value = "分页查询商户审核信息列表")
     @PostMapping("/pageFindMerchantAudit")
     public BaseResponse pageFindMerchantAudit(@RequestBody @ApiParam MerchantDTO merchantDTO) {
@@ -70,4 +77,11 @@ public class MerchantController extends BaseController {
     public BaseResponse auditMerchant(@RequestParam @ApiParam String merchantId, @RequestParam @ApiParam Boolean enabled, @RequestParam(required = false) @ApiParam String remark) {
         return ResultUtil.success(merchantService.auditMerchant(this.getSysUserVO().getUsername(), merchantId, enabled, remark));
     }
+
+    @ApiOperation(value = "代理商下拉框")
+    @GetMapping("/getAllAgent")
+    public BaseResponse getAllAgent(@RequestParam @ApiParam String merchantType) {
+        return ResultUtil.success(merchantService.getAllAgent(merchantType));
+    }
+
 }
