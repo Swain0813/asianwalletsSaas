@@ -83,8 +83,8 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
         BeanUtils.copyProperties(merchantDTO, merchant);
         BeanUtils.copyProperties(merchantDTO, merchantAudit);
         //商户编号
-        String id = "M"+IDS.uniqueID();
-        String merchantId = DateToolUtils.getReqDateE().concat(id.substring(id.length() - 4));
+        String id = IDS.uniqueID().toString();
+        String merchantId ="M"+DateToolUtils.getReqDateE().concat(id.substring(id.length() - 4));
         merchant.setId(merchantId);
         merchant.setCreateTime(new Date());
         merchant.setCreator(name);

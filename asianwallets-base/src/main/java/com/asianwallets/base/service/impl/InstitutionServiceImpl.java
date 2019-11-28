@@ -75,7 +75,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
         }
         //机构编号
         String str = IDS.uniqueID().toString();
-        String institutionId = DateToolUtils.getReqDateE().concat(str.substring(str.length() - 4));
+        String institutionId = "I"+DateToolUtils.getReqDateE().concat(str.substring(str.length() - 4));
 
         Institution institution = new Institution();
         InstitutionAudit institutionAudit = new InstitutionAudit();
