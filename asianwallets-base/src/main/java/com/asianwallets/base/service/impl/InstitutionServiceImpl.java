@@ -1,20 +1,14 @@
 package com.asianwallets.base.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.asianwallets.base.dao.InstitutionAuditMapper;
-import com.asianwallets.base.dao.InstitutionHistoryMapper;
-import com.asianwallets.base.dao.InstitutionMapper;
-import com.asianwallets.base.dao.SysUserMapper;
+import com.asianwallets.base.dao.*;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
-import com.asianwallets.common.entity.Institution;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.base.service.InstitutionService;
 import com.asianwallets.common.base.BaseServiceImpl;
-import com.asianwallets.common.entity.InstitutionAudit;
-import com.asianwallets.common.entity.InstitutionHistory;
-import com.asianwallets.common.entity.SysUser;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
@@ -55,6 +49,9 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
     @Autowired
     private SysUserMapper sysUserMapper;
 
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
+
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public String encryptPassword(String password) {
@@ -78,7 +75,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
         }
         //机构编号
         String str = IDS.uniqueID().toString();
-        String institutionId = DateToolUtils.getReqDateE().concat(str.substring(str.length() - 4));
+        String institutionId = "I"+DateToolUtils.getReqDateE().concat(str.substring(str.length() - 4));
 
         Institution institution = new Institution();
         InstitutionAudit institutionAudit = new InstitutionAudit();
@@ -114,6 +111,14 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
             sysUser.setCreator(name);
             sysUser.setEnabled(true);
             sysUserMapper.insert(sysUser);
+
+            //分配机构角色
+            SysUserRole sysUserRole = new SysUserRole();
+            sysUserRole.setRoleId(sysUserRoleMapper.getInstitutionRoleId());
+            sysUserRole.setUserId(userId);
+            sysUserRole.setCreateTime(new Date());
+            sysUserRole.setCreator(name);
+            sysUserRoleMapper.insert(sysUserRole);
 
         }
 
