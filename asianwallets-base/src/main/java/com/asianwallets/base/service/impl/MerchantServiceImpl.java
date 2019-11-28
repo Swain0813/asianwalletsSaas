@@ -105,15 +105,15 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             sysUser.setPassword(encryptPassword("123456"));
             sysUser.setTradePassword(encryptPassword("123456"));//交易密码
             sysUser.setSysId(merchantId);
-            if (merchantDTO.getMerchantType().equals(AsianWalletConstant.MERCHANT_USER)) {
+            if (merchantDTO.getMerchantType().equals("3")) {
                 //普通商户
                 sysUser.setPermissionType(AsianWalletConstant.MERCHANT);
                 sysUser.setSysType(AsianWalletConstant.MERCHANT_USER);
-            } else if (merchantDTO.getMerchantType().equals(AsianWalletConstant.AGENCY_USER)) {
+            } else if (merchantDTO.getMerchantType().equals("4")) {
                 //代理商户
                 sysUser.setPermissionType(AsianWalletConstant.AGENCY);
                 sysUser.setSysType(AsianWalletConstant.AGENCY_USER);
-            } else if (merchantDTO.getMerchantType().equals(AsianWalletConstant.GROUP_USER)) {
+            } else if (merchantDTO.getMerchantType().equals("5")) {
                 //集团商户
                 sysUser.setPermissionType(AsianWalletConstant.MERCHANT);
                 sysUser.setSysType(AsianWalletConstant.GROUP_USER);
@@ -124,7 +124,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             sysUser.setEnabled(true);
             sysUserMapper.insert(sysUser);
 
-            if (merchantDTO.getMerchantType().equals(AsianWalletConstant.MERCHANT_USER)) {
+            if (merchantDTO.getMerchantType().equals("3")) {
                 //分配普通商户角色
                 SysUserRole sysUserRole = new SysUserRole();
                 sysUserRole.setRoleId(sysUserRoleMapper.getMerchantRoleId());
@@ -157,7 +157,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
                 sysUserRoleMapper.insert(sysUserRole1);
 
 
-            } else if (merchantDTO.getMerchantType().equals(AsianWalletConstant.AGENCY_USER)) {
+            } else if (merchantDTO.getMerchantType().equals("4")) {
                 //分配代理商户角色
                 SysUserRole sysUserRole = new SysUserRole();
                 sysUserRole.setRoleId(sysUserRoleMapper.getAgencyRoleId());
@@ -165,7 +165,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
                 sysUserRole.setCreateTime(new Date());
                 sysUserRole.setCreator(name);
                 sysUserRoleMapper.insert(sysUserRole);
-            } else if (merchantDTO.getMerchantType().equals(AsianWalletConstant.GROUP_USER)) {
+            } else if (merchantDTO.getMerchantType().equals("5")) {
                 //分配集团商户角色
                 SysUserRole sysUserRole = new SysUserRole();
                 sysUserRole.setRoleId(sysUserRoleMapper.getGroupRoleId());
