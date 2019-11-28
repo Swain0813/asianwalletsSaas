@@ -112,6 +112,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
             sysUser.setName("admin");
             sysUser.setCreateTime(new Date());
             sysUser.setCreator(name);
+            sysUser.setEnabled(true);
             sysUserMapper.insert(sysUser);
 
         }

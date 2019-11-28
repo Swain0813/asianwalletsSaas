@@ -25,18 +25,13 @@ public class MerchantExportVO {
     /**
      * 上级商户id
      */
-    @ApiModelProperty(value = "上级商户id")
+    @ApiModelProperty(value = "上级商户")
     private String parentId;
     /**
      * 商户中文名称
      */
-    @ApiModelProperty(value = "商户中文名称")
+    @ApiModelProperty(value = "商户名称")
     private String cnName;
-    /**
-     * 商户英文名称
-     */
-    @ApiModelProperty(value = "商户英文名称")
-    private String enName;
 
     @ApiModelProperty(value = "国家")
     private String country;
