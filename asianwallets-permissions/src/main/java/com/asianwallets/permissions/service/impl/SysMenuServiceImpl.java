@@ -185,16 +185,35 @@ public class SysMenuServiceImpl implements SysMenuService {
         }
         switch (sysMenu.getLevel()) {
             case AsianWalletConstant.ZERO:
-                //Level为0时,查询下级权限ID
-                List<String> menuIdList = sysMenuMapper.getMenuByParentId(sysMenu.getId());
-                menuIdList.add(sysMenu.getId());
+                //查询关联权限ID
+                FirstMenuVO firstMenuVO = sysMenuMapper.selectAllMenuById(menuId);
+                List<String> menuIds = new ArrayList<>();
+                menuIds.add(firstMenuVO.getId());
+                for (SecondMenuVO secondMenuVO : firstMenuVO.getSecondMenuVOS()) {
+                    menuIds.add(secondMenuVO.getId());
+                    for (ThreeMenuVO threeMenuVO : secondMenuVO.getThreeMenuVOS()) {
+                        menuIds.add(threeMenuVO.getId());
+                    }
+                }
+                //删除中间表的关联关系
+                sysUserMenuMapper.deleteByMenuIdList(menuIds);
+                sysRoleMenuMapper.deleteByMenuIdList(menuIds);
                 //删除一级权限关联的所有权限
-                return sysMenuMapper.deleteByIdAndParentIdList(menuIdList);
+                return sysMenuMapper.deleteByIdList(menuIds);
             case AsianWalletConstant.ONE:
-                //Level为1时,删除二级权限关联的所有权限
-                return sysMenuMapper.deleteByIdAndParentId(menuId);
+                //查询所有关联权限ID
+                List<String> menuIdList = sysMenuMapper.selectMenuByParentId(menuId);
+                menuIdList.add(menuId);
+                //删除中间表的关联关系
+                sysUserMenuMapper.deleteByMenuIdList(menuIdList);
+                sysRoleMenuMapper.deleteByMenuIdList(menuIdList);
+                //删除二级权限关联的所有权限
+                return sysMenuMapper.deleteByIdList(menuIdList);
             case AsianWalletConstant.TWO:
-                //Level为2时,删除三级权限自身
+                //删除中间表的关联关系
+                sysUserMenuMapper.deleteByMenuId(menuId);
+                sysRoleMenuMapper.deleteByMenuId(menuId);
+                //删除三级权限自身
                 return sysMenuMapper.deleteByPrimaryKey(menuId);
             default:
                 log.info("=========【删除权限信息】==========【层级信息不存在!】 Level: {}", sysMenu.getLevel());
@@ -234,9 +253,9 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public List<FirstMenuVO> getAllMenuByUserId(String userId, Integer permissionType) {
-        List<FirstMenuVO> menuList = sysMenuMapper.getAllMenuByPermissionType(permissionType);
+        List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionType(permissionType);
         if (StringUtils.isNotBlank(userId)) {
-            Set<String> menuSet = sysMenuMapper.getUserMenu(userId);
+            Set<String> menuSet = sysMenuMapper.selectMenuByUserId(userId);
             for (FirstMenuVO firstMenuVO : menuList) {
                 if (menuSet.contains(firstMenuVO.getId())) {
                     firstMenuVO.setFlag(true);
@@ -266,9 +285,9 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Override
     public List<FirstMenuVO> getAllMenuByRoleId(String roleId, Integer permissionType) {
         //根据权限类型查询所有权限
-        List<FirstMenuVO> menuList = sysMenuMapper.getAllMenuByPermissionType(permissionType);
+        List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionType(permissionType);
         if (StringUtils.isNotBlank(roleId)) {
-            Set<String> menuSet = sysMenuMapper.getRoleMenu(roleId);
+            Set<String> menuSet = sysMenuMapper.selectMenuByRoleId(roleId);
             for (FirstMenuVO firstMenuVO : menuList) {
                 if (menuSet.contains(firstMenuVO.getId())) {
                     firstMenuVO.setFlag(true);
