@@ -319,6 +319,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
      **/
     @Override
     public List<Institution> exportInstitution(InstitutionDTO institutionDTO) {
+        institutionDTO.setLanguage(auditorProvider.getLanguage());//设置语言
         return institutionMapper.exportInstitution(institutionDTO);
     }
 }

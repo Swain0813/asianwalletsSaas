@@ -317,4 +317,16 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
     public List<Merchant> getAllAgent(String merchantType) {
         return merchantMapper.getAllAgent(merchantType);
     }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 导出商户
+     * @return
+     **/
+    @Override
+    public List<Merchant> exportMerchant(MerchantDTO merchantDTO) {
+        merchantDTO.setLanguage(auditorProvider.getLanguage());//设置语言
+        return merchantMapper.exportMerchant(merchantDTO);
+    }
 }

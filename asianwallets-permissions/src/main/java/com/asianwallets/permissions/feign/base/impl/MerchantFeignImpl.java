@@ -54,4 +54,11 @@ public class MerchantFeignImpl implements MerchantFeign {
     public BaseResponse getAllAgent(String merchantType) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BaseResponse exportMerchant(MerchantDTO merchantDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+
 }

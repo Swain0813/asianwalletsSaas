@@ -84,4 +84,12 @@ public interface MerchantService extends BaseService<Merchant> {
      * @return
      **/
     List<Merchant> getAllAgent(String merchantType);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 导出商户
+     * @return
+     **/
+    List<Merchant> exportMerchant(MerchantDTO merchantDTO);
 }

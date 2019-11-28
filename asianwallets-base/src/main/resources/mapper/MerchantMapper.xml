@@ -114,5 +114,47 @@
 		m.id=#{id}
 
 	</select>
+	<select id="exportMerchant" resultMap="BaseResultMap">
+		select
+		i.cn_name as institution_id,
+		m.id,m.cn_name,m.en_name,m.country_type,co.contry_name as country,m.mcc,co.area_name as region,m.merchant_type,m.group_master_account,m.develop_sales,
+		m.company_regist_number,m.company_validity,m.legal_passport_code,m.legal_passport_validity,
+		co.area_code as country_code,m.institution_adress,m.legal_passport_img,m.institution_contract,m.company_articles,m.business_certificate,m.institution_phone,
+		m.legal_name,m.business_category,m.business_license,m.industry_category,m.institution_postal_code,m.institution_email,m.institution_web_url,
+		m.contact_address,m.contact_people,m.contact_phone,m.audit_status,m.ext7,m.ext6,m.ext5,m.ext4,m.ext3,m.ext2,m.ext1,m.create_time,m.update_time,
+		m.creator,m.modifier,m.remark,m.enabled
+		from merchant m
+		left join institution i on m.institution_id = i.id
+		left join country co on m.country = co.extend1 and co.language = #{language}
+		<where>
+			<if test="merchantId!=null and merchantId != ''">
+				and m.id=#{merchantID}
+			</if>
+			<if test="merchantType!=null and merchantType != ''">
+				and m.merchant_type=#{merchantType}
+			</if>
+			<if test="cnName != null and cnName != ''">
+				and m.cn_name LIKE CONCAT(CONCAT('%', #{cnName}), '%')
+			</if>
+			<if test="enabled != null">
+				and m.enabled=#{enabled}
+			</if>
+			<if test="country != null and country != ''">
+				and i.country=#{country}
+			</if>
+			<if test="auditStatus != null and auditStatus != ''">
+				and m.audit_status=#{auditStatus}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				AND DATE_FORMAT(m.create_time,'%Y-%m-%d') &gt;= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(m.create_time,'%Y-%m-%d') &lt;= #{endTime}
+			</if>
+			<if test="countryType != null and countryType != ''">
+				and m.country_type=#{countryType}
+			</if>
+		</where>
+	</select>
 
 </mapper>

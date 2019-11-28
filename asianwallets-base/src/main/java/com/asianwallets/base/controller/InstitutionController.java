@@ -50,7 +50,7 @@ public class InstitutionController extends BaseController {
     }
 
     @ApiOperation(value = "导出机构")
-    @GetMapping("/exportInstitution")
+    @PostMapping("/exportInstitution")
     public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO){
         return ResultUtil.success(institutionService.exportInstitution(institutionDTO));
     }

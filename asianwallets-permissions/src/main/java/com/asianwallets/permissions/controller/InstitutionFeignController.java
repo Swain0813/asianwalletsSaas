@@ -118,7 +118,7 @@ public class InstitutionFeignController extends BaseController {
     }
 
     @ApiOperation(value = "导出机构")
-    @GetMapping("/exportInstitution")
+    @PostMapping("/exportInstitution")
     public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
         BaseResponse baseResponse = institutionFeign.exportInstitution(institutionDTO);
         ArrayList<LinkedHashMap> data = (ArrayList<LinkedHashMap>) baseResponse.getData();

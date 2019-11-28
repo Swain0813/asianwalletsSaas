@@ -53,7 +53,7 @@ public interface InstitutionFeign {
     BaseResponse getAllInstitution();
 
     @ApiOperation(value = "导出机构")
-    @GetMapping("/institution/exportInstitution")
+    @PostMapping("/institution/exportInstitution")
     BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO);
 
 }

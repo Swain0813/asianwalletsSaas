@@ -1,18 +1,30 @@
 package com.asianwallets.permissions.controller;
 
+import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.MerchantDTO;
+import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.vo.InstitutionExportVO;
 import com.asianwallets.permissions.feign.base.MerchantFeign;
+import com.asianwallets.permissions.service.ExportService;
 import com.asianwallets.permissions.service.OperationLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  * @description:
@@ -29,6 +41,9 @@ public class MerchantFeignController extends BaseController {
 
     @Autowired
     private OperationLogService operationLogService;
+
+    @Autowired
+    private ExportService exportService;
 
     @ApiOperation(value = "添加商户")
     @PostMapping("addMerchant")
@@ -56,6 +71,33 @@ public class MerchantFeignController extends BaseController {
                 "分页查询商户信息列表"));
         return merchantFeign.pageFindMerchant(merchantDTO);
     }
+
+    @ApiOperation(value = "导出商户")
+    @GetMapping("/exportMerchant")
+    public BaseResponse exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO){
+        BaseResponse baseResponse = merchantFeign.exportMerchant(merchantDTO);
+        ArrayList<LinkedHashMap> data = (ArrayList<LinkedHashMap>) baseResponse.getData();
+        if (data == null || data.size() == 0) {//数据不存在的场合
+            throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
+        }
+        //ArrayList<InstitutionExportVO> institutionExportVOS = new ArrayList<>();
+        //for (LinkedHashMap datum : data) {
+        //    institutionExportVOS.add(JSON.parseObject(JSON.toJSONString(datum), InstitutionExportVO.class));
+        //}
+        //ExcelWriter writer = null;
+        //try {
+        //    writer = exportService.getInstitutionExcel(institutionExportVOS, InstitutionExportVO.class);
+        //    HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+        //    ServletOutputStream out = response.getOutputStream();
+        //    writer.flush(out);
+        //} catch (Exception e) {
+        //    throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
+        //} finally {
+        //    writer.close();
+        //}
+        return ResultUtil.success();
+    }
+
 
     @ApiOperation(value = "分页查询商户审核信息列表")
     @PostMapping("/pageFindMerchantAudit")
