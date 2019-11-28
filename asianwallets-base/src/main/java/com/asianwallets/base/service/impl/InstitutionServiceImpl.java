@@ -5,6 +5,7 @@ import com.asianwallets.base.dao.InstitutionAuditMapper;
 import com.asianwallets.base.dao.InstitutionHistoryMapper;
 import com.asianwallets.base.dao.InstitutionMapper;
 import com.asianwallets.base.dao.SysUserMapper;
+import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
@@ -48,7 +49,8 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
     private InstitutionHistoryMapper institutionHistoryMapper;
     @Autowired
     private RedisService redisService;
-
+    @Autowired
+    private AuditorProvider auditorProvider;
     @Autowired
     private SysUserMapper sysUserMapper;
 
@@ -152,6 +154,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
      **/
     @Override
     public PageInfo<Institution> pageFindInstitution(InstitutionDTO institutionDTO) {
+        institutionDTO.setLanguage(auditorProvider.getLanguage());//设置语言
         return new PageInfo(institutionMapper.pageFindInstitution(institutionDTO));
     }
 
@@ -164,6 +167,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
      **/
     @Override
     public PageInfo<InstitutionAudit> pageFindInstitutionAudit(InstitutionDTO institutionDTO) {
+        institutionDTO.setLanguage(auditorProvider.getLanguage());//设置语言
         return new PageInfo(institutionAuditMapper.pageFindInstitutionAudit(institutionDTO));
     }
 
@@ -175,7 +179,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
      **/
     @Override
     public Institution getInstitutionInfo(String id) {
-        return institutionMapper.getInstitutionInfo(id);
+        return institutionMapper.getInstitutionInfo(id,auditorProvider.getLanguage());
     }
 
 
@@ -187,7 +191,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
      **/
     @Override
     public InstitutionAudit getInstitutionInfoAudit(String id) {
-        return institutionAuditMapper.getInstitutionInfoAudit(id);
+        return institutionAuditMapper.getInstitutionInfoAudit(id,auditorProvider.getLanguage());
     }
 
     /**

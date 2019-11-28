@@ -7,6 +7,7 @@ import com.asianwallets.base.dao.MerchantMapper;
 import com.asianwallets.base.dao.SysUserMapper;
 import com.asianwallets.base.service.MerchantService;
 import com.asianwallets.common.base.BaseServiceImpl;
+import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.MerchantDTO;
@@ -47,6 +48,8 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
 
     @Autowired
     private MerchantHistoryMapper merchantHistoryMapper;
+    @Autowired
+    private AuditorProvider auditorProvider;
 
     @Autowired
     private SysUserMapper sysUserMapper;
@@ -134,6 +137,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
      **/
     @Override
     public PageInfo<Merchant> pageFindMerchant(MerchantDTO merchantDTO) {
+        merchantDTO.setLanguage(auditorProvider.getLanguage());
         return new PageInfo<>(merchantMapper.pageFindMerchant(merchantDTO));
     }
 
@@ -172,6 +176,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
      **/
     @Override
     public PageInfo<MerchantAudit> pageFindMerchantAudit(MerchantDTO merchantDTO) {
+        merchantDTO.setLanguage(auditorProvider.getLanguage());
         return new PageInfo<>(merchantAuditMapper.pageFindMerchantAudit(merchantDTO));
     }
 
@@ -183,7 +188,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
      **/
     @Override
     public Merchant getMerchantInfo(String id) {
-        return merchantMapper.getMerchantInfo(id);
+        return merchantMapper.getMerchantInfo(id,auditorProvider.getLanguage());
     }
 
     /**
@@ -194,7 +199,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
      **/
     @Override
     public MerchantAudit getMerchantAuditInfo(String id) {
-        return merchantAuditMapper.getMerchantAuditInfo(id);
+        return merchantAuditMapper.getMerchantAuditInfo(id,auditorProvider.getLanguage());
     }
 
     /**

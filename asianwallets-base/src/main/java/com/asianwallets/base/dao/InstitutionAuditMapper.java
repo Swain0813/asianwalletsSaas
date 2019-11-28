@@ -4,6 +4,7 @@ import com.asianwallets.common.base. BaseMapper;
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.InstitutionAudit;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -35,5 +36,5 @@ public interface InstitutionAuditMapper extends  BaseMapper<InstitutionAudit> {
      * @Descripate getInstitutionInfoAudit
      * @return
      **/
-    InstitutionAudit getInstitutionInfoAudit(String id);
+    InstitutionAudit getInstitutionInfoAudit(@Param("id") String id, @Param("language") String language);
 }

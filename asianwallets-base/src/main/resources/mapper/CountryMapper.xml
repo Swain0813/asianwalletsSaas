@@ -58,7 +58,7 @@
 
 
     <select id="inquireAllCountry" resultMap="CountryVOResultMap">
-        select c1.id           as country_id,
+        select c1.extend1      as country_id,
                c2.area_code    as area_code,
                c2.country_name as country_name,
                c2.extend1      as area_id,
