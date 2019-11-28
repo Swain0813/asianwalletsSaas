@@ -77,8 +77,8 @@
 			<if test="endTime != null and endTime != ''">
 				AND DATE_FORMAT(i.create_time,'%Y-%m-%d') &lt;= #{endTime}
 			</if>
-			<if test="countryType != null and countryType != ''">
-				and i.country_type=#{countryType}
+			<if test="enabled != null and enabled != ''">
+				and i.enabled=#{enabled}
 			</if>
 		</where>
 	</select>
