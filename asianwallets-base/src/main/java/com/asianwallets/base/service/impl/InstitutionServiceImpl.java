@@ -321,6 +321,4 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
     public List<Institution> exportInstitution(InstitutionDTO institutionDTO) {
         return institutionMapper.exportInstitution(institutionDTO);
     }
-
-
 }
