@@ -14,10 +14,10 @@ public interface SysUserRoleMapper extends BaseMapper<SysUserRole> {
     @Select("select id from sys_role where role_name like '%POS机管理员%'")
     String getPOSRoleId();
 
-    @Select("select id from sys_role where role_name like '%代理商管理员%'")
+    @Select("select id from sys_role where role_name like '%代理管理员%'")
     String getAgencyRoleId();
 
-    @Select("select id from sys_role where role_name like '%普通商户管理员%'")
+    @Select("select id from sys_role where role_name like '%商户管理员%'")
     String getMerchantRoleId();
 
     @Select("select id from sys_role where role_name like '%集团商户管理员%'")

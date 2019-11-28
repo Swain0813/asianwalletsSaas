@@ -127,7 +127,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             if (merchantDTO.getMerchantType().equals(AsianWalletConstant.MERCHANT_USER)) {
                 //分配普通商户角色
                 SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setRoleId(sysUserRoleMapper.getInstitutionRoleId());
+                sysUserRole.setRoleId(sysUserRoleMapper.getMerchantRoleId());
                 sysUserRole.setUserId(userId);
                 sysUserRole.setCreateTime(new Date());
                 sysUserRole.setCreator(name);
