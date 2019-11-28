@@ -5,7 +5,7 @@
         <id column="id" property="id" jdbcType="VARCHAR"/>
         <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
         <result column="area_code" property="areaCode" jdbcType="VARCHAR"/>
-        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="country_name" property="countryName" jdbcType="VARCHAR"/>
         <result column="area_name" property="areaName" jdbcType="VARCHAR"/>
         <result column="language" property="language" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
@@ -51,34 +51,32 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, name, area_name,area_code, language,  create_time,
+        id, parent_id, area_name,country_name,area_code, language,  create_time,
     update_time, creator, modifier, remark, extend1, extend2, extend3, extend4, extend5, 
     extend6,enabled
     </sql>
 
 
     <select id="inquireAllCountry" resultMap="CountryVOResultMap">
-        select id        as country_id,
-               area_code as area_code,
-               name      as country_name,
-               id        as area_id,
-               id        as area_parent_id,
-               name      as area_name
-        from country
-        where id is not null
-          and id is not null
-          and enabled = 1
-          and enabled = 1
-          and language = #{language}
-          and language = #{language}
+        select c1.id           as country_id,
+               c2.area_code    as area_code,
+               c2.country_name as country_name,
+               c2.extend1      as area_id,
+               c2.parent_id    as area_parent_id,
+               c2.area_name    as area_name
+        from country c1
+                 left join country c2
+                           on c1.id = c2.parent_id
+        where c1.language = #{language}
+          and c2.language = #{language}
+
     </select>
 
     <select id="selectByName" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from country
-        where name = #{name};
-
+        where area_name = #{name};
     </select>
 
     <select id="pageCountry" resultMap="CountrysVOMap">
@@ -86,7 +84,7 @@
         id as parent_id,
         id as id,
         area_code as area_code,
-        name as country,
+        country_name as country,
         area_name as area,
         language,
         create_time,

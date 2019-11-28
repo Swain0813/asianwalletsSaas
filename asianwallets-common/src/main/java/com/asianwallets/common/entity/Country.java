@@ -13,14 +13,17 @@ import javax.persistence.Table;
 @ApiModel(value = "国家", description = "国家")
 public class Country extends BaseEntity {
 
+    @ApiModelProperty(value = "父id")
+    @Column(name = "parent_id")
+    private String parentId;
 
     @ApiModelProperty(value = "国家编号")
     @Column(name = "area_code")
     private String areaCode;
 
     @ApiModelProperty(value = "国家名称")
-    @Column(name = "name")
-    private String name;
+    @Column(name = "country_name")
+    private String countryName;
 
     @ApiModelProperty(value = "地区名称")
     @Column(name = "area_name")
