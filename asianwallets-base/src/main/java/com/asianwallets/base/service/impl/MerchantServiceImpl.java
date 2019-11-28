@@ -15,6 +15,7 @@ import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -83,22 +84,20 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
         MerchantAudit merchantAudit = new MerchantAudit();
         BeanUtils.copyProperties(merchantDTO, merchant);
         BeanUtils.copyProperties(merchantDTO, merchantAudit);
-
-        String id = "M" + IDS.uniqueID().toString();
-
-        merchant.setId(id);
+        //商户编号
+        String id = "M"+IDS.uniqueID();
+        String merchantId = DateToolUtils.getReqDateE().concat(id.substring(id.length() - 4));
+        merchant.setId(merchantId);
         merchant.setCreateTime(new Date());
         merchant.setCreator(name);
         merchant.setAuditStatus(TradeConstant.AUDIT_WAIT);
         merchant.setEnabled(false);
 
-        merchantAudit.setId(id);
+        merchantAudit.setId(merchantId);
         merchantAudit.setCreateTime(new Date());
         merchantAudit.setCreator(name);
         merchantAudit.setAuditStatus(TradeConstant.AUDIT_WAIT);
         merchantAudit.setEnabled(false);
-
-
         if (merchantMapper.insert(merchant) > 0) {
             //账号信息
             SysUser sysUser = new SysUser();
