@@ -136,7 +136,7 @@ public class Institution extends BaseEntity {
     /**
      * 行业许可
      */
-	@ApiModelProperty(value = "机构logo")
+	@ApiModelProperty(value = "行业许可")
 	@Column(name = "business_license")
 	private String businessLicense;
     /**
