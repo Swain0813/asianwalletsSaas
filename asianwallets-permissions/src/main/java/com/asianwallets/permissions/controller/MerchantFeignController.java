@@ -144,7 +144,7 @@ public class MerchantFeignController extends BaseController {
 
     @ApiOperation(value = "禁用启用商户")
     @GetMapping("/banMerchant")
-    public BaseResponse banMerchant(@RequestParam @ApiParam String merchantId, @RequestParam @ApiParam Boolean enabled) {
+    public BaseResponse banMerchant(@RequestParam("merchantId") @ApiParam String merchantId, @RequestParam("enabled") @ApiParam Boolean enabled) {
         return  merchantFeign.banMerchant(merchantId, enabled);
     }
 }

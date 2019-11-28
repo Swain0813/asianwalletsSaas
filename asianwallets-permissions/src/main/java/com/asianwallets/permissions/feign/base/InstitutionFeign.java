@@ -58,6 +58,6 @@ public interface InstitutionFeign {
 
     @ApiOperation(value = "禁用启用机构")
     @GetMapping("/institution/banInstitution")
-    BaseResponse banInstitution(@RequestParam @ApiParam String institutionId, @RequestParam @ApiParam Boolean enabled);
+    BaseResponse banInstitution(@RequestParam("institutionId") @ApiParam String institutionId, @RequestParam("enabled") @ApiParam Boolean enabled);
 
 }

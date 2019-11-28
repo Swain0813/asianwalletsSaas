@@ -54,6 +54,6 @@ public interface MerchantFeign {
 
     @ApiOperation(value = "禁用启用商户")
     @GetMapping("/merchant/banMerchant")
-    BaseResponse banMerchant(@RequestParam @ApiParam String merchantId, @RequestParam @ApiParam Boolean enabled);
+    BaseResponse banMerchant(@RequestParam("merchantId") @ApiParam String merchantId, @RequestParam("enabled") @ApiParam Boolean enabled);
 
 }
