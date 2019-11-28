@@ -7,6 +7,8 @@ import com.asianwallets.common.entity.InstitutionAudit;
 import com.asianwallets.common.vo.SysUserVO;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
+
 /**
  * <p>
  * 机构表 服务类
@@ -76,4 +78,12 @@ public interface InstitutionService extends BaseService<Institution> {
      * @Descripate 审核机构信息
      **/
     int auditInstitution(String username, String institutionId, Boolean enabled, String remark);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 机构
+     * @return
+     **/
+    List<Institution> getAllInstitution();
 }

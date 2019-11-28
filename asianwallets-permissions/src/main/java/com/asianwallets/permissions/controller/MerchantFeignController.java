@@ -65,4 +65,10 @@ public class MerchantFeignController extends BaseController {
     public BaseResponse auditMerchant(@RequestParam @ApiParam String merchantId, @RequestParam @ApiParam Boolean enabled, @RequestParam(required = false) @ApiParam String remark) {
         return merchantFeign.auditMerchant(merchantId, enabled, remark);
     }
+
+    @ApiOperation(value = "代理商下拉框")
+    @GetMapping("/getAllAgent")
+    public BaseResponse getAllAgent(@RequestParam("merchantType") @ApiParam String merchantType) {
+        return merchantFeign.getAllAgent(merchantType);
+    }
 }

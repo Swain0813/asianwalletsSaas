@@ -70,4 +70,11 @@ public class MerchantController extends BaseController {
     public BaseResponse auditMerchant(@RequestParam @ApiParam String merchantId, @RequestParam @ApiParam Boolean enabled, @RequestParam(required = false) @ApiParam String remark) {
         return ResultUtil.success(merchantService.auditMerchant(this.getSysUserVO().getUsername(), merchantId, enabled, remark));
     }
+
+    @ApiOperation(value = "代理商下拉框")
+    @GetMapping("/getAllAgent")
+    public BaseResponse getAllAgent(@RequestParam @ApiParam String merchantType) {
+        return ResultUtil.success(merchantService.getAllAgent(merchantType));
+    }
+
 }

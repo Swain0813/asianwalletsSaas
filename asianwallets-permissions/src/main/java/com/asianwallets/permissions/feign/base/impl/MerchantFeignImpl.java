@@ -49,4 +49,9 @@ public class MerchantFeignImpl implements MerchantFeign {
     public BaseResponse auditMerchant(String merchantId, Boolean enabled, String remark) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BaseResponse getAllAgent(String merchantType) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

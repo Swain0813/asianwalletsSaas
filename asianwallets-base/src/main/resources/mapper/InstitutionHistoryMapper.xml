@@ -15,6 +15,7 @@
 		<result column="company_validity" property="companyValidity" />
 		<result column="legal_passport_code" property="legalPassportCode" />
 		<result column="legal_passport_validity" property="legalPassportValidity" />
+		<result column="develop_sales" property="developSales" />
 		<result column="country_code" property="countryCode" />
 		<result column="institution_adress" property="institutionAdress" />
 		<result column="legal_passport_img" property="legalPassportImg" />

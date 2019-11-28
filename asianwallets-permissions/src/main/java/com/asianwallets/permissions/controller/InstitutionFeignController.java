@@ -3,6 +3,7 @@ package com.asianwallets.permissions.controller;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -66,6 +67,12 @@ public class InstitutionFeignController extends BaseController {
     @GetMapping("/auditInstitution")
     public BaseResponse auditInstitution(@RequestParam @ApiParam String institutionId, @RequestParam @ApiParam Boolean enabled, @RequestParam(required = false) @ApiParam String remark) {
         return institutionFeign.auditInstitution(institutionId, enabled, remark);
+    }
+
+    @ApiOperation(value = "机构下拉框")
+    @GetMapping("/getAllInstitution")
+    public BaseResponse getAllInstitution() {
+        return institutionFeign.getAllInstitution();
     }
 
 }

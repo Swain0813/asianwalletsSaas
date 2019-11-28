@@ -74,6 +74,12 @@ public class InstitutionAudit extends BaseEntity {
 	@ApiModelProperty(value = "法人证件编号")
 	@Column(name ="legal_passport_code")
 	private String legalPassportCode;
+	/**
+	 * 拓展销售
+	 */
+	@ApiModelProperty(value = "拓展销售")
+	@Column(name = "develop_sales")
+	private String developSales;
     /**
      * 证件有效期
      */
