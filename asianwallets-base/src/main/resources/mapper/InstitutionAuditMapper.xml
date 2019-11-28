@@ -19,6 +19,7 @@
         <result column="legal_passport_img" property="legalPassportImg"/>
         <result column="institution_contract" property="institutionContract"/>
         <result column="company_articles" property="companyArticles"/>
+        <result column="develop_sales" property="developSales" />
         <result column="business_certificate" property="businessCertificate"/>
         <result column="institution_phone" property="institutionPhone"/>
         <result column="legal_name" property="legalName"/>
@@ -49,19 +50,19 @@
 
     <select id="pageFindInstitutionAudit" resultMap="BaseResultMap">
         select
-        ia.id,i.cn_name,ia.en_name,ia.country_type,co.country_name as
+        ia.id,ia.cn_name,ia.en_name,ia.country_type,co.country_name as
         country,ia.company_regist_number,ia.company_validity,
         ia.legal_passport_code,ia.legal_passport_validity,
         co.area_code as country_code,ia.institution_adress,ia.legal_passport_img,ia.institution_contract,
         ia.company_articles,ia.business_certificate,ia.institution_phone,
         ia.legal_name,ia.business_category,ia.business_license,ia.industry_category,ia.institution_postal_code,ia.institution_email,ia.institution_web_url,
         ia.contact_address,ia.contact_people,ia.contact_phone,ia.audit_status,ia.ext7,ia.ext6,ia.ext5,ia.ext4,ia.ext3,
-        ia.ext2,ia.ext1,ia.create_time,ia.institution_logo,
+        ia.ext2,ia.ext1,ia.create_time,ia.institution_logo,ia.develop_sales,
         ia.update_time,ia.creator,ia.modifier,ia.remark,ia.enabled
         from institution_audit ia left join country co on ia.country = co.extend1 and co.language = #{language}
         <where>
-            <if test="institutionCode!=null and institutionCode != ''">
-                and ia.institution_code=#{institutionCode}
+            <if test="institutionId!=null and institutionId != ''">
+                and ia.institution_id=#{institutionId}
             </if>
             <if test="cnName != null and cnName != ''">
                 and ia.cn_name LIKE CONCAT(CONCAT('%', #{cnName}), '%')
@@ -81,9 +82,7 @@
             <if test="endTime != null and endTime != ''">
                 AND DATE_FORMAT(ia.create_time,'%Y-%m-%d') &lt;= #{endTime}
             </if>
-            <if test="countryType != null and countryType != ''">
-                and ia.country_type=#{countryType}
-            </if>
+
         </where>
     </select>
     <select id="getInstitutionInfoAudit" resultMap="BaseResultMap">
@@ -92,7 +91,7 @@
 		 co.area_code as country_code,i.institution_adress,i.legal_passport_img,i.institution_contract,i.company_articles,i.business_certificate,i.institution_phone,
 		i.legal_name,i.business_category,i.business_license,i.industry_category,i.institution_postal_code,i.institution_email,i.institution_web_url,
 		i.contact_address,i.contact_people,i.contact_phone,i.audit_status,i.ext7,i.ext6,i.ext5,i.ext4,i.ext3,i.ext2,i.ext1,i.create_time,i.update_time,
-		i.creator,i.modifier,i.remark,i.enabled,i.institution_logo
+		i.creator,i.modifier,i.remark,i.enabled,i.institution_logo,ia.develop_sales
 		from institution_audit i left join country co on i.country = co.extend1 and co.language = #{language}
 		where i.id = #{id}
 	</select>

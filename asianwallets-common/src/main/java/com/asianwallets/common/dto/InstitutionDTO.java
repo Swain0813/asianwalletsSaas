@@ -63,6 +63,13 @@ public class InstitutionDTO {
     @ApiModelProperty(value = "公司证件有效期")
     @Column(name = "legal_passport_code")
     private String legalPassportCode;
+
+    /**
+     * 拓展销售
+     */
+    @ApiModelProperty(value = "拓展销售")
+    private String developSales;
+
     /**
      * 证件有效期
      */

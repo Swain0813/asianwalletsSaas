@@ -28,6 +28,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -297,5 +298,28 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
 
         }
         return num;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 机构下拉框
+     * @return
+     **/
+    @Override
+    public List<Institution> getAllInstitution() {
+        return institutionMapper.getAllInstitution();
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 导出机构
+     * @return
+     **/
+    @Override
+    public List<Institution> exportInstitution(InstitutionDTO institutionDTO) {
+        institutionDTO.setLanguage(auditorProvider.getLanguage());//设置语言
+        return institutionMapper.exportInstitution(institutionDTO);
     }
 }

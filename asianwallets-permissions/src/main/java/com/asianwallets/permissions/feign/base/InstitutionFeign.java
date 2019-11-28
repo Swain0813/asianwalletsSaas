@@ -2,6 +2,7 @@ package com.asianwallets.permissions.feign.base;
 
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.feign.base.impl.InstitutionFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -46,4 +47,13 @@ public interface InstitutionFeign {
     @GetMapping("/institution/auditInstitution")
     BaseResponse auditInstitution(@RequestParam("institutionId") @ApiParam String institutionId, @RequestParam("enabled") @ApiParam Boolean enabled,
                                   @RequestParam("remark") @ApiParam String remark);
+
+    @ApiOperation(value = "机构下拉框")
+    @GetMapping("/institution/getAllInstitution")
+    BaseResponse getAllInstitution();
+
+    @ApiOperation(value = "导出机构")
+    @PostMapping("/institution/exportInstitution")
+    BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO);
+
 }
