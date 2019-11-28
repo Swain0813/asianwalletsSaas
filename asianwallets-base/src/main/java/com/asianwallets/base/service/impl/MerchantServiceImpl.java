@@ -1,10 +1,7 @@
 package com.asianwallets.base.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.asianwallets.base.dao.MerchantAuditMapper;
-import com.asianwallets.base.dao.MerchantHistoryMapper;
-import com.asianwallets.base.dao.MerchantMapper;
-import com.asianwallets.base.dao.SysUserMapper;
+import com.asianwallets.base.dao.*;
 import com.asianwallets.base.service.MerchantService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.config.AuditorProvider;
@@ -52,7 +49,8 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
     private MerchantHistoryMapper merchantHistoryMapper;
     @Autowired
     private AuditorProvider auditorProvider;
-
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
     @Autowired
     private SysUserMapper sysUserMapper;
 
@@ -85,8 +83,8 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
         BeanUtils.copyProperties(merchantDTO, merchant);
         BeanUtils.copyProperties(merchantDTO, merchantAudit);
         //商户编号
-        String id = "M"+IDS.uniqueID();
-        String merchantId = DateToolUtils.getReqDateE().concat(id.substring(id.length() - 4));
+        String id = IDS.uniqueID().toString();
+        String merchantId ="M"+DateToolUtils.getReqDateE().concat(id.substring(id.length() - 4));
         merchant.setId(merchantId);
         merchant.setCreateTime(new Date());
         merchant.setCreator(name);
@@ -103,19 +101,19 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             SysUser sysUser = new SysUser();
             String userId = IDS.uuid2();
             sysUser.setId(userId);
-            sysUser.setUsername("admin"+id);
+            sysUser.setUsername("admin"+merchantId);
             sysUser.setPassword(encryptPassword("123456"));
             sysUser.setTradePassword(encryptPassword("123456"));//交易密码
-            sysUser.setSysId(id);
-            if (merchantDTO.getMerchantType().equals(AsianWalletConstant.MERCHANT_USER)) {
+            sysUser.setSysId(merchantId);
+            if (merchantDTO.getMerchantType().equals("3")) {
                 //普通商户
                 sysUser.setPermissionType(AsianWalletConstant.MERCHANT);
                 sysUser.setSysType(AsianWalletConstant.MERCHANT_USER);
-            } else if (merchantDTO.getMerchantType().equals(AsianWalletConstant.AGENCY_USER)) {
+            } else if (merchantDTO.getMerchantType().equals("4")) {
                 //代理商户
                 sysUser.setPermissionType(AsianWalletConstant.AGENCY);
                 sysUser.setSysType(AsianWalletConstant.AGENCY_USER);
-            } else {
+            } else if (merchantDTO.getMerchantType().equals("5")) {
                 //集团商户
                 sysUser.setPermissionType(AsianWalletConstant.MERCHANT);
                 sysUser.setSysType(AsianWalletConstant.GROUP_USER);
@@ -123,7 +121,83 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             sysUser.setName("admin");
             sysUser.setCreateTime(new Date());
             sysUser.setCreator(name);
+            sysUser.setEnabled(true);
             sysUserMapper.insert(sysUser);
+
+            if (merchantDTO.getMerchantType().equals("3")) {
+                //分配普通商户角色
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setRoleId(sysUserRoleMapper.getMerchantRoleId());
+                sysUserRole.setUserId(userId);
+                sysUserRole.setCreateTime(new Date());
+                sysUserRole.setCreator(name);
+                sysUserRoleMapper.insert(sysUserRole);
+
+                //分配pos机账号
+                SysUser sysUser1 = new SysUser();
+                String userId1 = IDS.uuid2();
+                sysUser1.setId(userId1);
+                sysUser1.setUsername("00"+merchantId);
+                sysUser1.setPassword(encryptPassword("123456"));
+                sysUser1.setTradePassword(encryptPassword("123456"));//交易密码
+                sysUser1.setSysId(merchantId);
+                sysUser1.setPermissionType(AsianWalletConstant.POS);
+                sysUser1.setName("posAdmin");
+                sysUser1.setLanguage(auditorProvider.getLanguage());//设置语言
+                sysUser1.setCreateTime(new Date());
+                sysUser1.setCreator(name);
+                sysUserMapper.insert(sysUser1);
+
+                //分配pos机角色
+                SysUserRole sysUserRole1 = new SysUserRole();
+                sysUserRole1.setRoleId(sysUserRoleMapper.getPOSRoleId());
+                sysUserRole1.setUserId(userId1);
+                sysUserRole1.setCreateTime(new Date());
+                sysUserRole1.setCreator(name);
+                sysUserRoleMapper.insert(sysUserRole1);
+
+
+            } else if (merchantDTO.getMerchantType().equals("4")) {
+                //分配代理商户角色
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setRoleId(sysUserRoleMapper.getAgencyRoleId());
+                sysUserRole.setUserId(userId);
+                sysUserRole.setCreateTime(new Date());
+                sysUserRole.setCreator(name);
+                sysUserRoleMapper.insert(sysUserRole);
+            } else if (merchantDTO.getMerchantType().equals("5")) {
+                //分配集团商户角色
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setRoleId(sysUserRoleMapper.getGroupRoleId());
+                sysUserRole.setUserId(userId);
+                sysUserRole.setCreateTime(new Date());
+                sysUserRole.setCreator(name);
+                sysUserRoleMapper.insert(sysUserRole);
+
+
+                //分配pos机账号
+                SysUser sysUser1 = new SysUser();
+                String userId1 = IDS.uuid2();
+                sysUser1.setId(userId1);
+                sysUser1.setUsername("00"+merchantId);
+                sysUser1.setPassword(encryptPassword("123456"));
+                sysUser1.setTradePassword(encryptPassword("123456"));//交易密码
+                sysUser1.setSysId(merchantId);
+                sysUser1.setPermissionType(AsianWalletConstant.POS);
+                sysUser1.setName("posAdmin");
+                sysUser1.setLanguage(auditorProvider.getLanguage());//设置语言
+                sysUser1.setCreateTime(new Date());
+                sysUser1.setCreator(name);
+                sysUserMapper.insert(sysUser1);
+
+                //分配pos机角色
+                SysUserRole sysUserRole1 = new SysUserRole();
+                sysUserRole1.setRoleId(sysUserRoleMapper.getPOSRoleId());
+                sysUserRole1.setUserId(userId1);
+                sysUserRole1.setCreateTime(new Date());
+                sysUserRole1.setCreator(name);
+                sysUserRoleMapper.insert(sysUserRole1);
+            }
         }
 
         return merchantAuditMapper.insert(merchantAudit);
