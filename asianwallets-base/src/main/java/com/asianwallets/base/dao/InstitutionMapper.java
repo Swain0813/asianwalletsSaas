@@ -43,6 +43,6 @@ public interface InstitutionMapper extends  BaseMapper<Institution> {
      * @Descripate 根据机构Id查询机构信息详情
      * @return
      **/
-    Institution getInstitutionInfo(@Param("id") String id);
+    Institution getInstitutionInfo(@Param("id") String id, @Param("language") String language);
 
 }

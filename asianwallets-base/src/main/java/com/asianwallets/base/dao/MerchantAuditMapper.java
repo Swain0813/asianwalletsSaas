@@ -35,5 +35,5 @@ public interface MerchantAuditMapper extends  BaseMapper<MerchantAudit> {
      * @Descripate 根据商户Id查询商户审核信息详情
      * @return
      **/
-    MerchantAudit getMerchantAuditInfo(@Param("id") String id);
+    MerchantAudit getMerchantAuditInfo(@Param("id") String id, @Param("language") String language);
 }
