@@ -50,7 +50,7 @@
 
     <select id="pageFindInstitutionAudit" resultMap="BaseResultMap">
         select
-        ia.id,i.cn_name,ia.en_name,ia.country_type,co.country_name as
+        ia.id,ia.cn_name,ia.en_name,ia.country_type,co.country_name as
         country,ia.company_regist_number,ia.company_validity,
         ia.legal_passport_code,ia.legal_passport_validity,
         co.area_code as country_code,ia.institution_adress,ia.legal_passport_img,ia.institution_contract,
@@ -61,8 +61,8 @@
         ia.update_time,ia.creator,ia.modifier,ia.remark,ia.enabled
         from institution_audit ia left join country co on ia.country = co.extend1 and co.language = #{language}
         <where>
-            <if test="institutionCode!=null and institutionCode != ''">
-                and ia.institution_code=#{institutionCode}
+            <if test="institutionId!=null and institutionId != ''">
+                and ia.institution_id=#{institutionId}
             </if>
             <if test="cnName != null and cnName != ''">
                 and ia.cn_name LIKE CONCAT(CONCAT('%', #{cnName}), '%')
@@ -82,9 +82,7 @@
             <if test="endTime != null and endTime != ''">
                 AND DATE_FORMAT(ia.create_time,'%Y-%m-%d') &lt;= #{endTime}
             </if>
-            <if test="countryType != null and countryType != ''">
-                and ia.country_type=#{countryType}
-            </if>
+
         </where>
     </select>
     <select id="getInstitutionInfoAudit" resultMap="BaseResultMap">
