@@ -123,6 +123,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             sysUser.setName("admin");
             sysUser.setCreateTime(new Date());
             sysUser.setCreator(name);
+            sysUser.setEnabled(true);
             sysUserMapper.insert(sysUser);
         }
 
