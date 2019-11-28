@@ -72,6 +72,12 @@ public class InstitutionHistory extends BaseEntity{
 	@ApiModelProperty(value = "公司证件有效期")
 	@Column(name ="company_validity")
 	private String companyValidity;
+	/**
+	 * 拓展销售
+	 */
+	@ApiModelProperty(value = "拓展销售")
+	@Column(name = "develop_sales")
+	private String developSales;
     /**
      * 法人证件编号
      */

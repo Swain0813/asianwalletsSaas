@@ -92,4 +92,10 @@ public class MerchantFeignController extends BaseController {
                 "审核商户信息接口"));
         return merchantFeign.auditMerchant(merchantId, enabled, remark);
     }
+
+    @ApiOperation(value = "代理商下拉框")
+    @GetMapping("/getAllAgent")
+    public BaseResponse getAllAgent(@RequestParam("merchantType") @ApiParam String merchantType) {
+        return merchantFeign.getAllAgent(merchantType);
+    }
 }

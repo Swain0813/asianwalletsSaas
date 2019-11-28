@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.service;
 
+import com.asianwallets.permissions.dto.FirstMenuDto;
 import com.asianwallets.permissions.dto.SysMenuDto;
 import com.asianwallets.permissions.vo.FirstMenuVO;
 
@@ -11,10 +12,10 @@ public interface SysMenuService {
      * 添加权限信息
      *
      * @param username   用户名
-     * @param sysMenuDto 权限输入实体
+     * @param firstMenuDto 权限输入实体
      * @return 修改条数
      */
-    int addMenu(String username, SysMenuDto sysMenuDto);
+    int addMenu(String username, FirstMenuDto firstMenuDto);
 
     /**
      * 删除权限信息

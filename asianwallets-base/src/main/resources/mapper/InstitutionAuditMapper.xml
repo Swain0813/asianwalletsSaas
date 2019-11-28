@@ -19,6 +19,7 @@
         <result column="legal_passport_img" property="legalPassportImg"/>
         <result column="institution_contract" property="institutionContract"/>
         <result column="company_articles" property="companyArticles"/>
+        <result column="develop_sales" property="developSales" />
         <result column="business_certificate" property="businessCertificate"/>
         <result column="institution_phone" property="institutionPhone"/>
         <result column="legal_name" property="legalName"/>
@@ -56,7 +57,7 @@
         ia.company_articles,ia.business_certificate,ia.institution_phone,
         ia.legal_name,ia.business_category,ia.business_license,ia.industry_category,ia.institution_postal_code,ia.institution_email,ia.institution_web_url,
         ia.contact_address,ia.contact_people,ia.contact_phone,ia.audit_status,ia.ext7,ia.ext6,ia.ext5,ia.ext4,ia.ext3,
-        ia.ext2,ia.ext1,ia.create_time,ia.institution_logo,
+        ia.ext2,ia.ext1,ia.create_time,ia.institution_logo,ia.develop_sales,
         ia.update_time,ia.creator,ia.modifier,ia.remark,ia.enabled
         from institution_audit ia left join country co on ia.country = co.extend1 and co.language = #{language}
         <where>
@@ -92,7 +93,7 @@
 		 co.area_code as country_code,i.institution_adress,i.legal_passport_img,i.institution_contract,i.company_articles,i.business_certificate,i.institution_phone,
 		i.legal_name,i.business_category,i.business_license,i.industry_category,i.institution_postal_code,i.institution_email,i.institution_web_url,
 		i.contact_address,i.contact_people,i.contact_phone,i.audit_status,i.ext7,i.ext6,i.ext5,i.ext4,i.ext3,i.ext2,i.ext1,i.create_time,i.update_time,
-		i.creator,i.modifier,i.remark,i.enabled,i.institution_logo
+		i.creator,i.modifier,i.remark,i.enabled,i.institution_logo,ia.develop_sales
 		from institution_audit i left join country co on i.country = co.extend1 and co.language = #{language}
 		where i.id = #{id}
 	</select>

@@ -45,4 +45,14 @@ public interface MerchantMapper extends BaseMapper<Merchant> {
      **/
     @Select("select count(1) from merchant where cn_name = #{cnName} or en_name = #{cnName}")
     int selectCountByInsName(@Param("cnName") String cnName);
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 代理商下拉框
+     * @return
+     **/
+    @Select("select id as id ,en_name as enName,cn_name as cnName from merchant where merchant_type = #{merchantType}")
+    List<Merchant> getAllAgent(@Param("merchantType") String merchantType);
 }

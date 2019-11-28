@@ -74,7 +74,11 @@ public class InstitutionController extends BaseController {
         return ResultUtil.success(institutionService.auditInstitution(this.getSysUserVO().getUsername(), institutionId, enabled, remark));
     }
 
-
+    @ApiOperation(value = "机构下拉框")
+    @GetMapping("/getAllInstitution")
+    public BaseResponse getAllInstitution() {
+        return ResultUtil.success(institutionService.getAllInstitution());
+    }
 
 
 }

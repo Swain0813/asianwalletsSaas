@@ -5,6 +5,7 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
 import com.asianwallets.permissions.service.OperationLogService;
 import io.swagger.annotations.Api;
@@ -93,6 +94,12 @@ public class InstitutionFeignController extends BaseController {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(this.getRequest().getParameterMap()),
                 "审核机构信息接口"));
         return institutionFeign.auditInstitution(institutionId, enabled, remark);
+    }
+
+    @ApiOperation(value = "机构下拉框")
+    @GetMapping("/getAllInstitution")
+    public BaseResponse getAllInstitution() {
+        return institutionFeign.getAllInstitution();
     }
 
 }

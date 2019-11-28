@@ -24,10 +24,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author yx
@@ -62,10 +63,10 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 添加商户
-     * @return
      **/
     @Override
     public int addMerchant(String name, MerchantDTO merchantDTO) {
@@ -80,10 +81,10 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
 
         Merchant merchant = new Merchant();
         MerchantAudit merchantAudit = new MerchantAudit();
-        BeanUtils.copyProperties(merchantDTO,merchant);
-        BeanUtils.copyProperties(merchantDTO,merchantAudit);
+        BeanUtils.copyProperties(merchantDTO, merchant);
+        BeanUtils.copyProperties(merchantDTO, merchantAudit);
 
-        String id = "M"+ IDS.uniqueID().toString();
+        String id = "M" + IDS.uniqueID().toString();
 
         merchant.setId(id);
         merchant.setCreateTime(new Date());
@@ -98,7 +99,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
         merchantAudit.setEnabled(false);
 
 
-        if(merchantMapper.insert(merchant)>0){
+        if (merchantMapper.insert(merchant) > 0) {
             //账号信息
             SysUser sysUser = new SysUser();
             String userId = IDS.uuid2();
@@ -107,15 +108,15 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             sysUser.setPassword(encryptPassword("123456"));
             sysUser.setTradePassword(encryptPassword("123456"));//交易密码
             sysUser.setSysId(id);
-            if(merchantDTO.getMerchantType().equals(AsianWalletConstant.MERCHANT_USER)){
+            if (merchantDTO.getMerchantType().equals(AsianWalletConstant.MERCHANT_USER)) {
                 //普通商户
                 sysUser.setPermissionType(AsianWalletConstant.MERCHANT);
                 sysUser.setSysType(AsianWalletConstant.MERCHANT_USER);
-            }else if(merchantDTO.getMerchantType().equals(AsianWalletConstant.AGENCY_USER)){
+            } else if (merchantDTO.getMerchantType().equals(AsianWalletConstant.AGENCY_USER)) {
                 //代理商户
                 sysUser.setPermissionType(AsianWalletConstant.AGENCY);
                 sysUser.setSysType(AsianWalletConstant.AGENCY_USER);
-            }else{
+            } else {
                 //集团商户
                 sysUser.setPermissionType(AsianWalletConstant.MERCHANT);
                 sysUser.setSysType(AsianWalletConstant.GROUP_USER);
@@ -130,10 +131,10 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 分页查询商户信息列表
-     * @return
      **/
     @Override
     public PageInfo<Merchant> pageFindMerchant(MerchantDTO merchantDTO) {
@@ -142,10 +143,10 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 修改商户
-     * @return
      **/
     @Override
     public int updateMerchant(String name, MerchantDTO merchantDTO) {
@@ -169,10 +170,10 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 分页查询商户审核信息列表
-     * @return
      **/
     @Override
     public PageInfo<MerchantAudit> pageFindMerchantAudit(MerchantDTO merchantDTO) {
@@ -181,32 +182,32 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 根据商户Id查询商户信息详情
-     * @return
      **/
     @Override
     public Merchant getMerchantInfo(String id) {
-        return merchantMapper.getMerchantInfo(id,auditorProvider.getLanguage());
+        return merchantMapper.getMerchantInfo(id, auditorProvider.getLanguage());
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 根据商户Id查询商户审核信息详情
-     * @return
      **/
     @Override
     public MerchantAudit getMerchantAuditInfo(String id) {
-        return merchantAuditMapper.getMerchantAuditInfo(id,auditorProvider.getLanguage());
+        return merchantAuditMapper.getMerchantAuditInfo(id, auditorProvider.getLanguage());
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 审核商户信息接口
-     * @return
      **/
     @Override
     public int auditMerchant(String username, String merchantId, Boolean enabled, String remark) {
@@ -255,7 +256,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
                 merchantAudit.setUpdateTime(new Date());
                 merchantAudit.setRemark(remark);
                 merchantAudit.setEnabled(enabled);
-                num =merchantAuditMapper.updateByPrimaryKeySelective(merchantAudit);
+                num = merchantAuditMapper.updateByPrimaryKeySelective(merchantAudit);
             }
         } else {
             //初次添加
@@ -305,5 +306,16 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
 
         }
         return num;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 代理商下拉框
+     **/
+    @Override
+    public List<Merchant> getAllAgent(String merchantType) {
+        return merchantMapper.getAllAgent(merchantType);
     }
 }
