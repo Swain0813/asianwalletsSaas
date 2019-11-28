@@ -52,4 +52,8 @@ public interface MerchantFeign {
     @PostMapping("/merchant/exportMerchant")
     BaseResponse exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO);
 
+    @ApiOperation(value = "禁用启用商户")
+    @GetMapping("/merchant/banMerchant")
+    BaseResponse banMerchant(@RequestParam("merchantId") @ApiParam String merchantId, @RequestParam("enabled") @ApiParam Boolean enabled);
+
 }

@@ -103,7 +103,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             SysUser sysUser = new SysUser();
             String userId = IDS.uuid2();
             sysUser.setId(userId);
-            sysUser.setUsername(id + "admin");
+            sysUser.setUsername("admin"+id);
             sysUser.setPassword(encryptPassword("123456"));
             sysUser.setTradePassword(encryptPassword("123456"));//交易密码
             sysUser.setSysId(id);
@@ -328,5 +328,32 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
     public List<Merchant> exportMerchant(MerchantDTO merchantDTO) {
         merchantDTO.setLanguage(auditorProvider.getLanguage());//设置语言
         return merchantMapper.exportMerchant(merchantDTO);
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/11/28
+     * @Descripate 禁用启用商户
+     * @return
+     **/
+    @Override
+    public int banMerchant(String username, String merchantId, Boolean enabled) {
+        int num;
+        Merchant merchant = merchantMapper.selectByPrimaryKey(merchantId);
+        if (merchant == null) {//商户信息不存在
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
+        merchant.setId(merchantId);
+        merchant.setEnabled(enabled);
+        merchant.setModifier(username);
+        merchant.setUpdateTime(new Date());
+        num = merchantMapper.updateByPrimaryKeySelective(merchant);
+        try {
+            //更新机构信息后添加的redis里
+            redisService.set(AsianWalletConstant.MERCHANT_CACHE_KEY.concat("_").concat(merchant.getId()), JSON.toJSONString(merchant));
+        } catch (Exception e) {
+            throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+        }
+        return num;
     }
 }

@@ -87,7 +87,11 @@ public class InstitutionController extends BaseController {
         return ResultUtil.success(institutionService.getAllInstitution());
     }
 
-
+    @ApiOperation(value = "禁用启用机构")
+    @GetMapping("/banInstitution")
+    public BaseResponse banInstitution(@RequestParam @ApiParam String institutionId, @RequestParam @ApiParam Boolean enabled) {
+        return ResultUtil.success(institutionService.banInstitution(this.getSysUserVO().getUsername(), institutionId, enabled));
+    }
 
 
 
