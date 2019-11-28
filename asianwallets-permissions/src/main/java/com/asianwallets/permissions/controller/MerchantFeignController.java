@@ -10,6 +10,7 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.InstitutionExportVO;
+import com.asianwallets.common.vo.MerchantExportVO;
 import com.asianwallets.permissions.feign.base.MerchantFeign;
 import com.asianwallets.permissions.service.ExportService;
 import com.asianwallets.permissions.service.OperationLogService;
@@ -80,21 +81,21 @@ public class MerchantFeignController extends BaseController {
         if (data == null || data.size() == 0) {//数据不存在的场合
             throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
         }
-        //ArrayList<InstitutionExportVO> institutionExportVOS = new ArrayList<>();
-        //for (LinkedHashMap datum : data) {
-        //    institutionExportVOS.add(JSON.parseObject(JSON.toJSONString(datum), InstitutionExportVO.class));
-        //}
-        //ExcelWriter writer = null;
-        //try {
-        //    writer = exportService.getInstitutionExcel(institutionExportVOS, InstitutionExportVO.class);
-        //    HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-        //    ServletOutputStream out = response.getOutputStream();
-        //    writer.flush(out);
-        //} catch (Exception e) {
-        //    throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
-        //} finally {
-        //    writer.close();
-        //}
+        ArrayList<MerchantExportVO> merchantExportVOS = new ArrayList<>();
+        for (LinkedHashMap datum : data) {
+            merchantExportVOS.add(JSON.parseObject(JSON.toJSONString(datum), MerchantExportVO.class));
+        }
+        ExcelWriter writer = null;
+        try {
+            writer = exportService.getMerchantExcel(merchantExportVOS, MerchantExportVO.class);
+            HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+            ServletOutputStream out = response.getOutputStream();
+            writer.flush(out);
+        } catch (Exception e) {
+            throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
+        } finally {
+            writer.close();
+        }
         return ResultUtil.success();
     }
 
