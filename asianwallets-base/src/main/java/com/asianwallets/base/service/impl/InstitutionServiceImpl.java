@@ -322,4 +322,31 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
         institutionDTO.setLanguage(auditorProvider.getLanguage());//设置语言
         return institutionMapper.exportInstitution(institutionDTO);
     }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/1/25
+     * @Descripate 启用禁用机构
+     **/
+    @Override
+    public int banInstitution(String modifier, String institutionId, Boolean enabled) {
+        int num;
+        Institution institution = institutionMapper.selectByPrimaryKey(institutionId);
+        if (institution == null) {//机构信息不存在
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
+        institution.setId(institutionId);
+        institution.setEnabled(enabled);
+        institution.setModifier(modifier);
+        institution.setUpdateTime(new Date());
+        num = institutionMapper.updateByPrimaryKeySelective(institution);
+        try {
+            //更新机构信息后添加的redis里
+            redisService.set(AsianWalletConstant.INSTITUTION_CACHE_KEY.concat("_").concat(institution.getId()), JSON.toJSONString(institution));
+        } catch (Exception e) {
+            throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+        }
+        return num;
+    }
 }

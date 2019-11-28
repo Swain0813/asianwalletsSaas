@@ -56,4 +56,8 @@ public interface InstitutionFeign {
     @PostMapping("/institution/exportInstitution")
     BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO);
 
+    @ApiOperation(value = "禁用启用机构")
+    @GetMapping("/institution/banInstitution")
+    BaseResponse banInstitution(@RequestParam @ApiParam String institutionId, @RequestParam @ApiParam Boolean enabled);
+
 }

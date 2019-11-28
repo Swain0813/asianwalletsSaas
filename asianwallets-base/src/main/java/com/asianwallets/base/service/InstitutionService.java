@@ -95,4 +95,11 @@ public interface InstitutionService extends BaseService<Institution> {
      * @return
      **/
     List<Institution>  exportInstitution(InstitutionDTO institutionDTO);
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/1/25
+     * @Descripate 启用禁用机构
+     **/
+    int banInstitution(String modifier, String institutionId, Boolean enabled);
 }

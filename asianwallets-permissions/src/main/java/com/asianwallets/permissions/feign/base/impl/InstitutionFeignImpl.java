@@ -65,4 +65,9 @@ public class InstitutionFeignImpl implements InstitutionFeign {
     public BaseResponse exportInstitution(InstitutionDTO institutionDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BaseResponse banInstitution(String institutionId, Boolean enabled) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

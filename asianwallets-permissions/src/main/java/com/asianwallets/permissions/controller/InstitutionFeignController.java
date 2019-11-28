@@ -117,6 +117,12 @@ public class InstitutionFeignController extends BaseController {
         return institutionFeign.getAllInstitution();
     }
 
+    @ApiOperation(value = "禁用启用机构")
+    @GetMapping("/banInstitution")
+    public BaseResponse banInstitution(@RequestParam @ApiParam String institutionId, @RequestParam @ApiParam Boolean enabled) {
+        return institutionFeign.banInstitution(institutionId, enabled);
+    }
+
     @ApiOperation(value = "导出机构")
     @PostMapping("/exportInstitution")
     public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
