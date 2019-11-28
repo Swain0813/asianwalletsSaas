@@ -57,6 +57,8 @@
 
 		select
 		i.cn_name as institution_id,
+		m1.cn_name as agent_id,
+		m2.cn_name as parent_id,
 		m.id,m.cn_name,m.en_name,m.country_type,co.country_name as country,m.mcc,co.area_name as region,m.merchant_type,m.group_master_account,m.develop_sales,
 		m.company_regist_number,m.company_validity,m.legal_passport_code,m.legal_passport_validity,
 		co.area_code as country_code,m.institution_adress,m.legal_passport_img,m.institution_contract,m.company_articles,m.business_certificate,m.institution_phone,
@@ -65,6 +67,8 @@
 		m.creator,m.modifier,m.remark,m.enabled
 		from merchant m
 		left join institution i on m.institution_id = i.id
+		left join merchant m1 on m.agent_id = m1.id
+		left join merchant m2 on m.parent_id = m2.id
 		left join country co on m.country = co.extend1 and co.language = #{language}
 		<where>
 			<if test="merchantId!=null and merchantId != ''">
@@ -101,6 +105,8 @@
 	<select id="getMerchantInfo" resultMap="BaseResultMap">
 			select
 		i.cn_name as institution_id,
+		m1.cn_name as agent_id,
+        m2.cn_name as parent_id,
 		m.id,m.cn_name,m.en_name,m.country_type,co.country_name as country,m.mcc,co.area_name as region,m.merchant_type,m.group_master_account,m.develop_sales,
 		m.company_regist_number,m.company_validity,m.legal_passport_code,m.legal_passport_validity,
 		 co.area_code as country_code,m.institution_adress,m.legal_passport_img,m.institution_contract,m.company_articles,m.business_certificate,m.institution_phone,
@@ -109,6 +115,8 @@
 		m.creator,m.modifier,m.remark,m.enabled
 		from merchant m
 		left join institution i on m.institution_id = i.id
+		left join merchant m1 on m.agent_id = m1.id
+		left join merchant m2 on m.parent_id = m2.id
 		left join country co on m.country = co.extend1 and co.language = #{language}
 		where
 		m.id=#{id}
@@ -117,6 +125,8 @@
 	<select id="exportMerchant" resultMap="BaseResultMap">
 		select
 		i.cn_name as institution_id,
+		m1.cn_name as agent_id,
+		m2.cn_name as parent_id,
 		m.id,m.cn_name,m.en_name,m.country_type,co.country_name as country,m.mcc,co.area_name as region,m.merchant_type,m.group_master_account,m.develop_sales,
 		m.company_regist_number,m.company_validity,m.legal_passport_code,m.legal_passport_validity,
 		co.area_code as country_code,m.institution_adress,m.legal_passport_img,m.institution_contract,m.company_articles,m.business_certificate,m.institution_phone,
@@ -125,6 +135,8 @@
 		m.creator,m.modifier,m.remark,m.enabled
 		from merchant m
 		left join institution i on m.institution_id = i.id
+		left join merchant m1 on m.agent_id = m1.id
+		left join merchant m2 on m.parent_id = m2.id
 		left join country co on m.country = co.extend1 and co.language = #{language}
 		<where>
 			<if test="merchantId!=null and merchantId != ''">
