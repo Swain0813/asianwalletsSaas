@@ -2,94 +2,97 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.asianwallets.base.dao.InstitutionAuditMapper">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.InstitutionAudit">
-	<result column="id" property="id" />
-		<result column="institution_logo" property="institutionLogo" />
-		<result column="cn_name" property="cnName" />
-		<result column="en_name" property="enName" />
-		<result column="country_type" property="countryType" />
-		<result column="country" property="country" />
-		<result column="company_regist_number" property="companyRegistNumber" />
-		<result column="company_validity" property="companyValidity" />
-		<result column="legal_passport_code" property="legalPassportCode" />
-		<result column="legal_passport_validity" property="legalPassportValidity" />
-		<result column="country_code" property="countryCode" />
-		<result column="institution_adress" property="institutionAdress" />
-		<result column="legal_passport_img" property="legalPassportImg" />
-		<result column="institution_contract" property="institutionContract" />
-		<result column="company_articles" property="companyArticles" />
-		<result column="business_certificate" property="businessCertificate" />
-		<result column="institution_phone" property="institutionPhone" />
-		<result column="legal_name" property="legalName" />
-		<result column="business_category" property="businessCategory" />
-		<result column="business_license" property="businessLicense" />
-		<result column="industry_category" property="industryCategory" />
-		<result column="institution_postal_code" property="institutionPostalCode" />
-		<result column="institution_email" property="institutionEmail" />
-		<result column="institution_web_url" property="institutionWebUrl" />
-		<result column="contact_address" property="contactAddress" />
-		<result column="contact_people" property="contactPeople" />
-		<result column="contact_phone" property="contactPhone" />
-		<result column="audit_status" property="auditStatus" />
-		<result column="ext7" property="ext7" />
-		<result column="ext6" property="ext6" />
-		<result column="ext5" property="ext5" />
-		<result column="ext4" property="ext4" />
-		<result column="ext3" property="ext3" />
-		<result column="ext2" property="ext2" />
-		<result column="ext1" property="ext1" />
-		<result column="create_time" property="createTime" />
-		<result column="update_time" property="updateTime" />
-		<result column="creator" property="creator" />
-		<result column="modifier" property="modifier" />
-		<result column="remark" property="remark" />
-		<result column="enabled" property="enabled" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.InstitutionAudit">
+        <result column="id" property="id"/>
+        <result column="institution_logo" property="institutionLogo"/>
+        <result column="cn_name" property="cnName"/>
+        <result column="en_name" property="enName"/>
+        <result column="country_type" property="countryType"/>
+        <result column="country" property="country"/>
+        <result column="company_regist_number" property="companyRegistNumber"/>
+        <result column="company_validity" property="companyValidity"/>
+        <result column="legal_passport_code" property="legalPassportCode"/>
+        <result column="legal_passport_validity" property="legalPassportValidity"/>
+        <result column="country_code" property="countryCode"/>
+        <result column="institution_adress" property="institutionAdress"/>
+        <result column="legal_passport_img" property="legalPassportImg"/>
+        <result column="institution_contract" property="institutionContract"/>
+        <result column="company_articles" property="companyArticles"/>
+        <result column="business_certificate" property="businessCertificate"/>
+        <result column="institution_phone" property="institutionPhone"/>
+        <result column="legal_name" property="legalName"/>
+        <result column="business_category" property="businessCategory"/>
+        <result column="business_license" property="businessLicense"/>
+        <result column="industry_category" property="industryCategory"/>
+        <result column="institution_postal_code" property="institutionPostalCode"/>
+        <result column="institution_email" property="institutionEmail"/>
+        <result column="institution_web_url" property="institutionWebUrl"/>
+        <result column="contact_address" property="contactAddress"/>
+        <result column="contact_people" property="contactPeople"/>
+        <result column="contact_phone" property="contactPhone"/>
+        <result column="audit_status" property="auditStatus"/>
+        <result column="ext7" property="ext7"/>
+        <result column="ext6" property="ext6"/>
+        <result column="ext5" property="ext5"/>
+        <result column="ext4" property="ext4"/>
+        <result column="ext3" property="ext3"/>
+        <result column="ext2" property="ext2"/>
+        <result column="ext1" property="ext1"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="remark" property="remark"/>
+        <result column="enabled" property="enabled"/>
+    </resultMap>
 
-	<select id="pageFindInstitutionAudit" resultMap="BaseResultMap" >
-		select
-		ia.id,i.cn_name,ia.en_name,ia.country_type,co.country_name as country,ia.company_regist_number,ia.company_validity,
-		ia.legal_passport_code,ia.legal_passport_validity,
-		ia.country_code,ia.institution_adress,ia.legal_passport_img,ia.institution_contract,ia.company_articles,ia.business_certificate,ia.institution_phone,
-		ia.legal_name,ia.business_category,ia.business_license,ia.industry_category,ia.institution_postal_code,ia.institution_email,ia.institution_web_url,
-		ia.contact_address,ia.contact_people,ia.contact_phone,ia.audit_status,ia.ext7,ia.ext6,ia.ext5,ia.ext4,ia.ext3,ia.ext2,ia.ext1,ia.create_time,ia.institution_logo,
-		ia.update_time,ia.creator,ia.modifier,ia.remark,ia.enabled
-		from institution_audit ia left join country co on ia.country = co.extend1 and co.language = #{language}
-		<where>
-			<if test="institutionCode!=null and institutionCode != ''">
-				and ia.institution_code=#{institutionCode}
-			</if>
-			<if test="institutionType!=null and institutionType != ''">
-				and ia.institution_type=#{institutionType}
-			</if>
-			<if test="cnName != null and cnName != ''">
-				and ia.cn_name LIKE CONCAT(CONCAT('%', #{cnName}), '%')
-			</if>
-			<if test="enabled != null">
-				and ia.enabled=#{enabled}
-			</if>
-			<if test="country != null and country != ''">
-				and ia.country=#{country}
-			</if>
-			<if test="auditStatus != null and auditStatus != ''">
-				and ia.audit_status=#{auditStatus}
-			</if>
-			<if test="startTime != null and startTime != ''">
-				AND DATE_FORMAT(ia.create_time,'%Y-%m-%d') &gt;= #{startTime}
-			</if>
-			<if test="endTime != null and endTime != ''">
-				AND DATE_FORMAT(ia.create_time,'%Y-%m-%d') &lt;= #{endTime}
-			</if>
-			<if test="countryType != null and countryType != ''">
-				and ia.country_type=#{countryType}
-			</if>
-		</where>
-	</select>
-	<select id="getInstitutionInfoAudit"  resultMap="BaseResultMap" >
+    <select id="pageFindInstitutionAudit" resultMap="BaseResultMap">
+        select
+        ia.id,i.cn_name,ia.en_name,ia.country_type,co.country_name as
+        country,ia.company_regist_number,ia.company_validity,
+        ia.legal_passport_code,ia.legal_passport_validity,
+        co.area_code as country_code,ia.institution_adress,ia.legal_passport_img,ia.institution_contract,
+        ia.company_articles,ia.business_certificate,ia.institution_phone,
+        ia.legal_name,ia.business_category,ia.business_license,ia.industry_category,ia.institution_postal_code,ia.institution_email,ia.institution_web_url,
+        ia.contact_address,ia.contact_people,ia.contact_phone,ia.audit_status,ia.ext7,ia.ext6,ia.ext5,ia.ext4,ia.ext3,
+        ia.ext2,ia.ext1,ia.create_time,ia.institution_logo,
+        ia.update_time,ia.creator,ia.modifier,ia.remark,ia.enabled
+        from institution_audit ia left join country co on ia.country = co.extend1 and co.language = #{language}
+        <where>
+            <if test="institutionCode!=null and institutionCode != ''">
+                and ia.institution_code=#{institutionCode}
+            </if>
+            <if test="institutionType!=null and institutionType != ''">
+                and ia.institution_type=#{institutionType}
+            </if>
+            <if test="cnName != null and cnName != ''">
+                and ia.cn_name LIKE CONCAT(CONCAT('%', #{cnName}), '%')
+            </if>
+            <if test="enabled != null">
+                and ia.enabled=#{enabled}
+            </if>
+            <if test="country != null and country != ''">
+                and ia.country=#{country}
+            </if>
+            <if test="auditStatus != null and auditStatus != ''">
+                and ia.audit_status=#{auditStatus}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND DATE_FORMAT(ia.create_time,'%Y-%m-%d') &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(ia.create_time,'%Y-%m-%d') &lt;= #{endTime}
+            </if>
+            <if test="countryType != null and countryType != ''">
+                and ia.country_type=#{countryType}
+            </if>
+        </where>
+    </select>
+    <select id="getInstitutionInfoAudit" resultMap="BaseResultMap">
 			select
         i.id,i.cn_name,i.en_name,i.country_type,co.country_name as country,i.company_regist_number,i.company_validity,i.legal_passport_code,i.legal_passport_validity,
-		i.country_code,i.institution_adress,i.legal_passport_img,i.institution_contract,i.company_articles,i.business_certificate,i.institution_phone,
+		 co.area_code as country_code,i.institution_adress,i.legal_passport_img,i.institution_contract,i.company_articles,i.business_certificate,i.institution_phone,
 		i.legal_name,i.business_category,i.business_license,i.industry_category,i.institution_postal_code,i.institution_email,i.institution_web_url,
 		i.contact_address,i.contact_people,i.contact_phone,i.audit_status,i.ext7,i.ext6,i.ext5,i.ext4,i.ext3,i.ext2,i.ext1,i.create_time,i.update_time,
 		i.creator,i.modifier,i.remark,i.enabled,i.institution_logo

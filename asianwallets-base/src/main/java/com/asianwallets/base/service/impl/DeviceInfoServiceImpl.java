@@ -3,6 +3,7 @@ package com.asianwallets.base.service.impl;
 import com.asianwallets.base.dao.*;
 import com.asianwallets.base.service.DeviceInfoService;
 import com.asianwallets.common.base.BaseServiceImpl;
+import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.dto.DeviceInfoDTO;
 import com.asianwallets.common.entity.DeviceInfo;
 import com.asianwallets.common.entity.Institution;
@@ -41,6 +42,9 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
 
     @Autowired
     private OrdersMapper ordersMapper;
+
+    @Autowired
+    private AuditorProvider auditorProvider;
     /**
      * 新增设备信息
      *
@@ -62,7 +66,7 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
             //设置默认名称 厂商_型号
             deviceInfoDTO.setName(deviceInfoDTO.getVendorName() + "_" + deviceInfoDTO.getModelName());
         }
-        Institution institutionInfo = institutionMapper.getInstitutionInfo(deviceInfoDTO.getInstitutionId());
+        Institution institutionInfo = institutionMapper.getInstitutionInfo(deviceInfoDTO.getInstitutionId(),auditorProvider.getLanguage());
         if (institutionInfo == null || !institutionInfo.getEnabled()) {
             throw new BusinessException(EResultEnum.INSTITUTION_STATUS_ABNORMAL.getCode());
         }

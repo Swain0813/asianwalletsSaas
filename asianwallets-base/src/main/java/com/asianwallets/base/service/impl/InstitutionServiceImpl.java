@@ -167,6 +167,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
      **/
     @Override
     public PageInfo<InstitutionAudit> pageFindInstitutionAudit(InstitutionDTO institutionDTO) {
+        institutionDTO.setLanguage(auditorProvider.getLanguage());//设置语言
         return new PageInfo(institutionAuditMapper.pageFindInstitutionAudit(institutionDTO));
     }
 
@@ -178,7 +179,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
      **/
     @Override
     public Institution getInstitutionInfo(String id) {
-        return institutionMapper.getInstitutionInfo(id);
+        return institutionMapper.getInstitutionInfo(id,auditorProvider.getLanguage());
     }
 
 
@@ -190,7 +191,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
      **/
     @Override
     public InstitutionAudit getInstitutionInfoAudit(String id) {
-        return institutionAuditMapper.getInstitutionInfoAudit(id);
+        return institutionAuditMapper.getInstitutionInfoAudit(id,auditorProvider.getLanguage());
     }
 
     /**
