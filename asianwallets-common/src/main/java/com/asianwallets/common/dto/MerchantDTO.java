@@ -21,9 +21,14 @@ public class MerchantDTO {
     @ApiModelProperty(value = "机构id")
     private String institutionId;
 
+    @ApiModelProperty(value = "机构名称")
+    private String institutionName;
+
     @ApiModelProperty(value = "代理商id")
-    @Column(name = "agent_id")
     private String agentId;
+
+    @ApiModelProperty(value = "代理商名称")
+    private String agentName;
 
     @ApiModelProperty(value = "上级商户id")
     private String parentId;

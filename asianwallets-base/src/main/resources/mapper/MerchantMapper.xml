@@ -56,9 +56,9 @@
     <select id="pageFindMerchant" resultMap="BaseResultMap">
 
         select
-        i.institution_id,
-        m1.agent_id,
-        m2.parent_id,
+        m.institution_id,
+        m.agent_id,
+        m.parent_id,
         i.cn_name as ext5,
         m1.cn_name as ext6,
         m2.cn_name as ext7,
@@ -100,8 +100,20 @@
             <if test="endTime != null and endTime != ''">
                 AND DATE_FORMAT(m.create_time,'%Y-%m-%d') &lt;= #{endTime}
             </if>
-            <if test="countryType != null and countryType != ''">
-                and m.country_type=#{countryType}
+            <if test="institutionName != null and institutionName != ''">
+                and  i.cn_name=#{institutionName}
+            </if>
+            <if test="institutionId != null and institutionId != ''">
+                and  i.id=#{institutionId}
+            </if>
+            <if test="agentId != null and agentId != ''">
+                and  m1.agent_id=#{agentId}
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and i.cn_name=#{agentName}
+            </if>
+            <if test="groupMasterAccount != null and groupMasterAccount != ''">
+                and  m.group_master_account=#{groupMasterAccount}
             </if>
         </where>
 
@@ -109,12 +121,12 @@
     </select>
     <select id="getMerchantInfo" resultMap="BaseResultMap">
 			select
-	    i.institution_id,
-		m1.agent_id,
-		m2.parent_id,
-		i.cn_name as ext5,
-		m1.cn_name as ext6,
-		m2.cn_name as ext7,
+	    m.institution_id,
+        m.agent_id,
+        m.parent_id,
+        i.cn_name as ext5,
+        m1.cn_name as ext6,
+        m2.cn_name as ext7,
 		m.id,m.cn_name,m.en_name,m.country_type,co.country_name as country,m.mcc,co.area_name as region,m.merchant_type,m.group_master_account,m.develop_sales,
 		m.company_regist_number,m.company_validity,m.legal_passport_code,m.legal_passport_validity,
 		 co.area_code as country_code,m.institution_adress,m.legal_passport_img,m.institution_contract,m.company_articles,m.business_certificate,m.institution_phone,
@@ -173,8 +185,20 @@
             <if test="endTime != null and endTime != ''">
                 AND DATE_FORMAT(m.create_time,'%Y-%m-%d') &lt;= #{endTime}
             </if>
-            <if test="countryType != null and countryType != ''">
-                and m.country_type=#{countryType}
+            <if test="institutionName != null and institutionName != ''">
+                and  i.cn_name=#{institutionName}
+            </if>
+            <if test="institutionId != null and institutionId != ''">
+                and  i.id=#{institutionId}
+            </if>
+            <if test="agentId != null and agentId != ''">
+                and  m1.agent_id=#{agentId}
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and i.cn_name=#{agentName}
+            </if>
+            <if test="groupMasterAccount != null and groupMasterAccount != ''">
+                and  m.group_master_account=#{groupMasterAccount}
             </if>
         </where>
     </select>
