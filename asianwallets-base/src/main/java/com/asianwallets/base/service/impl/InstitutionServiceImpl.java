@@ -103,7 +103,10 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
             sysUser.setId(userId);
             sysUser.setUsername("admin"+institutionId);
             sysUser.setPassword(encryptPassword("123456"));
-            sysUser.setTradePassword(encryptPassword("123456"));//交易密码
+            //交易密码
+            sysUser.setTradePassword(encryptPassword("123456"));
+            //设置语言
+            sysUser.setLanguage(auditorProvider.getLanguage());
             sysUser.setSysId(institutionId);
             sysUser.setPermissionType(AsianWalletConstant.INSTITUTION);
             sysUser.setSysType(AsianWalletConstant.INSTITUTION_USER);
