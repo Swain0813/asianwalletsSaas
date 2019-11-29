@@ -60,7 +60,7 @@ public class SysRoleServiceImpl implements SysRoleService {
         List<SysRoleMenu> list = Lists.newArrayList();
         for (String menuId : sysRoleMenuDto.getMenuIdList()) {
             SysRoleMenu sysRoleMenu = new SysRoleMenu();
-            sysRoleMenu.setId(IDS.uuid());
+            sysRoleMenu.setId(IDS.uuid2());
             sysRoleMenu.setRoleId(sysRole.getId());
             sysRoleMenu.setMenuId(menuId);
             sysRoleMenu.setCreator(username);
