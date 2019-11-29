@@ -24,6 +24,9 @@ public class MerchantDTO {
     @ApiModelProperty(value = "机构名称")
     private String institutionName;
 
+    @ApiModelProperty(value = "代理商类型")
+    private String agentType;
+
     @ApiModelProperty(value = "代理商id")
     private String agentId;
 
