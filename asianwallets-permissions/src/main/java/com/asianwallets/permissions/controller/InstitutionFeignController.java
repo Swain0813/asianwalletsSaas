@@ -132,8 +132,9 @@ public class InstitutionFeignController extends BaseController {
             ServletOutputStream out = response.getOutputStream();
             if (ArrayUtil.isEmpty(dataList)) {
                 //数据不存在的场合
-                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(getLanguage());
-                writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
+//                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(getLanguage());
+//                writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
+                writer.write(Arrays.asList(EResultEnum.DATA_IS_NOT_EXIST.getCode()));
                 writer.flush(out);
                 return ResultUtil.success();
             }
