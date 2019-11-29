@@ -1,7 +1,5 @@
 package com.asianwallets.base.controller;
-
 import com.asianwallets.base.service.MerchantService;
-import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.dto.MerchantDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
@@ -9,7 +7,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.asianwallets.common.base.BaseController;
 

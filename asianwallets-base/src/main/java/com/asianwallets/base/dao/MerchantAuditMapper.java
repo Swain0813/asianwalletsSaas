@@ -1,8 +1,6 @@
 package com.asianwallets.base.dao;
-
 import com.asianwallets.common.base. BaseMapper;
 import com.asianwallets.common.dto.MerchantDTO;
-import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.entity.MerchantAudit;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

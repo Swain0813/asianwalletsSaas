@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
+import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -25,6 +26,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @description:
@@ -126,13 +128,12 @@ public class InstitutionFeignController extends BaseController {
     @ApiOperation(value = "导出机构")
     @PostMapping("/exportInstitution")
     public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
-        BaseResponse baseResponse = institutionFeign.exportInstitution(institutionDTO);
-        ArrayList<LinkedHashMap> data = (ArrayList<LinkedHashMap>) baseResponse.getData();
+        List<Institution> data = institutionFeign.exportInstitution(institutionDTO);
         if (data == null || data.size() == 0) {//数据不存在的场合
             throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
         }
         ArrayList<InstitutionExportVO> institutionExportVOS = new ArrayList<>();
-        for (LinkedHashMap datum : data) {
+        for (Institution datum : data) {
             institutionExportVOS.add(JSON.parseObject(JSON.toJSONString(datum), InstitutionExportVO.class));
         }
         ExcelWriter writer = null;

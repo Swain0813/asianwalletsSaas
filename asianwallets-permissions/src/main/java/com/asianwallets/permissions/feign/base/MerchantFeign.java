@@ -1,8 +1,6 @@
 package com.asianwallets.permissions.feign.base;
-
 import com.asianwallets.common.dto.MerchantDTO;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.feign.base.impl.MerchantFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
