@@ -1,5 +1,6 @@
 package com.asianwallets.permissions;
 
+import com.alibaba.fastjson.JSON;
 import com.asianwallets.permissions.dao.SysMenuMapper;
 import com.asianwallets.permissions.demo.AbstractLogger;
 import com.asianwallets.permissions.demo.ResultVO;
@@ -51,8 +52,8 @@ public class PermissionsApplicationTests {
                 System.out.println("-----------------------------------------");
                 ResultVO resultVO = new ResultVO();
                 resultVO.setObject("===== 进来了 ====");
-                ab.logMessage(resultVO);
-                System.out.println("-----------------------------------------");
+                ResultVO vo = ab.logMessage(resultVO);
+                System.out.println("-------- 结束了 ------------ ResultVO ："+ JSON.toJSONString(vo));
             } catch (Exception e) {
 
             }
