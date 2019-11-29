@@ -61,18 +61,15 @@ public class Institution extends BaseEntity {
 	@ApiModelProperty(value = "公司证件有效期")
 	@Column(name = "company_validity")
 	private String companyValidity;
-    /**
-     * 法人证件编号
-     */
-	@ApiModelProperty(value = "公司证件有效期")
+
+	@ApiModelProperty(value = "法人证件编号")
 	@Column(name = "legal_passport_code")
 	private String legalPassportCode;
-    /**
-     * 证件有效期
-     */
-	@ApiModelProperty(value = "证件有效期")
+
+	@ApiModelProperty(value = "法人证件有效期")
 	@Column(name = "legal_passport_validity")
 	private String legalPassportValidity;
+
     /**
      * 国家区号
      */
