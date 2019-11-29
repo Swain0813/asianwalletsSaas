@@ -222,7 +222,6 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
                 institutionHistory.setId(IDS.uuid2());
                 institutionHistory.setInstitutionId(institutionId);
                 institutionHistory.setEnabled(enabled);
-                institutionHistory.setRemark(remark);
                 institutionHistoryMapper.insert(institutionHistory);
                 institutionMapper.deleteByPrimaryKey(institutionId);
                 //将审核表信息移动到主题表
@@ -275,7 +274,6 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
                 institution.setUpdateTime(new Date());
                 institution.setModifier(username);
                 institution.setEnabled(enabled);
-                institution.setRemark(remark);
                 institutionMapper.insert(institution);
                 try {
                     //审核通过后将新增和修改的机构信息添加的redis里
