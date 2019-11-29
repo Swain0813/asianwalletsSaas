@@ -5,16 +5,23 @@ package com.asianwallets.base.demo;
  * @author: YangXu
  * @create: 2019-11-29 14:03
  **/
-public class FileLogger extends AbstractLogger {
+public class SecondProcess extends AbstractLogger {
 
-    public FileLogger(int level) {
+    public SecondProcess(String level) {
         this.level = level;
+    }
+    public SecondProcess(String level,AbstractLogger abstractLogger) {
+        this.level = level;
+        this.nextLogger = abstractLogger;
     }
 
     @Override
-    protected void write(String message) {
-
-        System.out.println("File::Logger: " + message);
+    protected ResultVO write(String message) {
+        System.out.println("-------------------------- SecondProcess --------------------------------");
+        ResultVO resultVO = new ResultVO();
+        System.out.println(" ================= SecondProcess : " + message);
+        resultVO.setStatus(true);
+        return resultVO;
 
     }
 }
