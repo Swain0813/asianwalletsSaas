@@ -67,23 +67,21 @@
     </select>
 
     <select id="selectAllMenuById" resultMap="FirstMenuMap">
-        select f.id      as fid,
-               s.id      as sid,
-               t.id      as tid
+        select f.id as fid,
+               s.id as sid,
+               t.id as tid
         from (select id, en_name, cn_name, parent_id
               from sys_menu
-              where level = 0
-                and enabled = 1) as f
+              where level = 0) as f
                  left join
              (select id, en_name, cn_name, parent_id
               from sys_menu
-              where level = 1
-                and enabled = 1) as s on s.parent_id = f.id
+              where level = 1) as s on s.parent_id = f.id
                  left join
              (select id, en_name, cn_name, parent_id
               from sys_menu
-              where level = 2
-                and enabled = 1) as t on t.parent_id = s.id where f.id = #{id}
+              where level = 2) as t on t.parent_id = s.id
+        where f.id = #{id}
     </select>
 
     <select id="selectMenuByUserId" resultType="String">
