@@ -142,6 +142,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
                 sysUser1.setTradePassword(encryptPassword("123456"));//交易密码
                 sysUser1.setSysId(merchantId);
                 sysUser1.setPermissionType(AsianWalletConstant.POS);
+                sysUser1.setSysType(AsianWalletConstant.MERCHANT_USER);
                 sysUser1.setName("posAdmin");
                 sysUser1.setLanguage(auditorProvider.getLanguage());//设置语言
                 sysUser1.setCreateTime(new Date());
@@ -184,6 +185,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
                 sysUser1.setTradePassword(encryptPassword("123456"));//交易密码
                 sysUser1.setSysId(merchantId);
                 sysUser1.setPermissionType(AsianWalletConstant.POS);
+                sysUser1.setSysType(AsianWalletConstant.GROUP_USER);
                 sysUser1.setName("posAdmin");
                 sysUser1.setLanguage(auditorProvider.getLanguage());//设置语言
                 sysUser1.setCreateTime(new Date());
