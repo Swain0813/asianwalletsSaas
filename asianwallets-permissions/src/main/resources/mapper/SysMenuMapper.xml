@@ -100,7 +100,7 @@
         where role_id = #{id}
     </select>
 
-    <delete id="deleteByIdList">
+    <delete id="deleteByMenuIdList">
         delete from sys_menu where id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
             #{item}

@@ -17,7 +17,7 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      * @param idList 权限ID集合
      * @return 修改条数
      */
-    int deleteByIdList(List<String> idList);
+    int deleteByMenuIdList(List<String> idList);
 
     /**
      * 根据权限类型查询所有权限信息

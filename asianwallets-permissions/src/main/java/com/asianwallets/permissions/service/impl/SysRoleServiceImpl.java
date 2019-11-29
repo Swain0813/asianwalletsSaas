@@ -30,8 +30,6 @@ public class SysRoleServiceImpl implements SysRoleService {
     @Autowired
     private SysRoleMenuMapper sysRoleMenuMapper;
 
-
-
     /**
      * 新增角色权限信息
      *

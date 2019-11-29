@@ -59,18 +59,6 @@ public class SysUserServiceImpl implements SysUserService {
     @Autowired
     private AuditorProvider auditorProvider;
 
-
-    /**
-     * 根据用户名查询用户关联角色,权限信息
-     *
-     * @param userName 用户名
-     * @return SysUserVO
-     */
-    @Override
-    public SysUserVO getSysUser(String userName) {
-        return sysUserMapper.getSysUser(userName);
-    }
-
     /**
      * 分配用户角色,用户权限信息
      *
@@ -172,24 +160,6 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     /**
-     * 分页查询用户信息
-     *
-     * @param sysUserDto 用户查询实体
-     * @return 修改条数
-     */
-    @Override
-    public PageInfo<SysUserSecVO> pageGetSysUser(SysUserDto sysUserDto) {
-        List<SysUserSecVO> sysUserList = new ArrayList<>();
-        if (AsianWalletConstant.OPERATION.equals(sysUserDto.getPermissionType())) {
-            //运营系统
-            sysUserDto.setSort("s.create_time");
-            sysUserList = sysUserMapper.pageGetSysUserByOperation(sysUserDto);
-        }
-        return new PageInfo<>(sysUserList);
-    }
-
-
-    /**
      * 重置登录密码
      *
      * @param username 用户名
@@ -258,6 +228,7 @@ public class SysUserServiceImpl implements SysUserService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int updateTradePassword(String username, UpdatePasswordDto updatePasswordDto) {
         SysUser sysUser = sysUserMapper.selectByPrimaryKey(updatePasswordDto.getUserId());
         if (sysUser == null) {
@@ -273,6 +244,34 @@ public class SysUserServiceImpl implements SysUserService {
             throw new BusinessException(EResultEnum.ORIGINAL_PASSWORD_ERROR.getCode());
         }
         return sysUserMapper.updateByPrimaryKeySelective(sysUser);
+    }
+
+    /**
+     * 根据用户名查询用户关联角色,权限信息
+     *
+     * @param userName 用户名
+     * @return SysUserVO
+     */
+    @Override
+    public SysUserVO getSysUser(String userName) {
+        return sysUserMapper.getSysUser(userName);
+    }
+
+    /**
+     * 分页查询用户信息
+     *
+     * @param sysUserDto 用户查询实体
+     * @return 修改条数
+     */
+    @Override
+    public PageInfo<SysUserSecVO> pageGetSysUser(SysUserDto sysUserDto) {
+        List<SysUserSecVO> sysUserList = new ArrayList<>();
+        if (AsianWalletConstant.OPERATION.equals(sysUserDto.getPermissionType())) {
+            //运营系统
+            sysUserDto.setSort("s.create_time");
+            sysUserList = sysUserMapper.pageGetSysUserByOperation(sysUserDto);
+        }
+        return new PageInfo<>(sysUserList);
     }
 
     /**

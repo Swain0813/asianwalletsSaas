@@ -228,7 +228,7 @@ public class SysMenuServiceImpl implements SysMenuService {
                 sysUserMenuMapper.deleteByMenuIdList(menuIds);
                 sysRoleMenuMapper.deleteByMenuIdList(menuIds);
                 //删除一级权限关联的所有权限
-                return sysMenuMapper.deleteByIdList(menuIds);
+                return sysMenuMapper.deleteByMenuIdList(menuIds);
             case AsianWalletConstant.ONE:
                 //查询所有关联权限ID
                 List<String> menuIdList = sysMenuMapper.selectMenuByParentId(menuId);
@@ -237,7 +237,7 @@ public class SysMenuServiceImpl implements SysMenuService {
                 sysUserMenuMapper.deleteByMenuIdList(menuIdList);
                 sysRoleMenuMapper.deleteByMenuIdList(menuIdList);
                 //删除二级权限关联的所有权限
-                return sysMenuMapper.deleteByIdList(menuIdList);
+                return sysMenuMapper.deleteByMenuIdList(menuIdList);
             case AsianWalletConstant.TWO:
                 //删除中间表的关联关系
                 sysUserMenuMapper.deleteByMenuId(menuId);
