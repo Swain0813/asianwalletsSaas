@@ -171,6 +171,31 @@ public class SysMenuServiceImpl implements SysMenuService {
     }
 
     /**
+     * 添加菜单权限信息
+     *
+     * @param username   用户名
+     * @param sysMenuDto 权限输入实体
+     * @return 修改条数
+     */
+    @Override
+    @Transactional
+    public int addMenu(String username, SysMenuDto sysMenuDto) {
+        SysMenu sysMenu = new SysMenu();
+        sysMenu.setId(IDS.uuid2());
+        sysMenu.setEnName(sysMenuDto.getEnName());
+        sysMenu.setCnName(sysMenuDto.getCnName());
+        sysMenu.setParentId(sysMenuDto.getParentId());
+        sysMenu.setPermissionType(sysMenuDto.getPermissionType());
+        sysMenu.setDescription(sysMenuDto.getDescription());
+        sysMenu.setLevel(sysMenuDto.getLevel());
+        sysMenu.setCreateTime(new Date());
+        sysMenu.setCreator(username);
+        sysMenu.setSort(0);
+        sysMenu.setEnabled(true);
+        return sysMenuMapper.insert(sysMenu);
+    }
+
+    /**
      * 删除权限信息
      *
      * @param menuId 权限ID

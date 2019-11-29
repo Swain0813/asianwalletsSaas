@@ -38,9 +38,19 @@ public interface SysMenuService {
     int addOneLayerMenu(String username, ThreeMenuDto threeMenuDto);
 
     /**
+     * 添加菜单权限信息
+     *
+     * @param username   用户名
+     * @param sysMenuDto 权限输入实体
+     * @return 修改条数
+     */
+    int addMenu(String username, SysMenuDto sysMenuDto);
+
+
+    /**
      * 删除权限信息
      *
-     * @param menuId   权限ID
+     * @param menuId 权限ID
      * @return 修改条数
      */
     int deleteMenu(String menuId);

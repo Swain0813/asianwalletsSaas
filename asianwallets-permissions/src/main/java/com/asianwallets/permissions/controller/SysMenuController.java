@@ -56,6 +56,14 @@ public class SysMenuController extends BaseController {
         return ResultUtil.success(sysMenuService.addOneLayerMenu(getSysUserVO().getUsername(), threeMenuDto));
     }
 
+    @ApiOperation(value = "添加菜单权限信息")
+    @PostMapping("/addMenu")
+    public BaseResponse addMenu(@RequestBody @ApiParam SysMenuDto sysMenuDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysMenuDto),
+                "添加菜单权限信息"));
+        return ResultUtil.success(sysMenuService.addMenu(getSysUserVO().getUsername(), sysMenuDto));
+    }
+
     @ApiOperation(value = "删除权限信息")
     @GetMapping("/deleteMenu")
     public BaseResponse deleteMenu(@RequestParam @ApiParam String menuId) {
