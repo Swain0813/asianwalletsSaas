@@ -14,6 +14,7 @@ import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.InstitutionExportVO;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -324,7 +325,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
      * @return
      **/
     @Override
-    public List<Institution> exportInstitution(InstitutionDTO institutionDTO) {
+    public List<InstitutionExportVO> exportInstitution(InstitutionDTO institutionDTO) {
         institutionDTO.setLanguage(auditorProvider.getLanguage());//设置语言
         return institutionMapper.exportInstitution(institutionDTO);
     }

@@ -69,10 +69,10 @@ public class InstitutionExportVO {
      * 审核状态 1-待审核 2-审核通过 3-审核不通过
      */
     @ApiModelProperty(value = "审核状态")
-    private Byte auditStatus;
+    private String auditStatus;
 
     @ApiModelProperty(value = "启用禁用")
-    private Boolean enabled;
+    private String enabled;
 
 
     @ApiModelProperty(value = "创建时间")

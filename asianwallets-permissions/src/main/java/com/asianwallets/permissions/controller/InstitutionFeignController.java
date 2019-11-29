@@ -5,11 +5,12 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
-import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.utils.ArrayUtil;
+import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.vo.InstitutionExportVO;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
 import com.asianwallets.permissions.service.ExportService;
@@ -24,8 +25,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -43,10 +42,6 @@ public class InstitutionFeignController extends BaseController {
 
     @Autowired
     private OperationLogService operationLogService;
-
-    @Autowired
-    private ExportService exportService;
-
 
     @ApiOperation(value = "添加机构")
     @PostMapping("addInstitution")
@@ -127,19 +122,15 @@ public class InstitutionFeignController extends BaseController {
 
     @ApiOperation(value = "导出机构")
     @PostMapping("/exportInstitution")
-    public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
-        List<Institution> data = institutionFeign.exportInstitution(institutionDTO);
-        if (data == null || data.size() == 0) {//数据不存在的场合
+    public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO, HttpServletResponse response) {
+        List<InstitutionExportVO> dataList = institutionFeign.exportInstitution(institutionDTO);
+        if (ArrayUtil.isEmpty(dataList)) {//数据不存在的场合
             throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
-        }
-        ArrayList<InstitutionExportVO> institutionExportVOS = new ArrayList<>();
-        for (Institution datum : data) {
-            institutionExportVOS.add(JSON.parseObject(JSON.toJSONString(datum), InstitutionExportVO.class));
         }
         ExcelWriter writer = null;
         try {
-            writer = exportService.getInstitutionExcel(institutionExportVOS, InstitutionExportVO.class);
-            HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+            ExcelUtils<InstitutionExportVO> excelUtils = new ExcelUtils<>();
+            writer = excelUtils.exportExcel(dataList, InstitutionExportVO.class);
             ServletOutputStream out = response.getOutputStream();
             writer.flush(out);
         } catch (Exception e) {
