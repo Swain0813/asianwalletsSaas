@@ -37,8 +37,7 @@
         <result column="tcName" property="cName" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <select id="getAllMenuByPermissionType" resultMap="FirstMenuMap">
-
+    <select id="selectAllMenuByPermissionType" resultMap="FirstMenuMap">
         select f.id      as fid,
                f.en_name as feName,
                f.cn_name as fcName,
@@ -67,7 +66,27 @@
                 and permission_type = #{permissionType}) as t on t.parent_id = s.id
     </select>
 
-    <select id="getUserMenu" resultType="String">
+    <select id="selectAllMenuById" resultMap="FirstMenuMap">
+        select f.id      as fid,
+               s.id      as sid,
+               t.id      as tid
+        from (select id, en_name, cn_name, parent_id
+              from sys_menu
+              where level = 0
+                and enabled = 1) as f
+                 left join
+             (select id, en_name, cn_name, parent_id
+              from sys_menu
+              where level = 1
+                and enabled = 1) as s on s.parent_id = f.id
+                 left join
+             (select id, en_name, cn_name, parent_id
+              from sys_menu
+              where level = 2
+                and enabled = 1) as t on t.parent_id = s.id where f.id = #{id}
+    </select>
+
+    <select id="selectMenuByUserId" resultType="String">
         select DISTINCT(menu_id)
         from sys_role_menu
         where role_id in (select role_id from sys_user_role where user_id = #{id})
@@ -77,30 +96,23 @@
         where user_id = #{id}
     </select>
 
-    <select id="getRoleMenu" resultType="String">
+    <select id="selectMenuByRoleId" resultType="String">
         select DISTINCT(menu_id)
         from sys_role_menu
         where role_id = #{id}
     </select>
 
-    <delete id="deleteByIdAndParentIdList">
+    <delete id="deleteByIdList">
         delete from sys_menu where id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
-        or parent_id in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
     </delete>
 
-    <delete id="deleteByIdAndParentId">
-        delete from sys_menu where id =#{menuId} or parent_id =#{menuId}
-    </delete>
-
-    <select id="getMenuByParentId" resultType="String">
+    <select id="selectMenuByParentId" resultType="String">
         select id
         from sys_menu
         where parent_id = #{parentId}
     </select>
+
 </mapper>

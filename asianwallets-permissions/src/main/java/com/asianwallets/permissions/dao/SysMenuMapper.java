@@ -12,28 +12,28 @@ import java.util.Set;
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
 
     /**
-     * 删除ID与父ID为指定权限ID集合的权限信息
+     * 删除指定权限ID集合的权限信息
      *
-     * @param menuIdList 权限ID集合
+     * @param idList 权限ID集合
      * @return 修改条数
      */
-    int deleteByIdAndParentIdList(List<String> menuIdList);
+    int deleteByIdList(List<String> idList);
 
     /**
-     * 删除ID与父ID为指定权限ID的权限信息
-     *
-     * @param menuId 权限ID
-     * @return 修改条数
-     */
-    int deleteByIdAndParentId(String menuId);
-
-    /**
-     * 查询所有权限
+     * 根据权限类型查询所有权限信息
      *
      * @param permissionType 权限类型
      * @return 一级权限集合
      */
-    List<FirstMenuVO> getAllMenuByPermissionType(Integer permissionType);
+    List<FirstMenuVO> selectAllMenuByPermissionType(Integer permissionType);
+
+    /**
+     * 根据权限ID查询所有权限信息
+     *
+     * @param id 权限ID
+     * @return 权限ID集合
+     */
+    FirstMenuVO selectAllMenuById(String id);
 
     /**
      * 根据用户ID查询权限
@@ -41,7 +41,7 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      * @param userId 用户ID
      * @return 权限集合
      */
-    Set<String> getUserMenu(String userId);
+    Set<String> selectMenuByUserId(String userId);
 
     /**
      * 根据角色ID查询权限
@@ -49,7 +49,7 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      * @param roleId 角色ID
      * @return 权限集合
      */
-    Set<String> getRoleMenu(String roleId);
+    Set<String> selectMenuByRoleId(String roleId);
 
     /**
      * 根据父级ID查询权限ID信息
@@ -57,5 +57,6 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      * @param parentId 父级ID
      * @return 权限集合
      */
-    List<String> getMenuByParentId(String parentId);
+    List<String> selectMenuByParentId(String parentId);
+
 }
