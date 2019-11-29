@@ -77,7 +77,7 @@
         left join country co on m.country = co.extend1 and co.language = #{language}
         <where>
             <if test="merchantId!=null and merchantId != ''">
-                and m.id=#{merchantID}
+                and m.id=#{merchantId}
             </if>
             <if test="merchantType!=null and merchantType != ''">
                 and m.merchant_type=#{merchantType}
