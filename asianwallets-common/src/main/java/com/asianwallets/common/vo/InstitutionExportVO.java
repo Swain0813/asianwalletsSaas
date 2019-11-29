@@ -96,14 +96,14 @@ public class InstitutionExportVO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date createTime;
 
-    @ApiModelProperty(value = "修改时间")
+    @ApiModelProperty(value = "审核时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
     @ApiModelProperty(value = "创建者")
     private String creator;
 
-    @ApiModelProperty(value = "更改者")
+    @ApiModelProperty(value = "审核人")
     private String modifier;
 
     @ApiModelProperty(value = "备注")
