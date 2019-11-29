@@ -23,12 +23,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -130,7 +126,7 @@ public class InstitutionFeignController extends BaseController {
     @ApiOperation(value = "导出机构")
     @PostMapping("/exportInstitution")
     public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO, HttpServletResponse response) {
-        ExcelWriter writer = ExcelUtil.getBigWriter("d:/abc.xlsx");
+        ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
             List<InstitutionExportVO> dataList = institutionFeign.exportInstitution(institutionDTO);
             ServletOutputStream out = response.getOutputStream();
