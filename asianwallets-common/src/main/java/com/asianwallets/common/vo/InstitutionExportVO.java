@@ -57,7 +57,7 @@ public class InstitutionExportVO {
 
     @ApiModelProperty(value = "联系人电话")
     private String contactPhone;
-    
+
     @ApiModelProperty(value = "商务邮箱")
     private String institutionEmail;
 
