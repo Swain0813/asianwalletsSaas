@@ -64,22 +64,22 @@ public class PermissionsApplicationTests {
             //String[] process1 = new String[]{"ThreeProcess", "FirstProcess", "SecondProcess"};
             int num = process1.length - 1;
             AbstractLogger a = (AbstractLogger) Class.forName("com.asianwallets.permissions.demo." + process1[num]).newInstance();
-            System.out.println("---------------- return a");
+            //System.out.println("---------------- return a");
             if(num==0) return a;
             num--;
             AbstractLogger b = (AbstractLogger) Class.forName("com.asianwallets.permissions.demo." + process1[num]).newInstance();
             b.setNextLogger(a);
-            System.out.println("---------------- return b");
+            //System.out.println("---------------- return b");
             if(num==0) return b;
             num--;
             AbstractLogger c = (AbstractLogger) Class.forName("com.asianwallets.permissions.demo." + process1[num]).newInstance();
             c.setNextLogger(b);
-            System.out.println("---------------- return c");
+            //System.out.println("---------------- return c");
             if(num==0) return c;
             num--;
             AbstractLogger d = (AbstractLogger) Class.forName("com.asianwallets.permissions.demo." + process1[num]).newInstance();
             d.setNextLogger(c);
-            System.out.println("---------------- return d");
+            //System.out.println("---------------- return d");
             if(num==0) return d;
             num--;
 
