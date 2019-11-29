@@ -130,6 +130,7 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setPassword(BCryptUtils.encode(sysUserRoleDto.getPassword()));
         sysUser.setTradePassword(BCryptUtils.encode(sysUserRoleDto.getTradePassword()));
         sysUser.setLanguage(auditorProvider.getLanguage());
+        sysUser.setUsername(sysUserRoleDto.getUsername());
         sysUser.setName(sysUserRoleDto.getName());
         sysUser.setEmail(sysUserRoleDto.getEmail());
         sysUser.setCreator(username);
