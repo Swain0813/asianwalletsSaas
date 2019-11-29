@@ -64,9 +64,7 @@ public class SysRoleServiceImpl implements SysRoleService {
             sysRoleMenu.setRoleId(sysRole.getId());
             sysRoleMenu.setMenuId(menuId);
             sysRoleMenu.setCreator(username);
-            sysRoleMenu.setModifier(username);
             sysRoleMenu.setCreateTime(new Date());
-            sysRoleMenu.setUpdateTime(new Date());
             list.add(sysRoleMenu);
         }
         sysRoleMenuMapper.insertList(list);
@@ -100,9 +98,7 @@ public class SysRoleServiceImpl implements SysRoleService {
             sysRoleMenu.setMenuId(menuId);
             sysRoleMenu.setRoleId(dbSysRole.getId());
             sysRoleMenu.setCreator(username);
-            sysRoleMenu.setModifier(username);
             sysRoleMenu.setCreateTime(new Date());
-            sysRoleMenu.setUpdateTime(new Date());
             roleMenuList.add(sysRoleMenu);
         }
         if (roleMenuList.size() == 0) {

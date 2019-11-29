@@ -87,9 +87,7 @@ public class SysUserServiceImpl implements SysUserService {
                 sysUserRole.setUserId(sysUser.getId());
                 sysUserRole.setRoleId(roleId);
                 sysUserRole.setCreator(sysUser.getCreator());
-                sysUserRole.setModifier(sysUser.getCreator());
                 sysUserRole.setCreateTime(new Date());
-                sysUserRole.setUpdateTime(new Date());
                 userRoleList.add(sysUserRole);
             }
             sysUserRoleMapper.insertList(userRoleList);
@@ -105,7 +103,6 @@ public class SysUserServiceImpl implements SysUserService {
                 sysUserMenu.setCreator(sysUser.getCreator());
                 sysUserMenu.setMenuId(sysUser.getCreator());
                 sysUserMenu.setCreateTime(new Date());
-                sysUserMenu.setUpdateTime(new Date());
                 userMenuList.add(sysUserMenu);
             }
             sysUserMenuMapper.insertList(userMenuList);
@@ -133,6 +130,8 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setPassword(BCryptUtils.encode(sysUserRoleDto.getPassword()));
         sysUser.setTradePassword(BCryptUtils.encode(sysUserRoleDto.getTradePassword()));
         sysUser.setLanguage(auditorProvider.getLanguage());
+        sysUser.setUsername(sysUserRoleDto.getUsername());
+        sysUser.setPermissionType(sysUserRoleDto.getPermissionType());
         sysUser.setName(sysUserRoleDto.getName());
         sysUser.setEmail(sysUserRoleDto.getEmail());
         sysUser.setCreator(username);
