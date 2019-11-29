@@ -145,7 +145,7 @@
         i.company_validity as companyValidity,
         i.legal_passport_code as legalPassportCode,
         i.legal_passport_validity as legalPassportValidity,
-        co.area_code as country_code,
+        co.area_code as countryCode,
         i.institution_adress as institutionAdress,
         i.legal_passport_img as legalPassportImg,
         i.institution_contract as institutionContract,
