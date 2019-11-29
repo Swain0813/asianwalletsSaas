@@ -89,7 +89,7 @@ public class InstitutionExportVO {
     @ApiModelProperty(value = "审核人")
     private String modifier;
 
-    @ApiModelProperty(value = "备注")
+    @ApiModelProperty(value = "审核备注")
     @Column(name = "remark")
     private String remark;
 }
