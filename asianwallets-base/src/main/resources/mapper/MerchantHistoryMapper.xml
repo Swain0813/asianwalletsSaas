@@ -8,6 +8,7 @@
 		<result column="merchant_id" property="merchantId" />
 		<result column="institution_id" property="institutionId" />
 		<result column="agent_id" property="agentId" />
+		<result column="agent_type" property="agentType"/>
 		<result column="parent_id" property="parentId" />
 		<result column="cn_name" property="cnName" />
 		<result column="en_name" property="enName" />
