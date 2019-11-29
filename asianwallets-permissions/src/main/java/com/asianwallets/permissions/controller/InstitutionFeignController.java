@@ -1,8 +1,10 @@
 package com.asianwallets.permissions.controller;
 
+import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.Institution;
@@ -10,6 +12,7 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.vo.InstitutionExportVO;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
 import com.asianwallets.permissions.service.ExportService;
@@ -25,7 +28,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -129,18 +133,20 @@ public class InstitutionFeignController extends BaseController {
     @PostMapping("/exportInstitution")
     public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
         List<Institution> data = institutionFeign.exportInstitution(institutionDTO);
-        if (data == null || data.size() == 0) {//数据不存在的场合
-            throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
-        }
-        ArrayList<InstitutionExportVO> institutionExportVOS = new ArrayList<>();
-        for (Institution datum : data) {
-            institutionExportVOS.add(JSON.parseObject(JSON.toJSONString(datum), InstitutionExportVO.class));
-        }
-        ExcelWriter writer = null;
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
         try {
-            writer = exportService.getInstitutionExcel(institutionExportVOS, InstitutionExportVO.class);
-            HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
             ServletOutputStream out = response.getOutputStream();
+            if (data == null || data.size() == 0) {//数据不存在的场合
+                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(this.getLanguage());
+                writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
+                writer.flush(out);
+            }
+            ArrayList<InstitutionExportVO> institutionExportVOS = new ArrayList<>();
+            for (Institution datum : data) {
+                institutionExportVOS.add(JSON.parseObject(JSON.toJSONString(datum), InstitutionExportVO.class));
+            }
+            writer = exportService.getInstitutionExcel(institutionExportVOS, InstitutionExportVO.class);
             writer.flush(out);
         } catch (Exception e) {
             throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
