@@ -15,8 +15,7 @@ public class ExcelUtils<T> {
      * @param clazz    字节码对象
      * @return Excel输出流
      */
-    public ExcelWriter exportExcel(List<T> dataList, Class<T> clazz) {
-        ExcelWriter writer = ExcelUtil.getBigWriter();
+    public ExcelWriter exportExcel(List<T> dataList, Class<T> clazz,ExcelWriter writer) {
         //获取属性值字段和注释
         Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
         //注释信息

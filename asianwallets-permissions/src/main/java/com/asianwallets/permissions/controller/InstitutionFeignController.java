@@ -1,8 +1,10 @@
 package com.asianwallets.permissions.controller;
 
+import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.exception.BusinessException;
@@ -11,13 +13,14 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.ExcelUtils;
+import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.vo.InstitutionExportVO;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
-import com.asianwallets.permissions.service.ExportService;
 import com.asianwallets.permissions.service.OperationLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -25,6 +28,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -35,6 +41,7 @@ import java.util.List;
 @RestController
 @Api(description = "机构管理接口")
 @RequestMapping("/institution")
+@Slf4j
 public class InstitutionFeignController extends BaseController {
 
     @Autowired
@@ -123,23 +130,26 @@ public class InstitutionFeignController extends BaseController {
     @ApiOperation(value = "导出机构")
     @PostMapping("/exportInstitution")
     public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO, HttpServletResponse response) {
-        List<InstitutionExportVO> dataList = institutionFeign.exportInstitution(institutionDTO);
-        if (ArrayUtil.isEmpty(dataList)) {//数据不存在的场合
-            throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
-        }
-        ExcelWriter writer = null;
+        ExcelWriter writer = ExcelUtil.getBigWriter("d:/abc.xlsx");
         try {
-            ExcelUtils<InstitutionExportVO> excelUtils = new ExcelUtils<>();
-            writer = excelUtils.exportExcel(dataList, InstitutionExportVO.class);
+            List<InstitutionExportVO> dataList = institutionFeign.exportInstitution(institutionDTO);
             ServletOutputStream out = response.getOutputStream();
+            if (ArrayUtil.isEmpty(dataList)) {
+                //数据不存在的场合
+                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(getLanguage());
+                writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
+                writer.flush(out);
+                return ResultUtil.success();
+            }
+            ExcelUtils<InstitutionExportVO> excelUtils = new ExcelUtils<>();
+            excelUtils.exportExcel(dataList, InstitutionExportVO.class, writer);
             writer.flush(out);
         } catch (Exception e) {
+            log.info("==========【机构导出】==========【机构导出异常】", e);
             throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
         } finally {
             writer.close();
         }
         return ResultUtil.success();
     }
-
-
 }
