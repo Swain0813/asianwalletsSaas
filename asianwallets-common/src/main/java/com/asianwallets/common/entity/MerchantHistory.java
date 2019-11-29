@@ -35,6 +35,9 @@ public class MerchantHistory extends BaseEntity {
 	@ApiModelProperty(value = "机构id")
 	@Column(name = "institution_id")
 	private String institutionId;
+	@ApiModelProperty(value = "代理商类型")
+	@Column(name = "agent_type")
+	private String agentType;
 
 	@ApiModelProperty(value = "代理商id")
 	@Column(name = "agent_id")
