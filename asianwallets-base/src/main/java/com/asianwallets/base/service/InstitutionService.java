@@ -4,7 +4,7 @@ import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.base.BaseService;
 import com.asianwallets.common.entity.InstitutionAudit;
-import com.asianwallets.common.vo.SysUserVO;
+import com.asianwallets.common.vo.InstitutionExportVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -94,7 +94,7 @@ public interface InstitutionService extends BaseService<Institution> {
      * @Descripate 导出机构
      * @return
      **/
-    List<Institution>  exportInstitution(InstitutionDTO institutionDTO);
+    List<InstitutionExportVO>  exportInstitution(InstitutionDTO institutionDTO);
     /**
      * @return
      * @Author YangXu

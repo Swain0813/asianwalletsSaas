@@ -7,19 +7,20 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
-import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.utils.ArrayUtil;
+import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.vo.InstitutionExportVO;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
-import com.asianwallets.permissions.service.ExportService;
 import com.asianwallets.permissions.service.OperationLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -40,6 +41,7 @@ import java.util.List;
 @RestController
 @Api(description = "机构管理接口")
 @RequestMapping("/institution")
+@Slf4j
 public class InstitutionFeignController extends BaseController {
 
     @Autowired
@@ -47,10 +49,6 @@ public class InstitutionFeignController extends BaseController {
 
     @Autowired
     private OperationLogService operationLogService;
-
-    @Autowired
-    private ExportService exportService;
-
 
     @ApiOperation(value = "添加机构")
     @PostMapping("addInstitution")
@@ -131,30 +129,27 @@ public class InstitutionFeignController extends BaseController {
 
     @ApiOperation(value = "导出机构")
     @PostMapping("/exportInstitution")
-    public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
-        List<Institution> data = institutionFeign.exportInstitution(institutionDTO);
-        ExcelWriter writer = ExcelUtil.getBigWriter();
-        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+    public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO, HttpServletResponse response) {
+        ExcelWriter writer = ExcelUtil.getBigWriter("d:/abc.xlsx");
         try {
+            List<InstitutionExportVO> dataList = institutionFeign.exportInstitution(institutionDTO);
             ServletOutputStream out = response.getOutputStream();
-            if (data == null || data.size() == 0) {//数据不存在的场合
-                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(this.getLanguage());
+            if (ArrayUtil.isEmpty(dataList)) {
+                //数据不存在的场合
+                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(getLanguage());
                 writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
                 writer.flush(out);
+                return ResultUtil.success();
             }
-            ArrayList<InstitutionExportVO> institutionExportVOS = new ArrayList<>();
-            for (Institution datum : data) {
-                institutionExportVOS.add(JSON.parseObject(JSON.toJSONString(datum), InstitutionExportVO.class));
-            }
-            writer = exportService.getInstitutionExcel(institutionExportVOS, InstitutionExportVO.class);
+            ExcelUtils<InstitutionExportVO> excelUtils = new ExcelUtils<>();
+            excelUtils.exportExcel(dataList, InstitutionExportVO.class, writer);
             writer.flush(out);
         } catch (Exception e) {
+            log.info("==========【机构导出】==========【机构导出异常】", e);
             throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
         } finally {
             writer.close();
         }
         return ResultUtil.success();
     }
-
-
 }

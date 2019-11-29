@@ -3,6 +3,7 @@ package com.asianwallets.base.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.Institution;
+import com.asianwallets.common.vo.InstitutionExportVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
@@ -60,5 +61,5 @@ public interface InstitutionMapper extends  BaseMapper<Institution> {
      * @Date 2019/11/25
      * @Descripate 导出机构
      **/
-    List<Institution> exportInstitution(InstitutionDTO institutionDTO);
+    List<InstitutionExportVO> exportInstitution(InstitutionDTO institutionDTO);
 }
