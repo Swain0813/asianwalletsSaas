@@ -20,6 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@Transactional
 public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements MerchantService {
 
     @Autowired
