@@ -1,6 +1,7 @@
 package com.asianwallets.base.controller;
 import com.asianwallets.base.service.InstitutionService;
 import com.asianwallets.common.dto.InstitutionDTO;
+import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import io.swagger.annotations.Api;
@@ -9,6 +10,8 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.asianwallets.common.base.BaseController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -48,8 +51,8 @@ public class InstitutionController extends BaseController {
 
     @ApiOperation(value = "导出机构")
     @PostMapping("/exportInstitution")
-    public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO){
-        return ResultUtil.success(institutionService.exportInstitution(institutionDTO));
+    public List<Institution> exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO){
+        return institutionService.exportInstitution(institutionDTO);
     }
 
 

@@ -1,9 +1,11 @@
 package com.asianwallets.common.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
+import java.util.Date;
 
 /**
  * @description:
@@ -65,7 +67,7 @@ public class InstitutionExportVO {
 
     @ApiModelProperty(value = "机构网站url")
     private String institutionWebUrl;
-    
+
     /**
      * 联系人地址
      */
@@ -76,9 +78,7 @@ public class InstitutionExportVO {
      */
     @ApiModelProperty(value = "联系人")
     private String contactPeople;
-    /**
-     * 联系人电话
-     */
+
     @ApiModelProperty(value = "联系人电话")
     private String contactPhone;
 
@@ -88,9 +88,25 @@ public class InstitutionExportVO {
     @ApiModelProperty(value = "审核状态")
     private Byte auditStatus;
 
-    /**
-     * 启用禁用
-     */
     @ApiModelProperty(value = "启用禁用")
     private Boolean enabled;
+
+
+    @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    public Date createTime;
+
+    @ApiModelProperty(value = "修改时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateTime;
+
+    @ApiModelProperty(value = "创建者")
+    private String creator;
+
+    @ApiModelProperty(value = "更改者")
+    private String modifier;
+
+    @ApiModelProperty(value = "备注")
+    @Column(name = "remark")
+    private String remark;
 }

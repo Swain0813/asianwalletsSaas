@@ -1,11 +1,14 @@
 package com.asianwallets.permissions.feign.base.impl;
 
 import com.asianwallets.common.dto.InstitutionDTO;
+import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 
 /**
@@ -62,7 +65,7 @@ public class InstitutionFeignImpl implements InstitutionFeign {
     }
 
     @Override
-    public BaseResponse exportInstitution(InstitutionDTO institutionDTO) {
+    public List<Institution> exportInstitution(InstitutionDTO institutionDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
