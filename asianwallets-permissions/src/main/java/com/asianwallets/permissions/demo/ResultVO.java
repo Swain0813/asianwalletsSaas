@@ -1,4 +1,4 @@
-package com.asianwallets.base.demo;
+package com.asianwallets.permissions.demo;
 
 import lombok.Data;
 

@@ -1,18 +1,19 @@
-package com.asianwallets.base.demo;
+package com.asianwallets.permissions.demo;
+
+import org.springframework.stereotype.Component;
 
 /**
  * @description:
  * @author: YangXu
  * @create: 2019-11-29 14:03
  **/
+@Component
 public class ThreeProcess extends AbstractLogger{
+    public ThreeProcess(){
 
-    public ThreeProcess(String level){
-        this.level = level;
     }
 
-    public ThreeProcess(String level,AbstractLogger abstractLogger){
-        this.level = level;
+    public ThreeProcess(AbstractLogger abstractLogger){
         this.nextLogger = abstractLogger;
     }
 
@@ -20,7 +21,10 @@ public class ThreeProcess extends AbstractLogger{
     protected ResultVO write(String message) {
         System.out.println("-------------------------- ThreeProcess --------------------------------");
         ResultVO resultVO = new ResultVO();
+
+        message = message +" > c" ;
         System.out.println(" ================= ThreeProcess : " + message);
+        resultVO.setObject(message);
         resultVO.setStatus(true);
         return resultVO;
     }
