@@ -15,11 +15,11 @@ public class FirstProcess extends AbstractLogger {
     public FirstProcess(AbstractLogger abstractLogger) {
         this.nextLogger = abstractLogger;
     }
+
     @Override
-    protected ResultVO write(String message) {
+    protected ResultVO write(ResultVO resultVO) {
         System.out.println("-------------------------- FirstProcess --------------------------------");
-        ResultVO resultVO = new ResultVO();
-        message = message +" > a" ;
+        String message = resultVO.getObject().toString() + " > a";
         System.out.println(" ================= FirstProcess : " + message);
         resultVO.setObject(message);
         resultVO.setStatus(true);

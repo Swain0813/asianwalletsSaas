@@ -2,6 +2,7 @@ package com.asianwallets.permissions;
 
 import com.asianwallets.permissions.dao.SysMenuMapper;
 import com.asianwallets.permissions.demo.AbstractLogger;
+import com.asianwallets.permissions.demo.ResultVO;
 import com.asianwallets.permissions.vo.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,18 +38,20 @@ public class PermissionsApplicationTests {
     @Test
     public void contextLoad1s() {
 
-            String[] process = new String[]{"SecondProcess"};
+            //String[] process = new String[]{"SecondProcess"};
             //String[] process = new String[]{"ThreeProcess", "FirstProcess"};
             //String[] process = new String[]{"ThreeProcess", "FirstProcess"};
             //String[] process = new String[]{"ThreeProcess", "FirstProcess" ,"SecondProcess"};
             //String[] process = new String[]{"FirstProcess", "ThreeProcess" ,"SecondProcess"};
-            //String[] process = new String[]{"FirstProcess", "SecondProcess" ,"SecondProcess"};
+            String[] process = new String[]{"FirstProcess", "SecondProcess" ,"SecondProcess"};
             System.out.println("-----------------------------------------");
             try {
                 AbstractLogger ab = getAbstractLogger(process);
                 if(ab == null) System.out.println("========== AbstractLogger is null =========");
                 System.out.println("-----------------------------------------");
-                ab.logMessage("This is an 1.");
+                ResultVO resultVO = new ResultVO();
+                resultVO.setObject("===== 进来了 ====");
+                ab.logMessage(resultVO);
                 System.out.println("-----------------------------------------");
             } catch (Exception e) {
 

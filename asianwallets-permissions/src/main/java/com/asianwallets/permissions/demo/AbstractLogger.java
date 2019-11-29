@@ -23,12 +23,12 @@ public abstract  class AbstractLogger {
         this.nextLogger = nextLogger;
     }
 
-    public void logMessage(String message){
-        ResultVO vo  = write(message);
+    public void logMessage(ResultVO resultVO){
+        ResultVO vo  = write(resultVO);
         if(nextLogger !=null && vo.status){
-            nextLogger.logMessage(vo.getObject().toString());
+            nextLogger.logMessage(resultVO);
         }
     }
 
-    abstract protected ResultVO write(String message);
+    abstract protected ResultVO write(ResultVO resultVO);
 }

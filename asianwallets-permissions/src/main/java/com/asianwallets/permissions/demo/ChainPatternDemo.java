@@ -21,7 +21,7 @@ public class ChainPatternDemo {
 
         System.out.println("-----------------------------------------");
 
-        loggerChain.logMessage("This is an 1.");
+        //loggerChain.logMessage("This is an 1.");
 
 
         System.out.println("-----------------------------------------");
