@@ -2,13 +2,13 @@ package com.asianwallets.base.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.*;
+import com.asianwallets.base.service.InstitutionService;
+import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.*;
-import com.asianwallets.base.service.InstitutionService;
-import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
@@ -222,6 +222,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
                 institutionHistory.setId(IDS.uuid2());
                 institutionHistory.setInstitutionId(institutionId);
                 institutionHistory.setEnabled(enabled);
+                institutionHistory.setRemark(remark);
                 institutionHistoryMapper.insert(institutionHistory);
                 institutionMapper.deleteByPrimaryKey(institutionId);
                 //将审核表信息移动到主题表
@@ -274,6 +275,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
                 institution.setUpdateTime(new Date());
                 institution.setModifier(username);
                 institution.setEnabled(enabled);
+                institution.setRemark(remark);
                 institutionMapper.insert(institution);
                 try {
                     //审核通过后将新增和修改的机构信息添加的redis里

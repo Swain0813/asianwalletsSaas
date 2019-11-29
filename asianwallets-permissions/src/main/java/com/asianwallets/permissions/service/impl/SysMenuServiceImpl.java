@@ -14,7 +14,6 @@ import com.asianwallets.permissions.dto.SecondMenuDto;
 import com.asianwallets.permissions.dto.SysMenuDto;
 import com.asianwallets.permissions.dto.ThreeMenuDto;
 import com.asianwallets.permissions.service.SysMenuService;
-import com.asianwallets.permissions.utils.BCryptUtils;
 import com.asianwallets.permissions.vo.FirstMenuVO;
 import com.asianwallets.permissions.vo.SecondMenuVO;
 import com.asianwallets.permissions.vo.ThreeMenuVO;
@@ -213,6 +212,10 @@ public class SysMenuServiceImpl implements SysMenuService {
             case AsianWalletConstant.ZERO:
                 //查询关联权限ID
                 FirstMenuVO firstMenuVO = sysMenuMapper.selectAllMenuById(menuId);
+                if (firstMenuVO == null) {
+                    log.info("=========【删除权限信息】==========【数据异常!】");
+                    throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+                }
                 List<String> menuIds = new ArrayList<>();
                 menuIds.add(firstMenuVO.getId());
                 for (SecondMenuVO secondMenuVO : firstMenuVO.getSecondMenuVOS()) {
@@ -225,7 +228,7 @@ public class SysMenuServiceImpl implements SysMenuService {
                 sysUserMenuMapper.deleteByMenuIdList(menuIds);
                 sysRoleMenuMapper.deleteByMenuIdList(menuIds);
                 //删除一级权限关联的所有权限
-                return sysMenuMapper.deleteByIdList(menuIds);
+                return sysMenuMapper.deleteByMenuIdList(menuIds);
             case AsianWalletConstant.ONE:
                 //查询所有关联权限ID
                 List<String> menuIdList = sysMenuMapper.selectMenuByParentId(menuId);
@@ -234,7 +237,7 @@ public class SysMenuServiceImpl implements SysMenuService {
                 sysUserMenuMapper.deleteByMenuIdList(menuIdList);
                 sysRoleMenuMapper.deleteByMenuIdList(menuIdList);
                 //删除二级权限关联的所有权限
-                return sysMenuMapper.deleteByIdList(menuIdList);
+                return sysMenuMapper.deleteByMenuIdList(menuIdList);
             case AsianWalletConstant.TWO:
                 //删除中间表的关联关系
                 sysUserMenuMapper.deleteByMenuId(menuId);
@@ -245,10 +248,6 @@ public class SysMenuServiceImpl implements SysMenuService {
                 log.info("=========【删除权限信息】==========【层级信息不存在!】 Level: {}", sysMenu.getLevel());
                 throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
         }
-    }
-
-    public static void main(String[] args) {
-        System.out.println(BCryptUtils.encode("123456"));
     }
 
     /**
