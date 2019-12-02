@@ -6,6 +6,8 @@
         <result column="info_id" property="infoId" jdbcType="VARCHAR"/>
         <result column="institution_code" property="institutionCode" jdbcType="VARCHAR"/>
         <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
         <result column="vendor_name" property="vendorName" jdbcType="VARCHAR"/>
         <result column="model_name" property="modelName" jdbcType="VARCHAR"/>
         <result column="info_name" property="infoName" jdbcType="VARCHAR"/>
@@ -26,6 +28,8 @@
         <result column="info_id" property="infoId" jdbcType="VARCHAR"/>
         <result column="institution_code" property="institutionCode" jdbcType="VARCHAR"/>
         <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
         <result column="vendor_name" property="vendorName" jdbcType="VARCHAR"/>
         <result column="model_name" property="modelName" jdbcType="VARCHAR"/>
         <result column="info_name" property="infoName" jdbcType="VARCHAR"/>
@@ -53,6 +57,8 @@
         db.vendor_name,
         db.model_name,
         db.info_name,
+        db.merchant_id,
+        db.merchant_name
         db.imei,
         db.sn,
         db.operator,
