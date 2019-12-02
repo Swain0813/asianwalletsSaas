@@ -86,7 +86,7 @@
     </select>
     <select id="selectBankCardByMerId" resultMap="BaseResultMap">
         select
-        b.id as bankCardId, m.cn_name as merchantId,
+        b.id as id, m.cn_name as merchantId,
         b.account_code as accountCode,b.account_name as accountName,
         b.create_time,b.update_time,b.enabled,b.bank_account_code as bankAccountCode,
         b.bank_name as bankName, b.bank_currency as bankCurrency,b.settle_currency as settleCurrency,
