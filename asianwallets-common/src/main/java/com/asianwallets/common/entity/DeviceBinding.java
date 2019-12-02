@@ -29,6 +29,14 @@ public class DeviceBinding extends BaseEntity {
     @Column(name = "institution_name")
     private String institutionName;
 
+    @ApiModelProperty(value = "商户id")
+    @Column(name = "merchant_id")
+    private String merchantId;
+
+    @ApiModelProperty(value = "商户名称")
+    @Column(name = "merchant_name")
+    private String merchantName;
+
     @ApiModelProperty(value = "设备厂商名称")
     @Column(name = "vendor_name")
     private String vendorName;

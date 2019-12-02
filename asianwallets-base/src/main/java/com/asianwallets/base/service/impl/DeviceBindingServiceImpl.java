@@ -57,7 +57,6 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
         String institutionCode = deviceBindingDTO.getInstitutionId();
         ArrayList<DeviceBinding> bindings = new ArrayList<>();
         List<String> infoId = deviceBindingDTO.getInfoId();
-
         int mark = 0;
         for (String id : infoId) {
             //判断是否可以绑定
@@ -71,6 +70,8 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
             deviceBinding.setInstitutionCode(institutionCode);
             deviceBinding.setInfoId(id);
             deviceBinding.setInstitutionName(deviceBindingDTO.getInstitutionName());
+            deviceBinding.setMerchantId(deviceBindingDTO.getMerchantId());
+            deviceBinding.setMerchantName(deviceBindingDTO.getMerchantName());
             deviceBinding.setVendorName(deviceInfoVO.getVendorName());
             deviceBinding.setModelName(deviceInfoVO.getModelName());
             deviceBinding.setInfoName(deviceInfoVO.getName());
