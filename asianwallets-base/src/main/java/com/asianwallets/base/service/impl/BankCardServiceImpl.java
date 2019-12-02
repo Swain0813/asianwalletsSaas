@@ -58,26 +58,20 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
                     }
                 }
             }
-
-            //若是list中存在默认数据
-            //    //不为第一条时
-            //    if (i != 0) {
-            //        for (int j = 0; j < list.size(); j++) {
-            //            //同一条时
-            //            if (i == j) {
-            //                continue;
-            //            }
-            //            if (list.get(i).getBankCurrency().equals(list.get(j).getSettleCurrency())) {
-            //                //有相同的结算币种就不设置为默认银行卡
-            //                list.get(i).setDefaultFlag(false);
-            //                break;
-            //            }
-            //        }
-            //    }
-            //for (BankCardDTO bankCardDTO:list) {
-            //    if(bankCardDTO.getBankCurrency().equals(list.get(i).getBankCurrency()))
-            //
-            //}
+            for (int j = 0; j < list.size(); j++) {
+                //入参中有两条同币种的银行卡
+                if (list.get(j).getBankCurrency().equals(list.get(i).getBankCurrency())
+                        && list.get(j).getMerchantId().equals(list.get(i).getMerchantId())
+                        && i != j) {
+                    throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
+                }
+                if (list.get(j).getMerchantId().equals(list.get(i).getMerchantId())
+                        && list.get(j).getDefaultFlag() == list.get(i).getDefaultFlag()
+                        && list.get(i).getDefaultFlag()
+                        && i != j) {
+                    throw new BusinessException(EResultEnum.INFORMATION_IS_ILLEGAL.getCode());
+                }
+            }
 
 
             //根据机构code，银行卡币种和启用禁用状态和是否设为默认银行卡查询银行卡信息
