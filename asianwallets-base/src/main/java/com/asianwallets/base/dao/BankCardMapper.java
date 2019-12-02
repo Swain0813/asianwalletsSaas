@@ -53,8 +53,8 @@ public interface BankCardMapper extends  BaseMapper<BankCard> {
      *
      * @return
      */
-    @Select("SELECT id,merchant_id as merchantId,settle_currency as settleCurrency,bank_currency as bankCurrency,bank_account_code as bankAccountCode from bank_card WHERE merchant_id = #{merchantId} and settle_currency = #{settleCurrency} and default_flag=true")
-    List<BankCard> selectUpdateBankCard(@Param("merchantId") String merchantId, @Param("settleCurrency") String settleCurrency);
+    @Select("SELECT id,merchant_id as merchantId,settle_currency as settleCurrency,bank_currency as bankCurrency,bank_account_code as bankAccountCode from bank_card WHERE merchant_id = #{merchantId} and bank_currency = #{bankCurrency} and default_flag=true and enabled=true")
+    List<BankCard> selectUpdateBankCard(@Param("merchantId") String merchantId, @Param("bankCurrency") String bankCurrency);
 
     /**
      * 根据银行卡id查询银行卡信息
