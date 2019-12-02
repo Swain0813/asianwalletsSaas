@@ -39,7 +39,7 @@
 
         select
         b.id as bankCardId, m.cn_name as remark,
-        b.merchant_id as merchantId;
+        b.merchant_id as merchantId,
         b.account_code as accountCode,b.account_name as accountName,
         b.create_time,b.update_time,b.enabled,b.bank_account_code as bankAccountCode,
         b.bank_name as bankName, b.bank_currency as bankCurrency,b.settle_currency as settleCurrency,
