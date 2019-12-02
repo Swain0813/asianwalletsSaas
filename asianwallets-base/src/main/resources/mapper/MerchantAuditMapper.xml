@@ -118,6 +118,7 @@
             </if>
         </where>
     </select>
+
     <select id="getMerchantAuditInfo" resultMap="BaseResultMap">
 		select
 		m.institution_id,
