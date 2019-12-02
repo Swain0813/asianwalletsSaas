@@ -47,17 +47,14 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
     public int addBankCard(String name, List<BankCardDTO> list) {
         List<BankCard> bankCardList = Lists.newArrayList();
         for (int i = 0; i < list.size(); i++) {
-            //判断该机构下的银行账户下的该银行卡币种是不是已经存在
-            List<BankCard> bankCards = bankCardMapper.getBankCards(list.get(i).getMerchantId(), list.get(i).getBankAccountCode());
-            if (bankCards != null && bankCards.size() > 0) {
-                for (BankCard bc : bankCards) {
-                    //结算币种
-                    if (bc.getBankCurrency().equals(list.get(i).getBankCurrency())) {
-                        //信息已存在
-                        throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
-                    }
-                }
+            //判断该机构下是否已存在当前币种银行卡
+            List<BankCard> banlcardList = bankCardMapper.checkBankCardbyCurrency(list.get(i).getMerchantId(),list.get(i).getBankCurrency());
+            if (banlcardList != null && banlcardList.size() > 0) {
+                //信息已存在
+                throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
             }
+
+
             for (int j = 0; j < list.size(); j++) {
                 //入参中有两条同币种的银行卡
                 if (list.get(j).getBankCurrency().equals(list.get(i).getBankCurrency())
