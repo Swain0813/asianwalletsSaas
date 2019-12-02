@@ -121,6 +121,12 @@ public class BankCard extends BaseEntity {
 	@Column(name ="swift_code")
 	private String swiftCode;
     /**
+     * 是否为中间行银行
+     */
+	@ApiModelProperty(value = "是否为中间行银行")
+	@Column(name ="intermediary_bank_default")
+	private String intermediaryBankDefault;
+    /**
      * 中间行银行编码
      */
 	@ApiModelProperty(value = "中间行银行编码")

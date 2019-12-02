@@ -66,6 +66,9 @@ public class BankCardDTO {
     @ApiModelProperty(value = "iban")
     private String iban;
 
+    @ApiModelProperty(value = "是否为中间行银行")
+    private String intermediaryBankDefault;
+
     @ApiModelProperty(value = "中间行银行编码")
     private String intermediaryBankCode;
 

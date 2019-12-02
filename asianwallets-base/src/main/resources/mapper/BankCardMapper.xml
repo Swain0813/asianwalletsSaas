@@ -21,6 +21,7 @@
         <result column="receiver" property="receiver"/>
         <result column="bank_name" property="bankName"/>
         <result column="swift_code" property="swiftCode"/>
+        <result column="intermediary_bank_default" property="intermediaryBankDefault"/>
         <result column="intermediary_bank_code" property="intermediaryBankCode"/>
         <result column="intermediary_bank_name" property="intermediaryBankName"/>
         <result column="intermediary_bank_address" property="intermediaryBankAddress"/>
@@ -41,6 +42,7 @@
         b.id as id, m.cn_name as accountCode,
         b.merchant_id as merchantId,
         b.account_name as accountName,
+        b.intermediary_bank_default as intermediaryBankDefault,
         b.create_time,b.update_time,b.enabled,b.bank_account_code as bankAccountCode,
         b.bank_name as bankName, b.bank_currency as bankCurrency,b.settle_currency as settleCurrency,
         b.swift_code as swiftCode,b.bank_code as bankCode,b.intermediary_bank_code,b.intermediary_bank_name,
@@ -87,6 +89,7 @@
     <select id="selectBankCardByMerId" resultMap="BaseResultMap">
         select
         b.id as id, m.cn_name as merchantId,
+        b.intermediary_bank_default as intermediaryBankDefault,
         b.account_code as accountCode,b.account_name as accountName,
         b.create_time,b.update_time,b.enabled,b.bank_account_code as bankAccountCode,
         b.bank_name as bankName, b.bank_currency as bankCurrency,b.settle_currency as settleCurrency,
