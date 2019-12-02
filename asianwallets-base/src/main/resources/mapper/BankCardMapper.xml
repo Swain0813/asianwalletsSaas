@@ -41,7 +41,7 @@
         b.id as bankCardId, m.cn_name as merchantId,
         b.account_code as accountCode,b.account_name as accountName,
         b.create_time,b.update_time,b.enabled,b.bank_account_code as bankAccountCode,
-        b.bank_name as bankName, b.bank_currency as bankCurrency,b.bankcode_currency as bankCodeCurrency,
+        b.bank_name as bankName, b.bank_currency as bankCurrency,b.settle_currency as settleCurrency,
         b.swift_code as swiftCode,b.bank_code as bankCode,b.intermediary_bank_code,b.intermediary_bank_name,
         b.intermediary_bank_address,b.intermediary_bank_account_no,
         b.intermediary_bank_country,b.intermediary_other_code,b.iban as iban,
@@ -67,8 +67,8 @@
             <if test="bankCurrency!=null and bankCurrency != ''">
                 and b.bank_currency=#{bankCurrency}
             </if>
-            <if test="bankCodeCurrency!=null and bankCodeCurrency != ''">
-                and b.bankcode_currency=#{bankCodeCurrency}
+            <if test="settleCurrency!=null and settleCurrency != ''">
+                and b.settle_currency=#{settleCurrency}
             </if>
             <if test="defaultFlag != null">
                 and b.default_flag = #{defaultFlag}
@@ -88,7 +88,7 @@
         b.id as bankCardId, m.cn_name as merchantId,
         b.account_code as accountCode,b.account_name as accountName,
         b.create_time,b.update_time,b.enabled,b.bank_account_code as bankAccountCode,
-        b.bank_name as bankName, b.bank_currency as bankCurrency,b.bankcode_currency as bankCodeCurrency,
+        b.bank_name as bankName, b.bank_currency as bankCurrency,b.settle_currency as settleCurrency,
         b.swift_code as swiftCode,b.bank_code as bankCode,b.intermediary_bank_code,b.intermediary_bank_name,
         b.intermediary_bank_address,b.intermediary_bank_account_no,
         b.intermediary_bank_country,b.intermediary_other_code,b.iban as iban,

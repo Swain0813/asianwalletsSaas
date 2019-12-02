@@ -58,7 +58,8 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
                     }
                 }
             }
-            //    boolean flag = true;
+
+            //若是list中存在默认数据
             //    //不为第一条时
             //    if (i != 0) {
             //        for (int j = 0; j < list.size(); j++) {
@@ -66,13 +67,19 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
             //            if (i == j) {
             //                continue;
             //            }
-            //            if (list.get(i).getSettleCurrency().equals(list.get(j).getSettleCurrency())) {
+            //            if (list.get(i).getBankCurrency().equals(list.get(j).getSettleCurrency())) {
             //                //有相同的结算币种就不设置为默认银行卡
-            //                flag = false;
+            //                list.get(i).setDefaultFlag(false);
             //                break;
             //            }
             //        }
             //    }
+            //for (BankCardDTO bankCardDTO:list) {
+            //    if(bankCardDTO.getBankCurrency().equals(list.get(i).getBankCurrency()))
+            //
+            //}
+
+
             //根据机构code，银行卡币种和启用禁用状态和是否设为默认银行卡查询银行卡信息
             if (list.get(i).getDefaultFlag()) {
                 List<BankCard> lists = bankCardMapper.selectUpdateBankCard(list.get(i).getMerchantId(), list.get(i).getBankCurrency());
