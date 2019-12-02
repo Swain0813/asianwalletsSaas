@@ -5,6 +5,7 @@ import com.asianwallets.common.dto.BankCardSearchDTO;
 import com.asianwallets.common.entity.BankCard;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -31,15 +32,16 @@ public interface BankCardMapper extends  BaseMapper<BankCard> {
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 根据商户id查询银行卡
-     * @return
      **/
     List<BankCard> selectBankCardByMerId(@Param("merchantId") String merchantId);
 
     /**
      * 根据机构code和银行账号获取银行卡信息
+     *
      * @param bankAccountCode
      * @return
      */
@@ -48,6 +50,7 @@ public interface BankCardMapper extends  BaseMapper<BankCard> {
 
     /**
      * 根据机构code，银行卡币种以及结算币种和是否设为默认银行卡查询银行卡信息
+     *
      * @return
      */
     @Select("SELECT id,merchant_id as merchantId,settle_currency as settleCurrency,bank_currency as bankCurrency,bank_account_code as bankAccountCode from bank_card WHERE merchant_id = #{merchantId} and settle_currency = #{settleCurrency} and default_flag=true")
@@ -55,6 +58,7 @@ public interface BankCardMapper extends  BaseMapper<BankCard> {
 
     /**
      * 根据银行卡id查询银行卡信息
+     *
      * @param bankCardId
      * @return
      */
@@ -63,14 +67,16 @@ public interface BankCardMapper extends  BaseMapper<BankCard> {
 
     /**
      * 根据机构code，银行卡卡号，银行卡币种以及结算币种查询银行卡信息
+     *
      * @param bankAccountCode
      * @param bankCurrency
      * @return
      */
-    @Select("SELECT id,merchant_id as merchantId,account_code as accountCode,bank_account_code as bankAccountCode,settle_currency as settleCurrency,bank_currency as bankCurrency FROM bank_card WHERE merchant_id = #{merchantId} and bank_account_code = #{bankAccountCode} and settle_currency = #{settleCurrency} " +
+    @Select("SELECT id,merchant_id as merchantId,account_code as accountCode,bank_account_code as bankAccountCode,settle_currency as settleCurrency,bank_currency as bankCurrency FROM bank_card WHERE merchant_id = #{merchantId} and bank_account_code = #{bankAccountCode} " +
             "and bank_currency = #{bankCurrency} and enabled=true")
-    BankCard checkBankCard(@Param("merchantId") String merchantId, @Param("bankAccountCode") String bankAccountCode, @Param("bankCurrency") String bankCurrency, @Param("settleCurrency") String settleCurrency);
+    List<BankCard> checkBankCard(@Param("merchantId") String merchantId, @Param("bankAccountCode") String bankAccountCode, @Param("bankCurrency") String bankCurrency);
 
-    @Select("SELECT id,merchant_id as merchantId,account_code as accountCode,bank_account_code as bankAccountCode,settle_currency as settleCurrency,bank_currency as bankCurrency FROM bank_card WHERE merchant_id = #{merchantId}  and settle_currency = #{settleCurrency} and default_flag=true")
-    List<BankCard> checkDefaultBankCard(@Param("merchantId") String merchantId, @Param("settleCurrency") String settleCurrency);
+    @Select("SELECT id,merchant_id as merchantId,account_code as accountCode,bank_account_code as bankAccountCode,settle_currency as settleCurrency,bank_currency as bankCurrency FROM bank_card WHERE merchant_id = #{merchantId} and default_flag=true")
+    List<BankCard> checkDefaultBankCard(@Param("merchantId") String merchantId);
+
 }
