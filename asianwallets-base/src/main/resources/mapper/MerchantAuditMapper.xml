@@ -138,7 +138,7 @@
 		left join merchant m1 on m.agent_id = m1.id
         left join merchant m2 on m.parent_id = m2.id
 		left join country co on m.country = co.extend1 and co.language = #{language}
-		   left join country c1 on m.region = c1.extend1 and c1.language = #{language}
+-- 		   left join country c1 on m.region = c1.extend1 and c1.language = #{language}
 		where
 		m.id=#{id}
 	</select>
