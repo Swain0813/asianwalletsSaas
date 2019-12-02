@@ -52,6 +52,9 @@
             <if test="merchantName!=null and merchantName != ''">
                 and m.cn_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
             </if>
+            <if test="merchantType!=null and merchantType != ''">
+                and m.merchant_type = #{merchantType}
+            </if>
             <if test="merchantId!=null and merchantId != ''">
                 and m.id=#{merchantId}
             </if>
@@ -69,6 +72,12 @@
             </if>
             <if test="defaultFlag != null">
                 and b.default_flag = #{defaultFlag}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND DATE_FORMAT(b.create_time,'%Y-%m-%d') &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(b.create_time,'%Y-%m-%d') &lt;= #{endTime}
             </if>
         </where>
         order by b.create_time DESC

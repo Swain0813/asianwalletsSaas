@@ -1,10 +1,8 @@
 package com.asianwallets.common.dto;
-
+import com.asianwallets.common.base.BasePageHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.persistence.Column;
 
 /**
  * @description:
@@ -13,7 +11,7 @@ import javax.persistence.Column;
  **/
 @Data
 @ApiModel(value = "商户实体", description = "商户实体")
-public class MerchantDTO {
+public class MerchantDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "商户id")
     private String merchantId;

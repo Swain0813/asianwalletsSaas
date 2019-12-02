@@ -1,5 +1,6 @@
 package com.asianwallets.common.dto;
 
+import com.asianwallets.common.base.BasePageHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,7 +14,7 @@ import javax.persistence.Column;
  **/
 @Data
 @ApiModel(value = "机构实体", description = "机构实体")
-public class InstitutionDTO {
+public class InstitutionDTO extends BasePageHelper {
 
     /**
      * 机构id

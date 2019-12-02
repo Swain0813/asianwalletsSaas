@@ -17,6 +17,9 @@ public class BankCardSearchDTO extends BasePageHelper {
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 
+    @ApiModelProperty(value = "商户类型")
+    private String merchantType;
+
     @ApiModelProperty(value = "商户Code")
     private String merchantId;
 
@@ -34,4 +37,13 @@ public class BankCardSearchDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "是否设为默认银行卡")
     private Boolean defaultFlag;
+
+    @ApiModelProperty(value = "语言")
+    private String language;
+
+    @ApiModelProperty(value = "起始时间")
+    private String startTime;
+
+    @ApiModelProperty(value = "结束时间")
+    private String endTime;
 }
