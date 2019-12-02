@@ -84,7 +84,7 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
 
             //根据机构code，银行卡币种和启用禁用状态和是否设为默认银行卡查询银行卡信息
             if (list.get(i).getDefaultFlag()) {
-                List<BankCard> lists = bankCardMapper.selectUpdateBankCard(list.get(i).getMerchantId(), list.get(i).getBankCurrency());
+                List<BankCard> lists = bankCardMapper.checkDefaultBankCard(list.get(i).getMerchantId());
                 if (lists != null && !lists.isEmpty()) {//存在的场合
                     for (BankCard bankCard : lists) {
                         bankCard.setDefaultFlag(false);
