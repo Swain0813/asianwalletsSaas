@@ -299,7 +299,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
                 MerchantHistory merchantHistory = new MerchantHistory();
                 BeanUtils.copyProperties(oleMerchant, merchantHistory);
                 merchantHistory.setId(IDS.uuid2());
-                merchantHistory.setInstitutionId(merchantId);
+                merchantHistory.setMerchantId(merchantId);
                 merchantHistory.setEnabled(enabled);
                 merchantHistoryMapper.insert(merchantHistory);
                 merchantMapper.deleteByPrimaryKey(merchantId);
