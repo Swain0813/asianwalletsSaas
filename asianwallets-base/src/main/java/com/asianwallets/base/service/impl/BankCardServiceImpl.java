@@ -36,11 +36,12 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
 
     @Autowired
     private AccountMapper accountMapper;
+
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/25
      * @Descripate 添加银行卡信息
-     * @return
      **/
     @Override
     public int addBankCard(String name, List<BankCardDTO> list) {
@@ -57,27 +58,29 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
                     }
                 }
             }
-        //    boolean flag = true;
-        //    //不为第一条时
-        //    if (i != 0) {
-        //        for (int j = 0; j < list.size(); j++) {
-        //            //同一条时
-        //            if (i == j) {
-        //                continue;
-        //            }
-        //            if (list.get(i).getSettleCurrency().equals(list.get(j).getSettleCurrency())) {
-        //                //有相同的结算币种就不设置为默认银行卡
-        //                flag = false;
-        //                break;
-        //            }
-        //        }
-        //    }
+            //    boolean flag = true;
+            //    //不为第一条时
+            //    if (i != 0) {
+            //        for (int j = 0; j < list.size(); j++) {
+            //            //同一条时
+            //            if (i == j) {
+            //                continue;
+            //            }
+            //            if (list.get(i).getSettleCurrency().equals(list.get(j).getSettleCurrency())) {
+            //                //有相同的结算币种就不设置为默认银行卡
+            //                flag = false;
+            //                break;
+            //            }
+            //        }
+            //    }
             //根据机构code，银行卡币种和启用禁用状态和是否设为默认银行卡查询银行卡信息
-            List<BankCard> lists = bankCardMapper.selectUpdateBankCard(list.get(i).getMerchantId(), list.get(i).getBankCurrency());
-            if (lists != null && !lists.isEmpty()) {//存在的场合
-                for (BankCard bankCard : lists) {
-                    bankCard.setDefaultFlag(false);
-                    bankCardMapper.updateByPrimaryKeySelective(bankCard);//将存在的更新为不为默认的银行卡
+            if (list.get(i).getDefaultFlag()) {
+                List<BankCard> lists = bankCardMapper.selectUpdateBankCard(list.get(i).getMerchantId(), list.get(i).getBankCurrency());
+                if (lists != null && !lists.isEmpty()) {//存在的场合
+                    for (BankCard bankCard : lists) {
+                        bankCard.setDefaultFlag(false);
+                        bankCardMapper.updateByPrimaryKeySelective(bankCard);//将存在的更新为不为默认的银行卡
+                    }
                 }
             }
             BankCard bankCard = new BankCard();
@@ -151,7 +154,7 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
             //}
 
             //如果启用银行卡已存在将原启用银行卡禁用
-            for (BankCard b:bankCards) {
+            for (BankCard b : bankCards) {
                 BankCard bankCard = new BankCard();
                 bankCard.setId(b.getId());
                 bankCard.setEnabled(false);
@@ -200,7 +203,7 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
             //}
 
             //若默认银行卡已存在设为非默认
-            for (BankCard b:bankCards) {
+            for (BankCard b : bankCards) {
                 BankCard bankCard = new BankCard();
                 bankCard.setId(b.getId());
                 bankCard.setDefaultFlag(false);
