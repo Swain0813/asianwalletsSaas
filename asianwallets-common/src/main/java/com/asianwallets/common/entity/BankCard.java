@@ -125,7 +125,7 @@ public class BankCard extends BaseEntity {
      */
 	@ApiModelProperty(value = "是否为中间行银行")
 	@Column(name ="intermediary_bank_default")
-	private String intermediaryBankDefault;
+	private Boolean intermediaryBankDefault;
     /**
      * 中间行银行编码
      */
