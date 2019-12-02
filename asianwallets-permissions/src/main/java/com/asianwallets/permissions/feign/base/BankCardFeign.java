@@ -28,7 +28,7 @@ public interface BankCardFeign {
 
     @ApiOperation(value = "根据商户id查询银行卡")
     @GetMapping("/bankCard/selectBankCardByMerId")
-    BaseResponse selectBankCardByMerId(@RequestParam @ApiParam String merchantId);
+    BaseResponse selectBankCardByMerId(@RequestParam("merchantId") @ApiParam String merchantId);
 
     @ApiOperation(value = "分页查询银行卡")
     @PostMapping("/bankCard/pageBankCard")
@@ -36,10 +36,10 @@ public interface BankCardFeign {
 
     @ApiOperation(value = "启用禁用银行卡")
     @GetMapping("/bankCard/banBankCard")
-    BaseResponse banBankCard(@RequestParam @ApiParam String bankCardId, @RequestParam @ApiParam Boolean enabled);
+    BaseResponse banBankCard(@RequestParam("bankCardId") @ApiParam String bankCardId, @RequestParam("enabled") @ApiParam Boolean enabled);
 
     @ApiOperation(value = "设置默认银行卡")
     @GetMapping("/bankCard/defaultBankCard")
-    BaseResponse defaultBankCard(@RequestParam @ApiParam String bankCardId, @RequestParam @ApiParam Boolean defaultFlag);
+    BaseResponse defaultBankCard(@RequestParam("bankCardId") @ApiParam String bankCardId, @RequestParam("defaultFlag") @ApiParam Boolean defaultFlag);
 
 }
