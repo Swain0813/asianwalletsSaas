@@ -6,6 +6,7 @@
         <result column="id" property="id"/>
         <result column="merchant_id" property="merchantId"/>
         <result column="merchant_name" property="merchantName"/>
+        <result column="merchant_type" property="merchantType"/>
         <result column="account_code" property="accountCode"/>
         <result column="bank_account_code" property="bankAccountCode"/>
         <result column="account_name" property="accountName"/>
@@ -38,10 +39,9 @@
     </resultMap>
 
     <select id="pageBankCard" resultMap="BaseResultMap">
-
         select
         b.id as id, b.merchant_name as merchantName,
-        b.merchant_id as merchantId,
+        b.merchant_id as merchantId,b.merchant_type as merchantType,
         b.account_name as accountName,
         b.intermediary_bank_default as intermediaryBankDefault,
         b.create_time,b.update_time,b.enabled,b.bank_account_code as bankAccountCode,
@@ -50,14 +50,13 @@
         b.intermediary_bank_address,b.intermediary_bank_account_no,
         b.intermediary_bank_country,b.intermediary_other_code,b.iban as iban,
         b.default_flag as defaultFlag,b.receiver_address as receiverAddress
-        from bank_card b , merchant m
+        from bank_card b
         <where>
-            b.merchant_id =m.id
             <if test="merchantName!=null and merchantName != ''">
                 and b.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
             </if>
             <if test="merchantType!=null and merchantType != ''">
-                and m.merchant_type = #{merchantType}
+                and b.merchant_type = #{merchantType}
             </if>
             <if test="merchantId!=null and merchantId != ''">
                 and b.merchant_id=#{merchantId}
@@ -89,7 +88,7 @@
     <select id="selectBankCardByMerId" resultMap="BaseResultMap">
         select
         b.id as id, b.merchant_id as merchantId,b.merchant_name as merchantName,
-        b.intermediary_bank_default as intermediaryBankDefault,
+        b.intermediary_bank_default as intermediaryBankDefault,b.merchant_type as merchantType,
         b.account_code as accountCode,b.account_name as accountName,
         b.create_time,b.update_time,b.enabled,b.bank_account_code as bankAccountCode,
         b.bank_name as bankName, b.bank_currency as bankCurrency,b.settle_currency as settleCurrency,

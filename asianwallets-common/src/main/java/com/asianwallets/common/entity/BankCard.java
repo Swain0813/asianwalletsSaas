@@ -32,10 +32,11 @@ public class BankCard extends BaseEntity {
 	@Column(name ="merchant_name")
 	private String merchantName;
 
+	@ApiModelProperty(value = "商户类型")//3普通商户 4代理商户 5集团商户
+	@Column(name ="merchant_type")
+	private String merchantType;
 
-    /**
-     * 账户编号
-     */
+
 	@ApiModelProperty(value = "账户编号")
 	@Column(name ="account_code")
 	private String accountCode;
