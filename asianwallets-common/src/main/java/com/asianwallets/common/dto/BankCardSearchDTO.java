@@ -26,10 +26,10 @@ public class BankCardSearchDTO extends BasePageHelper {
     @ApiModelProperty(value = "银行卡id")
     private String bankCardId;
 
-    @ApiModelProperty(value = "银行卡币种")
-    private String bankCodeCurrency;
-
     @ApiModelProperty(value = "结算币种")
+    private String settleCurrency;
+
+    @ApiModelProperty(value = "银行卡币种")
     private String bankCurrency;
 
     @ApiModelProperty(value = "启用禁用状态")

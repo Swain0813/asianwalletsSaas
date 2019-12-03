@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+
 /**
  * @description:
  * @author: YangXu
@@ -64,6 +66,9 @@ public class BankCardDTO {
     @ApiModelProperty(value = "iban")
     private String iban;
 
+    @ApiModelProperty(value = "是否为中间行银行")
+    private Boolean intermediaryBankDefault;
+
     @ApiModelProperty(value = "中间行银行编码")
     private String intermediaryBankCode;
 
@@ -81,4 +86,7 @@ public class BankCardDTO {
 
     @ApiModelProperty(value = "中间行银行其他code")
     private String intermediaryOtherCode;
+
+    @ApiModelProperty(value = "是否设为默认银行卡")
+    private Boolean defaultFlag;
 }
