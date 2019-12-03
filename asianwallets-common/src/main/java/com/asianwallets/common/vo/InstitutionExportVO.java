@@ -18,11 +18,14 @@ public class InstitutionExportVO {
     @ApiModelProperty(value = "机构编号")
     public String id;
 
-    @ApiModelProperty(value = "机构中文名称")
+    @ApiModelProperty(value = "机构名称")
     private String cnName;
 
     @ApiModelProperty(value = "所属国家")
     private String country;
+
+    @ApiModelProperty(value = "机构状态")
+    private String enabled;
 
     @ApiModelProperty(value = "拓展销售")
     private String developSales;
@@ -70,9 +73,6 @@ public class InstitutionExportVO {
      */
     @ApiModelProperty(value = "审核状态")
     private String auditStatus;
-
-    @ApiModelProperty(value = "启用禁用")
-    private String enabled;
 
 
     @ApiModelProperty(value = "创建时间")
