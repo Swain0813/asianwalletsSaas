@@ -75,16 +75,16 @@ public class MerchantExportVO {
     /**
      * mcc
      */
-    //@ApiModelProperty(value = "mcc")
-    //private String mcc;
+    @ApiModelProperty(value = "mcc")
+    private String mcc;
 
 
 
     ///**
     // * 公司注册号
     // */
-    //@ApiModelProperty(value = "公司注册号")
-    //private String companyRegistNumber;
+    @ApiModelProperty(value = "公司注册号")
+    private String companyRegistNumber;
     ///**
     // * 国家区号
     // */
@@ -93,23 +93,23 @@ public class MerchantExportVO {
     ///**
     // * 机构电话
     // */
-    //@ApiModelProperty(value = "机构电话")
-    //private String institutionPhone;
+    @ApiModelProperty(value = "机构电话")
+    private String institutionPhone;
     ///**
     // * 法人姓名
     // */
-    //@ApiModelProperty(value = "法人姓名")
-    //private String legalName;
+    @ApiModelProperty(value = "法人姓名")
+    private String legalName;
     ///**
     // * 邮编
     // */
-    //@ApiModelProperty(value = "邮编")
-    //private String merchantPostalCode;
+    @ApiModelProperty(value = "邮编")
+    private String merchantPostalCode;
     ///**
     // * 邮箱
     // */
-    //@ApiModelProperty(value = "邮箱")
-    //private String merchantEmail;
+    @ApiModelProperty(value = "邮箱")
+    private String merchantEmail;
     ///**
     // * 联系人地址
     // */
@@ -118,13 +118,13 @@ public class MerchantExportVO {
     ///**
     // * 联系人
     // */
-    //@ApiModelProperty(value = "联系人")
-    //private String contactPeople;
+    @ApiModelProperty(value = "联系人")
+    private String contactPeople;
     ///**
     // * 联系人电话
     // */
-    //@ApiModelProperty(value = "联系人电话")
-    //private String contactPhone;
+    @ApiModelProperty(value = "联系人电话")
+    private String contactPhone;
     ///**
     // * 审核状态 1-待审核 2-审核通过 3-审核不通过
     // */

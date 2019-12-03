@@ -148,9 +148,12 @@
 
     <select id="exportMerchant" resultMap="BaseResultMap">
         select
-        i.cn_name as institution_id,
-        m1.cn_name as agent_id,
-        m2.cn_name as parent_id,
+        m.institution_id,
+        m.agent_id,
+        m.parent_id,
+        i.cn_name as ext5,
+        m1.cn_name as ext6,
+        m2.cn_name as ext7,
         m.agent_type,
         m.id,m.cn_name,m.en_name,m.country_type,co.country_name as country,m.mcc,c1.area_name as
         region,m.merchant_type,m.group_master_account,m.develop_sales,
