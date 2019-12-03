@@ -22,7 +22,7 @@ public class RedisServiceImpl implements RedisService {
 
     public static final long SLEEP_MILLIS = 25;//单位毫秒
 
-    @Autowired
+    @Autowired(required = false)
     private JedisPool jedisPool;
 
     @Override
