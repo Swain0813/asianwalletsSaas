@@ -32,6 +32,9 @@ public class DeviceBindingDTO extends BasePageHelper {
     @ApiModelProperty(value = "商户Code")
     private String merchantId;
 
+    @ApiModelProperty(value = "代理商Code")
+    private String agentId;
+
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 

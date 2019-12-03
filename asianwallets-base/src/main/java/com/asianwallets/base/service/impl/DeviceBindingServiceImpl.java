@@ -69,6 +69,7 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
             DeviceBinding deviceBinding = new DeviceBinding();
             deviceBinding.setInstitutionCode(institutionCode);
             deviceBinding.setInfoId(id);
+            deviceBinding.setAgentId(deviceBindingDTO.getAgentId());
             deviceBinding.setInstitutionName(deviceBindingDTO.getInstitutionName());
             deviceBinding.setMerchantId(deviceBindingDTO.getMerchantId());
             deviceBinding.setMerchantName(deviceBindingDTO.getMerchantName());

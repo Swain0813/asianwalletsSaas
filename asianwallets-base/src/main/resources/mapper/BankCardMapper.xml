@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.asianwallets.base.dao.BankCardMapper">
-
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.BankCard">
         <result column="id" property="id"/>
         <result column="merchant_id" property="merchantId"/>
+        <result column="merchant_name" property="merchantName"/>
+        <result column="merchant_type" property="merchantType"/>
         <result column="account_code" property="accountCode"/>
         <result column="bank_account_code" property="bankAccountCode"/>
         <result column="account_name" property="accountName"/>
@@ -36,11 +37,11 @@
         <result column="remark" property="remark"/>
         <result column="enabled" property="enabled"/>
     </resultMap>
-    <select id="pageBankCard" resultMap="BaseResultMap">
 
+    <select id="pageBankCard" resultMap="BaseResultMap">
         select
-        b.id as id, m.cn_name as accountCode,
-        b.merchant_id as merchantId,
+        b.id as id, b.merchant_name as merchantName,
+        b.merchant_id as merchantId,b.merchant_type as merchantType,
         b.account_name as accountName,
         b.intermediary_bank_default as intermediaryBankDefault,
         b.create_time,b.update_time,b.enabled,b.bank_account_code as bankAccountCode,
@@ -49,17 +50,16 @@
         b.intermediary_bank_address,b.intermediary_bank_account_no,
         b.intermediary_bank_country,b.intermediary_other_code,b.iban as iban,
         b.default_flag as defaultFlag,b.receiver_address as receiverAddress
-        from bank_card b , merchant m
+        from bank_card b
         <where>
-            b.merchant_id =m.id
             <if test="merchantName!=null and merchantName != ''">
-                and m.cn_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+                and b.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
             </if>
             <if test="merchantType!=null and merchantType != ''">
-                and m.merchant_type = #{merchantType}
+                and b.merchant_type = #{merchantType}
             </if>
             <if test="merchantId!=null and merchantId != ''">
-                and m.id=#{merchantId}
+                and b.merchant_id=#{merchantId}
             </if>
             <if test="bankCardId!=null and bankCardId != ''">
                 and b.id=#{bankCardId}
@@ -83,13 +83,12 @@
                 AND DATE_FORMAT(b.create_time,'%Y-%m-%d') &lt;= #{endTime}
             </if>
         </where>
-        order by b.create_time DESC
-
     </select>
+
     <select id="selectBankCardByMerId" resultMap="BaseResultMap">
         select
-        b.id as id, m.cn_name as merchantId,
-        b.intermediary_bank_default as intermediaryBankDefault,
+        b.id as id, b.merchant_id as merchantId,b.merchant_name as merchantName,
+        b.intermediary_bank_default as intermediaryBankDefault,b.merchant_type as merchantType,
         b.account_code as accountCode,b.account_name as accountName,
         b.create_time,b.update_time,b.enabled,b.bank_account_code as bankAccountCode,
         b.bank_name as bankName, b.bank_currency as bankCurrency,b.settle_currency as settleCurrency,
@@ -97,9 +96,8 @@
         b.intermediary_bank_address,b.intermediary_bank_account_no,
         b.intermediary_bank_country,b.intermediary_other_code,b.iban as iban,
         b.default_flag as defaultFlag,b.receiver_address as receiverAddress
-        from bank_card b left join merchant m on   b.merchant_id =m.id
+        from bank_card b
         where
         b.merchant_id = #{merchantId}
     </select>
-
 </mapper>

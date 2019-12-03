@@ -33,6 +33,10 @@ public class DeviceBinding extends BaseEntity {
     @Column(name = "merchant_id")
     private String merchantId;
 
+    @ApiModelProperty(value = "代理商id")
+    @Column(name = "agent_id")
+    private String agentId;
+
     @ApiModelProperty(value = "商户名称")
     @Column(name = "merchant_name")
     private String merchantName;

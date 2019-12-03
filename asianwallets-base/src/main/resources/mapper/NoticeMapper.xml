@@ -50,10 +50,10 @@
         and language=#{language}
       </if>
       <if test="startDate != null and startDate != ''">
-        <![CDATA[ and a.create_time >= CONCAT(#{startDate},' 00:00:00')]]>
+        <![CDATA[ and create_time >= CONCAT(#{startDate},' 00:00:00')]]>
       </if>
       <if test="endDate != null and endDate != ''">
-        <![CDATA[ AND a.create_time <= CONCAT(#{endDate},' 23:59:59')]]>
+        <![CDATA[ AND create_time <= CONCAT(#{endDate},' 23:59:59')]]>
       </if>
     </where>
   </select>
