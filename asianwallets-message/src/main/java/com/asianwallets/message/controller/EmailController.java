@@ -1,5 +1,4 @@
 package com.asianwallets.message.controller;
-import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
@@ -14,12 +13,13 @@ import java.util.Map;
 
 /**
  * 短信模块
+ *
  * @author: yangshanlong@asianwallets.com on 2019/01/24.
  **/
 @RestController
 @Api(value = "邮件发送相关接口")
 @RequestMapping("/email")
-public class EmailController extends BaseController {
+public class EmailController {
 
     @Autowired
     private EmailService emailService;
@@ -29,7 +29,7 @@ public class EmailController extends BaseController {
     public BaseResponse sendSimpleMail(@RequestParam(value = "sendTo") @ApiParam String sendTo,
                                        @RequestParam(value = "title") @ApiParam String title,
                                        @RequestParam(value = "content") @ApiParam String content) {
-        return ResultUtil.success(emailService.sendSimpleMail(sendTo,title,content));
+        return ResultUtil.success(emailService.sendSimpleMail(sendTo, title, content));
     }
 
     @ApiOperation(value = "发送模板邮件")
