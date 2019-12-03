@@ -25,7 +25,7 @@ public class MerchantDTO extends BasePageHelper {
     @ApiModelProperty(value = "代理商类型")
     private String agentType;
 
-    @ApiModelProperty(value = "代理商id")
+    @ApiModelProperty(value = "代理商编号")
     private String agentId;
 
     @ApiModelProperty(value = "代理商名称")
@@ -47,26 +47,19 @@ public class MerchantDTO extends BasePageHelper {
     @ApiModelProperty(value = "国别类型 0 境外 1 中国境内")
     private Integer countryType;
 
-    @ApiModelProperty(value = "国家")
+    @ApiModelProperty(value = "所属国家")
     private String country;
-    /**
-     * 地区
-     */
+
+
     @ApiModelProperty(value = "地区")
     private String region;
-    /**
-     * mcc
-     */
+
     @ApiModelProperty(value = "mcc")
     private String mcc;
-    /**
-     * 商户类型
-     */
+
     @ApiModelProperty(value = "商户类型")
     private String merchantType;
-    /**
-     * 集团主账户
-     */
+
     @ApiModelProperty(value = "集团主账户")
     private String groupMasterAccount;
     /**

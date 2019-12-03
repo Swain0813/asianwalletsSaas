@@ -70,7 +70,7 @@
         m.company_articles,m.business_certificate,m.institution_phone,m.develop_sales,
         m.legal_name,m.business_category,m.business_license,m.industry_category,m.merchant_postal_code,m.merchant_email,m.merchant_web_url,
         m.contact_address,m.contact_people,m.contact_phone,m.audit_status,m.ext7,m.ext6,m.ext5,m.ext4,m.ext3,m.ext2,m.ext1,m.create_time,m.update_time,
-        m.creator,m.modifier,m.remark,m.enabled
+        m.creator,m.modifier,m.remark,m.enabled,m.group_master_account
         from merchant_audit m
         left join institution i on m.institution_id = i.id
         left join merchant m1 on m.agent_id = m1.id
@@ -109,7 +109,7 @@
                 and  i.id=#{institutionId}
             </if>
             <if test="agentId != null and agentId != ''">
-                and  m1.agent_id=#{agentId}
+                and  m.agent_id=#{agentId}
             </if>
             <if test="agentName != null and agentName != ''">
                 and i.cn_name=#{agentName}
