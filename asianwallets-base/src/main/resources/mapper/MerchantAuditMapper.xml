@@ -63,6 +63,7 @@
         m1.cn_name as ext6,
         m2.cn_name as ext7,
         m.agent_type,
+        m.merchant_type,
         m.id,m.cn_name,m.en_name,m.country_type,co.country_name as country,c1.area_name as region,
         m.company_regist_number,m.company_validity,m.legal_passport_code,m.legal_passport_validity,
         co.area_code as country_code,m.institution_adress,m.legal_passport_img,m.institution_contract,
