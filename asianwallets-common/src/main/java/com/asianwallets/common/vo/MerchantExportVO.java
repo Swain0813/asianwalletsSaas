@@ -103,8 +103,8 @@ public class MerchantExportVO {
     ///**
     // * 邮编
     // */
-    @ApiModelProperty(value = "邮编")
-    private String merchantPostalCode;
+    //@ApiModelProperty(value = "邮编")
+    //private String merchantPostalCode;
     ///**
     // * 邮箱
     // */
