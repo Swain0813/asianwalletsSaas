@@ -96,7 +96,7 @@ public class SysRoleServiceImpl implements SysRoleService {
             sysRoleMenu.setMenuId(menuId);
             sysRoleMenu.setRoleId(dbSysRole.getId());
             sysRoleMenu.setCreator(username);
-            sysRoleMenu.setCreateTime(new Date());
+            sysRoleMenu.setCreateTime  (new Date());
             roleMenuList.add(sysRoleMenu);
         }
         if (roleMenuList.size() == 0) {

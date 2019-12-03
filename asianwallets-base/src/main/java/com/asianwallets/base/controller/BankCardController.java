@@ -1,5 +1,4 @@
 package com.asianwallets.base.controller;
-
 import com.asianwallets.base.service.BankCardService;
 import com.asianwallets.common.dto.BankCardDTO;
 import com.asianwallets.common.dto.BankCardSearchDTO;
@@ -9,10 +8,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.asianwallets.common.base.BaseController;
-
 import java.util.List;
 
 /**

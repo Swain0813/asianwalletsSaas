@@ -3,6 +3,7 @@ package com.asianwallets.permissions.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.SysRole;
 import com.asianwallets.permissions.dto.SysRoleDto;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      * @param sysId    系统ID
      * @return 用户实体
      */
-    SysRole getSysRoleByNameAndSysId(String roleName, String sysId);
+    SysRole getSysRoleByNameAndSysId(@Param("roleName") String roleName, @Param("sysId")String sysId);
 
     /**
      * 查询角色信息
