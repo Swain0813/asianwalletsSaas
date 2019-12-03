@@ -78,21 +78,22 @@ public class MerchantFeignController extends BaseController {
     @PostMapping("/exportMerchant")
     public BaseResponse exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO){
         ExcelWriter writer = null;
-        BaseResponse baseResponse = merchantFeign.exportMerchant(merchantDTO);
-        ArrayList<LinkedHashMap> data = (ArrayList<LinkedHashMap>) baseResponse.getData();
-        if (data == null || data.size() == 0) {//数据不存在的场合
-            HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(getLanguage());
-            writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
-            return ResultUtil.success();
-        }
-        ArrayList<MerchantExportVO> merchantExportVOS = new ArrayList<>();
-        for (LinkedHashMap datum : data) {
-            merchantExportVOS.add(JSON.parseObject(JSON.toJSONString(datum), MerchantExportVO.class));
-        }
         try {
-            writer = exportService.getMerchantExcel(merchantExportVOS, MerchantExportVO.class);
             HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
             ServletOutputStream out = response.getOutputStream();
+            BaseResponse baseResponse = merchantFeign.exportMerchant(merchantDTO);
+            ArrayList<LinkedHashMap> data = (ArrayList<LinkedHashMap>) baseResponse.getData();
+            if (data == null || data.size() == 0) {//数据不存在的场合
+                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(getLanguage());
+                writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
+                writer.flush(out);
+                return ResultUtil.success();
+            }
+            ArrayList<MerchantExportVO> merchantExportVOS = new ArrayList<>();
+            for (LinkedHashMap datum : data) {
+                merchantExportVOS.add(JSON.parseObject(JSON.toJSONString(datum), MerchantExportVO.class));
+            }
+            writer = exportService.getMerchantExcel(merchantExportVOS, MerchantExportVO.class);
             writer.flush(out);
         } catch (Exception e) {
             throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
