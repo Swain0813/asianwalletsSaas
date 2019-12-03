@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
@@ -108,6 +109,9 @@ public class CurrencyServiceImpl implements CurrencyService {
      */
     @Override
     public List<Currency> inquireAllCurrency() {
-        return currencyMapper.selectAll();
+        Example example = new Example(Currency.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("enabled", true);
+        return currencyMapper.selectByExample(example);
     }
 }
