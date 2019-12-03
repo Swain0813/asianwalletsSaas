@@ -110,7 +110,7 @@
                 and i.id=#{institutionId}
             </if>
             <if test="agentId != null and agentId != ''">
-                and m1.agent_id=#{agentId}
+                and m.agent_id=#{agentId}
             </if>
             <if test="agentName != null and agentName != ''">
                 and i.cn_name=#{agentName}
@@ -201,7 +201,7 @@
                 and i.id=#{institutionId}
             </if>
             <if test="agentId != null and agentId != ''">
-                and m1.agent_id=#{agentId}
+                and m.agent_id=#{agentId}
             </if>
             <if test="agentName != null and agentName != ''">
                 and i.cn_name=#{agentName}
