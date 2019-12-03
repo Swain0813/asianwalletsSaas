@@ -1,6 +1,4 @@
 package com.asianwallets.base.service.impl;
-
-import com.asianwallets.base.dao.AccountMapper;
 import com.asianwallets.base.dao.BankCardMapper;
 import com.asianwallets.base.service.BankCardService;
 import com.asianwallets.common.base.BaseServiceImpl;
@@ -15,8 +13,6 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
 import java.util.Date;
 import java.util.List;
 
@@ -34,9 +30,6 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
     @Autowired
     private BankCardMapper bankCardMapper;
 
-    @Autowired
-    private AccountMapper accountMapper;
-
     /**
      * @return
      * @Author YangXu
@@ -47,12 +40,6 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
     public int addBankCard(String name, List<BankCardDTO> list) {
         List<BankCard> bankCardList = Lists.newArrayList();
         for (int i = 0; i < list.size(); i++) {
-            //判断该机构下是否已存在当前币种银行卡
-            //List<BankCard> banlcardList = bankCardMapper.checkBankCardbyCurrency(list.get(i).getMerchantId(),list.get(i).getBankCurrency());
-            //if (banlcardList != null && banlcardList.size() > 0) {
-            //    //信息已存在
-            //    throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
-            //}
             //判断该机构下的银行账户下的该银行卡币种是不是已经存在
             List<BankCard> bankCards = bankCardMapper.getBankCards(list.get(i).getMerchantId(), list.get(i).getBankAccountCode());
             if (bankCards != null && bankCards.size() > 0) {
@@ -64,7 +51,6 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
                     }
                 }
             }
-
             for (int j = 0; j < list.size(); j++) {
                 //入参中有两条同币种的银行卡
                 if (list.get(j).getBankCurrency().equals(list.get(i).getBankCurrency())
@@ -80,7 +66,6 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
                     throw new BusinessException(EResultEnum.INFORMATION_IS_ILLEGAL.getCode());
                 }
             }
-
 
             //根据机构code，银行卡币种和启用禁用状态和是否设为默认银行卡查询银行卡信息
             if (list.get(i).getDefaultFlag()) {
