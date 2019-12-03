@@ -7,6 +7,7 @@
         <result column="institution_code" property="institutionCode" jdbcType="VARCHAR"/>
         <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
         <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="agent_id" property="agentId" jdbcType="VARCHAR"/>
         <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
         <result column="vendor_name" property="vendorName" jdbcType="VARCHAR"/>
         <result column="model_name" property="modelName" jdbcType="VARCHAR"/>
@@ -30,6 +31,8 @@
         <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
         <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
         <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="agent_id" property="agentId" jdbcType="VARCHAR"/>
+        <result column="agent_name" property="agentName" jdbcType="VARCHAR"/>
         <result column="vendor_name" property="vendorName" jdbcType="VARCHAR"/>
         <result column="model_name" property="modelName" jdbcType="VARCHAR"/>
         <result column="info_name" property="infoName" jdbcType="VARCHAR"/>
@@ -70,8 +73,11 @@
         db.creator,
         db.modifier,
         db.remark,
+        m.cn_name as agent_name,
+        m.id as agent_id,
         d.name as use_type_name
-        from device_binding db left join dictionary d on db.use_type = d.code and d.language=#{language}
+        from device_binding db LEFT JOIN merchant m on db.agent_id = m.id left join dictionary d on db.use_type
+        = d.code and d.language=#{language}
         <where>
             <if test="id != null and id !=''">AND id = #{id}</if>
             <if test="infoId != null and infoId !=''">AND info_id = #{infoId}</if>
