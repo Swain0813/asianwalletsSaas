@@ -89,7 +89,6 @@ public class SysUserServiceImpl implements SysUserService {
                 sysUserMenu.setUserId(sysUser.getId());
                 sysUserMenu.setMenuId(menuId);
                 sysUserMenu.setCreator(sysUser.getCreator());
-                sysUserMenu.setMenuId(sysUser.getCreator());
                 sysUserMenu.setCreateTime(new Date());
                 userMenuList.add(sysUserMenu);
             }
