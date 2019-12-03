@@ -52,6 +52,12 @@ public class DeviceBindingVO extends BasePageHelper {
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 
+    @ApiModelProperty(value = "代理商id")
+    private String agentId;
+
+    @ApiModelProperty(value = "代理商名称")
+    private String agentName;
+
     @ApiModelProperty(value = "设备厂商名称")
     private String vendorName;
 
