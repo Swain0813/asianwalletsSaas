@@ -1,6 +1,7 @@
 package com.asianwallets.base.controller;
 import com.asianwallets.base.service.MerchantService;
 import com.asianwallets.common.dto.MerchantDTO;
+import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import io.swagger.annotations.Api;
@@ -9,6 +10,8 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.asianwallets.common.base.BaseController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -46,8 +49,8 @@ public class MerchantController extends BaseController {
 
     @ApiOperation(value = "导出商户")
     @PostMapping("/exportMerchant")
-    public BaseResponse exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO){
-        return ResultUtil.success(merchantService.exportMerchant(merchantDTO));
+    public List<Merchant> exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO){
+        return merchantService.exportMerchant(merchantDTO);
     }
 
 
