@@ -11,40 +11,6 @@ eureka:
     instance-id: asianwallets-message5004
     prefer-ip-address: true
 
-spring:
-  # 数据库配置
-  datasource:
-      url: jdbc:mysql://192.168.124.22:3306/asianwallets_saas?useUnicode=true&characterEncoding=utf-8&useSSL=false
-      username: root
-      password: root
-      # 使用druid数据源
-      type: com.alibaba.druid.pool.DruidDataSource
-      driver-class-name: com.mysql.jdbc.Driver
-      filters: stat
-      maxActive: 200
-      initialSize: 1
-      maxWait: 60000
-      minIdle: 1
-      timeBetweenEvictionRunsMillis: 60000
-      minEvictableIdleTimeMillis: 300000
-      validationQuery: select 'x'
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
-      poolPreparedStatements: true
-      maxOpenPreparedStatements: 20
-redis:
-  database: 1
-  password: test123
-  host: 127.0.0.1
-  port: 6379
-  time: 0
-  pool:
-    max-idle: 100
-    min-idle: 5
-    max-total: 100
-    max-wait-millis: -1
-
 #项目自定义配置
 custom:
 

@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.feign.base;
 import com.asianwallets.common.dto.MerchantDTO;
+import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.impl.MerchantFeignImpl;
 import io.swagger.annotations.ApiOperation;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @FeignClient(value = "asianwallets-base", fallback = MerchantFeignImpl.class)
 public interface MerchantFeign {
@@ -48,7 +51,7 @@ public interface MerchantFeign {
 
     @ApiOperation(value = "导出商户")
     @PostMapping("/merchant/exportMerchant")
-    BaseResponse exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO);
+    List<Merchant> exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO);
 
     @ApiOperation(value = "禁用启用商户")
     @GetMapping("/merchant/banMerchant")
