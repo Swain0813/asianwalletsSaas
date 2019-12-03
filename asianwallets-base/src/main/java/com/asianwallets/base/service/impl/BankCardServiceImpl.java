@@ -154,21 +154,6 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
         if (bankCardInfo == null) {//银行卡信息不存在
             throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
         }
-        ////根据启用禁用状态判断
-        //if (enabled) {//启用时判断是不是已经存在
-        //    List<BankCard> bankCards = bankCardMapper.checkBankCard(bankCardInfo.getMerchantId(), bankCardInfo.getBankAccountCode(),
-        //            bankCardInfo.getBankCurrency());
-        //
-        //    //如果启用银行卡已存在将原启用银行卡禁用
-        //    for (BankCard b : bankCards) {
-        //        BankCard bankCard = new BankCard();
-        //        bankCard.setId(b.getId());
-        //        bankCard.setEnabled(false);
-        //        bankCard.setUpdateTime(new Date());
-        //        bankCard.setModifier(name);
-        //        bankCardMapper.updateByPrimaryKeySelective(bankCard);
-        //    }
-        //}
         BankCard bankCard = new BankCard();
         bankCard.setId(bankCardId);
         bankCard.setEnabled(enabled);
@@ -203,7 +188,6 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
         //根据是否设为默认银行卡判断
         if (defaultFlag) {//默认银行卡是否已经存在判断是不是已经存在
             List<BankCard> bankCards = bankCardMapper.checkDefaultBankCard(bankCardInfo.getMerchantId());
-
             //若默认银行卡已存在设为非默认
             for (BankCard b : bankCards) {
                 BankCard bankCard = new BankCard();
