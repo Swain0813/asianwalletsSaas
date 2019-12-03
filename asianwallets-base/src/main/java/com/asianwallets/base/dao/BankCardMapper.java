@@ -62,4 +62,11 @@ public interface BankCardMapper extends  BaseMapper<BankCard> {
      */
     @Select("SELECT id,merchant_id as merchantId,account_code as accountCode,bank_account_code as bankAccountCode,settle_currency as settleCurrency,bank_currency as bankCurrency FROM bank_card WHERE merchant_id = #{merchantId} and default_flag=true")
     List<BankCard> checkDefaultBankCard(@Param("merchantId") String merchantId);
+
+    /**
+     * 根据银行卡code查询启用的银行卡信息
+     * @param bankAccountCode
+     * @return
+     */
+    List<BankCard> selectBankCards(@Param("bankAccountCode") String bankAccountCode);
 }

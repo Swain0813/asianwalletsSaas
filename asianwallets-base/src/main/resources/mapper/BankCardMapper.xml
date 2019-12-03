@@ -37,7 +37,11 @@
         <result column="remark" property="remark"/>
         <result column="enabled" property="enabled"/>
     </resultMap>
-
+    <sql id="commonSql">
+    id,merchant_id,merchant_name,merchant_type,account_code,bank_account_code,account_name,settle_currency,bank_currency,iban,bank_code,
+    bank_address,bank_card_billing_address,nature,receiver_country,receiver_address,receiver,bank_name,swift_code,intermediary_bank_default,
+    intermediary_bank_code,default_flag,create_time,update_time,creator,modifier,remark,enabled
+    </sql>
     <select id="pageBankCard" resultMap="BaseResultMap">
         select
         b.id as id, b.merchant_name as merchantName,
@@ -99,5 +103,13 @@
         from bank_card b
         where
         b.merchant_id = #{merchantId}
+    </select>
+
+    <select id="selectBankCards" resultMap="BaseResultMap">
+        select
+        <include refid="commonSql"></include>
+        from bank_card
+        where
+        bank_account_code = #{bankAccountCode}
     </select>
 </mapper>
