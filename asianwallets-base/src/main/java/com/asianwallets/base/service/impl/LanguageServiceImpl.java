@@ -1,12 +1,12 @@
 package com.asianwallets.base.service.impl;
 
+import com.asianwallets.base.dao.LanguageMapper;
+import com.asianwallets.base.service.LanguageService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.dto.LanguageDTO;
+import com.asianwallets.common.entity.Language;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.institution.dao.LanguageMapper;
-import com.asianwallets.institution.entity.Language;
-import com.asianwallets.institution.service.LanguageService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
