@@ -1,21 +1,28 @@
 package com.asianwallets.base.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.CurrencyMapper;
 import com.asianwallets.base.service.CurrencyService;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.CurrencyDTO;
 import com.asianwallets.common.entity.Currency;
 import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @ClassName CurrencyServiceImpl
@@ -29,6 +36,9 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Autowired
     private CurrencyMapper currencyMapper;
+
+    @Autowired
+    private RedisService redisService;
 
     /**
      * 添加币种
@@ -51,7 +61,11 @@ public class CurrencyServiceImpl implements CurrencyService {
         currency.setId(IDS.uuid2());
         currency.setCreateTime(new Date());
         currency.setEnabled(true);
-        return currencyMapper.insert(currency);
+        int result = currencyMapper.insert(currency);
+        if (result != 0) {
+            redisService.set(AsianWalletConstant.CURRENCY_CACHE_KEY.concat("_").concat(currencyDTO.getCode()), JSON.toJSONString(currency));
+        }
+        return result;
     }
 
     /**
@@ -65,14 +79,38 @@ public class CurrencyServiceImpl implements CurrencyService {
         if (StringUtils.isBlank(currencyDTO.getId())) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        if (currencyMapper.selectById(currencyDTO.getId()) == null) {
+        Currency c = currencyMapper.selectById(currencyDTO.getId());
+        if (c == null) {
             throw new BusinessException(EResultEnum.INFORMATION_DOES_NOT_EXIST.getCode());
         }
-        Currency currency = new Currency();
-        BeanUtils.copyProperties(currencyDTO, currency);
-        currency.setUpdateTime(new Date());
-        return currencyMapper.updateByPrimaryKeySelective(currency);
+        BeanUtils.copyProperties(currencyDTO, c, getNullPropertyNames(currencyDTO));
+        c.setUpdateTime(new Date());
+        int result = currencyMapper.updateByPrimaryKeySelective(c);
+        if (result != 0) {
+            redisService.set(AsianWalletConstant.CURRENCY_CACHE_KEY.concat("_").concat(c.getCode()), JSON.toJSONString(c));
+        }
+        return result;
     }
+
+    /**
+     * 获取空值字段
+     *
+     * @param source
+     * @return
+     */
+    public String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<String>();
+        for (java.beans.PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
+    }
+
 
     /**
      * 查询币种
@@ -96,10 +134,17 @@ public class CurrencyServiceImpl implements CurrencyService {
         if (StringUtils.isBlank(currencyDTO.getId()) || currencyDTO.getEnabled() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        Currency currency = new Currency();
-        BeanUtils.copyProperties(currencyDTO, currency);
-        currency.setUpdateTime(new Date());
-        return currencyMapper.updateByPrimaryKeySelective(currency);
+        int result = 0;
+        Currency c = currencyMapper.selectById(currencyDTO.getId());
+        if (c != null) {
+            c.setEnabled(currencyDTO.getEnabled());
+            c.setUpdateTime(new Date());
+            result = currencyMapper.updateByPrimaryKeySelective(c);
+            if (result != 0) {
+                redisService.set(AsianWalletConstant.CURRENCY_CACHE_KEY.concat("_").concat(c.getCode()), JSON.toJSONString(c));
+            }
+        }
+        return result;
     }
 
     /**
