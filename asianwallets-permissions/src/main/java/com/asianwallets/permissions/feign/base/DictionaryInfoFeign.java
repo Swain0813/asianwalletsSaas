@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @Date: 2019/2/1 15:48
  * @Description: 字典类型与数据操作 Feign 接口
  */
-@FeignClient(value = "asianwallet-institution", fallback = DictionaryInfoFeignImpl.class)
+@FeignClient(value = "asianwallets-base", fallback = DictionaryInfoFeignImpl.class)
 public interface DictionaryInfoFeign {
 
     /**
