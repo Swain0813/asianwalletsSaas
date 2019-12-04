@@ -65,7 +65,7 @@ public class SysUserServiceImpl implements SysUserService {
      * @param sysUser        用户实体
      * @param sysUserRoleDto 用户角色输入实体
      */
-    private void allotSysRoleAndSysMenu(SysUser sysUser, SysUserRoleDto sysUserRoleDto) {
+    private void allotSysRoleAndSysMenu(String username, SysUser sysUser, SysUserRoleDto sysUserRoleDto) {
         //用户分配角色
         if (!ArrayUtil.isEmpty(sysUserRoleDto.getRoleIdList())) {
             List<SysUserRole> userRoleList = Lists.newArrayList();
@@ -74,7 +74,7 @@ public class SysUserServiceImpl implements SysUserService {
                 sysUserRole.setId(IDS.uuid2());
                 sysUserRole.setUserId(sysUser.getId());
                 sysUserRole.setRoleId(roleId);
-                sysUserRole.setCreator(sysUser.getCreator());
+                sysUserRole.setCreator(username);
                 sysUserRole.setCreateTime(new Date());
                 userRoleList.add(sysUserRole);
             }
@@ -88,7 +88,7 @@ public class SysUserServiceImpl implements SysUserService {
                 sysUserMenu.setId(IDS.uuid2());
                 sysUserMenu.setUserId(sysUser.getId());
                 sysUserMenu.setMenuId(menuId);
-                sysUserMenu.setCreator(sysUser.getCreator());
+                sysUserMenu.setCreator(username);
                 sysUserMenu.setCreateTime(new Date());
                 userMenuList.add(sysUserMenu);
             }
@@ -125,7 +125,7 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setCreateTime(new Date());
         sysUser.setEnabled(true);
         //分配用户角色,用户权限信息
-        allotSysRoleAndSysMenu(sysUser, sysUserRoleDto);
+        allotSysRoleAndSysMenu(username, sysUser, sysUserRoleDto);
         return sysUserMapper.insert(sysUser);
     }
 
@@ -154,7 +154,7 @@ public class SysUserServiceImpl implements SysUserService {
         //删除用户权限表中的信息
         sysUserMenuMapper.deleteByUserId(sysUserRoleDto.getUserId());
         //分配用户角色,用户权限信息
-        allotSysRoleAndSysMenu(dbSysUser, sysUserRoleDto);
+        allotSysRoleAndSysMenu(username, dbSysUser, sysUserRoleDto);
         return sysUserMapper.updateByPrimaryKeySelective(dbSysUser);
     }
 
