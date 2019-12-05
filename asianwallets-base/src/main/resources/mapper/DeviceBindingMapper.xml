@@ -50,7 +50,7 @@
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <select id="pageDeviceBinding" resultType="com.asianwallets.common.vo.DeviceBindingVO"
+    <select id="pageDeviceBinding"
             resultMap="NewResultMap">
         select
         db.id,
@@ -81,8 +81,8 @@
         <where>
             <if test="id != null and id !=''">AND id = #{id}</if>
             <if test="infoId != null and infoId !=''">AND info_id = #{infoId}</if>
-            <if test="institutionCode != null and institutionCode !=''">
-                AND institution_code LIKE CONCAT(CONCAT('%',#{institutionCode}),'%')
+            <if test="institutionId != null and institutionId !=''">
+                AND institution_code LIKE CONCAT(CONCAT('%',#{institutionId}),'%')
             </if>
             <if test="institutionName != null and institutionName !=''">
                 AND institution_name LIKE CONCAT(CONCAT('%',#{institutionName}),'%')
