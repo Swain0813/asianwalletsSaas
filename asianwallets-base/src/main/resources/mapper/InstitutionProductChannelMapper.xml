@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.base.dao.InstitutionProductChannelMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.InstitutionProductChannel">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="product_id" property="productId" jdbcType="VARCHAR"/>
+        <result column="channel_id" property="channelId" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="product_abbrev" property="productAbbrev" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="BaseSql">
+		institution_id ,product_id, channel_id, institution_name ,product_abbrev,
+		id,create_time, update_time ,creator ,modifier, remark
+	</sql>
+</mapper>
