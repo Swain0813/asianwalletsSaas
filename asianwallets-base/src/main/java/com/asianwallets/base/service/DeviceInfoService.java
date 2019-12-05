@@ -51,4 +51,12 @@ public interface DeviceInfoService extends BaseService<DeviceInfo> {
      * @return
      */
     int uploadFiles(List<DeviceInfo> fileList);
+
+    /**
+     * 导出设备信息
+     *
+     * @param deviceInfoDTO
+     * @return
+     */
+    List exportDeviceInfo(DeviceInfoDTO deviceInfoDTO);
 }

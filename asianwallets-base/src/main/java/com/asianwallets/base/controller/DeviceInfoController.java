@@ -62,4 +62,10 @@ public class DeviceInfoController extends BaseController {
     public BaseResponse uploadDeviceInfo(@RequestBody @ApiParam List<DeviceInfo> fileList) {
         return ResultUtil.success(deviceInfoService.uploadFiles(fileList));
     }
+
+    @ApiOperation(value = "导出设备信息")
+    @PostMapping("/exportDeviceInfo")
+    public List exportDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO) {
+        return deviceInfoService.exportDeviceInfo(deviceInfoDTO);
+    }
 }

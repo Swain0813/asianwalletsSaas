@@ -71,4 +71,15 @@ public class DeviceInfoFeignImpl implements DeviceInfoFeign {
     public BaseResponse uploadDeviceInfo(List<DeviceInfo> fileList) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    /**
+     * 导出设备信息
+     *
+     * @param deviceInfoDTO
+     * @return
+     */
+    @Override
+    public List exportDeviceInfo(DeviceInfoDTO deviceInfoDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

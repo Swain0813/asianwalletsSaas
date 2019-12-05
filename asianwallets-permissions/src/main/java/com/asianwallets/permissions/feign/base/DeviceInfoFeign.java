@@ -63,4 +63,13 @@ public interface DeviceInfoFeign {
      */
     @PostMapping("/deviceinfo/uploadDeviceInfo")
     BaseResponse uploadDeviceInfo(@RequestBody @ApiParam List<DeviceInfo> fileList);
+
+    /**
+     * 导出设备信息
+     *
+     * @param deviceInfoDTO
+     * @returne
+     */
+    @PostMapping("/deviceinfo/exportDeviceInfo")
+    List exportDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO);
 }
