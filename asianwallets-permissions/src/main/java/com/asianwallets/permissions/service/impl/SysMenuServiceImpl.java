@@ -29,6 +29,7 @@ import java.util.Set;
 
 @Service
 @Slf4j
+@Transactional
 public class SysMenuServiceImpl implements SysMenuService {
 
     @Autowired
