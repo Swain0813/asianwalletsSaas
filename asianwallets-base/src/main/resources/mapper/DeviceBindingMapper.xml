@@ -60,7 +60,7 @@
         db.model_name,
         db.info_name,
         db.merchant_id,
-        db.merchant_name,
+        m.cn_name,
         db.imei,
         db.sn,
         db.operator,

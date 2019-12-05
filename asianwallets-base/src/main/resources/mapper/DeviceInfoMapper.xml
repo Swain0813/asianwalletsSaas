@@ -185,13 +185,16 @@
         select count(*)
         from device_info
         <where>
+            <if test="id != null and id !=''">
+                and id != #{id}
+            </if>
             <if test="imei != null and imei !=''">
-                imei = #{imei}
+                and imei = #{imei}
             </if>
             <if test="sn != null and sn !=''">
                 or sn = #{sn}
             </if>
-            and id != #{id}
+
         </where>
     </select>
 
