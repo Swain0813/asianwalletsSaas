@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.PayTypeMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.PayType">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="en_name" property="enName" jdbcType="VARCHAR"/>
+        <result column="cn_name" property="cnName" jdbcType="VARCHAR"/>
+        <result column="picon" property="picon" jdbcType="VARCHAR"/>
+        <result column="dicon" property="dicon" jdbcType="VARCHAR"/>
+        <result column="mode" property="mode" jdbcType="BIT"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="extend1" property="extend1" jdbcType="VARCHAR"/>
+        <result column="extend2" property="extend2" jdbcType="VARCHAR"/>
+        <result column="extend3" property="extend3" jdbcType="VARCHAR"/>
+        <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
+        <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
+        <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, en_name, cn_name, picon, dicon, mode, enabled, create_time, update_time, creator,
+    modifier, remark, extend1, extend2, extend3, extend4, extend5, extend6
+    </sql>
+
+    <select id="selectByCnOrEnName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from pay_type
+        <where>
+            <if test="cnName != null and cnName != ''">
+                cn_name = #{cnName}
+            </if>
+            <if test="enName != null and enName != ''">
+                or en_name = #{enName}
+            </if>
+        </where>
+    </select>
+
+    <select id="pagePayType" resultMap="BaseResultMap">
+        select id,
+        en_name,
+        cn_name,
+        picon,
+        dicon,
+        mode,
+        enabled,
+        create_time,
+        update_time,
+        creator,
+        modifier,
+        remark
+        from pay_type
+        <where>
+            <if test="cnName != null and cnName != ''">
+                cn_name LIKE CONCAT(CONCAT('%', #{cnName} ), '%' )
+            </if>
+            <if test="enName != null and enName != ''">
+                and en_name LIKE CONCAT(CONCAT('%', #{enName} ), '%' )
+            </if>
+            <if test="mode != null">
+                and mode = #{mode}
+            </if>
+            <if test="enabled != null">
+                and enabled = #{enabled}
+            </if>
+        </where>
+    </select>
+
+    <!-- <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+       select
+       <include refid="Base_Column_List" />
+       from pay_type
+       where id = #{id,jdbcType=VARCHAR}
+     </select>-->
+
+    <!--<delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+      delete from pay_type
+      where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.asianwallets.common.entity.PayType" >
+      insert into pay_type (id, en_name, cn_name,
+        picon, dicon, mode, enabled,
+        create_time, update_time, creator,
+        modifier, remark, extend1,
+        extend2, extend3, extend4,
+        extend5, extend6)
+      values (#{id,jdbcType=VARCHAR}, #{enName,jdbcType=VARCHAR}, #{cnName,jdbcType=VARCHAR},
+        #{picon,jdbcType=VARCHAR}, #{dicon,jdbcType=VARCHAR}, #{mode,jdbcType=BIT}, #{enabled,jdbcType=BIT},
+        #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR},
+        #{modifier,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{extend1,jdbcType=VARCHAR},
+        #{extend2,jdbcType=VARCHAR}, #{extend3,jdbcType=VARCHAR}, #{extend4,jdbcType=VARCHAR},
+        #{extend5,jdbcType=VARCHAR}, #{extend6,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.asianwallets.common.entity.PayType" >
+      insert into pay_type
+      <trim prefix="(" suffix=")" suffixOverrides="," >
+        <if test="id != null" >
+          id,
+        </if>
+        <if test="enName != null" >
+          en_name,
+        </if>
+        <if test="cnName != null" >
+          cn_name,
+        </if>
+        <if test="picon != null" >
+          picon,
+        </if>
+        <if test="dicon != null" >
+          dicon,
+        </if>
+        <if test="mode != null" >
+          mode,
+        </if>
+        <if test="enabled != null" >
+          enabled,
+        </if>
+        <if test="createTime != null" >
+          create_time,
+        </if>
+        <if test="updateTime != null" >
+          update_time,
+        </if>
+        <if test="creator != null" >
+          creator,
+        </if>
+        <if test="modifier != null" >
+          modifier,
+        </if>
+        <if test="remark != null" >
+          remark,
+        </if>
+        <if test="extend1 != null" >
+          extend1,
+        </if>
+        <if test="extend2 != null" >
+          extend2,
+        </if>
+        <if test="extend3 != null" >
+          extend3,
+        </if>
+        <if test="extend4 != null" >
+          extend4,
+        </if>
+        <if test="extend5 != null" >
+          extend5,
+        </if>
+        <if test="extend6 != null" >
+          extend6,
+        </if>
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides="," >
+        <if test="id != null" >
+          #{id,jdbcType=VARCHAR},
+        </if>
+        <if test="enName != null" >
+          #{enName,jdbcType=VARCHAR},
+        </if>
+        <if test="cnName != null" >
+          #{cnName,jdbcType=VARCHAR},
+        </if>
+        <if test="picon != null" >
+          #{picon,jdbcType=VARCHAR},
+        </if>
+        <if test="dicon != null" >
+          #{dicon,jdbcType=VARCHAR},
+        </if>
+        <if test="mode != null" >
+          #{mode,jdbcType=BIT},
+        </if>
+        <if test="enabled != null" >
+          #{enabled,jdbcType=BIT},
+        </if>
+        <if test="createTime != null" >
+          #{createTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="updateTime != null" >
+          #{updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="creator != null" >
+          #{creator,jdbcType=VARCHAR},
+        </if>
+        <if test="modifier != null" >
+          #{modifier,jdbcType=VARCHAR},
+        </if>
+        <if test="remark != null" >
+          #{remark,jdbcType=VARCHAR},
+        </if>
+        <if test="extend1 != null" >
+          #{extend1,jdbcType=VARCHAR},
+        </if>
+        <if test="extend2 != null" >
+          #{extend2,jdbcType=VARCHAR},
+        </if>
+        <if test="extend3 != null" >
+          #{extend3,jdbcType=VARCHAR},
+        </if>
+        <if test="extend4 != null" >
+          #{extend4,jdbcType=VARCHAR},
+        </if>
+        <if test="extend5 != null" >
+          #{extend5,jdbcType=VARCHAR},
+        </if>
+        <if test="extend6 != null" >
+          #{extend6,jdbcType=VARCHAR},
+        </if>
+      </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.asianwallets.common.entity.PayType" >
+      update pay_type
+      <set >
+        <if test="enName != null" >
+          en_name = #{enName,jdbcType=VARCHAR},
+        </if>
+        <if test="cnName != null" >
+          cn_name = #{cnName,jdbcType=VARCHAR},
+        </if>
+        <if test="picon != null" >
+          picon = #{picon,jdbcType=VARCHAR},
+        </if>
+        <if test="dicon != null" >
+          dicon = #{dicon,jdbcType=VARCHAR},
+        </if>
+        <if test="mode != null" >
+          mode = #{mode,jdbcType=BIT},
+        </if>
+        <if test="enabled != null" >
+          enabled = #{enabled,jdbcType=BIT},
+        </if>
+        <if test="createTime != null" >
+          create_time = #{createTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="updateTime != null" >
+          update_time = #{updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="creator != null" >
+          creator = #{creator,jdbcType=VARCHAR},
+        </if>
+        <if test="modifier != null" >
+          modifier = #{modifier,jdbcType=VARCHAR},
+        </if>
+        <if test="remark != null" >
+          remark = #{remark,jdbcType=VARCHAR},
+        </if>
+        <if test="extend1 != null" >
+          extend1 = #{extend1,jdbcType=VARCHAR},
+        </if>
+        <if test="extend2 != null" >
+          extend2 = #{extend2,jdbcType=VARCHAR},
+        </if>
+        <if test="extend3 != null" >
+          extend3 = #{extend3,jdbcType=VARCHAR},
+        </if>
+        <if test="extend4 != null" >
+          extend4 = #{extend4,jdbcType=VARCHAR},
+        </if>
+        <if test="extend5 != null" >
+          extend5 = #{extend5,jdbcType=VARCHAR},
+        </if>
+        <if test="extend6 != null" >
+          extend6 = #{extend6,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.asianwallets.common.entity.PayType" >
+      update pay_type
+      set en_name = #{enName,jdbcType=VARCHAR},
+        cn_name = #{cnName,jdbcType=VARCHAR},
+        picon = #{picon,jdbcType=VARCHAR},
+        dicon = #{dicon,jdbcType=VARCHAR},
+        mode = #{mode,jdbcType=BIT},
+        enabled = #{enabled,jdbcType=BIT},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        creator = #{creator,jdbcType=VARCHAR},
+        modifier = #{modifier,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        extend1 = #{extend1,jdbcType=VARCHAR},
+        extend2 = #{extend2,jdbcType=VARCHAR},
+        extend3 = #{extend3,jdbcType=VARCHAR},
+        extend4 = #{extend4,jdbcType=VARCHAR},
+        extend5 = #{extend5,jdbcType=VARCHAR},
+        extend6 = #{extend6,jdbcType=VARCHAR}
+      where id = #{id,jdbcType=VARCHAR}
+    </update>-->
+</mapper>

@@ -91,7 +91,7 @@
                 and i.imei LIKE CONCAT(CONCAT('%', #{imei} ), '%' )
             </if>
             <if test="sn != null and sn != ''">
-                and i.sn =#{sn}
+                and i.sn LIKE CONCAT(CONCAT('%', #{sn} ), '%' )
             </if>
             <if test="mac != null and mac != ''">
                 and i.mac = #{mac}
