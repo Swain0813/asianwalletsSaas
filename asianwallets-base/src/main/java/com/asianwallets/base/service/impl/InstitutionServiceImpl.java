@@ -1,5 +1,4 @@
 package com.asianwallets.base.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.*;
 import com.asianwallets.base.service.InstitutionService;
@@ -22,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.util.StringUtils;
 import java.util.Date;
 import java.util.List;
 
@@ -120,7 +119,12 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
 
             //分配机构角色
             SysUserRole sysUserRole = new SysUserRole();
-            sysUserRole.setRoleId(sysUserRoleMapper.getInstitutionRoleId());
+            String roleId = sysUserRoleMapper.getInstitutionRoleId();
+            //角色不存在或者角色已经被禁用
+            if (StringUtils.isEmpty(roleId)) {
+                throw new BusinessException(EResultEnum.ROLE_NO_EXIST.getCode());
+            }
+            sysUserRole.setRoleId(roleId);
             sysUserRole.setUserId(userId);
             sysUserRole.setCreateTime(new Date());
             sysUserRole.setCreator(name);
