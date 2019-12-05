@@ -189,12 +189,11 @@
                 and id != #{id}
             </if>
             <if test="imei != null and imei !=''">
-                and imei = #{imei}
+                or imei = #{imei}
             </if>
             <if test="sn != null and sn !=''">
                 or sn = #{sn}
             </if>
-
         </where>
     </select>
 
