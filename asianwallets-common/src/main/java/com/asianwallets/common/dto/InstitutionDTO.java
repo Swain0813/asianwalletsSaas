@@ -168,6 +168,18 @@ public class InstitutionDTO extends BasePageHelper {
     @ApiModelProperty(value = "审核状态")
     private Integer auditStatus;
 
+    @ApiModelProperty(value = "是否支持退款")
+    private Boolean supportRefundState;
+
+    @ApiModelProperty(value = "退款方式")//1-API接口 2-人工退款
+    private Byte refundMethod;
+
+    @ApiModelProperty(value = "是否开通DCC")
+    private Boolean dcc;
+
+    @ApiModelProperty(value = "是否开通异步通知")
+    private Boolean asynNotice;
+
     @ApiModelProperty(value = "语言")
     private String language;
 

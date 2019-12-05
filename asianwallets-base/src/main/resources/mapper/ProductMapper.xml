@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.base.dao.ProductMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Product">
+	<result column="id" property="id" />
+		<result column="product_code" property="productCode" />
+		<result column="product_name" property="productName" />
+		<result column="product_details_logo" property="productDetailsLogo" />
+		<result column="product_print_logo" property="productPrintLogo" />
+		<result column="product_img" property="productImg" />
+		<result column="trans_type" property="transType" />
+		<result column="trade_direction" property="tradeDirection" />
+		<result column="pay_type" property="payType" />
+		<result column="currency" property="currency" />
+		<result column="daily_total_amount" property="dailyTotalAmount" />
+		<result column="daily_trading_count" property="dailyTradingCount" />
+		<result column="limit_amount" property="limitAmount" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator" property="creator" />
+		<result column="modifier" property="modifier" />
+		<result column="remark" property="remark" />
+		<result column="enabled" property="enabled" />
+	</resultMap>
+
+	<select id="pageProduct" resultMap="BaseResultMap">
+		select
+		p.id as id ,p.product_code as productCode,p.product_name as productName, p.trans_type as transType,
+		case
+		when #{language} = 'zh-cn' then pt.cn_name
+		when #{language} = 'en-us' then pt.en_name
+		end
+		as payType,
+		p.trade_direction as tradeDirection,
+		p.product_img as productImg,p.product_print_logo as productPrintLogo,p.product_details_logo as productDetailsLogo,
+		p.currency as currency,p.create_time ,p.update_time ,p.creator as creator,p.modifier as modifier,p.remark as
+		remark,p.enabled as enabled,p.limit_amount as limitAmount,
+		p.daily_trading_count as dailyTradingCount,p.daily_total_amount as dailyTotalAmount
+		from product p left join pay_type pt on p.pay_type = pt.id
+		<where>
+
+			<if test="payType!=null and payType != ''">
+				and p.pay_type=#{payType}
+			</if>
+			<if test="transType != null and transType != ''">
+				and p.trans_type =#{transType}
+			</if>
+			<if test="tradeDirection != null and tradeDirection != ''">
+				and p.trade_direction =#{tradeDirection}
+			</if>
+			<!--<if test="language != null and language != ''">-->
+				<!--and p.language =#{language}-->
+			<!--</if>-->
+		</where>
+	</select>
+
+</mapper>

@@ -92,4 +92,12 @@ public interface DeviceInfoMapper extends BaseMapper<DeviceInfo> {
      * @return
      */
     int selectByInfoIMEI(@Param("imei") String imei);
+
+    /**
+     * 查询sn号或者imei号是否已存在
+     *
+     * @param deviceInfoDTO
+     * @return
+     */
+    int selectByIMEIAndSN(DeviceInfoDTO deviceInfoDTO);
 }

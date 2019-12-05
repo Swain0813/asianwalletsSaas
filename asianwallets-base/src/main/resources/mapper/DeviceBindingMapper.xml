@@ -94,12 +94,16 @@
             <if test="sn != null and sn !=''">
                 AND sn LIKE CONCAT(CONCAT('%',#{sn}),'%')
             </if>
+            <if test="startTime != null and startTime != ''">
+                AND DATE_FORMAT(binding_time,'%Y-%m-%d') &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(binding_time,'%Y-%m-%d') &lt;= #{endTime}
+            </if>
             <if test="operator != null and operator !=''">AND operator = #{operator}</if>
             <if test="useType != null and useType !=''">AND use_type = #{useType}</if>
             <if test="enabled != null">AND db.enabled = #{enabled}</if>
             <if test="bindingTime != null and bindingTime !=''">AND db.binding_time = #{bindingTime}</if>
-            <if test="createTime != null and createTime !=''">AND db.create_time = #{createTime}</if>
-            <if test="updateTime != null and updateTime !=''">AND db.update_time = #{updateTime}</if>
             <if test="creator != null and creator !=''">AND db.creator = #{creator}</if>
             <if test="modifier != null and modifier !=''">AND db.modifier = #{modifier}</if>
             <if test="remark != null and remark !=''">AND db.remark = #{remark}</if>

@@ -83,4 +83,10 @@ public class DeviceBindingDTO extends BasePageHelper {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "起始时间")
+    private String startTime;
+
+    @ApiModelProperty(value = "结束时间")
+    private String endTime;
+
 }
