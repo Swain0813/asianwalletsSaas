@@ -1,5 +1,4 @@
 package com.asianwallets.base.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.*;
 import com.asianwallets.base.service.MerchantService;
@@ -21,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.util.StringUtils;
 import java.util.Date;
 import java.util.List;
 
@@ -49,12 +48,16 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
 
     @Autowired
     private MerchantHistoryMapper merchantHistoryMapper;
+
     @Autowired
     private AuditorProvider auditorProvider;
+
     @Autowired
     private SysUserRoleMapper sysUserRoleMapper;
+
     @Autowired
     private SysUserMapper sysUserMapper;
+
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -71,7 +74,6 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
      **/
     @Override
     public int addMerchant(String name, MerchantDTO merchantDTO) {
-
         //判断机构名称是否存在
         if (merchantMapper.selectCountByInsName(merchantDTO.getCnName()) > 0) {
             throw new BusinessException(EResultEnum.NAME_EXIST.getCode());
@@ -127,9 +129,15 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             sysUserMapper.insert(sysUser);
 
             if (merchantDTO.getMerchantType().equals("3")) {
+                //普通商户角色
+                String roleId = sysUserRoleMapper.getMerchantRoleId();
+                //普通商户角色不存在或者角色已经被禁用
+                if (StringUtils.isEmpty(roleId)) {
+                    throw new BusinessException(EResultEnum.ROLE_NO_EXIST.getCode());
+                }
                 //分配普通商户角色
                 SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setRoleId(sysUserRoleMapper.getMerchantRoleId());
+                sysUserRole.setRoleId(roleId);
                 sysUserRole.setUserId(userId);
                 sysUserRole.setCreateTime(new Date());
                 sysUserRole.setCreator(name);
@@ -153,7 +161,12 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
 
                 //分配pos机角色
                 SysUserRole sysUserRole1 = new SysUserRole();
-                sysUserRole1.setRoleId(sysUserRoleMapper.getPOSRoleId());
+                String roleIdPos = sysUserRoleMapper.getPOSRoleId();
+                //pos机角色不存在或者角色已经被禁用
+                if (StringUtils.isEmpty(roleIdPos)) {
+                    throw new BusinessException(EResultEnum.ROLE_NO_EXIST.getCode());
+                }
+                sysUserRole1.setRoleId(roleIdPos);
                 sysUserRole1.setUserId(userId1);
                 sysUserRole1.setCreateTime(new Date());
                 sysUserRole1.setCreator(name);
@@ -161,17 +174,27 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
 
 
             } else if (merchantDTO.getMerchantType().equals("4")) {
+                String roleIdAgency = sysUserRoleMapper.getAgencyRoleId();
+                //代理商角色不存在或者角色已经被禁用
+                if (StringUtils.isEmpty(roleIdAgency)) {
+                    throw new BusinessException(EResultEnum.ROLE_NO_EXIST.getCode());
+                }
                 //分配代理商户角色
                 SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setRoleId(sysUserRoleMapper.getAgencyRoleId());
+                sysUserRole.setRoleId(roleIdAgency);
                 sysUserRole.setUserId(userId);
                 sysUserRole.setCreateTime(new Date());
                 sysUserRole.setCreator(name);
                 sysUserRoleMapper.insert(sysUserRole);
             } else if (merchantDTO.getMerchantType().equals("5")) {
                 //分配集团商户角色
+                String roleIdGroup = sysUserRoleMapper.getGroupRoleId();
+                //集团商角色不存在或者角色已经被禁用
+                if (StringUtils.isEmpty(roleIdGroup)) {
+                    throw new BusinessException(EResultEnum.ROLE_NO_EXIST.getCode());
+                }
                 SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setRoleId(sysUserRoleMapper.getGroupRoleId());
+                sysUserRole.setRoleId(roleIdGroup);
                 sysUserRole.setUserId(userId);
                 sysUserRole.setCreateTime(new Date());
                 sysUserRole.setCreator(name);
@@ -194,9 +217,15 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
                 sysUser1.setCreator(name);
                 sysUserMapper.insert(sysUser1);
 
+
+                String roleIdGroupPos = sysUserRoleMapper.getPOSRoleId();
+                //集团商对应的pos机角色不存在或者角色已经被禁用
+                if (StringUtils.isEmpty(roleIdGroupPos)) {
+                    throw new BusinessException(EResultEnum.ROLE_NO_EXIST.getCode());
+                }
                 //分配pos机角色
                 SysUserRole sysUserRole1 = new SysUserRole();
-                sysUserRole1.setRoleId(sysUserRoleMapper.getPOSRoleId());
+                sysUserRole1.setRoleId(roleIdGroupPos);
                 sysUserRole1.setUserId(userId1);
                 sysUserRole1.setCreateTime(new Date());
                 sysUserRole1.setCreator(name);

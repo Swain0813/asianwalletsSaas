@@ -17,6 +17,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
@@ -32,6 +33,7 @@ import java.util.Set;
  * @Version 1.0
  */
 @Service
+@Transactional
 public class CurrencyServiceImpl implements CurrencyService {
 
     @Autowired
