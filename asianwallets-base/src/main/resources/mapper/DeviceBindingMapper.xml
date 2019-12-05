@@ -75,9 +75,11 @@
         me.cn_name as agent_name,
         me.id as agent_id,
         d.name as use_type_name
-        from device_binding db left join dictionary d on db.use_type = d.code
+        from device_binding db
         left join institution i on i.id = db.institution_code
-        left join merchant m on db.merchant_id = m.id left join merchant me on m.agent_id = me.id
+        left join merchant m on db.merchant_id = m.id
+        left join merchant me on m.agent_id = me.id
+        left join dictionary d on db.use_type = d.code
         and d.language=#{language}
         <where>
             <if test="id != null and id !=''">AND id = #{id}</if>

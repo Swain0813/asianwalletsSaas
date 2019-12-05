@@ -191,6 +191,7 @@
             <if test="sn != null and sn !=''">
                 or sn = #{sn}
             </if>
+            and id != #{id}
         </where>
     </select>
 
