@@ -18,46 +18,30 @@ public class Institution extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-	/**
-	 * 机构logo
-	 */
 	@ApiModelProperty(value = "机构logo")
 	@Column(name = "institution_logo")
 	private String institutionLogo;
 
-    /**
-     * 机构中文名称
-     */
 	@ApiModelProperty(value = "机构中文名称")
 	@Column(name = "cn_name")
 	private String cnName;
-    /**
-     * 机构英文名称
-     */
+
 	@ApiModelProperty(value = "机构英文名称")
 	@Column(name = "en_name")
 	private String enName;
-    /**
-     * 国别类型 0 境外 1 中国境内
-     */
-	@ApiModelProperty(value = "国别类型")
+
+	@ApiModelProperty(value = "国别类型")//0 境外 1 中国境内
 	@Column(name = "country_type")
 	private Integer countryType;
-    /**
-     * 所属国家
-     */
+
 	@ApiModelProperty(value = "所属国家")
 	@Column(name = "country")
 	private String country;
-    /**
-     * 公司注册号
-     */
+
 	@ApiModelProperty(value = "公司注册号")
 	@Column(name = "company_regist_number")
 	private String companyRegistNumber;
-    /**
-     * 公司证件有效期
-     */
+
 	@ApiModelProperty(value = "公司证件有效期")
 	@Column(name = "company_validity")
 	private String companyValidity;
@@ -70,120 +54,97 @@ public class Institution extends BaseEntity {
 	@Column(name = "legal_passport_validity")
 	private String legalPassportValidity;
 
-    /**
-     * 国家区号
-     */
 	@ApiModelProperty(value = "国家区号")
 	@Column(name = "country_code")
 	private String countryCode;
-    /**
-     * 机构地址
-     */
+
 	@ApiModelProperty(value = "机构地址")
 	@Column(name = "institution_adress")
 	private String institutionAdress;
-    /**
-     * 法人证件照片
-     */
+
 	@ApiModelProperty(value = "法人证件照片")
 	@Column(name = "legal_passport_img")
 	private String legalPassportImg;
-	/**
-	 * 拓展销售
-	 */
+
 	@ApiModelProperty(value = "拓展销售")
 	@Column(name = "develop_sales")
 	private String developSales;
-    /**
-     * 机构协议
-     */
+
 	@ApiModelProperty(value = "机构协议")
 	@Column(name = "institution_contract")
 	private String institutionContract;
-    /**
-     * 公司章程
-     */
+
 	@ApiModelProperty(value = "公司章程")
 	@Column(name = "company_articles")
 	private String companyArticles;
-    /**
-     * 企业证件
-     */
+
 	@ApiModelProperty(value = "企业证件")
 	@Column(name = "business_certificate")
 	private String businessCertificate;
-    /**
-     * 机构电话
-     */
+
 	@ApiModelProperty(value = "机构电话")
 	@Column(name = "institution_phone")
 	private String institutionPhone;
-    /**
-     * 法人姓名
-     */
+
 	@ApiModelProperty(value = "法人姓名")
 	@Column(name = "legal_name")
 	private String legalName;
-    /**
-     * 经营类目
-     */
+
 	@ApiModelProperty(value = "经营类目")
 	@Column(name = "business_category")
 	private String businessCategory;
-    /**
-     * 行业许可
-     */
+
 	@ApiModelProperty(value = "行业许可")
 	@Column(name = "business_license")
 	private String businessLicense;
-    /**
-     * 行业类别
-     */
+
 	@ApiModelProperty(value = "行业类别")
 	@Column(name = "industry_category")
 	private String industryCategory;
-    /**
-     * 机构邮编
-     */
+
 	@ApiModelProperty(value = "机构邮编")
 	@Column(name = "institution_postal_code")
 	private String institutionPostalCode;
-    /**
-     * 邮箱
-     */
-	@ApiModelProperty(value = "邮箱")
+
+	@ApiModelProperty(value = "机构邮箱")
 	@Column(name = "institution_email")
 	private String institutionEmail;
-    /**
-     * 机构网站url
-     */
+
 	@ApiModelProperty(value = "机构网站url")
 	@Column(name = "institution_web_url")
 	private String institutionWebUrl;
-    /**
-     * 联系人地址
-     */
+
 	@ApiModelProperty(value = "联系人地址")
 	@Column(name = "contact_address")
 	private String contactAddress;
-    /**
-     * 联系人
-     */
+
 	@ApiModelProperty(value = "联系人")
 	@Column(name = "contact_people")
 	private String contactPeople;
-    /**
-     * 联系人电话
-     */
+
 	@ApiModelProperty(value = "联系人电话")
 	@Column(name = "contact_phone")
 	private String contactPhone;
-    /**
-     * 审核状态 1-待审核 2-审核通过 3-审核不通过
-     */
-	@ApiModelProperty(value = "审核状态")
+
+	@ApiModelProperty(value = "审核状态")//1-待审核 2-审核通过 3-审核不通过
 	@Column(name = "audit_status")
 	private Byte auditStatus;
+
+	@ApiModelProperty(value = "是否支持退款")
+	@Column(name = "support_refund_state")
+	private Boolean supportRefundState;
+
+	@ApiModelProperty(value = "退款方式")//1-API接口 2-人工退款
+	@Column(name = "refund_method")
+	private Byte refundMethod;
+
+	@ApiModelProperty(value = "是否开通DCC")
+	@Column(name = "dcc")
+	private Boolean dcc;
+
+	@ApiModelProperty(value = "是否开通异步通知")
+	@Column(name = "asyn_notice")
+	private Boolean asynNotice;
 
 	@ApiModelProperty(value = "ext7")
 	@Column(name = "ext7")

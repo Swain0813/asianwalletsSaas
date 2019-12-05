@@ -1,20 +1,13 @@
 package com.asianwallets.common.entity;
-
 import com.asianwallets.common.base.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * <p>
  * 机构审核表
- * </p>
- *
- * @author yx
- * @since 2019-11-25
  */
 @Data
 @Entity
@@ -194,6 +187,22 @@ public class InstitutionAudit extends BaseEntity {
 	@ApiModelProperty(value = "审核状态 1-待审核 2-审核通过 3-审核不通过")
 	@Column(name ="audit_status")
 	private Byte auditStatus;
+
+	@ApiModelProperty(value = "是否支持退款")
+	@Column(name = "support_refund_state")
+	private Boolean supportRefundState;
+
+	@ApiModelProperty(value = "退款方式")//1-API接口 2-人工退款
+	@Column(name = "refund_method")
+	private Byte refundMethod;
+
+	@ApiModelProperty(value = "是否开通DCC")
+	@Column(name = "dcc")
+	private Boolean dcc;
+
+	@ApiModelProperty(value = "是否开通异步通知")
+	@Column(name = "asyn_notice")
+	private Boolean asynNotice;
 
 	@ApiModelProperty(value = "ext7")
 	@Column(name = "ext7")

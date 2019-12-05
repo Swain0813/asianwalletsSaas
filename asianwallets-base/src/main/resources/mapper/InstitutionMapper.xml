@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.asianwallets.base.dao.InstitutionMapper">
-
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Institution">
         <result column="id" property="id"/>
@@ -33,6 +32,10 @@
         <result column="contact_people" property="contactPeople"/>
         <result column="contact_phone" property="contactPhone"/>
         <result column="audit_status" property="auditStatus"/>
+        <result column="support_refund_state" property="supportRefundState"/>
+        <result column="refund_method" property="refundMethod"/>
+        <result column="dcc" property="dcc"/>
+        <result column="asyn_notice" property="asynNotice"/>
         <result column="ext7" property="ext7"/>
         <result column="ext6" property="ext6"/>
         <result column="ext5" property="ext5"/>
@@ -52,8 +55,8 @@
         select
         i.id,i.cn_name,i.en_name,i.country_type,co.country_name as
         country,i.company_regist_number,i.company_validity,i.legal_passport_code,i.legal_passport_validity,
-        co.area_code as
-        country_code,i.institution_adress,i.legal_passport_img,i.institution_contract,i.company_articles,i.business_certificate,i.institution_phone,
+        co.area_code as country_code,i.institution_adress,i.legal_passport_img,i.institution_contract,i.company_articles,
+        i.business_certificate,i.institution_phone,i.support_refund_state,i.refund_method,i.dcc,i.asyn_notice,
         i.legal_name,i.business_category,i.business_license,i.industry_category,i.institution_postal_code,i.institution_email,i.institution_web_url,
         i.contact_address,i.contact_people,i.contact_phone,i.audit_status,i.ext7,i.ext6,i.ext5,i.ext4,i.ext3,i.ext2,i.ext1,i.create_time,i.update_time,
         i.creator,i.modifier,i.remark,i.enabled,i.institution_logo,i.develop_sales
@@ -114,6 +117,10 @@
                i.contact_people,
                i.contact_phone,
                i.audit_status,
+               i.support_refund_state,
+               i.refund_method,
+               i.dcc,
+               i.asyn_notice,
                i.ext7,
                i.ext6,
                i.ext5,
@@ -181,6 +188,18 @@
         when 2 then '审核通过'
         when 3 then '审核不通过'
         else '' end auditStatus,
+        case i.support_refund_state
+        when 0 then '不支持'
+        when 1 then '支持'
+        else '' end supportRefundState,
+        case i.refund_method
+        when 1 then 'API接口'
+        when 2 then '人工退款'
+        else '' end refundMethod,
+        case i.dcc
+        when 0 then '否'
+        when 1 then '是'
+        else '' end dcc,
         case i.enabled
         when 0 then '禁用'
         when 1 then '启用'
