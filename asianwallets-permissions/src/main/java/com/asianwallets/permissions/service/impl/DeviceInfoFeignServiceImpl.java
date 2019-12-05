@@ -4,12 +4,14 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.DeviceInfo;
+import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.permissions.dao.DeviceInfoMapper;
 import com.asianwallets.permissions.dao.DeviceModelMapper;
 import com.asianwallets.permissions.dao.DeviceVendorMapper;
+import com.asianwallets.permissions.dao.InstitutionMapper;
 import com.asianwallets.permissions.service.DeviceInfoFeignService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,9 @@ public class DeviceInfoFeignServiceImpl implements DeviceInfoFeignService {
 
     @Autowired
     private DeviceInfoMapper deviceInfoMapper;
+
+    @Autowired
+    private InstitutionMapper institutionMapper;
 
     @Override
     public List<DeviceInfo> uploadDeviceInfo(MultipartFile file, String createName) {
@@ -67,8 +72,9 @@ public class DeviceInfoFeignServiceImpl implements DeviceInfoFeignService {
                     || StringUtils.isEmpty(objects.get(1))
                     || StringUtils.isEmpty(objects.get(3))
                     || StringUtils.isEmpty(objects.get(4))
-                    || objects.size() != 6
-                    || StringUtils.isEmpty(objects.get(5))) {
+                    || objects.size() != 7
+                    || StringUtils.isEmpty(objects.get(5))
+                    || StringUtils.isEmpty(objects.get(6))) {
                 throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
             }
             //如果名称没有填写
@@ -86,6 +92,10 @@ public class DeviceInfoFeignServiceImpl implements DeviceInfoFeignService {
             if (deviceInfoMapper.selectBySN(objects.get(4)) > 0) {
                 throw new BusinessException(EResultEnum.DEVICE_SN_EXIST.getCode());
             }
+            Institution institution = institutionMapper.selectByPrimaryKey(objects.get(6));
+            if (institution == null) {
+                throw new BusinessException(EResultEnum.INSTITUTION_CODE_NO_EXIST.getCode());
+            }
             deviceInfo.setId(IDS.uuid2());
             deviceInfo.setVendorId(vendorId);
             deviceInfo.setModelId(modelId);
@@ -93,6 +103,8 @@ public class DeviceInfoFeignServiceImpl implements DeviceInfoFeignService {
             deviceInfo.setSn(objects.get(4).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
             deviceInfo.setMac(objects.get(5).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
             deviceInfo.setName(objects.get(2).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+            deviceInfo.setInstitutionId(institution.getId());
+            deviceInfo.setInstitutionName(institution.getCnName());
             deviceInfo.setEnabled(true);
             deviceInfo.setCreateTime(new Date());
             deviceInfo.setCreator(createName);

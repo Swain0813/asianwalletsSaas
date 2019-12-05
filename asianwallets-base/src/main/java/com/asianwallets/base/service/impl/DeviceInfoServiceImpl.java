@@ -15,6 +15,7 @@ import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.vo.DeviceInfoExportVO;
 import com.asianwallets.common.vo.DeviceInfoVO;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -143,6 +144,12 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
         //未绑定是否走过交易
         if (ordersMapper.selectByDeviceCode(deviceInfoDTO.getImei()).size() != 0) {
             throw new BusinessException(EResultEnum.DEVICE_UNBIND_FAILED.getCode());
+        }
+        //判断imei 与 sn 是否重复
+        if (!StringUtils.isBlank(deviceInfoDTO.getImei()) || !StringUtils.isBlank(deviceInfoDTO.getSn())) {
+            if (deviceInfoMapper.selectByIMEIAndSN(deviceInfoDTO) != 0) {
+                throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
+            }
         }
         return deviceInfoMapper.updateByPrimaryKeySelective(deviceInfo);
     }
