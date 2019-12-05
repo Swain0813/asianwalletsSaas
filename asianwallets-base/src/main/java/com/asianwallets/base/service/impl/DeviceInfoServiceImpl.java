@@ -57,18 +57,18 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
     @Override
     public int addDeviceInfo(DeviceInfoDTO deviceInfoDTO) {
         //判断数据是否存在
-        if (deviceInfoDTO.getImei() == null || deviceInfoDTO.getMac() == null || deviceInfoDTO.getSn()
+        if (deviceInfoDTO.getImei() == null || deviceInfoDTO.getSn()
                 == null || deviceInfoDTO.getVendorId() == null || deviceInfoDTO.getModelId() == null || deviceInfoDTO.getInstitutionId() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        //判断名字是否为空
+        /*//判断名字是否为空
         if (deviceInfoDTO.getName() == null) {
             if (deviceInfoDTO.getModelName() == null || deviceInfoDTO.getVendorName() == null) {
                 throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
             }
             //设置默认名称 厂商_型号
             deviceInfoDTO.setName(deviceInfoDTO.getVendorName() + "_" + deviceInfoDTO.getModelName());
-        }
+        }*/
         Institution institutionInfo = institutionMapper.getInstitutionInfo(deviceInfoDTO.getInstitutionId(),auditorProvider.getLanguage());
         if (institutionInfo == null || !institutionInfo.getEnabled()) {
             throw new BusinessException(EResultEnum.INSTITUTION_STATUS_ABNORMAL.getCode());
