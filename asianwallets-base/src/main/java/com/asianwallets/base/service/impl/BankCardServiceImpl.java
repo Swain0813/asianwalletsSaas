@@ -13,6 +13,8 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +27,7 @@ import java.util.List;
  * @since 2019-11-25
  */
 @Service
+@Transactional
 public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements BankCardService {
 
     @Autowired
@@ -40,16 +43,16 @@ public class BankCardServiceImpl extends BaseServiceImpl<BankCard> implements Ba
     public int addBankCard(String name, List<BankCardDTO> list) {
         List<BankCard> bankCardList = Lists.newArrayList();
         for (int i = 0; i < list.size(); i++) {
-            //判断银行信息是不是已经绑定其他商户
-            List<BankCard>  selectBankCards = bankCardMapper.selectBankCards(list.get(i).getBankAccountCode());
-            if(selectBankCards!=null && selectBankCards.size()>0){
-                for(BankCard selectBankCard:selectBankCards){
-                    if(!selectBankCard.getMerchantId().equals(list.get(i).getMerchantId())){
-                        //信息已存在 该银行卡已经绑定其他商户
-                        throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
-                    }
-                }
-            }
+//            //判断银行信息是不是已经绑定其他商户
+//            List<BankCard>  selectBankCards = bankCardMapper.selectBankCards(list.get(i).getBankAccountCode());
+//            if(selectBankCards!=null && selectBankCards.size()>0){
+//                for(BankCard selectBankCard:selectBankCards){
+//                    if(!selectBankCard.getMerchantId().equals(list.get(i).getMerchantId())){
+//                        //信息已存在 该银行卡已经绑定其他商户
+//                        throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
+//                    }
+//                }
+//            }
             //判断该机构下的银行账户下的该银行卡币种是不是已经存在
             List<BankCard> bankCards = bankCardMapper.getBankCards(list.get(i).getMerchantId(), list.get(i).getBankAccountCode());
             if (bankCards != null && bankCards.size() > 0) {

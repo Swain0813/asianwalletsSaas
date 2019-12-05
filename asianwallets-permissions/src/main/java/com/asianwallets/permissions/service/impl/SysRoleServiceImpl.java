@@ -22,6 +22,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@Transactional
 public class SysRoleServiceImpl implements SysRoleService {
 
     @Autowired

@@ -1,5 +1,4 @@
 package com.asianwallets.permissions.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.Merchant;
@@ -27,7 +26,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Set;
 
