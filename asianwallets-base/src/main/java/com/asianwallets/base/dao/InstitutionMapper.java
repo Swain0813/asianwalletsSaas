@@ -52,7 +52,7 @@ public interface InstitutionMapper extends  BaseMapper<Institution> {
      * @Descripate 机构下拉框
      * @return
      **/
-    @Select("select id as id ,cn_name as cnName ,en_name as enName from institution")
+    @Select("select id as id ,cn_name as cnName ,en_name as enName from institution where enabled=1")
     List<Institution> getAllInstitution();
 
     /**

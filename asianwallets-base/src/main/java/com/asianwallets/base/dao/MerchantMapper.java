@@ -53,7 +53,7 @@ public interface MerchantMapper extends BaseMapper<Merchant> {
      * @Descripate 代理商下拉框
      * @return
      **/
-    @Select("select id as id ,en_name as enName,cn_name as cnName from merchant where merchant_type = #{merchantType}")
+    @Select("select id as id ,en_name as enName,cn_name as cnName from merchant where merchant_type = #{merchantType} and enabled=1")
     List<Merchant> getAllAgent(@Param("merchantType") String merchantType);
 
    /**
