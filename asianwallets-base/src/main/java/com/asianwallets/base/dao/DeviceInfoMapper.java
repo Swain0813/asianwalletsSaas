@@ -94,10 +94,18 @@ public interface DeviceInfoMapper extends BaseMapper<DeviceInfo> {
     int selectByInfoIMEI(@Param("imei") String imei);
 
     /**
-     * 查询sn号或者imei号是否已存在
+     * 查找不等于id的imei
      *
      * @param deviceInfoDTO
      * @return
      */
-    int selectByIMEIAndSN(DeviceInfoDTO deviceInfoDTO);
+    int selectByIMEI(DeviceInfoDTO deviceInfoDTO);
+
+    /**
+     * 查找不等于id的sn
+     *
+     * @param deviceInfoDTO
+     * @return
+     */
+    int selectBySN(DeviceInfoDTO deviceInfoDTO);
 }

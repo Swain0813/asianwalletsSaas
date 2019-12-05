@@ -181,17 +181,19 @@
         from device_info
         where imei = #{imei};
     </select>
-    <select id="selectByIMEIAndSN" resultType="java.lang.Integer">
+
+    <select id="selectByIMEI" resultType="java.lang.Integer">
         select count(*)
         from device_info
-        <where>
-            <if test="imei != null and imei !=''">
-                imei = #{imei}
-            </if>
-            <if test="sn != null and sn !=''">
-                or sn = #{sn}
-            </if>
-        </where>
+        where id != #{id}
+          and imei = #{imei};
+    </select>
+
+    <select id="selectBySN" resultType="java.lang.Integer">
+        select count(*)
+        from device_info
+        where id != #{id}
+          and sn = #{sn};
     </select>
 
     <update id="updateById">
