@@ -5,6 +5,8 @@ import com.asianwallets.common.entity.InstitutionProduct;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface InstitutionProductMapper extends BaseMapper<InstitutionProduct> {
 
@@ -22,7 +24,7 @@ public interface InstitutionProductMapper extends BaseMapper<InstitutionProduct>
      * @param institutionId 机构ID
      * @return 修改条数
      */
-    InstitutionProductChannelVO selectRelevantInfoByInstitutionId(String institutionId);
+    List<InstitutionProductChannelVO> selectRelevantInfoByInstitutionId(String institutionId);
 
 
     /**

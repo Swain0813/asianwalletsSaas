@@ -20,7 +20,9 @@
 	</sql>
 
     <select id="selectByInstitutionId" resultMap="BaseResultMap">
-        select <include refid="baseSql"/> from institution_product where institution_id = #{institutionId}
+        select
+        <include refid="baseSql"/>
+        from institution_product where institution_id = #{institutionId}
     </select>
 
     <resultMap id="InstitutionProductChannelVOMap" type="com.asianwallets.common.vo.InstitutionProductChannelVO">
@@ -33,6 +35,7 @@
 
     <resultMap id="InstitutionChannelVOMap" type="com.asianwallets.common.vo.InstitutionChannelVO">
         <result column="channelId" property="channelId" jdbcType="VARCHAR"/>
+        <result column="insProId" property="insProId" jdbcType="VARCHAR"/>
     </resultMap>
 
     <select id="selectRelevantInfoByInstitutionId" resultMap="InstitutionProductChannelVOMap">
@@ -40,9 +43,10 @@
                ip.institution_name as institutionName,
                ip.product_id       as productId,
                ip.product_abbrev   as productAbbrev,
-               ic.channel_id       as channelId
+               ic.channel_id       as channelId,
+               ic.ins_pro_id       as insProId
         from institution_product ip
-                 left join institution_channel ic on ip.institution_id = ic.institution_id
+                 left join institution_channel ic on ip.id = ic.ins_pro_id
         where ip.institution_id = #{institutionId}
     </select>
 

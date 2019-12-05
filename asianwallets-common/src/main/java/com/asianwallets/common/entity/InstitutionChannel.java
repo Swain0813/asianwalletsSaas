@@ -17,9 +17,9 @@ import javax.persistence.Table;
 @ApiModel(value = "机构通道", description = "机构通道")
 public class InstitutionChannel extends BaseEntity {
 
-    @ApiModelProperty(value = "机构id")
-    @Column(name = "institution_id")
-    private String institutionId;
+    @ApiModelProperty(value = "机构产品id")
+    @Column(name = "ins_pro_id")
+    private String insProId;
 
     @ApiModelProperty(value = "通道id")
     @Column(name = "channel_id")

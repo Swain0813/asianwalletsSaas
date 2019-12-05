@@ -3,7 +3,7 @@
 <mapper namespace="com.asianwallets.base.dao.InstitutionChannelMapper">
     <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.InstitutionChannel">
         <result column="id" property="id" jdbcType="VARCHAR"/>
-        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="ins_pro_id" property="insProId" jdbcType="VARCHAR"/>
         <result column="channel_id" property="channelId" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
@@ -13,11 +13,14 @@
     </resultMap>
 
     <sql id="baseSql">
-		institution_id, channel_id,
+		ins_pro_id, channel_id,
 		id,create_time, update_time ,creator ,modifier, remark
 	</sql>
 
-    <delete id="deleteByInstitutionId">
-       delete from institution_channel where institution_id = #{institutionId}
+    <delete id="deleteByInsProIdList">
+        delete from institution_channel where ins_pro_id in
+        <foreach collection="collection" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </delete>
 </mapper>

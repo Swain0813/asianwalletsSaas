@@ -32,9 +32,8 @@ public interface InstitutionProductChannelService {
      *
      * @param username 用户名
      * @param insId    机构ID
-     * @return 修改条数
+     * @return 机构产品通道输出实体集合
      */
-    InstitutionProductChannelVO getInsProChaByInsId(String username, String insId);
-
+    List<InstitutionProductChannelVO> getInsProChaByInsId(String username, String insId);
 
 }

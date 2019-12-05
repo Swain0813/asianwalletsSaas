@@ -1,11 +1,11 @@
 package com.asianwallets.base.service.impl;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.asianwallets.base.dao.InstitutionChannelMapper;
 import com.asianwallets.base.dao.InstitutionProductMapper;
 import com.asianwallets.base.service.InstitutionProductChannelService;
+import com.asianwallets.common.dto.InstitutionChannelDTO;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
 import com.asianwallets.common.entity.InstitutionChannel;
 import com.asianwallets.common.entity.InstitutionProduct;
@@ -41,7 +41,8 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
         for (InstitutionProductChannelDTO institutionProductChannelDTO : institutionProductChannelDTOList) {
             //机构产品信息
             InstitutionProduct institutionProduct = new InstitutionProduct();
-            institutionProduct.setId(IDS.uuid2());
+            String insProId = IDS.uuid2();
+            institutionProduct.setId(insProId);
             institutionProduct.setInstitutionId(institutionProductChannelDTO.getInstitutionId());
             institutionProduct.setProductId(institutionProductChannelDTO.getProductId());
             institutionProduct.setInstitutionName(institutionProductChannelDTO.getInstitutionName());
@@ -51,12 +52,12 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
             institutionProductMapper.insert(institutionProduct);
             //机构通道信息
             List<InstitutionChannel> institutionChannelList = Lists.newArrayList();
-            if (!ArrayUtil.isEmpty(institutionProductChannelDTO.getChannelIdList())) {
-                for (String channelId : institutionProductChannelDTO.getChannelIdList()) {
+            if (!ArrayUtil.isEmpty(institutionProductChannelDTO.getInstitutionChannelDTOList())) {
+                for (InstitutionChannelDTO institutionChannelDTO : institutionProductChannelDTO.getInstitutionChannelDTOList()) {
                     InstitutionChannel institutionChannel = new InstitutionChannel();
                     institutionChannel.setId(IDS.uuid2());
-                    institutionChannel.setInstitutionId(institutionProductChannelDTO.getInstitutionId());
-                    institutionChannel.setChannelId(channelId);
+                    institutionChannel.setInsProId(insProId);
+                    institutionChannel.setChannelId(institutionChannelDTO.getChannelId());
                     institutionChannel.setCreateTime(new Date());
                     institutionChannel.setCreator(username);
                     institutionChannelList.add(institutionChannel);
@@ -80,12 +81,19 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
     public int updateInsProChaByInsId(String username, List<InstitutionProductChannelDTO> institutionProductChannelDTOList) {
         //删除机构产品中间表信息
         institutionProductMapper.deleteByInstitutionId(institutionProductChannelDTOList.get(0).getInstitutionId());
+        Set<String> insProIdSet = new HashSet<>();
         //删除机构通道中间表信息
-        institutionChannelMapper.deleteByInstitutionId(institutionProductChannelDTOList.get(0).getInstitutionId());
+        for (InstitutionProductChannelDTO institutionProductChannelDTO : institutionProductChannelDTOList) {
+            for (InstitutionChannelDTO institutionChannelDTO : institutionProductChannelDTO.getInstitutionChannelDTOList()) {
+                insProIdSet.add(institutionChannelDTO.getInsProId());
+            }
+        }
+        institutionChannelMapper.deleteByInsProIdList(insProIdSet);
         for (InstitutionProductChannelDTO institutionProductChannelDTO : institutionProductChannelDTOList) {
             //机构产品信息
             InstitutionProduct institutionProduct = new InstitutionProduct();
-            institutionProduct.setId(IDS.uuid2());
+            String insProId = IDS.uuid2();
+            institutionProduct.setId(insProId);
             institutionProduct.setInstitutionId(institutionProductChannelDTO.getInstitutionId());
             institutionProduct.setProductId(institutionProductChannelDTO.getProductId());
             institutionProduct.setInstitutionName(institutionProductChannelDTO.getInstitutionName());
@@ -96,12 +104,12 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
             institutionProduct.setModifier(username);
             institutionProductMapper.insert(institutionProduct);
             List<InstitutionChannel> institutionChannelList = Lists.newArrayList();
-            if (!ArrayUtil.isEmpty(institutionProductChannelDTO.getChannelIdList())) {
-                for (String channelId : institutionProductChannelDTO.getChannelIdList()) {
+            if (!ArrayUtil.isEmpty(institutionProductChannelDTO.getInstitutionChannelDTOList())) {
+                for (InstitutionChannelDTO institutionChannelDTO : institutionProductChannelDTO.getInstitutionChannelDTOList()) {
                     InstitutionChannel institutionChannel = new InstitutionChannel();
                     institutionChannel.setId(IDS.uuid2());
-                    institutionChannel.setInstitutionId(institutionProductChannelDTO.getInstitutionId());
-                    institutionChannel.setChannelId(channelId);
+                    institutionChannel.setInsProId(insProId);
+                    institutionChannel.setChannelId(institutionChannelDTO.getChannelId());
                     institutionChannel.setCreateTime(new Date());
                     institutionChannel.setUpdateTime(new Date());
                     institutionChannel.setCreator(username);
@@ -119,10 +127,10 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
      *
      * @param username 用户名
      * @param insId    机构ID
-     * @return 修改条数
+     * @return 机构产品通道输出实体集合
      */
     @Override
-    public InstitutionProductChannelVO getInsProChaByInsId(String username, String insId) {
+    public List<InstitutionProductChannelVO> getInsProChaByInsId(String username, String insId) {
         return institutionProductMapper.selectRelevantInfoByInstitutionId(insId);
     }
 }
