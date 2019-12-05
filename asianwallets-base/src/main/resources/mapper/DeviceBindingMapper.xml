@@ -50,13 +50,12 @@
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <select id="pageDeviceBinding"
-            resultMap="NewResultMap">
+    <select id="pageDeviceBinding" resultMap="NewResultMap">
         select
         db.id,
         db.info_id,
         db.institution_code,
-        db.institution_name,
+        i.cn_name as institution_name,
         db.vendor_name,
         db.model_name,
         db.info_name,
@@ -73,11 +72,13 @@
         db.creator,
         db.modifier,
         db.remark,
-        m.cn_name as agent_name,
-        m.id as agent_id,
+        me.cn_name as agent_name,
+        me.id as agent_id,
         d.name as use_type_name
-        from device_binding db LEFT JOIN merchant m on db.agent_id = m.id left join dictionary d on db.use_type
-        = d.code and d.language=#{language}
+        from device_binding db left join dictionary d on db.use_type = d.code
+        left join institution i on i.id = db.institution_code
+        left join merchant m on db.merchant_id = m.id left join merchant me on m.agent_id = me.id
+        and d.language=#{language}
         <where>
             <if test="id != null and id !=''">AND id = #{id}</if>
             <if test="infoId != null and infoId !=''">AND info_id = #{infoId}</if>

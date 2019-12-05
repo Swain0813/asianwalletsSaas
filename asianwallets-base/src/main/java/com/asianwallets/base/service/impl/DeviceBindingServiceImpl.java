@@ -69,8 +69,6 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
             DeviceBinding deviceBinding = new DeviceBinding();
             deviceBinding.setInstitutionCode(institutionCode);
             deviceBinding.setInfoId(id);
-            deviceBinding.setAgentId(deviceBindingDTO.getAgentId());
-            deviceBinding.setInstitutionName(deviceBindingDTO.getInstitutionName());
             deviceBinding.setMerchantId(deviceBindingDTO.getMerchantId());
             deviceBinding.setMerchantName(deviceBindingDTO.getMerchantName());
             deviceBinding.setVendorName(deviceInfoVO.getVendorName());
@@ -127,6 +125,6 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
     public PageInfo<DeviceBindingVO> pageDeviceBinding(DeviceBindingDTO deviceBindingDTO) {
         //设置语言
         deviceBindingDTO.setLanguage(auditorProvider.getLanguage());
-        return new PageInfo<DeviceBindingVO>(deviceBindingMapper.pageDeviceBinding(deviceBindingDTO));
+        return new PageInfo<>(deviceBindingMapper.pageDeviceBinding(deviceBindingDTO));
     }
 }
