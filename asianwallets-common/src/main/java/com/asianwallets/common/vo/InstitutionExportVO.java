@@ -1,10 +1,7 @@
 package com.asianwallets.common.vo;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.persistence.Column;
 import java.util.Date;
 
 /**
@@ -74,6 +71,17 @@ public class InstitutionExportVO {
     @ApiModelProperty(value = "审核状态")
     private String auditStatus;
 
+    @ApiModelProperty(value = "是否支持退款")
+    private Boolean supportRefundState;
+
+    @ApiModelProperty(value = "退款方式")//1-API接口 2-人工退款
+    private Byte refundMethod;
+
+    @ApiModelProperty(value = "是否开通DCC")
+    private Boolean dcc;
+
+    @ApiModelProperty(value = "是否开通异步通知")
+    private Boolean asynNotice;
 
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -90,6 +98,5 @@ public class InstitutionExportVO {
     private String modifier;
 
     @ApiModelProperty(value = "审核备注")
-    @Column(name = "remark")
     private String remark;
 }
