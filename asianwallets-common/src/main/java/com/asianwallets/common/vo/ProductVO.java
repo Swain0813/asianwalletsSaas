@@ -33,6 +33,9 @@ public class ProductVO {
     @ApiModelProperty(value = "支付类型")
     private String payType;
 
+    @ApiModelProperty(value = "支付类型名称")
+    private String payTypeName;
+
     @ApiModelProperty(value = "交易场景")
     private Byte tradeDirection;
 
