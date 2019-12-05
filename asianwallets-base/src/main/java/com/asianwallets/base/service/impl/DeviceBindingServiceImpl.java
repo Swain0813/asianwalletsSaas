@@ -50,8 +50,7 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
     public int addDeviceBinding(DeviceBindingDTO deviceBindingDTO) {
         //判断参数
         if (deviceBindingDTO.getInstitutionId() == null
-                || deviceBindingDTO.getUseType() == null
-                || deviceBindingDTO.getInstitutionName() == null) {
+                || deviceBindingDTO.getUseType() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         String institutionCode = deviceBindingDTO.getInstitutionId();
