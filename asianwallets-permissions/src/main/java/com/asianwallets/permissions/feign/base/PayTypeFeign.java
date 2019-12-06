@@ -6,7 +6,6 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.impl.PayTypeFeignImpl;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -24,6 +23,6 @@ public interface PayTypeFeign {
     @PostMapping("/paytype/banPayType")
     BaseResponse banCurrency(@RequestBody @ApiParam PayTypeDTO PayTypeDTO);
 
-    @GetMapping("/paytype/inquireAllPayType")
-    BaseResponse inquireAllPaytype();
+   /* @GetMapping("/paytype/inquireAllPayType")
+    BaseResponse inquireAllPaytype();*/
 }

@@ -31,7 +31,7 @@ public class PayType extends BaseEntity {
 
     @ApiModelProperty(value = "付款类型 0 收 1 付")
     @Column(name = "mode")
-    private Boolean mode;
+    private Byte mode;
 
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")

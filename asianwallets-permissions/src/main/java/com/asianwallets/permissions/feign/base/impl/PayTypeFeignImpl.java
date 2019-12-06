@@ -29,8 +29,8 @@ public class PayTypeFeignImpl implements PayTypeFeign {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
-    @Override
+    /*@Override
     public BaseResponse inquireAllPaytype() {
         throw new BusinessException(EResultEnum.ERROR.getCode());
-    }
+    }*/
 }

@@ -27,8 +27,11 @@ public class PayTypeDTO extends BasePageHelper {
     @ApiModelProperty(value = "小图标")
     private String dicon;
 
-    @ApiModelProperty(value = "交易类型 0 收 1 付")
-    private Boolean mode;
+    @ApiModelProperty(value = "交易类型 1 收 2 付")
+    private Byte mode;
+
+    @ApiModelProperty(value = "语言")
+    private String language;
 
     @ApiModelProperty(value = "启用禁用")
     private Boolean enabled;

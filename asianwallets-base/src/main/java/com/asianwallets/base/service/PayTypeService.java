@@ -2,6 +2,7 @@ package com.asianwallets.base.service;
 
 import com.asianwallets.common.dto.PayTypeDTO;
 import com.asianwallets.common.entity.PayType;
+import com.asianwallets.common.vo.PayTypeVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public interface PayTypeService {
      * @param payTypeDTO
      * @return
      */
-    PageInfo<PayType> pagePayType(PayTypeDTO payTypeDTO);
+    PageInfo<PayTypeVO> pagePayType(PayTypeDTO payTypeDTO);
 
     /**
      * 禁用支付方式

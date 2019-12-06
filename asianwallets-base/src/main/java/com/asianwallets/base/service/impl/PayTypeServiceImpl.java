@@ -7,6 +7,7 @@ import com.asianwallets.common.entity.PayType;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.PayTypeVO;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -83,8 +85,22 @@ public class PayTypeServiceImpl implements PayTypeService {
      * @return
      */
     @Override
-    public PageInfo<PayType> pagePayType(PayTypeDTO payTypeDTO) {
-        return new PageInfo<>(payTypeMapper.pagePayType(payTypeDTO));
+    public PageInfo<PayTypeVO> pagePayType(PayTypeDTO payTypeDTO) {
+        List<PayType> payTypes = payTypeMapper.pagePayType(payTypeDTO);
+        List<PayTypeVO> payTypeVOS = new ArrayList<>();
+        for (PayType payType : payTypes) {
+            PayTypeVO payTypeVO = new PayTypeVO();
+            if (payTypeDTO.getLanguage().equals("zh-cn")) {
+                BeanUtils.copyProperties(payType, payTypeVO);
+                payTypeVO.setName(payType.getCnName());
+                payTypeVOS.add(payTypeVO);
+            } else {
+                BeanUtils.copyProperties(payType, payTypeVO);
+                payTypeVO.setName(payType.getEnName());
+                payTypeVOS.add(payTypeVO);
+            }
+        }
+        return new PageInfo<>(payTypeVOS);
     }
 
     /**
