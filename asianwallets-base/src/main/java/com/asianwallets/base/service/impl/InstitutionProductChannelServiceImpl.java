@@ -50,9 +50,9 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
             institutionProduct.setCreateTime(new Date());
             institutionProduct.setCreator(username);
             institutionProductMapper.insert(institutionProduct);
-            //机构通道信息
-            List<InstitutionChannel> institutionChannelList = Lists.newArrayList();
             if (!ArrayUtil.isEmpty(institutionProductChannelDTO.getInstitutionChannelDTOList())) {
+                //机构通道信息
+                List<InstitutionChannel> institutionChannelList = Lists.newArrayList();
                 for (InstitutionChannelDTO institutionChannelDTO : institutionProductChannelDTO.getInstitutionChannelDTOList()) {
                     InstitutionChannel institutionChannel = new InstitutionChannel();
                     institutionChannel.setId(IDS.uuid2());
@@ -63,7 +63,6 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
                     institutionChannelList.add(institutionChannel);
                 }
                 institutionChannelMapper.insertList(institutionChannelList);
-
             }
         }
         return 1;
@@ -103,8 +102,8 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
             institutionProduct.setCreator(username);
             institutionProduct.setModifier(username);
             institutionProductMapper.insert(institutionProduct);
-            List<InstitutionChannel> institutionChannelList = Lists.newArrayList();
             if (!ArrayUtil.isEmpty(institutionProductChannelDTO.getInstitutionChannelDTOList())) {
+                List<InstitutionChannel> institutionChannelList = Lists.newArrayList();
                 for (InstitutionChannelDTO institutionChannelDTO : institutionProductChannelDTO.getInstitutionChannelDTOList()) {
                     InstitutionChannel institutionChannel = new InstitutionChannel();
                     institutionChannel.setId(IDS.uuid2());
