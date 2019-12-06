@@ -2,11 +2,13 @@ package com.asianwallets.base.service.impl;
 
 import com.asianwallets.base.dao.DeviceBindingMapper;
 import com.asianwallets.base.dao.DeviceInfoMapper;
+import com.asianwallets.base.dao.InstitutionMapper;
 import com.asianwallets.base.service.DeviceBindingService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.dto.DeviceBindingDTO;
 import com.asianwallets.common.entity.DeviceBinding;
+import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
@@ -39,6 +41,8 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
     @Autowired
     private AuditorProvider auditorProvider;
 
+    @Autowired
+    private InstitutionMapper institutionMapper;
 
     /**
      * 新增设备绑定信息
@@ -54,12 +58,16 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         String institutionCode = deviceBindingDTO.getInstitutionId();
+        Institution institution = institutionMapper.selectByPrimaryKey(institutionCode);
         ArrayList<DeviceBinding> bindings = new ArrayList<>();
         List<String> infoId = deviceBindingDTO.getInfoId();
+        if (institution == null) {
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
         int mark = 0;
         for (String id : infoId) {
             //判断是否可以绑定
-            DeviceInfoVO deviceInfoVO = deviceInfoMapper.selectModelAndVendorAndInfoById(id);
+            DeviceInfoVO deviceInfoVO = deviceInfoMapper.selectModelAndVendorAndInfoById(id, institutionCode);
             if (deviceInfoVO == null) {
                 throw new BusinessException(EResultEnum.DEVICE_NOT_AVAILABLE.getCode());
             }
@@ -67,6 +75,7 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
             mark += deviceInfoMapper.updateById(id, true, new Date(), deviceBindingDTO.getCreator());
             DeviceBinding deviceBinding = new DeviceBinding();
             deviceBinding.setInstitutionCode(institutionCode);
+            deviceBinding.setInstitutionName(institution.getCnName());
             deviceBinding.setInfoId(id);
             deviceBinding.setMerchantId(deviceBindingDTO.getMerchantId());
             deviceBinding.setMerchantName(deviceBindingDTO.getMerchantName());

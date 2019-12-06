@@ -142,9 +142,9 @@
                  left join device_vendor v on i.vendor_id = v.id
                  left join device_model m on i.model_id = m.id
         where i.id = #{id}
+          and i.institution_id = #{institutionId}
           and i.binding_status = 0
           and i.enabled = 1
-
     </select>
 
 

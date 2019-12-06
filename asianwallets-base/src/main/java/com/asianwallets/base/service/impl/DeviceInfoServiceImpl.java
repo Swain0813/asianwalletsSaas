@@ -62,21 +62,12 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
                 == null || deviceInfoDTO.getVendorId() == null || deviceInfoDTO.getModelId() == null || deviceInfoDTO.getInstitutionId() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        /*//判断名字是否为空
-        if (deviceInfoDTO.getName() == null) {
-            if (deviceInfoDTO.getModelName() == null || deviceInfoDTO.getVendorName() == null) {
-                throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-            }
-            //设置默认名称 厂商_型号
-            deviceInfoDTO.setName(deviceInfoDTO.getVendorName() + "_" + deviceInfoDTO.getModelName());
-        }*/
         Institution institutionInfo = institutionMapper.getInstitutionInfo(deviceInfoDTO.getInstitutionId(),auditorProvider.getLanguage());
         if (institutionInfo == null || !institutionInfo.getEnabled()) {
             throw new BusinessException(EResultEnum.INSTITUTION_STATUS_ABNORMAL.getCode());
         }
         //判断设备厂商是否存在
         DeviceInfo deviceInfo = getDeviceInfo(deviceInfoDTO);
-        deviceInfo.setEnabled(true);
         deviceInfo.setBindingStatus(false);
         if (deviceInfoMapper.selectOne(deviceInfo) != null) {
             throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
