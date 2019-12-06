@@ -192,9 +192,9 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
                 deviceInfoVO.setBindingStatusStr("未绑定");
             }
             if (deviceInfoVO.getEnabled()) {
-                deviceInfoVO.setBindingStatusStr("已启用");
+                deviceInfoVO.setEnabledStr("已启用");
             } else {
-                deviceInfoVO.setBindingStatusStr("已禁用");
+                deviceInfoVO.setEnabledStr("已禁用");
             }
         }
         return collect;
