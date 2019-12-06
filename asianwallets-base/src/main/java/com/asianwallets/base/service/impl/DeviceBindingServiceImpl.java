@@ -3,12 +3,14 @@ package com.asianwallets.base.service.impl;
 import com.asianwallets.base.dao.DeviceBindingMapper;
 import com.asianwallets.base.dao.DeviceInfoMapper;
 import com.asianwallets.base.dao.InstitutionMapper;
+import com.asianwallets.base.dao.MerchantMapper;
 import com.asianwallets.base.service.DeviceBindingService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.dto.DeviceBindingDTO;
 import com.asianwallets.common.entity.DeviceBinding;
 import com.asianwallets.common.entity.Institution;
+import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
@@ -44,6 +46,9 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
     @Autowired
     private InstitutionMapper institutionMapper;
 
+    @Autowired
+    private MerchantMapper merchantMapper;
+
     /**
      * 新增设备绑定信息
      *
@@ -64,6 +69,10 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
         if (institution == null) {
             throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
         }
+        Merchant merchant = merchantMapper.selectByPrimaryKey(deviceBindingDTO.getMerchantId());
+        if (merchant == null) {
+            throw new BusinessException(EResultEnum.INFORMATION_DOES_NOT_EXIST.getCode());
+        }
         int mark = 0;
         for (String id : infoId) {
             //判断是否可以绑定
@@ -78,7 +87,7 @@ public class DeviceBindingServiceImpl extends BaseServiceImpl<DeviceBinding> imp
             deviceBinding.setInstitutionName(institution.getCnName());
             deviceBinding.setInfoId(id);
             deviceBinding.setMerchantId(deviceBindingDTO.getMerchantId());
-            deviceBinding.setMerchantName(deviceBindingDTO.getMerchantName());
+            deviceBinding.setMerchantName(merchant.getCnName());
             deviceBinding.setVendorName(deviceInfoVO.getVendorName());
             deviceBinding.setModelName(deviceInfoVO.getModelName());
             deviceBinding.setInfoName(deviceInfoVO.getName());
