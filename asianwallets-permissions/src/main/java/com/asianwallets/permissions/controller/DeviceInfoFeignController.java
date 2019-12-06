@@ -119,7 +119,6 @@ public class DeviceInfoFeignController extends BaseController {
             }
             ExcelUtils excelUtils = new ExcelUtils();
             excelUtils.exportExcel(lists, DeviceInfoExportVO.class, writer);
-            writer.write(lists);
             writer.flush(out);
         } catch (Exception e) {
             log.info("==========【设备信息导出】==========【设备信息导出】", e);

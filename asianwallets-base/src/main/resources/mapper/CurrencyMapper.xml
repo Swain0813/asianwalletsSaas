@@ -76,7 +76,7 @@
         case enabled
         when 0 then '禁用'
         when 1 then '启用'
-        else '' end enabled
+        else '' end enabled,
         creator,create_time as createTime,
         modifier,update_time as updateTime
         from currency
