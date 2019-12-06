@@ -17,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author shenxinran
@@ -182,7 +184,8 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
         deviceInfoDTO.setPageSize(Integer.MAX_VALUE);
         deviceInfoDTO.setSort("i.create_time");
         List<DeviceInfoVO> deviceInfoVOS = deviceInfoMapper.pageDeviceInfo(deviceInfoDTO);
-        for (DeviceInfoVO deviceInfoVO : deviceInfoVOS) {
+        List<DeviceInfoVO> collect = deviceInfoVOS.stream().sorted(Comparator.comparing(DeviceInfoVO::getCreateTime).reversed()).collect(Collectors.toList());
+        for (DeviceInfoVO deviceInfoVO : collect) {
             if (deviceInfoVO.getBindingStatus()) {
                 deviceInfoVO.setBindingStatusStr("已绑定");
             } else {
@@ -194,6 +197,6 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
                 deviceInfoVO.setBindingStatusStr("已禁用");
             }
         }
-        return deviceInfoVOS;
+        return collect;
     }
 }
