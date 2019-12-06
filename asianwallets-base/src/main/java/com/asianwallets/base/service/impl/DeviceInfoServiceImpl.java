@@ -207,17 +207,17 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
                     if (s.equals(property[i])) {
                         oSet1.add(comment[i]);
                         if (s.equals("bindingStatus")) {
-                            if ((String.valueOf((oMap.get(s))).equals("1"))) {
+                            if ((String.valueOf((oMap.get(s))).equals("true"))) {
                                 oList2.add("已绑定");
-                            } else if ((String.valueOf((oMap.get(s))).equals("0"))) {
+                            } else if ((String.valueOf((oMap.get(s))).equals("false"))) {
                                 oList2.add("未绑定");
                             } else {
                                 oList2.add("");
                             }
                         } else if (s.equals("enabled")) {
-                            if ((String.valueOf((oMap.get(s))).equals("1"))) {
+                            if ((String.valueOf((oMap.get(s))).equals("true"))) {
                                 oList2.add("启用");
-                            } else if ((String.valueOf((oMap.get(s))).equals("0"))) {
+                            } else if ((String.valueOf((oMap.get(s))).equals("false"))) {
                                 oList2.add("禁用");
                             } else {
                                 oList2.add("");

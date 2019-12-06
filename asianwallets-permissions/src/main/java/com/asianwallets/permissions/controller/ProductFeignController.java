@@ -59,5 +59,13 @@ public class ProductFeignController extends BaseController {
         return productFeign.pageProduct(productDTO);
     }
 
+    @ApiOperation(value = "查询产品")
+    @PostMapping("/selectProduct")
+    public BaseResponse selectProduct(@RequestBody @ApiParam ProductDTO productDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(productDTO),
+                "查询产品"));
+        return productFeign.selectProduct(productDTO);
+    }
+
 
 }
