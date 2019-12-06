@@ -44,7 +44,7 @@
         id, vendor_id, model_id, name, imei, sn, mac, enabled, create_time, update_time,
         creator, modifier, remark
     </sql>
-    <select id="pageDeviceInfo" resultType="com.asianwallets.common.vo.DeviceInfoVO" resultMap="NewResultMap">
+    <select id="pageDeviceInfo" resultMap="NewResultMap">
         select i.id,
         i.vendor_id,
         i.model_id,
