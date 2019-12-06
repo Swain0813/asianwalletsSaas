@@ -97,4 +97,11 @@ public class SysMenuController extends BaseController {
                 "查询角色所有权限信息"));
         return ResultUtil.success(sysMenuService.getAllMenuByRoleId(roleId, permissionType));
     }
+
+    @ApiOperation(value = "查询用户所有权限信息（前端用）")
+    @GetMapping("/getAllMenu")
+    public BaseResponse getAllMenu(@RequestParam(value = "userId", required = false) @ApiParam String userId,
+                                   @RequestParam("permissionType") @ApiParam Integer permissionType) {
+        return ResultUtil.success(sysMenuService.getAllMenuByUserId(userId, permissionType));
+    }
 }

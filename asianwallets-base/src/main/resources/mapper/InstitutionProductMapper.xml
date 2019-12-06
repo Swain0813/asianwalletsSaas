@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.base.dao.InstitutionProductMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.InstitutionProduct">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="product_id" property="productId" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="product_abbrev" property="productAbbrev" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="baseSql">
+		institution_id, product_id, institution_name ,product_abbrev,
+		id,create_time, update_time ,creator ,modifier, remark
+	</sql>
+
+    <select id="selectByInstitutionId" resultMap="BaseResultMap">
+        select
+        <include refid="baseSql"/>
+        from institution_product where institution_id = #{institutionId}
+    </select>
+
+    <resultMap id="InstitutionProductChannelVOMap" type="com.asianwallets.common.vo.InstitutionProductChannelVO">
+        <result column="institutionId" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="productId" property="productId" jdbcType="VARCHAR"/>
+        <result column="institutionName" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="productAbbrev" property="productAbbrev" jdbcType="VARCHAR"/>
+        <collection property="institutionChannelVOList" javaType="list" resultMap="InstitutionChannelVOMap"/>
+    </resultMap>
+
+    <resultMap id="InstitutionChannelVOMap" type="com.asianwallets.common.vo.InstitutionChannelVO">
+        <result column="channelId" property="channelId" jdbcType="VARCHAR"/>
+        <result column="insProId" property="insProId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectRelevantInfoByInstitutionId" resultMap="InstitutionProductChannelVOMap">
+        select ip.institution_id   as institutionId,
+               ip.institution_name as institutionName,
+               ip.product_id       as productId,
+               ip.product_abbrev   as productAbbrev,
+               ic.channel_id       as channelId,
+               ic.ins_pro_id       as insProId
+        from institution_product ip
+                 left join institution_channel ic on ip.id = ic.ins_pro_id
+        where ip.institution_id = #{institutionId}
+    </select>
+
+    <delete id="deleteByInstitutionId">
+       delete from institution_product where institution_id = #{institutionId}
+    </delete>
+</mapper>

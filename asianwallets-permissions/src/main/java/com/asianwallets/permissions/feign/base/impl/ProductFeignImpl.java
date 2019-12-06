@@ -29,4 +29,9 @@ public class ProductFeignImpl implements ProductFeign {
     public BaseResponse pageProduct(ProductDTO productDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BaseResponse selectProduct(ProductDTO productDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

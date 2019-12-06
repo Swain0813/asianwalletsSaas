@@ -72,8 +72,11 @@ public class AsianWalletConstant {
     // institutionCacheKey_886079481626
     public static final String INSTITUTION_CACHE_KEY = "institutionCacheKey";//机构表的缓存key
 
-    // institutionCacheKey_886079481626
+    // merchantCacheKey_886079481626
     public static final String MERCHANT_CACHE_KEY = "merchantCacheKey";//商户表的缓存key
+
+    //institutionReqPmsCacheKey_I201912050048_1
+    public static final String INSTITUTION_REQPMS_CACHE_KEY = "institutionReqPmsCacheKey";//机构请求参数设置的缓存key
 
     // productCacheKey_1      key+产品code
     public static final String PRODUCT_CACHE_CODE_KEY = "productCodeCacheKey";//产品表的缓存key

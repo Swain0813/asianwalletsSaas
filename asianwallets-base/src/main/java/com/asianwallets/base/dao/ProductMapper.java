@@ -26,4 +26,12 @@ public interface ProductMapper extends  BaseMapper<Product> {
     * @return
     **/
     List<ProductVO> pageProduct(ProductDTO productDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/5
+     * @Descripate 查询产品
+     * @return
+     **/
+    List<ProductVO> selectProduct(ProductDTO productDTO);
 }

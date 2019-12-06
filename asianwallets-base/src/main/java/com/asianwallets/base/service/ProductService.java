@@ -6,6 +6,8 @@ import com.asianwallets.common.entity.Product;
 import com.asianwallets.common.vo.ProductVO;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
+
 /**
  * <p>
  * 产品表 服务类
@@ -41,4 +43,13 @@ public interface ProductService extends BaseService<Product> {
      * @Descripate 分页查询产品
      **/
     PageInfo<ProductVO> pageProduct(ProductDTO productDTO);
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/6
+     * @Descripate 查询产品
+     * @return
+     **/
+    List<ProductVO> selectProduct(ProductDTO productDTO);
 }
