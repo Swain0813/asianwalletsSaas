@@ -119,4 +119,15 @@ public class ProductServiceImpl extends BaseServiceImpl<Product> implements Prod
     public PageInfo<ProductVO> pageProduct(ProductDTO productDTO) {
         return new PageInfo<ProductVO>(productMapper.pageProduct(productDTO));
     }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/6
+     * @Descripate 查询产品
+     * @return
+     **/
+    @Override
+    public List<ProductVO> selectProduct(ProductDTO productDTO) {
+        return productMapper.pageProduct(productDTO);
+    }
 }
