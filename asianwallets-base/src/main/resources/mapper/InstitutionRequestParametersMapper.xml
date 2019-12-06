@@ -12,7 +12,7 @@
     <result column="order_no" property="orderNo" jdbcType="BIT" />
     <result column="order_amount" property="orderAmount" jdbcType="BIT" />
     <result column="product_code" property="productCode" jdbcType="BIT" />
-    <result column="terminal_id" property="terminalId" jdbcType="BIT" />
+    <result column="imei" property="imei" jdbcType="BIT" />
     <result column="operator_id" property="operatorId" jdbcType="BIT" />
     <result column="token" property="token" jdbcType="BIT" />
     <result column="issuer_id" property="issuerId" jdbcType="BIT" />
@@ -41,7 +41,7 @@
 
   <sql id="Base_Column_List" >
     id, institution_code, institution_name, trade_direction, merchant_id, order_currency,
-    order_time, order_no, order_amount, product_code, terminal_id, operator_id, token, issuer_id,
+    order_time, order_no, order_amount, product_code, imei, operator_id, token, issuer_id,
     browser_url, server_url, product_name, product_description, payer_name, payer_phone, payer_email,
     payer_bank, auth_code, sign_type, sign, language, remark1, remark2, remark3, create_time,
     update_time, creator, modifier, remark, enabled
