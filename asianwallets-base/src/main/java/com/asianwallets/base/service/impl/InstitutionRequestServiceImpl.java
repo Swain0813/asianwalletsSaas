@@ -139,7 +139,6 @@ public class InstitutionRequestServiceImpl implements InstitutionRequestService 
             if(institutionRequestParameters1==null){
                 throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
             }
-            //再复制查询结果对象
             BeanUtils.copyProperties(institutionRequest, institutionRequestParameters1, ReflexClazzUtils.getNullPropertyNames(institutionRequest));
             //修改人
             institutionRequestParameters1.setModifier(username);
