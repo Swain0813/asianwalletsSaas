@@ -28,9 +28,10 @@ public interface DeviceInfoMapper extends BaseMapper<DeviceInfo> {
      * 通过设备信息id查询设备的厂商、型号等信息
      *
      * @param id
+     * @param institutionId
      * @return
      */
-    DeviceInfoVO selectModelAndVendorAndInfoById(@Param("id") String id);
+    DeviceInfoVO selectModelAndVendorAndInfoById(@Param("id") String id, @Param("institutionId") String institutionId);
 
     /**
      * 通过id更新设备绑定

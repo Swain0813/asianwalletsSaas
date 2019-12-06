@@ -66,7 +66,7 @@ public class InstitutionRequestServiceImpl implements InstitutionRequestService 
                 //产品编号 线下必填
                 institutionRequest.setProductCode(true);
                 //设备编号 线下必填
-                institutionRequest.setTerminalId(true);
+                institutionRequest.setImei(true);
                 //操作员ID 线下必填
                 institutionRequest.setOperatorId(true);
                 //token 线下必填

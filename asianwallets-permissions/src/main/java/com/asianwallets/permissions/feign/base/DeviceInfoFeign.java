@@ -3,6 +3,7 @@ package com.asianwallets.permissions.feign.base;
 import com.asianwallets.common.dto.DeviceInfoDTO;
 import com.asianwallets.common.entity.DeviceInfo;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.vo.DeviceInfoVO;
 import com.asianwallets.permissions.feign.base.impl.DeviceInfoFeignImpl;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -71,5 +72,5 @@ public interface DeviceInfoFeign {
      * @returne
      */
     @PostMapping("/deviceinfo/exportDeviceInfo")
-    List exportDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO);
+    List<DeviceInfoVO> exportDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO);
 }

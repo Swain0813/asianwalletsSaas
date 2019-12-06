@@ -95,6 +95,7 @@ public interface InstitutionService extends BaseService<Institution> {
      * @return
      **/
     List<InstitutionExportVO>  exportInstitution(InstitutionDTO institutionDTO);
+
     /**
      * @return
      * @Author YangXu

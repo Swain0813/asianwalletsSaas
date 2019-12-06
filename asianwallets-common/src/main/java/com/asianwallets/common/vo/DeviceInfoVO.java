@@ -55,6 +55,9 @@ public class DeviceInfoVO {
     @ApiModelProperty("绑定状态")
     private Boolean bindingStatus;
 
+    @ApiModelProperty("绑定状态")
+    private String bindingStatusStr;
+
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
@@ -62,6 +65,9 @@ public class DeviceInfoVO {
     @ApiModelProperty("更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
+
+    @ApiModelProperty("启用禁用")
+    private String enabledStr;
 
     @ApiModelProperty(value = "创建者")
     private String creator;

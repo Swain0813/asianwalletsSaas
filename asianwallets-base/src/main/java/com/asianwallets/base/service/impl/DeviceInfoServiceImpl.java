@@ -4,15 +4,11 @@ import com.asianwallets.base.dao.*;
 import com.asianwallets.base.service.DeviceInfoService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.config.AuditorProvider;
-import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.DeviceInfoDTO;
 import com.asianwallets.common.entity.DeviceInfo;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.BeanToMapUtil;
-import com.asianwallets.common.utils.ReflexClazzUtils;
-import com.asianwallets.common.vo.DeviceInfoExportVO;
 import com.asianwallets.common.vo.DeviceInfoVO;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
@@ -21,7 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author shenxinran
@@ -49,6 +46,7 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
 
     @Autowired
     private AuditorProvider auditorProvider;
+
     /**
      * 新增设备信息
      *
@@ -62,21 +60,12 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
                 == null || deviceInfoDTO.getVendorId() == null || deviceInfoDTO.getModelId() == null || deviceInfoDTO.getInstitutionId() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        /*//判断名字是否为空
-        if (deviceInfoDTO.getName() == null) {
-            if (deviceInfoDTO.getModelName() == null || deviceInfoDTO.getVendorName() == null) {
-                throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-            }
-            //设置默认名称 厂商_型号
-            deviceInfoDTO.setName(deviceInfoDTO.getVendorName() + "_" + deviceInfoDTO.getModelName());
-        }*/
-        Institution institutionInfo = institutionMapper.getInstitutionInfo(deviceInfoDTO.getInstitutionId(),auditorProvider.getLanguage());
+        Institution institutionInfo = institutionMapper.getInstitutionInfo(deviceInfoDTO.getInstitutionId(), auditorProvider.getLanguage());
         if (institutionInfo == null || !institutionInfo.getEnabled()) {
             throw new BusinessException(EResultEnum.INSTITUTION_STATUS_ABNORMAL.getCode());
         }
         //判断设备厂商是否存在
         DeviceInfo deviceInfo = getDeviceInfo(deviceInfoDTO);
-        deviceInfo.setEnabled(true);
         deviceInfo.setBindingStatus(false);
         if (deviceInfoMapper.selectOne(deviceInfo) != null) {
             throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
@@ -188,49 +177,21 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
      * @return
      */
     @Override
-    public List exportDeviceInfo(DeviceInfoDTO deviceInfoDTO) {
+    public List<DeviceInfoVO> exportDeviceInfo(DeviceInfoDTO deviceInfoDTO) {
         deviceInfoDTO.setPageSize(Integer.MAX_VALUE);
         List<DeviceInfoVO> deviceInfoVOS = deviceInfoMapper.pageDeviceInfo(deviceInfoDTO);
-        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(DeviceInfoExportVO.class);
-        //注释信息
-        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
-        //属性名信息
-        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
-        ArrayList<Object> oList1 = new ArrayList<>();
-        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
         for (DeviceInfoVO deviceInfoVO : deviceInfoVOS) {
-            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(deviceInfoVO);
-            ArrayList<Object> oList2 = new ArrayList<>();
-            Set<String> keySet = oMap.keySet();
-            for (int i = 0; i < property.length; i++) {
-                for (String s : keySet) {
-                    if (s.equals(property[i])) {
-                        oSet1.add(comment[i]);
-                        if (s.equals("bindingStatus")) {
-                            if ((String.valueOf((oMap.get(s))).equals("true"))) {
-                                oList2.add("已绑定");
-                            } else if ((String.valueOf((oMap.get(s))).equals("false"))) {
-                                oList2.add("未绑定");
-                            } else {
-                                oList2.add("");
-                            }
-                        } else if (s.equals("enabled")) {
-                            if ((String.valueOf((oMap.get(s))).equals("true"))) {
-                                oList2.add("启用");
-                            } else if ((String.valueOf((oMap.get(s))).equals("false"))) {
-                                oList2.add("禁用");
-                            } else {
-                                oList2.add("");
-                            }
-                        } else {
-                            oList2.add(oMap.get(s));
-                        }
-                    }
-                }
+            if (deviceInfoVO.getBindingStatus()) {
+                deviceInfoVO.setBindingStatusStr("已绑定");
+            } else {
+                deviceInfoVO.setBindingStatusStr("未绑定");
             }
-            oList1.add(oList2);
+            if (deviceInfoVO.getEnabled()) {
+                deviceInfoVO.setBindingStatusStr("已启用");
+            } else {
+                deviceInfoVO.setBindingStatusStr("已禁用");
+            }
         }
-        oList1.add(0, oSet1);
-        return oList1;
+        return deviceInfoVOS;
     }
 }

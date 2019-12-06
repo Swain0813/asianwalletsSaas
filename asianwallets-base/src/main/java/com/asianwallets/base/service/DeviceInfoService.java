@@ -58,5 +58,5 @@ public interface DeviceInfoService extends BaseService<DeviceInfo> {
      * @param deviceInfoDTO
      * @return
      */
-    List exportDeviceInfo(DeviceInfoDTO deviceInfoDTO);
+    List<DeviceInfoVO> exportDeviceInfo(DeviceInfoDTO deviceInfoDTO);
 }

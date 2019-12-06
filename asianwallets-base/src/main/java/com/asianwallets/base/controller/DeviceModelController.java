@@ -51,7 +51,7 @@ public class DeviceModelController extends BaseController {
         return ResultUtil.success(deviceModelService.pageDeviceModel(deviceModelDTO));
     }
 
-    @ApiOperation(value = "查询厂商类别")
+    @ApiOperation(value = "查询设备型号类别")
     @GetMapping("/queryModelCategory")
     public BaseResponse queryModelCategory() {
         return ResultUtil.success(deviceModelService.queryModelCategory());

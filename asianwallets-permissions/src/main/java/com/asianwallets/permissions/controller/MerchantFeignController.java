@@ -76,6 +76,8 @@ public class MerchantFeignController extends BaseController {
     @ApiOperation(value = "导出商户")
     @PostMapping("/exportMerchant")
     public BaseResponse exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO){
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(merchantDTO),
+                "导出商户"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
             HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();

@@ -2,6 +2,7 @@ package com.asianwallets.base.service;
 
 import com.asianwallets.common.dto.CurrencyDTO;
 import com.asianwallets.common.entity.Currency;
+import com.asianwallets.common.vo.CurrencyExportVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -49,4 +50,11 @@ public interface CurrencyService {
      * @return
      */
     List<Currency> inquireAllCurrency();
+
+    /**
+     * 导出币种信息用
+     * @param currencyDTO
+     * @return
+     */
+    List<CurrencyExportVO> exportCurrency(CurrencyDTO currencyDTO);
 }

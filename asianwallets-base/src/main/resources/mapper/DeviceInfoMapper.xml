@@ -44,7 +44,7 @@
         id, vendor_id, model_id, name, imei, sn, mac, enabled, create_time, update_time,
         creator, modifier, remark
     </sql>
-    <select id="pageDeviceInfo" resultType="com.asianwallets.common.vo.DeviceInfoVO" resultMap="NewResultMap">
+    <select id="pageDeviceInfo" resultMap="NewResultMap">
         select i.id,
         i.vendor_id,
         i.model_id,
@@ -142,9 +142,9 @@
                  left join device_vendor v on i.vendor_id = v.id
                  left join device_model m on i.model_id = m.id
         where i.id = #{id}
+          and i.institution_id = #{institutionId}
           and i.binding_status = 0
           and i.enabled = 1
-
     </select>
 
 
