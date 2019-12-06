@@ -146,8 +146,13 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
             throw new BusinessException(EResultEnum.DEVICE_UNBIND_FAILED.getCode());
         }
         //判断imei 与 sn 是否重复
-        if (!StringUtils.isBlank(deviceInfoDTO.getImei()) || !StringUtils.isBlank(deviceInfoDTO.getSn())) {
-            if (deviceInfoMapper.selectByIMEIAndSN(deviceInfoDTO) != 0) {
+        if (!StringUtils.isBlank(deviceInfoDTO.getImei())) {
+            if (deviceInfoMapper.selectByIMEI(deviceInfoDTO) != 0) {
+                throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
+            }
+        }
+        if (!StringUtils.isBlank(deviceInfoDTO.getSn())) {
+            if (deviceInfoMapper.selectBySN(deviceInfoDTO) != 0) {
                 throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
             }
         }

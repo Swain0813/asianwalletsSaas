@@ -6,7 +6,6 @@ import com.asianwallets.common.dto.PayTypeDTO;
 import com.asianwallets.common.entity.PayType;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
@@ -47,8 +46,7 @@ public class PayTypeServiceImpl implements PayTypeService {
                 BeanUtils.copyProperties(payTypeDTO, payType);
                 payType.setCreateTime(new Date());
                 payType.setEnabled(true);
-                String id = IDS.uniqueID().toString();
-                payType.setId(DateToolUtils.getReqDateE().concat(id.substring(id.length() - 4)));
+                payType.setId(IDS.uniqueID().toString());
                 return payTypeMapper.insert(payType);
             } else {
                 throw new BusinessException(EResultEnum.PAYMENTMODE_EXIST.getCode());
