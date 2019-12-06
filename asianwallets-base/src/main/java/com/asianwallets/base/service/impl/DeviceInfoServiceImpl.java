@@ -156,6 +156,7 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
      */
     @Override
     public PageInfo<DeviceInfoVO> pageDeviceInfo(DeviceInfoDTO deviceInfoDTO) {
+        deviceInfoDTO.setSort("i.create_time");
         return new PageInfo<>(deviceInfoMapper.pageDeviceInfo(deviceInfoDTO));
     }
 
@@ -179,6 +180,7 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
     @Override
     public List<DeviceInfoVO> exportDeviceInfo(DeviceInfoDTO deviceInfoDTO) {
         deviceInfoDTO.setPageSize(Integer.MAX_VALUE);
+        deviceInfoDTO.setSort("i.create_time");
         List<DeviceInfoVO> deviceInfoVOS = deviceInfoMapper.pageDeviceInfo(deviceInfoDTO);
         for (DeviceInfoVO deviceInfoVO : deviceInfoVOS) {
             if (deviceInfoVO.getBindingStatus()) {
