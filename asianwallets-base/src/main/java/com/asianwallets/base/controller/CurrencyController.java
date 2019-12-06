@@ -5,11 +5,14 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.CurrencyDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.vo.CurrencyExportVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @ClassName CurrencyController
@@ -57,5 +60,11 @@ public class CurrencyController extends BaseController {
     @GetMapping("inquireAllCurrency")
     public BaseResponse inquireAllCurrency() {
         return ResultUtil.success(currencyService.inquireAllCurrency());
+    }
+
+    @ApiOperation(value = "导出币种信息")
+    @PostMapping("exportCurrency")
+    public List<CurrencyExportVO> exportCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO){
+        return currencyService.exportCurrency(currencyDTO);
     }
 }

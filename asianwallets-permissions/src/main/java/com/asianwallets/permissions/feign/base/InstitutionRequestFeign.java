@@ -1,8 +1,7 @@
 package com.asianwallets.permissions.feign.base;
-
 import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.permissions.feign.base.impl.NoticeFeignImpl;
+import com.asianwallets.permissions.feign.base.impl.InstitutionRequestFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -14,7 +13,7 @@ import java.util.List;
 /**
  * 机构请求参数设置的Feign端
  */
-@FeignClient(value = "asianwallets-base", fallback = NoticeFeignImpl.class)
+@FeignClient(value = "asianwallets-base", fallback = InstitutionRequestFeignImpl.class)
 public interface InstitutionRequestFeign {
 
     @ApiOperation(value = "添加机构请求参数设置")

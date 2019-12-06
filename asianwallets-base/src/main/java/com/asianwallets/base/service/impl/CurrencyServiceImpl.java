@@ -10,6 +10,7 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.CurrencyExportVO;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -141,5 +142,16 @@ public class CurrencyServiceImpl implements CurrencyService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("enabled", true);
         return currencyMapper.selectByExample(example);
+    }
+
+    /**
+     * 导出币种信息用
+     * @param currencyDTO
+     * @return
+     */
+    @Override
+    public List<CurrencyExportVO> exportCurrency(CurrencyDTO currencyDTO){
+        List<CurrencyExportVO> currencyExportVOLists = currencyMapper.exportCurrency(currencyDTO);
+        return currencyExportVOLists;
     }
 }

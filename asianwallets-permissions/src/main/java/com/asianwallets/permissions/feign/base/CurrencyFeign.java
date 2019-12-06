@@ -2,6 +2,7 @@ package com.asianwallets.permissions.feign.base;
 
 import com.asianwallets.common.dto.CurrencyDTO;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.vo.CurrencyExportVO;
 import com.asianwallets.permissions.feign.base.impl.CurrencyFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -9,6 +10,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 /**
  * 国家模块Feign端
@@ -36,4 +39,8 @@ public interface CurrencyFeign {
     @ApiOperation(value = "查询所有币种")
     @GetMapping("/currency/inquireAllCurrency")
     BaseResponse inquireAllCurrency();
+
+    @ApiOperation(value = "导出币种信息")
+    @PostMapping("exportCurrency")
+    List<CurrencyExportVO> exportCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO);
 }

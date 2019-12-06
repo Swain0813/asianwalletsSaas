@@ -54,8 +54,8 @@ public class InstitutionRequestParameters extends BaseEntity {
     private Boolean productCode;
 
     @ApiModelProperty(value = "设备编号")
-    @Column(name = "terminal_id")
-    private Boolean terminalId;
+    @Column(name = "imei")
+    private Boolean imei;
 
     @ApiModelProperty(value = "操作员ID")
     @Column(name = "operator_id")

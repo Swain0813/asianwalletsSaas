@@ -72,16 +72,16 @@ public class InstitutionExportVO {
     private String auditStatus;
 
     @ApiModelProperty(value = "是否支持退款")
-    private Boolean supportRefundState;
+    private String supportRefundState;
 
     @ApiModelProperty(value = "退款方式")//1-API接口 2-人工退款
-    private Byte refundMethod;
+    private String refundMethod;
 
     @ApiModelProperty(value = "是否开通DCC")
-    private Boolean dcc;
+    private String dcc;
 
     @ApiModelProperty(value = "是否开通异步通知")
-    private Boolean asynNotice;
+    private String asynNotice;
 
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

@@ -10,6 +10,7 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
@@ -65,7 +66,7 @@ public class InstitutionRequestServiceImpl implements InstitutionRequestService 
                 //产品编号 线下必填
                 institutionRequest.setProductCode(true);
                 //设备编号 线下必填
-                institutionRequest.setTerminalId(true);
+                institutionRequest.setImei(true);
                 //操作员ID 线下必填
                 institutionRequest.setOperatorId(true);
                 //token 线下必填
@@ -129,12 +130,8 @@ public class InstitutionRequestServiceImpl implements InstitutionRequestService 
     public int updateInstitutionRequest(String username, List<InstitutionRequestDTO> institutionRequests){
         List<InstitutionRequestParameters> institutionRequestParameters = Lists.newArrayList();
         for(InstitutionRequestDTO institutionRequest:institutionRequests){
-            //机构编号的非空check
-            if(StringUtils.isEmpty(institutionRequest.getInstitutionCode())){
-                throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-            }
-            //交易方向的非空check
-            if(StringUtils.isEmpty(institutionRequest.getTradeDirection())){
+            //修改机构请求参数设置id的非空check
+            if(StringUtils.isEmpty(institutionRequest.getId())){
                 throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
             }
             //根据机构编号和交易方向判断数据存不存在
@@ -142,13 +139,12 @@ public class InstitutionRequestServiceImpl implements InstitutionRequestService 
             if(institutionRequestParameters1==null){
                 throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
             }
-            InstitutionRequestParameters updateInstitutionRequestParameters = new InstitutionRequestParameters();
-            BeanUtils.copyProperties(institutionRequest, updateInstitutionRequestParameters);
+            BeanUtils.copyProperties(institutionRequest, institutionRequestParameters1, ReflexClazzUtils.getNullPropertyNames(institutionRequest));
             //修改人
-            updateInstitutionRequestParameters.setModifier(username);
+            institutionRequestParameters1.setModifier(username);
             //修改时间
-            updateInstitutionRequestParameters.setUpdateTime(new Date());
-            institutionRequestParameters.add(updateInstitutionRequestParameters);
+            institutionRequestParameters1.setUpdateTime(new Date());
+            institutionRequestParameters.add(institutionRequestParameters1);
         }
         int num =institutionRequestParametersMapper.updateBatchList(institutionRequestParameters);
         try {

@@ -195,6 +195,7 @@
         case i.refund_method
         when 1 then 'API接口'
         when 2 then '人工退款'
+        when 3 then 'API接口,人工退款'
         else '' end refundMethod,
         case i.dcc
         when 0 then '否'

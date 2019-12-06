@@ -127,6 +127,8 @@ public class InstitutionFeignController extends BaseController {
     @ApiOperation(value = "导出机构")
     @PostMapping("/exportInstitution")
     public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO, HttpServletResponse response) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionDTO),
+                "导出机构"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
             List<InstitutionExportVO> dataList = institutionFeign.exportInstitution(institutionDTO);

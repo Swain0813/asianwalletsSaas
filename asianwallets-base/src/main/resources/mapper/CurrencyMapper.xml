@@ -63,7 +63,31 @@
             <if test="name != null and name != ''">
                 AND name LIKE CONCAT(CONCAT('%',#{name}),'%')
             </if>
-            <if test="enabled != null">
+            <if test="enabled != null and enabled != ''">
+                AND enabled = #{enabled}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="exportCurrency" resultType="com.asianwallets.common.vo.CurrencyExportVO">
+        select
+        code,name,remark,defaults,
+        case enabled
+        when 0 then '禁用'
+        when 1 then '启用'
+        else '' end enabled
+        creator,create_time as createTime,
+        modifier,update_time as updateTime
+        from currency
+        <where>
+            <if test="code != null and code != ''">
+                AND code LIKE CONCAT(CONCAT('%',#{code}),'%')
+            </if>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT(CONCAT('%',#{name}),'%')
+            </if>
+            <if test="enabled != null and enabled != ''">
                 AND enabled = #{enabled}
             </if>
         </where>

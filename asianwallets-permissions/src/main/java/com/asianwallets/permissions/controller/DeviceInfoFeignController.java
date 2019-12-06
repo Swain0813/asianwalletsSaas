@@ -101,6 +101,8 @@ public class DeviceInfoFeignController extends BaseController {
     @ApiOperation(value = "导出设备信息")
     @PostMapping("/exportDeviceInfo")
     public BaseResponse exportDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO, HttpServletResponse response) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(deviceInfoDTO),
+                "导出设备信息"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
             List lists = deviceInfoFeign.exportDeviceInfo(deviceInfoDTO);

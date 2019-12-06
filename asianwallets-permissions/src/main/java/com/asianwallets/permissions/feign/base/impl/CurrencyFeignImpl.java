@@ -4,8 +4,11 @@ import com.asianwallets.common.dto.CurrencyDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.vo.CurrencyExportVO;
 import com.asianwallets.permissions.feign.base.CurrencyFeign;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @ClassName CurrencyFeignImpl
@@ -39,6 +42,12 @@ public class CurrencyFeignImpl implements CurrencyFeign {
 
     @Override
     public BaseResponse inquireAllCurrency() {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+
+    @Override
+    public List<CurrencyExportVO> exportCurrency(CurrencyDTO currencyDTO){
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }
