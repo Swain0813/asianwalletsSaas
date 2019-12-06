@@ -25,6 +25,10 @@
         from institution_product where institution_id = #{institutionId}
     </select>
 
+    <select id="selectIdListByInstitutionId" resultType="String">
+        select id from institution_product where institution_id = #{institutionId}
+    </select>
+
     <resultMap id="InstitutionProductChannelVOMap" type="com.asianwallets.common.vo.InstitutionProductChannelVO">
         <result column="institutionId" property="institutionId" jdbcType="VARCHAR"/>
         <result column="productId" property="productId" jdbcType="VARCHAR"/>
