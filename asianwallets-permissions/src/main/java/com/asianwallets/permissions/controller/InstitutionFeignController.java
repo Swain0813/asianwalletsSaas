@@ -140,7 +140,7 @@ public class InstitutionFeignController extends BaseController {
                 writer.flush(out);
                 return ResultUtil.success();
             }
-            ExcelUtils<InstitutionExportVO> excelUtils = new ExcelUtils<>();
+            ExcelUtils excelUtils = new ExcelUtils();
             excelUtils.exportExcel(dataList, InstitutionExportVO.class, writer);
             writer.flush(out);
         } catch (Exception e) {

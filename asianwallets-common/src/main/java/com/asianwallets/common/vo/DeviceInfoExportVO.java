@@ -39,7 +39,7 @@ public class DeviceInfoExportVO {
     private String sn;
 
     @ApiModelProperty("绑定状态")
-    private Boolean bindingStatus;
+    private String bindingStatusStr;
 
     @ApiModelProperty(value = "操作员")
     private String creator;
@@ -49,6 +49,6 @@ public class DeviceInfoExportVO {
     private Date updateTime;
 
     @ApiModelProperty("状态")
-    private Boolean enabled;
+    private String enabledStr;
 
 }

@@ -5,6 +5,7 @@ import com.asianwallets.common.entity.DeviceInfo;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.vo.DeviceInfoVO;
 import com.asianwallets.permissions.feign.base.DeviceInfoFeign;
 import org.springframework.stereotype.Component;
 
@@ -79,7 +80,7 @@ public class DeviceInfoFeignImpl implements DeviceInfoFeign {
      * @return
      */
     @Override
-    public List exportDeviceInfo(DeviceInfoDTO deviceInfoDTO) {
+    public List<DeviceInfoVO> exportDeviceInfo(DeviceInfoDTO deviceInfoDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

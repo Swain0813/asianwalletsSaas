@@ -1,10 +1,11 @@
 package com.asianwallets.common.utils;
+
 import cn.hutool.poi.excel.ExcelWriter;
 import com.asianwallets.common.constant.AsianWalletConstant;
 
 import java.util.*;
 
-public class ExcelUtils<T> {
+public class ExcelUtils {
 
     /**
      * 导出Excel文件
@@ -13,7 +14,7 @@ public class ExcelUtils<T> {
      * @param clazz    字节码对象
      * @return Excel输出流
      */
-    public ExcelWriter exportExcel(List<T> dataList, Class<T> clazz,ExcelWriter writer) {
+    public ExcelWriter exportExcel(List dataList, Class clazz, ExcelWriter writer) {
         //获取属性值字段和注释
         Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
         //注释信息
@@ -24,7 +25,7 @@ public class ExcelUtils<T> {
         List<Object> sourceList = new ArrayList<>();
         //注释集合
         Set<Object> commentSet = new LinkedHashSet<>();
-        for (T data : dataList) {
+        for (Object data : dataList) {
             //对象属性名对应属性值的Map
             Map<String, Object> objMap = BeanToMapUtil.beanToMap(data);
             List<Object> tempList = new ArrayList<>();

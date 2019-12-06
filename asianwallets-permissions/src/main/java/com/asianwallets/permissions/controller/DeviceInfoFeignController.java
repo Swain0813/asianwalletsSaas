@@ -12,7 +12,10 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.ArrayUtil;
+import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
+import com.asianwallets.common.vo.DeviceInfoExportVO;
+import com.asianwallets.common.vo.DeviceInfoVO;
 import com.asianwallets.permissions.feign.base.DeviceInfoFeign;
 import com.asianwallets.permissions.service.DeviceInfoFeignService;
 import com.asianwallets.permissions.service.OperationLogService;
@@ -105,7 +108,7 @@ public class DeviceInfoFeignController extends BaseController {
                 "导出设备信息"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
-            List lists = deviceInfoFeign.exportDeviceInfo(deviceInfoDTO);
+            List<DeviceInfoVO> lists = deviceInfoFeign.exportDeviceInfo(deviceInfoDTO);
             ServletOutputStream out = response.getOutputStream();
             if (ArrayUtil.isEmpty(lists)) {
                 //数据不存在的场合
@@ -114,6 +117,8 @@ public class DeviceInfoFeignController extends BaseController {
                 writer.flush(out);
                 return ResultUtil.success();
             }
+            ExcelUtils excelUtils = new ExcelUtils();
+            excelUtils.exportExcel(lists, DeviceInfoExportVO.class, writer);
             writer.write(lists);
             writer.flush(out);
         } catch (Exception e) {

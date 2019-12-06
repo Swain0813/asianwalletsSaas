@@ -105,7 +105,7 @@ public class CurrencyFeignController extends BaseController {
                 writer.flush(out);
                 return ResultUtil.success();
             }
-            ExcelUtils<CurrencyExportVO> excelUtils = new ExcelUtils<>();
+            ExcelUtils excelUtils = new ExcelUtils();
             excelUtils.exportExcel(dataList, CurrencyExportVO.class, writer);
             writer.flush(out);
         } catch (Exception e) {
