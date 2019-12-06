@@ -128,6 +128,6 @@ public class ProductServiceImpl extends BaseServiceImpl<Product> implements Prod
      **/
     @Override
     public List<ProductVO> selectProduct(ProductDTO productDTO) {
-        return productMapper.pageProduct(productDTO);
+        return productMapper.selectProduct(productDTO);
     }
 }
