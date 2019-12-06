@@ -21,7 +21,7 @@ public interface InstitutionRequestParametersMapper extends BaseMapper<Instituti
     List<InstitutionRequestParameters> pageInstitutionRequest(InstitutionRequestDTO institutionRequestDTO);
 
     /**
-     * 查询机构请求参数设置详情
+     * 查询机构请求参数设置详情用
      * @param institutionRequestDTO
      * @return
      */

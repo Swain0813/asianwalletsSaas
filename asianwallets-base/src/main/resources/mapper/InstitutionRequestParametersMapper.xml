@@ -48,8 +48,8 @@
   </sql>
 
   <select id="pageInstitutionRequest" resultMap="BaseResultMap">
-    select distinct
-    <include refid="Base_Column_List" />
+    select
+    DISTINCT institution_code,institution_name,create_time,creator
     from institution_request_parameters
     <where>
       <if test="institutionCode!=null and institutionCode!= ''">
