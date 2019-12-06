@@ -90,6 +90,9 @@
             <if test="institutionName != null and institutionName !=''">
                 AND institution_name LIKE CONCAT(CONCAT('%',#{institutionName}),'%')
             </if>
+            <if test="merchantName != null and merchantName !=''">
+                AND merchant_name LIKE CONCAT(CONCAT('%',#{merchantName}),'%')
+            </if>
             <if test="vendorName != null and vendorName !=''">AND vendor_name = #{vendorName}</if>
             <if test="modelName != null and modelName !=''">AND model_name = #{modelName}</if>
             <if test="infoName != null and infoName !=''">AND info_name = #{infoName}</if>
