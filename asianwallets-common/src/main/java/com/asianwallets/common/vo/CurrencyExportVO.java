@@ -22,7 +22,6 @@ public class CurrencyExportVO {
     @ApiModelProperty(value = "币种国家")
     private String remark;
 
-
     @ApiModelProperty(value = "币种最小单位")
     private String defaults;
 
