@@ -3,6 +3,7 @@ package com.asianwallets.base.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.CurrencyDTO;
 import com.asianwallets.common.entity.Currency;
+import com.asianwallets.common.vo.CurrencyExportVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -34,4 +35,11 @@ public interface CurrencyMapper extends BaseMapper<Currency> {
      * @return
      */
     List<Currency> pageCurrency(CurrencyDTO currencyDTO);
+
+    /**
+     * 导出币种信息用
+     * @param currencyDTO
+     * @return
+     */
+    List<CurrencyExportVO> exportCurrency(CurrencyDTO currencyDTO);
 }
