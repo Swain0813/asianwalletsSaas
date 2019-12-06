@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.InstitutionRequestParametersMapper" >
+  <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.InstitutionRequestParameters" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="institution_code" property="institutionCode" jdbcType="VARCHAR" />
+    <result column="institution_name" property="institutionName" jdbcType="VARCHAR" />
+    <result column="trade_direction" property="tradeDirection" jdbcType="BIT" />
+    <result column="merchant_id" property="merchantId" jdbcType="BIT" />
+    <result column="order_currency" property="orderCurrency" jdbcType="BIT" />
+    <result column="order_time" property="orderTime" jdbcType="BIT" />
+    <result column="order_no" property="orderNo" jdbcType="BIT" />
+    <result column="order_amount" property="orderAmount" jdbcType="BIT" />
+    <result column="product_code" property="productCode" jdbcType="BIT" />
+    <result column="terminal_id" property="terminalId" jdbcType="BIT" />
+    <result column="operator_id" property="operatorId" jdbcType="BIT" />
+    <result column="token" property="token" jdbcType="BIT" />
+    <result column="issuer_id" property="issuerId" jdbcType="BIT" />
+    <result column="browser_url" property="browserUrl" jdbcType="BIT" />
+    <result column="server_url" property="serverUrl" jdbcType="BIT" />
+    <result column="product_name" property="productName" jdbcType="BIT" />
+    <result column="product_description" property="productDescription" jdbcType="BIT" />
+    <result column="payer_name" property="payerName" jdbcType="BIT" />
+    <result column="payer_phone" property="payerName" jdbcType="BIT" />
+    <result column="payer_email" property="payerEmail" jdbcType="BIT" />
+    <result column="payer_bank" property="payerBank" jdbcType="BIT" />
+    <result column="auth_code" property="authCode" jdbcType="BIT" />
+    <result column="sign_type" property="signType" jdbcType="BIT" />
+    <result column="sign" property="sign" jdbcType="BIT" />
+    <result column="language" property="language" jdbcType="BIT" />
+    <result column="remark1" property="remark1" jdbcType="BIT" />
+    <result column="remark2" property="remark2" jdbcType="BIT" />
+    <result column="remark3" property="remark3" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="enabled" property="enabled" jdbcType="BIT" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, institution_code, institution_name, trade_direction, merchant_id, order_currency,
+    order_time, order_no, order_amount, product_code, terminal_id, operator_id, token, issuer_id,
+    browser_url, server_url, product_name, product_description, payer_name, payer_phone, payer_email,
+    payer_bank, auth_code, sign_type, sign, language, remark1, remark2, remark3, create_time,
+    update_time, creator, modifier, remark, enabled
+  </sql>
+
+  <select id="pageInstitutionRequest" resultMap="BaseResultMap">
+    select
+    DISTINCT institution_code,institution_name,create_time,creator
+    from institution_request_parameters
+    <where>
+      <if test="institutionCode!=null and institutionCode!= ''">
+        AND institution_code=#{institutionCode}
+      </if>
+      <if test="institutionName != null and institutionName != ''">
+        AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+      </if>
+      <if test="startTime != null and startTime != ''">
+        AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+        AND DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <select id="getInstitutionRequest" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from institution_request_parameters
+    where institution_code=#{institutionCode}
+  </select>
+
+
+  <select id="getInstitutionRequests" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from institution_request_parameters
+    <where>
+      <if test="institutionCode!=null and institutionCode!= ''">
+        AND institution_code=#{institutionCode}
+      </if>
+      <if test="institutionName != null and institutionName != ''">
+        AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+      </if>
+      <if test="startTime != null and startTime != ''">
+        AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+        AND DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
+      </if>
+    </where>
+  </select>
+
+</mapper>

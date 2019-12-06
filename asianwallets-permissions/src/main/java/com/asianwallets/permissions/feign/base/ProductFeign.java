@@ -25,4 +25,8 @@ public interface ProductFeign {
     @PostMapping("/product/pageProduct")
     BaseResponse pageProduct(@RequestBody @ApiParam ProductDTO productDTO);
 
+    @ApiOperation(value = "查询产品")
+    @PostMapping("/product/selectProduct")
+    BaseResponse selectProduct(@RequestBody @ApiParam ProductDTO productDTO);
+
 }

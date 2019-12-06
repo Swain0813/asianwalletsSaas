@@ -54,5 +54,14 @@ public class ProductController extends BaseController {
         return ResultUtil.success(productService.pageProduct(productDTO));
     }
 
+    @ApiOperation(value = "查询产品")
+    @PostMapping("/selectProduct")
+    public BaseResponse selectProduct(@RequestBody @ApiParam ProductDTO productDTO) {
+        if (StringUtils.isBlank(productDTO.getLanguage())) {
+            productDTO.setLanguage(this.getLanguage());
+        }
+        return ResultUtil.success(productService.selectProduct(productDTO));
+    }
+
 
 }
