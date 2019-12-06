@@ -14,15 +14,23 @@ public interface InstitutionProductMapper extends BaseMapper<InstitutionProduct>
      * 根据机构ID查询机构产品信息
      *
      * @param institutionId 机构ID
-     * @return 修改条数
+     * @return 机构产品集合
      */
     InstitutionProduct selectByInstitutionId(String institutionId);
+
+    /**
+     * 根据机构ID查询机构产品ID信息
+     *
+     * @param institutionId 机构ID
+     * @return 机构产品ID集合
+     */
+    List<String> selectIdListByInstitutionId(String institutionId);
 
     /**
      * 根据机构ID查询机构关联产品通道信息
      *
      * @param institutionId 机构ID
-     * @return 修改条数
+     * @return 机构产品通道信息集合
      */
     List<InstitutionProductChannelVO> selectRelevantInfoByInstitutionId(String institutionId);
 

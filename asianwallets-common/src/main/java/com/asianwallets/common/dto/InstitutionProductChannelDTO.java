@@ -22,7 +22,7 @@ public class InstitutionProductChannelDTO {
     private String productId;
 
     @ApiModelProperty(value = "通道id集合")
-    private List<InstitutionChannelDTO> institutionChannelDTOList;
+    private List<String> channelIdList;
 
     @ApiModelProperty(value = "产品简称")
     private String productAbbrev;

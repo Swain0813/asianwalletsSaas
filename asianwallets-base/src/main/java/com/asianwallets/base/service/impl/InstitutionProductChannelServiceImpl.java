@@ -5,7 +5,6 @@ import java.util.*;
 import com.asianwallets.base.dao.InstitutionChannelMapper;
 import com.asianwallets.base.dao.InstitutionProductMapper;
 import com.asianwallets.base.service.InstitutionProductChannelService;
-import com.asianwallets.common.dto.InstitutionChannelDTO;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
 import com.asianwallets.common.entity.InstitutionChannel;
 import com.asianwallets.common.entity.InstitutionProduct;
@@ -50,14 +49,14 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
             institutionProduct.setCreateTime(new Date());
             institutionProduct.setCreator(username);
             institutionProductMapper.insert(institutionProduct);
-            if (!ArrayUtil.isEmpty(institutionProductChannelDTO.getInstitutionChannelDTOList())) {
+            if (!ArrayUtil.isEmpty(institutionProductChannelDTO.getChannelIdList())) {
                 //机构通道信息
                 List<InstitutionChannel> institutionChannelList = Lists.newArrayList();
-                for (InstitutionChannelDTO institutionChannelDTO : institutionProductChannelDTO.getInstitutionChannelDTOList()) {
+                for (String channelId : institutionProductChannelDTO.getChannelIdList()) {
                     InstitutionChannel institutionChannel = new InstitutionChannel();
                     institutionChannel.setId(IDS.uuid2());
                     institutionChannel.setInsProId(insProId);
-                    institutionChannel.setChannelId(institutionChannelDTO.getChannelId());
+                    institutionChannel.setChannelId(channelId);
                     institutionChannel.setCreateTime(new Date());
                     institutionChannel.setCreator(username);
                     institutionChannelList.add(institutionChannel);
@@ -78,16 +77,14 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
     @Override
     @Transactional
     public int updateInsProChaByInsId(String username, List<InstitutionProductChannelDTO> institutionProductChannelDTOList) {
+        //查询机构产品中间表ID
+        List<String> insProIdList = institutionProductMapper.selectIdListByInstitutionId(institutionProductChannelDTOList.get(0).getInstitutionId());
+        if (!ArrayUtil.isEmpty(insProIdList)) {
+            //删除机构通道中间表信息
+            institutionChannelMapper.deleteByInsProIdList(insProIdList);
+        }
         //删除机构产品中间表信息
         institutionProductMapper.deleteByInstitutionId(institutionProductChannelDTOList.get(0).getInstitutionId());
-        Set<String> insProIdSet = new HashSet<>();
-        //删除机构通道中间表信息
-        for (InstitutionProductChannelDTO institutionProductChannelDTO : institutionProductChannelDTOList) {
-            for (InstitutionChannelDTO institutionChannelDTO : institutionProductChannelDTO.getInstitutionChannelDTOList()) {
-                insProIdSet.add(institutionChannelDTO.getInsProId());
-            }
-        }
-        institutionChannelMapper.deleteByInsProIdList(insProIdSet);
         for (InstitutionProductChannelDTO institutionProductChannelDTO : institutionProductChannelDTOList) {
             //机构产品信息
             InstitutionProduct institutionProduct = new InstitutionProduct();
@@ -102,13 +99,13 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
             institutionProduct.setCreator(username);
             institutionProduct.setModifier(username);
             institutionProductMapper.insert(institutionProduct);
-            if (!ArrayUtil.isEmpty(institutionProductChannelDTO.getInstitutionChannelDTOList())) {
+            if (!ArrayUtil.isEmpty(institutionProductChannelDTO.getChannelIdList())) {
                 List<InstitutionChannel> institutionChannelList = Lists.newArrayList();
-                for (InstitutionChannelDTO institutionChannelDTO : institutionProductChannelDTO.getInstitutionChannelDTOList()) {
+                for (String channelId : institutionProductChannelDTO.getChannelIdList()) {
                     InstitutionChannel institutionChannel = new InstitutionChannel();
                     institutionChannel.setId(IDS.uuid2());
                     institutionChannel.setInsProId(insProId);
-                    institutionChannel.setChannelId(institutionChannelDTO.getChannelId());
+                    institutionChannel.setChannelId(channelId);
                     institutionChannel.setCreateTime(new Date());
                     institutionChannel.setUpdateTime(new Date());
                     institutionChannel.setCreator(username);

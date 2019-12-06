@@ -19,7 +19,7 @@
 
     <delete id="deleteByInsProIdList">
         delete from institution_channel where ins_pro_id in
-        <foreach collection="collection" index="index" item="item" open="(" separator="," close=")">
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
     </delete>
