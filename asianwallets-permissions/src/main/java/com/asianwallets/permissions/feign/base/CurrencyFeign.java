@@ -41,6 +41,6 @@ public interface CurrencyFeign {
     BaseResponse inquireAllCurrency();
 
     @ApiOperation(value = "导出币种信息")
-    @PostMapping("exportCurrency")
+    @PostMapping("/currency/exportCurrency")
     List<CurrencyExportVO> exportCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO);
 }
