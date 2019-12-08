@@ -188,5 +188,6 @@
   "30028": "Key generation failed",
   "30029": "The entry account type cannot be empty",
   "30030": "Channel is inconsistent with product currency",
-  "30031": "Information does not exist"
+  "30031": "Information does not exist",
+  "30032": "MCC exists"
 }

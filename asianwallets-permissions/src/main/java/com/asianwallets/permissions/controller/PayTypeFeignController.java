@@ -12,10 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @ClassName 支付方式
@@ -67,11 +64,11 @@ public class PayTypeFeignController extends BaseController {
         return ResultUtil.success(payTypeFeign.banCurrency(currencyDTO));
     }
 
-   /* @ApiOperation(value = "查询所有支付方式")
+    @ApiOperation(value = "查询所有支付方式")
     @GetMapping("inquireAllPayType")
     public BaseResponse inquireAllPayType() {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, null,
                 "查询所有支付方式"));
         return ResultUtil.success(payTypeFeign.inquireAllPaytype());
-    }*/
+    }
 }

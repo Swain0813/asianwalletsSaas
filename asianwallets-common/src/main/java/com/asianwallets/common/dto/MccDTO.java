@@ -9,23 +9,17 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-@ApiModel(value = "支付方式", description = "支付方式")
-public class PayTypeDTO extends BasePageHelper {
+@ApiModel(value = "mcc", description = "mcc")
+public class MccDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "id")
     public String id;
 
-    @ApiModelProperty(value = "支付方式名称")
+    @ApiModelProperty(value = "MCC名称")
     private String name;
 
-    @ApiModelProperty(value = "大图标")
-    private String picon;
-
-    @ApiModelProperty(value = "小图标")
-    private String dicon;
-
-    @ApiModelProperty(value = "交易类型 1 收 2 付")
-    private Byte mode;
+    @ApiModelProperty(value = "MCC编号")
+    private String code;
 
     @ApiModelProperty(value = "语言")
     private String language;

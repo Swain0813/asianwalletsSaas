@@ -13,13 +13,13 @@ import javax.persistence.Table;
 @ApiModel(value = "支付方式", description = "支付方式")
 public class PayType extends BaseEntity {
 
-    @ApiModelProperty(value = "英文")
-    @Column(name = "en_name")
-    private String enName;
+    @ApiModelProperty(value = "名称")
+    @Column(name = "name")
+    private String name;
 
     @ApiModelProperty(value = "中文")
-    @Column(name = "cn_name")
-    private String cnName;
+    @Column(name = "language")
+    private String language;
 
     @ApiModelProperty(value = "大图标")
     @Column(name = "picon")

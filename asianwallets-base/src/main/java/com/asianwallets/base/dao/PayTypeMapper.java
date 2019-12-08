@@ -3,6 +3,8 @@ package com.asianwallets.base.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.PayTypeDTO;
 import com.asianwallets.common.entity.PayType;
+import com.asianwallets.common.vo.PayTypeVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,7 +20,7 @@ public interface PayTypeMapper extends BaseMapper<PayType> {
      * @param payTypeDTO
      * @return
      */
-    PayType selectByCnOrEnName(PayTypeDTO payTypeDTO);
+    PayType selectByName(PayTypeDTO payTypeDTO);
 
     /**
      * 分页查询
@@ -26,16 +28,30 @@ public interface PayTypeMapper extends BaseMapper<PayType> {
      * @param payTypeDTO
      * @return
      */
-    List<PayType> pagePayType(PayTypeDTO payTypeDTO);
-    /*int deleteByPrimaryKey(String id);
+    List<PayTypeVO> pagePayType(PayTypeDTO payTypeDTO);
 
-    int insert(PayType record);
+    /**
+     * 使用extend1与语言查询数据
+     *
+     * @param extend1
+     * @param language
+     * @return
+     */
+    PayType selectByExtend1AndLanguage(@Param("extend1") String extend1, @Param("language") String language);
 
-    int insertSelective(PayType record);
+    /**
+     * 查询所有支付方式
+     *
+     * @param language
+     * @return
+     */
+    List<PayTypeVO> inquireAllPaytype(@Param("language") String language);
 
-    PayType selectByPrimaryKey(String id);
-
-    int updateByPrimaryKeySelective(PayType record);
-
-    int updateByPrimaryKey(PayType record);*/
+    /**
+     * 使用extend1查询数据
+     *
+     * @param extend1
+     * @return
+     */
+    List<PayType> selectByExtend1(@Param("extend1") String extend1);
 }

@@ -13,13 +13,17 @@ import javax.persistence.Table;
 @ApiModel(value = "mcc", description = "mcc")
 public class Mcc extends BaseEntity {
 
-    @ApiModelProperty(value = "英文")
-    @Column(name = "en_name")
-    private String enName;
+    @ApiModelProperty(value = "名称")
+    @Column(name = "name")
+    private String name;
 
     @ApiModelProperty(value = "中文")
-    @Column(name = "cn_name")
-    private String cnName;
+    @Column(name = "language")
+    private String language;
+
+    @ApiModelProperty(value = "编号")
+    @Column(name = "code")
+    private String code;
 
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")
@@ -48,21 +52,4 @@ public class Mcc extends BaseEntity {
     @ApiModelProperty(value = "备注6")
     @Column(name = "extend6")
     private String extend6;
-
-    @ApiModelProperty(value = "备注7")
-    @Column(name = "extend7")
-    private String extend7;
-
-    @ApiModelProperty(value = "备注8")
-    @Column(name = "extend8")
-    private String extend8;
-
-    @ApiModelProperty(value = "备注9")
-    @Column(name = "extend9")
-    private String extend9;
-
-    @ApiModelProperty(value = "备注10")
-    @Column(name = "cn_name")
-    private String extend10;
-
 }

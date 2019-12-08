@@ -14,9 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,20 +40,42 @@ public class PayTypeServiceImpl implements PayTypeService {
      */
     @Override
     public int addPayType(PayTypeDTO payTypeDTO) {
-        if (!StringUtils.isBlank(payTypeDTO.getCnName()) || !StringUtils.isBlank(payTypeDTO.getEnName())) {
-            if (payTypeMapper.selectByCnOrEnName(payTypeDTO) == null) {
+        if (StringUtils.isBlank(payTypeDTO.getName())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (payTypeMapper.selectByName(payTypeDTO) != null) {
+            throw new BusinessException(EResultEnum.PAYMENTMODE_EXIST.getCode());
+        }
+        if (StringUtils.isBlank(payTypeDTO.getId())) {
+            //第一次新增
+            PayType payType = new PayType();
+            BeanUtils.copyProperties(payTypeDTO, payType);
+            payType.setCreateTime(new Date());
+            payType.setEnabled(true);
+            payType.setId(IDS.uniqueID().toString());
+            //对外ID
+            payType.setExtend1(IDS.uniqueID().toString());
+            return payTypeMapper.insert(payType);
+        } else {
+            List<PayType> payTypeList = payTypeMapper.selectByExtend1(payTypeDTO.getId());
+            if (payTypeList.size() > 0) {
+                if (payTypeList.stream().anyMatch(p -> p.getLanguage().equals(payTypeDTO.getLanguage()))) {
+                    throw new BusinessException(EResultEnum.LANGUAGE_EXIST.getCode());
+                }
+                //新增语言
                 PayType payType = new PayType();
                 BeanUtils.copyProperties(payTypeDTO, payType);
                 payType.setCreateTime(new Date());
                 payType.setEnabled(true);
                 payType.setId(IDS.uniqueID().toString());
+                //对外ID
+                payType.setExtend1(payTypeList.get(0).getExtend1());
                 return payTypeMapper.insert(payType);
             } else {
-                throw new BusinessException(EResultEnum.PAYMENTMODE_EXIST.getCode());
+                throw new BusinessException(EResultEnum.INFORMATION_DOES_NOT_EXIST.getCode());
             }
-        } else {
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
+
     }
 
     /**
@@ -69,12 +89,18 @@ public class PayTypeServiceImpl implements PayTypeService {
         if (StringUtils.isBlank(payTypeDTO.getId())) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        PayType payType = payTypeMapper.selectByPrimaryKey(payTypeDTO.getId());
+        PayType payType = payTypeMapper.selectByExtend1AndLanguage(payTypeDTO.getId(), payTypeDTO.getLanguage());
         if (payType == null) {
             throw new BusinessException(EResultEnum.INFORMATION_DOES_NOT_EXIST.getCode());
         }
+        if (payTypeMapper.selectByName(payTypeDTO) != null) {
+            throw new BusinessException(EResultEnum.PAYMENTMODE_EXIST.getCode());
+        }
+        String id = payType.getId();
         BeanUtils.copyProperties(payTypeDTO, payType, getNullPropertyNames(payTypeDTO));
         payType.setUpdateTime(new Date());
+        payType.setId(id);
+        payType.setExtend1(null);
         return payTypeMapper.updateByPrimaryKeySelective(payType);
     }
 
@@ -86,21 +112,7 @@ public class PayTypeServiceImpl implements PayTypeService {
      */
     @Override
     public PageInfo<PayTypeVO> pagePayType(PayTypeDTO payTypeDTO) {
-        List<PayType> payTypes = payTypeMapper.pagePayType(payTypeDTO);
-        List<PayTypeVO> payTypeVOS = new ArrayList<>();
-        for (PayType payType : payTypes) {
-            PayTypeVO payTypeVO = new PayTypeVO();
-            if (payTypeDTO.getLanguage().equals("zh-cn")) {
-                BeanUtils.copyProperties(payType, payTypeVO);
-                payTypeVO.setName(payType.getCnName());
-                payTypeVOS.add(payTypeVO);
-            } else {
-                BeanUtils.copyProperties(payType, payTypeVO);
-                payTypeVO.setName(payType.getEnName());
-                payTypeVOS.add(payTypeVO);
-            }
-        }
-        return new PageInfo<>(payTypeVOS);
+        return new PageInfo<>(payTypeMapper.pagePayType(payTypeDTO));
     }
 
     /**
@@ -114,24 +126,26 @@ public class PayTypeServiceImpl implements PayTypeService {
         if (StringUtils.isBlank(payTypeDTO.getId()) || payTypeDTO.getEnabled() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        PayType payType = new PayType();
-        payType.setId(payTypeDTO.getId());
-        payType.setUpdateTime(new Date());
+        PayType payType = payTypeMapper.selectByExtend1AndLanguage(payTypeDTO.getId(), payTypeDTO.getLanguage());
+        if (payType == null) {
+            throw new BusinessException(EResultEnum.INFORMATION_DOES_NOT_EXIST.getCode());
+        }
+        String id = payType.getId();
         payType.setEnabled(payTypeDTO.getEnabled());
         payType.setModifier(payTypeDTO.getModifier());
+        payType.setUpdateTime(new Date());
+        payType.setId(id);
         return payTypeMapper.updateByPrimaryKeySelective(payType);
     }
 
     /**
      * 查询所有支付方式
      *
+     * @param language
      * @return
      */
     @Override
-    public List<PayType> inquireAllPaytype() {
-        Example example = new Example(PayType.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("enabled", true);
-        return payTypeMapper.selectByExample(example);
+    public List<PayTypeVO> inquireAllPaytype(String language) {
+        return payTypeMapper.inquireAllPaytype(language);
     }
 }

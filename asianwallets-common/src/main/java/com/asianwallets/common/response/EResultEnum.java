@@ -177,6 +177,7 @@ public enum EResultEnum {
     ACCOUNT_TYPE_IS_NULL("30029"),//入账账户类型不能为空
     PRODUCT_CHANNEL_CURRENCY_NO_SAME("30030"),//通道与产品币种不一致
     INFORMATION_DOES_NOT_EXIST("30031"),//信息不存在
+    MCC_EXIST("30032"),//mcc已存在
 
 
     /****汇率模块的错误信息从40001开始--许文奇*****/

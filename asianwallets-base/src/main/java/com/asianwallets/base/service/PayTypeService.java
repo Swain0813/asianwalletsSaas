@@ -1,14 +1,13 @@
 package com.asianwallets.base.service;
 
 import com.asianwallets.common.dto.PayTypeDTO;
-import com.asianwallets.common.entity.PayType;
 import com.asianwallets.common.vo.PayTypeVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
 /**
- * 支付方式
+ * mcc
  */
 public interface PayTypeService {
     /**
@@ -47,5 +46,5 @@ public interface PayTypeService {
     /**
      * @return
      */
-    List<PayType> inquireAllPaytype();
+    List<PayTypeVO> inquireAllPaytype(String language);
 }

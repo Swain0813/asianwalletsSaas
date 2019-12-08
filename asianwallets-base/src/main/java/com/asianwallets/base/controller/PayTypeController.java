@@ -9,10 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @ClassName CurrencyController
@@ -33,12 +30,14 @@ public class PayTypeController extends BaseController {
     @PostMapping("addPayType")
     public BaseResponse addPaytype(@RequestBody @ApiParam PayTypeDTO PayTypeDTO) {
         PayTypeDTO.setCreator(this.getSysUserVO().getUsername());
+        PayTypeDTO.setLanguage(this.getLanguage());
         return ResultUtil.success(PayTypeService.addPayType(PayTypeDTO));
     }
 
     @ApiOperation(value = "修改支付方式")
     @PostMapping("updatePayType")
     public BaseResponse updatePaytype(@RequestBody @ApiParam PayTypeDTO PayTypeDTO) {
+        PayTypeDTO.setLanguage(this.getLanguage());
         PayTypeDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(PayTypeService.updatePayType(PayTypeDTO));
     }
@@ -54,12 +53,13 @@ public class PayTypeController extends BaseController {
     @PostMapping("banPayType")
     public BaseResponse banCurrency(@RequestBody @ApiParam PayTypeDTO PayTypeDTO) {
         PayTypeDTO.setModifier(this.getSysUserVO().getUsername());
+        PayTypeDTO.setLanguage(this.getLanguage());
         return ResultUtil.success(PayTypeService.banPayType(PayTypeDTO));
     }
 
-    /*@ApiOperation(value = "查询所有支付方式")
+    @ApiOperation(value = "查询所有支付方式")
     @GetMapping("inquireAllPayType")
     public BaseResponse inquireAllPaytype() {
-        return ResultUtil.success(PayTypeService.inquireAllPaytype());
-    }*/
+        return ResultUtil.success(PayTypeService.inquireAllPaytype(this.getLanguage()));
+    }
 }
