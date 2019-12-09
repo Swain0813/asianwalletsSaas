@@ -12,6 +12,7 @@ import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ChaBankRelVO;
 import com.google.common.collect.Lists;
@@ -50,6 +51,8 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     private ChannelBankMapper channelBankMapper;
     @Autowired
     private RedisService redisService;
+    @Autowired
+    private QrtzJobDetailsMapper qrtzJobDetailsMapper;
 
     /**
      * @Author YangXu
@@ -178,6 +181,69 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                 throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
             }
         }
+        return 0;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/9
+     * @Descripate  修改商户产品
+     * @return
+     **/
+    @Override
+    public int updateMerchantProduct(String name, MerchantProductDTO merchantProductDTO) {
+        Date date = merchantProductDTO.getEffectTime();
+        Date date1 = DateToolUtils.addMinute(new Date(), 30);
+        if (date.getTime() < date1.getTime()) {
+            throw new BusinessException(EResultEnum.EFFECTTIME_IS_ILLEGAL.getCode());
+        }
+        if (qrtzJobDetailsMapper.getCountByInsProId(merchantProductDTO.getMerProId().concat("_PRODUCT_INFO")) > 0) {
+            throw new BusinessException(EResultEnum.AUDIT_INFO_EXIENT.getCode());
+        }
+        int num = 0;
+        MerchantProductAudit oldMerchantProductAudit = merchantProductAuditMapper.selectByPrimaryKey(merchantProductDTO.getMerProId());
+        MerchantProduct oldMerPro = merchantProductMapper.selectByPrimaryKey(merchantProductDTO.getMerProId());
+        MerchantProductAudit merchantProductAudit = new MerchantProductAudit();
+        //如果该商户已经不存在或者禁用的话，是不允许进行修改的
+        Merchant merchant = merchantMapper.selectByPrimaryKey(oldMerPro.getMerchantId());
+        if (merchant == null) {//商户信息不存在
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());//商户信息不存在
+        }
+        //机构已禁用
+        if (!merchant.getEnabled()) {
+            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());//商户已禁用
+        }
+        //根据当前商户id获取代理商信息
+        if (!StringUtils.isEmpty(merchant.getAgentId())) {
+            //代理商信息
+            Merchant agentMerchant = merchantMapper.selectByPrimaryKey(merchant.getAgentId());
+            MerchantProduct agentMerchantProduct = merchantProductMapper.getMerchantProductByMerIdAndProId(agentMerchant.getId(), merchantProductDTO.getProductId());
+            if (agentMerchantProduct != null && agentMerchantProduct.getRateType().equals(agentMerchantProduct.getRateType())) {
+                //单笔定额的场合
+                if (TradeConstant.FEE_TYPE_QUOTA.equals(merchantProductDTO.getRateType())) {
+                    if (merchantProductDTO.getRate().compareTo(agentMerchantProduct.getRate()) == -1) {
+                        throw new BusinessException(EResultEnum.RATE_IS_ILLEGAL.getCode());
+                    }
+                } else if (TradeConstant.FEE_TYPE_RATE.equals(merchantProductDTO.getRateType())) {
+                    //单笔费率
+                    if (merchantProductDTO.getRate().compareTo(agentMerchantProduct.getRate()) == -1 ||
+                            merchantProductDTO.getMinTate().compareTo(agentMerchantProduct.getMinTate()) == -1 ||
+                            merchantProductDTO.getMaxTate().compareTo(agentMerchantProduct.getMaxTate()) == -1) {
+                        throw new BusinessException(EResultEnum.RATE_IS_ILLEGAL.getCode());
+                    }
+                }
+            }else if(agentMerchantProduct != null && !agentMerchantProduct.getRateType().equals(agentMerchantProduct.getRateType())){
+                //商户的产品费率类型和代理商的产品费率类型不一致
+                throw new BusinessException(EResultEnum.RATE_TYPE_IS_DIFFERENT.getCode());
+            }
+        }
+
+        if (oldMerchantProductAudit == null) {
+
+        }else if(oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_FAIL || oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_SUCCESS){
+
+        }
+
         return 0;
     }
 }

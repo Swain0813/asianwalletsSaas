@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.QrtzJobDetailsMapper" >
+  <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.QrtzJobDetails" >
+    <id column="SCHED_NAME" property="schedName" jdbcType="VARCHAR" />
+    <id column="JOB_NAME" property="jobName" jdbcType="VARCHAR" />
+    <id column="JOB_GROUP" property="jobGroup" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="JOB_CLASS_NAME" property="jobClassName" jdbcType="VARCHAR" />
+    <result column="IS_DURABLE" property="isDurable" jdbcType="VARCHAR" />
+    <result column="IS_NONCONCURRENT" property="isNonconcurrent" jdbcType="VARCHAR" />
+    <result column="IS_UPDATE_DATA" property="isUpdateData" jdbcType="VARCHAR" />
+    <result column="REQUESTS_RECOVERY" property="requestsRecovery" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.asianwallets.common.entity.QrtzJobDetails" extends="BaseResultMap" >
+    <result column="JOB_DATA" property="jobData" jdbcType="LONGVARBINARY" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    SCHED_NAME, JOB_NAME, JOB_GROUP, DESCRIPTION, JOB_CLASS_NAME, IS_DURABLE, IS_NONCONCURRENT,
+    IS_UPDATE_DATA, REQUESTS_RECOVERY
+  </sql>
+  <sql id="Blob_Column_List" >
+    JOB_DATA
+  </sql>
+
+</mapper>

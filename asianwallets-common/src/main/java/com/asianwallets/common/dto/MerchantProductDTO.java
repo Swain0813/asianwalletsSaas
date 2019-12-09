@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @description:
@@ -17,6 +18,8 @@ import java.math.BigDecimal;
 @ApiModel(value = "商户产品实体", description = "商户产品实体")
 public class MerchantProductDTO {
 
+    @ApiModelProperty(value = "商户产品id")
+    private String merProId;
     @ApiModelProperty(value = "商户id")
     private String merchantId;
     @ApiModelProperty(value = "产品id")
@@ -75,7 +78,7 @@ public class MerchantProductDTO {
     private Boolean enabled;
     @ApiModelProperty(value = "生效时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private String effectTime;
+    private Date effectTime;
 
     @ApiModelProperty(value = "ext1")
     private String ext1;
