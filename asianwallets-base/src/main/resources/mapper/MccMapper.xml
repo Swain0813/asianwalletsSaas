@@ -60,10 +60,13 @@
         from mcc
         <where>
             <if test="name != null and name != ''">
-                name LIKE CONCAT(CONCAT('%', #{name} ), '%' )
+                and name LIKE CONCAT(CONCAT('%', #{name} ), '%' )
             </if>
             <if test="code != null and code != ''">
-                and code = #{code}
+                and code LIKE CONCAT(CONCAT('%', #{code} ), '%' )
+            </if>
+            <if test="language != null and language != ''">
+                and language = #{language}
             </if>
             <if test="enabled != null">
                 and enabled = #{enabled}
