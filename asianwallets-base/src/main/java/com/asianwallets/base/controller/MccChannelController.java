@@ -56,7 +56,7 @@ public class MccChannelController extends BaseController {
     @ApiOperation(value = "查询所有mccChannel")
     @GetMapping("inquireAllMccChannel")
     public BaseResponse inquireAllMccChannel() {
-        return ResultUtil.success(mccChannelService.inquireAllMccChannel(this.getLanguage()));
+        return ResultUtil.success(mccChannelService.inquireAllMccChannel(null));
     }
 
 

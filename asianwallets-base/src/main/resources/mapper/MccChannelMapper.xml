@@ -56,33 +56,49 @@
         left join channel ch on mc.cid = ch.channel_code
         <where>
             <if test="mid != null and mid != ''">
-                c.extend1 LIKE CONCAT(CONCAT('%', #{mid} ), '%' )
+                and c.code LIKE CONCAT(CONCAT('%', #{mid} ), '%' )
             </if>
             <if test="mccName != null and mccName != ''">
-                c.name LIKE CONCAT(CONCAT('%', #{mccName} ), '%' )
+                and c.name LIKE CONCAT(CONCAT('%', #{mccName} ), '%' )
             </if>
             <if test="channelName != null and channelName != ''">
-                ch.channel_cn_name LIKE CONCAT(CONCAT('%', #{channelName} ), '%' )
+                and ch.channel_cn_name LIKE CONCAT(CONCAT('%', #{channelName} ), '%' )
+            </if>
+            <if test="language != null and language != ''">
+                and c.language = #{language}
+            </if>
+            <if test="enabled != null">
+                and mc.enabled = #{enabled}
             </if>
         </where>
     </select>
     <select id="inquireAllMccChannel" resultType="com.asianwallets.common.vo.MccChannelVO">
         select mc.id,
-               mc.mid,
-               mc.cid,
-               mc.code,
-               mc.enabled,
-               mc.create_time     as createTime,
-               mc.update_time     as updateTime,
-               mc.creator,
-               mc.modifier,
-               mc.remark,
-               c.name             as mName,
-               c.code             as mCode,
-               ch.channel_cn_name as cName
+        mc.mid,
+        mc.cid,
+        mc.code,
+        mc.enabled,
+        mc.create_time as createTime,
+        mc.update_time as updateTime,
+        mc.creator,
+        mc.modifier,
+        mc.remark,
+        c.name as mName,
+        c.code as mCode,
+        ch.channel_cn_name as cName
         from mcc_channel mc
-                 left join mcc c on mc.mid = c.extend1
-                 left join channel ch on mc.cid = ch.channel_code
-        where c.language = #{language}
+        left join mcc c on mc.mid = c.extend1
+        left join channel ch on mc.cid = ch.channel_code
+        <where>
+            <if test="language != null and language != ''">
+                c.language = #{language}
+            </if>
+        </where>
+
+    </select>
+    <select id="selectByCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mcc_channel where code = #{code};
     </select>
 </mapper>

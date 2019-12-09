@@ -36,4 +36,11 @@ public interface MccChannelMapper extends BaseMapper<MccChannel> {
      */
     List<MccChannelVO> inquireAllMccChannel(@Param("language") String language);
 
+    /**
+     * 通过CODE查询
+     *
+     * @param code
+     * @return
+     */
+    MccChannel selectByCode(@Param("code") String code);
 }

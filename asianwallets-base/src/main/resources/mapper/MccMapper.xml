@@ -29,6 +29,14 @@
         where extend1 = #{id};
     </update>
 
+    <update id="updateByCode">
+        update mcc
+        set enabled     = #{enabled},
+            modifier    = #{modifier},
+            update_time = now()
+        where code = #{code};
+    </update>
+
     <select id="selectByName" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -52,10 +60,13 @@
         from mcc
         <where>
             <if test="name != null and name != ''">
-                name LIKE CONCAT(CONCAT('%', #{name} ), '%' )
+                and name LIKE CONCAT(CONCAT('%', #{name} ), '%' )
             </if>
             <if test="code != null and code != ''">
-                and code = #{code}
+                and code LIKE CONCAT(CONCAT('%', #{code} ), '%' )
+            </if>
+            <if test="language != null and language != ''">
+                and language = #{language}
             </if>
             <if test="enabled != null">
                 and enabled = #{enabled}
@@ -66,7 +77,12 @@
         select
         <include refid="Base_Column_List"/>
         from mcc
-        where language = #{language} and extend1 = #{extend1}
+        <where>
+            <if test="language != null and language != ''">
+                and language = #{language}
+            </if>
+            and extend1 = #{extend1}
+        </where>
     </select>
 
     <select id="inquireAllMcc" resultType="com.asianwallets.common.vo.MccVO">

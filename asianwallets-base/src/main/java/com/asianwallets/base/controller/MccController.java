@@ -34,7 +34,6 @@ public class MccController extends BaseController {
     @PostMapping("addMcc")
     public BaseResponse addMcc(@RequestBody @ApiParam MccDTO mccDto) {
         mccDto.setCreator(this.getSysUserVO().getUsername());
-        mccDto.setLanguage(this.getLanguage());
         return ResultUtil.success(mccService.addMcc(mccDto));
     }
 
@@ -49,7 +48,6 @@ public class MccController extends BaseController {
     @ApiOperation(value = "查询mcc")
     @PostMapping("pageMcc")
     public BaseResponse pageMcc(@RequestBody @ApiParam MccDTO mccDto) {
-        mccDto.setLanguage(this.getLanguage());
         return ResultUtil.success(mccService.pageMcc(mccDto));
     }
 

@@ -1,0 +1,96 @@
+package com.asianwallets.base.controller;
+
+import com.asianwallets.base.service.MerchantReportService;
+import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.dto.MerchantReportDTO;
+import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.vo.MerchantReportVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+/**
+ * @ClassName mcc
+ * @Description 商户报备
+ * @Author abc
+ * @Date 2019/11/22 6:26
+ * @Version 1.0
+ */
+@RestController
+@RequestMapping("/merchantReport")
+@Api("MerchantReport")
+public class MerchantReportController extends BaseController {
+
+    @Autowired
+    private MerchantReportService merchantReportService;
+
+    @ApiOperation(value = "新增报备信息")
+    @PostMapping("addReport")
+    public BaseResponse addReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
+        merchantReportDTO.setCreator(this.getSysUserVO().getUsername());
+        return ResultUtil.success(merchantReportService.addReport(merchantReportDTO));
+    }
+
+    @ApiOperation(value = "查询报备信息")
+    @PostMapping("pageReport")
+    public BaseResponse pageReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
+        return ResultUtil.success(merchantReportService.pageReport(merchantReportDTO));
+    }
+
+    @ApiOperation(value = "修改报备信息")
+    @PostMapping("updateReport")
+    public BaseResponse updateReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
+        merchantReportDTO.setModifier(this.getSysUserVO().getUsername());
+        return ResultUtil.success(merchantReportService.updateReport(merchantReportDTO));
+    }
+
+    @ApiOperation(value = "启用禁用Report")
+    @PostMapping("banReport")
+    public BaseResponse banReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
+        merchantReportDTO.setModifier(this.getSysUserVO().getUsername());
+        return ResultUtil.success(merchantReportService.banReport(merchantReportDTO));
+    }
+
+    @ApiOperation(value = "导出Report")
+    @PostMapping("exportReport")
+    public List<MerchantReportVO> exportReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
+        return merchantReportService.exportReport(merchantReportDTO);
+    }
+
+    /*
+    @ApiOperation(value = "启用禁用mcc")
+    @PostMapping("banMcc")
+    public BaseResponse banMcc(@RequestBody @ApiParam MccDTO mccDto) {
+        mccDto.setModifier(this.getSysUserVO().getUsername());
+        mccDto.setLanguage(this.getLanguage());
+        return ResultUtil.success(mccService.banMcc(mccDto));
+    }
+
+    @ApiOperation(value = "查询所有mcc")
+    @GetMapping("inquireAllMcc")
+    public BaseResponse inquireAllMcc() {
+        return ResultUtil.success(mccService.inquireAllMcc(this.getLanguage()));
+    }
+
+
+    @ApiOperation(value = "导入mcc")
+    @PostMapping("importMcc")
+    public BaseResponse importMcc(@RequestBody @ApiParam List<Mcc> list) {
+        return ResultUtil.success(mccService.importMcc(list));
+    }
+
+    @ApiOperation(value = "导出mcc")
+    @PostMapping("exportMcc")
+    public List<MccVO> exportMcc(@RequestBody @ApiParam MccDTO mccDto) {
+        mccDto.setLanguage(this.getLanguage());
+        return mccService.exportMcc(mccDto);
+    }*/
+}

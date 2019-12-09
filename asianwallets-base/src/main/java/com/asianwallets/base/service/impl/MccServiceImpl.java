@@ -137,12 +137,9 @@ public class MccServiceImpl implements MccService {
         if (mcc == null) {
             throw new BusinessException(EResultEnum.INFORMATION_DOES_NOT_EXIST.getCode());
         }
-        String id = mcc.getId();
         mcc.setEnabled(mccDTO.getEnabled());
         mcc.setModifier(mccDTO.getModifier());
-        mcc.setUpdateTime(new Date());
-        mcc.setId(id);
-        return mccMapper.updateByPrimaryKeySelective(mcc);
+        return mccMapper.updateByCode(mcc);
     }
 
     /**

@@ -179,7 +179,10 @@ public enum EResultEnum {
     INFORMATION_DOES_NOT_EXIST("30031"),//信息不存在
     MCC_EXIST("30032"),//mcc已存在
     MCC_DOES_NOT_EXIST("30033"),//mcc不存在
-    channel_DOES_NOT_EXIST("30034"),//通道不存在
+    CHANNEL_DOES_NOT_EXIST("30034"),//通道不存在
+    INSTITUTION_DOES_NOT_EXIST("30035"),//机构不存在
+    MERCHANT_DOES_NOT_EXIST("30036"),//商户不存在
+    SHOP_CODE_EXIST("30037"),//通道店铺编号已存在
 
 
     /****汇率模块的错误信息从40001开始--许文奇*****/

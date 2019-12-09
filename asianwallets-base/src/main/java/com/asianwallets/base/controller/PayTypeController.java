@@ -30,7 +30,6 @@ public class PayTypeController extends BaseController {
     @PostMapping("addPayType")
     public BaseResponse addPaytype(@RequestBody @ApiParam PayTypeDTO PayTypeDTO) {
         PayTypeDTO.setCreator(this.getSysUserVO().getUsername());
-        PayTypeDTO.setLanguage(this.getLanguage());
         return ResultUtil.success(PayTypeService.addPayType(PayTypeDTO));
     }
 
@@ -45,7 +44,6 @@ public class PayTypeController extends BaseController {
     @ApiOperation(value = "查询支付方式")
     @PostMapping("pagePayType")
     public BaseResponse pagePaytype(@RequestBody @ApiParam PayTypeDTO PayTypeDTO) {
-        PayTypeDTO.setLanguage(this.getLanguage());
         return ResultUtil.success(PayTypeService.pagePayType(PayTypeDTO));
     }
 
@@ -60,6 +58,6 @@ public class PayTypeController extends BaseController {
     @ApiOperation(value = "查询所有支付方式")
     @GetMapping("inquireAllPayType")
     public BaseResponse inquireAllPaytype() {
-        return ResultUtil.success(PayTypeService.inquireAllPaytype(this.getLanguage()));
+        return ResultUtil.success(PayTypeService.inquireAllPaytype(null));
     }
 }

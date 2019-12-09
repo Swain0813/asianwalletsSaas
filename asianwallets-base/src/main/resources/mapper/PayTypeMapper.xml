@@ -50,8 +50,14 @@
         remark
         from pay_type
         <where>
+            <if test="payType != null and payType != ''">
+                and extend1 LIKE CONCAT(CONCAT('%', #{payType} ), '%' )
+            </if>
             <if test="name != null and name != ''">
-                name LIKE CONCAT(CONCAT('%', #{name} ), '%' )
+                and name LIKE CONCAT(CONCAT('%', #{name} ), '%' )
+            </if>
+            <if test="language != null and language != ''">
+                and language = #{language}
             </if>
             <if test="mode != null">
                 and mode = #{mode}
@@ -69,21 +75,26 @@
     </select>
 
     <select id="inquireAllPaytype" resultType="com.asianwallets.common.vo.PayTypeVO">
-        select extend1     as id,
-               name,
-               language,
-               picon,
-               dicon,
-               mode,
-               enabled,
-               create_time as createTime,
-               update_time as updateTime,
-               creator,
-               modifier,
-               remark
+        select extend1 as id,
+        name,
+        language,
+        picon,
+        dicon,
+        mode,
+        enabled,
+        create_time as createTime,
+        update_time as updateTime,
+        creator,
+        modifier,
+        remark
         from pay_type
-        where language = #{language}
-          and enabled = 1;
+        <where>
+            <if test="language != null and language != ''">
+                language = #{language}
+            </if>
+            and enabled = 1;
+        </where>
+
     </select>
 
     <select id="selectByExtend1" resultMap="BaseResultMap">
