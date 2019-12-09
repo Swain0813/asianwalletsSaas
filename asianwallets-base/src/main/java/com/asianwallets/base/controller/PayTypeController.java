@@ -44,7 +44,6 @@ public class PayTypeController extends BaseController {
     @ApiOperation(value = "查询支付方式")
     @PostMapping("pagePayType")
     public BaseResponse pagePaytype(@RequestBody @ApiParam PayTypeDTO PayTypeDTO) {
-        PayTypeDTO.setLanguage(this.getLanguage());
         return ResultUtil.success(PayTypeService.pagePayType(PayTypeDTO));
     }
 
