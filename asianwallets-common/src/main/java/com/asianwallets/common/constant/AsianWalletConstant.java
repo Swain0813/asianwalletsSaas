@@ -90,6 +90,9 @@ public class AsianWalletConstant {
     // institutionChannelCacheKey_242e7c2f738f4ebd9a6f91399bdeafef          key+机构产品ID
     public static final String INSTITUTIONCHANNEL_CACHE_KEY = "institutionChannelCacheKey";//机构通道中间表的缓存key
 
+    // institutionChannelCacheKey_242e7c2f738f4ebd9a6f91399bdeafef          key+商户产品ID
+    public static final String MERCHANTCHANNEL_CACHE_KEY = "merchantChannelCacheKey";//商户通道中间表的缓存key
+
     //channelCacheKey_165dd9669f064da98645fecfb70afc3d      key+通道id
     public static final String CHANNEL_CACHE_KEY = "channelCacheKey";//通道表的缓存key
 

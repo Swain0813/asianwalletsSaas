@@ -1,13 +1,16 @@
 package com.asianwallets.base.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.base.dao.*;
 import com.asianwallets.base.service.MerchantProductService;
 import com.asianwallets.common.base.BaseServiceImpl;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ChaBankRelVO;
@@ -43,6 +46,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     private MerchantMapper merchantMapper;
     @Autowired
     private MerchantChannelMapper merchantChannelMapper;
+    @Autowired
+    private ChannelBankMapper channelBankMapper;
+    @Autowired
+    private RedisService redisService;
 
     /**
      * @Author YangXu
@@ -136,14 +143,41 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             merchantChannelMapper.deleteByMerProId(merchantProduct.getId());
             for (ChannelInfoDTO channelInfoDTO : prodChannelDTO.getChannelList()) {
                 for (BankInfoDTO bankInfoDTO : channelInfoDTO.getBankList()) {
-                    //ChaBankRelVO chaBankRelVO = channelBankMapper.getInfoByCIdAndBId(channelInfoDTO.getChannelId(), bankInfoDTO.getBankId());
-
-
+                    ChaBankRelVO chaBankRelVO = channelBankMapper.getInfoByCIdAndBId(channelInfoDTO.getChannelId(), bankInfoDTO.getBankId());
+                    MerchantChannel merchantChannel = new MerchantChannel();
+                    merchantChannel.setId(IDS.uuid2());
+                    merchantChannel.setMerProId(merchantProduct.getId());
+                    //通道银行id
+                    merchantChannel.setChaBanId(chaBankRelVO.getChabankId());
+                    merchantChannel.setCreateTime(new Date());
+                    merchantChannel.setCreator(username);
+                    merchantChannel.setSort(chaBankRelVO.getSort());
+                    merchantChannel.setEnabled(true);
+                    boolean flag = true;
+                    for (MerchantChannel mc : list1) {
+                        if (merchantChannel.getMerProId().equals(mc.getMerProId()) && merchantChannel.getChaBanId().equals(mc.getChaBanId())) {
+                            flag = false;
+                            list.add(mc);
+                        }
+                    }
+                    if (flag) {
+                        list.add(merchantChannel);
+                    }
                 }
-
             }
         }
-
+        merchantChannelMapper.insertList(list);
+        for (MerchantChannel merchantChannel : list) {
+            //审核通过后将新增和修改的通道信息添加的redis里
+            List<String> chaBanIds = merchantChannelMapper.selectChannelCodeByMerProId(merchantChannel.getMerProId());
+            try {
+                redisService.set(AsianWalletConstant.MERCHANTCHANNEL_CACHE_KEY.concat("_").concat(merchantChannel.getMerProId()),
+                        JSON.toJSONString(chaBanIds));
+            } catch (Exception e) {
+                log.error("审核通过后将新增和修改的通道信息添加的redis里：", e.getMessage());
+                throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+            }
+        }
         return 0;
     }
 }

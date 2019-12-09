@@ -48,7 +48,7 @@ public class MerchantChannel extends BaseEntity{
      */
 	@ApiModelProperty(value = "排序")
 	@Column(name ="sort")
-	private Boolean sort;
+	private String sort;
 
 
 }
