@@ -25,4 +25,44 @@
         from bank_issuer_id
         where bank_name = #{bankName};
     </select>
+
+    <select id="selectByChannelCodeAndBankNameAndCurrency" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bank_issuer_id
+        where channel_code = #{channelCode}
+        and bank_name = #{bankName}
+        and currency = #{currency}
+    </select>
+
+    <select id="pageFindBankIssuerId" resultMap="BaseResultMap">
+        select
+        b.id,
+        b.bank_name,
+        b.issuer_id,
+        c.currency,
+        c.channel_cn_name as channel_code,
+        b.enabled,
+        b.create_time,
+        b.update_time,
+        b.creator,
+        b.modifier,
+        b.remark
+        from bank_issuer_id b left join channel c on b.channel_code = c.channel_code
+        left join bank on b.bank_name = bank.bank_name
+        <where>
+            <if test="bankName!=null and bankName != ''">
+                and b.bank_name LIKE CONCAT(CONCAT('%', #{bankName}), '%')
+            </if>
+            <if test="currency!=null and currency != ''">
+                and b.currency=#{currency}
+            </if>
+            <if test="enabled!=null and enabled != ''">
+                and b.enabled=#{enabled}
+            </if>
+            <if test="channelCode!=null and channelCode != ''">
+                and b.channel_code=#{channelCode}
+            </if>
+        </where>
+    </select>
 </mapper>
