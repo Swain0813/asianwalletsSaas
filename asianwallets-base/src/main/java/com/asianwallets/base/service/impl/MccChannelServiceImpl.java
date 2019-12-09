@@ -49,7 +49,7 @@ public class MccChannelServiceImpl implements MccChannelService {
         if (mccChannelMapper.selectByCidAndMid(mc) != null) {
             throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
         }
-        if (mccMapper.selectByExtend1AndLanguage(mc.getMid(), mc.getLanguage()) == null) {
+        if (mccMapper.selectByExtend1(mc.getMid()).size() == 0) {
             throw new BusinessException(EResultEnum.MCC_DOES_NOT_EXIST.getCode());
         }
         if (channelMapper.selectByChannelCode(mc.getCid()) == null) {
