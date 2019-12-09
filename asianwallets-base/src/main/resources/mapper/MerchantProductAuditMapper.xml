@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.base.dao.MerchantProductAuditMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.MerchantProductAudit">
+	<result column="id" property="id" />
+		<result column="merchant_id" property="merchantId" />
+		<result column="product_id" property="productId" />
+		<result column="merchant_name" property="merchantName" />
+		<result column="product_abbrev" property="productAbbrev" />
+		<result column="trade_direction" property="tradeDirection" />
+		<result column="trans_type" property="transType" />
+		<result column="pay_type" property="payType" />
+		<result column="rate_type" property="rateType" />
+		<result column="min_tate" property="minTate" />
+		<result column="max_tate" property="maxTate" />
+		<result column="rate" property="rate" />
+		<result column="add_value" property="addValue" />
+		<result column="limit_amount" property="limitAmount" />
+		<result column="daily_trading_count" property="dailyTradingCount" />
+		<result column="float_rate" property="floatRate" />
+		<result column="divided_ratio" property="dividedRatio" />
+		<result column="divided_mode" property="dividedMode" />
+		<result column="fee_payer" property="feePayer" />
+		<result column="refund_default" property="refundDefault" />
+		<result column="refund_rate_type" property="refundRateType" />
+		<result column="refund_min_tate" property="refundMinTate" />
+		<result column="refund_max_tate" property="refundMaxTate" />
+		<result column="refund_rate" property="refundRate" />
+		<result column="refund_add_value" property="refundAddValue" />
+		<result column="settle_cycle" property="settleCycle" />
+		<result column="audit_status" property="auditStatus" />
+		<result column="audit_remark" property="auditRemark" />
+		<result column="effect_time" property="effectTime" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator" property="creator" />
+		<result column="modifier" property="modifier" />
+		<result column="remark" property="remark" />
+		<result column="enabled" property="enabled" />
+		<result column="ext1" property="ext1" />
+		<result column="ext2" property="ext2" />
+		<result column="ext3" property="ext3" />
+		<result column="ext4" property="ext4" />
+		<result column="ext5" property="ext5" />
+		<result column="ext6" property="ext6" />
+		<result column="ext7" property="ext7" />
+	</resultMap>
+
+</mapper>
