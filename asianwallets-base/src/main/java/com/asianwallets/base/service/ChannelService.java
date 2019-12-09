@@ -2,6 +2,7 @@ package com.asianwallets.base.service;
 
 import com.asianwallets.common.dto.ChannelDTO;
 import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.vo.ChannelDetailVO;
 import com.github.pagehelper.PageInfo;
 
 public interface ChannelService {
@@ -32,4 +33,12 @@ public interface ChannelService {
      * @return 修改条数
      */
     PageInfo<Channel> pageFindChannel(ChannelDTO channelDTO);
+
+    /**
+     * 根据通道ID查询通道详情
+     *
+     * @param channelId 通道ID
+     * @return 修改条数
+     */
+    ChannelDetailVO getChannelById(String channelId);
 }

@@ -21,6 +21,7 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.utils.ReflexClazzUtils;
+import com.asianwallets.common.vo.ChannelDetailVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -244,5 +245,16 @@ public class ChannelServiceImpl implements ChannelService {
         channelDTO.setLanguage(auditorProvider.getLanguage());
         channelDTO.setSort("ch.create_time");
         return new PageInfo<>(channelMapper.pageFindChannel(channelDTO));
+    }
+
+    /**
+     * 根据通道ID查询通道详情
+     *
+     * @param channelId 通道ID
+     * @return 修改条数
+     */
+    @Override
+    public ChannelDetailVO getChannelById(String channelId) {
+        return null;//channelMapper.getChannelById(channelId, auditorProvider.getLanguage()`);
     }
 }
