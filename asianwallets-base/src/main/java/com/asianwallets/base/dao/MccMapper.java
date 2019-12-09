@@ -70,4 +70,12 @@ public interface MccMapper extends BaseMapper<Mcc> {
      * @return
      */
     int updateById(MccDTO mccDTO);
+
+    /**
+     * 通过CODE修改
+     *
+     * @param mcc
+     * @return
+     */
+    int updateByCode(Mcc mcc);
 }
