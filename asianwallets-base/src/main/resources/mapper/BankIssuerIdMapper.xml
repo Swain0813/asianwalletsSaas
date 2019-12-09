@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.institution.dao.BankIssueridMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.BankIssuerid">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="bank_name" property="bankName" jdbcType="VARCHAR"/>
+        <result column="issuer_id" property="issuerId" jdbcType="VARCHAR"/>
+        <result column="currency" property="currency" jdbcType="VARCHAR"/>
+        <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, bank_name, issuer_id,currency, channel_code,enabled, create_time, update_time, creator, modifier,
+    remark
+    </sql>
+
+    <select id="pageFindBankIssuerid" resultMap="BaseResultMap">
+        select
+        b.id, b.bank_name, b.issuer_id, c.currency,c.channel_cn_name as channel_code ,b.enabled, b.create_time, b.update_time, b.creator, b.modifier,
+        b.remark
+        from bank_issuerid b left join  channel c on b.channel_code = c.channel_code
+        <where>
+            <if test="bankName!=null and bankName != ''">
+                and b.bank_name LIKE CONCAT(CONCAT('%', #{bankName}), '%')
+            </if>
+            <if test="issuerId!=null and issuerId != ''">
+                and b.issuer_id=#{issuerId}
+            </if>
+            <if test="currency!=null and currency != ''">
+                and b.currency=#{currency}
+            </if>
+            <if test="enabled!=null and enabled != ''">
+                and b.enabled=#{enabled}
+            </if>
+            <if test="channelCode!=null and channelCode != ''">
+                and b.channel_code=#{channelCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByBankName" resultType="com.asianwallets.common.entity.BankIssuerid" resultMap="BaseResultMap">
+        select id,
+               bank_name,
+               issuer_id,
+               channel_code,
+               enabled,
+               create_time,
+               update_time,
+               creator,
+               modifier,
+               remark
+        from bank_issuerid
+        where bank_name = #{bankName};
+    </select>
+
+    <select id="exportBankIssuerid" resultMap="BaseResultMap">
+        select
+        b.id, b.bank_name, b.issuer_id, c.currency,c.channel_cn_name as channel_code ,b.enabled, b.create_time,
+        b.update_time, b.creator, b.modifier,
+        b.remark
+        from bank_issuerid b left join channel c on b.channel_code = c.channel_code
+        <where>
+            <if test="bankName!=null and bankName != ''">
+                and b.bank_name LIKE CONCAT(CONCAT('%', #{bankName}), '%')
+            </if>
+            <if test="issuerId!=null and issuerId != ''">
+                and b.issuer_id=#{issuerId}
+            </if>
+            <if test="currency!=null and currency != ''">
+                and b.currency=#{currency}
+            </if>
+            <if test="enabled!=null and enabled != ''">
+                and b.enabled=#{enabled}
+            </if>
+            <if test="channelCode!=null and channelCode != ''">
+                and b.channel_code=#{channelCode}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
