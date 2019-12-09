@@ -13,14 +13,14 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(name = "channel")
-@ApiModel(value = "通道配置", description = "通道配置")
+@ApiModel(value = "通道", description = "通道")
 public class Channel extends BaseEntity {
 
     @ApiModelProperty(value = "通道编号")
     @Column(name = "channel_code")
     private String channelCode;
 
-    @ApiModelProperty(value = "通道的服务名称比如AD3_ONLINE,AD3_OFFLINE")
+    @ApiModelProperty(value = "通道英文名称")
     @Column(name = "channel_en_name")
     private String channelEnName;
 
@@ -56,7 +56,7 @@ public class Channel extends BaseEntity {
     @Column(name = "currency")
     private String currency;
 
-    @ApiModelProperty(value = "银行机构号：微信填写wechat支付宝填写alipay")
+    @ApiModelProperty(value = "银行机构号")
     @Column(name = "issuer_id")
     private String issuerId;
 
@@ -64,11 +64,19 @@ public class Channel extends BaseEntity {
     @Column(name = "settle_cycle")
     private String settleCycle;
 
-    @ApiModelProperty(value = "通道url")
-    @Column(name = "channel_url")
-    private String channelUrl;
+    @ApiModelProperty(value = "通道服务名称标识")
+    @Column(name = "service_name_mark")
+    private String serviceNameMark;
 
-    @ApiModelProperty(value = "Swift Code")//Swift Code
+    @ApiModelProperty(value = "支付url")
+    @Column(name = "pay_url")
+    private String payUrl;
+
+    @ApiModelProperty(value = "撤销url")
+    @Column(name = "void_url")
+    private String voidUrl;
+
+    @ApiModelProperty(value = "退款url")
     @Column(name = "refund_url")
     private String refundUrl;
 
@@ -82,19 +90,15 @@ public class Channel extends BaseEntity {
 
     @ApiModelProperty(value = "通道最小限额")
     @Column(name = "limit_min_amount")
-    private BigDecimal limitMinAmount;
+    private BigDecimal limitMinAmount = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "通道最大限额")
     @Column(name = "limit_max_amount")
-    private BigDecimal limitMaxAmount;
+    private BigDecimal limitMaxAmount = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "通道费率")
     @Column(name = "channel_rate")
     private BigDecimal channelRate;
-
-    @ApiModelProperty(value = "通道手续费")
-    @Column(name = "channel_fee")
-    private BigDecimal channelFee;
 
     @ApiModelProperty(value = "通道费率最小值")
     @Column(name = "channel_min_rate")
@@ -112,10 +116,6 @@ public class Channel extends BaseEntity {
     @Column(name = "channel_gateway_rate")
     private BigDecimal channelGatewayRate;
 
-    @ApiModelProperty(value = "通道网关手续费")
-    @Column(name = "channel_gateway_fee")
-    private BigDecimal channelGatewayFee;
-
     @ApiModelProperty(value = "通道网关费率最小值")
     @Column(name = "channel_gateway_min_rate")
     private BigDecimal channelGatewayMinRate;
@@ -126,19 +126,19 @@ public class Channel extends BaseEntity {
 
     @ApiModelProperty(value = "通道网关手续费类型")
     @Column(name = "channel_gateway_fee_type")
-    private String channelGatewayFeeType;//1-单笔费率,2-单笔定额
+    private String channelGatewayFeeType;
 
-    @ApiModelProperty(value = "ad3的支付code")
+    @ApiModelProperty(value = "支付编码")
     @Column(name = "pay_code")
-    private String payCode;//ad3的支付code
+    private String payCode;
 
-    @ApiModelProperty(value = "通道网关是否收取")
+    @ApiModelProperty(value = "通道网关是否收取 1-收 2-不收")
     @Column(name = "channel_gateway_charge")
-    private Byte channelGatewayCharge;//1-收 2-不收
+    private Byte channelGatewayCharge;
 
-    @ApiModelProperty(value = "通道网关收取状态")
+    @ApiModelProperty(value = "通道网关收取状态 1-成功时收取 2-失败时收取 3-全收")
     @Column(name = "channel_gateway_status")
-    private Byte channelGatewayStatus;// 1-成功时收取 2-失败时收取 3-全收
+    private Byte channelGatewayStatus;
 
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")
@@ -159,4 +159,60 @@ public class Channel extends BaseEntity {
     @ApiModelProperty(value = "通道加密MD5key")
     @Column(name = "md5_key_str")
     private String md5KeyStr;
+
+    @ApiModelProperty(value = "扩展字段1")
+    @Column(name = "extend1")
+    private String extend1;
+
+    @ApiModelProperty(value = "扩展字段2")
+    @Column(name = "extend2")
+    private String extend2;
+
+    @ApiModelProperty(value = "扩展字段3")
+    @Column(name = "extend3")
+    private String extend3;
+
+    @ApiModelProperty(value = "扩展字段4")
+    @Column(name = "extend4")
+    private String extend4;
+
+    @ApiModelProperty(value = "扩展字段5")
+    @Column(name = "extend5")
+    private String extend5;
+
+    @ApiModelProperty(value = "是否报备")
+    @Column(name = "is_report")
+    private Boolean isReport;
+
+    @ApiModelProperty(value = "报备形式")
+    @Column(name = "report_form")
+    private Byte reportForm;
+
+    @ApiModelProperty(value = "退款时是否退还收单手续费(1-退还,2-不退还)")
+    @Column(name = "refunding_is_return_fee")
+    private Byte refundingIsReturnFee;
+
+    @ApiModelProperty(value = "通道代理商id")
+    @Column(name = "channel_agent_id")
+    private String channelAgentId;
+
+    @ApiModelProperty(value = "通道退款手续费费率类型")
+    @Column(name = "channel_refund_fee_type")
+    private String channelRefundFeeType;
+
+    @ApiModelProperty(value = "通道退款手续费费率")
+    @Column(name = "channel_refund_fee_rate")
+    private BigDecimal channelRefundFeeRate;
+
+    @ApiModelProperty(value = "通道退款手续费最大值")
+    @Column(name = "channel_refund_max_rate")
+    private BigDecimal channelRefundMaxRate;
+
+    @ApiModelProperty(value = "通道退款手续费最小值")
+    @Column(name = "channel_refund_min_rate")
+    private BigDecimal channelRefundMinRate;
+
+    @ApiModelProperty(value = "订单有效期")
+    @Column(name = "order_validity")
+    private Integer orderValidity;
 }
