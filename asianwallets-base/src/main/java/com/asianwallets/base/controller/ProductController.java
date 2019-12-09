@@ -1,9 +1,7 @@
 package com.asianwallets.base.controller;
 
 import com.asianwallets.base.service.ProductService;
-import com.asianwallets.common.dto.MerchantDTO;
 import com.asianwallets.common.dto.ProductDTO;
-import com.asianwallets.common.entity.Product;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import io.swagger.annotations.Api;

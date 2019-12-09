@@ -46,6 +46,9 @@ public class MccChannelVO {
     @ApiModelProperty(value = "通道名称")
     private String cName;
 
+    @ApiModelProperty(value = "语言")
+    private String language;
+
     @ApiModelProperty(value = "通道MCC编号")
     private String code;
 

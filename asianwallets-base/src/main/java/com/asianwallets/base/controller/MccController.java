@@ -34,7 +34,6 @@ public class MccController extends BaseController {
     @PostMapping("addMcc")
     public BaseResponse addMcc(@RequestBody @ApiParam MccDTO mccDto) {
         mccDto.setCreator(this.getSysUserVO().getUsername());
-        mccDto.setLanguage(this.getLanguage());
         return ResultUtil.success(mccService.addMcc(mccDto));
     }
 

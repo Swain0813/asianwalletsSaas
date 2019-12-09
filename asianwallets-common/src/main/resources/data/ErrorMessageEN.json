@@ -191,5 +191,8 @@
   "30031": "Information does not exist",
   "30032": "MCC exists",
   "30033": "MCC does not exist",
-  "30034": "Channel does not exist"
+  "30034": "Channel does not exist",
+  "30035": "The institution does not exist",
+  "30036": "Merchant does not exist",
+  "30037": "Shop ID already exists"
 }

@@ -15,6 +15,9 @@ public class PayTypeDTO extends BasePageHelper {
     @ApiModelProperty(value = "id")
     public String id;
 
+    @ApiModelProperty(value = "paytype")
+    public String payType;
+
     @ApiModelProperty(value = "支付方式名称")
     private String name;
 
