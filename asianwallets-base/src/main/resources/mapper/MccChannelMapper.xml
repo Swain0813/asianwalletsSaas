@@ -56,7 +56,7 @@
         left join channel ch on mc.cid = ch.channel_code
         <where>
             <if test="mid != null and mid != ''">
-                and c.extend1 LIKE CONCAT(CONCAT('%', #{mid} ), '%' )
+                and c.code LIKE CONCAT(CONCAT('%', #{mid} ), '%' )
             </if>
             <if test="mccName != null and mccName != ''">
                 and c.name LIKE CONCAT(CONCAT('%', #{mccName} ), '%' )
@@ -66,6 +66,9 @@
             </if>
             <if test="language != null and language != ''">
                 and c.language = #{language}
+            </if>
+            <if test="enabled != null">
+                and mc.enabled = #{enabled}
             </if>
         </where>
     </select>
@@ -92,5 +95,10 @@
             </if>
         </where>
 
+    </select>
+    <select id="selectByCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mcc_channel where code = #{code};
     </select>
 </mapper>

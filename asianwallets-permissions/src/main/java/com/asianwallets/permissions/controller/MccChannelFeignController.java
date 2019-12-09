@@ -107,13 +107,13 @@ public class MccChannelFeignController extends BaseController {
 
     @ApiOperation(value = "导出mccChannel")
     @PostMapping("exportMccChannel")
-    public BaseResponse exportMcc(@RequestBody @ApiParam MccChannelDTO mc, HttpServletResponse response) {
+    public BaseResponse exportMccChannel(@RequestBody @ApiParam MccChannelDTO mc, HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
                 AsianWalletConstant.SELECT, null,
                 "导出mccChannel"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
-            List<MccChannelVO> lists = mccChannelFeign.exportMcc(mc);
+            List<MccChannelVO> lists = mccChannelFeign.exportMccChannel(mc);
             ServletOutputStream out = response.getOutputStream();
             if (ArrayUtil.isEmpty(lists)) {
                 //数据不存在的场合

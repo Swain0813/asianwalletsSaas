@@ -2,7 +2,9 @@ package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.ChannelBank;
+import com.asianwallets.common.vo.ChaBankRelVO;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 
@@ -15,4 +17,6 @@ public interface ChannelBankMapper extends BaseMapper<ChannelBank> {
      */
     @Delete("DELETE FROM channel_bank WHERE channel_id = #{channelId}")
     int deleteByChannelId(String channelId);
+
+    ChaBankRelVO getInfoByCIdAndBId(@Param("channelId")String channelId, @Param("bankId") String bankId);
 }
