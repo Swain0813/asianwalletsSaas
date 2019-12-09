@@ -35,5 +35,5 @@ public interface MccChannelFeign {
     BaseResponse importMccChannel(@RequestBody @ApiParam List<MccChannel> list);
 
     @PostMapping("/mccChannel/exportMccChannel")
-    List<MccChannelVO> exportMcc(@RequestBody @ApiParam MccChannelDTO mc);
+    List<MccChannelVO> exportMccChannel(@RequestBody @ApiParam MccChannelDTO mc);
 }
