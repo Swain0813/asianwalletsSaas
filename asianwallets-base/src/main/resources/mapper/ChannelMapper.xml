@@ -14,23 +14,23 @@
         <result column="channel_connect_method" property="channelConnectMethod" jdbcType="TINYINT"/>
         <result column="pay_type" property="payType" jdbcType="VARCHAR"/>
         <result column="currency" property="currency" jdbcType="VARCHAR"/>
+        <result column="service_name_mark" property="serviceNameMark" jdbcType="VARCHAR"/>
         <result column="settle_cycle" property="settleCycle" jdbcType="VARCHAR"/>
         <result column="issuer_id" property="issuerId" jdbcType="VARCHAR"/>
-        <result column="channel_url" property="channelUrl" jdbcType="VARCHAR"/>
+        <result column="pay_url" property="payUrl" jdbcType="VARCHAR"/>
+        <result column="void_url" property="voidUrl" jdbcType="VARCHAR"/>
         <result column="refund_url" property="refundUrl" jdbcType="VARCHAR"/>
         <result column="channel_single_select_url" property="channelSingleSelectUrl" jdbcType="VARCHAR"/>
         <result column="channel_batch_select_url" property="channelBatchSelectUrl" jdbcType="VARCHAR"/>
         <result column="limit_min_amount" property="limitMinAmount" jdbcType="DECIMAL"/>
         <result column="limit_max_amount" property="limitMaxAmount" jdbcType="DECIMAL"/>
         <result column="channel_rate" property="channelRate" jdbcType="DECIMAL"/>
-        <result column="channel_fee" property="channelFee" jdbcType="DECIMAL"/>
         <result column="channel_min_rate" property="channelMinRate" jdbcType="DECIMAL"/>
         <result column="channel_max_rate" property="channelMaxRate" jdbcType="DECIMAL"/>
         <result column="channel_fee_type" property="channelFeeType" jdbcType="VARCHAR"/>
         <result column="channel_gateway_rate" property="channelGatewayRate" jdbcType="DECIMAL"/>
         <result column="channel_gateway_min_rate" property="channelGatewayMinRate" jdbcType="DECIMAL"/>
         <result column="channel_gateway_max_rate" property="channelGatewayMaxRate" jdbcType="DECIMAL"/>
-        <result column="channel_gateway_fee" property="channelGatewayFee" jdbcType="DECIMAL"/>
         <result column="channel_gateway_fee_type" property="channelGatewayFeeType" jdbcType="VARCHAR"/>
         <result column="sort" property="sort" jdbcType="VARCHAR"/>
         <result column="channel_gateway_charge" property="channelGatewayCharge" jdbcType="TINYINT"/>
@@ -44,53 +44,80 @@
         <result column="support_refund_state" property="supportRefundState" jdbcType="BIT"/>
         <result column="channel_merchant_id" property="channelMerchantId" jdbcType="VARCHAR"/>
         <result column="md5_key_str" property="md5KeyStr" jdbcType="VARCHAR"/>
+        <result column="extend1" property="extend1" jdbcType="VARCHAR"/>
+        <result column="extend2" property="extend2" jdbcType="VARCHAR"/>
+        <result column="extend3" property="extend3" jdbcType="VARCHAR"/>
+        <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
+        <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
+        <result column="is_report" property="isReport" jdbcType="BIT"/>
+        <result column="report_form" property="reportForm" jdbcType="TINYINT"/>
+        <result column="refunding_is_return_fee" property="refundingIsReturnFee" jdbcType="TINYINT"/>
+        <result column="channel_agent_id" property="channelAgentId" jdbcType="VARCHAR"/>
+        <result column="channel_refund_fee_type" property="channelRefundFeeType" jdbcType="VARCHAR"/>
+        <result column="channel_refund_fee_rate" property="channelRefundFeeRate" jdbcType="DECIMAL"/>
+        <result column="channel_refund_max_rate" property="channelRefundMaxRate" jdbcType="DECIMAL"/>
+        <result column="channel_refund_min_rate" property="channelRefundMinRate" jdbcType="DECIMAL"/>
+        <result column="order_validity" property="orderValidity" jdbcType="DECIMAL"/>
     </resultMap>
-    <select id="selectByChannelCode" resultType="com.asianwallets.common.entity.Channel">
-        select id,
-               channel_code,
-               channel_cn_name,
-               channel_en_name,
-               channel_img,
-               pay_code,
-               country_type,
-               country,
-               trans_type,
-               pay_type,
-               currency,
-               issuer_id,
-               settle_cycle,
-               channel_connect_method,
-               refund_url,
-               channel_url,
-               channel_single_select_url,
-               channel_batch_select_url,
-               limit_max_amount,
-               limit_min_amount,
-               support_refund_state,
-               create_time,
-               update_time,
-               creator,
-               modifier,
-               remark,
-               enabled,
-               channel_fee,
-               channel_rate,
-               channel_fee_type,
-               channel_min_rate,
-               channel_max_rate,
-               channel_gateway_rate,
-               channel_gateway_fee,
-               channel_gateway_fee_type,
-               channel_gateway_charge,
-               channel_gateway_status,
-               channel_gateway_min_rate,
-               channel_gateway_max_rate,
-               channel_merchant_id,
-               md5_key_str,
-               sort
+
+    <sql id="Base_Column_List">
+        id, channel_code, channel_en_name, channel_cn_name, channel_img, country, country_type, trans_type, pay_type,
+        currency, settle_cycle,channel_single_select_url, channel_batch_select_url,limit_min_amount,limit_max_amount,
+        create_time,channel_merchant_id,md5_key_str,
+        update_time, creator,pay_code,
+        issuer_id,channel_connect_method,
+        channel_rate,channel_fee_type,channel_min_rate,channel_max_rate,
+        channel_gateway_rate,channel_gateway_min_rate,channel_gateway_max_rate,channel_gateway_fee_type,channel_gateway_charge,channel_gateway_status,
+        modifier, remark, enabled,support_refund_state,refund_url,sort,pay_url,void_url,order_validity,
+        extend1, extend2, extend3, extend4, extend5,is_report,report_form ,refunding_is_return_fee, channel_agent_id,
+        channel_refund_fee_type, channel_refund_fee_rate, channel_refund_max_rate ,channel_refund_min_rate
+    </sql>
+
+    <select id="selectByChannelCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
         from channel
-        where channel_code = #{code};
+        where channel_code = #{channelCode};
     </select>
 
+    <select id="selectByNameAndCurrency" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from channel
+        where channel_cn_name = #{channelCnName} and currency = #{currency};
+    </select>
 
+    <select id="pageFindChannel" resultMap="BaseResultMap">
+        select
+        ch.create_time,
+        ch.channel_code,
+        ch.channel_cn_name,
+        p.name as pay_type,
+        ch.currency,
+        ch.limit_min_amount,
+        ch.limit_max_amount,
+        ch.enabled,
+        ch.support_refund_state,
+        ch.refunding_is_return_fee,
+        ch.update_time,
+        ch.modifier,
+        from channel ch left join pay_type p on p.id = ch.pay_type and p.language=#{language}
+        <where>
+            <if test="channelCode!=null and channelCode != ''">
+                and ch.channel_code=#{channelCode}
+            </if>
+            <if test="channelCnName != null and channelCnName != ''">
+                and ch.channel_cn_name LIKE CONCAT(CONCAT('%', #{channelCnName}), '%')
+            </if>
+            <if test="payType != null and payType != ''">
+                and ch.pay_type=#{payType}
+            </if>
+            <if test="enabled != null">
+                and ch.enabled=#{enabled}
+            </if>
+            <if test="currency != null and currency != ''">
+                and ch.currency=#{currency}
+            </if>
+        </where>
+    </select>
 </mapper>
