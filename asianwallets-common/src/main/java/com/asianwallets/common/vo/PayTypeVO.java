@@ -35,6 +35,9 @@ public class PayTypeVO {
     @ApiModelProperty(value = "支付方式名称")
     private String name;
 
+    @ApiModelProperty(value = "语言")
+    private String language;
+
     @ApiModelProperty(value = "大图标")
     private String picon;
 
