@@ -7,11 +7,6 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * @description: 银行导出VO
- * @author: XuWenQi
- * @create: 2019-08-26 10:57
- **/
 @Data
 @ApiModel(value = "银行导出VO", description = "银行实银行导出VO体")
 public class ExportBankVO {

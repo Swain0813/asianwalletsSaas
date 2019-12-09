@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.asianwallets.institution.dao.BankMapper">
+<mapper namespace="com.asianwallets.base.dao.BankMapper">
     <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Bank">
         <id column="id" property="id" jdbcType="VARCHAR"/>
         <result column="bank_code" property="bankCode" jdbcType="VARCHAR"/>
@@ -22,5 +22,57 @@
         update_time, creator, modifier, remark, enabled
     </sql>
 
+    <select id="selectByBankNameAndCurrency" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bank
+        where bank_name = #{bankName}
+        and bank_currency = #{bankCurrency}
+        and enabled = 1;
+    </select>
 
+    <select id="pageFindBank" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from bank
+        <where>
+            <if test="bankName != null and bankName != ''">
+                and bank_name LIKE CONCAT(CONCAT('%', #{bankName}), '%')
+            </if>
+            <if test="bankCurrency != null and bankCurrency != ''">
+                and bank_currency=#{bankCurrency}
+            </if>
+            <if test="bankCountry != null and bankCountry != ''">
+                and bank_country=#{bankCountry}
+            </if>
+        </where>
+    </select>
+
+    <select id="exportBank" resultMap="ExportBankVOMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bank
+        <where>
+            <if test="bankName != null and bankName != ''">
+                and bank_name LIKE CONCAT(CONCAT('%', #{bankName}), '%')
+            </if>
+            <if test="bankCurrency != null and bankCurrency != ''">
+                and bank_currency=#{bankCurrency}
+            </if>
+            <if test="bankCountry != null and bankCountry != ''">
+                and bank_country=#{bankCountry}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <resultMap id="ExportBankVOMap" type="com.asianwallets.common.vo.ExportBankVO">
+        <result column="bankCode" property="bankCode" jdbcType="VARCHAR"/>
+        <result column="bankName" property="bankName" jdbcType="VARCHAR"/>
+        <result column="bankCountry" property="bankCountry" jdbcType="VARCHAR"/>
+        <result column="bankCurrency" property="bankCurrency" jdbcType="VARCHAR"/>
+        <result column="issuerId" property="issuerId" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+    </resultMap>
 </mapper>

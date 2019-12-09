@@ -1,30 +1,35 @@
 package com.asianwallets.common.dto;
 
 import com.asianwallets.common.base.BasePageHelper;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-
-/**
- * @description:
- * @author: YangXu
- * @create: 2019-07-04 16:39
- **/
 @Data
+@ApiModel(value = "银行输入实体", description = "银行输入实体")
 public class BankDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "银行名称")
     private String bankName;
 
-    @ApiModelProperty(value = "国家")
+    @ApiModelProperty(value = "银行国家")
     private String bankCountry;
 
-    @ApiModelProperty(value = "币种")
-    private String id;
+    @ApiModelProperty(value = "银行id")
+    private String bankId;
+
+    @ApiModelProperty(value = "银行机构号")
     private String issuerId;
+
+    @ApiModelProperty(value = "银行币种")
     private String bankCurrency;
-    private String currency;
-    private boolean enabled;
+
+    @ApiModelProperty(value = "启用禁用")
+    private Boolean enabled;
+
+    @ApiModelProperty(value = "银行编码")
     private String bankCode;
+
+    @ApiModelProperty(value = "银行图片")
+    private String bankImg;
 }

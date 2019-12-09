@@ -1,70 +1,46 @@
 package com.asianwallets.base.service;
 
-import com.asianwallets.common.base.BaseService;
-import com.asianwallets.common.dto.BankCardDTO;
-import com.asianwallets.common.dto.BankCardSearchDTO;
-import com.asianwallets.common.entity.BankCard;
+
+import com.asianwallets.common.dto.BankDTO;
+import com.asianwallets.common.entity.Bank;
+import com.asianwallets.common.vo.ExportBankVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
-/**
- * <p>
- * 银行卡表 服务类
- * </p>
- *
- * @author yx
- * @since 2019-11-25
- */
-public interface BankCardService extends BaseService<BankCard> {
-
+public interface BankService {
 
     /**
-     * @Author YangXu
-     * @Date 2019/11/25
-     * @Descripate 添加银行卡信息
-     * @return
-     **/
-    int addBankCard(String username, List<BankCardDTO> bankCardDTO);
-
-    /**
-     * @Author YangXu
-     * @Date 2019/2/27
-     * @Descripate 修改银行卡信息
-     * @return
-     **/
-    int updateBankCard(String name, BankCardDTO bankCardDTO);
-
-    /**
-     * @Author YangXu
-     * @Date 2019/2/27
-     * @Descripate 根据商户id查询银行卡
-     * @return
-     **/
-    List<BankCard> selectBankCardByMerId(String institutionId);
-
-    /**
-     * @Author YangXu
-     * @Date 2019/2/27
-     * @Descripate 分页查询银行卡
-     * @return
-     **/
-    PageInfo<BankCard> pageBankCard(BankCardSearchDTO bankCardSearchDTO);
-
-    /**
-     * @Author YangXu
-     * @Date 2019/2/27
-     * @Descripate 启用禁用银行卡
-     * @return
-     **/
-    int  banBankCard(String name,String bankCardId , Boolean enabled);
-
-    /**
-     * 设置默认银行卡
-     * @param name
-     * @param bankCardId
-     * @param defaultFlag
-     * @return
+     * 新增银行信息
+     *
+     * @param username 用户名
+     * @param bankDTO  通道输入实体
+     * @return 修改条数
      */
-    int  defaultBankCard(String name,String bankCardId , Boolean defaultFlag);
+    int addBank(String username, BankDTO bankDTO);
+
+    /**
+     * 修改银行信息
+     *
+     * @param username 用户名
+     * @param bankDTO  通道输入实体
+     * @return 修改条数
+     */
+    int updateBank(String username, BankDTO bankDTO);
+
+    /**
+     * 分页查询银行信息
+     *
+     * @param bankDTO  通道输入实体
+     * @return 修改条数
+     */
+    PageInfo<Bank> pageFindBank(BankDTO bankDTO);
+
+    /**
+     * 导出银行信息
+     *
+     * @param bankDTO  通道输入实体
+     * @return 修改条数
+     */
+    List<ExportBankVO> exportBank(BankDTO bankDTO);
 }

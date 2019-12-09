@@ -155,6 +155,7 @@ public class ChannelServiceImpl implements ChannelService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int updateChannel(String username, ChannelDTO channelDTO) {
         //校验产品信息
         if (ArrayUtil.isEmpty(channelDTO.getProductIdList())) {
