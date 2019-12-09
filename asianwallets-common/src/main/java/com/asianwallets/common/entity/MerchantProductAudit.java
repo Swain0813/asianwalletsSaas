@@ -1,6 +1,8 @@
 package com.asianwallets.common.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
+
 import com.asianwallets.common.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -180,7 +182,7 @@ public class MerchantProductAudit extends BaseEntity {
      */
 	@ApiModelProperty(value = "审核状态 1-待审核 2-审核通过 3-审核不通过")
 	@Column(name ="audit_status")
-	private Integer auditStatus;
+	private Byte auditStatus;
     /**
      * 审核备注
      */
@@ -191,7 +193,7 @@ public class MerchantProductAudit extends BaseEntity {
 	@ApiModelProperty(value = "生效时间")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	@Column(name ="effect_time")
-	private String effectTime;
+	private Date effectTime;
 
 	@ApiModelProperty(value = "enabled")
 	@Column(name ="enabled")
