@@ -254,13 +254,15 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             merchantProductAudit.setAddValue(merchantProductDTO.getAddValue());
             merchantProductAudit.setFloatRate(merchantProductDTO.getFloatRate());
             merchantProductAudit.setRefundDefault(merchantProductDTO.getRefundDefault());
-            merchantProductAudit.setRefundRateType(merchantProductDTO.getRefundRateType());
-            merchantProductAudit.setRefundRate(merchantProductDTO.getRefundRate());
-            if (merchantProductDTO.getRefundRateType() != null && TradeConstant.FEE_TYPE_RATE.equals(merchantProductDTO.getRefundRateType())) {
-                merchantProductAudit.setRefundMaxTate(merchantProductDTO.getRefundMaxTate());
-                merchantProductAudit.setRefundMinTate(merchantProductDTO.getRefundMinTate());
+            if (merchantProductDTO.getRefundDefault()) {
+                merchantProductAudit.setRefundRateType(merchantProductDTO.getRefundRateType());
+                merchantProductAudit.setRefundRate(merchantProductDTO.getRefundRate());
+                if (merchantProductDTO.getRefundRateType() != null && TradeConstant.FEE_TYPE_RATE.equals(merchantProductDTO.getRefundRateType())) {
+                    merchantProductAudit.setRefundMaxTate(merchantProductDTO.getRefundMaxTate());
+                    merchantProductAudit.setRefundMinTate(merchantProductDTO.getRefundMinTate());
+                }
+                merchantProductAudit.setRefundAddValue(merchantProductDTO.getRefundAddValue());
             }
-            merchantProductAudit.setRefundAddValue(merchantProductDTO.getRefundAddValue());
             merchantProductAudit.setDividedMode(merchantProductDTO.getDividedMode());
             merchantProductAudit.setDividedRatio(merchantProductDTO.getDividedRatio());
             merchantProductAudit.setDividedRatio(merchantProductDTO.getDividedRatio());
@@ -289,13 +291,15 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             merchantProductAudit.setAddValue(merchantProductDTO.getAddValue());
             merchantProductAudit.setFloatRate(merchantProductDTO.getFloatRate());
             merchantProductAudit.setRefundDefault(merchantProductDTO.getRefundDefault());
-            merchantProductAudit.setRefundRateType(merchantProductDTO.getRefundRateType());
-            merchantProductAudit.setRefundRate(merchantProductDTO.getRefundRate());
-            if (merchantProductDTO.getRefundRateType() != null && TradeConstant.FEE_TYPE_RATE.equals(merchantProductDTO.getRefundRateType())) {
-                merchantProductAudit.setRefundMaxTate(merchantProductDTO.getRefundMaxTate());
-                merchantProductAudit.setRefundMinTate(merchantProductDTO.getRefundMinTate());
+            if (merchantProductDTO.getRefundDefault()) {
+                merchantProductAudit.setRefundRateType(merchantProductDTO.getRefundRateType());
+                merchantProductAudit.setRefundRate(merchantProductDTO.getRefundRate());
+                if (merchantProductDTO.getRefundRateType() != null && TradeConstant.FEE_TYPE_RATE.equals(merchantProductDTO.getRefundRateType())) {
+                    merchantProductAudit.setRefundMaxTate(merchantProductDTO.getRefundMaxTate());
+                    merchantProductAudit.setRefundMinTate(merchantProductDTO.getRefundMinTate());
+                }
+                merchantProductAudit.setRefundAddValue(merchantProductDTO.getRefundAddValue());
             }
-            merchantProductAudit.setRefundAddValue(merchantProductDTO.getRefundAddValue());
             merchantProductAudit.setDividedMode(merchantProductDTO.getDividedMode());
             merchantProductAudit.setDividedRatio(merchantProductDTO.getDividedRatio());
             merchantProductAudit.setDividedRatio(merchantProductDTO.getDividedRatio());
