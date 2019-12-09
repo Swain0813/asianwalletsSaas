@@ -55,6 +55,9 @@ public class MccChannelServiceImpl implements MccChannelService {
         if (channelMapper.selectByChannelCode(mc.getCid()) == null) {
             throw new BusinessException(EResultEnum.CHANNEL_IS_NOT_EXISTS.getCode());
         }
+        if (mccChannelMapper.selectByCode(mc.getCode()) != null) {
+            throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
+        }
         MccChannel mccChannel = new MccChannel();
         BeanUtils.copyProperties(mc, mccChannel);
         mccChannel.setId(IDS.uniqueID().toString());
