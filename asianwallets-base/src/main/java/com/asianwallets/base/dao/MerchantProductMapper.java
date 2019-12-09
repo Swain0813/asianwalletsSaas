@@ -1,0 +1,32 @@
+package com.asianwallets.base.dao;
+
+import com.asianwallets.common.base. BaseMapper;
+import com.asianwallets.common.entity.MerchantProduct;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Repository;
+
+/**
+ * <p>
+  *  Mapper 接口
+ * </p>
+ *
+ * @author yx
+ * @since 2019-12-09
+ */
+@Repository
+public interface MerchantProductMapper extends  BaseMapper<MerchantProduct> {
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/9
+     * @Descripate 查询商户是否已经分配产品
+     * @return
+     **/
+    @Select("select count(1) from merchant_product where merchant_id = #{merchantId} and product_id = #{productId}")
+    int selectCountbyMerIdProId(@Param("merchantId") String merchantId, @Param("productId") String productId);
+
+
+    MerchantProduct getMerchantProductByMerIdAndProId(@Param("merchantid") String merchantid, @Param("productId") String productId);
+}
