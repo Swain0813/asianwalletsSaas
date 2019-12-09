@@ -51,13 +51,13 @@
         from pay_type
         <where>
             <if test="payType != null and payType != ''">
-                extend1 LIKE CONCAT(CONCAT('%', #{payType} ), '%' )
+                and extend1 LIKE CONCAT(CONCAT('%', #{payType} ), '%' )
             </if>
             <if test="name != null and name != ''">
-                name LIKE CONCAT(CONCAT('%', #{name} ), '%' )
+                and name LIKE CONCAT(CONCAT('%', #{name} ), '%' )
             </if>
             <if test="language != null and language != ''">
-                language = #{language}
+                and language = #{language}
             </if>
             <if test="mode != null">
                 and mode = #{mode}
