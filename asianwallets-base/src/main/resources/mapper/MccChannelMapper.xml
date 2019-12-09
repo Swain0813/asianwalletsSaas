@@ -47,6 +47,7 @@
         mc.creator,
         mc.modifier,
         mc.remark,
+        c.language,
         c.name as mName,
         c.code as mCode,
         ch.channel_cn_name as cName
@@ -63,7 +64,6 @@
             <if test="channelName != null and channelName != ''">
                 ch.channel_cn_name LIKE CONCAT(CONCAT('%', #{channelName} ), '%' )
             </if>
-            and c.language = #{language}
         </where>
     </select>
     <select id="inquireAllMccChannel" resultType="com.asianwallets.common.vo.MccChannelVO">

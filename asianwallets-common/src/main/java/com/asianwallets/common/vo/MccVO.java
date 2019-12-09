@@ -31,6 +31,9 @@ public class MccVO {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "语言")
+    private String language;
+
     @ApiModelProperty(value = "mcc名称")
     private String name;
 
