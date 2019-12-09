@@ -68,7 +68,7 @@ public class MccChannelController extends BaseController {
 
     @ApiOperation(value = "导出mccChannel")
     @PostMapping("exportMccChannel")
-    public List<MccChannelVO> exportMcc(@RequestBody @ApiParam MccChannelDTO mc) {
+    public List<MccChannelVO> exportMccChannel(@RequestBody @ApiParam MccChannelDTO mc) {
         mc.setLanguage(this.getLanguage());
         return mccChannelService.exportMccChannel(mc);
     }

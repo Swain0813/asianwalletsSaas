@@ -42,7 +42,7 @@ public class MccChannelFeignImpl implements MccChannelFeign {
     }
 
     @Override
-    public List<MccChannelVO> exportMcc(MccChannelDTO mc) {
+    public List<MccChannelVO> exportMccChannel(MccChannelDTO mc) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }
