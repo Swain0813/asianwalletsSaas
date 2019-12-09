@@ -186,5 +186,6 @@
   "30029": "Tài khoản tài khoản loại không được rỗng",
   "30030": "Kênh không phù hợp với tiền tệ sản phẩm",
   "30031": "Thông tin không tồn tại",
-  "30032": "MCC đã tồn tại"
+  "30032": "MCC đã tồn tại",
+  "30033": "MCC không tồn tại"
 }

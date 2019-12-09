@@ -6,6 +6,7 @@ import com.asianwallets.common.dto.MccDTO;
 import com.asianwallets.common.entity.Mcc;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.vo.MccVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -75,8 +76,8 @@ public class MccController extends BaseController {
 
     @ApiOperation(value = "导出mcc")
     @PostMapping("exportMcc")
-    public BaseResponse exportMcc(@RequestBody @ApiParam MccDTO mccDto) {
+    public List<MccVO> exportMcc(@RequestBody @ApiParam MccDTO mccDto) {
         mccDto.setLanguage(this.getLanguage());
-        return ResultUtil.success(mccService.exportMcc(mccDto));
+        return mccService.exportMcc(mccDto);
     }
 }

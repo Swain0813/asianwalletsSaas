@@ -15,6 +15,12 @@ public class MccChannelDTO extends BasePageHelper {
     @ApiModelProperty(value = "id")
     public String id;
 
+    @ApiModelProperty(value = "MCC名称")
+    public String mccName;
+
+    @ApiModelProperty(value = "通道名称")
+    public String channelName;
+
     @ApiModelProperty(value = "MCC编号")
     private String mid;
 

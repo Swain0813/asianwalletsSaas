@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.permissions.dao.MccMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Mcc">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="language" property="language" jdbcType="VARCHAR"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="extend1" property="extend1" jdbcType="VARCHAR"/>
+        <result column="extend2" property="extend2" jdbcType="VARCHAR"/>
+        <result column="extend3" property="extend3" jdbcType="VARCHAR"/>
+        <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
+        <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
+        <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, name, language,  code, enabled, create_time, update_time, creator,
+    modifier, remark, extend1, extend2, extend3, extend4, extend5, extend6
+    </sql>
+    <update id="updateById">
+        update mcc
+        set code = #{code}
+        where extend1 = #{id};
+    </update>
+
+    <select id="selectByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mcc
+        where
+        name = #{name}
+    </select>
+
+    <select id="pageMcc" resultType="com.asianwallets.common.vo.MccVO">
+        select
+        extend1 as id,
+        name,
+        language,
+        code,
+        enabled,
+        create_time as createTime,
+        update_time as updateTime,
+        creator,
+        modifier,
+        remark
+        from mcc
+        <where>
+            <if test="name != null and name != ''">
+                name LIKE CONCAT(CONCAT('%', #{name} ), '%' )
+            </if>
+            <if test="code != null and code != ''">
+                and code = #{code}
+            </if>
+            <if test="enabled != null">
+                and enabled = #{enabled}
+            </if>
+            and language = #{language}
+        </where>
+    </select>
+    <select id="selectByExtend1AndLanguage" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mcc
+        where language = #{language} and extend1 = #{extend1}
+    </select>
+
+    <select id="inquireAllMcc" resultType="com.asianwallets.common.vo.MccVO">
+        select extend1     as id,
+               name,
+               language,
+               code,
+               enabled,
+               create_time as createTime,
+               update_time as updateTime,
+               creator,
+               modifier,
+               remark
+        from mcc
+        where language = #{language}
+          and enabled = 1;
+    </select>
+
+    <select id="selectByExtend1" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mcc
+        where extend1 = #{extend1}
+    </select>
+    <select id="selectByCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mcc
+        where code = #{code}
+        limit 1;
+    </select>
+
+</mapper>

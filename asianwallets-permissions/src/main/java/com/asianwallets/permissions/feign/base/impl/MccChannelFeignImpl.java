@@ -1,12 +1,12 @@
 package com.asianwallets.permissions.feign.base.impl;
 
-import com.asianwallets.common.dto.MccDTO;
-import com.asianwallets.common.entity.Mcc;
+import com.asianwallets.common.dto.MccChannelDTO;
+import com.asianwallets.common.entity.MccChannel;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.vo.MccVO;
-import com.asianwallets.permissions.feign.base.MccFeign;
+import com.asianwallets.common.vo.MccChannelVO;
+import com.asianwallets.permissions.feign.base.MccChannelFeign;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,39 +15,34 @@ import java.util.List;
  * mcc
  */
 @Component
-public class MccFeignImpl implements MccFeign {
+public class MccChannelFeignImpl implements MccChannelFeign {
     @Override
-    public BaseResponse inquireAllMcc() {
+    public BaseResponse addMccChannel(MccChannelDTO mc) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse addMcc(MccDTO mccDto) {
+    public BaseResponse pageMccChannel(MccChannelDTO mc) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse updateMcc(MccDTO mccDto) {
+    public BaseResponse banMccChannel(MccChannelDTO mc) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse pageMcc(MccDTO mccDto) {
+    public BaseResponse inquireAllMccChannel() {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse banMcc(MccDTO mccDto) {
+    public BaseResponse importMccChannel(List<MccChannel> list) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse importMcc(List<Mcc> list) {
-        throw new BusinessException(EResultEnum.ERROR.getCode());
-    }
-
-    @Override
-    public List<MccVO> exportMcc(MccDTO mccDto) {
+    public List<MccChannelVO> exportMcc(MccChannelDTO mc) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

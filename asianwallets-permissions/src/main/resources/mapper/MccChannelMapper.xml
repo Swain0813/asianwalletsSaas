@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.permissions.dao.MccChannelMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.MccChannel">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="mid" property="mid" jdbcType="VARCHAR"/>
+        <result column="cid" property="cid" jdbcType="VARCHAR"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="extend1" property="extend1" jdbcType="VARCHAR"/>
+        <result column="extend2" property="extend2" jdbcType="VARCHAR"/>
+        <result column="extend3" property="extend3" jdbcType="VARCHAR"/>
+        <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
+        <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
+        <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
+        <result column="extend7" property="extend7" jdbcType="VARCHAR"/>
+        <result column="extend8" property="extend8" jdbcType="VARCHAR"/>
+        <result column="extend9" property="extend9" jdbcType="VARCHAR"/>
+        <result column="extend10" property="extend10" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, mid, cid, code, enabled, create_time, update_time, creator, modifier, remark,
+    extend1, extend2, extend3, extend4, extend5, extend6, extend7, extend8, extend9, 
+    extend10
+    </sql>
+    <select id="selectByCidAndMid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mcc_channel
+        where cid = #{cid}
+        and mid = #{mid};
+    </select>
+    <select id="pageMccChannel" resultType="com.asianwallets.common.vo.MccChannelVO">
+        select
+        mc.id,
+        mc.mid,
+        mc.cid,
+        mc.code,
+        mc.enabled,
+        mc.create_time as createTime,
+        mc.update_time as updateTime,
+        mc.creator,
+        mc.modifier,
+        mc.remark,
+        c.name as mName,
+        c.code as mCode,
+        ch.channel_cn_name as cName
+        from mcc_channel mc
+        left join mcc c on mc.mid = c.extend1
+        left join channel ch on mc.cid = ch.channel_code
+        <where>
+            <if test="mid != null and mid != ''">
+                c.extend1 LIKE CONCAT(CONCAT('%', #{mid} ), '%' )
+            </if>
+            <if test="mccName != null and mccName != ''">
+                c.name LIKE CONCAT(CONCAT('%', #{mccName} ), '%' )
+            </if>
+            <if test="channelName != null and channelName != ''">
+                ch.channel_cn_name LIKE CONCAT(CONCAT('%', #{channelName} ), '%' )
+            </if>
+            and c.language = #{language}
+        </where>
+    </select>
+    <select id="inquireAllMccChannel" resultType="com.asianwallets.common.vo.MccChannelVO">
+        select mc.id,
+               mc.mid,
+               mc.cid,
+               mc.code,
+               mc.enabled,
+               mc.create_time     as createTime,
+               mc.update_time     as updateTime,
+               mc.creator,
+               mc.modifier,
+               mc.remark,
+               c.name             as mName,
+               c.code             as mCode,
+               ch.channel_cn_name as cName
+        from mcc_channel mc
+                 left join mcc c on mc.mid = c.extend1
+                 left join channel ch on mc.cid = ch.channel_code
+        where c.language = #{language}
+    </select>
+</mapper>

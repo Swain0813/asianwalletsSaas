@@ -3,9 +3,10 @@ package com.asianwallets.base.controller;
 import com.asianwallets.base.service.MccChannelService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.MccChannelDTO;
-import com.asianwallets.common.entity.Mcc;
+import com.asianwallets.common.entity.MccChannel;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.vo.MccChannelVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -37,14 +38,6 @@ public class MccChannelController extends BaseController {
         return ResultUtil.success(mccChannelService.addMccChannel(mc));
     }
 
-    @ApiOperation(value = "修改mccChannel")
-    @PostMapping("updateMccChannel")
-    public BaseResponse updateMccChannel(@RequestBody @ApiParam MccChannelDTO mc) {
-        mc.setLanguage(this.getLanguage());
-        mc.setModifier(this.getSysUserVO().getUsername());
-        return ResultUtil.success(mccChannelService.updateMccChannel(mc));
-    }
-
     @ApiOperation(value = "查询mccChannel")
     @PostMapping("pageMccChannel")
     public BaseResponse pageMccChannel(@RequestBody @ApiParam MccChannelDTO mc) {
@@ -69,14 +62,14 @@ public class MccChannelController extends BaseController {
 
     @ApiOperation(value = "导入mccChannel")
     @PostMapping("importMccChannel")
-    public BaseResponse importMccChannel(@RequestBody @ApiParam List<Mcc> list) {
+    public BaseResponse importMccChannel(@RequestBody @ApiParam List<MccChannel> list) {
         return ResultUtil.success(mccChannelService.importMccChannel(list));
     }
 
     @ApiOperation(value = "导出mccChannel")
     @PostMapping("exportMccChannel")
-    public BaseResponse exportMcc(@RequestBody @ApiParam MccChannelDTO mc) {
+    public List<MccChannelVO> exportMcc(@RequestBody @ApiParam MccChannelDTO mc) {
         mc.setLanguage(this.getLanguage());
-        return ResultUtil.success(mccChannelService.exportMccChannel(mc));
+        return mccChannelService.exportMccChannel(mc);
     }
 }

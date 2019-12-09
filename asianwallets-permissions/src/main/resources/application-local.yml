@@ -27,7 +27,7 @@ hystrix:
 spring:
   # 数据库配置
   datasource:
-    url: jdbc:mysql://192.168.31.102:3306/asianwallets_saas?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://192.168.124.22:3306/asianwallets_saas?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
     password: root
     # 使用druid数据源
@@ -55,7 +55,7 @@ spring:
 redis:
   database: 1
   password: test123
-  host: 192.168.31.102
+  host: 192.168.124.22
   port: 6379
   time: 0
   pool:

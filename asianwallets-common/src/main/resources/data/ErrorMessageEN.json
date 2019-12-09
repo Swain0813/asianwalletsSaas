@@ -189,5 +189,7 @@
   "30029": "The entry account type cannot be empty",
   "30030": "Channel is inconsistent with product currency",
   "30031": "Information does not exist",
-  "30032": "MCC exists"
+  "30032": "MCC exists",
+  "30033": "MCC does not exist",
+  "30034": "Channel does not exist"
 }
