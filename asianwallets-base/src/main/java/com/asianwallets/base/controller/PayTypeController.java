@@ -30,7 +30,6 @@ public class PayTypeController extends BaseController {
     @PostMapping("addPayType")
     public BaseResponse addPaytype(@RequestBody @ApiParam PayTypeDTO PayTypeDTO) {
         PayTypeDTO.setCreator(this.getSysUserVO().getUsername());
-        PayTypeDTO.setLanguage(this.getLanguage());
         return ResultUtil.success(PayTypeService.addPayType(PayTypeDTO));
     }
 
