@@ -8,7 +8,6 @@ import com.asianwallets.common.response.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,5 +42,11 @@ public class ChannelController extends BaseController {
     @GetMapping("/getChannelById")
     public BaseResponse getChannelById(@RequestParam @ApiParam String channelId) {
         return ResultUtil.success(channelService.getChannelById(channelId));
+    }
+
+    @ApiOperation(value = "导出通道信息")
+    @PostMapping("/exportChannel")
+    public BaseResponse exportChannel(@RequestBody @ApiParam ChannelDTO channelDTO) {
+        return ResultUtil.success(channelService.exportChannel(channelDTO));
     }
 }
