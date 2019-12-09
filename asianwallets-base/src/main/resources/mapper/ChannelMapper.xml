@@ -120,4 +120,178 @@
             </if>
         </where>
     </select>
+
+    <select id="selectByChannelId" resultMap="ChannelDetailVOMap">
+        select ch.channel_cn_name           as channelCnName,
+               ch.currency                  as currency,
+               ch.settle_cycle              as settleCycle,
+               ch.channel_merchant_id       as channelMerchantId,
+               ch.md5_key_str               as md5KeyStr,
+               ch.limit_min_amount          as limitMinAmount,
+               ch.limit_max_amount          as limitMaxAmount,
+               ch.sort,
+               ch.pay_code                  as payCode,
+               ch.channel_agent_id          as channelAgentId,
+               ch.order_validity            as orderValidity,
+               ch.is_report                 as isReport,
+               ch.report_form               as reportForm,
+               ch.enabled,
+               ch.support_refund_state      as supportRefundState,
+               ch.refunding_is_return_fee   as refundingIsReturnFee,
+               ch.channel_fee_type,
+               ch.channel_rate,
+               ch.channel_min_rate,
+               ch.channel_max_rate,
+               ch.channel_gateway_status,
+               ch.channel_gateway_charge,
+               ch.channel_gateway_fee_type,
+               ch.channel_gateway_rate,
+               ch.channel_gateway_min_rate,
+               ch.channel_gateway_max_rate,
+               ch.channel_refund_fee_type,
+               ch.channel_refund_fee_rate,
+               ch.channel_refund_min_rate,
+               ch.channel_refund_max_rate,
+
+               ch.pay_url                   as payUrl,
+               ch.channel_single_select_url as channelSingleSelectUrl,
+               ch.void_url                  as voidUrl,
+               ch.refund_url                as refundUrl,
+               ch.channel_code              as channelCode,
+
+               p.id                         as productId,
+               p.product_code               as productCode,
+               p.trans_type                 as pTransType,
+               p.currency                   as pCurrency,
+
+               b.id                         as bankID,
+               b.bank_code                  as bankCode,
+               b.bank_name                  as bankName,
+               b.bank_country               as bankCountry,
+               b.bank_currency              as bankCurrency
+        from channel ch,
+             product p,
+             product_channel pc,
+             bank b,
+             channel_bank cb,
+             pay_type pt
+        where ch.id = pc.channel_id
+          and pc.product_id = p.id
+          and ch.id = cb.channel_id
+          and cb.bank_id = b.id
+          and p.pay_type = pt.id
+          and ch.id = #{channelId}
+        order by ch.create_time DESC
+    </select>
+
+    <resultMap id="ChannelDetailVOMap" type="com.asianwallets.common.vo.ChannelDetailVO">
+        <result column="channelCnName" property="channelCnName" jdbcType="VARCHAR"/>
+        <result column="currency" property="currency" jdbcType="VARCHAR"/>
+        <result column="settleCycle" property="settleCycle" jdbcType="VARCHAR"/>
+        <result column="channelMerchantId" property="channelMerchantId" jdbcType="VARCHAR"/>
+        <result column="md5KeyStr" property="md5KeyStr" jdbcType="VARCHAR"/>
+        <result column="limitMinAmount" property="limitMinAmount" jdbcType="DECIMAL"/>
+        <result column="limitMaxAmount" property="limitMaxAmount" jdbcType="DECIMAL"/>
+        <result column="sort" property="sort" jdbcType="VARCHAR"/>
+        <result column="payCode" property="payCode" jdbcType="VARCHAR"/>
+        <result column="channelAgentId" property="channelAgentId" jdbcType="VARCHAR"/>
+        <result column="orderValidity" property="orderValidity" jdbcType="INTEGER"/>
+        <result column="isReport" property="isReport" jdbcType="BIT"/>
+        <result column="reportForm" property="reportForm" jdbcType="TINYINT"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="supportRefundState" property="supportRefundState" jdbcType="BIT"/>
+        <result column="refundingIsReturnFee" property="refundingIsReturnFee" jdbcType="TINYINT"/>
+        <result column="channel_fee_type" property="channelFeeType" jdbcType="VARCHAR"/>
+        <result column="channel_rate" property="channelRate" jdbcType="DECIMAL"/>
+        <result column="channel_min_rate" property="channelMinRate" jdbcType="DECIMAL"/>
+        <result column="channel_max_rate" property="channelMaxRate" jdbcType="DECIMAL"/>
+        <result column="channel_gateway_status" property="channelGatewayStatus" jdbcType="TINYINT"/>
+        <result column="channel_gateway_charge" property="channelGatewayCharge" jdbcType="TINYINT"/>
+        <result column="channel_gateway_fee_type" property="channelGatewayFeeType" jdbcType="VARCHAR"/>
+        <result column="channel_gateway_rate" property="channelGatewayRate" jdbcType="DECIMAL"/>
+        <result column="channel_gateway_min_rate" property="channelGatewayMinRate" jdbcType="DECIMAL"/>
+        <result column="channel_gateway_max_rate" property="channelGatewayMaxRate" jdbcType="DECIMAL"/>
+        <result column="channel_refund_fee_type" property="channelRefundFeeType" jdbcType="DECIMAL"/>
+        <result column="channel_refund_fee_type" property="channelRefundFeeRate" jdbcType="DECIMAL"/>
+        <result column="channel_refund_fee_type" property="channelRefundMinRate" jdbcType="DECIMAL"/>
+        <result column="channel_refund_fee_type" property="channelRefundMaxRate" jdbcType="DECIMAL"/>
+
+        <result column="payUrl" property="payUrl" jdbcType="VARCHAR"/>
+        <result column="channelSingleSelectUrl" property="channelSingleSelectUrl" jdbcType="VARCHAR"/>
+        <result column="voidUrl" property="currency" jdbcType="VARCHAR"/>
+        <result column="refundUrl" property="refundUrl" jdbcType="VARCHAR"/>
+        <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+
+        <collection javaType="list" property="productVOList" resultMap="ChannelDetailProductVOMap"/>
+        <collection javaType="list" property="bankVOList" resultMap="BankVOMap"/>
+    </resultMap>
+    <resultMap id="ChannelDetailProductVOMap" type="com.asianwallets.common.vo.ChannelDetailProductVO">
+        <result column="productId" property="productId" jdbcType="VARCHAR"/>
+        <result column="productCode" property="productCode" jdbcType="VARCHAR"/>
+        <result column="pTransType" property="transType" jdbcType="TINYINT"/>
+        <result column="pCurrency" property="currency" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="BankVOMap" type="com.asianwallets.common.vo.BankVO">
+        <result column="bankID" property="bankID" jdbcType="VARCHAR"/>
+        <result column="bankCode" property="bankCode" jdbcType="VARCHAR"/>
+        <result column="bankName" property="bankName" jdbcType="VARCHAR"/>
+        <result column="bankCountry" property="bankCountry" jdbcType="VARCHAR"/>
+        <result column="bankCurrency" property="bankCurrency" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="exportChannel" resultType="com.asianwallets.common.vo.ChannelExportVO">
+        SELECT
+        ch.channel_code AS channelCode,
+        ch.channel_cn_name AS channelCnName,
+        d.name AS payType,
+        ch.currency AS currency,
+        ch.channel_en_name AS channelEnName,
+        ch.pay_code AS payCode,
+        ch.settle_cycle AS settleCycle,
+        ch.create_time AS createTime,
+        ch.channel_rate AS channelRate,
+        ch.support_refund_state,
+        ch.sort,
+        ch.limit_max_amount,
+        ch.limit_min_amount,
+        ch.channel_min_rate ,
+        ch.channel_max_rate ,
+        ch.channel_fee_type ,
+        ch.update_time AS updateTime,
+        ch.enabled AS enabled,
+        ch.channel_connect_method AS channelConnectMethod,
+        ch.creator AS creator,
+        ch.modifier AS modifier,
+        ch.remark AS remark,
+        b.bank_name as bank_name
+        from channel ch,
+        dictionary d,
+        channel_bank cb,
+        bank b
+        <where>
+            ch.id = cb.channel_id
+            and cb.bank_id = b.id
+            and d.code = ch.pay_type
+            and d.language=#{language}
+            <if test="channelCode!=null and channelCode != ''">
+                and ch.channel_code=#{channelCode}
+            </if>
+            <if test="channelEnName != null and channelEnName != ''">
+                and ch.channel_en_name LIKE CONCAT(CONCAT('%', #{channelEnName}), '%')
+            </if>
+            <if test="channelCnName != null and channelCnName != ''">
+                and ch.channel_cn_name LIKE CONCAT(CONCAT('%', #{channelCnName}), '%')
+            </if>
+            <if test="payType != null and payType != ''">
+                and ch.pay_type=#{payType}
+            </if>
+            <if test="enabled != null">
+                and ch.enabled=#{enabled}
+            </if>
+            <if test="currency != null and currency != ''">
+                and ch.currency=#{currency}
+            </if>
+        </where>
+        ORDER BY ch.create_time desc
+    </select>
 </mapper>

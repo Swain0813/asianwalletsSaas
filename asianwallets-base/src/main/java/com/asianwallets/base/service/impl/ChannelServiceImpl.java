@@ -1,7 +1,6 @@
 package com.asianwallets.base.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.base.dao.ChannelBankMapper;
 import com.asianwallets.base.dao.ChannelMapper;
 import com.asianwallets.base.dao.ProductChannelMapper;
@@ -9,7 +8,6 @@ import com.asianwallets.base.dao.ProductMapper;
 import com.asianwallets.base.service.ChannelService;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
-import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.ChannelDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelBank;
@@ -22,6 +20,7 @@ import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.vo.ChannelDetailVO;
+import com.asianwallets.common.vo.ChannelExportVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -251,10 +250,22 @@ public class ChannelServiceImpl implements ChannelService {
      * 根据通道ID查询通道详情
      *
      * @param channelId 通道ID
-     * @return 修改条数
+     * @return 通道详情输出实体
      */
     @Override
     public ChannelDetailVO getChannelById(String channelId) {
-        return null;//channelMapper.getChannelById(channelId, auditorProvider.getLanguage()`);
+        return channelMapper.selectByChannelId(channelId, auditorProvider.getLanguage());
+    }
+
+    /**
+     * 导出通道信息
+     *
+     * @param channelDTO 通道输入实体
+     * @return 修改条数
+     */
+    @Override
+    public List<ChannelExportVO> exportChannel(ChannelDTO channelDTO) {
+        channelDTO.setLanguage(auditorProvider.getLanguage());
+        return channelMapper.exportChannel(channelDTO);
     }
 }
