@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author yx
@@ -55,10 +55,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     private QrtzJobDetailsMapper qrtzJobDetailsMapper;
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/9
      * @Descripate 添加商户产品
-     * @return
      **/
     @Override
     public int addMerchantProduct(String name, List<MerchantProductDTO> merchantProductDTOs) {
@@ -90,7 +90,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                             throw new BusinessException(EResultEnum.RATE_IS_ILLEGAL.getCode());
                         }
                     }
-                }else if(agentMerchantProduct != null && !agentMerchantProduct.getRateType().equals(agentMerchantProduct.getRateType())){
+                } else if (agentMerchantProduct != null && !agentMerchantProduct.getRateType().equals(agentMerchantProduct.getRateType())) {
                     //商户的产品费率类型和代理商的产品费率类型不一致
                     throw new BusinessException(EResultEnum.RATE_TYPE_IS_DIFFERENT.getCode());
                 }
@@ -121,10 +121,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/9
      * @Descripate 商户分配通道
-     * @return
      **/
     @Override
     public int allotMerProductChannel(String username, MerProDTO merProDTO) {
@@ -185,10 +185,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/9
-     * @Descripate  修改商户产品
-     * @return
+     * @Descripate 修改商户产品
      **/
     @Override
     public int updateMerchantProduct(String name, MerchantProductDTO merchantProductDTO) {
@@ -232,18 +232,82 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                         throw new BusinessException(EResultEnum.RATE_IS_ILLEGAL.getCode());
                     }
                 }
-            }else if(agentMerchantProduct != null && !agentMerchantProduct.getRateType().equals(agentMerchantProduct.getRateType())){
+            } else if (agentMerchantProduct != null && !agentMerchantProduct.getRateType().equals(agentMerchantProduct.getRateType())) {
                 //商户的产品费率类型和代理商的产品费率类型不一致
                 throw new BusinessException(EResultEnum.RATE_TYPE_IS_DIFFERENT.getCode());
             }
         }
 
         if (oldMerchantProductAudit == null) {
+            BeanUtils.copyProperties(oldMerPro, merchantProductAudit);
+            merchantProductAudit.setTradeDirection(merchantProductDTO.getTradeDirection());
+            merchantProductAudit.setPayType(merchantProductDTO.getPayType());
+            merchantProductAudit.setProductId(merchantProductDTO.getProductId());
+            merchantProductAudit.setProductAbbrev(merchantProductDTO.getProductAbbrev());
+            merchantProductAudit.setRateType(merchantProductDTO.getRateType());
+            merchantProductAudit.setRate(merchantProductDTO.getRate());
+            //费率类型为单笔费率的场合才有费率最小值和费率最大值
+            if (merchantProductDTO.getRateType() != null && TradeConstant.FEE_TYPE_RATE.equals(merchantProductDTO.getRateType())) {
+                merchantProductAudit.setMaxTate(merchantProductDTO.getMaxTate());
+                merchantProductAudit.setMinTate(merchantProductDTO.getMinTate());
+            }
+            merchantProductAudit.setAddValue(merchantProductDTO.getAddValue());
+            merchantProductAudit.setFloatRate(merchantProductDTO.getFloatRate());
+            merchantProductAudit.setRefundDefault(merchantProductDTO.getRefundDefault());
+            merchantProductAudit.setRefundRateType(merchantProductDTO.getRefundRateType());
+            merchantProductAudit.setRefundRate(merchantProductDTO.getRefundRate());
+            if (merchantProductDTO.getRefundRateType() != null && TradeConstant.FEE_TYPE_RATE.equals(merchantProductDTO.getRefundRateType())) {
+                merchantProductAudit.setRefundMaxTate(merchantProductDTO.getRefundMaxTate());
+                merchantProductAudit.setRefundMinTate(merchantProductDTO.getRefundMinTate());
+            }
+            merchantProductAudit.setRefundAddValue(merchantProductDTO.getRefundAddValue());
+            merchantProductAudit.setDividedMode(merchantProductDTO.getDividedMode());
+            merchantProductAudit.setDividedRatio(merchantProductDTO.getDividedRatio());
+            merchantProductAudit.setDividedRatio(merchantProductDTO.getDividedRatio());
+            merchantProductAudit.setAuditStatus(TradeConstant.AUDIT_WAIT);
+            merchantProductAudit.setEffectTime(merchantProductDTO.getEffectTime());
+            merchantProductAudit.setCreateTime(new Date());
+            merchantProductAudit.setCreator(oldMerPro.getCreator());
+            merchantProductAudit.setModifier(name);
+            merchantProductAudit.setUpdateTime(oldMerPro.getCreateTime());
+            num = merchantProductAuditMapper.insert(merchantProductAudit);
 
-        }else if(oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_FAIL || oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_SUCCESS){
+        } else if (oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_FAIL || oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_SUCCESS) {
 
+            BeanUtils.copyProperties(oldMerPro, merchantProductAudit);
+            merchantProductAudit.setTradeDirection(merchantProductDTO.getTradeDirection());
+            merchantProductAudit.setPayType(merchantProductDTO.getPayType());
+            merchantProductAudit.setProductId(merchantProductDTO.getProductId());
+            merchantProductAudit.setProductAbbrev(merchantProductDTO.getProductAbbrev());
+            merchantProductAudit.setRateType(merchantProductDTO.getRateType());
+            merchantProductAudit.setRate(merchantProductDTO.getRate());
+            //费率类型为单笔费率的场合才有费率最小值和费率最大值
+            if (merchantProductDTO.getRateType() != null && TradeConstant.FEE_TYPE_RATE.equals(merchantProductDTO.getRateType())) {
+                merchantProductAudit.setMaxTate(merchantProductDTO.getMaxTate());
+                merchantProductAudit.setMinTate(merchantProductDTO.getMinTate());
+            }
+            merchantProductAudit.setAddValue(merchantProductDTO.getAddValue());
+            merchantProductAudit.setFloatRate(merchantProductDTO.getFloatRate());
+            merchantProductAudit.setRefundDefault(merchantProductDTO.getRefundDefault());
+            merchantProductAudit.setRefundRateType(merchantProductDTO.getRefundRateType());
+            merchantProductAudit.setRefundRate(merchantProductDTO.getRefundRate());
+            if (merchantProductDTO.getRefundRateType() != null && TradeConstant.FEE_TYPE_RATE.equals(merchantProductDTO.getRefundRateType())) {
+                merchantProductAudit.setRefundMaxTate(merchantProductDTO.getRefundMaxTate());
+                merchantProductAudit.setRefundMinTate(merchantProductDTO.getRefundMinTate());
+            }
+            merchantProductAudit.setRefundAddValue(merchantProductDTO.getRefundAddValue());
+            merchantProductAudit.setDividedMode(merchantProductDTO.getDividedMode());
+            merchantProductAudit.setDividedRatio(merchantProductDTO.getDividedRatio());
+            merchantProductAudit.setDividedRatio(merchantProductDTO.getDividedRatio());
+            merchantProductAudit.setAuditStatus(TradeConstant.AUDIT_WAIT);
+            merchantProductAudit.setEffectTime(merchantProductDTO.getEffectTime());
+            merchantProductAudit.setModifier(name);
+            merchantProductAudit.setCreateTime(new Date());
+            num = merchantProductAuditMapper.updateByPrimaryKeySelective(merchantProductAudit);
+
+        } else if (oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_WAIT || oldMerchantProductAudit.getAuditStatus() == null) {
+            throw new BusinessException(EResultEnum.AUDIT_INFO_EXIENT.getCode());
         }
-
-        return 0;
+        return num;
     }
 }
