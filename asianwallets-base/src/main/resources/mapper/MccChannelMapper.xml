@@ -67,6 +67,9 @@
             <if test="language != null and language != ''">
                 and c.language = #{language}
             </if>
+            <if test="enabled != null">
+                and mc.enabled = #{enabled}
+            </if>
         </where>
     </select>
     <select id="inquireAllMccChannel" resultType="com.asianwallets.common.vo.MccChannelVO">
