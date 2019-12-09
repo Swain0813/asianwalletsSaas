@@ -41,7 +41,6 @@ public class MccChannelController extends BaseController {
     @ApiOperation(value = "查询mccChannel")
     @PostMapping("pageMccChannel")
     public BaseResponse pageMccChannel(@RequestBody @ApiParam MccChannelDTO mc) {
-        mc.setLanguage(this.getLanguage());
         return ResultUtil.success(mccChannelService.pageMccChannel(mc));
     }
 
@@ -56,7 +55,7 @@ public class MccChannelController extends BaseController {
     @ApiOperation(value = "查询所有mccChannel")
     @GetMapping("inquireAllMccChannel")
     public BaseResponse inquireAllMccChannel() {
-        return ResultUtil.success(mccChannelService.inquireAllMccChannel(this.getLanguage()));
+        return ResultUtil.success(mccChannelService.inquireAllMccChannel(null));
     }
 
 
