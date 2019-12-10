@@ -17,19 +17,19 @@ import java.util.List;
 public interface InstitutionRequestFeign {
 
     @ApiOperation(value = "添加机构请求参数设置")
-    @PostMapping("/addInstitutionRequest")
+    @PostMapping("/insreqps/addInstitutionRequest")
     BaseResponse addInstitutionRequest(@RequestBody @ApiParam List<InstitutionRequestDTO> institutionRequestDTO);
 
     @ApiOperation(value = "分页查询机构请求参数设置")
-    @PostMapping("/pageInstitutionRequest")
+    @PostMapping("/insreqps/pageInstitutionRequest")
     BaseResponse pageInstitutionRequest(@RequestBody @ApiParam InstitutionRequestDTO institutionRequestDTO);
 
     @ApiOperation(value = "根据机构编号查询机构请求参数设置的详情")
-    @PostMapping(value = "/getInstitutionRequest")
+    @PostMapping(value = "/insreqps/getInstitutionRequest")
     BaseResponse getInstitutionRequest(@RequestBody @ApiParam InstitutionRequestDTO institutionRequestDTO);
 
 
     @ApiOperation(value = "修改机构请求参数设置")
-    @PostMapping("/updateInstitutionRequest")
+    @PostMapping("/insreqps/updateInstitutionRequest")
     BaseResponse updateInstitutionRequest(@RequestBody @ApiParam List<InstitutionRequestDTO> institutionRequestDTO);
 }
