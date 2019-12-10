@@ -1,10 +1,12 @@
 package com.asianwallets.permissions.feign.base;
 
 import com.asianwallets.common.dto.*;
+import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.impl.MerchantProductFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,5 +60,9 @@ public interface MerchantProductFeign {
     @GetMapping("/merchantProduct/getRelevantInfo")
     BaseResponse getRelevantInfo(@RequestParam("merchantId") @ApiParam String merchantId);
 
+
+    @ApiOperation(value = "导出商户产品信息")
+    @PostMapping("/merchantProduct/exportMerProduct")
+    List<MerchantProduct> exportMerProduct(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO);
 
 }

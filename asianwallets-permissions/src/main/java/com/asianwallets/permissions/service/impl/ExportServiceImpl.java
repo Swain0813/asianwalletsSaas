@@ -7,6 +7,7 @@ import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.vo.InstitutionExportVO;
 import com.asianwallets.common.vo.MerchantExportVO;
+import com.asianwallets.common.vo.MerchantProductExportVO;
 import com.asianwallets.permissions.service.ExportService;
 import org.springframework.stereotype.Service;
 
@@ -141,5 +142,65 @@ public class ExportServiceImpl implements ExportService {
         writer.write(oList1);
         return writer;
 
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 导出商户产品
+     * @return
+     **/
+    @Override
+    public ExcelWriter getMerchantProductExcel(ArrayList<MerchantProductExportVO> merchantProExportVOS, Class clazz) {
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (MerchantProductExportVO merchantProductExportVO : merchantProExportVOS) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(merchantProductExportVO);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int p = 0; p < property.length; p++) {
+                for (String s : keySet) {
+                    if (s.equals(property[p])) {
+                        oSet1.add(comment[p]);
+                        if (s.equals("tradeDirection")) {
+                            if ((String.valueOf((oMap.get(s))).equals("1"))) {
+                                oList2.add("线上");
+                            } else if ((String.valueOf((oMap.get(s))).equals("2"))) {
+                                oList2.add("线下");
+                            } else {
+                                oList2.add("");
+                            }
+                        } else if (s.equals("enabled")) {
+                            if ((String.valueOf((oMap.get(s)))).equals("true")) {
+                                oList2.add("启用");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("false")) {
+                                oList2.add("禁用");
+                            }
+                        } else if (s.equals("rateType")) {
+                            if ((String.valueOf((oMap.get(s)))).equals("1")) {
+                                oList2.add("单笔费率");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("2")) {
+                                oList2.add("单笔定额");
+                            }else {
+                                oList2.add("");
+                            }
+                        } else {
+                            oList2.add(oMap.get(s));
+                        }
+
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.write(oList1);
+        return writer;
     }
 }

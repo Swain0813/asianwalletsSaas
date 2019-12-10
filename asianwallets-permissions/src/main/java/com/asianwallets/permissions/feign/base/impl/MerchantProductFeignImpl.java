@@ -1,6 +1,7 @@
 package com.asianwallets.permissions.feign.base.impl;
 
 import com.asianwallets.common.dto.*;
+import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -70,6 +71,11 @@ public class MerchantProductFeignImpl implements MerchantProductFeign {
 
     @Override
     public BaseResponse getRelevantInfo(String merchantId) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public List<MerchantProduct> exportMerProduct(MerchantProductDTO merchantProductDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

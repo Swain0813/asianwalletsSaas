@@ -644,4 +644,15 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
         list.add(institutionVO2);
         return list;
     }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 导出商户产品信息
+     * @return
+     **/
+    @Override
+    public List<MerchantProduct> exportMerProduct(MerchantProductDTO merchantProductDTO) {
+        return merchantProductMapper.exportMerProduct(merchantProductDTO);
+    }
 }
