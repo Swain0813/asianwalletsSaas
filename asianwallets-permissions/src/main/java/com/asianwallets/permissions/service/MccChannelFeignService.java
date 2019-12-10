@@ -18,7 +18,7 @@ public interface MccChannelFeignService {
     /**
      * 查询通道信息
      *
-     * @return
+     * @return MChannelVO 这里面的CID指的是channel_code
      */
     List<MChannelVO> selectAllChannel();
 }

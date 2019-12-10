@@ -29,7 +29,7 @@ public class PayType extends BaseEntity {
     @Column(name = "dicon")
     private String dicon;
 
-    @ApiModelProperty(value = "付款类型 0 收 1 付")
+    @ApiModelProperty(value = "交易类型 1 线上 2 线下")
     @Column(name = "mode")
     private Byte mode;
 

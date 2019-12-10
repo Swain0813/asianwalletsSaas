@@ -17,9 +17,9 @@ public class MerchantReport extends BaseEntity {
     @Column(name = "merchant_id")
     private String merchantId;
 
-    @ApiModelProperty(value = "通道ID")
-    @Column(name = "channel_id")
-    private String channelId;
+    @ApiModelProperty(value = "通道Code")
+    @Column(name = "channel_code")
+    private String channelCode;
 
     @ApiModelProperty(value = "机构ID")
     @Column(name = "institution_id")
