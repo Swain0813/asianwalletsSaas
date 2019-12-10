@@ -14,7 +14,6 @@ import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
-import com.asianwallets.common.vo.ChannelExportVO;
 import com.asianwallets.common.vo.ExportBankVO;
 import com.asianwallets.permissions.feign.base.BankFeign;
 import com.asianwallets.permissions.service.OperationLogService;

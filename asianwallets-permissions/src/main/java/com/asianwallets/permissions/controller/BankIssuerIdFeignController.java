@@ -15,7 +15,6 @@ import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.vo.BankIssuerIdVO;
-import com.asianwallets.common.vo.ExportBankVO;
 import com.asianwallets.permissions.feign.base.BankIssuerIdFeign;
 import com.asianwallets.permissions.service.OperationLogService;
 import io.swagger.annotations.Api;
