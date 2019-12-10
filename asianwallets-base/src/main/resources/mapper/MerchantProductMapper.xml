@@ -97,5 +97,39 @@
             </if>
         </where>
     </select>
+    <select id="exportMerProduct" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from merchant_product
+        <where>
+            <if test="merchantId!=null and merchantId != ''">
+                and merchant_id=#{merchantId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                and merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+            </if>
+            <if test="transType != null and transType != ''">
+                and trans_type=#{transType}
+            </if>
+            <if test="tradeDirection != null and tradeDirection != ''">
+                and trade_direction=#{tradeDirection}
+            </if>
+            <if test="payType != null and payType != ''">
+                and pay_type=#{payType}
+            </if>
+            <if test="enabled != null">
+                and enabled=#{enabled}
+            </if>
+            <if test="auditStatus != null and auditStatus != ''">
+                and audit_status=#{auditStatus}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
 
 </mapper>

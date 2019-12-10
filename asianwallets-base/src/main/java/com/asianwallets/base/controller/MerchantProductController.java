@@ -2,6 +2,7 @@ package com.asianwallets.base.controller;
 
 import com.asianwallets.base.service.MerchantProductService;
 import com.asianwallets.common.dto.*;
+import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
@@ -112,6 +113,16 @@ public class MerchantProductController extends BaseController {
     @GetMapping("/getRelevantInfo")
     public BaseResponse getRelevantInfo(@RequestParam @ApiParam String merchantId) {
         return ResultUtil.success(merchantProductService.getRelevantInfo(merchantId));
+    }
+
+
+    @ApiOperation(value = "导出商户产品信息")
+    @PostMapping("/exportMerProduct")
+    public List<MerchantProduct> exportMerProduct(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO) {
+        if (StringUtils.isBlank(merchantProductDTO.getLanguage())) {
+            merchantProductDTO.setLanguage(this.getLanguage());
+        }
+        return merchantProductService.exportMerProduct(merchantProductDTO);
     }
 
 }

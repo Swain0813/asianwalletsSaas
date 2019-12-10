@@ -40,4 +40,12 @@ public interface MerchantProductMapper extends  BaseMapper<MerchantProduct> {
      * @return
      **/
     List<MerchantProduct> pageFindMerProduct(MerchantProductDTO merchantProductDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 导出商户产品信息
+     * @return
+     **/
+    List<MerchantProduct> exportMerProduct(MerchantProductDTO merchantProductDTO);
 }
