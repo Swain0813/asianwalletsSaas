@@ -6,6 +6,7 @@ import com.asianwallets.base.dao.*;
 import com.asianwallets.base.job.ProductInfoJob;
 import com.asianwallets.base.service.MerchantProductService;
 import com.asianwallets.common.base.BaseServiceImpl;
+import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.*;
@@ -19,8 +20,10 @@ import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ChaBankRelVO;
 import com.asianwallets.common.vo.MerChannelVO;
+import com.asianwallets.common.vo.MerchantRelevantVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.BeanUtils;
@@ -30,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -71,6 +75,8 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     private AccountMapper accountMapper;
     @Autowired
     private SettleControlMapper settleControlMapper;
+    @Autowired
+    private AuditorProvider auditorProvider;
 
 
     /**
@@ -614,5 +620,28 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
         //同步Redis
         redisService.set(AsianWalletConstant.MERCHANTCHANNEL_CACHE_KEY.concat("_").concat(merchantChannel.getMerProId()), JSON.toJSONString(list));
         return num;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 查询商户分配通道关联关系
+     * @return
+     **/
+    @Override
+    public List<MerchantRelevantVO> getRelevantInfo(String merchantId) {
+        List<MerchantRelevantVO> list = new ArrayList<>();
+        Merchant merchant = merchantMapper.selectByPrimaryKey(merchantId);
+        //判断机构是否已经禁用
+        if (!merchant.getEnabled()) {
+            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());//机构已经禁用
+        }
+        //查询机构关联产品,产品关联通道,机构关联通道信息
+        MerchantRelevantVO institutionVO1 = merchantChannelMapper.getRelevantByMerchantId(merchantId, auditorProvider.getLanguage());
+        //查询机构关联产品,产品关联通道信息
+        MerchantRelevantVO institutionVO2 = merchantChannelMapper.getNoRelevantByMerchantId(merchantId, auditorProvider.getLanguage());
+        list.add(institutionVO1);
+        list.add(institutionVO2);
+        return list;
     }
 }

@@ -108,5 +108,11 @@ public class MerchantProductController extends BaseController {
         return ResultUtil.success(merchantProductService.updateMerchantChannel(this.getSysUserVO().getUsername(), batchUpdateSort));
     }
 
+    @ApiOperation(value = "查询商户分配通道关联关系")
+    @GetMapping("getRelevantInfo")
+    @CrossOrigin
+    public BaseResponse getRelevantInfo(@RequestParam @ApiParam String merchantId) {
+        return ResultUtil.success(merchantProductService.getRelevantInfo(merchantId));
+    }
 
 }

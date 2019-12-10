@@ -4,6 +4,7 @@ import com.asianwallets.common.base. BaseMapper;
 import com.asianwallets.common.dto.SearchChannelDTO;
 import com.asianwallets.common.entity.MerchantChannel;
 import com.asianwallets.common.vo.MerChannelVO;
+import com.asianwallets.common.vo.MerchantRelevantVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
@@ -50,4 +51,8 @@ public interface MerchantChannelMapper extends  BaseMapper<MerchantChannel> {
      **/
     @Select("select cha_ban_id from merchant_channel where mer_pro_id = #{merProId} and enabled = true order by sort")
     List<String> selectChannelCodeByInsProId(@Param("merProId") String merProId);
+
+    MerchantRelevantVO getRelevantByMerchantId(@Param("merchantId") String merchantId, @Param("language") String language);
+
+    MerchantRelevantVO getNoRelevantByMerchantId(@Param("merchantId") String merchantId, @Param("language") String language);
 }

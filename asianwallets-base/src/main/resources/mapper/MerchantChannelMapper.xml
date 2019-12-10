@@ -34,6 +34,43 @@
 		<result column="sort" property="sort" />
 	</resultMap>
 
+	<resultMap id="MerchantRelevantVOMap" type="com.asianwallets.common.vo.MerchantRelevantVO">
+		<result column="institutionId" property="institutionId" jdbcType="VARCHAR"/>
+		<result column="institutionName" property="institutionName" jdbcType="VARCHAR"/>
+		<result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
+		<result column="merchantName" property="merchantName" jdbcType="VARCHAR"/>
+		<collection javaType="list" property="productRelevantVOS" resultMap="ProductRelevantVOMap"/>
+	</resultMap>
+	<resultMap id="ProductRelevantVOMap" type="com.asianwallets.common.vo.ProductRelevantVO">
+		<id column="productId" property="productId" jdbcType="VARCHAR"/>
+		<id column="productAbbrev" property="productAbbrev" jdbcType="VARCHAR"/>
+		<result column="payType" property="payType" jdbcType="VARCHAR"/>
+		<result column="tradeDirection" property="tradeDirection" jdbcType="TINYINT"/>
+		<result column="productCurrency" property="productCurrency" jdbcType="VARCHAR"/>
+		<result column="productCode" property="productCode" jdbcType="VARCHAR"/>
+		<collection javaType="list" property="channelRelevantVOS" resultMap="ChannelRelevantVOMap"/>
+	</resultMap>
+
+	<resultMap id="ChannelRelevantVOMap" type="com.asianwallets.common.vo.ChannelRelevantVO">
+		<id column="channelId" property="channelId" jdbcType="VARCHAR"/>
+		<result column="channelName" property="channelName" jdbcType="VARCHAR"/>
+		<result column="channelCurrency" property="channelCurrency" jdbcType="VARCHAR"/>
+		<result column="sort" property="sort" jdbcType="VARCHAR"/>
+		<result column="channelEnabled" property="channelEnabled" jdbcType="BIT"/>
+		<result column="channelEnName" property="channelEnName" jdbcType="VARCHAR"/>
+		<result column="flag" property="flag" jdbcType="VARCHAR"/>
+		<collection javaType="list" property="bankReleVantVOList" resultMap="BankReleVantVOMap"/>
+	</resultMap>
+
+	<resultMap id="BankReleVantVOMap" type="com.asianwallets.common.vo.BankReleVantVO">
+		<id column="bankID" property="bankID" jdbcType="VARCHAR"/>
+		<result column="bankName" property="bankName" jdbcType="VARCHAR"/>
+		<result column="bankCountry" property="bankCountry" jdbcType="VARCHAR"/>
+		<result column="bankCurrency" property="bankCurrency" jdbcType="VARCHAR"/>
+		<result column="flag" property="flag" jdbcType="VARCHAR"/>
+		<result column="bankIssuerId" property="bankIssuerId" jdbcType="VARCHAR"/>
+	</resultMap>
+
 	<sql id="Base_Column_List">
         id, mer_pro_id, cha_ban_id, create_time, update_time, creator, modifier, remark,enabled,sort
     </sql>
@@ -84,8 +121,76 @@
 
 
 	</select>
+	<select id="getRelevantByMerchantId" resultMap="MerchantRelevantVOMap">
+   select 		m.id               as merchantId,
+               m.cn_name          as merchantName,
+               	i.id        as institutionId,
+             	i.cn_name      as institutionName,
+               p.id               as productId,
+               pt.name             as payType,
+               mp.product_abbrev             as productAbbrev,
+               p.currency         as productCurrency,
+               p.product_code     as productCode,
+               p.trade_direction  as tradeDirection,
+               ch.id              as channelId,
+               ch.channel_cn_name as channelName,
+               ch.currency        as channelCurrency,
+               ch.sort            as sort,
+               ch.channel_en_name as channelEnName,
+               b.id               as bankID,
+               b.bank_name        as bankName,
+               b.bank_country     as bankCountry,
+               b.bank_currency    as bankCurrency,
+               b.issuer_id        as bankIssuerId
+        from merchant m
+           left join institution i on  m.institution_id = i.id
+           left join merchant_product mp on  m.id = mp.merchant_id
+           left join product p on  mp.product_id = p.id
+           left join merchant_channel mc on mc.mer_pro_id = mp.id
+           left join channel_bank cb on cb.id = mc.cha_ban_id
+           left join channel ch on cb.channel_id = ch.id
+           left join bank b on b.id = cb.bank_id
+           left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
+        where
+         m.id = #{merchantId}
+    </select>
+	<select id="getNoRelevantByMerchantId"  resultMap="MerchantRelevantVOMap">
+  		  SELECT m.id               AS merchantId,
+             m.cn_name          as merchantName,
+             	i.id        as institutionId,
+             	i.cn_name      as institutionName,
+               p.id               AS productId,
+               pt.name             as payType,
+                mp.product_abbrev             as productAbbrev,
+               p.product_code     AS productCode,
+               p.currency         AS productCurrency,
+               p.trade_direction  as tradeDirection,
+               ch.id              AS channelId,
+               ch.channel_cn_name AS channelName,
+               ch.currency        as channelCurrency,
+               ch.sort            as sort,
+               ch.enabled         AS channelEnabled,
+               ch.channel_en_name as channelEnName,
+               b.id               as bankID,
+               b.bank_name        as bankName,
+               b.bank_country     as bankCountry,
+               b.bank_currency    as bankCurrency,
+               b.issuer_id        as bankIssuerId
+        FROM merchant m
+                 left join institution i on  m.institution_id = i.id
+                 LEFT JOIN merchant_product mp ON m.id = mp.merchant_id
+                 LEFT JOIN product p ON p.id = mp.product_id
+                 LEFT JOIN product_channel pc ON pc.product_id = p.id
+                 LEFT JOIN channel ch ON pc.channel_id = ch.id
+                 left join channel_bank cb on ch.id = cb.channel_id
+                 left join bank b on cb.bank_id = b.id
+                 LEFT JOIN pay_type pt ON p.pay_type = pt.extend1 AND pt.`language` = #{language}
+        WHERE m.enabled = 1
+          AND m.id = #{merchantId}
 
-    <delete id="deleteByMerProId">
+	</select>
+
+	<delete id="deleteByMerProId">
         delete
         from merchant_channel
         where mer_pro_id = #{id}
