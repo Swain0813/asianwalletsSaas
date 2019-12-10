@@ -26,4 +26,9 @@ public class InstitutionProductChannelFeignImpl implements InstitutionProductCha
     public BaseResponse getInsProChaByInsId(String insId) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BaseResponse getAllProCha() {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

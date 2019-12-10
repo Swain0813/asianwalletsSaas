@@ -30,13 +30,19 @@ public class InstitutionProductChannelController extends BaseController {
 
     @ApiOperation(value = "修改机构关联产品通道信息")
     @PostMapping("/updateInsProCha")
-    public BaseResponse updateInsProChaByInsId(@RequestBody @ApiParam  List<InstitutionProductChannelDTO> institutionProductChannelDTOList) {
+    public BaseResponse updateInsProChaByInsId(@RequestBody @ApiParam List<InstitutionProductChannelDTO> institutionProductChannelDTOList) {
         return ResultUtil.success(institutionProductChannelService.updateInsProChaByInsId(getSysUserVO().getUsername(), institutionProductChannelDTOList));
     }
 
     @ApiOperation(value = "根据机构ID查询机构关联产品通道信息")
     @GetMapping("/getInsProChaByInsId")
     public BaseResponse getInsProChaByInsId(@RequestParam @ApiParam String insId) {
-        return ResultUtil.success(institutionProductChannelService.getInsProChaByInsId(getSysUserVO().getUsername(), insId));
+        return ResultUtil.success(institutionProductChannelService.getInsProChaByInsId(insId));
+    }
+
+    @ApiOperation(value = "查询所有产品关联通道信息")
+    @PostMapping("/getAllProCha")
+    public BaseResponse getAllProCha() {
+        return ResultUtil.success(institutionProductChannelService.getAllProCha());
     }
 }

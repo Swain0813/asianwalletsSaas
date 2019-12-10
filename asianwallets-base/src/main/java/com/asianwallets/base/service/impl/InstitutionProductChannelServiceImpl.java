@@ -4,10 +4,13 @@ import java.util.*;
 
 import com.asianwallets.base.dao.InstitutionChannelMapper;
 import com.asianwallets.base.dao.InstitutionProductMapper;
+import com.asianwallets.base.dao.ProductChannelMapper;
 import com.asianwallets.base.service.InstitutionProductChannelService;
+import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
 import com.asianwallets.common.entity.InstitutionChannel;
 import com.asianwallets.common.entity.InstitutionProduct;
+import com.asianwallets.common.entity.ProductChannel;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
@@ -26,6 +29,12 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
 
     @Autowired
     private InstitutionChannelMapper institutionChannelMapper;
+
+    @Autowired
+    private ProductChannelMapper productChannelMapper;
+
+    @Autowired
+    private AuditorProvider auditorProvider;
 
     /**
      * 新增机构关联产品通道信息
@@ -121,12 +130,21 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
     /**
      * 根据机构ID查询机构关联产品通道信息
      *
-     * @param username 用户名
-     * @param insId    机构ID
+     * @param insId 机构ID
      * @return 机构产品通道输出实体集合
      */
     @Override
-    public List<InstitutionProductChannelVO> getInsProChaByInsId(String username, String insId) {
+    public List<InstitutionProductChannelVO> getInsProChaByInsId(String insId) {
         return institutionProductMapper.selectRelevantInfoByInstitutionId(insId);
+    }
+
+    /**
+     * 查询所有产品关联通道信息
+     *
+     * @return 产品通道集合
+     */
+    @Override
+    public List<ProductChannel> getAllProCha() {
+        return productChannelMapper.getAllProCha(auditorProvider.getLanguage());
     }
 }

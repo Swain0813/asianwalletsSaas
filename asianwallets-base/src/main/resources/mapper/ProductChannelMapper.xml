@@ -1,18 +1,48 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.asianwallets.institution.dao.ProductChannelMapper" >
-  <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.ProductChannel" >
-    <result column="id" property="id" jdbcType="VARCHAR" />
-    <result column="product_id" property="productId" jdbcType="VARCHAR" />
-    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="creator" property="creator" jdbcType="VARCHAR" />
-    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-    <result column="remark" property="remark" jdbcType="VARCHAR" />
-  </resultMap>
+<mapper namespace="com.asianwallets.base.dao.ProductChannelMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.ProductChannel">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="product_id" property="productId" jdbcType="VARCHAR"/>
+        <result column="channel_id" property="channelId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
 
     <sql id="Base_Column_List">
         id, product_id, channel_id, create_time, update_time, creator, modifier, remark, enabled
     </sql>
+
+    <select id="getAllProCha" resultMap="ProductChannelVOMap">
+        SELECT pt.name                          as payType,
+               p.trans_type                     as transType,
+               concat(pt.name, '-', p.currency) as productName,
+               c.id                             as channelId,
+               c.channel_code                   as channelCode,
+               c.channel_cn_name                as channelCnName
+        FROM product p,
+             product_channel pc,
+             pay_type pt,
+             channel c
+        where p.id = pc.product_id
+          and pc.channel_id = c.id
+          and p.pay_type = pt.extend1
+          and language = #{language}
+    </select>
+
+    <resultMap id="ProductChannelVOMap" type="com.asianwallets.common.vo.ProductChannelVO">
+        <id column="payType" property="payType" jdbcType="VARCHAR"/>
+        <result column="transType" property="transType" jdbcType="TINYINT"/>
+        <result column="productName" property="productName" jdbcType="VARCHAR"/>
+        <collection javaType="list" property="institutionConfigChannelVOList"
+                    resultMap="InstitutionConfigChannelVOMap"/>
+    </resultMap>
+    <resultMap id="InstitutionConfigChannelVOMap" type="com.asianwallets.common.vo.InstitutionConfigChannelVO">
+        <id column="channelId" property="channelId" jdbcType="VARCHAR"/>
+        <result column="channelCode" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="channelCnName" property="channelCnName" jdbcType="VARCHAR"/>
+    </resultMap>
 </mapper>
