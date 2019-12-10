@@ -2,6 +2,7 @@ package com.asianwallets.base.service;
 
 import com.asianwallets.common.dto.BankIssuerIdDTO;
 import com.asianwallets.common.entity.BankIssuerId;
+import com.asianwallets.common.vo.BankIssuerIdVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public interface BankIssuerIdService {
      * @param bankIssuerIdDTO 银行机构代码映射输入实体
      * @return 修改条数
      */
-    PageInfo<BankIssuerId> pageFindBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO);
+    PageInfo<BankIssuerIdVO> pageFindBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO);
 
     /**
      * 导出银行机构代码映射信息
@@ -40,5 +41,5 @@ public interface BankIssuerIdService {
      * @param bankIssuerIdDTO 银行机构代码映射输入实体
      * @return 修改条数
      */
-    List<BankIssuerId> exportBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO);
+    List<BankIssuerIdVO> exportBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO);
 }

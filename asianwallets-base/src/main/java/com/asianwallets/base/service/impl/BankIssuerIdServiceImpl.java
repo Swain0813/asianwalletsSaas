@@ -7,6 +7,7 @@ import com.asianwallets.common.entity.BankIssuerId;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.BankIssuerIdVO;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,7 @@ public class BankIssuerIdServiceImpl implements BankIssuerIdService {
      * @return 修改条数
      */
     @Override
-    public PageInfo<BankIssuerId> pageFindBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO) {
+    public PageInfo<BankIssuerIdVO> pageFindBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO) {
         return new PageInfo<>(bankIssuerIdMapper.pageFindBankIssuerId(bankIssuerIdDTO));
     }
 
@@ -90,7 +91,7 @@ public class BankIssuerIdServiceImpl implements BankIssuerIdService {
      * @return 修改条数
      */
     @Override
-    public List<BankIssuerId> exportBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO) {
-        return null;
+    public List<BankIssuerIdVO> exportBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO) {
+        return bankIssuerIdMapper.exportBankIssuerId(bankIssuerIdDTO);
     }
 }

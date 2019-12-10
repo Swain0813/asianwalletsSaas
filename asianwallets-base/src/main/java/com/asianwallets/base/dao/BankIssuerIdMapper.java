@@ -3,6 +3,7 @@ package com.asianwallets.base.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.BankIssuerIdDTO;
 import com.asianwallets.common.entity.BankIssuerId;
+import com.asianwallets.common.vo.BankIssuerIdVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -37,5 +38,13 @@ public interface BankIssuerIdMapper extends BaseMapper<BankIssuerId> {
      * @param bankIssuerIdDTO 银行机构映射输入实体
      * @return 银行机构代码映射信息集合
      */
-    List<BankIssuerId> pageFindBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO);
+    List<BankIssuerIdVO> pageFindBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO);
+
+    /**
+     * 导出查询银行机构代码映射信息
+     *
+     * @param bankIssuerIdDTO 银行机构映射输入实体
+     * @return 银行机构代码映射信息集合
+     */
+    List<BankIssuerIdVO> exportBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO);
 }
