@@ -14,6 +14,7 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ChaBankRelVO;
@@ -64,6 +65,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     private Scheduler scheduler;
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private AccountMapper accountMapper;
+    @Autowired
+    private SettleControlMapper settleControlMapper;
 
 
     /**
@@ -450,55 +455,76 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     merchantProductAuditMapper.updateByPrimaryKeySelective(merchantProductAudit);
 
                     //添加账户
-                    //Account account = new Account();
-                    ////账户关联表 自动结算开关和最小提现金额
-                    //SettleControl settleControl = new SettleControl();
-                    //String currency = productMapper.selectByPrimaryKey(institutionProductMapper.selectByPrimaryKey(insProductId).getProductId()).getCurrency();
-                    //if (accountMapper.getCountByinstitutionIdAndCurry(institutionMapper.selectByPrimaryKey(oldInstitutionProduct.getInstitutionId()).getInstitutionCode(), currency) == 0) {
-                    //    account.setAccountCode(IDS.uniqueID().toString());
-                    //    String institutionCode = institutionMapper.selectByPrimaryKey(oldInstitutionProduct.getInstitutionId()).getInstitutionCode();
-                    //    account.setInstitutionId(institutionCode);//机构code
-                    //    account.setInstitutionName(institutionMapper.selectByPrimaryKey(oldInstitutionProduct.getInstitutionId()).getCnName());//机构名称
-                    //    account.setCurrency(currency);//币种
-                    //    account.setId(IDS.uuid2());
-                    //    account.setSettleBalance(BigDecimal.ZERO);//默认结算金额为0
-                    //    account.setClearBalance(BigDecimal.ZERO);//默认清算金额为0
-                    //    account.setFreezeBalance(BigDecimal.ZERO);//默认冻结金额为0
-                    //    account.setEnabled(true);//产品审核通过以后默认币种的状态是启用的
-                    //    account.setCreateTime(new Date());//创建时间
-                    //    account.setCreator(modifier);//创建人
-                    //    account.setRemark("产品信息审核通过后自动创建币种的账户");
-                    //    //账户关联表id
-                    //    settleControl.setId(IDS.uuid2());
-                    //    //账户id
-                    //    settleControl.setAccountId(account.getId());
-                    //    //设置最小提现金额为0
-                    //    settleControl.setMinSettleAmount(BigDecimal.ZERO);
-                    //    settleControl.setCreateTime(new Date());
-                    //    settleControl.setEnabled(true);
-                    //    settleControl.setCreator(modifier);
-                    //    settleControl.setRemark("产品信息审核通过后自动创建币种的结算控制信息");
-                    //    if (accountMapper.insertSelective(account) > 0 && settleControlMapper.insertSelective(settleControl) > 0) {
-                    //        redisService.set(AsianWalletConstant.ACCOUNT_CACHE_KEY.concat("_").concat(institutionCode).concat("_").concat(currency), JSON.toJSONString(account));
-                    //    }
-                    //}
-                    ////若审核表限额状态为成功,删除审核记录
-                    //if (oldInstitutionProductAudit.getAuditLimitStatus() == TradeConstant.AUDIT_SUCCESS) {
-                    //    institutionProductAuditMapper.deleteByPrimaryKey(insProductId);
-                    //}
-                    ////审核通过后将新增和修改的机构产品信息添加的redis里
-                    //try {
-                    //    redisService.set(AsianWalletConstant.INSTITUTIONPRODUCT_CACHE_KEY.concat("_").concat(institutionProduct.getInstitutionId().concat("_").concat(institutionProduct.getProductId())), JSON.toJSONString(institutionProduct));
-                    //} catch (Exception e) {
-                    //    log.error("审核通过后将新增和修改的机构产品信息添加的redis里：" + e.getMessage());
-                    //    throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
-                    //}
+                    Account account = new Account();
+                    //账户关联表 自动结算开关和最小提现金额
+                    SettleControl settleControl = new SettleControl();
+                    String currency = productMapper.selectByPrimaryKey(merchantProductMapper.selectByPrimaryKey(merProId).getProductId()).getCurrency();
+                    if (accountMapper.getCountByinstitutionIdAndCurry(oldMerchantProduct.getMerchantId(), currency) == 0) {
+                        account.setAccountCode(IDS.uniqueID().toString());
+                        account.setMerchantId(oldMerchantProduct.getMerchantId());
+                        account.setMerchantName(merchantMapper.selectByPrimaryKey(oldMerchantProduct.getMerchantId()).getCnName());
+                        account.setCurrency(currency);//币种
+                        account.setId(IDS.uuid2());
+                        account.setSettleBalance(BigDecimal.ZERO);//默认结算金额为0
+                        account.setClearBalance(BigDecimal.ZERO);//默认清算金额为0
+                        account.setFreezeBalance(BigDecimal.ZERO);//默认冻结金额为0
+                        account.setEnabled(true);//产品审核通过以后默认币种的状态是启用的
+                        account.setCreateTime(new Date());//创建时间
+                        account.setCreator(username);//创建人
+                        account.setRemark("产品信息审核通过后自动创建币种的账户");
+                        //账户关联表id
+                        settleControl.setId(IDS.uuid2());
+                        //账户id
+                        settleControl.setAccountId(account.getId());
+                        //设置最小提现金额为0
+                        settleControl.setMinSettleAmount(BigDecimal.ZERO);
+                        settleControl.setCreateTime(new Date());
+                        settleControl.setEnabled(true);
+                        settleControl.setCreator(username);
+                        settleControl.setRemark("产品信息审核通过后自动创建币种的结算控制信息");
+                        if (accountMapper.insertSelective(account) > 0 && settleControlMapper.insertSelective(settleControl) > 0) {
+                            redisService.set(AsianWalletConstant.ACCOUNT_CACHE_KEY.concat("_").concat(oldMerchantProduct.getMerchantId()).concat("_").concat(currency), JSON.toJSONString(account));
+                        }
+                    }
+                    //若审核表限额状态为成功,删除审核记录
+                    if (oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_SUCCESS) {
+                        merchantProductAuditMapper.deleteByPrimaryKey(oldMerchantProduct.getMerchantId());
+                    }
+                    //审核通过后将新增和修改的机构产品信息添加的redis里
+                    try {
+                        redisService.set(AsianWalletConstant.MERCHANTPRODUCT_CACHE_KEY.concat("_").concat(merchantProduct.getMerchantId().concat("_").concat(merchantProduct.getProductId())), JSON.toJSONString(merchantProduct));
+                    } catch (Exception e) {
+                        log.error("审核通过后将新增和修改的机构产品信息添加的redis里：" + e.getMessage());
+                        throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+                    }
 
                 }else{
+                    //初次添加审核不通过
+                    MerchantProduct merchantProduct = new MerchantProduct();
+                    merchantProduct.setId(merProId);
+                    merchantProduct.setAuditStatus(TradeConstant.AUDIT_FAIL);
+                    merchantProduct.setAuditRemark(auaditProductDTO.getRemarks());
+                    merchantProduct.setModifier(username);
+                    merchantProduct.setUpdateTime(new Date());
+                    num = merchantProductMapper.updateByPrimaryKeySelective(merchantProduct);
 
+                    MerchantProductAudit merchantProductAudit = new MerchantProductAudit();
+                    merchantProductAudit.setId(merProId);
+                    merchantProductAudit.setAuditStatus(TradeConstant.AUDIT_FAIL);
+                    merchantProductAudit.setAuditRemark(auaditProductDTO.getRemarks());
+                    merchantProductAudit.setModifier(username);
+                    //institutionProductAudit.setUpdateTime(new Date());
+                    merchantProductAuditMapper.updateByPrimaryKeySelective(merchantProductAudit);
+
+                    MerchantProductHistory merchantProductAuditHistory = new MerchantProductHistory();
+                    BeanUtils.copyProperties(oldMerchantProductAudit, merchantProductAuditHistory);
+                    merchantProductAuditHistory.setId(IDS.uuid2());
+                    merchantProductAuditHistory.setMerchantProductId(oldMerchantProductAudit.getId());
+                    merchantProductAuditHistory.setAuditStatus(TradeConstant.AUDIT_FAIL);
+                    merchantProductHistoryMapper.insert(merchantProductAuditHistory);
                 }
             }
         }
-        return null;
+        return ResultUtil.success(num);
     }
 }
