@@ -6,7 +6,7 @@ import com.asianwallets.common.dto.MccChannelDTO;
 import com.asianwallets.common.entity.MccChannel;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
-import com.asianwallets.common.vo.MccChannelVO;
+import com.asianwallets.common.vo.MccChannelExportVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -68,7 +68,7 @@ public class MccChannelController extends BaseController {
 
     @ApiOperation(value = "导出mccChannel")
     @PostMapping("exportMccChannel")
-    public List<MccChannelVO> exportMccChannel(@RequestBody @ApiParam MccChannelDTO mc) {
+    public List<MccChannelExportVO> exportMccChannel(@RequestBody @ApiParam MccChannelDTO mc) {
         mc.setLanguage(this.getLanguage());
         return mccChannelService.exportMccChannel(mc);
     }

@@ -54,8 +54,4 @@ public class MccChannelVO {
 
     @ApiModelProperty(value = "启用禁用")
     private Boolean enabled;
-
-    @ApiModelProperty(value = "启用禁用Str 导出用")
-    private String enabledStr;
-
 }

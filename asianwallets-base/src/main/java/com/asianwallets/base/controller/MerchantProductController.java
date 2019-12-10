@@ -42,6 +42,14 @@ public class MerchantProductController extends BaseController {
         return ResultUtil.success(merchantProductService.addMerchantProduct(this.getSysUserVO().getName(), merchantProductDTOs));
     }
 
+    @ApiOperation(value = "修改商户产品")
+    @PostMapping("/updateMerchantProduct")
+    public BaseResponse updateMerchantProduct(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO) {
+        return ResultUtil.success(merchantProductService.updateMerchantProduct(this.getSysUserVO().getName(), merchantProductDTO));
+    }
+
+
+
     @ApiOperation(value = "商户分配通道")
     @PostMapping("/allotMerProductChannel")
     public BaseResponse allotMerProductChannel(@RequestBody @ApiParam @Valid MerProDTO merProDTO) {

@@ -3,7 +3,7 @@ package com.asianwallets.permissions.feign.base;
 import com.asianwallets.common.dto.MccChannelDTO;
 import com.asianwallets.common.entity.MccChannel;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.vo.MccChannelVO;
+import com.asianwallets.common.vo.MccChannelExportVO;
 import com.asianwallets.permissions.feign.base.impl.MccChannelFeignImpl;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -35,5 +35,5 @@ public interface MccChannelFeign {
     BaseResponse importMccChannel(@RequestBody @ApiParam List<MccChannel> list);
 
     @PostMapping("/mccChannel/exportMccChannel")
-    List<MccChannelVO> exportMccChannel(@RequestBody @ApiParam MccChannelDTO mc);
+    List<MccChannelExportVO> exportMccChannel(@RequestBody @ApiParam MccChannelDTO mc);
 }

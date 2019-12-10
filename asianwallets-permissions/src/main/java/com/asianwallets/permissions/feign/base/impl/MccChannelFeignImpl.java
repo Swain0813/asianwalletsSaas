@@ -5,7 +5,7 @@ import com.asianwallets.common.entity.MccChannel;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.vo.MccChannelVO;
+import com.asianwallets.common.vo.MccChannelExportVO;
 import com.asianwallets.permissions.feign.base.MccChannelFeign;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +42,7 @@ public class MccChannelFeignImpl implements MccChannelFeign {
     }
 
     @Override
-    public List<MccChannelVO> exportMccChannel(MccChannelDTO mc) {
+    public List<MccChannelExportVO> exportMccChannel(MccChannelDTO mc) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

@@ -3,6 +3,7 @@ package com.asianwallets.base.service;
 
 import com.asianwallets.common.dto.MccChannelDTO;
 import com.asianwallets.common.entity.MccChannel;
+import com.asianwallets.common.vo.MccChannelExportVO;
 import com.asianwallets.common.vo.MccChannelVO;
 import com.github.pagehelper.PageInfo;
 
@@ -58,5 +59,5 @@ public interface MccChannelService {
      * @param mc
      * @return
      */
-    List<MccChannelVO> exportMccChannel(MccChannelDTO mc);
+    List<MccChannelExportVO> exportMccChannel(MccChannelDTO mc);
 }

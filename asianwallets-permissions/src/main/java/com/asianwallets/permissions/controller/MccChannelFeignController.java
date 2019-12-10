@@ -15,7 +15,6 @@ import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.vo.MccChannelExportVO;
-import com.asianwallets.common.vo.MccChannelVO;
 import com.asianwallets.permissions.feign.base.MccChannelFeign;
 import com.asianwallets.permissions.service.MccChannelFeignService;
 import com.asianwallets.permissions.service.OperationLogService;
@@ -113,7 +112,7 @@ public class MccChannelFeignController extends BaseController {
                 "导出mccChannel"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
-            List<MccChannelVO> lists = mccChannelFeign.exportMccChannel(mc);
+            List<MccChannelExportVO> lists = mccChannelFeign.exportMccChannel(mc);
             ServletOutputStream out = response.getOutputStream();
             if (ArrayUtil.isEmpty(lists)) {
                 //数据不存在的场合

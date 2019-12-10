@@ -9,6 +9,7 @@ import com.asianwallets.common.entity.MccChannel;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.MccChannelExportVO;
 import com.asianwallets.common.vo.MccChannelVO;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -128,17 +130,30 @@ public class MccChannelServiceImpl implements MccChannelService {
      * @return
      */
     @Override
-    public List<MccChannelVO> exportMccChannel(MccChannelDTO mc) {
+    public List<MccChannelExportVO> exportMccChannel(MccChannelDTO mc) {
         mc.setPageSize(Integer.MAX_VALUE);
         List<MccChannelVO> voList = mccChannelMapper.pageMccChannel(mc);
         List<MccChannelVO> collect = voList.stream().sorted(Comparator.comparing(MccChannelVO::getCreateTime).reversed()).collect(Collectors.toList());
+        ArrayList<MccChannelExportVO> mccChannelExportVOS = new ArrayList<>();
         for (MccChannelVO mccChannelVO : collect) {
+            MccChannelExportVO mccChannelExportVO = new MccChannelExportVO();
+            mccChannelExportVO.setCreateTime(mccChannelVO.getCreateTime());
+            mccChannelExportVO.setmCode(mccChannelVO.getMCode());
+            mccChannelExportVO.setmName(mccChannelVO.getMName());
+            mccChannelExportVO.setcName(mccChannelVO.getCName());
+            mccChannelExportVO.setCode(mccChannelVO.getCode());
+            mccChannelExportVO.setModifier(mccChannelVO.getModifier());
+            mccChannelExportVO.setUpdateTime(mccChannelVO.getUpdateTime());
+            mccChannelExportVO.setCreator(mccChannelVO.getCreator());
             if (mccChannelVO.getEnabled()) {
-                mccChannelVO.setEnabledStr("启用");
+                mccChannelExportVO.setEnabledStr("启用");
             } else {
-                mccChannelVO.setEnabledStr("禁用");
+                mccChannelExportVO.setEnabledStr("禁用");
             }
+            mccChannelExportVOS.add(mccChannelExportVO);
         }
-        return collect;
+
+
+        return mccChannelExportVOS;
     }
 }

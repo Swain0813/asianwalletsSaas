@@ -33,4 +33,12 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
      * @return
      **/
     int allotMerProductChannel(String username, MerProDTO merProDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/9
+     * @Descripate 修改商户产品
+     * @return
+     **/
+    int updateMerchantProduct(String name, MerchantProductDTO merchantProductDTO);
 }
