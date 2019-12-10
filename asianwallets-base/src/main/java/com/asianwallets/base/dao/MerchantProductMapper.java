@@ -1,10 +1,13 @@
 package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base. BaseMapper;
+import com.asianwallets.common.dto.MerchantProductDTO;
 import com.asianwallets.common.entity.MerchantProduct;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * <p>
@@ -29,4 +32,12 @@ public interface MerchantProductMapper extends  BaseMapper<MerchantProduct> {
 
 
     MerchantProduct getMerchantProductByMerIdAndProId(@Param("merchantid") String merchantid, @Param("productId") String productId);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户产品信息
+     * @return
+     **/
+    List<MerchantProduct> pageFindMerProduct(MerchantProductDTO merchantProductDTO);
 }

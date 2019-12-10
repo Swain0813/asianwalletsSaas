@@ -4,8 +4,9 @@ import com.asianwallets.common.base.BaseService;
 import com.asianwallets.common.dto.AuaditProductDTO;
 import com.asianwallets.common.dto.MerProDTO;
 import com.asianwallets.common.dto.MerchantProductDTO;
-import com.asianwallets.common.entity.MerchantProduct;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.response.BaseResponse;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -51,4 +52,21 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
     * @return
     **/
    BaseResponse auditMerchantProduct(String username, AuaditProductDTO auaditProductDTO);
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户产品信息
+     * @return
+     **/
+    PageInfo<MerchantProduct> pageFindMerProduct(MerchantProductDTO merchantProductDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户审核产品信息
+     * @return
+     **/
+    PageInfo<MerchantProductAudit> pageFindMerProductAudit(MerchantProductDTO merchantProductDTO);
 }

@@ -18,6 +18,7 @@ import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ChaBankRelVO;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
@@ -526,5 +527,28 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             }
         }
         return ResultUtil.success(num);
+    }
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户产品信息
+     * @return
+     **/
+    @Override
+    public PageInfo<MerchantProduct> pageFindMerProduct(MerchantProductDTO merchantProductDTO) {
+        return new PageInfo<MerchantProduct>(merchantProductMapper.pageFindMerProduct(merchantProductDTO));
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户审核产品信息
+     * @return
+     **/
+    @Override
+    public PageInfo<MerchantProductAudit> pageFindMerProductAudit(MerchantProductDTO merchantProductDTO) {
+        return new PageInfo<MerchantProductAudit>(merchantProductAuditMapper.pageFindMerProductAudit(merchantProductDTO));
     }
 }
