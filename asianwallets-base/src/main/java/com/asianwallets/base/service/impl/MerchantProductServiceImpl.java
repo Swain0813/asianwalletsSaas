@@ -551,4 +551,26 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     public PageInfo<MerchantProductAudit> pageFindMerProductAudit(MerchantProductDTO merchantProductDTO) {
         return new PageInfo<MerchantProductAudit>(merchantProductAuditMapper.pageFindMerProductAudit(merchantProductDTO));
     }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 根据产品Id查询商户产品详情
+     * @return
+     **/
+    @Override
+    public MerchantProduct getMerProductById(String merProductId) {
+        return merchantProductMapper.selectByPrimaryKey(merProductId);
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 根据Id查询商户产品审核详情
+     * @return
+     **/
+    @Override
+    public MerchantProductAudit getMerProductAuditById(String merProductId) {
+        return merchantProductAuditMapper.selectByPrimaryKey(merProductId);
+    }
 }

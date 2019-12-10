@@ -69,4 +69,20 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
      * @return
      **/
     PageInfo<MerchantProductAudit> pageFindMerProductAudit(MerchantProductDTO merchantProductDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 根据产品Id查询商户产品详情
+     * @return
+     **/
+    MerchantProduct getMerProductById(String merProductId);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 根据Id查询商户产品审核详情
+     * @return
+     **/
+    MerchantProductAudit getMerProductAuditById(String merProductId);
 }
