@@ -73,7 +73,7 @@ public class MerchantReportServiceImpl implements MerchantReportService {
             throw new BusinessException(EResultEnum.SHOP_CODE_EXIST.getCode());
         }
         //检查重复添加
-        if (merchantReportMapper.selectByChannelCodeAndMerchantId(merchantReportDTO.getChannelCode(), merchantReportDTO.getMerchantId()) == null) {
+        if (merchantReportMapper.selectByChannelCodeAndMerchantId(merchantReportDTO.getChannelCode(), merchantReportDTO.getMerchantId()) != null) {
             throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
         }
         //检查该商户是否属于此机构
