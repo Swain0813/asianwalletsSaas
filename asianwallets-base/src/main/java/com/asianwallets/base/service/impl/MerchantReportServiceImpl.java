@@ -71,6 +71,11 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         if (merchantReportMapper.selectByShopCode(merchantReportDTO.getShopCode()) != null) {
             throw new BusinessException(EResultEnum.SHOP_CODE_EXIST.getCode());
         }
+        //检查该商户是否属于此机构
+        if (!StringUtils.isBlank(merchant.getInstitutionId()) && !merchant.getInstitutionId().equals(institution.getId())) {
+            //YES
+            throw new BusinessException(EResultEnum.SHOP_CODE_EXIST.getCode());
+        }
         //Assignment
         MerchantReport merchantReport = new MerchantReport();
         merchantReport.setMerchantId(merchant.getId());

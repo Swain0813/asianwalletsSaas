@@ -25,4 +25,61 @@
         from bank_issuer_id
         where bank_name = #{bankName};
     </select>
+
+    <select id="selectByChannelCodeAndBankNameAndCurrency" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bank_issuer_id
+        where channel_code = #{channelCode}
+        and bank_name = #{bankName}
+        and currency = #{currency}
+    </select>
+
+    <select id="pageFindBankIssuerId" resultType="com.asianwallets.common.vo.BankIssuerIdVO">
+        select
+        b.id,
+        b.bank_name as bankName,
+        b.issuer_id as issuerId,
+        c.currency,
+        c.channel_cn_name as channelCnName,
+        b.enabled,
+        b.create_time as createTime,
+        b.update_time as updateTime,
+        b.creator,
+        b.modifier,
+        b.remark
+        from bank_issuer_id b left join channel c on b.channel_code = c.channel_code
+        <where>
+            <if test="bankName!=null and bankName != ''">
+                and b.bank_name LIKE CONCAT(CONCAT('%', #{bankName}), '%')
+            </if>
+            <if test="channelCode!=null and channelCode != ''">
+                and b.channel_code=#{channelCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="exportBankIssuerId" resultType="com.asianwallets.common.vo.BankIssuerIdVO">
+        select
+        b.id,
+        b.bank_name as bankName,
+        b.issuer_id as issuerId,
+        c.currency,
+        c.channel_cn_name as channelCnName,
+        b.enabled,
+        b.create_time as createTime,
+        b.update_time as updateTime,
+        b.creator,
+        b.modifier,
+        b.remark
+        from bank_issuer_id b left join channel c on b.channel_code = c.channel_code
+        <where>
+            <if test="bankName!=null and bankName != ''">
+                and b.bank_name LIKE CONCAT(CONCAT('%', #{bankName}), '%')
+            </if>
+            <if test="channelCode!=null and channelCode != ''">
+                and b.channel_code=#{channelCode}
+            </if>
+        </where>
+    </select>
 </mapper>
