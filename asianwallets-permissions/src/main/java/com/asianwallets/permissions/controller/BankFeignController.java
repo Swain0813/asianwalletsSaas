@@ -50,9 +50,6 @@ public class BankFeignController extends BaseController {
     @Autowired
     private OperationLogService operationLogService;
 
-    @Value("${file.tmpfile}")
-    private String tmpFile;
-
     @ApiOperation(value = "增加银行")
     @PostMapping("/addBank")
     public BaseResponse addBank(@RequestBody @ApiParam BankDTO bankDTO) {
@@ -82,12 +79,7 @@ public class BankFeignController extends BaseController {
     public BaseResponse importBank(@RequestParam("file") @ApiParam MultipartFile file) {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(file),
                 "导入银行信息"));
-        MultipartConfigFactory factory = new MultipartConfigFactory();
-        //指定临时文件路径，这个路径可以随便写
-        factory.setLocation(tmpFile);
-        factory.createMultipartConfig();
-        List<Bank> bankList = importService.importBank(getSysUserVO().getUsername(), file);
-        return bankFeign.importBank(bankList);
+        return bankFeign.importBank(importService.importBank(getSysUserVO().getUsername(), file));
     }
 
     @ApiOperation(value = "导出银行信息")
