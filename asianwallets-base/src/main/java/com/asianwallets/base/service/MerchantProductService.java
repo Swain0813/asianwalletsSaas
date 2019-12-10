@@ -1,9 +1,12 @@
 package com.asianwallets.base.service;
 
 import com.asianwallets.common.base.BaseService;
+import com.asianwallets.common.dto.AuaditProductDTO;
 import com.asianwallets.common.dto.MerProDTO;
 import com.asianwallets.common.dto.MerchantProductDTO;
-import com.asianwallets.common.entity.MerchantProduct;
+import com.asianwallets.common.entity.*;
+import com.asianwallets.common.response.BaseResponse;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -41,4 +44,45 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
      * @return
      **/
     int updateMerchantProduct(String name, MerchantProductDTO merchantProductDTO);
+
+   /**
+    * @Author YangXu
+    * @Date 2019/12/10
+    * @Descripate 批量审核商户产品
+    * @return
+    **/
+   BaseResponse auditMerchantProduct(String username, AuaditProductDTO auaditProductDTO);
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户产品信息
+     * @return
+     **/
+    PageInfo<MerchantProduct> pageFindMerProduct(MerchantProductDTO merchantProductDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户审核产品信息
+     * @return
+     **/
+    PageInfo<MerchantProductAudit> pageFindMerProductAudit(MerchantProductDTO merchantProductDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 根据产品Id查询商户产品详情
+     * @return
+     **/
+    MerchantProduct getMerProductById(String merProductId);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 根据Id查询商户产品审核详情
+     * @return
+     **/
+    MerchantProductAudit getMerProductAuditById(String merProductId);
 }

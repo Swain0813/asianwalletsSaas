@@ -1,21 +1,19 @@
 package com.asianwallets.base.controller;
 
 import com.asianwallets.base.service.MerchantProductService;
+import com.asianwallets.common.dto.AuaditProductDTO;
 import com.asianwallets.common.dto.MerProDTO;
 import com.asianwallets.common.dto.MerchantProductDTO;
-import com.asianwallets.common.dto.ProductDTO;
-import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import com.asianwallets.common.base.BaseController;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -48,7 +46,18 @@ public class MerchantProductController extends BaseController {
         return ResultUtil.success(merchantProductService.updateMerchantProduct(this.getSysUserVO().getName(), merchantProductDTO));
     }
 
-
+    @ApiOperation(value = "批量审核商户产品")
+    @PostMapping("/auditMerchantProduct")
+    public BaseResponse auditMerchantProduct(@RequestBody @ApiParam AuaditProductDTO auaditProductDTO) {
+        BaseResponse baseResponse = merchantProductService.auditMerchantProduct(this.getSysUserVO().getUsername(), auaditProductDTO);
+        String code = baseResponse.getCode();//业务返回码
+        if (org.springframework.util.StringUtils.isEmpty(code)) {
+            baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+            baseResponse.setMsg("SUCCESS");
+            return baseResponse;
+        }
+        return ResultUtil.error(code, this.getErrorMsgMap(code));
+    }
 
     @ApiOperation(value = "商户分配通道")
     @PostMapping("/allotMerProductChannel")
@@ -56,6 +65,34 @@ public class MerchantProductController extends BaseController {
         return ResultUtil.success(merchantProductService.allotMerProductChannel(this.getSysUserVO().getUsername(), merProDTO));
     }
 
+    @ApiOperation(value = "分页查询商户产品信息")
+    @PostMapping("/pageFindMerProduct")
+    public BaseResponse pageFindMerProduct(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO) {
+        if (StringUtils.isBlank(merchantProductDTO.getLanguage())) {
+            merchantProductDTO.setLanguage(this.getLanguage());
+        }
+        return ResultUtil.success(merchantProductService.pageFindMerProduct(merchantProductDTO));
+    }
 
+    @ApiOperation(value = "根据产品Id查询商户产品详情")
+    @GetMapping("/getMerProductById")
+    public BaseResponse getMerProductById(@RequestParam @ApiParam String merProductId) {
+        return ResultUtil.success(merchantProductService.getMerProductById(merProductId));
+    }
+
+    @ApiOperation(value = "分页查询商户审核产品信息")
+    @PostMapping("/pageFindMerProductAudit")
+    public BaseResponse pageFindMerProductAudit(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO) {
+        if (StringUtils.isBlank(merchantProductDTO.getLanguage())) {
+            merchantProductDTO.setLanguage(this.getLanguage());
+        }
+        return ResultUtil.success(merchantProductService.pageFindMerProductAudit(merchantProductDTO));
+    }
+
+    @ApiOperation(value = "根据Id查询商户产品审核详情")
+    @GetMapping("/getMerProductAuditById")
+    public BaseResponse getMerProductAuditById(@RequestParam @ApiParam String merProductId) {
+        return ResultUtil.success(merchantProductService.getMerProductAuditById(merProductId));
+    }
 
 }

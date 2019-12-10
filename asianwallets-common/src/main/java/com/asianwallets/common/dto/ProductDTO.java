@@ -59,6 +59,9 @@ public class ProductDTO extends BasePageHelper {
     @ApiModelProperty(value = "币种")
     private String currency;
 
+    @ApiModelProperty(value = "备注")
+    private String remark;
+
     @ApiModelProperty(value = "启用禁用")
     private Boolean enabled;
 

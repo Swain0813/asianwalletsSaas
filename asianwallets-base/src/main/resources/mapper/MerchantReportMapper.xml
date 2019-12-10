@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.MerchantReport">
         <id column="id" property="id" jdbcType="VARCHAR"/>
         <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
-        <result column="channel_id" property="channelId" jdbcType="VARCHAR"/>
+        <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
         <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
         <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
         <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
@@ -28,7 +28,7 @@
         <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-        id, merchant_id, channel_id, institution_id, institution_name, merchant_name, channel_name,
+        id, merchant_id, channel_code, institution_id, institution_name, merchant_name, channel_name,
     sub_merchant_code, sub_merchant_name,shop_code,shop_name,sub_appid, enabled, create_time, update_time, creator,
     modifier, remark, extend1, extend2, extend3, extend4, extend5, extend6
     </sql>
@@ -87,6 +87,13 @@
                 AND institution_name LIKE CONCAT(CONCAT('%',#{institutionName}),'%')
             </if>
         </where>
+    </select>
+    <select id="selectByChannelCodeAndMerchantId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from merchant_report
+        where channel_code = #{channelCode}
+        and merchant_id = #{merchantId};
     </select>
 
 </mapper>

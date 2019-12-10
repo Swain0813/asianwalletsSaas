@@ -64,33 +64,4 @@ public class MerchantReportController extends BaseController {
     public List<MerchantReportVO> exportReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
         return merchantReportService.exportReport(merchantReportDTO);
     }
-
-    /*
-    @ApiOperation(value = "启用禁用mcc")
-    @PostMapping("banMcc")
-    public BaseResponse banMcc(@RequestBody @ApiParam MccDTO mccDto) {
-        mccDto.setModifier(this.getSysUserVO().getUsername());
-        mccDto.setLanguage(this.getLanguage());
-        return ResultUtil.success(mccService.banMcc(mccDto));
-    }
-
-    @ApiOperation(value = "查询所有mcc")
-    @GetMapping("inquireAllMcc")
-    public BaseResponse inquireAllMcc() {
-        return ResultUtil.success(mccService.inquireAllMcc(this.getLanguage()));
-    }
-
-
-    @ApiOperation(value = "导入mcc")
-    @PostMapping("importMcc")
-    public BaseResponse importMcc(@RequestBody @ApiParam List<Mcc> list) {
-        return ResultUtil.success(mccService.importMcc(list));
-    }
-
-    @ApiOperation(value = "导出mcc")
-    @PostMapping("exportMcc")
-    public List<MccVO> exportMcc(@RequestBody @ApiParam MccDTO mccDto) {
-        mccDto.setLanguage(this.getLanguage());
-        return mccService.exportMcc(mccDto);
-    }*/
 }

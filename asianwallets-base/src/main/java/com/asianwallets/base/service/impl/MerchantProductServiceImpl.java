@@ -3,6 +3,7 @@ package com.asianwallets.base.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.base.dao.*;
+import com.asianwallets.base.job.ProductInfoJob;
 import com.asianwallets.base.service.MerchantProductService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -11,18 +12,24 @@ import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ChaBankRelVO;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +51,8 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     @Autowired
     private MerchantProductAuditMapper merchantProductAuditMapper;
     @Autowired
+    private MerchantProductHistoryMapper merchantProductHistoryMapper;
+    @Autowired
     private MerchantMapper merchantMapper;
     @Autowired
     private MerchantChannelMapper merchantChannelMapper;
@@ -53,6 +62,15 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     private RedisService redisService;
     @Autowired
     private QrtzJobDetailsMapper qrtzJobDetailsMapper;
+    @Autowired
+    private Scheduler scheduler;
+    @Autowired
+    private ProductMapper productMapper;
+    @Autowired
+    private AccountMapper accountMapper;
+    @Autowired
+    private SettleControlMapper settleControlMapper;
+
 
     /**
      * @return
@@ -209,7 +227,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
         if (merchant == null) {//商户信息不存在
             throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());//商户信息不存在
         }
-        //机构已禁用
+        //商户已禁用
         if (!merchant.getEnabled()) {
             throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());//商户已禁用
         }
@@ -313,5 +331,246 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             throw new BusinessException(EResultEnum.AUDIT_INFO_EXIENT.getCode());
         }
         return num;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 批量审核商户产品
+     **/
+    @Override
+    public BaseResponse auditMerchantProduct(String username, AuaditProductDTO auaditProductDTO) {
+        BaseResponse baseResponse = new BaseResponse();
+        List<String> list = auaditProductDTO.getMerProId();
+        int num = 0;
+        for (String merProId : list) {
+            MerchantProduct oldMerchantProduct = merchantProductMapper.selectByPrimaryKey(merProId);
+            //如果该商户已经不存在或者禁用的话，是不允许进行修改的
+            Merchant merchant = merchantMapper.selectByPrimaryKey(oldMerchantProduct.getMerchantId());
+            if (merchant == null) {//商户信息不存在
+                throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());//商户信息不存在
+            }
+            //商户已禁用
+            if (!merchant.getEnabled()) {
+                throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());//商户已禁用
+            }
+            MerchantProductAudit oldMerchantProductAudit = merchantProductAuditMapper.selectByPrimaryKey(merProId);
+            if (oldMerchantProductAudit.getEnabled()) {
+                //如果审核记录里的启用状态为true，则为非初次添加
+                if (auaditProductDTO.enabled) {
+                    //非初次添加信息审核通过
+                    //构建job信息
+                    String name = merProId;
+                    String group = merProId.concat("_PRODUCT_INFO");
+                    JobDataMap jobDataMap = new JobDataMap();
+                    jobDataMap.put("merProId", merProId);
+                    JobDetail jobDetail = JobBuilder.newJob(ProductInfoJob.class).withIdentity(name, group).setJobData(jobDataMap).build();
+                    //表达式调度构建器(即任务执行的时间)
+                    Date runDate = oldMerchantProductAudit.getEffectTime();
+                    if (runDate == null) {
+                        baseResponse.setCode(EResultEnum.EFFECTTIME_IS_NULL.getCode());//生效时间不能为空
+                        return baseResponse;
+                    }
+                    if (runDate.compareTo(new Date()) < 0) {
+                        MerchantProductHistory merchantProductHistory = new MerchantProductHistory();
+                        BeanUtils.copyProperties(oldMerchantProductAudit, merchantProductHistory);
+                        merchantProductHistory.setId(IDS.uuid2());
+                        merchantProductHistory.setMerchantProductId(oldMerchantProductAudit.getId());
+                        merchantProductHistory.setAuditStatus(TradeConstant.AUDIT_FAIL);
+                        merchantProductHistory.setAuditRemark("生效时间不合法");
+                        merchantProductHistoryMapper.insert(merchantProductHistory);
+                        //原记录信息审核状态记录失败
+                        oldMerchantProductAudit.setAuditStatus(TradeConstant.AUDIT_FAIL);
+                        //oldInstitutionProductAudit.setUpdateTime(new Date());
+                        oldMerchantProductAudit.setModifier(name);
+                        oldMerchantProductAudit.setAuditRemark(auaditProductDTO.getRemarks());
+                        merchantProductAuditMapper.updateByPrimaryKeySelective(oldMerchantProductAudit);
+                        baseResponse.setCode(EResultEnum.EFFECTTIME_IS_ILLEGAL.getCode());//生效时间不合法
+                        return baseResponse;
+                    }
+                    //更改审核信息状态
+                    oldMerchantProductAudit.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
+                    merchantProductAuditMapper.updateByPrimaryKeySelective(oldMerchantProductAudit);
+                    //根据配置动态生成cron表达式
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(runDate);
+                    String yyyy = String.valueOf(calendar.get(Calendar.YEAR));
+                    String mm = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+                    String dd = String.valueOf(calendar.get(Calendar.DATE));
+                    String HH = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
+                    String minute = String.valueOf(calendar.get(Calendar.MINUTE));
+                    String ss = String.valueOf(calendar.get(Calendar.SECOND));
+                    //生成 eg:【30 45 10 20 8 2018】格式 固定时间执行任务
+                    String cronExpression = ss.concat(" ").concat(minute)
+                            .concat(" ").concat(HH)
+                            .concat(" ").concat(dd)
+                            .concat(" ").concat(mm)
+                            .concat(" ").concat("?")
+                            .concat(" ").concat(yyyy);
+                    CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);
+                    //按新的cronExpression表达式构建一个新的trigger
+                    CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(name, group)
+                            .withSchedule(scheduleBuilder).build();
+                    try {
+                        scheduler.scheduleJob(jobDetail, trigger);
+                    } catch (SchedulerException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    //非初次添加信息审核不通过
+                    oldMerchantProductAudit.setAuditStatus(TradeConstant.AUDIT_FAIL);
+                    //oldInstitutionProductAudit.setUpdateTime(new Date());
+                    oldMerchantProductAudit.setModifier(username);
+                    oldMerchantProductAudit.setAuditRemark(auaditProductDTO.getRemarks());
+                    merchantProductAuditMapper.updateByPrimaryKeySelective(oldMerchantProductAudit);
+
+                    MerchantProductHistory merchantProductHistory = new MerchantProductHistory();
+                    BeanUtils.copyProperties(oldMerchantProductAudit, merchantProductHistory);
+                    merchantProductHistory.setId(IDS.uuid2());
+                    merchantProductHistory.setMerchantProductId(oldMerchantProductAudit.getId());
+                    merchantProductHistory.setAuditStatus(TradeConstant.AUDIT_FAIL);
+                    merchantProductHistoryMapper.insert(merchantProductHistory);
+                }
+            } else {
+                //如果审核记录里的启用状态为false ,则为初次添加状态
+                if (auaditProductDTO.enabled) {
+                    //初次添加信息审核通过 更改主表，审核表审核信息状态
+                    MerchantProduct merchantProduct = merchantProductMapper.selectByPrimaryKey(merProId);
+                    merchantProduct.setId(merProId);
+                    merchantProduct.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
+                    merchantProduct.setModifier(username);
+                    merchantProduct.setEnabled(true);
+                    merchantProduct.setUpdateTime(new Date());
+
+                    MerchantProductAudit merchantProductAudit = new MerchantProductAudit();
+                    merchantProductAudit.setId(merProId);
+                    merchantProductAudit.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
+                    merchantProductAudit.setModifier(username);
+                    //institutionProductAudit.setUpdateTime(new Date());
+                    merchantProductAudit.setEnabled(true);
+                    merchantProduct.setCreateTime(merchantProductAudit.getUpdateTime());
+
+                    merchantProductMapper.updateByPrimaryKeySelective(merchantProduct);
+                    merchantProductAuditMapper.updateByPrimaryKeySelective(merchantProductAudit);
+
+                    //添加账户
+                    Account account = new Account();
+                    //账户关联表 自动结算开关和最小提现金额
+                    SettleControl settleControl = new SettleControl();
+                    String currency = productMapper.selectByPrimaryKey(merchantProductMapper.selectByPrimaryKey(merProId).getProductId()).getCurrency();
+                    if (accountMapper.getCountByinstitutionIdAndCurry(oldMerchantProduct.getMerchantId(), currency) == 0) {
+                        account.setAccountCode(IDS.uniqueID().toString());
+                        account.setMerchantId(oldMerchantProduct.getMerchantId());
+                        account.setMerchantName(merchantMapper.selectByPrimaryKey(oldMerchantProduct.getMerchantId()).getCnName());
+                        account.setCurrency(currency);//币种
+                        account.setId(IDS.uuid2());
+                        account.setSettleBalance(BigDecimal.ZERO);//默认结算金额为0
+                        account.setClearBalance(BigDecimal.ZERO);//默认清算金额为0
+                        account.setFreezeBalance(BigDecimal.ZERO);//默认冻结金额为0
+                        account.setEnabled(true);//产品审核通过以后默认币种的状态是启用的
+                        account.setCreateTime(new Date());//创建时间
+                        account.setCreator(username);//创建人
+                        account.setRemark("产品信息审核通过后自动创建币种的账户");
+                        //账户关联表id
+                        settleControl.setId(IDS.uuid2());
+                        //账户id
+                        settleControl.setAccountId(account.getId());
+                        //设置最小提现金额为0
+                        settleControl.setMinSettleAmount(BigDecimal.ZERO);
+                        settleControl.setCreateTime(new Date());
+                        settleControl.setEnabled(true);
+                        settleControl.setCreator(username);
+                        settleControl.setRemark("产品信息审核通过后自动创建币种的结算控制信息");
+                        if (accountMapper.insertSelective(account) > 0 && settleControlMapper.insertSelective(settleControl) > 0) {
+                            redisService.set(AsianWalletConstant.ACCOUNT_CACHE_KEY.concat("_").concat(oldMerchantProduct.getMerchantId()).concat("_").concat(currency), JSON.toJSONString(account));
+                        }
+                    }
+                    //若审核表限额状态为成功,删除审核记录
+                    if (oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_SUCCESS) {
+                        merchantProductAuditMapper.deleteByPrimaryKey(oldMerchantProduct.getMerchantId());
+                    }
+                    //审核通过后将新增和修改的机构产品信息添加的redis里
+                    try {
+                        redisService.set(AsianWalletConstant.MERCHANTPRODUCT_CACHE_KEY.concat("_").concat(merchantProduct.getMerchantId().concat("_").concat(merchantProduct.getProductId())), JSON.toJSONString(merchantProduct));
+                    } catch (Exception e) {
+                        log.error("审核通过后将新增和修改的机构产品信息添加的redis里：" + e.getMessage());
+                        throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+                    }
+
+                }else{
+                    //初次添加审核不通过
+                    MerchantProduct merchantProduct = new MerchantProduct();
+                    merchantProduct.setId(merProId);
+                    merchantProduct.setAuditStatus(TradeConstant.AUDIT_FAIL);
+                    merchantProduct.setAuditRemark(auaditProductDTO.getRemarks());
+                    merchantProduct.setModifier(username);
+                    merchantProduct.setUpdateTime(new Date());
+                    num = merchantProductMapper.updateByPrimaryKeySelective(merchantProduct);
+
+                    MerchantProductAudit merchantProductAudit = new MerchantProductAudit();
+                    merchantProductAudit.setId(merProId);
+                    merchantProductAudit.setAuditStatus(TradeConstant.AUDIT_FAIL);
+                    merchantProductAudit.setAuditRemark(auaditProductDTO.getRemarks());
+                    merchantProductAudit.setModifier(username);
+                    //institutionProductAudit.setUpdateTime(new Date());
+                    merchantProductAuditMapper.updateByPrimaryKeySelective(merchantProductAudit);
+
+                    MerchantProductHistory merchantProductAuditHistory = new MerchantProductHistory();
+                    BeanUtils.copyProperties(oldMerchantProductAudit, merchantProductAuditHistory);
+                    merchantProductAuditHistory.setId(IDS.uuid2());
+                    merchantProductAuditHistory.setMerchantProductId(oldMerchantProductAudit.getId());
+                    merchantProductAuditHistory.setAuditStatus(TradeConstant.AUDIT_FAIL);
+                    merchantProductHistoryMapper.insert(merchantProductAuditHistory);
+                }
+            }
+        }
+        return ResultUtil.success(num);
+    }
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户产品信息
+     * @return
+     **/
+    @Override
+    public PageInfo<MerchantProduct> pageFindMerProduct(MerchantProductDTO merchantProductDTO) {
+        return new PageInfo<MerchantProduct>(merchantProductMapper.pageFindMerProduct(merchantProductDTO));
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户审核产品信息
+     * @return
+     **/
+    @Override
+    public PageInfo<MerchantProductAudit> pageFindMerProductAudit(MerchantProductDTO merchantProductDTO) {
+        return new PageInfo<MerchantProductAudit>(merchantProductAuditMapper.pageFindMerProductAudit(merchantProductDTO));
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 根据产品Id查询商户产品详情
+     * @return
+     **/
+    @Override
+    public MerchantProduct getMerProductById(String merProductId) {
+        return merchantProductMapper.selectByPrimaryKey(merProductId);
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 根据Id查询商户产品审核详情
+     * @return
+     **/
+    @Override
+    public MerchantProductAudit getMerProductAuditById(String merProductId) {
+        return merchantProductAuditMapper.selectByPrimaryKey(merProductId);
     }
 }

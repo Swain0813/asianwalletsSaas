@@ -52,7 +52,7 @@ public class MerchantReportServiceImpl implements MerchantReportService {
     @Override
     public int addReport(MerchantReportDTO merchantReportDTO) {
         //判断必要参数
-        if (StringUtils.isBlank(merchantReportDTO.getChannelId()) || StringUtils.isBlank(merchantReportDTO.getInstitutionId()) || StringUtils.isBlank(merchantReportDTO.getMerchantId())) {
+        if (StringUtils.isBlank(merchantReportDTO.getChannelCode()) || StringUtils.isBlank(merchantReportDTO.getInstitutionId()) || StringUtils.isBlank(merchantReportDTO.getMerchantId())) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         //判断机构 商户 通道 是否存在
@@ -60,7 +60,7 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         if (institution == null) {
             throw new BusinessException(EResultEnum.INSTITUTION_DOES_NOT_EXIST.getCode());
         }
-        Channel channel = channelMapper.selectByPrimaryKey(merchantReportDTO.getChannelId());
+        Channel channel = channelMapper.selectByPrimaryKey(merchantReportDTO.getChannelCode());
         if (channel == null) {
             throw new BusinessException(EResultEnum.CHANNEL_IS_NOT_EXISTS.getCode());
         }
@@ -68,8 +68,13 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         if (merchant == null) {
             throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
         }
+        //shopCode  不可以重复
         if (merchantReportMapper.selectByShopCode(merchantReportDTO.getShopCode()) != null) {
             throw new BusinessException(EResultEnum.SHOP_CODE_EXIST.getCode());
+        }
+        //检查重复添加
+        if (merchantReportMapper.selectByChannelCodeAndMerchantId(merchantReportDTO.getChannelCode(), merchantReportDTO.getMerchantId()) != null) {
+            throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
         }
         //检查该商户是否属于此机构
         if (!StringUtils.isBlank(merchant.getInstitutionId()) && !merchant.getInstitutionId().equals(institution.getId())) {
@@ -79,7 +84,7 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         //Assignment
         MerchantReport merchantReport = new MerchantReport();
         merchantReport.setMerchantId(merchant.getId());
-        merchantReport.setChannelId(channel.getId());
+        merchantReport.setChannelCode(channel.getChannelCode());
         merchantReport.setInstitutionId(institution.getId());
         merchantReport.setInstitutionName(institution.getCnName());
         merchantReport.setMerchantName(merchant.getCnName());
@@ -99,10 +104,9 @@ public class MerchantReportServiceImpl implements MerchantReportService {
     }
 
     /**
-     * 查询
-     *
-     * @param merchantReportDTO
-     * @return
+     * @param merchantReportDTO DTO
+     * @return PageInfo<MerchantReportVO>
+     * @Description 查询
      */
     @Override
     public PageInfo<MerchantReportVO> pageReport(MerchantReportDTO merchantReportDTO) {
@@ -152,7 +156,7 @@ public class MerchantReportServiceImpl implements MerchantReportService {
     @Override
     public List<MerchantReportVO> exportReport(MerchantReportDTO merchantReportDTO) {
         List<MerchantReportVO> merchantReportVOS = merchantReportMapper.pageReport(merchantReportDTO);
-        List<MerchantReportVO> collect = merchantReportVOS.stream().sorted(Comparator.comparing(MerchantReportVO::getCreateTime).reversed()).collect(Collectors.toList());
+        List<MerchantReportVO> collect = merchantReportVOS.parallelStream().sorted(Comparator.comparing(MerchantReportVO::getCreateTime).reversed()).collect(Collectors.toList());
         for (MerchantReportVO merchantReportVO : collect) {
             if (merchantReportVO.getEnabled()) {
                 merchantReportVO.setEnabledStr("启用");

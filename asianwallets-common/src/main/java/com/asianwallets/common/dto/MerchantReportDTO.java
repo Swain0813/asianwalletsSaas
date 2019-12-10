@@ -18,8 +18,8 @@ public class MerchantReportDTO extends BasePageHelper {
     @ApiModelProperty(value = "商户ID")
     private String merchantId;
 
-    @ApiModelProperty(value = "通道ID")
-    private String channelId;
+    @ApiModelProperty(value = "通道Code")
+    private String channelCode;
 
     @ApiModelProperty(value = "机构ID")
     private String institutionId;
