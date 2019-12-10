@@ -1,11 +1,10 @@
 package com.asianwallets.base.service;
 
 import com.asianwallets.common.base.BaseService;
-import com.asianwallets.common.dto.AuaditProductDTO;
-import com.asianwallets.common.dto.MerProDTO;
-import com.asianwallets.common.dto.MerchantProductDTO;
+import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.vo.MerChannelVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -85,4 +84,21 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
      * @return
      **/
     MerchantProductAudit getMerProductAuditById(String merProductId);
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户产品通道管理信息
+     * @return
+     **/
+    PageInfo<MerChannelVO> pageFindMerProChannel(SearchChannelDTO searchChannelDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 修改机构通道
+     * @return
+     **/
+    int updateMerchantChannel(String username, BatchUpdateSortDTO batchUpdateSort);
 }
