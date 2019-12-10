@@ -58,6 +58,6 @@ public class PayTypeController extends BaseController {
     @ApiOperation(value = "查询所有支付方式")
     @GetMapping("inquireAllPayType")
     public BaseResponse inquireAllPaytype() {
-        return ResultUtil.success(PayTypeService.inquireAllPaytype(null));
+        return ResultUtil.success(PayTypeService.inquireAllPaytype(this.getLanguage()));
     }
 }
