@@ -86,6 +86,9 @@
             <if test="institutionName != null and institutionName !=''">
                 AND institution_name LIKE CONCAT(CONCAT('%',#{institutionName}),'%')
             </if>
+            <if test="enabled != null">
+                AND enabled = #{enabled}
+            </if>
         </where>
     </select>
     <select id="selectByChannelCodeAndMerchantId" resultMap="BaseResultMap">

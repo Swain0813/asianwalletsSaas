@@ -50,7 +50,13 @@
 
     <select id="exportBank" resultMap="ExportBankVOMap">
         select
-        <include refid="Base_Column_List"/>
+        bank_code as bankCode,
+        bank_name as bankName,
+        bank_country as bankCountry,
+        bank_currency as bankCurrency,
+        issuer_id as issuerId,
+        create_time as createTime,
+        creator as creator
         from bank
         <where>
             <if test="bankName != null and bankName != ''">

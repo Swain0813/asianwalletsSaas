@@ -5,6 +5,7 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.feign.base.InstitutionProductChannelFeign;
 import com.asianwallets.permissions.service.OperationLogService;
 import io.swagger.annotations.Api;
@@ -49,5 +50,11 @@ public class InstitutionProductChannelFeignController extends BaseController {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(insId),
                 "根据机构ID查询机构关联产品通道信息"));
         return institutionProductChannelFeign.getInsProChaByInsId(insId);
+    }
+
+    @ApiOperation(value = "查询所有产品关联通道信息(前端用)")
+    @PostMapping("/getAllProCha")
+    public BaseResponse getAllProCha() {
+        return institutionProductChannelFeign.getAllProCha();
     }
 }

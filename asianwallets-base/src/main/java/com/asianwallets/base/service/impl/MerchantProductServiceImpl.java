@@ -18,6 +18,7 @@ import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ChaBankRelVO;
+import com.asianwallets.common.vo.MerChannelVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -499,7 +500,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                         throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
                     }
 
-                }else{
+                } else {
                     //初次添加审核不通过
                     MerchantProduct merchantProduct = new MerchantProduct();
                     merchantProduct.setId(merProId);
@@ -531,10 +532,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 分页查询商户产品信息
-     * @return
      **/
     @Override
     public PageInfo<MerchantProduct> pageFindMerProduct(MerchantProductDTO merchantProductDTO) {
@@ -542,10 +543,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 分页查询商户审核产品信息
-     * @return
      **/
     @Override
     public PageInfo<MerchantProductAudit> pageFindMerProductAudit(MerchantProductDTO merchantProductDTO) {
@@ -553,10 +554,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 根据产品Id查询商户产品详情
-     * @return
      **/
     @Override
     public MerchantProduct getMerProductById(String merProductId) {
@@ -564,13 +565,54 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 根据Id查询商户产品审核详情
-     * @return
      **/
     @Override
     public MerchantProductAudit getMerProductAuditById(String merProductId) {
         return merchantProductAuditMapper.selectByPrimaryKey(merProductId);
+    }
+
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户产品通道管理信息
+     **/
+    @Override
+    public PageInfo<MerChannelVO> pageFindMerProChannel(SearchChannelDTO searchChannelDTO) {
+        return new PageInfo<MerChannelVO>(merchantChannelMapper.pageFindMerProChannel(searchChannelDTO));
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 修改机构通道
+     **/
+    @Override
+    public int updateMerchantChannel(String username, BatchUpdateSortDTO batchUpdateSort) {
+        int num = 0;
+        if (StringUtils.isEmpty(batchUpdateSort.getEnabled()) && StringUtils.isEmpty(batchUpdateSort.getSort())) {
+            return num;
+        }
+        //这两个参数不为空,代表这是条需要修改的数据
+        MerchantChannel merchantChannel = merchantChannelMapper.selectByPrimaryKey(batchUpdateSort.getMerChannelId());
+        if (!StringUtils.isEmpty(batchUpdateSort.getSort())) {
+            merchantChannel.setSort(batchUpdateSort.getSort());
+        }
+        if (!StringUtils.isEmpty(batchUpdateSort.getEnabled())) {
+            merchantChannel.setEnabled(batchUpdateSort.getEnabled());
+        }
+        merchantChannel.setUpdateTime(new Date());
+        merchantChannel.setModifier(username);
+        num = merchantChannelMapper.updateByPrimaryKeySelective(merchantChannel);
+        List<String> list = merchantChannelMapper.selectChannelCodeByInsProId(merchantChannel.getMerProId());
+        //同步Redis
+        redisService.set(AsianWalletConstant.MERCHANTCHANNEL_CACHE_KEY.concat("_").concat(merchantChannel.getMerProId()), JSON.toJSONString(list));
+        return num;
     }
 }

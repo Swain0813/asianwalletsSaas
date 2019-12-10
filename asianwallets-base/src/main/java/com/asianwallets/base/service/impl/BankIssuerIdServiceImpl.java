@@ -12,6 +12,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,7 @@ public class BankIssuerIdServiceImpl implements BankIssuerIdService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int addBankIssuerId(String username, List<BankIssuerIdDTO> bankIssuerIdDTOList) {
         List<BankIssuerId> bankIssuerIdList = new ArrayList<>();
         for (BankIssuerIdDTO bankIssuerIdDTO : bankIssuerIdDTOList) {
@@ -61,10 +63,11 @@ public class BankIssuerIdServiceImpl implements BankIssuerIdService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int updateBankIssuerId(String username, BankIssuerIdDTO bankIssuerIdDTO) {
         BankIssuerId bankIssuerId = bankIssuerIdMapper.selectByPrimaryKey(bankIssuerIdDTO.getId());
         if (bankIssuerId == null) {
-            log.info("==========【添加银行机构代码映射】==========【bankIssuerId不存在】");
+            log.info("==========【修改银行机构代码映射信息】==========【bankIssuerId不存在】");
             throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
         }
         bankIssuerId.setIssuerId(bankIssuerIdDTO.getIssuerId());
@@ -77,10 +80,11 @@ public class BankIssuerIdServiceImpl implements BankIssuerIdService {
      * 分页查询银行机构代码映射信息
      *
      * @param bankIssuerIdDTO 银行机构代码映射输入实体
-     * @return 修改条数
+     * @return PageInfo<BankIssuerIdVO>
      */
     @Override
     public PageInfo<BankIssuerIdVO> pageFindBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO) {
+        bankIssuerIdDTO.setSort("b.create_time");
         return new PageInfo<>(bankIssuerIdMapper.pageFindBankIssuerId(bankIssuerIdDTO));
     }
 
@@ -88,7 +92,7 @@ public class BankIssuerIdServiceImpl implements BankIssuerIdService {
      * 导出银行机构代码映射信息
      *
      * @param bankIssuerIdDTO 银行机构代码映射输入实体
-     * @return 修改条数
+     * @return List<BankIssuerIdVO>
      */
     @Override
     public List<BankIssuerIdVO> exportBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO) {

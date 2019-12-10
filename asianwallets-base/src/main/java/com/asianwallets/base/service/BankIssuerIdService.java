@@ -31,7 +31,7 @@ public interface BankIssuerIdService {
      * 分页查询银行机构代码映射信息
      *
      * @param bankIssuerIdDTO 银行机构代码映射输入实体
-     * @return 修改条数
+     * @return PageInfo<BankIssuerIdVO>
      */
     PageInfo<BankIssuerIdVO> pageFindBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO);
 
@@ -39,7 +39,7 @@ public interface BankIssuerIdService {
      * 导出银行机构代码映射信息
      *
      * @param bankIssuerIdDTO 银行机构代码映射输入实体
-     * @return 修改条数
+     * @return List<BankIssuerIdVO>
      */
     List<BankIssuerIdVO> exportBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO);
 }
