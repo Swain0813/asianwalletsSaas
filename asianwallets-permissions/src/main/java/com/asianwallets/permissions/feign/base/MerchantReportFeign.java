@@ -4,6 +4,7 @@ package com.asianwallets.permissions.feign.base;
 import com.asianwallets.common.dto.MerchantReportDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.MerchantReportVO;
+import com.asianwallets.permissions.feign.base.impl.MerchantReportFeignImpl;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
