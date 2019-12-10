@@ -38,4 +38,11 @@ public interface MerchantReportMapper extends BaseMapper<MerchantReport> {
      */
     int banReport(@Param("id") String id, @Param("enabled") Boolean enabled, @Param("modifier") String modifier);
 
+    /**
+     * @param channelCode
+     * @param merchantId
+     * @return MerchantReport
+     * @Description 查询是否重复添加
+     */
+    MerchantReport selectByChannelCodeAndMerchantId(@Param("channelCode") String channelCode, @Param("merchantId") String merchantId);
 }

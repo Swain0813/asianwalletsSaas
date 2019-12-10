@@ -128,7 +128,7 @@ public class MccChannelFeignServiceImpl implements MccChannelFeignService {
     /**
      * 查询通道信息
      *
-     * @return
+     * @return MChannelVO 这里面的CID指的是channel_code
      */
     @Override
     public List<MChannelVO> selectAllChannel() {
