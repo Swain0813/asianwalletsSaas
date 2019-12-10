@@ -1,5 +1,6 @@
 package com.asianwallets.common.dto;
 
+import com.asianwallets.common.base.BasePageHelper;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -16,7 +17,7 @@ import java.util.Date;
  **/
 @Data
 @ApiModel(value = "商户产品实体", description = "商户产品实体")
-public class MerchantProductDTO {
+public class MerchantProductDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "商户产品id")
     private String merProId;
@@ -96,5 +97,11 @@ public class MerchantProductDTO {
     @ApiModelProperty(value = "ext7")
     private String ext7;
 
+    @ApiModelProperty(value = "语言")
+    private String language;
+    @ApiModelProperty(value = "起始时间")
+    private String startTime;
 
+    @ApiModelProperty(value = "结束时间")
+    private String endTime;
 }

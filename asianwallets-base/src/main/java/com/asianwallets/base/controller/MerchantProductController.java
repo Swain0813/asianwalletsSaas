@@ -10,12 +10,10 @@ import com.asianwallets.common.response.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import com.asianwallets.common.base.BaseController;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -67,6 +65,34 @@ public class MerchantProductController extends BaseController {
         return ResultUtil.success(merchantProductService.allotMerProductChannel(this.getSysUserVO().getUsername(), merProDTO));
     }
 
+    @ApiOperation(value = "分页查询商户产品信息")
+    @PostMapping("/pageFindMerProduct")
+    public BaseResponse pageFindMerProduct(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO) {
+        if (StringUtils.isBlank(merchantProductDTO.getLanguage())) {
+            merchantProductDTO.setLanguage(this.getLanguage());
+        }
+        return ResultUtil.success(merchantProductService.pageFindMerProduct(merchantProductDTO));
+    }
 
+    @ApiOperation(value = "根据产品Id查询商户产品详情")
+    @GetMapping("/getMerProductById")
+    public BaseResponse getMerProductById(@RequestParam @ApiParam String merProductId) {
+        return ResultUtil.success(merchantProductService.getMerProductById(merProductId));
+    }
+
+    @ApiOperation(value = "分页查询商户审核产品信息")
+    @PostMapping("/pageFindMerProductAudit")
+    public BaseResponse pageFindMerProductAudit(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO) {
+        if (StringUtils.isBlank(merchantProductDTO.getLanguage())) {
+            merchantProductDTO.setLanguage(this.getLanguage());
+        }
+        return ResultUtil.success(merchantProductService.pageFindMerProductAudit(merchantProductDTO));
+    }
+
+    @ApiOperation(value = "根据Id查询商户产品审核详情")
+    @GetMapping("/getMerProductAuditById")
+    public BaseResponse getMerProductAuditById(@RequestParam @ApiParam String merProductId) {
+        return ResultUtil.success(merchantProductService.getMerProductAuditById(merProductId));
+    }
 
 }

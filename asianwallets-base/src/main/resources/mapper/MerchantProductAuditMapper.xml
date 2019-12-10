@@ -48,4 +48,48 @@
 		<result column="ext7" property="ext7" />
 	</resultMap>
 
+
+	<sql id="Base_Column_List">
+        id,merchant_id,product_id, merchant_name, product_abbrev, trade_direction, trans_type,pay_type,
+         rate_type,min_tate,max_tate,rate,add_value,limit_amount,daily_trading_count,float_rate,divided_ratio,divided_mode,
+         fee_payer,refund_default,refund_rate_type,refund_min_tate,refund_max_tate,refund_rate,refund_add_value,settle_cycle,
+         audit_status,audit_remark,effect_time,create_time,update_time,creator,modifier,remark,enabled,ext1,ext2,ext3,ext4,ext5,
+         ext6,ext7
+  </sql>
+
+    <select id="pageFindMerProductAudit" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from merchant_product_audit
+		<where>
+			<if test="merchantId!=null and merchantId != ''">
+				and merchant_id=#{merchantId}
+			</if>
+			<if test="merchantName != null and merchantName != ''">
+				and merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+			</if>
+			<if test="transType != null and transType != ''">
+				and trans_type=#{transType}
+			</if>
+			<if test="tradeDirection != null and tradeDirection != ''">
+				and trade_direction=#{tradeDirection}
+			</if>
+			<if test="payType != null and payType != ''">
+				and pay_type=#{payType}
+			</if>
+			<if test="enabled != null">
+				and enabled=#{enabled}
+			</if>
+			<if test="auditStatus != null and auditStatus != ''">
+				and audit_status=#{auditStatus}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
+			</if>
+		</where>
+	</select>
+
 </mapper>
