@@ -23,6 +23,9 @@ public class SearchChannelDTO extends BasePageHelper {
     @ApiModelProperty(value = "产品id")
     private String productId;
 
+    @ApiModelProperty(value = "产品简称")
+    private String productAbbrev;
+
     @ApiModelProperty(value = "支付类型")
     private Integer payType;
 
