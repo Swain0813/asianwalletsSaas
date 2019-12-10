@@ -28,9 +28,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -97,20 +95,6 @@ public class ChannelServiceImpl implements ChannelService {
         }
         Channel channel = new Channel();
         BeanUtils.copyProperties(channelDTO, channel);
-//        //通道手续费类型为单笔定额时,最大最小费率设为null
-  /*      if (!StringUtils.isEmpty(channelDTO.getChannelFeeType()) && TradeConstant.FEE_TYPE_QUOTA.equals(channelDTO.getChannelFeeType())) {
-            //通道手续费最小值
-            channel.setChannelMinRate(null);
-            //通道手续费最大值
-            channel.setChannelMaxRate(null);
-        }
-        //通道网关手续费类型为单笔定额时,最大最小费率设为null
-        if (!StringUtils.isEmpty(channelDTO.getChannelGatewayFeeType()) && TradeConstant.FEE_TYPE_QUOTA.equals(channelDTO.getChannelGatewayFeeType())) {
-            //通道网关手续费最小值
-            channel.setChannelGatewayMinRate(null);
-            //通道网关手续费最大值
-            channel.setChannelGatewayMaxRate(null);
-        }*/
         String channelId = IDS.uuid2();
         channel.setId(channelId);
         channel.setChannelCode(IDS.uniqueID().toString());
@@ -187,16 +171,6 @@ public class ChannelServiceImpl implements ChannelService {
         BeanUtils.copyProperties(channelDTO, channel, ReflexClazzUtils.getNullPropertyNames(channelDTO));
         channel.setUpdateTime(new Date());
         channel.setModifier(username);
-        //通道手续费类型为单笔定额时,最大最小费率设为null
-  /*      if (channelDTO.getChannelFeeType() != null && TradeConstant.FEE_TYPE_QUOTA.equals(channelDTO.getChannelFeeType())) {
-            channel.setChannelMinRate(null);//通道手续费最小值
-            channel.setChannelMaxRate(null);//通道手续费最大值
-        }
-        //通道网关手续费类型为单笔定额时,最大最小费率设为null
-        if (channelDTO.getChannelGatewayFeeType() != null && TradeConstant.FEE_TYPE_QUOTA.equals(channelDTO.getChannelGatewayFeeType())) {
-            channel.setChannelGatewayMinRate(null);//通道网关手续费最小值
-            channel.setChannelGatewayMaxRate(null);//通道网关手续费最大值
-        }*/
         //删除产品通道关联关系
         productChannelMapper.deleteByChannelId(channelDTO.getChannelId());
         List<ProductChannel> productChannelList = Lists.newArrayList();

@@ -89,6 +89,7 @@
 
     <select id="pageFindChannel" resultMap="BaseResultMap">
         select
+        ch.id,
         ch.create_time,
         ch.channel_code,
         ch.channel_cn_name,
@@ -100,8 +101,8 @@
         ch.support_refund_state,
         ch.refunding_is_return_fee,
         ch.update_time,
-        ch.modifier,
-        from channel ch left join pay_type p on p.id = ch.pay_type and p.language=#{language}
+        ch.modifier
+        from channel ch left join pay_type p on p.extend1 = ch.pay_type and p.language=#{language}
         <where>
             <if test="channelCode!=null and channelCode != ''">
                 and ch.channel_code=#{channelCode}
@@ -163,25 +164,20 @@
                p.product_code               as productCode,
                p.trans_type                 as pTransType,
                p.currency                   as pCurrency,
+               pt.name                      as payType,
 
                b.id                         as bankID,
                b.bank_code                  as bankCode,
                b.bank_name                  as bankName,
                b.bank_country               as bankCountry,
                b.bank_currency              as bankCurrency
-        from channel ch,
-             product p,
-             product_channel pc,
-             bank b,
-             channel_bank cb,
-             pay_type pt
-        where ch.id = pc.channel_id
-          and pc.product_id = p.id
-          and ch.id = cb.channel_id
-          and cb.bank_id = b.id
-          and p.pay_type = pt.id
-          and ch.id = #{channelId}
-        order by ch.create_time DESC
+        from channel ch
+                 left join product_channel pc on ch.id = pc.channel_id
+                 left join product p on pc.product_id = p.id
+                 left join channel_bank cb on ch.id = cb.channel_id
+                 left join bank b on cb.bank_id = b.id
+                 left join pay_type pt on p.pay_type = pt.extend1 and pt.language = #{language}
+        where ch.id = #{channelId}
     </select>
 
     <resultMap id="ChannelDetailVOMap" type="com.asianwallets.common.vo.ChannelDetailVO">
@@ -212,9 +208,9 @@
         <result column="channel_gateway_min_rate" property="channelGatewayMinRate" jdbcType="DECIMAL"/>
         <result column="channel_gateway_max_rate" property="channelGatewayMaxRate" jdbcType="DECIMAL"/>
         <result column="channel_refund_fee_type" property="channelRefundFeeType" jdbcType="DECIMAL"/>
-        <result column="channel_refund_fee_type" property="channelRefundFeeRate" jdbcType="DECIMAL"/>
-        <result column="channel_refund_fee_type" property="channelRefundMinRate" jdbcType="DECIMAL"/>
-        <result column="channel_refund_fee_type" property="channelRefundMaxRate" jdbcType="DECIMAL"/>
+        <result column="channel_refund_fee_rate" property="channelRefundFeeRate" jdbcType="DECIMAL"/>
+        <result column="channel_refund_min_rate" property="channelRefundMinRate" jdbcType="DECIMAL"/>
+        <result column="channel_refund_max_rate" property="channelRefundMaxRate" jdbcType="DECIMAL"/>
 
         <result column="payUrl" property="payUrl" jdbcType="VARCHAR"/>
         <result column="channelSingleSelectUrl" property="channelSingleSelectUrl" jdbcType="VARCHAR"/>
@@ -230,6 +226,7 @@
         <result column="productCode" property="productCode" jdbcType="VARCHAR"/>
         <result column="pTransType" property="transType" jdbcType="TINYINT"/>
         <result column="pCurrency" property="currency" jdbcType="VARCHAR"/>
+        <result column="payType" property="payType" jdbcType="VARCHAR"/>
     </resultMap>
     <resultMap id="BankVOMap" type="com.asianwallets.common.vo.BankVO">
         <result column="bankID" property="bankID" jdbcType="VARCHAR"/>
@@ -243,41 +240,38 @@
         SELECT
         ch.channel_code AS channelCode,
         ch.channel_cn_name AS channelCnName,
-        d.name AS payType,
+        p.name AS payType,
         ch.currency AS currency,
         ch.channel_en_name AS channelEnName,
         ch.pay_code AS payCode,
         ch.settle_cycle AS settleCycle,
         ch.create_time AS createTime,
         ch.channel_rate AS channelRate,
-        ch.support_refund_state,
+        ch.support_refund_state as supportRefundState,
         ch.sort,
-        ch.limit_max_amount,
-        ch.limit_min_amount,
-        ch.channel_min_rate ,
-        ch.channel_max_rate ,
-        ch.channel_fee_type ,
+        ch.limit_max_amount as limitMaxAmount,
+        ch.limit_min_amount as limitMinAmount,
+        ch.channel_min_rate as channelMinRate,
+        ch.channel_max_rate as channelMaxRate,
+        ch.channel_fee_type as channelFeeType,
         ch.update_time AS updateTime,
         ch.enabled AS enabled,
         ch.channel_connect_method AS channelConnectMethod,
         ch.creator AS creator,
         ch.modifier AS modifier,
         ch.remark AS remark,
-        b.bank_name as bank_name
+        b.bank_name as bankName
         from channel ch,
-        dictionary d,
+        pay_type p,
         channel_bank cb,
         bank b
         <where>
             ch.id = cb.channel_id
             and cb.bank_id = b.id
-            and d.code = ch.pay_type
-            and d.language=#{language}
+            and p.extend1 = ch.pay_type
+            and p.language=#{language}
             <if test="channelCode!=null and channelCode != ''">
                 and ch.channel_code=#{channelCode}
-            </if>
-            <if test="channelEnName != null and channelEnName != ''">
-                and ch.channel_en_name LIKE CONCAT(CONCAT('%', #{channelEnName}), '%')
             </if>
             <if test="channelCnName != null and channelCnName != ''">
                 and ch.channel_cn_name LIKE CONCAT(CONCAT('%', #{channelCnName}), '%')

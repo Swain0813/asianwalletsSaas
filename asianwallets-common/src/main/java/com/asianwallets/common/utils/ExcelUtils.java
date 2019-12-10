@@ -15,6 +15,7 @@ public class ExcelUtils {
      * @return Excel输出流
      */
     public ExcelWriter exportExcel(List dataList, Class clazz, ExcelWriter writer) {
+        writer.setColumnWidth(-1, 25);
         //获取属性值字段和注释
         Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
         //注释信息
