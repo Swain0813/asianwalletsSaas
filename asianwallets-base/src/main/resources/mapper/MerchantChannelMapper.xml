@@ -84,8 +84,8 @@
 		mp.product_id as productId,mp.product_abbrev as productAbbrev,
 		ch.id as channelId, ch.channel_cn_name as channelName,
 		ch.currency as channelCurrency,b.bank_name as bankName,
-		mp.create_time,mp.update_time,mp.creator,mp.modifier,mp.enabled,
-		mp.sort
+		mc.create_time,mc.update_time,mc.creator,mc.modifier,mc.enabled,
+		mc.sort
 		from merchant_channel mc
 		left join merchant_product mp on mp.id = mc.mer_pro_id
 		left join channel_bank cb on cb.id = mc.cha_ban_id
