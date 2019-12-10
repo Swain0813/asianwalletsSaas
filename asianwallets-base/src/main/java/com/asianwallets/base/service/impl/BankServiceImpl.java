@@ -82,7 +82,7 @@ public class BankServiceImpl implements BankService {
         bank.setUpdateTime(new Date());
         bank.setEnabled(bankDTO.getEnabled());
         //修改银行机构代码映射表信息
-        List<BankIssuerId> bankIssuerIdList = bankIssuerIdMapper.selectByBankName(bank.getBankName(), bankDTO.getBankCurrency());
+        List<BankIssuerId> bankIssuerIdList = bankIssuerIdMapper.selectByBankName(bank.getBankName(), bank.getBankCurrency());
         for (BankIssuerId bankIssuerid : bankIssuerIdList) {
             bankIssuerid.setBankName(bank.getBankName());
             bankIssuerid.setModifier(username);
