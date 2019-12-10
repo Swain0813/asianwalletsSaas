@@ -1,11 +1,11 @@
 package com.asianwallets.base.controller;
 
 import com.asianwallets.base.service.MerchantProductService;
+import com.asianwallets.common.dto.AuaditProductDTO;
 import com.asianwallets.common.dto.MerProDTO;
 import com.asianwallets.common.dto.MerchantProductDTO;
-import com.asianwallets.common.dto.ProductDTO;
-import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,7 +48,18 @@ public class MerchantProductController extends BaseController {
         return ResultUtil.success(merchantProductService.updateMerchantProduct(this.getSysUserVO().getName(), merchantProductDTO));
     }
 
-
+    @ApiOperation(value = "批量审核商户产品")
+    @PostMapping("/auditMerchantProduct")
+    public BaseResponse auditMerchantProduct(@RequestBody @ApiParam AuaditProductDTO auaditProductDTO) {
+        BaseResponse baseResponse = merchantProductService.auditMerchantProduct(this.getSysUserVO().getUsername(), auaditProductDTO);
+        String code = baseResponse.getCode();//业务返回码
+        if (org.springframework.util.StringUtils.isEmpty(code)) {
+            baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+            baseResponse.setMsg("SUCCESS");
+            return baseResponse;
+        }
+        return ResultUtil.error(code, this.getErrorMsgMap(code));
+    }
 
     @ApiOperation(value = "商户分配通道")
     @PostMapping("/allotMerProductChannel")
