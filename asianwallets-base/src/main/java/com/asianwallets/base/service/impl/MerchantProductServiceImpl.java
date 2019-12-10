@@ -18,6 +18,7 @@ import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ChaBankRelVO;
+import com.asianwallets.common.vo.MerChannelVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -572,5 +573,17 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     @Override
     public MerchantProductAudit getMerProductAuditById(String merProductId) {
         return merchantProductAuditMapper.selectByPrimaryKey(merProductId);
+    }
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户产品通道管理信息
+     * @return
+     **/
+    @Override
+    public PageInfo<MerChannelVO> pageFindMerProChannel(SearchChannelDTO searchChannelDTO) {
+        return  new PageInfo<MerChannelVO>(merchantChannelMapper.pageFindMerProChannel(searchChannelDTO));
     }
 }

@@ -27,7 +27,7 @@ public class MerchantProductDTO extends BasePageHelper {
     private String productId;
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
-    @ApiModelProperty(value = "商品简称")
+    @ApiModelProperty(value = "产品简称")
     private String productAbbrev;
     @ApiModelProperty(value = "交易场景：1-线上 2-线下")
     private Integer tradeDirection;

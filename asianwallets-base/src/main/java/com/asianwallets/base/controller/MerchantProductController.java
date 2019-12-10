@@ -4,6 +4,7 @@ import com.asianwallets.base.service.MerchantProductService;
 import com.asianwallets.common.dto.AuaditProductDTO;
 import com.asianwallets.common.dto.MerProDTO;
 import com.asianwallets.common.dto.MerchantProductDTO;
+import com.asianwallets.common.dto.SearchChannelDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
@@ -94,5 +95,15 @@ public class MerchantProductController extends BaseController {
     public BaseResponse getMerProductAuditById(@RequestParam @ApiParam String merProductId) {
         return ResultUtil.success(merchantProductService.getMerProductAuditById(merProductId));
     }
+
+    @ApiOperation(value = "分页查询商户产品通道管理信息")
+    @PostMapping("/pageFindMerProChannel")
+    public BaseResponse pageFindMerProChannel(@RequestBody @ApiParam SearchChannelDTO searchChannelDTO) {
+        if (StringUtils.isBlank(searchChannelDTO.getLanguage())) {
+            searchChannelDTO.setLanguage(this.getLanguage());
+        }
+        return ResultUtil.success(merchantProductService.pageFindMerProChannel(searchChannelDTO));
+    }
+
 
 }

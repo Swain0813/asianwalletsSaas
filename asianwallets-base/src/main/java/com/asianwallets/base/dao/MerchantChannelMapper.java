@@ -1,7 +1,9 @@
 package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base. BaseMapper;
+import com.asianwallets.common.dto.SearchChannelDTO;
 import com.asianwallets.common.entity.MerchantChannel;
+import com.asianwallets.common.vo.MerChannelVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
@@ -31,4 +33,12 @@ public interface MerchantChannelMapper extends  BaseMapper<MerchantChannel> {
      **/
     @Select("select cha_ban_id from merchant_channel where mer_pro_id = #{merProId} and enabled = true order by sort")
     List<String> selectChannelCodeByMerProId(String merProId);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 分页查询商户产品通道管理信息
+     * @return
+     **/
+    List<MerChannelVO> pageFindMerProChannel(SearchChannelDTO searchChannelDTO);
 }
