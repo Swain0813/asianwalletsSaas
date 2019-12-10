@@ -41,4 +41,13 @@ public interface MerchantChannelMapper extends  BaseMapper<MerchantChannel> {
      * @return
      **/
     List<MerChannelVO> pageFindMerProChannel(SearchChannelDTO searchChannelDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/4/30
+     * @Descripate  查询通道code
+     * @return
+     **/
+    @Select("select cha_ban_id from merchant_channel where mer_pro_id = #{merProId} and enabled = true order by sort")
+    List<String> selectChannelCodeByInsProId(@Param("merProId") String merProId);
 }

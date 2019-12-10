@@ -15,6 +15,8 @@ import java.util.Date;
 @Data
 @ApiModel(value = "商户通道查询VO", description = "商户通道查询VO")
 public class MerChannelVO {
+    @ApiModelProperty(value = "商户通道id")
+    private String merChannelId;
 
     @ApiModelProperty(value = "商户id")
     private String merchantId;

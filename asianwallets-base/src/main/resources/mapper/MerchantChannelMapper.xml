@@ -17,6 +17,7 @@
 	</resultMap>
 
 	<resultMap id="secondResultMap" type="com.asianwallets.common.vo.MerChannelVO">
+		<result column="merChannelId" property="merChannelId" />
 		<result column="merchantId" property="merchantId" />
 		<result column="merchantName" property="merchantName" />
 		<result column="productId" property="productId" />
@@ -42,7 +43,7 @@
 			from merchant_channel where mer_pro_id = #{merProId} and enabled = true order by sort
 	</select>
     <select id="pageFindMerProChannel" resultMap="secondResultMap">
-		select mp.merchant_id as merchantId,mp.merchant_name as merchantName,
+		select mc.id as merChannelId, mp.merchant_id as merchantId,mp.merchant_name as merchantName,
 		mp.product_id as productId,mp.product_abbrev as productAbbrev,
 		ch.id as channelId, ch.channel_cn_name as channelName,
 		ch.currency as channelCurrency,b.bank_name as bankName,
