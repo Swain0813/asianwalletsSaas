@@ -6,9 +6,11 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.MerchantReportVO;
 import com.asianwallets.permissions.feign.base.MerchantReportFeign;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class MerchantReportFeignImpl implements MerchantReportFeign {
     @Override
     public BaseResponse addReport(MerchantReportDTO merchantReportDTO) {

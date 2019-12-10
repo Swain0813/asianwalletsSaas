@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@ApiModel(value = "通道输入实体", description = "通道输入实体")
+@ApiModel(value = "通道输入DTO", description = "通道输入DTO")
 public class ChannelDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "通道ID")

@@ -12,6 +12,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,7 @@ public class BankIssuerIdServiceImpl implements BankIssuerIdService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int addBankIssuerId(String username, List<BankIssuerIdDTO> bankIssuerIdDTOList) {
         List<BankIssuerId> bankIssuerIdList = new ArrayList<>();
         for (BankIssuerIdDTO bankIssuerIdDTO : bankIssuerIdDTOList) {
@@ -61,6 +63,7 @@ public class BankIssuerIdServiceImpl implements BankIssuerIdService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int updateBankIssuerId(String username, BankIssuerIdDTO bankIssuerIdDTO) {
         BankIssuerId bankIssuerId = bankIssuerIdMapper.selectByPrimaryKey(bankIssuerIdDTO.getId());
         if (bankIssuerId == null) {
