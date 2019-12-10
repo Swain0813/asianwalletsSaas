@@ -50,7 +50,7 @@ public class ImportServiceImpl implements ImportService {
         //指定临时文件路径，这个路径可以随便写
         factory.setLocation(tmpFile);
         factory.createMultipartConfig();
-        List<Bank> h = new ArrayList<>();
+        List<Bank> bankList = new ArrayList<>();
         String fileName = file.getOriginalFilename();
         if (StringUtils.isEmpty(fileName)) {
             throw new BusinessException(EResultEnum.FILE_FORMAT_ERROR.getCode());
@@ -63,8 +63,7 @@ public class ImportServiceImpl implements ImportService {
         try {
             reader = ExcelUtil.getReader(file.getInputStream());
         } catch (Exception e) {
-            e.printStackTrace();
-            // 当excel内的格式不正确时
+            //当Excel内的格式不正确时
             throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
         }
         List<List<Object>> read = reader.read();
@@ -106,19 +105,19 @@ public class ImportServiceImpl implements ImportService {
             if (bankFeign.getByBankNameAndCurrency(bankDTO) != null) {
                 continue;
             }
-            h.add(ol);
+            bankList.add(ol);
         }
-        for (int i = 0; i < h.size() - 1; i++) {
-            for (int j = h.size() - 1; j > i; j--) {
-                if (h.get(j).getBankName().equals(h.get(i).getBankName()) && h.get(j).getBankCurrency().equals(h.get(i).getBankCurrency())) {
-                    h.remove(j);
+        for (int i = 0; i < bankList.size() - 1; i++) {
+            for (int j = bankList.size() - 1; j > i; j--) {
+                if (bankList.get(j).getBankName().equals(bankList.get(i).getBankName()) && bankList.get(j).getBankCurrency().equals(bankList.get(i).getBankCurrency())) {
+                    bankList.remove(j);
                 }
             }
         }
-        if (h.size() == 0) {
+        if (bankList.size() == 0) {
             throw new BusinessException(EResultEnum.IMPORT_REPEAT_ERROR.getCode());
         }
-        return h;
+        return bankList;
     }
 
     /**
