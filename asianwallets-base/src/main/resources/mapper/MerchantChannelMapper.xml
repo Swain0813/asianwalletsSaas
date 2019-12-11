@@ -181,9 +181,10 @@
         FROM merchant m
                  left join institution i on  m.institution_id = i.id
                  LEFT JOIN merchant_product mp ON m.id = mp.merchant_id
-                 LEFT JOIN product p ON p.id = mp.product_id
-                 LEFT JOIN product_channel pc ON pc.product_id = p.id
-                 LEFT JOIN channel ch ON pc.channel_id = ch.id
+                 left join institution_product ip on ip.product_id = mp.product_id
+                 left join institution_channel ic on ic.ins_pro_id = ip.id
+                 left join product p on p.id = ip.product_id
+                 left join channel ch on ic.channel_id = ch.id
                  left join channel_bank cb on ch.id = cb.channel_id
                  left join bank b on cb.bank_id = b.id
                  LEFT JOIN pay_type pt ON p.pay_type = pt.extend1 AND pt.`language` = #{language}
