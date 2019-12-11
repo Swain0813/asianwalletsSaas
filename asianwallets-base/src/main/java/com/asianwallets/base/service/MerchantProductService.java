@@ -118,4 +118,12 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
      * @return
      **/
     List<MerchantProduct> exportMerProduct(MerchantProductDTO merchantProductDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/11
+     * @Descripate 根据商户通道Id查询商户通道详情
+     * @return
+     **/
+    MerChannelVO getMerChannelInfoById(String merChannelId);
 }

@@ -18,10 +18,16 @@ public class MerChannelVO {
     @ApiModelProperty(value = "商户通道id")
     private String merChannelId;
 
+    @ApiModelProperty(value = "机构id")
+    private String institutionId;
+
+    @ApiModelProperty(value = "机构名称")
+    private String institutionName;
+
     @ApiModelProperty(value = "商户id")
     private String merchantId;
 
-    @ApiModelProperty(value = "机构名称")
+    @ApiModelProperty(value = "商户名称")
     private String merchantName;
 
     @ApiModelProperty(value = "产品id")
