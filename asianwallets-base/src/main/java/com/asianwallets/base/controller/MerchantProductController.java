@@ -103,6 +103,12 @@ public class MerchantProductController extends BaseController {
         return ResultUtil.success(merchantProductService.pageFindMerProChannel(searchChannelDTO));
     }
 
+    @ApiOperation(value = "根据商户通道Id查询商户通道详情")
+    @GetMapping("/getMerChannelInfoById")
+    public BaseResponse getMerChannelInfoById(@RequestParam @ApiParam String merChannelId) {
+        return ResultUtil.success(merchantProductService.getMerChannelInfoById(merChannelId));
+    }
+
     @ApiOperation(value = "修改机构通道")
     @PostMapping("/updateMerchantChannel")
     public BaseResponse updateMerchantChannel(@RequestBody @ApiParam BatchUpdateSortDTO batchUpdateSort) {

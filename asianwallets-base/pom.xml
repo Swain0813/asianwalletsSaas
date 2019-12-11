@@ -16,7 +16,6 @@
 
 
     <dependencies>
-
         <!--quartz-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

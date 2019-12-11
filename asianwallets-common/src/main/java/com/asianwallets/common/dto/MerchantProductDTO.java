@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -88,7 +87,6 @@ public class MerchantProductDTO extends BasePageHelper {
     @ApiModelProperty(value = "ext3")
     private String ext3;
     @ApiModelProperty(value = "ext4")
-    @Column(name = "ext4")
     private String ext4;
     @ApiModelProperty(value = "ext5")
     private String ext5;
