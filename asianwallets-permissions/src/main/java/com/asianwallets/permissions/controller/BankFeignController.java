@@ -7,7 +7,6 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.BankDTO;
-import com.asianwallets.common.entity.Bank;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;

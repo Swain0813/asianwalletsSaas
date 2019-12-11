@@ -26,7 +26,9 @@
     </select>
 
     <select id="selectIdListByInstitutionId" resultType="String">
-        select id from institution_product where institution_id = #{institutionId}
+        select id
+        from institution_product
+        where institution_id = #{institutionId}
     </select>
 
     <resultMap id="InstitutionProductChannelVOMap" type="com.asianwallets.common.vo.InstitutionProductChannelVO">
@@ -34,6 +36,9 @@
         <result column="productId" property="productId" jdbcType="VARCHAR"/>
         <result column="institutionName" property="institutionName" jdbcType="VARCHAR"/>
         <result column="productAbbrev" property="productAbbrev" jdbcType="VARCHAR"/>
+        <result column="productName" property="productName" jdbcType="VARCHAR"/>
+        <result column="payType" property="payType" jdbcType="VARCHAR"/>
+        <result column="transType" property="transType" jdbcType="TINYINT"/>
         <collection property="institutionChannelVOList" javaType="list" resultMap="InstitutionChannelVOMap"/>
     </resultMap>
 
@@ -43,14 +48,19 @@
     </resultMap>
 
     <select id="selectRelevantInfoByInstitutionId" resultMap="InstitutionProductChannelVOMap">
-        select ip.institution_id   as institutionId,
-               ip.institution_name as institutionName,
-               ip.product_id       as productId,
-               ip.product_abbrev   as productAbbrev,
-               ic.channel_id       as channelId,
-               ic.ins_pro_id       as insProId
+        select ip.institution_id                as institutionId,
+               ip.institution_name              as institutionName,
+               ip.product_id                    as productId,
+               ip.product_abbrev                as productAbbrev,
+               ic.channel_id                    as channelId,
+               ic.ins_pro_id                    as insProId,
+               concat(pt.name, '-', p.currency) as productName,
+               pt.name                          as payType,
+               p.trans_type                     as transType
         from institution_product ip
                  left join institution_channel ic on ip.id = ic.ins_pro_id
+                 left join product p on ip.product_id = p.id
+                 left join pay_type pt on p.pay_type = pt.extend1 and pt.language = #{language}
         where ip.institution_id = #{institutionId}
     </select>
 
