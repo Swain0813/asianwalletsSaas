@@ -26,5 +26,5 @@ public interface ImportService {
      * @param file     文件
      * @return 银行机构号映射信息集合
      */
-    List<BankIssuerId> importBankIssureId(String username, MultipartFile file);
+    List<BankIssuerId> importBankIssuerId(String username, MultipartFile file);
 }

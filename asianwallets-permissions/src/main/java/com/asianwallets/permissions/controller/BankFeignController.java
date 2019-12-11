@@ -7,7 +7,6 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.BankDTO;
-import com.asianwallets.common.entity.Bank;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -75,7 +74,7 @@ public class BankFeignController extends BaseController {
     @ApiOperation(value = "导入银行信息")
     @PostMapping("/importBank")
     public BaseResponse importBank(@RequestParam("file") @ApiParam MultipartFile file) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(file),
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, null,
                 "导入银行信息"));
         return bankFeign.importBank(importService.importBank(getSysUserVO().getUsername(), file));
     }

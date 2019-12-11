@@ -24,6 +24,15 @@ public class InstitutionProductChannelVO {
     @ApiModelProperty(value = "产品简称")
     private String productAbbrev;
 
+    @ApiModelProperty(value = "支付方式")
+    private String payType;
+
+    @ApiModelProperty(value = "交易类型")
+    private Byte transType;
+
+    @ApiModelProperty(value = "产品名称")
+    private String productName;
+
     @ApiModelProperty(value = "机构通道集合")
     private List<InstitutionChannelVO> institutionChannelVOList;
 

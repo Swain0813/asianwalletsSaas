@@ -20,9 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -37,6 +39,11 @@ public class ImportServiceImpl implements ImportService {
     @Value("${file.tmpfile}")
     private String tmpFile;
 
+    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
     /**
      * 导入银行信息
      *
@@ -50,75 +57,79 @@ public class ImportServiceImpl implements ImportService {
         //指定临时文件路径，这个路径可以随便写
         factory.setLocation(tmpFile);
         factory.createMultipartConfig();
-        List<Bank> bankList = new ArrayList<>();
         String fileName = file.getOriginalFilename();
         if (StringUtils.isEmpty(fileName)) {
+            log.info("==========【导入银行信息】==========【文件名为空】");
             throw new BusinessException(EResultEnum.FILE_FORMAT_ERROR.getCode());
         }
         //判断格式
         if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
+            log.info("==========【导入银行信息】==========【文件名不正确】");
             throw new BusinessException(EResultEnum.FILE_FORMAT_ERROR.getCode());
         }
         ExcelReader reader;
         try {
             reader = ExcelUtil.getReader(file.getInputStream());
         } catch (Exception e) {
-            //当Excel内的格式不正确时
+            log.info("==========【导入银行信息】==========【Excel读取异常】", e);
             throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
         }
         List<List<Object>> read = reader.read();
-        //判断是否超过上传限制
-        if (read.size() - 1 > AsianWalletConstant.UPLOAD_LIMIT) {
-            throw new BusinessException(EResultEnum.EXCEEDING_UPLOAD_LIMIT.getCode());
-        }
-        if (read.size() <= 0) {
+        if (read.size() == 0) {
+            log.info("==========【导入银行信息】==========【Excel文件内容为空】");
             throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
         }
+        if (read.size() - 1 > AsianWalletConstant.UPLOAD_LIMIT) {
+            log.info("==========【导入银行信息】==========【超过最大导入条数300】");
+            throw new BusinessException(EResultEnum.EXCEEDING_UPLOAD_LIMIT.getCode());
+        }
+        List<Bank> bankList = new ArrayList<>();
+        //解析Excel内容
         for (int i = 1; i < read.size(); i++) {
             List<Object> objects = read.get(i);
-            Bank ol = new Bank();
             //判断传入的excel的格式是否符合约定
-            if (StringUtils.isEmpty(objects.get(0))
-                    || StringUtils.isEmpty(objects.get(1))
-                    || StringUtils.isEmpty(objects.get(2))
-                    || objects.size() != 4
-                    || StringUtils.isEmpty(objects.get(3))) {
+            if (StringUtils.isEmpty(objects.get(0)) || StringUtils.isEmpty(objects.get(1)) || StringUtils.isEmpty(objects.get(2))
+                    || objects.size() != 4 || StringUtils.isEmpty(objects.get(3))) {
+                log.info("==========【导入银行信息】==========【Excel文件内格式不正确】");
                 throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
             }
             try {
-                ol.setBankName(objects.get(0).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
-                ol.setBankCurrency(objects.get(1).toString().replaceAll("\\s*", ""));
-                ol.setBankCountry(objects.get(2).toString().replaceAll("\\s*", ""));
-                ol.setIssuerId(objects.get(3).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                String bankName = objects.get(0).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                String bankCurrency = objects.get(1).toString().replaceAll("\\s*", "");
+                BankDTO bankDTO = new BankDTO();
+                bankDTO.setBankName(bankName);
+                bankDTO.setBankCurrency(bankCurrency);
+                //校验是否有重复记录
+                if (bankFeign.getByBankNameAndCurrency(bankDTO) != null) {
+                    continue;
+                }
+                String bankCountry = objects.get(2).toString().replaceAll("\\s*", "");
+                String issuerId = objects.get(3).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                Bank bank = new Bank();
+                bank.setId(IDS.uuid2());
+                bank.setBankCode(IDS.uniqueID().toString());
+                bank.setBankName(bankName);
+                bank.setBankCurrency(bankCurrency);
+                bank.setIssuerId(issuerId);
+                bank.setBankCountry(bankCountry);
+                bank.setCreator(username);
+                bank.setCreateTime(new Date());
+                bank.setEnabled(true);
+                bankList.add(bank);
             } catch (Exception e) {
-                // 当excel内的格式不正确时
+                log.info("==========【导入银行信息】==========【解析异常】", e);
                 throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
             }
-            ol.setId(IDS.uuid2());
-            ol.setBankCode("" + IDS.uniqueID());
-            ol.setCreator(username);
-            ol.setCreateTime(new Date());
-            ol.setEnabled(true);
-            BankDTO bankDTO = new BankDTO();
-            bankDTO.setBankName(ol.getBankName());
-            bankDTO.setBankCurrency(ol.getBankCurrency());
-            if (bankFeign.getByBankNameAndCurrency(bankDTO) != null) {
-                continue;
-            }
-            bankList.add(ol);
         }
-        for (int i = 0; i < bankList.size() - 1; i++) {
-            for (int j = bankList.size() - 1; j > i; j--) {
-                if (bankList.get(j).getBankName().equals(bankList.get(i).getBankName()) && bankList.get(j).getBankCurrency().equals(bankList.get(i).getBankCurrency())) {
-                    bankList.remove(j);
-                }
-            }
-        }
-        if (bankList.size() == 0) {
+        //去除银行名与币种相同的数据
+        List<Bank> banks = bankList.stream().filter(distinctByKey(b -> b.getBankName() + b.getBankCurrency())).collect(Collectors.toList());
+        if (banks.size() == 0) {
+            log.info("==========【导入银行信息】==========【导入信息重复】");
             throw new BusinessException(EResultEnum.IMPORT_REPEAT_ERROR.getCode());
         }
-        return bankList;
+        return banks;
     }
+
 
     /**
      * 导入银行机构号映射信息
@@ -128,7 +139,7 @@ public class ImportServiceImpl implements ImportService {
      * @return 银行机构号映射信息集合
      */
     @Override
-    public List<BankIssuerId> importBankIssureId(String username, MultipartFile file) {
+    public List<BankIssuerId> importBankIssuerId(String username, MultipartFile file) {
         MultipartConfigFactory factory = new MultipartConfigFactory();
         //指定临时文件路径，这个路径可以随便写
         factory.setLocation(tmpFile);

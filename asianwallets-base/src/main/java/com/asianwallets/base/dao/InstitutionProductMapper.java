@@ -3,6 +3,7 @@ package com.asianwallets.base.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.InstitutionProduct;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -30,9 +31,10 @@ public interface InstitutionProductMapper extends BaseMapper<InstitutionProduct>
      * 根据机构ID查询机构关联产品通道信息
      *
      * @param institutionId 机构ID
+     * @param language      语言
      * @return 机构产品通道信息集合
      */
-    List<InstitutionProductChannelVO> selectRelevantInfoByInstitutionId(String institutionId);
+    List<InstitutionProductChannelVO> selectRelevantInfoByInstitutionId(@Param("institutionId") String institutionId, @Param("language") String language);
 
 
     /**
