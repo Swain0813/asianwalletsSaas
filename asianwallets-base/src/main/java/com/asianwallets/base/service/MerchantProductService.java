@@ -5,6 +5,7 @@ import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.MerChannelVO;
+import com.asianwallets.common.vo.MerchantRelevantVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -101,4 +102,28 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
      * @return
      **/
     int updateMerchantChannel(String username, BatchUpdateSortDTO batchUpdateSort);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 查询商户分配通道关联关系
+     * @return
+     **/
+    List<MerchantRelevantVO> getRelevantInfo(String merchantId);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 导出商户产品信息
+     * @return
+     **/
+    List<MerchantProduct> exportMerProduct(MerchantProductDTO merchantProductDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/11
+     * @Descripate 根据商户通道Id查询商户通道详情
+     * @return
+     **/
+    MerChannelVO getMerChannelInfoById(String merChannelId);
 }

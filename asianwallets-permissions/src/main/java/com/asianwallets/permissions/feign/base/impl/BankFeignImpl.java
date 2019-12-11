@@ -1,6 +1,7 @@
 package com.asianwallets.permissions.feign.base.impl;
 
 import com.asianwallets.common.dto.BankDTO;
+import com.asianwallets.common.entity.Bank;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -30,6 +31,16 @@ public class BankFeignImpl implements BankFeign {
 
     @Override
     public List<ExportBankVO> exportBank(BankDTO bankDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse importBank(List<Bank> bankList) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public Bank getByBankNameAndCurrency(BankDTO bankDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

@@ -7,6 +7,7 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.BankDTO;
+import com.asianwallets.common.entity.Bank;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -16,16 +17,15 @@ import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.vo.ExportBankVO;
 import com.asianwallets.permissions.feign.base.BankFeign;
+import com.asianwallets.permissions.service.ImportService;
 import com.asianwallets.permissions.service.OperationLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -41,6 +41,9 @@ public class BankFeignController extends BaseController {
 
     @Autowired
     private BankFeign bankFeign;
+
+    @Autowired
+    private ImportService importService;
 
     @Autowired
     private OperationLogService operationLogService;
@@ -67,6 +70,14 @@ public class BankFeignController extends BaseController {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(bankDTO),
                 "分页查询银行信息"));
         return bankFeign.pageFindBank(bankDTO);
+    }
+
+    @ApiOperation(value = "导入银行信息")
+    @PostMapping("/importBank")
+    public BaseResponse importBank(@RequestParam("file") @ApiParam MultipartFile file) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(file),
+                "导入银行信息"));
+        return bankFeign.importBank(importService.importBank(getSysUserVO().getUsername(), file));
     }
 
     @ApiOperation(value = "导出银行信息")

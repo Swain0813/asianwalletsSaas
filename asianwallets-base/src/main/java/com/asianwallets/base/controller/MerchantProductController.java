@@ -2,6 +2,7 @@ package com.asianwallets.base.controller;
 
 import com.asianwallets.base.service.MerchantProductService;
 import com.asianwallets.common.dto.*;
+import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
@@ -102,11 +103,32 @@ public class MerchantProductController extends BaseController {
         return ResultUtil.success(merchantProductService.pageFindMerProChannel(searchChannelDTO));
     }
 
+    @ApiOperation(value = "根据商户通道Id查询商户通道详情")
+    @GetMapping("/getMerChannelInfoById")
+    public BaseResponse getMerChannelInfoById(@RequestParam @ApiParam String merChannelId) {
+        return ResultUtil.success(merchantProductService.getMerChannelInfoById(merChannelId));
+    }
+
     @ApiOperation(value = "修改机构通道")
     @PostMapping("/updateMerchantChannel")
     public BaseResponse updateMerchantChannel(@RequestBody @ApiParam BatchUpdateSortDTO batchUpdateSort) {
         return ResultUtil.success(merchantProductService.updateMerchantChannel(this.getSysUserVO().getUsername(), batchUpdateSort));
     }
 
+    @ApiOperation(value = "查询商户分配通道关联关系")
+    @GetMapping("/getRelevantInfo")
+    public BaseResponse getRelevantInfo(@RequestParam @ApiParam String merchantId) {
+        return ResultUtil.success(merchantProductService.getRelevantInfo(merchantId));
+    }
+
+
+    @ApiOperation(value = "导出商户产品信息")
+    @PostMapping("/exportMerProduct")
+    public List<MerchantProduct> exportMerProduct(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO) {
+        if (StringUtils.isBlank(merchantProductDTO.getLanguage())) {
+            merchantProductDTO.setLanguage(this.getLanguage());
+        }
+        return merchantProductService.exportMerProduct(merchantProductDTO);
+    }
 
 }

@@ -3,6 +3,7 @@ package com.asianwallets.base.controller;
 import com.asianwallets.base.service.BankService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.BankDTO;
+import com.asianwallets.common.entity.Bank;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.ExportBankVO;
@@ -46,4 +47,15 @@ public class BankController extends BaseController {
         return bankService.exportBank(bankDTO);
     }
 
+    @ApiOperation(value = "导入银行信息")
+    @PostMapping("/importBank")
+    public BaseResponse importBank(@RequestBody @ApiParam List<Bank> bankList) {
+        return ResultUtil.success(bankService.importBank(bankList));
+    }
+
+    @ApiOperation(value = "根据银行名称与币种查询启用银行")
+    @PostMapping("/getByBankNameAndCurrency")
+    public Bank getByBankNameAndCurrency(@RequestBody @ApiParam BankDTO bankDTO) {
+        return bankService.getByBankNameAndCurrency(bankDTO);
+    }
 }
