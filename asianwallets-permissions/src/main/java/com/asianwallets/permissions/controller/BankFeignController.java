@@ -75,7 +75,7 @@ public class BankFeignController extends BaseController {
     @ApiOperation(value = "导入银行信息")
     @PostMapping("/importBank")
     public BaseResponse importBank(@RequestParam("file") @ApiParam MultipartFile file) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(file),
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, null,
                 "导入银行信息"));
         return bankFeign.importBank(importService.importBank(getSysUserVO().getUsername(), file));
     }

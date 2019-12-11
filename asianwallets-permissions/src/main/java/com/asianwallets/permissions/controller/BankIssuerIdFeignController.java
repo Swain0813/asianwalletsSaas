@@ -76,9 +76,9 @@ public class BankIssuerIdFeignController extends BaseController {
     @ApiOperation(value = "导入银行机构代码映射信息")
     @PostMapping("/importBankIssuerId")
     public BaseResponse importBankIssuerId(@RequestParam("file") @ApiParam MultipartFile file) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(file),
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, null,
                 "导入银行机构代码映射信息"));
-        return bankIssuerIdFeign.importBankIssuerId(importService.importBankIssureId(getSysUserVO().getUsername(), file));
+        return bankIssuerIdFeign.importBankIssuerId(importService.importBankIssuerId(getSysUserVO().getUsername(), file));
     }
 
     @ApiOperation(value = "导出银行机构代码映射信息")
