@@ -236,11 +236,21 @@ public class ChannelServiceImpl implements ChannelService {
      * 导出通道信息
      *
      * @param channelDTO 通道输入实体
-     * @return 修改条数
+     * @return List<ChannelExportVO>
      */
     @Override
     public List<ChannelExportVO> exportChannel(ChannelDTO channelDTO) {
         channelDTO.setLanguage(auditorProvider.getLanguage());
         return channelMapper.exportChannel(channelDTO);
+    }
+
+    /**
+     * 查询所有通道编号
+     *
+     * @return 通道编号集合
+     */
+    @Override
+    public List<String> getAllChannelCode() {
+        return channelMapper.selectAllChannelCode();
     }
 }

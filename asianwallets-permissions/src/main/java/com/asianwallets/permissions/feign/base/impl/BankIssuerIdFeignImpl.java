@@ -38,4 +38,9 @@ public class BankIssuerIdFeignImpl implements BankIssuerIdFeign {
     public BaseResponse importBankIssuerId(List<BankIssuerId> bankIssuerIdList) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BankIssuerId getByTerm(BankIssuerIdDTO bankIssuerIdDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

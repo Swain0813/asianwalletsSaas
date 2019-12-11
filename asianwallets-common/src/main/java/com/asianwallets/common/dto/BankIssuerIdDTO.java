@@ -26,4 +26,14 @@ public class BankIssuerIdDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "启用禁用")
     private Boolean enabled;
+
+    public BankIssuerIdDTO() {
+    }
+
+    public BankIssuerIdDTO(String bankName, String currency, String channelCode, String issuerId) {
+        this.bankName = bankName;
+        this.currency = currency;
+        this.channelCode = channelCode;
+        this.issuerId = issuerId;
+    }
 }

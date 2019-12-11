@@ -7,7 +7,6 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.BankIssuerIdDTO;
-import com.asianwallets.common.entity.BankIssuerId;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -24,7 +23,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -98,4 +98,26 @@ public class BankIssuerIdServiceImpl implements BankIssuerIdService {
     public List<BankIssuerIdVO> exportBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO) {
         return bankIssuerIdMapper.exportBankIssuerId(bankIssuerIdDTO);
     }
+
+    /**
+     * 根据条件查询银行机构映射信息
+     *
+     * @param bankIssuerIdDTO 银行机构代码映射输入实体
+     * @return BankIssuerId
+     */
+    @Override
+    public BankIssuerId getByTerm(BankIssuerIdDTO bankIssuerIdDTO) {
+        return bankIssuerIdMapper.selectByTerm(bankIssuerIdDTO);
+    }
+
+    /**
+     * 导入银行机构代码映射信息
+     *
+     * @param bankIssuerIdList 机构代码映射信息集合
+     * @return 修改条数
+     */
+    @Override
+    public int importBankIssuerId(List<BankIssuerId> bankIssuerIdList) {
+        return bankIssuerIdMapper.insertList(bankIssuerIdList);
+    }
 }

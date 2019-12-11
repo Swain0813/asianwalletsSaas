@@ -52,4 +52,10 @@ public class ChannelController extends BaseController {
     public List<ChannelExportVO> exportChannel(@RequestBody @ApiParam ChannelDTO channelDTO) {
         return channelService.exportChannel(channelDTO);
     }
+
+    @ApiOperation(value = "查询所有通道编号")
+    @PostMapping("/getAllChannelCode")
+    public List<String> getAllChannelCode() {
+        return channelService.getAllChannelCode();
+    }
 }
