@@ -4,6 +4,7 @@ package com.asianwallets.base.service;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
 import com.asianwallets.common.entity.ProductChannel;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
+import com.asianwallets.common.vo.ProductChannelVO;
 
 import java.util.List;
 
@@ -41,6 +42,6 @@ public interface InstitutionProductChannelService {
      *
      * @return 产品通道集合
      */
-    List<ProductChannel> getAllProCha();
+    List<ProductChannelVO> getAllProCha();
 
 }
