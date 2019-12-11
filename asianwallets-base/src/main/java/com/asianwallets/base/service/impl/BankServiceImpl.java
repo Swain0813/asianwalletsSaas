@@ -33,7 +33,7 @@ public class BankServiceImpl implements BankService {
      * 新增银行信息
      *
      * @param username 用户名
-     * @param bankDTO  通道输入实体
+     * @param bankDTO  银行输入实体
      * @return 修改条数
      */
     @Override
@@ -62,7 +62,7 @@ public class BankServiceImpl implements BankService {
      * 修改银行信息
      *
      * @param username 用户名
-     * @param bankDTO  通道输入实体
+     * @param bankDTO  银行输入实体
      * @return 修改条数
      */
     @Override
@@ -95,7 +95,7 @@ public class BankServiceImpl implements BankService {
     /**
      * 分页查询银行信息
      *
-     * @param bankDTO 通道输入实体
+     * @param bankDTO 银行输入实体
      * @return 修改条数
      */
     @Override
@@ -106,11 +106,33 @@ public class BankServiceImpl implements BankService {
     /**
      * 导出银行信息
      *
-     * @param bankDTO 通道输入实体
+     * @param bankDTO 银行输入实体
      * @return 修改条数
      */
     @Override
     public List<ExportBankVO> exportBank(BankDTO bankDTO) {
         return bankMapper.exportBank(bankDTO);
+    }
+
+    /**
+     * 根据银行名称与币种查询启用银行
+     *
+     * @param bankDTO 银行输入实体
+     * @return 银行
+     */
+    @Override
+    public Bank getByBankNameAndCurrency(BankDTO bankDTO) {
+        return bankMapper.selectByBankNameAndCurrency(bankDTO);
+    }
+
+    /**
+     * 导入银行
+     *
+     * @param bankList 银行集合
+     * @return 修改条数
+     */
+    @Override
+    public int importBank(List<Bank> bankList) {
+        return bankMapper.insertList(bankList);
     }
 }

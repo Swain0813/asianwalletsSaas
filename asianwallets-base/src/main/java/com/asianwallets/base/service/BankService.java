@@ -14,7 +14,7 @@ public interface BankService {
      * 新增银行信息
      *
      * @param username 用户名
-     * @param bankDTO  通道输入实体
+     * @param bankDTO  银行输入实体
      * @return 修改条数
      */
     int addBank(String username, BankDTO bankDTO);
@@ -23,7 +23,7 @@ public interface BankService {
      * 修改银行信息
      *
      * @param username 用户名
-     * @param bankDTO  通道输入实体
+     * @param bankDTO  银行输入实体
      * @return 修改条数
      */
     int updateBank(String username, BankDTO bankDTO);
@@ -31,7 +31,7 @@ public interface BankService {
     /**
      * 分页查询银行信息
      *
-     * @param bankDTO  通道输入实体
+     * @param bankDTO 银行输入实体
      * @return 修改条数
      */
     PageInfo<Bank> pageFindBank(BankDTO bankDTO);
@@ -39,8 +39,24 @@ public interface BankService {
     /**
      * 导出银行信息
      *
-     * @param bankDTO  通道输入实体
+     * @param bankDTO 银行输入实体
      * @return 修改条数
      */
     List<ExportBankVO> exportBank(BankDTO bankDTO);
+
+    /**
+     * 根据银行名称与币种查询启用银行
+     *
+     * @param bankDTO 银行输入实体
+     * @return 银行
+     */
+    Bank getByBankNameAndCurrency(BankDTO bankDTO);
+
+    /**
+     * 导入银行
+     *
+     * @param bankList 银行集合
+     * @return 修改条数
+     */
+    int importBank(List<Bank> bankList);
 }

@@ -7,6 +7,7 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.BankIssuerIdDTO;
+import com.asianwallets.common.entity.BankIssuerId;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -16,16 +17,16 @@ import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.vo.BankIssuerIdVO;
 import com.asianwallets.permissions.feign.base.BankIssuerIdFeign;
+import com.asianwallets.permissions.service.ImportService;
 import com.asianwallets.permissions.service.OperationLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -41,6 +42,9 @@ public class BankIssuerIdFeignController extends BaseController {
 
     @Autowired
     private BankIssuerIdFeign bankIssuerIdFeign;
+
+    @Autowired
+    private ImportService importService;
 
     @Autowired
     private OperationLogService operationLogService;
@@ -67,6 +71,14 @@ public class BankIssuerIdFeignController extends BaseController {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(bankIssuerIdDTO),
                 "查询银行机构代码映射信息"));
         return bankIssuerIdFeign.pageFindBankIssuerId(bankIssuerIdDTO);
+    }
+
+    @ApiOperation(value = "导入银行机构代码映射信息")
+    @PostMapping("/importBankIssuerId")
+    public BaseResponse importBankIssuerId(@RequestParam("file") @ApiParam MultipartFile file) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(file),
+                "导入银行机构代码映射信息"));
+        return bankIssuerIdFeign.importBankIssuerId(importService.importBankIssureId(getSysUserVO().getUsername(), file));
     }
 
     @ApiOperation(value = "导出银行机构代码映射信息")
