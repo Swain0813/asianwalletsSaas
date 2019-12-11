@@ -65,7 +65,7 @@
 	</resultMap>
 
 	<resultMap id="BankReleVantVOMap" type="com.asianwallets.common.vo.BankReleVantVO">
-		<id column="bankID" property="bankID" jdbcType="VARCHAR"/>
+		<id column="bankId" property="bankId" jdbcType="VARCHAR"/>
 		<result column="bankName" property="bankName" jdbcType="VARCHAR"/>
 		<result column="bankCountry" property="bankCountry" jdbcType="VARCHAR"/>
 		<result column="bankCurrency" property="bankCurrency" jdbcType="VARCHAR"/>
@@ -139,7 +139,7 @@
                ch.currency        as channelCurrency,
                ch.sort            as sort,
                ch.channel_en_name as channelEnName,
-               b.id               as bankID,
+               b.id               as bankId,
                b.bank_name        as bankName,
                b.bank_country     as bankCountry,
                b.bank_currency    as bankCurrency,
@@ -173,7 +173,7 @@
                ch.sort            as sort,
                ch.enabled         AS channelEnabled,
                ch.channel_en_name as channelEnName,
-               b.id               as bankID,
+               b.id               as bankId,
                b.bank_name        as bankName,
                b.bank_country     as bankCountry,
                b.bank_currency    as bankCurrency,
