@@ -3,6 +3,7 @@ package com.asianwallets.permissions.feign.base;
 import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.permissions.feign.base.impl.MerchantProductFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -51,6 +52,10 @@ public interface MerchantProductFeign {
     @ApiOperation(value = "分页查询商户产品通道管理信息")
     @PostMapping("/merchantProduct/pageFindMerProChannel")
     BaseResponse pageFindMerProChannel(@RequestBody @ApiParam SearchChannelDTO searchChannelDTO);
+
+    @ApiOperation(value = "根据商户通道Id查询商户通道详情")
+    @GetMapping("/merchantProduct/getMerChannelInfoById")
+    BaseResponse getMerChannelInfoById(@RequestParam("merChannelId") @ApiParam String merChannelId) ;
 
     @ApiOperation(value = "修改机构通道")
     @PostMapping("/merchantProduct/updateMerchantChannel")

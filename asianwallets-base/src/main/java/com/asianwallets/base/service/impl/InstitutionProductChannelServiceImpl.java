@@ -14,6 +14,7 @@ import com.asianwallets.common.entity.ProductChannel;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
+import com.asianwallets.common.vo.ProductChannelVO;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,7 +145,7 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
      * @return 产品通道集合
      */
     @Override
-    public List<ProductChannel> getAllProCha() {
+    public List<ProductChannelVO> getAllProCha() {
         return productChannelMapper.getAllProCha(auditorProvider.getLanguage());
     }
 }

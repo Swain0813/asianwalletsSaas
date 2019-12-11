@@ -18,6 +18,8 @@
 
 	<resultMap id="secondResultMap" type="com.asianwallets.common.vo.MerChannelVO">
 		<result column="merChannelId" property="merChannelId" />
+		<result column="institutionId" property="institutionId" />
+		<result column="institutionName" property="institutionName" />
 		<result column="merchantId" property="merchantId" />
 		<result column="merchantName" property="merchantName" />
 		<result column="productId" property="productId" />
@@ -188,6 +190,23 @@
         WHERE m.enabled = 1
           AND m.id = #{merchantId}
 
+	</select>
+	<select id="getMerChannelInfoById" resultMap="secondResultMap">
+		select mc.id as merChannelId, i.id as institutionId, i.cn_name as institutionName,
+		mp.merchant_id as merchantId,mp.merchant_name as merchantName,
+		mp.product_id as productId,mp.product_abbrev as productAbbrev,
+		ch.id as channelId, ch.channel_cn_name as channelName,
+		ch.currency as channelCurrency,b.bank_name as bankName,
+		mc.create_time,mc.update_time,mc.creator,mc.modifier,mc.enabled,
+		mc.sort
+		from merchant_channel mc
+		left join merchant_product mp on mp.id = mc.mer_pro_id
+		left join merchant m on m.id = mp.merchant_id
+		left join institution i on i.id = m.institution_id
+		left join channel_bank cb on cb.id = mc.cha_ban_id
+		left join channel ch on ch.id = cb.channel_id
+		left join bank b on b.id = cb.bank_id
+		where mc.id=#{merChannelId}
 	</select>
 
 	<delete id="deleteByMerProId">
