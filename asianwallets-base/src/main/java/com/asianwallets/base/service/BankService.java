@@ -59,4 +59,12 @@ public interface BankService {
      * @return 修改条数
      */
     int importBank(List<Bank> bankList);
+
+    /**
+     * 查询所有银行名称
+     *
+     * @return 银行名称集合
+     */
+    List<String> getAllBankName();
+
 }

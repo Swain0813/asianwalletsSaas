@@ -136,7 +136,7 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
      */
     @Override
     public List<InstitutionProductChannelVO> getInsProChaByInsId(String insId) {
-        return institutionProductMapper.selectRelevantInfoByInstitutionId(insId);
+        return institutionProductMapper.selectRelevantInfoByInstitutionId(insId,auditorProvider.getLanguage());
     }
 
     /**

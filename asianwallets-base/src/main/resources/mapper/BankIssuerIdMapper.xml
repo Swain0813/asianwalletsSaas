@@ -83,4 +83,24 @@
         </where>
         order by b.create_time desc
     </select>
+
+    <select id="selectByTerm" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bank_issuer_id
+        <where>
+            <if test="bankName != null and bankName != ''">
+                and bank_name = #{bankName}
+            </if>
+            <if test="channelCode != null and channelCode != ''">
+                and channel_code=#{channelCode}
+            </if>
+            <if test="issuerId != null and issuerId != ''">
+                and issuer_id=#{issuerId}
+            </if>
+            <if test="currency != null and currency != ''">
+                and currency=#{currency}
+            </if>
+        </where>
+    </select>
 </mapper>

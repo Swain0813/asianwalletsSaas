@@ -54,4 +54,11 @@ public interface ChannelMapper extends BaseMapper<Channel> {
      * @return ChannelExportVO集合
      */
     List<ChannelExportVO> exportChannel(ChannelDTO channelDTO);
+
+    /**
+     * 查询所有通道编号
+     *
+     * @return 通道编号集合
+     */
+    List<String> selectAllChannelCode();
 }

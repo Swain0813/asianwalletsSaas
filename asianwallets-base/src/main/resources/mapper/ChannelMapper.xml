@@ -288,4 +288,9 @@
         </where>
         ORDER BY ch.create_time desc
     </select>
+
+    <select id="selectAllChannelCode" resultType="String">
+        select channel_code
+        from channel;
+    </select>
 </mapper>

@@ -48,7 +48,14 @@ public interface ChannelService {
      * 导出通道信息
      *
      * @param channelDTO 通道输入实体
-     * @return 修改条数
+     * @return List<ChannelExportVO>
      */
     List<ChannelExportVO> exportChannel(ChannelDTO channelDTO);
+
+    /**
+     * 查询所有通道编号
+     *
+     * @return 通道编号集合
+     */
+    List<String> getAllChannelCode();
 }

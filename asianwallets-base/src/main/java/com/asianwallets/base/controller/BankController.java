@@ -58,4 +58,10 @@ public class BankController extends BaseController {
     public Bank getByBankNameAndCurrency(@RequestBody @ApiParam BankDTO bankDTO) {
         return bankService.getByBankNameAndCurrency(bankDTO);
     }
+
+    @ApiOperation(value = "查询所有银行名称")
+    @PostMapping("/getAllBankName")
+    public List<String> getAllBankName() {
+        return bankService.getAllBankName();
+    }
 }

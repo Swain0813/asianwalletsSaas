@@ -15,7 +15,7 @@ import lombok.Data;
 public class BankReleVantVO {
 
     @ApiModelProperty(value = "产品id")
-    private String bankID;
+    private String bankId;
 
     @ApiModelProperty(value = "银行名称")
     private String bankName;
