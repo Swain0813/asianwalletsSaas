@@ -12,6 +12,12 @@ import java.util.List;
 @ApiModel(value = "产品通道输出实体", description = "产品通道输出实体")
 public class ProductChannelVO {
 
+    @ApiModelProperty(value = "产品ID")
+    private String productId;
+
+    @ApiModelProperty(value = "产品编码")
+    private String productCode;
+
     @ApiModelProperty(value = "支付方式")
     private String payType;
 

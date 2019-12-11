@@ -18,6 +18,8 @@
 
     <select id="getAllProCha" resultMap="ProductChannelVOMap">
         SELECT pt.name                          as payType,
+               p.id                             as productId,
+               p.product_code                   as productCode,
                p.trans_type                     as transType,
                concat(pt.name, '-', p.currency) as productName,
                c.id                             as channelId,
@@ -34,7 +36,9 @@
     </select>
 
     <resultMap id="ProductChannelVOMap" type="com.asianwallets.common.vo.ProductChannelVO">
-        <id column="payType" property="payType" jdbcType="VARCHAR"/>
+        <id column="productId" property="productId" jdbcType="VARCHAR"/>
+        <id column="productCode" property="productCode" jdbcType="VARCHAR"/>
+        <result column="payType" property="payType" jdbcType="VARCHAR"/>
         <result column="transType" property="transType" jdbcType="TINYINT"/>
         <result column="productName" property="productName" jdbcType="VARCHAR"/>
         <collection javaType="list" property="institutionConfigChannelVOList"

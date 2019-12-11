@@ -2,6 +2,7 @@ package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.ProductChannel;
+import com.asianwallets.common.vo.ProductChannelVO;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -25,6 +26,6 @@ public interface ProductChannelMapper extends BaseMapper<ProductChannel> {
      *
      * @return 产品通道集合
      */
-    List<ProductChannel> getAllProCha(String language);
+    List<ProductChannelVO> getAllProCha(String language);
 
 }
