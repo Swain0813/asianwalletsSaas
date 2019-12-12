@@ -63,17 +63,17 @@ public class MegaPayServiceImpl implements MegaPayService {
             } else {
                 co = new ChannelsOrder();
             }
-            co.setInstitutionOrderId(megaPayRequestDTO.getInstitutionOrderId());
+            co.setMerchantOrderId(megaPayRequestDTO.getInstitutionOrderId());
             co.setTradeCurrency(megaPayRequestDTO.getTradeCurrency());
             co.setTradeAmount(new BigDecimal(megaPayRequestDTO.getAmt()));
             co.setReqIp(megaPayRequestDTO.getReqIp());
-            co.setDraweeName(megaPayRequestDTO.getC_Name());
+            co.setPayerName(megaPayRequestDTO.getC_Name());
             co.setBrowserUrl(megaPayRequestDTO.getRetURL());
-            co.setTradeStatus(TradeConstant.TRADE_WAIT);
+            co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
             co.setIssuerId(megaPayRequestDTO.getBMode());
             co.setMd5KeyStr(megaPayRequestDTO.getMd5KeyStr());
             co.setId(megaPayRequestDTO.getOrderID());
-            co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+            co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
             if (num > 0) {
                 co.setUpdateTime(new Date());
                 channelsOrderMapper.updateByPrimaryKeySelective(co);
@@ -127,17 +127,17 @@ public class MegaPayServiceImpl implements MegaPayService {
             } else {
                 co = new ChannelsOrder();
             }
-            co.setInstitutionOrderId(megaPayIDRRequestDTO.getInstitutionOrderId());
+            co.setMerchantOrderId(megaPayIDRRequestDTO.getInstitutionOrderId());
             co.setTradeCurrency(megaPayIDRRequestDTO.getTradeCurrency());
             co.setTradeAmount(new BigDecimal(megaPayIDRRequestDTO.getE_amt()));
             co.setReqIp(megaPayIDRRequestDTO.getReqIp());
-            co.setDraweeName(megaPayIDRRequestDTO.getCusName());
+            co.setPayerName(megaPayIDRRequestDTO.getCusName());
             co.setBrowserUrl(megaPayIDRRequestDTO.getE_respURL());
-            co.setTradeStatus(TradeConstant.TRADE_WAIT);
+            co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
             co.setIssuerId(megaPayIDRRequestDTO.getBMode());
             co.setMd5KeyStr(megaPayIDRRequestDTO.getMd5KeyStr());
             co.setId(megaPayIDRRequestDTO.getE_inv());
-            co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+            co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
             if (num > 0) {
                 co.setUpdateTime(new Date());
                 channelsOrderMapper.updateByPrimaryKeySelective(co);
@@ -187,14 +187,14 @@ public class MegaPayServiceImpl implements MegaPayService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(nextPosRequestDTO.getInstitutionOrderId());
+        co.setMerchantOrderId(nextPosRequestDTO.getInstitutionOrderId());
         co.setTradeCurrency("SGD");
         co.setTradeAmount(new BigDecimal(nextPosRequestDTO.getAmt()));
         co.setReqIp(nextPosRequestDTO.getReqIp());
         co.setServerUrl(nextPosRequestDTO.getReturn_url());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         co.setId(nextPosRequestDTO.getEinv());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         if (num > 0) {
             co.setUpdateTime(new Date());
             channelsOrderMapper.updateByPrimaryKeySelective(co);

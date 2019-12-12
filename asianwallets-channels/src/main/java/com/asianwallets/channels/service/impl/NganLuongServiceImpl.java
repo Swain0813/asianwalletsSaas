@@ -51,20 +51,20 @@ public class NganLuongServiceImpl implements NganLuongService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(nganLuongDTO.getInstitutionOrderId());
+        co.setMerchantOrderId(nganLuongDTO.getInstitutionOrderId());
         co.setTradeCurrency("VND");
         co.setTradeAmount(new BigDecimal(nganLuongDTO.getNganLuongRequestDTO().getTotal_amount()));
         co.setReqIp(nganLuongDTO.getReqIp());
-        co.setDraweeName(nganLuongDTO.getNganLuongRequestDTO().getBuyer_fullname());
-        co.setDraweeEmail(nganLuongDTO.getNganLuongRequestDTO().getBuyer_email());
+        co.setPayerName(nganLuongDTO.getNganLuongRequestDTO().getBuyer_fullname());
+        co.setPayerEmail(nganLuongDTO.getNganLuongRequestDTO().getBuyer_email());
         co.setBrowserUrl(nganLuongDTO.getNganLuongRequestDTO().getReturn_url());
         //co.setServerUrl("");
         co.setDraweePhone(nganLuongDTO.getNganLuongRequestDTO().getBuyer_mobile());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         co.setIssuerId(nganLuongDTO.getNganLuongRequestDTO().getBank_code());
         co.setMd5KeyStr(nganLuongDTO.getNganLuongRequestDTO().getMerchant_password());
         co.setId(nganLuongDTO.getNganLuongRequestDTO().getOrder_code());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         if (num > 0) {
             co.setUpdateTime(new Date());
             channelsOrderMapper.updateByPrimaryKeySelective(co);

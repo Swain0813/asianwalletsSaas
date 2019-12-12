@@ -54,7 +54,7 @@ public class EnetsServiceImpl implements EnetsService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(enetsBankRequestDTO.getInstitutionOrderId());
+        co.setMerchantOrderId(enetsBankRequestDTO.getInstitutionOrderId());
         co.setTradeCurrency(msg.get("currencyCode").toString());
         co.setTradeAmount(new BigDecimal(msg.get("txnAmount").toString()));
         co.setReqIp(msg.get("ipAddress").toString());
@@ -63,11 +63,11 @@ public class EnetsServiceImpl implements EnetsService {
         co.setBrowserUrl(msg.get("b2sTxnEndURL").toString());
         co.setServerUrl(msg.get("s2sTxnEndURL").toString());
         //co.setDraweePhone(eghlRequestDTO.getCustPhone());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         //co.setIssuerId(enetsBankRequestDTO.getTxnReq().getMsg().getIssuingBank());
         co.setMd5KeyStr(enetsBankRequestDTO.getMd5KeyStr());
         co.setId(msg.get("merchantTxnRef").toString());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         co.setRemark("enets网银收单交易金额需要放大100倍上送给上游通道");
         if (num > 0) {
             co.setUpdateTime(new Date());
@@ -124,14 +124,14 @@ public class EnetsServiceImpl implements EnetsService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(enetsOffLineRequestDTO.getInstitutionOrderId());
+        co.setMerchantOrderId(enetsOffLineRequestDTO.getInstitutionOrderId());
         co.setTradeCurrency(enetsOffLineRequestDTO.getRequestJsonDate().getNpxData().getSourceCurrency());
         co.setTradeAmount(new BigDecimal(enetsOffLineRequestDTO.getRequestJsonDate().getTargetAmount()));
         co.setReqIp(enetsOffLineRequestDTO.getReqIp());
         co.setServerUrl(enetsOffLineRequestDTO.getRequestJsonDate().getCommunicationData().get(0).getCommunicationDestination());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         co.setId(enetsOffLineRequestDTO.getOrderId());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         co.setRemark("eNets线下收单交易金额需要放大100倍上送给上游通道");
 
         BaseResponse baseResponse = new BaseResponse();

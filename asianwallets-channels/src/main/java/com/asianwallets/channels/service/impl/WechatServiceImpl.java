@@ -103,14 +103,14 @@ public class WechatServiceImpl implements WechatService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(wechatBSCDTO.getInstitutionOrderId());
+        co.setMerchantOrderId(wechatBSCDTO.getInstitutionOrderId());
         co.setTradeCurrency(wechatBSCDTO.getFee_type());
         co.setTradeAmount(new BigDecimal(wechatBSCDTO.getTotal_fee()));
         co.setReqIp(wechatBSCDTO.getReqIp());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         co.setMd5KeyStr(wechatBSCDTO.getMd5KeyStr());
         co.setId(wechatBSCDTO.getOut_trade_no());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         if (num > 0) {
             co.setUpdateTime(new Date());
             channelsOrderMapper.updateByPrimaryKeySelective(co);
@@ -452,15 +452,15 @@ public class WechatServiceImpl implements WechatService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(wechatCSBDTO.getInstitutionOrderId());
+        co.setMerchantOrderId(wechatCSBDTO.getInstitutionOrderId());
         co.setTradeCurrency(wechatCSBDTO.getFee_type());
         co.setTradeAmount(new BigDecimal(wechatCSBDTO.getTotal_fee()));
         co.setReqIp(wechatCSBDTO.getReqIp());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         co.setId(wechatCSBDTO.getOut_trade_no());
         co.setMd5KeyStr(wechatCSBDTO.getMd5KeyStr());
         co.setServerUrl(wechatCSBDTO.getNotify_url());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         if (num > 0) {
             co.setUpdateTime(new Date());
             channelsOrderMapper.updateByPrimaryKeySelective(co);
@@ -545,7 +545,7 @@ public class WechatServiceImpl implements WechatService {
     public BaseResponse wechatRefund(WechaRefundDTO wechaRefundDTO) {
 
         ChannelsOrder co = new ChannelsOrder();
-        co.setInstitutionOrderId(wechaRefundDTO.getOut_trade_no());
+        co.setMerchantOrderId(wechaRefundDTO.getOut_trade_no());
         co.setTradeCurrency(wechaRefundDTO.getRefund_fee_type());
         co.setTradeAmount(new BigDecimal(wechaRefundDTO.getRefund_fee()));
         //co.setReqIp(msg.get("ipAddress").toString());
@@ -554,11 +554,11 @@ public class WechatServiceImpl implements WechatService {
         //co.setBrowserUrl(msg.get("b2sTxnEndURL").toString());
         //co.setServerUrl(msg.get("s2sTxnEndURL").toString());
         //co.setDraweePhone(eghlRequestDTO.getCustPhone());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         //co.setIssuerId(enetsBankRequestDTO.getTxnReq().getMsg().getIssuingBank());
         co.setMd5KeyStr(wechaRefundDTO.getApikey());
         co.setId(wechaRefundDTO.getOut_refund_no());
-        co.setOrderType(AD3Constant.REFUND_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.REFUND_ORDER));
         co.setCreateTime(new Date());
         channelsOrderMapper.insert(co);
 

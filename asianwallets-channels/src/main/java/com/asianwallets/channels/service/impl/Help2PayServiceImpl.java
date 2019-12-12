@@ -53,17 +53,17 @@ public class Help2PayServiceImpl implements Help2PayService {
             } else {
                 co = new ChannelsOrder();
             }
-            co.setInstitutionOrderId(help2PayRequestDTO.getInstitutionOrderId());
+            co.setMerchantOrderId(help2PayRequestDTO.getInstitutionOrderId());
             co.setTradeCurrency(help2PayRequestDTO.getCurrency());
             co.setTradeAmount(new BigDecimal(help2PayRequestDTO.getAmount()));
             co.setReqIp(help2PayRequestDTO.getReqIp());
             co.setBrowserUrl(help2PayRequestDTO.getFrontURI());
             co.setServerUrl(help2PayRequestDTO.getBackURI());
-            co.setTradeStatus(TradeConstant.TRADE_WAIT);
+            co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
             co.setIssuerId(help2PayRequestDTO.getBank());
             co.setMd5KeyStr(help2PayRequestDTO.getMd5KeyStr());
             co.setId(help2PayRequestDTO.getReference());
-            co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+            co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
             if (num > 0) {
                 co.setUpdateTime(new Date());
                 channelsOrderMapper.updateByPrimaryKeySelective(co);

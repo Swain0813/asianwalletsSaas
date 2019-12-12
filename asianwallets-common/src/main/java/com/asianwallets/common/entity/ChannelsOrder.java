@@ -17,8 +17,8 @@ import java.math.BigDecimal;
 public class ChannelsOrder extends BaseEntity {
 
     @ApiModelProperty(value = "商户订单号")
-    @Column(name = "institution_order_id")
-    private String institutionOrderId;
+    @Column(name = "merchant_order_id")
+    private String merchantOrderId;
 
     @ApiModelProperty(value = "渠道流水号")
     @Column(name = "channel_number")
@@ -26,7 +26,7 @@ public class ChannelsOrder extends BaseEntity {
 
     @ApiModelProperty(value = "订单类型")
     @Column(name = "order_type")
-    private String orderType;
+    private Byte orderType;
 
     @ApiModelProperty(value = "交易币种")
     @Column(name = "trade_currency")
@@ -41,20 +41,20 @@ public class ChannelsOrder extends BaseEntity {
     private String reqIp;
 
     @ApiModelProperty(value = "付款人")
-    @Column(name = "drawee_name")
-    private String draweeName;
+    @Column(name = "payer_name")
+    private String payerName;
 
     @ApiModelProperty(value = "付款人账户")
-    @Column(name = "drawee_account")
-    private String draweeAccount;
+    @Column(name = "payer_account")
+    private String payerAccount;
 
     @ApiModelProperty(value = "付款人银行")
-    @Column(name = "drawee_bank")
-    private String draweeBank;
+    @Column(name = "payer_bank")
+    private String payerBank;
 
     @ApiModelProperty(value = "付款人邮箱")
-    @Column(name = "drawee_email")
-    private String draweeEmail;
+    @Column(name = "payer_email")
+    private String payerEmail;
 
     @ApiModelProperty(value = "浏览器通知地址")
     @Column(name = "browser_url")
@@ -68,9 +68,10 @@ public class ChannelsOrder extends BaseEntity {
     @Column(name = "drawee_phone")
     private String draweePhone;
 
+    //交易状态: 1-付款中  2-付款成功  3-付款失败
     @ApiModelProperty(value = "交易状态")
     @Column(name = "trade_status")
-    private String tradeStatus;
+    private Byte tradeStatus;
 
     @ApiModelProperty(value = "issuerId")
     @Column(name = "issuer_id")

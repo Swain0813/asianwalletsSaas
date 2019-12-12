@@ -48,20 +48,20 @@ public class EghlServiceImpl implements EghlService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(eghlRequestDTO.getOrderNumber());
+        co.setMerchantOrderId(eghlRequestDTO.getOrderNumber());
         co.setTradeCurrency(eghlRequestDTO.getCurrencyCode());
         co.setTradeAmount(new BigDecimal(eghlRequestDTO.getAmount()));
         co.setReqIp(eghlRequestDTO.getCustIP());
-        co.setDraweeName(eghlRequestDTO.getCustName());
-        co.setDraweeEmail(eghlRequestDTO.getCustEmail());
+        co.setPayerName(eghlRequestDTO.getCustName());
+        co.setPayerEmail(eghlRequestDTO.getCustEmail());
         co.setBrowserUrl(eghlRequestDTO.getMerchantReturnURL());
         co.setServerUrl(eghlRequestDTO.getMerchantCallBackURL());
         co.setDraweePhone(eghlRequestDTO.getCustPhone());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         co.setIssuerId(eghlRequestDTO.getIssuingBank());
         co.setMd5KeyStr(eghlRequestDTO.getMd5KeyStr());
         co.setId(eghlRequestDTO.getPaymentID());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         if (num > 0) {
             co.setUpdateTime(new Date());
             channelsOrderMapper.updateByPrimaryKeySelective(co);

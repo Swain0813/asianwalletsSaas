@@ -45,16 +45,16 @@ public class XenditServiceImpl implements XenditService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(xenditDTO.getInstitutionOrderId());
+        co.setMerchantOrderId(xenditDTO.getInstitutionOrderId());
         co.setTradeCurrency(xenditDTO.getTradeCurrency());
         co.setTradeAmount(xenditDTO.getXenditPayRequestDTO().getAmount());
         co.setReqIp(xenditDTO.getReqIp());
-        co.setDraweeEmail(xenditDTO.getXenditPayRequestDTO().getPayer_email());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setPayerEmail(xenditDTO.getXenditPayRequestDTO().getPayer_email());
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         co.setIssuerId(xenditDTO.getXenditPayRequestDTO().getPayment_methods()[0]);
         co.setMd5KeyStr(xenditDTO.getMd5KeyStr());
         co.setId(xenditDTO.getXenditPayRequestDTO().getExternal_id());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         if (num > 0) {
             co.setUpdateTime(new Date());
             channelsOrderMapper.updateByPrimaryKeySelective(co);

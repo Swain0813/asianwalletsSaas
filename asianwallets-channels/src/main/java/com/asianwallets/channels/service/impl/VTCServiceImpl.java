@@ -16,7 +16,7 @@ import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.utils.ChannelsSignUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -27,7 +27,7 @@ import java.util.Date;
  * @author: YangXu
  * @create: 2019-05-30 17:41
  **/
-@Repository
+@Service
 @Slf4j
 public class VTCServiceImpl implements VTCService {
 
@@ -49,17 +49,17 @@ public class VTCServiceImpl implements VTCService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(vtcRequestDTO.getInstitutionOrderId());
+        co.setMerchantOrderId(vtcRequestDTO.getInstitutionOrderId());
         co.setTradeCurrency(vtcRequestDTO.getCurrency());
         co.setTradeAmount(new BigDecimal(vtcRequestDTO.getAmount()));
         co.setReqIp(vtcRequestDTO.getWebsite_id());
         co.setBrowserUrl(vtcRequestDTO.getUrl_return());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         co.setIssuerId(vtcRequestDTO.getPayment_type());
         co.setMd5KeyStr(vtcRequestDTO.getMd5KeyStr());
         co.setId(vtcRequestDTO.getReference_number());
         co.setReqIp(vtcRequestDTO.getReqIp());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         if (num > 0) {
             co.setUpdateTime(new Date());
             channelsOrderMapper.updateByPrimaryKeySelective(co);

@@ -121,14 +121,14 @@ public class AliPayServiceImpl implements AliPayService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(aliPayOfflineBSCDTO.getInstitutionOrderId());
+        co.setMerchantOrderId(aliPayOfflineBSCDTO.getInstitutionOrderId());
         co.setTradeCurrency(aliPayOfflineBSCDTO.getCurrency());
         co.setTradeAmount(new BigDecimal(aliPayOfflineBSCDTO.getTrans_amount()));
         co.setReqIp(aliPayOfflineBSCDTO.getReqIp());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         co.setMd5KeyStr(aliPayOfflineBSCDTO.getMd5KeyStr());
         co.setId(aliPayOfflineBSCDTO.getPartner_trans_id());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         if (num > 0) {
             co.setUpdateTime(new Date());
             channelsOrderMapper.updateByPrimaryKeySelective(co);
@@ -440,7 +440,7 @@ public class AliPayServiceImpl implements AliPayService {
     public BaseResponse aliPayRefund(AliPayRefundDTO aliPayRefundDTO) {
 
         ChannelsOrder co = new ChannelsOrder();
-        co.setInstitutionOrderId(aliPayRefundDTO.getPartner_trans_id());
+        co.setMerchantOrderId(aliPayRefundDTO.getPartner_trans_id());
         co.setTradeCurrency(aliPayRefundDTO.getCurrency());
         co.setTradeAmount(new BigDecimal(aliPayRefundDTO.getRefund_amount()));
         //co.setReqIp(msg.get("ipAddress").toString());
@@ -449,11 +449,11 @@ public class AliPayServiceImpl implements AliPayService {
         //co.setBrowserUrl(msg.get("b2sTxnEndURL").toString());
         //co.setServerUrl(msg.get("s2sTxnEndURL").toString());
         //co.setDraweePhone(eghlRequestDTO.getCustPhone());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         //co.setIssuerId(enetsBankRequestDTO.getTxnReq().getMsg().getIssuingBank());
         //co.setMd5KeyStr(wechaRefundDTO.getApikey());
         co.setId(aliPayRefundDTO.getPartner_refund_id());
-        co.setOrderType(AD3Constant.REFUND_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.REFUND_ORDER));
         co.setCreateTime(new Date());
         channelsOrderMapper.insert(co);
 
@@ -543,7 +543,7 @@ public class AliPayServiceImpl implements AliPayService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(aliPayCSBDTO.getInstitution_order_id());
+        co.setMerchantOrderId(aliPayCSBDTO.getInstitution_order_id());
         co.setTradeCurrency(aliPayCSBDTO.getTrans_currency());
         co.setTradeAmount(new BigDecimal(aliPayCSBDTO.getTotal_fee()));
         co.setReqIp(aliPayCSBDTO.getReqIp());
@@ -552,11 +552,11 @@ public class AliPayServiceImpl implements AliPayService {
         co.setBrowserUrl(null);
         co.setServerUrl(aliPayCSBDTO.getNotify_url());
         //co.setDraweePhone(eghlRequestDTO.getCustPhone());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         //co.setIssuerId(enetsBankRequestDTO.getTxnReq().getMsg().getIssuingBank());
         co.setMd5KeyStr(aliPayCSBDTO.getMd5KeyStr());
         co.setId(aliPayCSBDTO.getOut_trade_no());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         if (num > 0) {
             co.setUpdateTime(new Date());
             channelsOrderMapper.updateByPrimaryKeySelective(co);
@@ -711,7 +711,7 @@ public class AliPayServiceImpl implements AliPayService {
         } else {
             co = new ChannelsOrder();
         }
-        co.setInstitutionOrderId(aliPayWebDTO.getInstitution_order_id());
+        co.setMerchantOrderId(aliPayWebDTO.getInstitution_order_id());
         co.setTradeCurrency(aliPayWebDTO.getTrans_currency());
         co.setTradeAmount(new BigDecimal(aliPayWebDTO.getAmt()));
         co.setReqIp(aliPayWebDTO.getReqIp());
@@ -720,11 +720,11 @@ public class AliPayServiceImpl implements AliPayService {
         co.setBrowserUrl(null);
         co.setServerUrl(aliPayWebDTO.getNotify_url());
         //co.setDraweePhone(eghlRequestDTO.getCustPhone());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         //co.setIssuerId(enetsBankRequestDTO.getTxnReq().getMsg().getIssuingBank());
         co.setMd5KeyStr(aliPayWebDTO.getMd5KeyStr());
         co.setId(aliPayWebDTO.getOut_trade_no());
-        co.setOrderType(AD3Constant.TRADE_ORDER.toString());
+        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
         if (num > 0) {
             co.setUpdateTime(new Date());
             channelsOrderMapper.updateByPrimaryKeySelective(co);
