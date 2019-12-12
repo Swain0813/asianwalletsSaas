@@ -11,6 +11,8 @@ import com.asianwallets.common.dto.InstitutionProductChannelDTO;
 import com.asianwallets.common.entity.InstitutionChannel;
 import com.asianwallets.common.entity.InstitutionProduct;
 import com.asianwallets.common.entity.ProductChannel;
+import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
@@ -47,6 +49,11 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
     @Override
     @Transactional
     public int addInstitutionProductChannel(String username, List<InstitutionProductChannelDTO> institutionProductChannelDTOList) {
+        InstitutionProduct dbInsPro = institutionProductMapper.selectByInstitutionId(institutionProductChannelDTOList.get(0).getInstitutionId());
+        if (dbInsPro != null) {
+            log.info("==========【新增机构关联产品通道信息】==========【信息已存在】");
+            throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
+        }
         for (InstitutionProductChannelDTO institutionProductChannelDTO : institutionProductChannelDTOList) {
             //机构产品信息
             InstitutionProduct institutionProduct = new InstitutionProduct();
@@ -136,7 +143,7 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
      */
     @Override
     public List<InstitutionProductChannelVO> getInsProChaByInsId(String insId) {
-        return institutionProductMapper.selectRelevantInfoByInstitutionId(insId,auditorProvider.getLanguage());
+        return institutionProductMapper.selectRelevantInfoByInstitutionId(insId, auditorProvider.getLanguage());
     }
 
     /**
