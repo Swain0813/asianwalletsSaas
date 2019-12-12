@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(name = "channels_order")
-@ApiModel(value = "通道配置", description = "通道配置")
+@ApiModel(value = "上报通道订单记录表", description = "上报通道订单记录表")
 public class ChannelsOrder extends BaseEntity {
 
     @ApiModelProperty(value = "商户订单号")
