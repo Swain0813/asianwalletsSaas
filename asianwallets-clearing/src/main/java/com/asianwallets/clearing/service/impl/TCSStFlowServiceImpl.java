@@ -123,9 +123,6 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     log.info("*************** 结算 IntoAndOutMerhtCLAccount2 **************** 查询商户结算账户信息异常");
                     return baseResponse;
                 }
-                ////查询清算表中未清算的金额
-                //BigDecimal unClearAmount =tcsCtFlowMapper.getUnClearAmount(stf.getMerchantid(),stf.getTxncurrency());
-                //unClearAmount = unClearAmount == null ? BigDecimal.ZERO : unClearAmount;
 
                 //查询结算算表中未结算算的金额
                 BigDecimal unSettleAmount =tcsStFlowMapper.getUnSettleAmount(stf.getMerchantid(),stf.getTxncurrency());
