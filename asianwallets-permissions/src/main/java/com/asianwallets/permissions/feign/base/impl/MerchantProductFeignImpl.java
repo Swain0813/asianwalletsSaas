@@ -5,6 +5,7 @@ import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.vo.MerChannelVO;
 import com.asianwallets.permissions.feign.base.MerchantProductFeign;
 import org.springframework.stereotype.Component;
 
@@ -81,6 +82,11 @@ public class MerchantProductFeignImpl implements MerchantProductFeign {
 
     @Override
     public List<MerchantProduct> exportMerProduct(MerchantProductDTO merchantProductDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public List<MerChannelVO> exportMerChannel(SearchChannelDTO searchChannelDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

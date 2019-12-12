@@ -666,4 +666,15 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     public MerChannelVO getMerChannelInfoById(String merChannelId) {
         return merchantChannelMapper.getMerChannelInfoById(merChannelId);
     }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/12
+     * @Descripate 导出商户通道信息
+     * @return
+     **/
+    @Override
+    public List<MerChannelVO> exportMerChannel(SearchChannelDTO searchChannelDTO) {
+        return merchantChannelMapper.exportMerChannel(searchChannelDTO);
+    }
 }

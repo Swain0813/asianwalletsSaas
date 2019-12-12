@@ -6,6 +6,7 @@ import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.vo.MerChannelVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -131,4 +132,12 @@ public class MerchantProductController extends BaseController {
         return merchantProductService.exportMerProduct(merchantProductDTO);
     }
 
+    @ApiOperation(value = "导出商户通道信息")
+    @PostMapping("/exportMerChannel")
+    public List<MerChannelVO> exportMerChannel(@RequestBody @ApiParam SearchChannelDTO searchChannelDTO) {
+        if (StringUtils.isBlank(searchChannelDTO.getLanguage())) {
+            searchChannelDTO.setLanguage(this.getLanguage());
+        }
+        return merchantProductService.exportMerChannel(searchChannelDTO);
+    }
 }

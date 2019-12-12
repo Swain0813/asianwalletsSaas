@@ -210,7 +210,47 @@
 		where mc.id=#{merChannelId}
 	</select>
 
-	<delete id="deleteByMerProId">
+	<select id="exportMerChannel" resultMap="secondResultMap">
+		select mc.id as merChannelId, mp.merchant_id as merchantId,mp.merchant_name as merchantName,
+		mp.product_id as productId,mp.product_abbrev as productAbbrev,
+		ch.id as channelId, ch.channel_cn_name as channelName,
+		ch.currency as channelCurrency,b.bank_name as bankName,
+		mc.create_time,mc.update_time,mc.creator,mc.modifier,mc.enabled,
+		mc.sort
+		from merchant_channel mc
+		left join merchant_product mp on mp.id = mc.mer_pro_id
+		left join channel_bank cb on cb.id = mc.cha_ban_id
+		left join channel ch on ch.id = cb.channel_id
+		left join bank b on b.id = cb.bank_id
+		<where>
+			<if test="merchantId!=null and merchantId != ''">
+				and mp.merchant_id=#{merchantId}
+			</if>
+			<if test="merchantName != null and merchantName != ''">
+				and mp.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+			</if>
+			<if test="channelName != null and channelName != ''">
+				and ch.channel_cn_name=#{channelName}
+			</if>
+			<if test="productAbbrev != null and productAbbrev != ''">
+				and mp.product_abbrev=#{productAbbrev}
+			</if>
+			<if test="productId != null and productId != ''">
+				and mp.product_id=#{productId}
+			</if>
+			<if test="enabled != null">
+				and mc.enabled=#{enabled}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				AND DATE_FORMAT(mc.create_time,'%Y-%m-%d') &gt;= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(mc.create_time,'%Y-%m-%d') &lt;= #{endTime}
+			</if>
+		</where>
+	</select>
+
+    <delete id="deleteByMerProId">
         delete
         from merchant_channel
         where mer_pro_id = #{id}

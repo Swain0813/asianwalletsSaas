@@ -2,6 +2,7 @@ package com.asianwallets.permissions.service;
 
 import cn.hutool.poi.excel.ExcelWriter;
 import com.asianwallets.common.vo.InstitutionExportVO;
+import com.asianwallets.common.vo.MerChannelExportVO;
 import com.asianwallets.common.vo.MerchantExportVO;
 import com.asianwallets.common.vo.MerchantProductExportVO;
 
@@ -35,4 +36,12 @@ public interface ExportService {
      * @return
      **/
     ExcelWriter getMerchantProductExcel(ArrayList<MerchantProductExportVO> merchantProExportVOS, Class clazz);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 导出商户通道
+     * @return
+     **/
+    ExcelWriter getMerchantChannelExcel(ArrayList<MerChannelExportVO> merchantChannelExportVOS, Class clazz);
 }

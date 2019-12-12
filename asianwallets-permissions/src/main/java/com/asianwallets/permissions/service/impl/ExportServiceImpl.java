@@ -6,6 +6,7 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.vo.InstitutionExportVO;
+import com.asianwallets.common.vo.MerChannelExportVO;
 import com.asianwallets.common.vo.MerchantExportVO;
 import com.asianwallets.common.vo.MerchantProductExportVO;
 import com.asianwallets.permissions.service.ExportService;
@@ -189,6 +190,50 @@ public class ExportServiceImpl implements ExportService {
                                 oList2.add("单笔定额");
                             }else {
                                 oList2.add("");
+                            }
+                        } else {
+                            oList2.add(oMap.get(s));
+                        }
+
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.write(oList1);
+        return writer;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/12
+     * @Descripate 导出商户通道
+     * @return
+     **/
+    @Override
+    public ExcelWriter getMerchantChannelExcel(ArrayList<MerChannelExportVO> merchantChannelExportVOS, Class clazz) {
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (MerChannelExportVO merChannelExportVO : merchantChannelExportVOS) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(merChannelExportVO);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int p = 0; p < property.length; p++) {
+                for (String s : keySet) {
+                    if (s.equals(property[p])) {
+                        oSet1.add(comment[p]);
+                        if(s.equals("enabled")) {
+                            if ((String.valueOf((oMap.get(s)))).equals("true")) {
+                                oList2.add("启用");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("false")) {
+                                oList2.add("禁用");
                             }
                         } else {
                             oList2.add(oMap.get(s));
