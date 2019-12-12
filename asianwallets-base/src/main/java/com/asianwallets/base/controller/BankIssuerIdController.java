@@ -3,6 +3,8 @@ package com.asianwallets.base.controller;
 import com.asianwallets.base.service.BankIssuerIdService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.BankIssuerIdDTO;
+import com.asianwallets.common.entity.Bank;
+import com.asianwallets.common.entity.BankIssuerId;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.BankIssuerIdVO;
@@ -44,10 +46,22 @@ public class BankIssuerIdController extends BaseController {
         return ResultUtil.success(bankIssuerIdService.pageFindBankIssuerId(bankIssuerIdDTO));
     }
 
+    @ApiOperation(value = "根据条件查询银行机构映射信息")
+    @PostMapping("/getByTerm")
+    public BankIssuerId getByTerm(@RequestBody @ApiParam BankIssuerIdDTO bankIssuerIdDTO) {
+        return bankIssuerIdService.getByTerm(bankIssuerIdDTO);
+    }
+
     @ApiOperation(value = "导出银行机构代码映射信息")
     @PostMapping("/exportBankIssuerId")
     public List<BankIssuerIdVO> exportBankIssuerId(@RequestBody @ApiParam BankIssuerIdDTO bankIssuerIdDTO) {
         return bankIssuerIdService.exportBankIssuerId(bankIssuerIdDTO);
+    }
+
+    @ApiOperation(value = "导入银行机构代码映射信息")
+    @PostMapping("/importBankIssuerId")
+    public BaseResponse importBankIssuerId(@RequestBody @ApiParam  List<BankIssuerId> bankIssuerIdList) {
+        return ResultUtil.success(bankIssuerIdService.importBankIssuerId(bankIssuerIdList));
     }
 
 }

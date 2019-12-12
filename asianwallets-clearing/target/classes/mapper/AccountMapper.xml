@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.clearing.dao.AccountMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Account">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="account_code" property="accountCode" jdbcType="VARCHAR"/>
+        <result column="currency" property="currency" jdbcType="VARCHAR"/>
+        <result column="settle_balance" property="settleBalance" jdbcType="DECIMAL"/>
+        <result column="clear_balance" property="clearBalance" jdbcType="DECIMAL"/>
+        <result column="freeze_balance" property="freezeBalance" jdbcType="DECIMAL"/>
+        <result column="version" property="version" jdbcType="BIGINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, merchant_id, merchant_name, account_code, currency, settle_balance, clear_balance,
+    freeze_balance, version, create_time, update_time,
+    creator, modifier, remark, enabled
+  </sql>
+
+    <update id="updateFrozenBalance" parameterType="com.asianwallets.common.entity.Account">
+        update account set
+        <if test="freezeBalance != null">
+            freeze_balance = freeze_balance+ #{freezeBalance},
+            version = #{version,jdbcType=BIGINT}+1,
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+            where id = #{id,jdbcType=VARCHAR}
+            and version = #{version,jdbcType=BIGINT}
+        </if>
+    </update>
+
+    <update id="updateCTAMTByPrimaryKey" parameterType="com.asianwallets.common.entity.Account">
+        update account
+        set
+        <if test="clearBalance != null">
+            clear_balance = clear_balance+#{clearBalance,jdbcType=DECIMAL},
+            <if test="freezeBalance != null">
+                freeze_balance = freeze_balance+#{freezeBalance,jdbcType=DECIMAL},
+            </if>
+            version = #{version,jdbcType=BIGINT}+1,
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+            where id = #{id,jdbcType=VARCHAR}
+            and version = #{version,jdbcType=BIGINT}
+        </if>
+    </update>
+
+    <update id="updateSTAMTByPrimaryKey" parameterType="com.asianwallets.common.entity.Account">
+        update account
+        set
+        <if test="settleBalance != null">
+            settle_balance = settle_balance+#{settleBalance,jdbcType=DECIMAL},
+            <if test="freezeBalance != null">
+                freeze_balance = freeze_balance+#{freezeBalance,jdbcType=DECIMAL},
+            </if>
+            <if test="remark != null">
+                remark =#{remark,jdbcType=VARCHAR},
+            </if>
+            version = #{version,jdbcType=BIGINT}+1,
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+            where id = #{id,jdbcType=VARCHAR}
+            and version = #{version,jdbcType=BIGINT}
+        </if>
+    </update>
+
+    <update id="updateSPAMTByPrimaryKey">
+        update account
+        set
+        <if test="settleBalance != null">
+            settle_balance = #{settleBalance,jdbcType=DECIMAL},
+            version = #{version,jdbcType=BIGINT}+1,
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+            where id = #{id,jdbcType=VARCHAR}
+            and version = #{version,jdbcType=BIGINT}
+        </if>
+    </update>
+
+    <select id="selectByMerchantIdAndCurrency" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from account where merchant_id =#{merchantId} and currency = #{currency} and enabled = true
+    </select>
+
+    <select id="getAccounts" resultMap="BaseResultMap">
+        select
+        a.id,a.merchant_id,a.merchant_name,a.account_code,a.currency,a.settle_balance,
+        a.freeze_balance
+        from account a left join settle_control b on a.id=b.account_id
+        where a.settle_balance-a.freeze_balance>0 and a.settle_balance-a.freeze_balance>=b.min_settle_amount
+         and a.enabled=1 and b.settle_switch=1 and b.enabled=1
+    </select>
+
+
+    <update id="updateAccountByPrimaryKey" parameterType="com.asianwallets.common.entity.Account">
+        update account
+        set
+        <if test="settleBalance != null">
+            settle_balance = #{settleBalance,jdbcType=DECIMAL},
+            <if test="remark != null">
+                remark =#{remark,jdbcType=VARCHAR},
+            </if>
+            version = #{version,jdbcType=BIGINT}+1,
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+            where id = #{id,jdbcType=VARCHAR}
+            and version = #{version,jdbcType=BIGINT}
+        </if>
+    </update>
+
+</mapper>

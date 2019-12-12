@@ -81,4 +81,10 @@
         <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="creator" property="creator" jdbcType="VARCHAR"/>
     </resultMap>
+
+
+    <select id="selectAllBankName" resultType="String">
+        select bank_name
+        from bank;
+    </select>
 </mapper>

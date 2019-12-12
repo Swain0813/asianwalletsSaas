@@ -47,4 +47,12 @@ public interface BankIssuerIdMapper extends BaseMapper<BankIssuerId> {
      * @return 银行机构代码映射信息集合
      */
     List<BankIssuerIdVO> exportBankIssuerId(BankIssuerIdDTO bankIssuerIdDTO);
+
+    /**
+     * 根据条件查询银行机构映射信息
+     *
+     * @param bankIssuerIdDTO 银行机构代码映射输入实体
+     * @return BankIssuerId
+     */
+    BankIssuerId selectByTerm(BankIssuerIdDTO bankIssuerIdDTO);
 }

@@ -35,4 +35,11 @@ public interface BankMapper extends BaseMapper<Bank> {
      * @return 银行集合
      */
     List<ExportBankVO> exportBank(BankDTO bankDTO);
+
+    /**
+     * 查询所有银行名称
+     *
+     * @return 银行名称集合
+     */
+    List<String> selectAllBankName();
 }

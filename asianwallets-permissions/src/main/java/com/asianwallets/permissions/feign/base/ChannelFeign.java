@@ -37,4 +37,8 @@ public interface ChannelFeign {
     @ApiOperation(value = "导出通道信息")
     @PostMapping("/channel/exportChannel")
     List<ChannelExportVO> exportChannel(@RequestBody @ApiParam ChannelDTO channelDTO);
+
+    @ApiOperation(value = "查询所有通道编号")
+    @PostMapping("/channel/getAllChannelCode")
+    List<String> getAllChannelCode();
 }
