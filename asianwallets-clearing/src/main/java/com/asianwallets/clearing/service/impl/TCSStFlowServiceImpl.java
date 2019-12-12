@@ -94,6 +94,8 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
         stf.setGatewayFee(ioma.getGatewayFee());
         //是否需要处理清除  1不需要，2需要
         stf.setNeedClear(1);
+        stf.setRefundOrderFee(ioma.getRefundOrderFee());
+        stf.setRefundOrderFeeCurrency(ioma.getRefundOrderFeeCurrency());
         //基础处理
         String key = Const.Redis.CLEARING_KEY + "_" + stf.getMerchantid() + "_" + stf.getSltcurrency();
         log.info("************ CLEARING_KEY *************** key:{}", key);
