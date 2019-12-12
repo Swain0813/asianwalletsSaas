@@ -50,6 +50,14 @@ public class TcsStFlow implements Serializable {
     @Column(name = "feecurrency")
     private String feecurrency;
 
+    @ApiModelProperty(value = "退还手续费")
+    @Column(name = "refundOrderFee")
+    private Double refundOrderFee;
+
+    @ApiModelProperty(value = "退还手续费币种")
+    @Column(name = "refundOrderFeeCurrency")
+    private String refundOrderFeeCurrency;
+
     @ApiModelProperty(value = "渠道成本")
     @Column(name = "channelCost")
     private Double channelCost;
