@@ -16,9 +16,7 @@ import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
-import com.asianwallets.common.vo.InstitutionExportVO;
-import com.asianwallets.common.vo.MerchantExportVO;
-import com.asianwallets.common.vo.MerchantProductExportVO;
+import com.asianwallets.common.vo.*;
 import com.asianwallets.permissions.feign.base.MerchantProductFeign;
 import com.asianwallets.permissions.service.ExportService;
 import com.asianwallets.permissions.service.OperationLogService;
@@ -183,5 +181,35 @@ public class MerchantProductFeignController extends BaseController {
         return ResultUtil.success();
     }
 
+    @ApiOperation(value = "导出商户通道信息")
+    @PostMapping("/exportMerChannel")
+    public BaseResponse exportMerChannel(@RequestBody @ApiParam SearchChannelDTO searchChannelDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(searchChannelDTO),
+                "导出商户通道信息"));
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        try {
+            HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+            ServletOutputStream out = response.getOutputStream();
+            List<MerChannelVO> merChannelVOS = merchantProductFeign.exportMerChannel(searchChannelDTO);
+            if (merChannelVOS == null || merChannelVOS.size() == 0) {//数据不存在的场合
+                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(getLanguage());
+                writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
+                writer.flush(out);
+                return ResultUtil.success();
+            }
+            ArrayList<MerChannelExportVO> merchantChannelExportVOS = new ArrayList<>();
+            for (MerChannelVO merchantProduct : merChannelVOS) {
+                merchantChannelExportVOS.add(JSON.parseObject(JSON.toJSONString(merchantProduct), MerChannelExportVO.class));
+            }
+            writer = exportService.getMerchantChannelExcel(merchantChannelExportVOS, MerChannelExportVO.class);
+            writer.flush(out);
+
+        } catch (Exception e) {
+            throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
+        } finally {
+            writer.close();
+        }
+        return ResultUtil.success();
+    }
 
 }
