@@ -88,9 +88,11 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
         ctf.setFeecurrency(ioma.getFeecurrency());
         ctf.setChannelcostcurrency(ioma.getChannelCostcurrency());
         ctf.setGatewayFee(ioma.getGatewayFee());
+        ctf.setRefundOrderFee(ioma.getRefundOrderFee());
+        ctf.setRefundOrderFeeCurrency(ioma.getRefundOrderFeeCurrency());
         try {
             int result = 0;
-            if (ctf == null || ctf.getSltcurrency() == null || ctf.getMerchantid() == null || ctf.getBusinessType() == 0) {
+            if (ctf == null || ctf.getSltcurrency() == null || ctf.getTxncurrency() == null || ctf.getMerchantid() == null || ctf.getBusinessType() == 0) {
                 //输入参数为空，待清算的数据为空
                 log.info("*************** 清算 IntoAndOutMerhtCLAccount2 **************** 待清算的数据为空，结束时间：{}", new Date());
                 return baseResponse;
