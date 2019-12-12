@@ -106,7 +106,7 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
             double clearMoney = ComDoubleUtil.addBySize(account.getClearBalance().doubleValue(),unClearAmount.doubleValue(),2);
             double settleMoney = ComDoubleUtil.addBySize(clearMoney,account.getSettleBalance().doubleValue(),2);
             double totalMoney = ComDoubleUtil.subBySize(settleMoney,account.getFreezeBalance().doubleValue(),2);
-            double outMoney = ComDoubleUtil.addBySize( totalMoney,ctf.getTxnamount()-ctf.getFee(), 2);
+            double outMoney = ComDoubleUtil.addBySize( totalMoney,ctf.getTxnamount()-ctf.getFee()+ctf.getRefundOrderFee(), 2);
             if(outMoney<0){
                 log.info("*************** 清算 IntoAndOutMerhtCLAccount2 **************** 清算户资金必须大于等于0才能操作，结束时间：{}", new Date());
                 return baseResponse;
