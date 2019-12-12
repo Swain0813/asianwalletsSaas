@@ -49,6 +49,10 @@ public class IntoAndOutMerhtAccountRequest implements Serializable{
 
     private String feecurrency;//手续费币种
 
+    private String refundOrderFeeCurrency;//退还手续费币种
+    
+    private double refundOrderFee;//退还手续费
+
     private String channelCostcurrency;//通道成本币种
 
     private double gatewayFee;//交易状态手续费
