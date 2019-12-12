@@ -133,7 +133,7 @@ public class MccServiceImpl implements MccService {
         if (StringUtils.isBlank(mccDTO.getId()) || mccDTO.getEnabled() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        Mcc mcc = mccMapper.selectByExtend1AndLanguage(mccDTO.getId(), mccDTO.getLanguage());
+        Mcc mcc = mccMapper.selectByExtend1AndLanguage(mccDTO.getId(), null);
         if (mcc == null) {
             throw new BusinessException(EResultEnum.INFORMATION_DOES_NOT_EXIST.getCode());
         }
