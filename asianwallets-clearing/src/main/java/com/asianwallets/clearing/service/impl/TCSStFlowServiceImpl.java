@@ -149,9 +149,9 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     mvafrz.setCurrency(stf.getSltcurrency());// 结算币种
                     mvafrz.setMerchantId(stf.getMerchantid());// 交易商户号
                     mvafrz.setEnabled(true);
-                    mvafrz.setFreezeBalance(new BigDecimal(-1 * stf.getTxnamount()));//加冻结
+                    mvafrz.setFreezeBalance(new BigDecimal(-1 * (stf.getTxnamount()-stf.getFee()+stf.getRefundOrderFee())));//加冻结 还要加上手续费
                     balance = mva01.getFreezeBalance().doubleValue();//变动前就是刚查询出来的
-                    afterbalance = mva01.getFreezeBalance().doubleValue() + (-1 * stf.getTxnamount());//变动后就是
+                    afterbalance = mva01.getFreezeBalance().doubleValue() + (-1 * (stf.getTxnamount()-stf.getFee()+stf.getRefundOrderFee()));//变动后就是
                     mvafrz.setId(vaccounId);
                     mvafrz.setUpdateTime(new Date());
                     mvafrz.setVersion(mva01.getVersion());
@@ -186,6 +186,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     mab.setSltcurrency(stf.getSltcurrency());
                     mab.setSltexrate(Double.parseDouble("1"));
                     mab.setSltamount(-1 * stf.getTxnamount());//结算资金
+                    mab.setRefundOrderFee(stf.getRefundOrderFee()); //退还手续费
                     Fre_result2 = tmMerChTvAcctBalanceMapper.insertSelective(mab);
                 }
                 // 插入结算表
