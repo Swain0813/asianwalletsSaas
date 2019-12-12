@@ -58,6 +58,7 @@
         <result column="channel_refund_max_rate" property="channelRefundMaxRate" jdbcType="DECIMAL"/>
         <result column="channel_refund_min_rate" property="channelRefundMinRate" jdbcType="DECIMAL"/>
         <result column="order_validity" property="orderValidity" jdbcType="DECIMAL"/>
+        <result column="only_today_order_refund" property="onlyTodayOrderRefund" jdbcType="BIT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -65,7 +66,7 @@
         currency, settle_cycle,channel_single_select_url, channel_batch_select_url,limit_min_amount,limit_max_amount,
         create_time,channel_merchant_id,md5_key_str,
         update_time, creator,pay_code,
-        issuer_id,channel_connect_method,
+        issuer_id,channel_connect_method,only_today_order_refund,
         channel_rate,channel_fee_type,channel_min_rate,channel_max_rate,
         channel_gateway_rate,channel_gateway_min_rate,channel_gateway_max_rate,channel_gateway_fee_type,channel_gateway_charge,channel_gateway_status,
         modifier, remark, enabled,support_refund_state,refund_url,sort,pay_url,void_url,order_validity,
@@ -159,6 +160,7 @@
                ch.void_url                  as voidUrl,
                ch.refund_url                as refundUrl,
                ch.channel_code              as channelCode,
+               ch.only_today_order_refund   as onlyTodayOrderRefund,
 
                p.id                         as productId,
                p.product_code               as productCode,
@@ -217,6 +219,7 @@
         <result column="voidUrl" property="currency" jdbcType="VARCHAR"/>
         <result column="refundUrl" property="refundUrl" jdbcType="VARCHAR"/>
         <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="onlyTodayOrderRefund" property="onlyTodayOrderRefund" jdbcType="BIT"/>
 
         <collection javaType="list" property="productVOList" resultMap="ChannelDetailProductVOMap"/>
         <collection javaType="list" property="bankVOList" resultMap="BankVOMap"/>
@@ -287,5 +290,10 @@
             </if>
         </where>
         ORDER BY ch.create_time desc
+    </select>
+
+    <select id="selectAllChannelCode" resultType="String">
+        select channel_code
+        from channel;
     </select>
 </mapper>

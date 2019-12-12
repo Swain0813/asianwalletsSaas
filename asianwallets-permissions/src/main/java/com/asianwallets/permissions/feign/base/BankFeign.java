@@ -42,4 +42,9 @@ public interface BankFeign {
     @ApiOperation(value = "根据银行名称与币种查询启用银行")
     @PostMapping("/bank/getByBankNameAndCurrency")
     Bank getByBankNameAndCurrency(BankDTO bankDTO);
+
+    @ApiOperation(value = "查询所有银行名称")
+    @PostMapping("/bank/getAllBankName")
+    List<String> getAllBankName();
+
 }

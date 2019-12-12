@@ -146,6 +146,9 @@ public class ChannelDetailVO {
     @ApiModelProperty(value = "订单有效期")
     private Integer orderValidity;
 
+    @ApiModelProperty(value = "仅当日交易可退款(0-否,1-是)")
+    private Boolean onlyTodayOrderRefund;
+
     @ApiModelProperty(value = "通道关联产品实体")
     private List<ChannelDetailProductVO> productVOList;
 

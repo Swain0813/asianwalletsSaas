@@ -49,7 +49,7 @@
 
   <select id="pageInstitutionRequest" resultMap="BaseResultMap">
     select
-    DISTINCT institution_code,institution_name,create_time,creator
+    DISTINCT institution_code,institution_name,create_time,creator,update_time,modifier
     from institution_request_parameters
     <where>
       <if test="institutionCode!=null and institutionCode!= ''">

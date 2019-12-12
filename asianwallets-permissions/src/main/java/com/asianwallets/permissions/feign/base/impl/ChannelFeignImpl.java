@@ -37,4 +37,9 @@ public class ChannelFeignImpl implements ChannelFeign {
     public List<ChannelExportVO> exportChannel(ChannelDTO channelDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public List<String> getAllChannelCode() {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

@@ -43,4 +43,9 @@ public class BankFeignImpl implements BankFeign {
     public Bank getByBankNameAndCurrency(BankDTO bankDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public List<String> getAllBankName() {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

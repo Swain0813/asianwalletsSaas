@@ -132,7 +132,18 @@ public class BankServiceImpl implements BankService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int importBank(List<Bank> bankList) {
         return bankMapper.insertList(bankList);
+    }
+
+    /**
+     * 查询所有银行名称
+     *
+     * @return 银行名称集合
+     */
+    @Override
+    public List<String> getAllBankName() {
+        return bankMapper.selectAllBankName();
     }
 }

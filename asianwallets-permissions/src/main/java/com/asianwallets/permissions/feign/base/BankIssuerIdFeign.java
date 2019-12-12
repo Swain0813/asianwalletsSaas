@@ -36,4 +36,8 @@ public interface BankIssuerIdFeign {
     @ApiOperation(value = "导入银行机构代码映射信息")
     @PostMapping("/bankIssuerId/importBankIssuerId")
     BaseResponse importBankIssuerId(List<BankIssuerId> bankIssuerIdList);
+
+    @ApiOperation(value = "根据条件查询银行机构映射信息")
+    @PostMapping("/bankIssuerId/getByTerm")
+    BankIssuerId getByTerm(@RequestBody @ApiParam BankIssuerIdDTO bankIssuerIdDTO);
 }
