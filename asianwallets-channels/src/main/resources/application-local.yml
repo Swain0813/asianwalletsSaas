@@ -8,7 +8,7 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
   instance:
-    instance-id: asianwallets-base5001
+    instance-id: asianwallets-channels5005
     prefer-ip-address: true
 
 ribbon:
@@ -49,7 +49,7 @@ spring:
 
 # redis 配置
 redis:
-  database: 0
+  database: 1
   password: test123
   host: 192.168.124.22
   port: 6379
@@ -59,5 +59,3 @@ redis:
     min-idle: 5
     max-total: 100
     max-wait-millis: -1
-
-#

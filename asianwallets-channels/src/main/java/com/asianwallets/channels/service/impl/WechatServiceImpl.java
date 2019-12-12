@@ -1,5 +1,4 @@
 package com.asianwallets.channels.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.WechatService;
@@ -24,7 +23,6 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.FileInputStream;
