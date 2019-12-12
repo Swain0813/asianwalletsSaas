@@ -19,6 +19,7 @@
     <result column="income" property="income" jdbcType="DOUBLE" />
     <result column="outcome" property="outcome" jdbcType="DOUBLE" />
     <result column="fee" property="fee" jdbcType="DOUBLE" />
+    <result column="refundOrderFee" property="refundOrderFee" jdbcType="DOUBLE" />
     <result column="balance" property="balance" jdbcType="DOUBLE" />
     <result column="afterbalance" property="afterbalance" jdbcType="DOUBLE" />
     <result column="sysAddDate" property="sysAddDate" jdbcType="TIMESTAMP" />
@@ -29,8 +30,8 @@
   </resultMap>
   <sql id="Base_Column_List" >
     flow, merchantid, mbuaccountId, vaccounId, type, bussinesstype, balancetype, currency,
-    referenceflow, tradetype, txnamount, sltamount, sltcurrency, sltexrate, income, outcome, 
-    fee, balance, afterbalance, sysAddDate, balance_timestamp, remark, gatewayFee, organId
+    referenceflow, tradetype, txnamount, sltamount, sltcurrency, sltexrate, income, outcome,
+    fee, refundOrderFee, balance, afterbalance, sysAddDate, balance_timestamp, remark, gatewayFee, organId
   </sql>
 
 </mapper>

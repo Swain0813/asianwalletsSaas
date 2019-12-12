@@ -67,3 +67,5 @@ asianwallets-task/target/
 asianwallets-message/target/
 asianwallets-eureka/target/classes/application-server1.yml
 asianwallets-eureka/target/
+/asianwallets-channels/target/
+/asianwallets-clearing/target/

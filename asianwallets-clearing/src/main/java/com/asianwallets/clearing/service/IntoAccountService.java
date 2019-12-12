@@ -1,6 +1,6 @@
 package com.asianwallets.clearing.service;
 
-import com.asianwallets.clearing.vo.IntoAndOutMerhtAccountRequest;
+import com.asianwallets.common.vo.clearing.IntoAndOutMerhtAccountRequest;
 
 public interface IntoAccountService {
 

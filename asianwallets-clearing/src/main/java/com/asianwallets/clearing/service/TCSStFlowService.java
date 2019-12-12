@@ -1,8 +1,8 @@
 package com.asianwallets.clearing.service;
 
-import com.asianwallets.clearing.vo.IntoAndOutMerhtAccountRequest;
 import com.asianwallets.common.entity.TcsStFlow;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.vo.clearing.IntoAndOutMerhtAccountRequest;
 
 import java.util.List;
 
