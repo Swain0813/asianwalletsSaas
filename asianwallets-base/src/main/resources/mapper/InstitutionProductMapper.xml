@@ -25,6 +25,12 @@
         from institution_product where institution_id = #{institutionId}
     </select>
 
+    <select id="selectCountByInstitutionId" resultType="int">
+        select count(*)
+        from institution_product
+        where institution_id = #{institutionId}
+    </select>
+
     <select id="selectIdListByInstitutionId" resultType="String">
         select id
         from institution_product
