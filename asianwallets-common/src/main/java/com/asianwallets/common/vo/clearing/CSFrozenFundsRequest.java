@@ -1,5 +1,7 @@
-package com.asianwallets.clearing.vo;
+package com.asianwallets.common.vo.clearing;
+
 import lombok.Data;
+
 import java.io.Serializable;
 
 /**
