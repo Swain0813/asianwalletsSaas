@@ -12,6 +12,14 @@ import java.util.List;
 public interface InstitutionProductMapper extends BaseMapper<InstitutionProduct> {
 
     /**
+     * 根据机构ID查询机构条数信息
+     *
+     * @param institutionId 机构ID
+     * @return 机构产品集合
+     */
+    int selectCountByInstitutionId(String institutionId);
+
+    /**
      * 根据机构ID查询机构产品信息
      *
      * @param institutionId 机构ID

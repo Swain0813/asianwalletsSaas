@@ -49,8 +49,7 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
     @Override
     @Transactional
     public int addInstitutionProductChannel(String username, List<InstitutionProductChannelDTO> institutionProductChannelDTOList) {
-        InstitutionProduct dbInsPro = institutionProductMapper.selectByInstitutionId(institutionProductChannelDTOList.get(0).getInstitutionId());
-        if (dbInsPro != null) {
+        if (institutionProductMapper.selectCountByInstitutionId(institutionProductChannelDTOList.get(0).getInstitutionId()) > 0) {
             log.info("==========【新增机构关联产品通道信息】==========【信息已存在】");
             throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
         }
