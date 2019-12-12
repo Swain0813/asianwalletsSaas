@@ -117,14 +117,14 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                  * 结算户资金变动处理，如果只正常资金那么就插入一条待结算的结算记录。 如果是冻结资金，
                  * 就先更新账户冻结资金金额，插入冻结资金流水，再插入一条待结算的结算记录
                  */
-                Account mva01 = accountMapper.selectByMerchantIdAndCurrency(stf.getMerchantid(), stf.getSltcurrency());
+                Account mva01 = accountMapper.selectByMerchantIdAndCurrency(stf.getMerchantid(), stf.getTxncurrency());
                 log.info("---------getVersion----------:{}", mva01.getVersion());
                 if (mva01 == null || mva01.getId() == null || mva01.getId().equals("")) {
                     log.info("*************** 结算 IntoAndOutMerhtCLAccount2 **************** 查询商户结算账户信息异常");
                     return baseResponse;
                 }
                 //查询清算表中未清算的金额
-                BigDecimal unClearAmount =tcsCtFlowMapper.getUnClearAmount(stf.getMerchantid(),stf.getSltcurrency());
+                BigDecimal unClearAmount =tcsCtFlowMapper.getUnClearAmount(stf.getMerchantid(),stf.getTxncurrency());
                 unClearAmount = unClearAmount == null ? BigDecimal.ZERO : unClearAmount;
                 //清算表中未清算的金额+结算户的资金+交易金额
                 double totalMoney = ComDoubleUtil.addBySize(mva01.getSettleBalance().doubleValue(), unClearAmount.doubleValue(), 2);
