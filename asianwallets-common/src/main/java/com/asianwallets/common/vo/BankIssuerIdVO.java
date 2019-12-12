@@ -12,6 +12,9 @@ import java.util.Date;
 @ApiModel(value = "银行机构代码输出实体", description = "银行机构代码输出实体")
 public class BankIssuerIdVO {
 
+    @ApiModelProperty(value = "id")
+    private String id;
+
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date createTime;
