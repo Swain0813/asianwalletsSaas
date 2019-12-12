@@ -132,6 +132,7 @@ public class BankServiceImpl implements BankService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int importBank(List<Bank> bankList) {
         return bankMapper.insertList(bankList);
     }

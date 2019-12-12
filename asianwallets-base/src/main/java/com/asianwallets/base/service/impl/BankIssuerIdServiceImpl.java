@@ -117,6 +117,7 @@ public class BankIssuerIdServiceImpl implements BankIssuerIdService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int importBankIssuerId(List<BankIssuerId> bankIssuerIdList) {
         return bankIssuerIdMapper.insertList(bankIssuerIdList);
     }
