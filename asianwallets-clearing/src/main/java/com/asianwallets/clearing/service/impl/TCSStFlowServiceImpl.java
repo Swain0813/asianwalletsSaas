@@ -123,11 +123,15 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     log.info("*************** 结算 IntoAndOutMerhtCLAccount2 **************** 查询商户结算账户信息异常");
                     return baseResponse;
                 }
-                //查询清算表中未清算的金额
-                BigDecimal unClearAmount =tcsCtFlowMapper.getUnClearAmount(stf.getMerchantid(),stf.getTxncurrency());
-                unClearAmount = unClearAmount == null ? BigDecimal.ZERO : unClearAmount;
-                //清算表中未清算的金额+结算户的资金+交易金额
-                double totalMoney = ComDoubleUtil.addBySize(mva01.getSettleBalance().doubleValue(), unClearAmount.doubleValue(), 2);
+                ////查询清算表中未清算的金额
+                //BigDecimal unClearAmount =tcsCtFlowMapper.getUnClearAmount(stf.getMerchantid(),stf.getTxncurrency());
+                //unClearAmount = unClearAmount == null ? BigDecimal.ZERO : unClearAmount;
+                
+                //查询结算算表中未结算算的金额
+                BigDecimal unSettleAmount =tcsStFlowMapper.getUnSettleAmount(stf.getMerchantid(),stf.getTxncurrency());
+                unSettleAmount = unSettleAmount == null ? BigDecimal.ZERO : unSettleAmount;
+                //结算表中未结算的金额+结算户的资金+交易金额
+                double totalMoney = ComDoubleUtil.addBySize(mva01.getSettleBalance().doubleValue(), unSettleAmount.doubleValue(), 2);
                 double outMoney = ComDoubleUtil.addBySize(totalMoney, stf.getTxnamount(), 2);
                 if (outMoney < 0) {
                     log.info("*************** 结算 IntoAndOutMerhtCLAccount2 **************** 结算算户资金必须大于等于0才能操作，结束时间：{}", new Date());
