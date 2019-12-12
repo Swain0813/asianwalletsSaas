@@ -180,15 +180,15 @@ public class Channel extends BaseEntity {
     @Column(name = "extend5")
     private String extend5;
 
-    @ApiModelProperty(value = "是否报备")
+    @ApiModelProperty(value = "是否报备")//0-否 1-是
     @Column(name = "is_report")
     private Boolean isReport;
 
-    @ApiModelProperty(value = "报备形式")
+    @ApiModelProperty(value = "报备形式")//1-接口报备 2-人工报备
     @Column(name = "report_form")
     private Byte reportForm;
 
-    @ApiModelProperty(value = "退款时是否退还收单手续费(1-退还,2-不退还)")
+    @ApiModelProperty(value = "是否退还收单手续费")//1-退还,2-不退还 3-仅限当日退还
     @Column(name = "refunding_is_return_fee")
     private Byte refundingIsReturnFee;
 
@@ -216,7 +216,7 @@ public class Channel extends BaseEntity {
     @Column(name = "order_validity")
     private Integer orderValidity;
 
-    @ApiModelProperty(value = "仅当日交易可退款(0-否,1-是)")
+    @ApiModelProperty(value = "仅当日交易可退款")//0-否,1-是
     @Column(name = "only_today_order_refund")
     private Boolean onlyTodayOrderRefund;
 }
