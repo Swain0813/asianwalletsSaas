@@ -52,6 +52,9 @@ public class BankIssuerIdServiceImpl implements BankIssuerIdService {
             bankIssuerId.setEnabled(true);
             bankIssuerIdList.add(bankIssuerId);
         }
+        if (bankIssuerIdList.size() == 0) {
+            throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
+        }
         return bankIssuerIdMapper.insertList(bankIssuerIdList);
     }
 

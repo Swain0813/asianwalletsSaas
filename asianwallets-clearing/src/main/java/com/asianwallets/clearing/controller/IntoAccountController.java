@@ -1,6 +1,6 @@
 package com.asianwallets.clearing.controller;
 import com.asianwallets.clearing.service.IntoAccountService;
-import com.asianwallets.clearing.vo.IntoAndOutMerhtAccountRequest;
+import com.asianwallets.common.vo.clearing.IntoAndOutMerhtAccountRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

@@ -24,8 +24,8 @@ public class AD3Constant {
     public static final String BUSINESS_OUT = "2"; //跨境业务
 
     //------------查询类型
-    public static final Integer TRADE_ORDER = 1; //交易订单
-    public static final Integer REFUND_ORDER = 2; //退款订单
+    public static final String TRADE_ORDER = "1"; //交易订单
+    public static final String REFUND_ORDER = "2"; //退款订单
 
     //------------交易订单状态
     public static final String ORDER_IN_TRADING = "1"; //交易中

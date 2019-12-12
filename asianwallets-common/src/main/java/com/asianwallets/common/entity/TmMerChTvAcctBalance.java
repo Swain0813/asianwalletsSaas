@@ -83,6 +83,10 @@ public class TmMerChTvAcctBalance{
     @Column(name = "fee")
     private Double fee;
 
+    @ApiModelProperty(value = "退还手续费")
+    @Column(name = "refundOrderFee")
+    private Double refundOrderFee;
+
     @ApiModelProperty(value = "原账户余额")
     @Column(name = "balance")
     private Double balance;

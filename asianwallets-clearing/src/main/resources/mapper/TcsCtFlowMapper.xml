@@ -18,6 +18,8 @@
     <result column="sysorderid" property="sysorderid" jdbcType="VARCHAR" />
     <result column="fee" property="fee" jdbcType="DOUBLE" />
     <result column="feecurrency" property="feecurrency" jdbcType="VARCHAR" />
+    <result column="refundOrderFee" property="refundOrderFee" jdbcType="DOUBLE" />
+    <result column="refundOrderFeeCurrency" property="refundOrderFeeCurrency" jdbcType="VARCHAR" />
     <result column="channelCost" property="channelCost" jdbcType="DOUBLE" />
     <result column="channelcostcurrency" property="channelcostcurrency" jdbcType="VARCHAR" />
     <result column="addDatetime" property="addDatetime" jdbcType="TIMESTAMP" />
@@ -30,9 +32,9 @@
     <result column="organId" property="organId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    CTFlow, refcnceFlow, tradetype, merchantid, merOrderNo, txncurrency, txnamount, revokemount, 
-    businessType, balancetype, CTstate, shouldCTtime, actualCTtime, sysorderid, fee, 
-    feecurrency, channelCost, channelcostcurrency, addDatetime, txndesc, sltamount, sltcurrency, 
+    CTFlow, refcnceFlow, tradetype, merchantid, merOrderNo, txncurrency, txnamount, revokemount,
+    businessType, balancetype, CTstate, shouldCTtime, actualCTtime, sysorderid, fee,refundOrderFee,refundOrderFeeCurrency,
+    feecurrency, channelCost, channelcostcurrency, addDatetime, txndesc, sltamount, sltcurrency,
     txnexrate, remark, gatewayFee, organId
   </sql>
   <select id="getCLLeftMoney" resultType="double" parameterType="com.asianwallets.common.entity.TcsCtFlow" >

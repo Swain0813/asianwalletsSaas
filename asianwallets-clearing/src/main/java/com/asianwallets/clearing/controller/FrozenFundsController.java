@@ -1,6 +1,6 @@
 package com.asianwallets.clearing.controller;
 import com.asianwallets.clearing.service.FrozenFundsService;
-import com.asianwallets.clearing.vo.CSFrozenFundsRequest;
+import com.asianwallets.common.vo.clearing.CSFrozenFundsRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

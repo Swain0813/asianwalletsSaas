@@ -1,6 +1,7 @@
 package com.asianwallets.clearing.service;
 
-import com.asianwallets.clearing.vo.CSFrozenFundsRequest;
+
+import com.asianwallets.common.vo.clearing.CSFrozenFundsRequest;
 
 public interface FrozenFundsService {
 
