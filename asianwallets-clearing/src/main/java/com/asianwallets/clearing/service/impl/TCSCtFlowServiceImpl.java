@@ -88,6 +88,8 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
         ctf.setFeecurrency(ioma.getFeecurrency());
         ctf.setChannelcostcurrency(ioma.getChannelCostcurrency());
         ctf.setGatewayFee(ioma.getGatewayFee());
+        ctf.setRefundOrderFee(ioma.getRefundOrderFee());
+        ctf.setRefundOrderFeeCurrency(ioma.getRefundOrderFeeCurrency());
         try {
             int result = 0;
             if (ctf == null || ctf.getSltcurrency() == null || ctf.getMerchantid() == null || ctf.getBusinessType() == 0) {
