@@ -154,6 +154,9 @@ public class ChannelDTO extends BasePageHelper {
     @ApiModelProperty(value = "订单有效期")
     private Integer orderValidity;
 
+    @ApiModelProperty(value = "仅当日交易可退款(0-否,1-是)")
+    private Boolean onlyTodayOrderRefund;
+
     @ApiModelProperty(value = "产品ID集合")
     private List<String> productIdList;
 

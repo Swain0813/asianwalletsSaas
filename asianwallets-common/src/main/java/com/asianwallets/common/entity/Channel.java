@@ -215,4 +215,8 @@ public class Channel extends BaseEntity {
     @ApiModelProperty(value = "订单有效期")
     @Column(name = "order_validity")
     private Integer orderValidity;
+
+    @ApiModelProperty(value = "仅当日交易可退款(0-否,1-是)")
+    @Column(name = "only_today_order_refund")
+    private Boolean onlyTodayOrderRefund;
 }
