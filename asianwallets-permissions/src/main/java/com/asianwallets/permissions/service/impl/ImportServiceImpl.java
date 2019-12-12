@@ -198,8 +198,8 @@ public class ImportServiceImpl implements ImportService {
             try {
                 List<Object> objects = read.get(i);
                 String bankName = objects.get(0).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
-                String channelCode = objects.get(2).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
                 String currency = objects.get(1).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                String channelCode = objects.get(2).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
                 String issuerId = objects.get(3).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
                 BankIssuerIdDTO bankIssuerIdDTO = new BankIssuerIdDTO(bankName, currency, channelCode, issuerId);
                 if (bankIssuerIdFeign.getByTerm(bankIssuerIdDTO) != null) {
