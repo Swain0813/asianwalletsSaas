@@ -19,6 +19,9 @@ public class BankIssuerIdVO {
     @ApiModelProperty(value = "银行名称")
     private String bankName;
 
+    @ApiModelProperty(value = "银行编号")
+    private String bankCode;
+
     @ApiModelProperty(value = "银行机构号")
     private String issuerId;
 

@@ -47,8 +47,10 @@
         b.update_time as updateTime,
         b.creator,
         b.modifier,
-        b.remark
+        b.remark,
+        k.bank_code as bankCode
         from bank_issuer_id b left join channel c on b.channel_code = c.channel_code
+        LEFT JOIN bank k on b.bank_name = k.bank_name
         <where>
             <if test="bankName!=null and bankName != ''">
                 and b.bank_name LIKE CONCAT(CONCAT('%', #{bankName}), '%')
