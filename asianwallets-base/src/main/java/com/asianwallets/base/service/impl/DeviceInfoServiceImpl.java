@@ -133,7 +133,7 @@ public class DeviceInfoServiceImpl extends BaseServiceImpl<DeviceInfo> implement
         DeviceInfo deviceInfo = getDeviceInfo(deviceInfoDTO);
         deviceInfo.setUpdateTime(new Date());
         //未绑定是否走过交易
-        if (ordersMapper.selectByDeviceCode(deviceInfoDTO.getImei()).size() != 0) {
+        if (ordersMapper.selectByImei(deviceInfoDTO.getImei()) != null) {
             throw new BusinessException(EResultEnum.DEVICE_UNBIND_FAILED.getCode());
         }
         //判断imei 与 sn 是否重复
