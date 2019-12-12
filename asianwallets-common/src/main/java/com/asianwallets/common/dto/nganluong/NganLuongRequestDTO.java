@@ -119,7 +119,7 @@ public class NganLuongRequestDTO {
         this.payment_method = channel.getPayCode();
         this.bank_code = orders.getIssuerId();
         this.buyer_fullname = null;
-        this.buyer_email = orders.getDraweeEmail();
+        this.buyer_email = orders.getPayerEmail();
         this.buyer_mobile = null;
         this.return_url = returnUrl;
         this.cancel_url = cancelUrl;

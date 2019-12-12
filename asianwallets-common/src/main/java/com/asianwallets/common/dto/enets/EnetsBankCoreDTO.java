@@ -83,7 +83,7 @@ public class EnetsBankCoreDTO {
         this.submissionMode = "B";
         this.txnAmount = amt;//交易金额
         this.merchantTxnRef = orders.getId();//id
-        this.merchantTxnDtm = DateToolUtils.getReqDateH(orders.getInstitutionOrderTime());//订单时间
+        this.merchantTxnDtm = DateToolUtils.getReqDateH(orders.getMerchantOrderTime());//订单时间
         this.paymentType = "SALE";
         this.currencyCode = orders.getTradeCurrency();//交易币种
         this.paymentMode = "DD";

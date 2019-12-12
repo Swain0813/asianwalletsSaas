@@ -51,8 +51,8 @@ public class NextPosRequestDTO {
         //标价金额,外币交易的支付金额精确到币种的最小单位，参数值不能带小数点。
         this.amt = String.valueOf(orders.getTradeAmount());//订单金额
         this.return_url = retURL;
-        this.product = orders.getCommodityName();
-        this.institutionOrderId = orders.getInstitutionOrderId();
+        this.product = orders.getProductName();
+        this.institutionOrderId = orders.getMerchantOrderId();
         this.reqIp = orders.getReqIp();
         this.merRespID = channel.getPayCode();
         this.merRespPassword = channel.getMd5KeyStr();

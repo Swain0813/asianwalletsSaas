@@ -98,7 +98,7 @@ public class WechaRefundDTO {
         this.mch_id = channel.getChannelMerchantId();
         this.sub_mch_id = "66104046";
         this.nonce_str = UUIDHelper.getRandomString(32);
-        this.total_fee = orders.getAmount().multiply(new BigDecimal(100)).intValue();
+        this.total_fee = orders.getOrderAmount().multiply(new BigDecimal(100)).intValue();
         this.refund_fee = orders.getTradeAmount().multiply(new BigDecimal(100)).intValue();
         this.refund_fee_type = orders.getTradeCurrency();
         this.refund_account = "REFUND_SOURCE_UNSETTLED_FUNDS";

@@ -70,7 +70,7 @@ public class MegaPayIDRRequestDTO {
         this.cusID = "thb@alldebit.com";
         this.cusName = "Alldebit";
         this.bMode = channel.getIssuerId();
-        this.institutionOrderId = orders.getInstitutionOrderId();
+        this.institutionOrderId = orders.getMerchantOrderId();
         this.md5KeyStr = channel.getMd5KeyStr();
         this.reqIp = orders.getReqIp();
         this.tradeCurrency = orders.getTradeCurrency();

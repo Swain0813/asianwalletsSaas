@@ -53,8 +53,8 @@ public class XenditPayRequestDTO {
 
     public XenditPayRequestDTO(Orders orders, Channel channel, String success_redirect_url, String failure_redirect_url) {
         this.external_id = orders.getId();
-        this.payer_email = orders.getDraweeEmail();
-        this.description = StringUtils.isEmpty(orders.getGoodsDescription()) ? "商品描述" : orders.getGoodsDescription();
+        this.payer_email = orders.getPayerEmail();
+        this.description = StringUtils.isEmpty(orders.getProductName()) ? "商品描述" : orders.getProductName();
         this.amount = orders.getTradeAmount();
         this.callback_virtual_account_id = channel.getChannelMerchantId();
         this.should_send_email = false;

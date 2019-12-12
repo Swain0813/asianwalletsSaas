@@ -63,7 +63,7 @@ public class MegaPayRequestDTO {
         this.retURL = retURL;//页面返回地址
         this.cusID = "";
         this.c_Name = "";
-        this.institutionOrderId = orders.getInstitutionOrderId();
+        this.institutionOrderId = orders.getMerchantOrderId();
         this.tradeCurrency = orders.getTradeCurrency();
         this.reqIp = orders.getReqIp();
         this.md5KeyStr = channel.getMd5KeyStr();

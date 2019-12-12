@@ -53,11 +53,10 @@ public class XenditRequestDTO {
         this.bank_code = channel.getIssuerId();
         this.account_holder_name = "swain";
         this.account_number = channel.getChannelMerchantId();
-        this.description = orders.getGoodsDescription();
+        this.description = orders.getProductName();
         this.amount = orders.getTradeAmount();
-        this.description = orders.getGoodsDescription();
         String[] s = new String[1];
-        s[0] = orders.getDraweeEmail();
+        s[0] = orders.getPayerEmail();
         this.email_to = s;
         this.email_cc = s;
         this.email_bcc = s;

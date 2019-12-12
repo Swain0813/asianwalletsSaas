@@ -147,7 +147,7 @@ public class AliPayCSBDTO {
         this.store_name = "zhstore";
         this.terminal_id = null;
         this.sys_service_provider_id = null;
-        this.institution_order_id = orders.getInstitutionOrderId();
+        this.institution_order_id = orders.getMerchantOrderId();
         this.reqIp = orders.getReqIp();
         this.channel = channel;
     }
