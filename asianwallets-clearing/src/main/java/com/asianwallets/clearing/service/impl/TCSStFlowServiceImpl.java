@@ -252,7 +252,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
 
                     //若是冻结资金，交易金额 - 手续费 + 退还手续费
                     if (validateST.getBalancetype() == 2) {
-                        totalFreAmt = totalFreAmt + (validateST.getTxnamount() - validateST.getFee() +  validateST.getRefundOrderFee());
+                        totalFreAmt = totalFreAmt + (validateST.getTxnamount() - validateST.getFee() + validateST.getRefundOrderFee());
                     }
                 }
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次总交易金额：{}", merchantid, sltcurrency, totalTxnAmt);
@@ -261,7 +261,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次里冻结资金的总金额 ：{}", merchantid, sltcurrency, totalFreAmt);
                 //此批次的总收入
                 double incomeAmt1 = ComDoubleUtil.subBySize(totalTxnAmt, totalFee, 2);
-                double incomeAmt = ComDoubleUtil.addBySize(incomeAmt1,totalRefundFee,2);
+                double incomeAmt = ComDoubleUtil.addBySize(incomeAmt1, totalRefundFee, 2);
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次总交易金额减总手续费 incomeAmt：{}", merchantid, sltcurrency, incomeAmt);
                 //add by ysl 追加结算金额+此批次的总收入如果小于0则下一个批次结算
                 //outMoney=结算金额+此批次的总收入
@@ -356,8 +356,8 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 balance = mva01.getSettleBalance().doubleValue();//结算账户资金
                 fr_balance = mva01.getFreezeBalance().doubleValue();//冻结账户资金
             } else if (st.getBalancetype() == 2) {//冻结资金 如果是冻结资金，需要同步处理冻结资金和正常资金
-                mva.setFreezeBalance(new BigDecimal(st.getTxnamount()-st.getFee()+st.getRefundOrderFee()));//去冻结资金(资金带负号进来的)
-                mva.setSettleBalance(new BigDecimal(st.getTxnamount() - st.getFee() +st.getRefundOrderFee()));//账户正常资金
+                mva.setFreezeBalance(new BigDecimal(st.getTxnamount() - st.getFee() + st.getRefundOrderFee()));//去冻结资金(资金带负号进来的)
+                mva.setSettleBalance(new BigDecimal(st.getTxnamount() - st.getFee() + st.getRefundOrderFee()));//账户正常资金
                 balance = mva01.getSettleBalance().doubleValue();
                 fr_balance = mva01.getFreezeBalance().doubleValue();//冻结资金变动前
             }
@@ -398,9 +398,9 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 mab_fr.setSltexrate(st.getTxnexrate());
                 //解冻资金全部都是从出账
                 mab_fr.setIncome(Double.parseDouble("0"));
-                mab_fr.setOutcome(-1 * st.getTxnamount()+st.getFee()-st.getRefundOrderFee());
-                mab_fr.setTxnamount(-1 * st.getTxnamount()+st.getFee()-st.getRefundOrderFee());
-                mab_fr.setSltamount(-1 * st.getTxnamount()+st.getFee()-st.getRefundOrderFee());
+                mab_fr.setOutcome(-1 * st.getTxnamount() + st.getFee() - st.getRefundOrderFee());
+                mab_fr.setTxnamount(-1 * st.getTxnamount() + st.getFee() - st.getRefundOrderFee());
+                mab_fr.setSltamount(-1 * st.getTxnamount() + st.getFee() - st.getRefundOrderFee());
                 mab_fr.setReferenceflow(st.getRefcnceFlow());
                 mab_fr.setTradetype(st.getTradetype());
                 mab_fr.setType(3);// type 3 冻结账户
@@ -426,15 +426,11 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             mab.setBalance(balance);
             mab.setBalanceTimestamp(new Date());
             mab.setSysAddDate(new Date());
-            mab.setBalancetype(1);//正常资金流水记录
+            //mab.setBalancetype(1);
+            mab.setBalancetype(st.getBalancetype());
             mab.setBussinesstype(st.getBusinessType());
             mab.setCurrency(st.getTxncurrency());
-            if (st.getBalancetype() == 1) {
-                mab.setFee(st.getFee());
-            } else {
-                //冻结资金手续费还要扣的
-                mab.setFee(st.getFee());
-            }
+            mab.setFee(st.getFee());
             mab.setGatewayFee(st.getGatewayFee());
             //20170511新增数据
             mab.setSltcurrency(st.getSltcurrency());
