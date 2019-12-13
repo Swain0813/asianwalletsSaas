@@ -1,5 +1,7 @@
 package com.asianwallets.base.service.impl;
+
 import java.util.*;
+
 import com.asianwallets.base.dao.InstitutionChannelMapper;
 import com.asianwallets.base.dao.InstitutionProductMapper;
 import com.asianwallets.base.dao.ProductChannelMapper;
@@ -21,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -54,7 +57,7 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
         }
         for (InstitutionProductChannelDTO institutionProductChannelDTO : institutionProductChannelDTOList) {
             //通道不选择的场合 报错误信息输入参数不能为空
-            if(institutionProductChannelDTO.getChannelIdList()==null || institutionProductChannelDTO.getChannelIdList().size()==0){
+            if (ArrayUtil.isEmpty(institutionProductChannelDTO.getChannelIdList()) || StringUtils.isEmpty(institutionProductChannelDTO.getInstitutionName())) {
                 throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
             }
             //机构产品信息
@@ -106,7 +109,7 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
         institutionProductMapper.deleteByInstitutionId(institutionProductChannelDTOList.get(0).getInstitutionId());
         for (InstitutionProductChannelDTO institutionProductChannelDTO : institutionProductChannelDTOList) {
             //通道不选择的场合 报错误信息输入参数不能为空
-            if(institutionProductChannelDTO.getChannelIdList()==null || institutionProductChannelDTO.getChannelIdList().size()==0){
+            if (ArrayUtil.isEmpty(institutionProductChannelDTO.getChannelIdList()) || StringUtils.isEmpty(institutionProductChannelDTO.getInstitutionName())) {
                 throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
             }
             //机构产品信息
@@ -164,11 +167,12 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
 
     /**
      * 分页查询机构参数设置
+     *
      * @param institutionRequestDTO
      * @return
      */
     @Override
-    public PageInfo<InstitutionProduct> pageInstitutionRequests(InstitutionRequestDTO institutionRequestDTO){
+    public PageInfo<InstitutionProduct> pageInstitutionRequests(InstitutionRequestDTO institutionRequestDTO) {
         return new PageInfo(institutionProductMapper.pageInstitutionRequests(institutionRequestDTO));
     }
 }
