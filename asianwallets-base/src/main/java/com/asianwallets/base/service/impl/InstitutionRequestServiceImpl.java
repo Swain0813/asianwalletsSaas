@@ -130,7 +130,7 @@ public class InstitutionRequestServiceImpl implements InstitutionRequestService 
     public int updateInstitutionRequest(String username, List<InstitutionRequestDTO> institutionRequests){
         List<InstitutionRequestParameters> institutionRequestParameters = Lists.newArrayList();
         for(InstitutionRequestDTO institutionRequest:institutionRequests){
-             if(institutionRequest.getId()==null){
+             if(StringUtils.isEmpty(institutionRequest.getId())){
                  //如果没有id则说明是新增的场合
                  addInstitutionRequest(username,institutionRequests);
                  continue;
