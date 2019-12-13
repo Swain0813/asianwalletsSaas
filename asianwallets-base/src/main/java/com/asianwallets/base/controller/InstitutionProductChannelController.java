@@ -1,8 +1,8 @@
 package com.asianwallets.base.controller;
-
 import com.asianwallets.base.service.InstitutionProductChannelService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
+import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import io.swagger.annotations.Api;
@@ -44,5 +44,12 @@ public class InstitutionProductChannelController extends BaseController {
     @PostMapping("/getAllProCha")
     public BaseResponse getAllProCha() {
         return ResultUtil.success(institutionProductChannelService.getAllProCha());
+    }
+
+
+    @ApiOperation(value = "分页查询机构参数设置")
+    @PostMapping("/pageInstitutionRequests")
+    public BaseResponse pageInstitutionRequests(@RequestBody @ApiParam InstitutionRequestDTO institutionRequestDTO) {
+        return ResultUtil.success(institutionProductChannelService.pageInstitutionRequests(institutionRequestDTO));
     }
 }

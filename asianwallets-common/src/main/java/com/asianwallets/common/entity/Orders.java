@@ -249,11 +249,11 @@ public class Orders extends BaseEntity {
 
     @ApiModelProperty(value = "发货状态 1-未发货 2-已发货")
     @Column(name = "delivery_status")
-    private Boolean deliveryStatus;
+    private Byte deliveryStatus;
 
     @ApiModelProperty(value = "签收状态  1-未签收 2-已签收 默认是未签收")
     @Column(name = "received_status")
-    private Boolean receivedStatus;
+    private Byte receivedStatus;
 
     @ApiModelProperty(value = "签收时间")
     @Column(name = "received_time")

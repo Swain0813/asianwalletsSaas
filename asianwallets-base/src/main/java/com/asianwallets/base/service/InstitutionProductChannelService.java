@@ -1,10 +1,10 @@
 package com.asianwallets.base.service;
-
-
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
-import com.asianwallets.common.entity.ProductChannel;
+import com.asianwallets.common.dto.InstitutionRequestDTO;
+import com.asianwallets.common.entity.InstitutionProduct;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
 import com.asianwallets.common.vo.ProductChannelVO;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -44,4 +44,10 @@ public interface InstitutionProductChannelService {
      */
     List<ProductChannelVO> getAllProCha();
 
+    /**
+     * 分页查询机构参数设置
+     * @param institutionRequestDTO
+     * @return
+     */
+    PageInfo<InstitutionProduct> pageInstitutionRequests(InstitutionRequestDTO institutionRequestDTO);
 }
