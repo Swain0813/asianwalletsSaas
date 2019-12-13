@@ -18,15 +18,15 @@ public class OrderRefund extends BaseEntity {
 
     @ApiModelProperty(value = "退款类型 - 1：全额退款 2：部分退款")
     @Column(name = "refund_type")
-    private Boolean refundType;
+    private Byte refundType;
 
     @ApiModelProperty(value = "退款方式 - 1：系统退款 2：人工退款")
     @Column(name = "refund_mode")
-    private Boolean refundMode;
+    private Byte refundMode;
 
     @ApiModelProperty(value = "退款状态 1:退款中 2:退款成功 3:退款失败 4:系统创建失败")
     @Column(name = "refund_status")
-    private Boolean refundStatus;
+    private Byte refundStatus;
 
     @ApiModelProperty(value = "交易类型:1-线上 2-线下")
     @Column(name = "trade_type")
@@ -134,7 +134,7 @@ public class OrderRefund extends BaseEntity {
 
     @ApiModelProperty(value = "换汇状态：1-换汇成功 2-换汇失败")
     @Column(name = "exchange_status")
-    private Boolean exchangeStatus;
+    private Byte exchangeStatus;
 
     @ApiModelProperty(value = "通道退款币种")
     @Column(name = "trade_currency")
@@ -238,7 +238,7 @@ public class OrderRefund extends BaseEntity {
 
     @ApiModelProperty(value = "手续费承担方 1:商家 2:用户")
     @Column(name = "fee_payer")
-    private Boolean feePayer;
+    private Byte feePayer;
 
     @ApiModelProperty(value = "通道手续费")
     @Column(name = "channel_fee")

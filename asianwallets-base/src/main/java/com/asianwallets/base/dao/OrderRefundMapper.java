@@ -9,15 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface OrderRefundMapper extends BaseMapper<OrderRefund> {
-    int deleteByPrimaryKey(String id);
 
-    int insert(OrderRefund record);
-
-    int insertSelective(OrderRefund record);
-
-    OrderRefund selectByPrimaryKey(String id);
-
-    int updateByPrimaryKeySelective(OrderRefund record);
-
-    int updateByPrimaryKey(OrderRefund record);
 }
