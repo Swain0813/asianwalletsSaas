@@ -156,6 +156,7 @@
                ch.channel_refund_fee_rate,
                ch.channel_refund_min_rate,
                ch.channel_refund_max_rate,
+               pt2.name as payType,
 
                ch.pay_url                   as payUrl,
                ch.channel_single_select_url as channelSingleSelectUrl,
@@ -183,6 +184,7 @@
                  left join channel_bank cb on ch.id = cb.channel_id
                  left join bank b on cb.bank_id = b.id
                  left join pay_type pt on p.pay_type = pt.extend1 and pt.language = #{language}
+                 left join pay_type pt2 on ch.pay_type = pt2.extend1 and pt2.language = #{language}
         where ch.id = #{channelId}
     </select>
 
@@ -217,6 +219,7 @@
         <result column="channel_refund_fee_rate" property="channelRefundFeeRate" jdbcType="DECIMAL"/>
         <result column="channel_refund_min_rate" property="channelRefundMinRate" jdbcType="DECIMAL"/>
         <result column="channel_refund_max_rate" property="channelRefundMaxRate" jdbcType="DECIMAL"/>
+        <result column="payType" property="payType" jdbcType="VARCHAR"/>
 
         <result column="payUrl" property="payUrl" jdbcType="VARCHAR"/>
         <result column="notifyServerUrl" property="notifyServerUrl" jdbcType="VARCHAR"/>
