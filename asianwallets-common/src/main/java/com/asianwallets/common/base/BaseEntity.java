@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ *
  * @version v1.0.0
  * @classDesc: 功能描述: 功能描述:(实体基础类)
  * @createTime 2018年6月29日 上午10:55:17

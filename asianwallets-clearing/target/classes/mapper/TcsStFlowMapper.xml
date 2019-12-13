@@ -11,6 +11,8 @@
     <result column="txnamount" property="txnamount" jdbcType="DOUBLE" />
     <result column="fee" property="fee" jdbcType="DOUBLE" />
     <result column="feecurrency" property="feecurrency" jdbcType="VARCHAR" />
+    <result column="refundOrderFee" property="refundOrderFee" jdbcType="DOUBLE" />
+    <result column="refundOrderFeeCurrency" property="refundOrderFeeCurrency" jdbcType="VARCHAR" />
     <result column="channelCost" property="channelCost" jdbcType="DOUBLE" />
     <result column="channelcostcurrency" property="channelcostcurrency" jdbcType="VARCHAR" />
     <result column="revokemount" property="revokemount" jdbcType="DOUBLE" />
@@ -33,9 +35,9 @@
     <result column="needClear" property="needClear" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    STFlow, refcnceFlow, tradetype, merchantid, merOrderNo, txncurrency, txnamount, fee, 
-    feecurrency, channelCost, channelcostcurrency, revokemount, businessType, balancetype, 
-    mbuaccountId, accountNo, STstate, shouldSTtime, actualSTtime, sysorderid, addDatetime, 
+    STFlow, refcnceFlow, tradetype, merchantid, merOrderNo, txncurrency, txnamount, fee,refundOrderFee,refundOrderFeeCurrency,
+    feecurrency, channelCost, channelcostcurrency, revokemount, businessType, balancetype,
+    mbuaccountId, accountNo, STstate, shouldSTtime, actualSTtime, sysorderid, addDatetime,
     txndesc, sltamount, sltcurrency, txnexrate, remark, gatewayFee, organId, needClear
   </sql>
     <select id="selectList" resultMap="BaseResultMap">
