@@ -14,10 +14,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @description:
@@ -67,5 +64,11 @@ public class ProductFeignController extends BaseController {
         return productFeign.selectProduct(productDTO);
     }
 
-
+    @ApiOperation(value = "根据支付方式查询所有产品")
+    @GetMapping("/selectProductByPayType")
+    public BaseResponse selectProductByPayType(@RequestParam @ApiParam String payType) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(this.getRequest().getParameterMap()),
+                "根据支付方式查询所有产品"));
+        return productFeign.selectProductByPayType(payType);
+    }
 }

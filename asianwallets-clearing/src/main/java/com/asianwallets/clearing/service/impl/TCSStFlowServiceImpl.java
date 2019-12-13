@@ -250,9 +250,9 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     totalFee += validateST.getFee();
                     totalRefundFee += validateST.getRefundOrderFee();
 
-                    //若是冻结资金，交易金额*（-1） + 手续费 - 退还手续费
+                    //若是冻结资金，交易金额 - 手续费 + 退还手续费
                     if (validateST.getBalancetype() == 2) {
-                        totalFreAmt = totalFreAmt + (-1 * validateST.getTxnamount() + validateST.getFee() - validateST.getRefundOrderFee());
+                        totalFreAmt = totalFreAmt + (validateST.getTxnamount() - validateST.getFee() +  validateST.getRefundOrderFee());
                     }
                 }
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次总交易金额：{}", merchantid, sltcurrency, totalTxnAmt);

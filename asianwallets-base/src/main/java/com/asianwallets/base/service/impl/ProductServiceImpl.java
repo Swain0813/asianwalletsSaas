@@ -130,4 +130,15 @@ public class ProductServiceImpl extends BaseServiceImpl<Product> implements Prod
     public List<ProductVO> selectProduct(ProductDTO productDTO) {
         return productMapper.selectProduct(productDTO);
     }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/1/29
+     * @Descripate 根据支付方式查询所有产品
+     **/
+    @Override
+    public List<Product> selectProductByPayType(String payType, String language) {
+        return productMapper.selectProductByPayType(payType, language);
+    }
 }
