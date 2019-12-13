@@ -7,6 +7,7 @@ import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.dto.OrdersRefundDTO;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.vo.ExportOrdersVO;
 import com.asianwallets.common.vo.OrdersDetailVO;
 import com.asianwallets.common.vo.OrdersRefundDetailVO;
 import com.asianwallets.common.vo.OrdersRefundVO;
@@ -14,6 +15,8 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -70,5 +73,41 @@ public class OrdersServiceImpl implements OrdersService {
     @Override
     public OrdersRefundDetailVO getOrdersRefundDetail(String refundId) {
         return orderRefundMapper.selectOrdersRefundDetailById(refundId, auditorProvider.getLanguage());
+    }
+
+    /**
+     * 退款单导出
+     *
+     * @param ordersRefundDTO
+     * @return
+     */
+    @Override
+    public List<OrdersRefundVO> exportOrdersRefund(OrdersRefundDTO ordersRefundDTO) {
+        ordersRefundDTO.setPageSize(Integer.MAX_VALUE);
+        List<OrdersRefundVO> ordersRefundVOS = orderRefundMapper.pageFindOrdersRefund(ordersRefundDTO);
+        for (OrdersRefundVO ordersRefundVO : ordersRefundVOS) {
+//            退款状态 1:退款中 2:退款成功 3:退款失败 4:系统创建失败
+            if (ordersRefundVO.getRefundStatus() == 1) {
+                ordersRefundVO.setRefundStatusStr("退款中");
+            } else if (ordersRefundVO.getRefundStatus() == 2) {
+                ordersRefundVO.setRefundStatusStr("退款成功");
+            } else if (ordersRefundVO.getRefundStatus() == 3) {
+                ordersRefundVO.setRefundStatusStr("退款失败");
+            } else {
+                ordersRefundVO.setRefundStatusStr("系统创建失败");
+            }
+        }
+        return ordersRefundVOS;
+    }
+
+    /**
+     * 订单导出
+     *
+     * @param ordersDTO 订单实体
+     * @return 订单集合
+     */
+    @Override
+    public List<ExportOrdersVO> exportOrders(OrdersDTO ordersDTO) {
+        return ordersMapper.exportOrders(ordersDTO);
     }
 }
