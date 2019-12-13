@@ -426,7 +426,8 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             mab.setBalance(balance);
             mab.setBalanceTimestamp(new Date());
             mab.setSysAddDate(new Date());
-            mab.setBalancetype(1);//正常资金流水记录
+            //mab.setBalancetype(1);
+            mab.setBalancetype(st.getBalancetype());
             mab.setBussinesstype(st.getBusinessType());
             mab.setCurrency(st.getTxncurrency());
             if (st.getBalancetype() == 1) {
