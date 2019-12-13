@@ -233,7 +233,8 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     mab.setBalancetype(ct.getBalancetype());
                     mab.setBussinesstype(ct.getBusinessType());
                     mab.setCurrency(ct.getTxncurrency());//交易币种
-                    mab.setFee(ct.getFee());//清算流水中手续费为0
+                    mab.setFee(Double.parseDouble("0"));//清算流水中手续费为0
+                    mab.setRefundOrderFee(Double.parseDouble("0"));//清算流水中手续费为0
                     mab.setGatewayFee(Double.parseDouble("0"));//清算流水中网关手续费为0，不做计算
                     mab.setSltcurrency(ct.getSltcurrency());//结算币种
                     mab.setSltexrate(ct.getTxnexrate());//结算汇率
@@ -244,7 +245,7 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                         mab.setIncome(ct.getTxnamount());
                         mab.setOutcome(Double.parseDouble("0"));
                         mab.setTxnamount(ct.getTxnamount());
-                        mab.setSltamount(ct.getSltamount());
+                        mab.setSltamount(ct.getTxnamount());
                     } else {
                         //小于0表示支出，有收入和支出那么所有的都要在流失里面都显示为正
                         mab.setIncome(Double.parseDouble("0"));

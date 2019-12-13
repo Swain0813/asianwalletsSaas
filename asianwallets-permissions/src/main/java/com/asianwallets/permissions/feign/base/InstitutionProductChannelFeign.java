@@ -1,6 +1,4 @@
 package com.asianwallets.permissions.feign.base;
-
-import com.asianwallets.common.dto.BankCardDTO;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.impl.InstitutionProductChannelFeignImpl;
