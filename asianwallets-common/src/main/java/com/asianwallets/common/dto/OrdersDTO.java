@@ -24,7 +24,7 @@ public class OrdersDTO extends BasePageHelper {
     private String institutionName;
 
     @ApiModelProperty(value = "机构编号")
-    private String institutionCode;
+    private String institutionId;
 
     @ApiModelProperty(value = "商户编号")
     private String merchantId;
@@ -39,7 +39,7 @@ public class OrdersDTO extends BasePageHelper {
     private String language;
 
     @ApiModelProperty(value = "订单金额")
-    private BigDecimal amount;
+    private BigDecimal orderAmount;
 
     @ApiModelProperty(value = "订单币种")
     private String orderCurrency;
@@ -82,4 +82,7 @@ public class OrdersDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "产品id")
     private String productId;
+
+    @ApiModelProperty(value = "发货状态 1-未发货 2-已发货")
+    private Boolean deliveryStatus;
 }
