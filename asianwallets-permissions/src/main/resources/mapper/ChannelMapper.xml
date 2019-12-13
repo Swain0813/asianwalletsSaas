@@ -17,6 +17,8 @@
         <result column="service_name_mark" property="serviceNameMark" jdbcType="VARCHAR"/>
         <result column="settle_cycle" property="settleCycle" jdbcType="VARCHAR"/>
         <result column="issuer_id" property="issuerId" jdbcType="VARCHAR"/>
+        <result column="notify_server_url" property="notifyServerUrl" jdbcType="VARCHAR"/>
+        <result column="notify_browser_url" property="notifyBrowserUrl" jdbcType="VARCHAR"/>
         <result column="pay_url" property="payUrl" jdbcType="VARCHAR"/>
         <result column="void_url" property="voidUrl" jdbcType="VARCHAR"/>
         <result column="refund_url" property="refundUrl" jdbcType="VARCHAR"/>
@@ -62,11 +64,11 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, channel_code, channel_en_name, channel_cn_name, channel_img, country, country_type, trans_type, pay_type,
+          id, channel_code, channel_en_name, channel_cn_name, channel_img, country, country_type, trans_type, pay_type,
         currency, settle_cycle,channel_single_select_url, channel_batch_select_url,limit_min_amount,limit_max_amount,
         create_time,channel_merchant_id,md5_key_str,
         update_time, creator,pay_code,
-        issuer_id,channel_connect_method,only_today_order_refund,
+        issuer_id,channel_connect_method,only_today_order_refund,notify_server_url,notify_browser_url,
         channel_rate,channel_fee_type,channel_min_rate,channel_max_rate,
         channel_gateway_rate,channel_gateway_min_rate,channel_gateway_max_rate,channel_gateway_fee_type,channel_gateway_charge,channel_gateway_status,
         modifier, remark, enabled,support_refund_state,refund_url,sort,pay_url,void_url,order_validity,

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -109,6 +110,12 @@ public class ChannelDetailVO {
 
     @ApiModelProperty(value = "权重")
     private String sort;
+
+    @ApiModelProperty(value = "服务器回调地址")
+    private String notifyServerUrl;
+
+    @ApiModelProperty(value = "浏览器回调地址")
+    private String notifyBrowserUrl;
 
     @ApiModelProperty(value = "支付url")
     private String payUrl;

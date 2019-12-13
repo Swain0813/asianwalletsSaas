@@ -243,18 +243,25 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 //判断此批次的总金额是否大于等于0，满足条件才能进行结算
                 double totalTxnAmt = 0.0;//此批次的总交易金额
                 double totalFee = 0.0;//此批次的总手续费
+                double totalRefundFee = 0.0;//此批次的总退还手续费
                 double totalFreAmt = 0.0; //此批次已冻结的总金额
                 for (TcsStFlow validateST : list) {
                     totalTxnAmt += validateST.getTxnamount();
                     totalFee += validateST.getFee();
-                    if (validateST.getTradetype().equals("WD") || (validateST.getTradetype().equals("AA") && validateST.getTxnamount() < 0) || validateST.getTradetype().equals("RF")) {
-                        totalFreAmt += validateST.getTxnamount(); //数值应该为负
+                    totalRefundFee += validateST.getRefundOrderFee();
+
+                    //若是冻结资金，交易金额 - 手续费 + 退还手续费
+                    if (validateST.getBalancetype() == 2) {
+                        totalFreAmt = totalFreAmt + (validateST.getTxnamount() - validateST.getFee() +  validateST.getRefundOrderFee());
                     }
                 }
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次总交易金额：{}", merchantid, sltcurrency, totalTxnAmt);
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次总手续费：{}", merchantid, sltcurrency, totalFee);
-                log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次里WD AA RF 总金额 ：{}", merchantid, sltcurrency, totalFreAmt);
-                double incomeAmt = ComDoubleUtil.subBySize(totalTxnAmt, totalFee, 2);//此批次的总收入
+                log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次总退还手续费：{}", merchantid, sltcurrency, totalRefundFee);
+                log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次里冻结资金的总金额 ：{}", merchantid, sltcurrency, totalFreAmt);
+                //此批次的总收入
+                double incomeAmt1 = ComDoubleUtil.subBySize(totalTxnAmt, totalFee, 2);
+                double incomeAmt = ComDoubleUtil.addBySize(incomeAmt1,totalRefundFee,2);
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次总交易金额减总手续费 incomeAmt：{}", merchantid, sltcurrency, incomeAmt);
                 //add by ysl 追加结算金额+此批次的总收入如果小于0则下一个批次结算
                 //outMoney=结算金额+此批次的总收入
@@ -263,7 +270,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 //outMoney1 = outMoney - 冻结金额
                 double outMoney1 = ComDoubleUtil.subBySize(outMoney, account.getFreezeBalance().doubleValue(), 2);
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} outMoney1：{}", merchantid, sltcurrency, outMoney1);
-                //计算批次总金额时，已经把WD,AA,RF等纪录的金额减去，上一部减去冻结金额相当于减去两次，所以要加上
+                //计算批次总金额时，已经把冻结资金类型的 纪录的金额减去，上一部减去冻结金额相当于减去两次，所以要加上
                 double resultOutMoney = ComDoubleUtil.addBySize(outMoney1, -1 * totalFreAmt, 2);
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{}  resultOutMoney：{}", merchantid, sltcurrency, resultOutMoney);
                 log.info("==========此批次的总收入==========" + resultOutMoney);
@@ -273,6 +280,8 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return;
                 }
+
+
                 for (TcsStFlow st : list) {
                     //单个执行结算处理
                     BaseResponse dm = this.SettlementBase3(st);
@@ -343,12 +352,12 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             Account mva = new Account();//账户更新条件实体类
             if (st.getBalancetype() == 1) {//正常资金
                 mva.setFreezeBalance(new BigDecimal(0.0));
-                mva.setSettleBalance(new BigDecimal(st.getTxnamount() - st.getFee() - st.getGatewayFee()));
+                mva.setSettleBalance(new BigDecimal(st.getTxnamount() - st.getFee() + st.getRefundOrderFee()));
                 balance = mva01.getSettleBalance().doubleValue();//结算账户资金
                 fr_balance = mva01.getFreezeBalance().doubleValue();//冻结账户资金
             } else if (st.getBalancetype() == 2) {//冻结资金 如果是冻结资金，需要同步处理冻结资金和正常资金
-                mva.setFreezeBalance(new BigDecimal(st.getTxnamount()));//去冻结资金(资金带负号进来的)
-                mva.setSettleBalance(new BigDecimal(st.getTxnamount() - st.getFee() - st.getGatewayFee()));//账户正常资金
+                mva.setFreezeBalance(new BigDecimal(st.getTxnamount()-st.getFee()+st.getRefundOrderFee()));//去冻结资金(资金带负号进来的)
+                mva.setSettleBalance(new BigDecimal(st.getTxnamount() - st.getFee() +st.getRefundOrderFee()));//账户正常资金
                 balance = mva01.getSettleBalance().doubleValue();
                 fr_balance = mva01.getFreezeBalance().doubleValue();//冻结资金变动前
             }
@@ -394,13 +403,14 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 mab_fr.setSltexrate(st.getTxnexrate());
                 //解冻资金全部都是从出账
                 mab_fr.setIncome(Double.parseDouble("0"));
-                mab_fr.setOutcome(-1 * st.getSltamount());
-                mab_fr.setTxnamount(-1 * st.getTxnamount());
-                mab_fr.setSltamount(-1 * st.getSltamount());
+                mab_fr.setOutcome(-1 * st.getTxnamount()+st.getFee()-st.getRefundOrderFee());
+                mab_fr.setTxnamount(-1 * st.getTxnamount()+st.getFee()-st.getRefundOrderFee());
+                mab_fr.setSltamount(-1 * st.getTxnamount()+st.getFee()-st.getRefundOrderFee());
                 mab_fr.setReferenceflow(st.getRefcnceFlow());
                 mab_fr.setTradetype(st.getTradetype());
                 mab_fr.setType(3);// type 3 冻结账户
                 mab_fr.setRemark("解冻资金" + "/" + st.getRemark());
+                mab_fr.setRefundOrderFee(Double.parseDouble("0"));
                 //插入账户流水记录
                 result1_fr = tmMerChTvAcctBalanceMapper.insertSelective(mab_fr);
                 if (result1_fr < 1) {
@@ -425,8 +435,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             mab.setBussinesstype(st.getBusinessType());
             mab.setCurrency(st.getTxncurrency());
             if (st.getBalancetype() == 1) {
-                //正常资金手续费已经在清结算被扣下了，设为0
-                mab.setFee(Double.parseDouble("0"));
+                mab.setFee(st.getFee());
             } else {
                 //冻结资金手续费还要扣的
                 mab.setFee(st.getFee());
@@ -435,10 +444,11 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             //20170511新增数据
             mab.setSltcurrency(st.getSltcurrency());
             mab.setSltexrate(st.getTxnexrate());
+            mab.setRefundOrderFee(st.getRefundOrderFee());
             //要判断接口传入的交易金额是正数还是负数
             if (st.getSltamount() >= 0) {
                 //表示收入
-                mab.setIncome(st.getSltamount() - st.getFee() - st.getGatewayFee());
+                mab.setIncome(st.getSltamount() - st.getFee() + st.getRefundOrderFee());
                 mab.setOutcome(Double.parseDouble("0"));
                 mab.setTxnamount(st.getTxnamount());
                 mab.setSltamount(st.getSltamount());
@@ -446,9 +456,9 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             } else {
                 //小于0表示支出
                 mab.setIncome(Double.parseDouble("0"));
-                mab.setOutcome(-1 * st.getSltamount() + st.getFee() + st.getGatewayFee());
+                mab.setOutcome(-1 * st.getSltamount() + st.getFee() - st.getRefundOrderFee());
                 mab.setTxnamount(-1 * st.getTxnamount());
-                mab.setSltamount(-1 * st.getSltamount());
+                mab.setSltamount(-1 * st.getTxnamount());
             }
             mab.setReferenceflow(st.getRefcnceFlow());
             mab.setTradetype(st.getTradetype());

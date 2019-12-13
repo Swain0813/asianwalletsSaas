@@ -9,11 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import com.asianwallets.common.base.BaseController;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -61,5 +58,10 @@ public class ProductController extends BaseController {
         return ResultUtil.success(productService.selectProduct(productDTO));
     }
 
+    @ApiOperation(value = "根据支付方式查询所有产品")
+    @GetMapping("/selectProductByPayType")
+    public BaseResponse selectProductByPayType(@RequestParam @ApiParam String payType) {
+        return ResultUtil.success(productService.selectProductByPayType(payType, this.getLanguage()));
+    }
 
 }

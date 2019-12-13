@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.OrderRefundMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.OrderRefund">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="refund_type" property="refundType" jdbcType="TINYINT"/>
+        <result column="refund_mode" property="refundMode" jdbcType="TINYINT"/>
+        <result column="refund_status" property="refundStatus" jdbcType="TINYINT"/>
+        <result column="trade_type" property="tradeType" jdbcType="TINYINT"/>
+        <result column="trade_direction" property="tradeDirection" jdbcType="TINYINT"/>
+        <result column="institution_code" property="institutionCode" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="agency_code" property="agencyCode" jdbcType="VARCHAR"/>
+        <result column="agency_name" property="agencyName" jdbcType="VARCHAR"/>
+        <result column="group_merchant_code" property="groupMerchantCode" jdbcType="VARCHAR"/>
+        <result column="group_merchant_name" property="groupMerchantName" jdbcType="VARCHAR"/>
+        <result column="second_merchant_name" property="secondMerchantName" jdbcType="VARCHAR"/>
+        <result column="second_merchant_code" property="secondMerchantCode" jdbcType="VARCHAR"/>
+        <result column="language" property="language" jdbcType="VARCHAR"/>
+        <result column="merchant_order_time" property="merchantOrderTime" jdbcType="TIMESTAMP"/>
+        <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR"/>
+        <result column="order_amount" property="orderAmount" jdbcType="DECIMAL"/>
+        <result column="order_currency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <result column="order_for_trade_rate" property="orderForTradeRate" jdbcType="DECIMAL"/>
+        <result column="trade_for_order_rate" property="tradeForOrderRate" jdbcType="DECIMAL"/>
+        <result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
+        <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="product_code" property="productCode" jdbcType="INTEGER"/>
+        <result column="imei" property="imei" jdbcType="VARCHAR"/>
+        <result column="operator_id" property="operatorId" jdbcType="VARCHAR"/>
+        <result column="token" property="token" jdbcType="VARCHAR"/>
+        <result column="exchange_rate" property="exchangeRate" jdbcType="DECIMAL"/>
+        <result column="exchange_time" property="exchangeTime" jdbcType="TIMESTAMP"/>
+        <result column="exchange_status" property="exchangeStatus" jdbcType="TINYINT"/>
+        <result column="trade_currency" property="tradeCurrency" jdbcType="VARCHAR"/>
+        <result column="trade_amount" property="tradeAmount" jdbcType="DECIMAL"/>
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="refund_channel_number" property="refundChannelNumber" jdbcType="VARCHAR"/>
+        <result column="channel_number" property="channelNumber" jdbcType="VARCHAR"/>
+        <result column="pay_method" property="payMethod" jdbcType="VARCHAR"/>
+        <result column="req_ip" property="reqIp" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="float_rate" property="floatRate" jdbcType="DECIMAL"/>
+        <result column="add_value" property="addValue" jdbcType="DECIMAL"/>
+        <result column="payer_name" property="payerName" jdbcType="VARCHAR"/>
+        <result column="payer_account" property="payerAccount" jdbcType="VARCHAR"/>
+        <result column="payer_bank" property="payerBank" jdbcType="VARCHAR"/>
+        <result column="payer_email" property="payerEmail" jdbcType="VARCHAR"/>
+        <result column="payer_phone" property="payerPhone" jdbcType="VARCHAR"/>
+        <result column="swift_code" property="swiftCode" jdbcType="VARCHAR"/>
+        <result column="sign" property="sign" jdbcType="VARCHAR"/>
+        <result column="remark1" property="remark1" jdbcType="VARCHAR"/>
+        <result column="remark2" property="remark2" jdbcType="VARCHAR"/>
+        <result column="remark3" property="remark3" jdbcType="VARCHAR"/>
+        <result column="channel_rate" property="channelRate" jdbcType="DECIMAL"/>
+        <result column="channel_fee_type" property="channelFeeType" jdbcType="VARCHAR"/>
+        <result column="channel_gateway_rate" property="channelGatewayRate" jdbcType="DECIMAL"/>
+        <result column="channel_gateway_fee" property="channelGatewayFee" jdbcType="DECIMAL"/>
+        <result column="channel_gateway_fee_type" property="channelGatewayFeeType" jdbcType="VARCHAR"/>
+        <result column="channel_gateway_charge" property="channelGatewayCharge" jdbcType="TINYINT"/>
+        <result column="channel_gateway_status" property="channelGatewayStatus" jdbcType="TINYINT"/>
+        <result column="product_settle_cycle" property="productSettleCycle" jdbcType="VARCHAR"/>
+        <result column="channel_amount" property="channelAmount" jdbcType="DECIMAL"/>
+        <result column="fee_payer" property="feePayer" jdbcType="TINYINT"/>
+        <result column="channel_fee" property="channelFee" jdbcType="DECIMAL"/>
+        <result column="refund_rate_type" property="refundRateType" jdbcType="VARCHAR"/>
+        <result column="refund_rate" property="refundRate" jdbcType="DECIMAL"/>
+        <result column="refund_fee" property="refundFee" jdbcType="DECIMAL"/>
+        <result column="refund_order_fee" property="refundOrderFee" jdbcType="DECIMAL"/>
+        <result column="remark4" property="remark4" jdbcType="VARCHAR"/>
+        <result column="remark5" property="remark5" jdbcType="VARCHAR"/>
+        <result column="remark6" property="remark6" jdbcType="VARCHAR"/>
+        <result column="remark7" property="remark7" jdbcType="VARCHAR"/>
+        <result column="remark8" property="remark8" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, refund_type, refund_mode, refund_status, trade_type, trade_direction, institution_code,
+    institution_name, agency_code, agency_name, group_merchant_code, group_merchant_name, 
+    second_merchant_name, second_merchant_code, language, merchant_order_time, merchant_order_id, 
+    order_amount, order_currency, order_for_trade_rate, trade_for_order_rate, channel_name, 
+    channel_code, product_name, product_code, imei, operator_id, token, exchange_rate, 
+    exchange_time, exchange_status, trade_currency, trade_amount, order_id, refund_channel_number, 
+    channel_number, pay_method, req_ip, create_time, update_time, creator, modifier, 
+    remark, float_rate, add_value, payer_name, payer_account, payer_bank, payer_email, 
+    payer_phone, swift_code, sign, remark1, remark2, remark3, channel_rate, channel_fee_type, 
+    channel_gateway_rate, channel_gateway_fee, channel_gateway_fee_type, channel_gateway_charge, 
+    channel_gateway_status, product_settle_cycle, channel_amount, fee_payer, channel_fee, 
+    refund_rate_type, refund_rate, refund_fee, refund_order_fee, remark4, remark5, remark6, 
+    remark7, remark8
+    </sql>
+
+</mapper>

@@ -3,6 +3,7 @@ package com.asianwallets.base.service;
 
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.vo.OrdersDetailVO;
 import com.github.pagehelper.PageInfo;
 
 public interface OrdersService {
@@ -14,4 +15,12 @@ public interface OrdersService {
      * @return 订单集合
      */
     PageInfo<Orders> pageFindOrders(OrdersDTO ordersAllDTO);
+
+    /**
+     * 查询订单详情信息
+     *
+     * @param id 订单id
+     * @return 订单详情输出实体
+     */
+    OrdersDetailVO getOrdersDetail(String id);
 }
