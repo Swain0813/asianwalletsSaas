@@ -96,7 +96,8 @@ public class SettleServiceImpl implements SettleService {
                         }
                     });
                     log.info("**************** SettlementForBatch 批次结算 ************** 开始执行商户号为:【{}】，币种为：【{}】的待结算数据", merchantid, sltncurrency);
-                    tcsStFlowService.SettlementForMerchantGroup2(merchantid, sltncurrency, slist);//以商户+交易币种为组进行结算，以组提交事物
+                    //以商户+交易币种为组进行结算，以组提交事物
+                    tcsStFlowService.SettlementForMerchantGroup2(merchantid, sltncurrency, slist);
                     log.info("**************** SettlementForBatch 批次结算 ************** 结束执行商户号为:【{}】，币种为：【{}】的待结算数据", merchantid, sltncurrency);
                 }
             }

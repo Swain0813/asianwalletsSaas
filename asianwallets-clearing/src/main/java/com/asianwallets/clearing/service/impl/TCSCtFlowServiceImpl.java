@@ -200,8 +200,10 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     Account mva = new Account();
                     balance = ma2clnow.getClearBalance().doubleValue();//变动前余额
                     //7/29修改
-                    afterbalance = balance + ct.getTxnamount() - ct.getFee();//变动后余额
-                    mva.setClearBalance(new BigDecimal(ct.getTxnamount()).subtract(new BigDecimal(ct.getFee())));//ysl-20190627 修改 变成 清算表中的金额-手续费
+                    //afterbalance = balance + ct.getTxnamount() - ct.getFee();//变动后余额
+                    //mva.setClearBalance(new BigDecimal(ct.getTxnamount()).subtract(new BigDecimal(ct.getFee())));//ysl-20190627 修改 变成 清算表中的金额-手续费
+                    afterbalance = balance + ct.getTxnamount();//变动后余额
+                    mva.setClearBalance(new BigDecimal(ct.getTxnamount()));//清算表中的金额
                     mva.setId(ma2clnow.getId());
                     mva.setUpdateTime(new Date());
                     mva.setVersion(ma2clnow.getVersion());
@@ -235,6 +237,7 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     mab.setGatewayFee(Double.parseDouble("0"));//清算流水中网关手续费为0，不做计算
                     mab.setSltcurrency(ct.getSltcurrency());//结算币种
                     mab.setSltexrate(ct.getTxnexrate());//结算汇率
+                    mab.setRefundOrderFee(ct.getRefundOrderFee());//退还手续费
                     //要判断接口传入的交易金额是正数还是负数
                     if (ct.getTxnamount() >= 0) {
                         //表示收入，
@@ -246,8 +249,8 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                         //小于0表示支出，有收入和支出那么所有的都要在流失里面都显示为正
                         mab.setIncome(Double.parseDouble("0"));
                         mab.setTxnamount(-1 * ct.getTxnamount());
-                        mab.setOutcome(-1 * ct.getSltamount());
-                        mab.setSltamount(-1 * ct.getSltamount());
+                        mab.setOutcome(-1 * ct.getTxnamount());
+                        mab.setSltamount(-1 * ct.getTxnamount());
                     }
                     mab.setReferenceflow(ct.getRefcnceFlow());
                     mab.setRemark(ct.getRemark());
@@ -276,6 +279,8 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     st.setMerOrderNo(ct.getMerOrderNo());
                     st.setRefcnceFlow(ct.getRefcnceFlow());
                     st.setShouldSTtime(ct.getShouldCTtime());
+                    st.setRefundOrderFee(ct.getRefundOrderFee());
+                    st.setRefundOrderFeeCurrency(ct.getRefundOrderFeeCurrency());
                     st.setSTstate(1);
                     if (ct.getTxnamount() >= 0) {
                         st.setTradetype("ST");//此时的交易类型要转换成结算：
