@@ -154,8 +154,8 @@ public class EnetsSMRequestDTO {
 
         this.stan = IDS.randomNumber(6);
 
-        this.transactionTime = DateUtil.format(orders.getInstitutionOrderTime(), "HHmmss"); //转换为字符串格式
-        this.transactionDate = DateUtil.format(orders.getInstitutionOrderTime(), "MMdd"); //转换为字符串格式
+        this.transactionTime = DateUtil.format(orders.getMerchantOrderTime(), "HHmmss"); //转换为字符串格式
+        this.transactionDate = DateUtil.format(orders.getMerchantOrderTime(), "MMdd"); //转换为字符串格式
         this.entryMode = "000";
         this.conditionCode = "85";
         this.institutionCode = "20000000001";

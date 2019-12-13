@@ -82,8 +82,8 @@ public class DOKURequestDTO {
         this.CURRENCY = "360";
         this.PURCHASECURRENCY = "360";
         this.SESSIONID = "SESSIONID";
-        this.NAME = orders.getDraweeName();
-        this.EMAIL = orders.getDraweeEmail();
+        this.NAME = orders.getPayerName();
+        this.EMAIL = orders.getPayerEmail();
         this.PAYMENTCHANNEL = channel.getIssuerId();
         this.BASKET = "ITEM1,10000.00,2,20000.00;ITEM2,20000.00,4,80000.00";
         this.channel = channel;

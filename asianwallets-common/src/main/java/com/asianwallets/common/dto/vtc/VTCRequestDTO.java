@@ -67,7 +67,7 @@ public class VTCRequestDTO {
         this.signature = "";
         this.reqIp = orders.getReqIp();
         this.md5KeyStr = channel.getMd5KeyStr();
-        this.institutionOrderId = orders.getInstitutionOrderId();
+        this.institutionOrderId = orders.getMerchantOrderId();
         this.channel = channel;
     }
 }

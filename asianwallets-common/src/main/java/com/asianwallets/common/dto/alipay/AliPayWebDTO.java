@@ -134,7 +134,7 @@ public class AliPayWebDTO {
         DecimalFormat decimalFormat = new DecimalFormat("###0.00");//格式化设置
         this.amt = decimalFormat.format(orders.getTradeAmount());
         this.channel = channel;
-        this.institution_order_id = orders.getInstitutionOrderId();
+        this.institution_order_id = orders.getMerchantOrderId();
         this.reqIp = orders.getReqIp();
     }
 

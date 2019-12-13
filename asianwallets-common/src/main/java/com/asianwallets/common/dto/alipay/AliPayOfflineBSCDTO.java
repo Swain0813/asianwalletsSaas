@@ -82,14 +82,14 @@ public class AliPayOfflineBSCDTO {
         this.partner = "2088421920790891";
         this._input_charset = "UTF-8";
         this.alipay_seller_id = "2088421920790891";
-        this.trans_name = StringUtils.isEmpty(orders.getCommodityName()) ? "SALE" : orders.getCommodityName();//产品名称
+        this.trans_name = StringUtils.isEmpty(orders.getProductName()) ? "SALE" : orders.getProductName();//产品名称
         this.partner_trans_id = orders.getId();//订单号
         this.currency = orders.getTradeCurrency();//币种
         this.trans_amount = String.valueOf(orders.getTradeAmount());
         this.buyer_identity_code = buyer_identity_code;//支付宝条码
         this.identity_code_type = "barcode";
         this.biz_product = "OVERSEAS_MBARCODE_PAY";
-        this.institutionOrderId = orders.getInstitutionOrderId();
+        this.institutionOrderId = orders.getMerchantOrderId();
         this.md5KeyStr = channel.getMd5KeyStr();
         this.reqIp = orders.getReqIp();
         this.channel = channel;

@@ -81,7 +81,7 @@ public class Help2PayRequestDTO {
     public Help2PayRequestDTO(Orders orders, Channel channel, String FrontURI, String BackURI, String md5KeyStr) {
         this.Merchant = channel.getChannelMerchantId();
         this.Currency = orders.getTradeCurrency();
-        this.Customer = orders.getInstitutionCode();
+        this.Customer = orders.getMerchantId();
         this.Reference = orders.getId();
         //金额必须格式化
         DecimalFormat decimalFormat = new DecimalFormat("###0.00");//格式化设置
@@ -94,7 +94,7 @@ public class Help2PayRequestDTO {
         this.Datetime = DateToolUtils.getReqDateyyyyMMddHHmmss(orders.getCreateTime());
         this.Bank = orders.getIssuerId();
         this.md5KeyStr = md5KeyStr;
-        this.institutionOrderId = orders.getInstitutionOrderId();
+        this.institutionOrderId = orders.getMerchantOrderId();
         this.channel = channel;
     }
 

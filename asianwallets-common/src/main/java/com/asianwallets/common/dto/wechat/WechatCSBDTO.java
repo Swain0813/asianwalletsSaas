@@ -89,7 +89,7 @@ public class WechatCSBDTO {
         this.mch_id = channel.getChannelMerchantId();
         this.sub_mch_id = "66104046";
         this.sign_type = "MD5";
-        this.body = StringUtils.isEmpty(orders.getCommodityName()) ? "商品" : orders.getCommodityName();//产品名称
+        this.body = StringUtils.isEmpty(orders.getProductName()) ? "商品" : orders.getProductName();//产品名称
         this.out_trade_no = orders.getId();
         this.fee_type = orders.getTradeCurrency();
         String amt = String.valueOf(orders.getTradeAmount());
@@ -108,7 +108,7 @@ public class WechatCSBDTO {
         this.version = "1.0";
         String mccCode = "";
         this.detail = "{\"goods_detail\":[{\"wxpay_goods_id\":\"" + mccCode + "\"}]}";
-        this.institutionOrderId = orders.getInstitutionOrderId();
+        this.institutionOrderId = orders.getMerchantOrderId();
         this.md5KeyStr = channel.getMd5KeyStr();
         this.reqIp = orders.getReqIp();
         this.channel = channel;

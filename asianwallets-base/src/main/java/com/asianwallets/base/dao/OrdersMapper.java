@@ -1,8 +1,8 @@
 package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base.BaseMapper;
+import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.Orders;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,10 +11,18 @@ import java.util.List;
 public interface OrdersMapper extends BaseMapper<Orders> {
 
     /**
-     * 查询该设备交易
+     * 根据设备编号查询订单
      *
-     * @param imei
-     * @return
+     * @param imei 设备号
+     * @return 订单
      */
-    List<Orders> selectByDeviceCode(@Param("imei") String imei);
+    Orders selectByImei(String imei);
+
+    /**
+     * 分页查询订单信息
+     *
+     * @param ordersAllDTO 订单输入实体
+     * @return 订单集合
+     */
+    List<Orders> pageFindOrders(OrdersDTO ordersAllDTO);
 }
