@@ -30,4 +30,10 @@ public class OrdersController extends BaseController {
     public BaseResponse getOrdersDetail(@RequestParam @ApiParam String id) {
         return ResultUtil.success(ordersService.getOrdersDetail(id));
     }
+
+    @ApiOperation(value = "分页查询退款订单信息")
+    @PostMapping("pageFindOrdersRefund")
+    public BaseResponse pageFindOrdersRefund(@RequestBody @ApiParam OrdersDTO ordersAllDTO) {
+        return ResultUtil.success(ordersService.pageFindOrders(ordersAllDTO));
+    }
 }
