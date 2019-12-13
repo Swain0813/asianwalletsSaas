@@ -3,6 +3,7 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
+import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.InstitutionProductChannelFeign;
 import com.asianwallets.permissions.service.OperationLogService;
@@ -53,5 +54,14 @@ public class InstitutionProductChannelFeignController extends BaseController {
     @PostMapping("/getAllProCha")
     public BaseResponse getAllProCha() {
         return institutionProductChannelFeign.getAllProCha();
+    }
+
+
+    @ApiOperation(value = "分页查询机构参数设置")
+    @PostMapping("/pageInstitutionRequests")
+    public BaseResponse pageInstitutionRequests(@RequestParam @ApiParam InstitutionRequestDTO institutionRequestDTO) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionRequestDTO),
+                "分页查询机构参数设置"));
+        return institutionProductChannelFeign.pageInstitutionRequests(institutionRequestDTO);
     }
 }
