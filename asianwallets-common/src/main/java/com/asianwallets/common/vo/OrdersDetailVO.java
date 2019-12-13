@@ -77,7 +77,7 @@ public class OrdersDetailVO {
     @ApiModelProperty(value = "换汇状态")
     private Byte exchangeStatus;
 
-    @ApiModelProperty(value = "换汇备注")
+    @ApiModelProperty(value = "换汇备注(remark1)")
     private String exchangeRateRemark;
 
     //----------------------【通道信息】----------------------------
@@ -90,9 +90,6 @@ public class OrdersDetailVO {
 
     @ApiModelProperty(value = "通道名称")
     private String channelName;
-
-    @ApiModelProperty(value = "银行机构号")
-    private String issuerId;
 
     @ApiModelProperty(value = "付款人名称")
     private String payerName;
@@ -113,7 +110,7 @@ public class OrdersDetailVO {
     @ApiModelProperty(value = "通道手续费")
     private BigDecimal channelFee;
 
-    @ApiModelProperty(value = "通道备注")
+    @ApiModelProperty(value = "通道备注(remark2)")
     private String channelRemark;
 
 
@@ -168,7 +165,7 @@ public class OrdersDetailVO {
     @ApiModelProperty(value = "发货状态")
     private Byte deliveryStatus;
 
-    @ApiModelProperty(value = "物流备注")
+    @ApiModelProperty(value = "物流备注(remark3)")
     private String logisticsRemark;
 
 }
