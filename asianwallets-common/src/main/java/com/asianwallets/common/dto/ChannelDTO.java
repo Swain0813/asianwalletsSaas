@@ -52,6 +52,12 @@ public class ChannelDTO extends BasePageHelper {
     @ApiModelProperty(value = "结算周期")
     private String settleCycle;
 
+    @ApiModelProperty(value = "服务器回调地址")
+    private String notifyServerUrl;
+
+    @ApiModelProperty(value = "浏览器回调地址")
+    private String notifyBrowserUrl;
+
     @ApiModelProperty(value = "支付url")
     private String payUrl;
 

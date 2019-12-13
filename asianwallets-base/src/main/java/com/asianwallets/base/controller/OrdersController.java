@@ -9,10 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Api(description = "订单接口")
@@ -26,5 +23,11 @@ public class OrdersController extends BaseController {
     @PostMapping("pageFindOrders")
     public BaseResponse pageFindOrders(@RequestBody @ApiParam OrdersDTO ordersAllDTO) {
         return ResultUtil.success(ordersService.pageFindOrders(ordersAllDTO));
+    }
+
+    @ApiOperation(value = "查询订单详情信息")
+    @GetMapping("getOrdersDetail")
+    public BaseResponse getOrdersDetail(@RequestParam @ApiParam String id) {
+        return ResultUtil.success(ordersService.getOrdersDetail(id));
     }
 }
