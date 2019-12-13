@@ -72,6 +72,14 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "language")
     private String language;
 
+    @ApiModelProperty(value = "商户编号")
+    @Column(name = "merchant_id")
+    private String merchantId;
+
+    @ApiModelProperty(value = "商户名")
+    @Column(name = "merchant_name")
+    private String merchantName;
+
     @ApiModelProperty(value = "商户订单时间")
     @Column(name = "merchant_order_time")
     private Date merchantOrderTime;
