@@ -24,12 +24,12 @@ public class OrdersServiceImpl implements OrdersService {
     /**
      * 分页查询订单信息
      *
-     * @param ordersAllDTO 订单输入实体
+     * @param ordersDTO 订单输入实体
      * @return 订单集合
      */
     @Override
-    public PageInfo<Orders> pageFindOrders(OrdersDTO ordersAllDTO) {
-        return new PageInfo<>(ordersMapper.pageFindOrders(ordersAllDTO));
+    public PageInfo<Orders> pageFindOrders(OrdersDTO ordersDTO) {
+        return new PageInfo<>(ordersMapper.pageFindOrders(ordersDTO));
     }
 
     /**

@@ -21,8 +21,8 @@ public class OrdersController extends BaseController {
 
     @ApiOperation(value = "分页查询订单信息")
     @PostMapping("pageFindOrders")
-    public BaseResponse pageFindOrders(@RequestBody @ApiParam OrdersDTO ordersAllDTO) {
-        return ResultUtil.success(ordersService.pageFindOrders(ordersAllDTO));
+    public BaseResponse pageFindOrders(@RequestBody @ApiParam OrdersDTO ordersDTO) {
+        return ResultUtil.success(ordersService.pageFindOrders(ordersDTO));
     }
 
     @ApiOperation(value = "查询订单详情信息")
@@ -33,7 +33,7 @@ public class OrdersController extends BaseController {
 
     @ApiOperation(value = "分页查询退款订单信息")
     @PostMapping("pageFindOrdersRefund")
-    public BaseResponse pageFindOrdersRefund(@RequestBody @ApiParam OrdersDTO ordersAllDTO) {
-        return ResultUtil.success(ordersService.pageFindOrders(ordersAllDTO));
+    public BaseResponse pageFindOrdersRefund(@RequestBody @ApiParam OrdersDTO ordersDTO) {
+        return ResultUtil.success(ordersService.pageFindOrders(ordersDTO));
     }
 }

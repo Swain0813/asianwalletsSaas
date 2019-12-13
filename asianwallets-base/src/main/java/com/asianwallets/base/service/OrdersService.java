@@ -11,10 +11,10 @@ public interface OrdersService {
     /**
      * 分页查询订单信息
      *
-     * @param ordersAllDTO 订单输入实体
+     * @param ordersDTO 订单输入实体
      * @return 订单集合
      */
-    PageInfo<Orders> pageFindOrders(OrdersDTO ordersAllDTO);
+    PageInfo<Orders> pageFindOrders(OrdersDTO ordersDTO);
 
     /**
      * 查询订单详情信息
