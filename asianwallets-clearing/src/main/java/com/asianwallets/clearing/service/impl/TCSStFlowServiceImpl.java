@@ -486,8 +486,8 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 ctflow.setSysorderid(st.getSysorderid());
 
                 Double leftmoney = tcsCtFlowMapper.getCLLeftMoney(ctflow);//获取清算表中金额
-                if (leftmoney == null || leftmoney.doubleValue() < 0) {
-                //if (leftmoney == null) {
+                //if (leftmoney == null || leftmoney.doubleValue() < 0) {
+                if (leftmoney == null) {
                     log.info("*************** SettlementBase3 结算基础方法 ************** 编号为：{}的结算流水 查询订单清算户剩余资金异常，或者查询处理过程中异常", record.getSTFlow());
                     //回滚
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
