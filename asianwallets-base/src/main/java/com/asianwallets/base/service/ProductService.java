@@ -52,4 +52,12 @@ public interface ProductService extends BaseService<Product> {
      * @return
      **/
     List<ProductVO> selectProduct(ProductDTO productDTO);
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/1/29
+     * @Descripate 根据支付方式查询所有产品
+     **/
+    List<Product> selectProductByPayType(String payType, String language);
 }
