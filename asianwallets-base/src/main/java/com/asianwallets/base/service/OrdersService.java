@@ -9,6 +9,8 @@ import com.asianwallets.common.vo.OrdersRefundDetailVO;
 import com.asianwallets.common.vo.OrdersRefundVO;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
+
 public interface OrdersService {
 
     /**
@@ -42,4 +44,12 @@ public interface OrdersService {
      * @return OrdersRefundDetailVO
      */
     OrdersRefundDetailVO getOrdersRefundDetail(String refundId);
+
+    /**
+     * 导出
+     *
+     * @param ordersRefundDTO
+     * @return
+     */
+    List<OrdersRefundVO> exportOrdersRefund(OrdersRefundDTO ordersRefundDTO);
 }

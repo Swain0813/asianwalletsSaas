@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Data
 @ApiModel(value = "退款订单输出实体", description = "退款订单输出实体")
-public class OrdersRefundVO {
+public class OrdersRefundExportVO {
 
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -54,9 +54,6 @@ public class OrdersRefundVO {
     @ApiModelProperty(value = "退款完成时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date completeTime;
-
-    @ApiModelProperty(value = "退款状态 1:退款中 2:退款成功 3:退款失败 4:系统创建失败")
-    private Byte refundStatus;
 
     @ApiModelProperty(value = "退款状态 导出用")
     private String refundStatusStr;
