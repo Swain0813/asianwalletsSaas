@@ -21,7 +21,7 @@
     <result column="product_name" property="productName" jdbcType="BIT" />
     <result column="product_description" property="productDescription" jdbcType="BIT" />
     <result column="payer_name" property="payerName" jdbcType="BIT" />
-    <result column="payer_phone" property="payerName" jdbcType="BIT" />
+    <result column="payer_phone" property="payerPhone" jdbcType="BIT" />
     <result column="payer_email" property="payerEmail" jdbcType="BIT" />
     <result column="payer_bank" property="payerBank" jdbcType="BIT" />
     <result column="auth_code" property="authCode" jdbcType="BIT" />

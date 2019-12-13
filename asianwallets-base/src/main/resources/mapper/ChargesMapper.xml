@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.institution.dao.ChargesMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Charges">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="rate_type" property="rateType" jdbcType="VARCHAR"/>
+        <result column="guaranteed_amount" property="guaranteedAmount" jdbcType="DECIMAL"/>
+        <result column="capping_amount" property="cappingAmount" jdbcType="DECIMAL"/>
+        <result column="added_value" property="addedValue" jdbcType="DECIMAL"/>
+        <result column="fee_payer" property="feePayer" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+    </resultMap>
+
+    <resultMap id="NewResultMap" type="com.asianwallets.common.vo.ChargesTypeVO">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="rate_type" property="rateType" jdbcType="VARCHAR"/>
+        <result column="rate_type_name" property="rateTypeName" jdbcType="VARCHAR"/>
+        <result column="guaranteed_amount" property="guaranteedAmount" jdbcType="DECIMAL"/>
+        <result column="capping_amount" property="cappingAmount" jdbcType="DECIMAL"/>
+        <result column="added_value" property="addedValue" jdbcType="DECIMAL"/>
+        <result column="fee_payer" property="feePayer" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+    </resultMap>
+
+
+    <select id="pageChargesCondition" resultMap="NewResultMap"
+            resultType="com.asianwallets.common.vo.ChargesTypeVO">
+        SELECT c.id, c.rate_type, c.guaranteed_amount, c.capping_amount, c.added_value, c.fee_payer, c.create_time,
+        c.update_time,
+        c.creator, c.modifier, c.remark, c.enabled ,d.name as rate_type_name
+        FROM charges c left join dictionary d on c.rate_type = d.code and d.language = #{language}
+        <where>
+            <if test="rateType !=  null">rate_type =#{rateType}</if>
+            <if test="guaranteedAmount !=  null">AND
+                guaranteed_amount=#{guaranteedAmount}#
+            </if>
+            <if test="cappingAmount !=  null">AND capping_amount=#{cappingAmount}</if>
+            <if test="addedValue !=  null">AND added_value=#{addedValue}</if>
+            <if test="feePayer !=  null">AND fee_payer LIKE '%' #{feePayer} '%'</if>
+            <if test="createTime !=  null">AND create_time=#{createTime}</if>
+            <if test="updateTime !=  null">AND update_time=#{updateTime}</if>
+            <if test="creator !=  null and creator.trim() != ''">AND creator LIKE '%' #{creator} '%'</if>
+            <if test="modifier !=  null and modifier.trim() != ''">AND modifier LIKE '%' #{modifier} '%'</if>
+            <if test="remark !=  null and remark.trim() != ''">AND remark LIKE '%' #{remark} '%'</if>
+            <if test="enabled !=  null">AND enabled=#{enabled}</if>
+
+        </where>
+    </select>
+
+
+</mapper>
