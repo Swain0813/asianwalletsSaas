@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@Transactional
 public class InstitutionProductChannelServiceImpl implements InstitutionProductChannelService {
 
     @Autowired

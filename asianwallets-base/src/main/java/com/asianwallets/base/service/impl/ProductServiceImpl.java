@@ -10,7 +10,6 @@ import com.asianwallets.common.entity.Product;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ProductVO;
 import com.github.pagehelper.PageInfo;
