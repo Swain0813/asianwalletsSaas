@@ -484,7 +484,8 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 ctflow.setMerOrderNo(st.getMerOrderNo());
                 ctflow.setSltcurrency(st.getSltcurrency());
                 ctflow.setSysorderid(st.getSysorderid());
-                Double leftmoney = tcsCtFlowMapper.getCLLeftMoney(ctflow);//获取清算表中金额-手续费后的金额
+
+                Double leftmoney = tcsCtFlowMapper.getCLLeftMoney(ctflow);//获取清算表中金额
                 //if (leftmoney == null || leftmoney.doubleValue() < 0) {
                 if (leftmoney == null) {
                     log.info("*************** SettlementBase3 结算基础方法 ************** 编号为：{}的结算流水 查询订单清算户剩余资金异常，或者查询处理过程中异常", record.getSTFlow());
@@ -526,6 +527,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 mab1.setBussinesstype(st.getBusinessType());
                 mab1.setCurrency(st.getTxncurrency());
                 mab1.setFee(Double.parseDouble("0"));//清算流水中手续费为0
+                mab1.setRefundOrderFee(Double.parseDouble("0"));
                 mab1.setGatewayFee(Double.parseDouble("0"));
                 if (st.getTxnamount() < 0 && st.getTradetype().equals(TradeConstant.RV)) {
                     mab1.setIncome(-1 * leftmoney);
