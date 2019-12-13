@@ -68,6 +68,14 @@ public class Channel extends BaseEntity {
     @Column(name = "service_name_mark")
     private String serviceNameMark;
 
+    @ApiModelProperty(value = "服务器回调地址")
+    @Column(name = "notify_server_url")
+    private String notifyServerUrl;
+
+    @ApiModelProperty(value = "浏览器回调地址")
+    @Column(name = "notify_browser_url")
+    private String notifyBrowserUrl;
+
     @ApiModelProperty(value = "支付url")
     @Column(name = "pay_url")
     private String payUrl;

@@ -243,18 +243,25 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 //判断此批次的总金额是否大于等于0，满足条件才能进行结算
                 double totalTxnAmt = 0.0;//此批次的总交易金额
                 double totalFee = 0.0;//此批次的总手续费
+                double totalRefundFee = 0.0;//此批次的总退还手续费
                 double totalFreAmt = 0.0; //此批次已冻结的总金额
                 for (TcsStFlow validateST : list) {
                     totalTxnAmt += validateST.getTxnamount();
                     totalFee += validateST.getFee();
-                    if (validateST.getTradetype().equals("WD") || (validateST.getTradetype().equals("AA") && validateST.getTxnamount() < 0) || validateST.getTradetype().equals("RF")) {
-                        totalFreAmt += validateST.getTxnamount(); //数值应该为负
+                    totalRefundFee += validateST.getRefundOrderFee();
+
+                    //若是冻结资金，交易金额 - 手续费 + 退还手续费
+                    if (validateST.getBalancetype() == 2) {
+                        totalFreAmt = totalFreAmt + (validateST.getTxnamount() - validateST.getFee() +  validateST.getRefundOrderFee());
                     }
                 }
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次总交易金额：{}", merchantid, sltcurrency, totalTxnAmt);
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次总手续费：{}", merchantid, sltcurrency, totalFee);
-                log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次里WD AA RF 总金额 ：{}", merchantid, sltcurrency, totalFreAmt);
-                double incomeAmt = ComDoubleUtil.subBySize(totalTxnAmt, totalFee, 2);//此批次的总收入
+                log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次总退还手续费：{}", merchantid, sltcurrency, totalRefundFee);
+                log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次里冻结资金的总金额 ：{}", merchantid, sltcurrency, totalFreAmt);
+                //此批次的总收入
+                double incomeAmt1 = ComDoubleUtil.subBySize(totalTxnAmt, totalFee, 2);
+                double incomeAmt = ComDoubleUtil.addBySize(incomeAmt1,totalRefundFee,2);
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} 的此批次总交易金额减总手续费 incomeAmt：{}", merchantid, sltcurrency, incomeAmt);
                 //add by ysl 追加结算金额+此批次的总收入如果小于0则下一个批次结算
                 //outMoney=结算金额+此批次的总收入
@@ -263,7 +270,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 //outMoney1 = outMoney - 冻结金额
                 double outMoney1 = ComDoubleUtil.subBySize(outMoney, account.getFreezeBalance().doubleValue(), 2);
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{} outMoney1：{}", merchantid, sltcurrency, outMoney1);
-                //计算批次总金额时，已经把WD,AA,RF等纪录的金额减去，上一部减去冻结金额相当于减去两次，所以要加上
+                //计算批次总金额时，已经把冻结资金类型的 纪录的金额减去，上一部减去冻结金额相当于减去两次，所以要加上
                 double resultOutMoney = ComDoubleUtil.addBySize(outMoney1, -1 * totalFreAmt, 2);
                 log.info("**************** SettlementForMerchantGroup2 单组结算 **************商户:{},币种：{}  resultOutMoney：{}", merchantid, sltcurrency, resultOutMoney);
                 log.info("==========此批次的总收入==========" + resultOutMoney);
@@ -273,6 +280,8 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return;
                 }
+
+
                 for (TcsStFlow st : list) {
                     //单个执行结算处理
                     BaseResponse dm = this.SettlementBase3(st);
