@@ -6,6 +6,7 @@ import com.asianwallets.base.dao.ProductChannelMapper;
 import com.asianwallets.base.service.InstitutionProductChannelService;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
+import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.entity.InstitutionChannel;
 import com.asianwallets.common.entity.InstitutionProduct;
 import com.asianwallets.common.exception.BusinessException;
@@ -14,6 +15,7 @@ import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
 import com.asianwallets.common.vo.ProductChannelVO;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
-@Transactional
 public class InstitutionProductChannelServiceImpl implements InstitutionProductChannelService {
 
     @Autowired
@@ -159,5 +160,15 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
     @Override
     public List<ProductChannelVO> getAllProCha() {
         return productChannelMapper.getAllProCha(auditorProvider.getLanguage());
+    }
+
+    /**
+     * 分页查询机构参数设置
+     * @param institutionRequestDTO
+     * @return
+     */
+    @Override
+    public PageInfo<InstitutionProduct> pageInstitutionRequests(InstitutionRequestDTO institutionRequestDTO){
+        return new PageInfo(institutionProductMapper.pageInstitutionRequests(institutionRequestDTO));
     }
 }

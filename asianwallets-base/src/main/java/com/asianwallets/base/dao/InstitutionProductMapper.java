@@ -1,6 +1,7 @@
 package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base.BaseMapper;
+import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.entity.InstitutionProduct;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
 import org.apache.ibatis.annotations.Param;
@@ -52,4 +53,11 @@ public interface InstitutionProductMapper extends BaseMapper<InstitutionProduct>
      * @return 修改条数
      */
     int deleteByInstitutionId(String institutionId);
+
+    /**
+     * 分页查询机构参数设置
+     * @param institutionRequestDTO
+     * @return
+     */
+    List<InstitutionProduct> pageInstitutionRequests(InstitutionRequestDTO institutionRequestDTO);
 }

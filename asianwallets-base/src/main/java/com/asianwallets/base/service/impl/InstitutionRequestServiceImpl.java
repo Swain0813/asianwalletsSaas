@@ -130,11 +130,11 @@ public class InstitutionRequestServiceImpl implements InstitutionRequestService 
     public int updateInstitutionRequest(String username, List<InstitutionRequestDTO> institutionRequests){
         List<InstitutionRequestParameters> institutionRequestParameters = Lists.newArrayList();
         for(InstitutionRequestDTO institutionRequest:institutionRequests){
-            //修改机构请求参数设置id的非空check
-            if(StringUtils.isEmpty(institutionRequest.getId())){
-                throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-            }
-            //根据机构编号和交易方向判断数据存不存在
+             if(institutionRequest.getId()==null){
+                 //如果没有id则说明是新增的场合
+                 return addInstitutionRequest(username,institutionRequests);
+             }
+            //根据id判断修改机构请求参数设置信息存不存在
             InstitutionRequestParameters institutionRequestParameters1 = institutionRequestParametersMapper.selectByPrimaryKey(institutionRequest.getId());
             if(institutionRequestParameters1==null){
                 throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
