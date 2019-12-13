@@ -2,7 +2,6 @@ package com.asianwallets.permissions.feign.base;
 
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.permissions.feign.base.impl.ExchangeRateFeignImpl;
 import com.asianwallets.permissions.feign.base.impl.OrdersFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
