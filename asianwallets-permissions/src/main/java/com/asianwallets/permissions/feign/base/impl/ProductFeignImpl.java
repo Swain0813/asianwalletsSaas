@@ -34,4 +34,9 @@ public class ProductFeignImpl implements ProductFeign {
     public BaseResponse selectProduct(ProductDTO productDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BaseResponse selectProductByPayType(String payType) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

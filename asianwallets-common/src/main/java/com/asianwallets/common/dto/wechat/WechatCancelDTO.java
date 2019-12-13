@@ -85,7 +85,7 @@ public class WechatCancelDTO {
         this.mch_id = channel.getChannelMerchantId();
         this.sub_mch_id = "66104046";
         this.nonce_str = UUIDHelper.getRandomString(32);
-        this.total_fee = orderRefund.getAmount().multiply(new BigDecimal(100)).intValue();
+        this.total_fee = orderRefund.getOrderAmount().multiply(new BigDecimal(100)).intValue();
         this.refund_fee = orderRefund.getTradeAmount().multiply(new BigDecimal(100)).intValue();
         this.refund_fee_type = orderRefund.getTradeCurrency();
         this.refund_account = "REFUND_SOURCE_UNSETTLED_FUNDS";
