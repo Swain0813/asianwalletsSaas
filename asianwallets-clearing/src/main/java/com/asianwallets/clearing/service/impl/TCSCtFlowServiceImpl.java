@@ -245,13 +245,13 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                         mab.setIncome(ct.getTxnamount());
                         mab.setOutcome(Double.parseDouble("0"));
                         mab.setTxnamount(ct.getTxnamount());
-                        mab.setSltamount(ct.getTxnamount());
+                        mab.setSltamount(ct.getSltamount());
                     } else {
                         //小于0表示支出，有收入和支出那么所有的都要在流失里面都显示为正
                         mab.setIncome(Double.parseDouble("0"));
                         mab.setTxnamount(-1 * ct.getTxnamount());
                         mab.setOutcome(-1 * ct.getTxnamount());
-                        mab.setSltamount(-1 * ct.getTxnamount());
+                        mab.setSltamount(-1 * ct.getSltamount());
                     }
                     mab.setReferenceflow(ct.getRefcnceFlow());
                     mab.setRemark(ct.getRemark());
