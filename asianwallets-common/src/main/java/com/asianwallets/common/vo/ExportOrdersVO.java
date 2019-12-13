@@ -60,19 +60,19 @@ public class ExportOrdersVO {
     private BigDecimal tradeAmount;
 
     @ApiModelProperty(value = "交易状态")//交易状态:1-待支付 2-交易中 3-交易成功 4-交易失败 5-已过期
-    private String tradeStatus;
+    private Byte tradeStatus;
 
     @ApiModelProperty(value = "撤销状态")//撤销状态：1-撤销中 2-撤销成功 3-撤销失败
-    private String cancelStatus;
+    private Byte cancelStatus;
 
     @ApiModelProperty(value = "退款状态")//退款状态：1-退款中 2-部分退款成功 3-退款成功 4-退款失败
-    private String refundStatus;
+    private Byte refundStatus;
 
     @ApiModelProperty(value = "通道流水号")
     private String channelNumber;
 
     @ApiModelProperty(value = "产品类型 收与付")
-    private String tradeDirection;
+    private Byte tradeDirection;
 
     @ApiModelProperty(value = "交易类型")
     private String tradeType;

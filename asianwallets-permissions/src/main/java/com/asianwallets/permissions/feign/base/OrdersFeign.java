@@ -3,6 +3,7 @@ package com.asianwallets.permissions.feign.base;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.dto.OrdersRefundDTO;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.vo.ExportOrdersVO;
 import com.asianwallets.common.vo.OrdersRefundVO;
 import com.asianwallets.permissions.feign.base.impl.OrdersFeignImpl;
 import io.swagger.annotations.ApiOperation;
@@ -37,4 +38,8 @@ public interface OrdersFeign {
     @ApiOperation(value = "导出退款订单")
     @PostMapping("/orders/exportOrdersRefund")
     List<OrdersRefundVO> exportOrdersRefund(@RequestBody @ApiParam OrdersRefundDTO ordersRefundDTO);
+
+    @ApiOperation(value = "订单导出")
+    @PostMapping("/orders/exportOrders")
+    List<ExportOrdersVO> exportOrders(OrdersDTO ordersDTO);
 }
