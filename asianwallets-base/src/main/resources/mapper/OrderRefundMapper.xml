@@ -17,6 +17,8 @@
         <result column="second_merchant_name" property="secondMerchantName" jdbcType="VARCHAR"/>
         <result column="second_merchant_code" property="secondMerchantCode" jdbcType="VARCHAR"/>
         <result column="language" property="language" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
         <result column="merchant_order_time" property="merchantOrderTime" jdbcType="TIMESTAMP"/>
         <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR"/>
         <result column="order_amount" property="orderAmount" jdbcType="DECIMAL"/>
@@ -78,10 +80,30 @@
         <result column="remark7" property="remark7" jdbcType="VARCHAR"/>
         <result column="remark8" property="remark8" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <!--    分页查询使用Map-->
+    <resultMap id="pageFindOrdersRefundMap" type="com.asianwallets.common.vo.OrdersRefundVO">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="institution_code" property="institutionCode" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR"/>
+        <result column="order_amount" property="orderAmount" jdbcType="DECIMAL"/>
+        <result column="order_currency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
+        <result column="trade_currency" property="tradeCurrency" jdbcType="VARCHAR"/>
+        <result column="trade_amount" property="tradeAmount" jdbcType="DECIMAL"/>
+        <result column="update_time" property="completeTime" jdbcType="TIMESTAMP"/>
+        <result column="refund_status" property="refundStatus" jdbcType="TINYINT"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
         id, refund_type, refund_mode, refund_status, trade_type, trade_direction, institution_code,
     institution_name, agency_code, agency_name, group_merchant_code, group_merchant_name, 
-    second_merchant_name, second_merchant_code, language, merchant_order_time, merchant_order_id, 
+    second_merchant_name, second_merchant_code, language,merchant_id,merchant_name, merchant_order_time, merchant_order_id,
     order_amount, order_currency, order_for_trade_rate, trade_for_order_rate, channel_name, 
     channel_code, product_name, product_code, imei, operator_id, token, exchange_rate, 
     exchange_time, exchange_status, trade_currency, trade_amount, order_id, refund_channel_number, 
@@ -93,5 +115,44 @@
     refund_rate_type, refund_rate, refund_fee, refund_order_fee, remark4, remark5, remark6, 
     remark7, remark8
     </sql>
+
+    <select id="pageFindOrdersRefund" resultMap="pageFindOrdersRefundMap">
+        select
+        <include refid="Base_Column_List"/>
+        from order_refund
+        <where>
+            <if test="refundCurrency !=null and refundCurrency !=''">
+                order_currency LIKE CONCAT(CONCAT('%', #{refundCurrency}), '%')
+            </if>
+            <if test="id !=null and id !=''">
+                AND id LIKE CONCAT(CONCAT('%', #{id}), '%')
+            </if>
+            <if test="merchantOrderId !=null and merchantOrderId !=''">
+                AND merchant_order_id LIKE CONCAT(CONCAT('%', #{merchantOrderId}), '%')
+            </if>
+            <if test="refundAmount !=null">
+                AND order_amount = #{refundAmount}
+            </if>
+            <if test="institutionCode !=null and institutionCode !=''">
+                AND institution_code LIKE CONCAT(CONCAT('%', #{institutionCode}), '%')
+            </if>
+            <if test="institutionName !=null and institutionName !=''">
+                AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+            </if>
+            <if test="refundStatus !=null">
+                AND refund_status = #{refundStatus}
+            </if>
+            <if test="startDate != null">
+                AND create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND create_time &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOrdersRefundDetailById" resultType="com.asianwallets.common.vo.OrdersRefundDetailVO">
+
+    </select>
 
 </mapper>
