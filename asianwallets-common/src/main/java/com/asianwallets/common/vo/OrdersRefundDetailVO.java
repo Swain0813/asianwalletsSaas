@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@ApiModel(value = "退款订单详情输出实体", description = "退款订单详情输出实体")
+@ApiModel(value = "OrdersRefundDetailVO", description = "退款订单详情输出实体")
 public class OrdersRefundDetailVO {
 
     @ApiModelProperty(value = "创建时间")

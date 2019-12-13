@@ -9,7 +9,7 @@ import lombok.Data;
  * @copyright: 上海众哈网络技术有限公司
  */
 @Data
-public class BaseResponse {
+public class BaseResponse<T> {
 
     //错误码
     private String code;
@@ -18,7 +18,7 @@ public class BaseResponse {
     private String msg;
 
     //具体的信息内容
-    private Object data;
+    private T data;
 
 }
 

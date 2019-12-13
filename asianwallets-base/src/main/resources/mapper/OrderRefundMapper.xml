@@ -118,7 +118,23 @@
 
     <select id="pageFindOrdersRefund" resultMap="pageFindOrdersRefundMap">
         select
-        <include refid="Base_Column_List"/>
+        id,
+        create_time,
+        institution_code,
+        institution_name,
+        merchant_id,
+        merchant_name,
+        merchant_order_id,
+        order_amount,
+        order_currency,
+        channel_name,
+        trade_currency,
+        trade_amount,
+        refund_status,
+        case refund_status
+        when 2 then update_time
+        end update_time,
+        remark
         from order_refund
         <where>
             <if test="refundCurrency !=null and refundCurrency !=''">
@@ -152,7 +168,62 @@
     </select>
 
     <select id="selectOrdersRefundDetailById" resultType="com.asianwallets.common.vo.OrdersRefundDetailVO">
+        SELECT o.create_time                         as orderCreateTime,
+               o.merchant_order_id                   as merchantOrderId,
+               o.id                                  as orderId,
+               o.order_currency                      as orderCurrency,
+               o.order_amount                        as orderAmount,
+               o.fee,
+               o.add_value                           as addValue,
+               concat(p.name, '-', o.trade_currency) as payType,
+               o.req_ip                              as reqIp,
+               o.imei,
+               o.operator_id                         as operatorId,
+               o.trade_status                        as tradeStatus,
+               o.remark                              as ordersRemark,
 
+
+               o.exchange_time                       as exchangeTime,
+               o.trade_amount                        as tradeAmount,
+               o.trade_currency                      as tradeCurrency,
+               o.float_rate                          as floatRate,
+               o.order_for_trade_rate                as orderForTradeRate,
+               o.exchange_rate                       as exchangeRate,
+               o.exchange_status                     as exchangeStatus,
+               o.remark1                             as exchangeRateRemark,
+
+
+               o.report_channel_time                 as reportChannelTime,
+               o.channel_number                      as channelNumber,
+               o.channel_name                        as channelName,
+               o.payer_name                          as payerName,
+               o.payer_account                       as payerAccount,
+               o.payer_bank                          as payerBank,
+               o.payer_email                         as payerEmail,
+               o.channel_callback_time               as channelCallbackTime,
+               o.channel_fee                         as channelFee,
+               o.remark2                             as channelRemark,
+
+               ore.create_time                       as orderRefundCreateTime,
+               ore.id                                as orderRefundId,
+               ore.order_amount                      as orderRefundAmount,
+               ore.exchange_rate                     as refundExchangeRate,
+               ore.channel_amount                    as refundChannelAmount,
+               ore.trade_currency                    as refundTradeCurrency,
+               ore.refund_status                     as refundStatus,
+               ore.update_time                       as refundFinishTime,
+               ore.refund_fee                        as refundFee,
+               ore.remark                            as refundRemark,
+
+               o.delivery_time                       as deliveryTime,
+               o.product_name                        as productName,
+               o.invoice_no                          as invoiceNo,
+               o.provider_name                       as providerName,
+               o.delivery_status                     as deliveryStatus,
+               o.remark3                             as logisticsRemark
+        FROM order_refund ore
+                 left join orders o on ore.order_id = o.id
+                 left join pay_type p on p.extend1 = o.pay_method and p.language = #{language}
+        WHERE ore.id = #{refundId}
     </select>
-
 </mapper>
