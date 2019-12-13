@@ -132,7 +132,8 @@ public class InstitutionRequestServiceImpl implements InstitutionRequestService 
         for(InstitutionRequestDTO institutionRequest:institutionRequests){
              if(institutionRequest.getId()==null){
                  //如果没有id则说明是新增的场合
-                 return addInstitutionRequest(username,institutionRequests);
+                 addInstitutionRequest(username,institutionRequests);
+                 continue;
              }
             //根据id判断修改机构请求参数设置信息存不存在
             InstitutionRequestParameters institutionRequestParameters1 = institutionRequestParametersMapper.selectByPrimaryKey(institutionRequest.getId());
