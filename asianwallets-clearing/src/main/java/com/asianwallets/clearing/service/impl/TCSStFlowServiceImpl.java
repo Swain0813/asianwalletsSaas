@@ -446,9 +446,9 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             mab.setSltexrate(st.getTxnexrate());
             mab.setRefundOrderFee(st.getRefundOrderFee());
             //要判断接口传入的交易金额是正数还是负数
-            if (st.getSltamount() >= 0) {
+            if (st.getTxnamount() >= 0) {
                 //表示收入
-                mab.setIncome(st.getSltamount() - st.getFee() + st.getRefundOrderFee());
+                mab.setIncome(st.getTxnamount() - st.getFee() + st.getRefundOrderFee());
                 mab.setOutcome(Double.parseDouble("0"));
                 mab.setTxnamount(st.getTxnamount());
                 mab.setSltamount(st.getSltamount());
@@ -458,7 +458,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 mab.setIncome(Double.parseDouble("0"));
                 mab.setOutcome(-1 * st.getSltamount() + st.getFee() - st.getRefundOrderFee());
                 mab.setTxnamount(-1 * st.getTxnamount());
-                mab.setSltamount(-1 * st.getTxnamount());
+                mab.setSltamount(-1 * st.getSltamount());
             }
             mab.setReferenceflow(st.getRefcnceFlow());
             mab.setTradetype(st.getTradetype());
