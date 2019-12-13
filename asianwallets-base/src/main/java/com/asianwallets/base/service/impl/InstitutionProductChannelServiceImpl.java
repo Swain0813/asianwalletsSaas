@@ -1,7 +1,5 @@
 package com.asianwallets.base.service.impl;
-
 import java.util.*;
-
 import com.asianwallets.base.dao.InstitutionChannelMapper;
 import com.asianwallets.base.dao.InstitutionProductMapper;
 import com.asianwallets.base.dao.ProductChannelMapper;
@@ -10,7 +8,6 @@ import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
 import com.asianwallets.common.entity.InstitutionChannel;
 import com.asianwallets.common.entity.InstitutionProduct;
-import com.asianwallets.common.entity.ProductChannel;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
@@ -25,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@Transactional
 public class InstitutionProductChannelServiceImpl implements InstitutionProductChannelService {
 
     @Autowired
@@ -54,6 +52,10 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
             throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
         }
         for (InstitutionProductChannelDTO institutionProductChannelDTO : institutionProductChannelDTOList) {
+            //通道不选择的场合 报错误信息输入参数不能为空
+            if(institutionProductChannelDTO.getChannelIdList()==null || institutionProductChannelDTO.getChannelIdList().size()==0){
+                throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+            }
             //机构产品信息
             InstitutionProduct institutionProduct = new InstitutionProduct();
             String insProId = IDS.uuid2();
@@ -102,6 +104,10 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
         //删除机构产品中间表信息
         institutionProductMapper.deleteByInstitutionId(institutionProductChannelDTOList.get(0).getInstitutionId());
         for (InstitutionProductChannelDTO institutionProductChannelDTO : institutionProductChannelDTOList) {
+            //通道不选择的场合 报错误信息输入参数不能为空
+            if(institutionProductChannelDTO.getChannelIdList()==null || institutionProductChannelDTO.getChannelIdList().size()==0){
+                throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+            }
             //机构产品信息
             InstitutionProduct institutionProduct = new InstitutionProduct();
             String insProId = IDS.uuid2();

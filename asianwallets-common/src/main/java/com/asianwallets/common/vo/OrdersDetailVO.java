@@ -1,4 +1,5 @@
 package com.asianwallets.common.vo;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,44 +12,49 @@ import java.util.Date;
 @ApiModel(value = "订单详情输出实体", description = "订单详情输出实体")
 public class OrdersDetailVO {
 
+    //----------------------【订单信息】----------------------------
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date createTime;
+    private Date orderCreateTime;
 
     @ApiModelProperty(value = "商户订单号")
-    private String institutionOrderId;
+    private String merchantOrderId;
 
     @ApiModelProperty(value = "订单流水号")
-    private String id;
+    private String orderId;
 
     @ApiModelProperty(value = "订单币种")
     private String orderCurrency;
 
     @ApiModelProperty(value = "订单金额")
-    private BigDecimal amount;
+    private BigDecimal orderAmount;
 
     @ApiModelProperty(value = "手续费")
     private BigDecimal fee;
 
-    @ApiModelProperty(value = "通道手续费")
-    private BigDecimal channelFee;
-
     @ApiModelProperty(value = "附加值")
     private BigDecimal addValue;
+
+    @ApiModelProperty(value = "产品名称")
+    private String payType;
 
     @ApiModelProperty(value = "请求ip")
     private String reqIp;
 
-    @ApiModelProperty(value = "设备编号")//收款设备编号(线下订单)
-    private String deviceCode;
+    @ApiModelProperty(value = "设备编号")
+    private String imei;
 
-    @ApiModelProperty(value = "设备操作员")//收银员编号(线下订单)
-    private String deviceOperator;
+    @ApiModelProperty(value = "设备操作员")
+    private String operatorId;
 
     @ApiModelProperty(value = "订单状态")
     private Byte tradeStatus;
 
+    @ApiModelProperty(value = "订单备注")
+    private String ordersRemark;
 
+
+    //----------------------【换汇信息】----------------------------
     @ApiModelProperty(value = "换汇时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date exchangeTime;
@@ -62,13 +68,19 @@ public class OrdersDetailVO {
     @ApiModelProperty(value = "浮动率")
     private BigDecimal floatRate;
 
+    @ApiModelProperty(value = "订单转交易币种汇率")
+    private BigDecimal orderForTradeRate;
+
     @ApiModelProperty(value = "换汇汇率")
     private BigDecimal exchangeRate;
 
     @ApiModelProperty(value = "换汇状态")
     private Byte exchangeStatus;
 
+    @ApiModelProperty(value = "换汇备注")
+    private String exchangeRateRemark;
 
+    //----------------------【通道信息】----------------------------
     @ApiModelProperty(value = "上报通道时间(请求扣款时间)")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date reportChannelTime;
@@ -83,53 +95,80 @@ public class OrdersDetailVO {
     private String issuerId;
 
     @ApiModelProperty(value = "付款人名称")
-    private String draweeName;
+    private String payerName;
 
     @ApiModelProperty(value = "付款人账户")
-    private String draweeAccount;
+    private String payerAccount;
 
     @ApiModelProperty(value = "付款人银行")
-    private String draweeBank;
+    private String payerBank;
 
     @ApiModelProperty(value = "付款人邮箱")
-    private String draweeEmail;
-
-    @ApiModelProperty(value = "商品名称")
-    private String productName;
-
+    private String payerEmail;
 
     @ApiModelProperty(value = "通道回调时间(扣款完成时间)")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date channelCallbackTime;
 
-    @ApiModelProperty(value = "备注")//订单失败原因
-    private String remark;
+    @ApiModelProperty(value = "通道手续费")
+    private BigDecimal channelFee;
 
-    @ApiModelProperty(value = "字典支付方式名称")
-    private String dName;
+    @ApiModelProperty(value = "通道备注")
+    private String channelRemark;
 
-    @ApiModelProperty(value = "产品名称")
-    private String payName;
 
-    @ApiModelProperty(value = "备注1")
-    private String remark1;
+    //----------------------【退款信息】----------------------------
+    @ApiModelProperty(value = "退款订单创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date orderRefundCreateTime;
 
-    @ApiModelProperty(value = "备注2")
-    private String remark2;
+    @ApiModelProperty(value = "退款流水号")
+    private String orderRefundId;
 
-    @ApiModelProperty(value = "备注3")
-    private String remark3;
+    @ApiModelProperty(value = "退款金额")
+    private BigDecimal orderRefundAmount;
 
-    @ApiModelProperty(value = "备注4")
-    private String remark4;
+    @ApiModelProperty(value = "退款汇率")
+    private BigDecimal refundExchangeRate;
 
-    @ApiModelProperty(value = "手续费付款方")
-    private Byte feePayer;
+    @ApiModelProperty(value = "通道退款金额")
+    private BigDecimal refundChannelAmount;
 
-    @ApiModelProperty(value = "手费率类型")
-    private String rateType;
+    @ApiModelProperty(value = "退款交易币种")
+    private String refundTradeCurrency;
 
-    @ApiModelProperty(value = "银行名")
-    private String bankName;
+    @ApiModelProperty(value = "退款状态")
+    private Byte refundStatus;
+
+    @ApiModelProperty(value = "退款完成时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date refundFinishTime;
+
+    @ApiModelProperty(value = "退款手续费")
+    private BigDecimal refundFee;
+
+    @ApiModelProperty(value = "退款备注")
+    private String refundRemark;
+
+
+    //----------------------【物流信息】----------------------------
+    @ApiModelProperty(value = "发货时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date deliveryTime;
+
+    @ApiModelProperty(value = "商品名称")
+    private String productName;
+
+    @ApiModelProperty(value = "发货单号")
+    private String invoiceNo;
+
+    @ApiModelProperty(value = "服务商名称")
+    private String providerName;
+
+    @ApiModelProperty(value = "发货状态")
+    private Byte deliveryStatus;
+
+    @ApiModelProperty(value = "物流备注")
+    private String logisticsRemark;
 
 }
