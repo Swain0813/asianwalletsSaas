@@ -4,7 +4,6 @@ import com.asianwallets.base.service.OrdersService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.dto.OrdersRefundDTO;
-import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.ExportOrdersVO;
@@ -35,7 +34,7 @@ public class OrdersController extends BaseController {
 
     @ApiOperation(value = "查询订单详情信息")
     @GetMapping("getOrdersDetail")
-    public BaseResponse getOrdersDetail(@RequestParam @ApiParam String id) {
+    public BaseResponse getOrdersDetail(@RequestParam("id") @ApiParam String id) {
         return ResultUtil.success(ordersService.getOrdersDetail(id));
     }
 
@@ -55,7 +54,7 @@ public class OrdersController extends BaseController {
 
     @ApiOperation(value = "查询退款订单详情信息")
     @GetMapping("getOrdersRefundDetail")
-    public BaseResponse getOrdersRefundDetail(@RequestParam @ApiParam String refundId) {
+    public BaseResponse getOrdersRefundDetail(@RequestParam("refundId") @ApiParam String refundId) {
         return ResultUtil.success(ordersService.getOrdersRefundDetail(refundId));
     }
 

@@ -25,15 +25,15 @@ public interface OrdersFeign {
 
     @ApiOperation(value = "查询订单详情信息")
     @GetMapping("/orders/getOrdersDetail")
-    BaseResponse getOrdersDetail(@RequestParam @ApiParam String id);
+    BaseResponse getOrdersDetail(@RequestParam("id") @ApiParam String id);
 
     @ApiOperation(value = "分页查询退款订单信息")
     @PostMapping("/orders/pageFindOrdersRefund")
     BaseResponse pageFindOrdersRefund(@RequestBody @ApiParam OrdersRefundDTO ordersRefundDTO);
 
     @ApiOperation(value = "查询退款订单详情信息")
-    @PostMapping("/orders/getOrdersRefundDetail")
-    BaseResponse getOrdersRefundDetail(@RequestParam @ApiParam String refundId);
+    @GetMapping("/orders/getOrdersRefundDetail")
+    BaseResponse getOrdersRefundDetail(@RequestParam("refundId") @ApiParam String refundId);
 
     @ApiOperation(value = "导出退款订单")
     @PostMapping("/orders/exportOrdersRefund")

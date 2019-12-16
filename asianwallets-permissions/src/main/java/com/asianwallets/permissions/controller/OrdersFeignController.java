@@ -27,12 +27,12 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @Api(description = "订单接口")
@@ -59,7 +59,7 @@ public class OrdersFeignController extends BaseController {
 
     @ApiOperation(value = "查询订单详情信息")
     @GetMapping("getOrdersDetail")
-    public BaseResponse getOrdersDetail(@RequestParam @ApiParam String id) {
+    public BaseResponse getOrdersDetail(@RequestParam("id") @ApiParam String id) {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(id),
                 "查询订单详情信息"));
         return ordersFeign.getOrdersDetail(id);
@@ -75,7 +75,7 @@ public class OrdersFeignController extends BaseController {
 
     @ApiOperation(value = "查询退款订单详情信息")
     @GetMapping("getOrdersRefundDetail")
-    public BaseResponse getOrdersRefundDetail(@RequestParam @ApiParam String refundId) {
+    public BaseResponse getOrdersRefundDetail(@RequestParam("refundId") @ApiParam String refundId) {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(refundId),
                 "查询退款订单详情信息"));
         return ordersFeign.getOrdersRefundDetail(refundId);
