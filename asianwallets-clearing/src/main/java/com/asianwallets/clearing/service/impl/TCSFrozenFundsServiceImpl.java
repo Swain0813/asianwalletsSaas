@@ -73,7 +73,7 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
                 }
                 //商户账户存在的情况下，需要判断本次操作是否会导致账户为负
                 if (!(mva.getFreezeBalance().doubleValue() + ffl.getTxnamount() >= 0)) {
-                    log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #本次操作后会导致账户资金为负,时间：{}", new Date());
+                    log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #本次操作后会导致冻结账户资金为负,时间：{}", new Date());
                     message.setCode(Const.Code.CODE_LackOfFunds);
                     message.setMsg(Const.Code.CODE_LackOfFunds + ":本次操作是否会导致账户为负");
                     return message;
@@ -84,6 +84,10 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
                  */
                 //更新结算户冻结资金
                 log.info("***************** frozenFundsLogs ****************# 账户：{} 变动前冻结账户余额 ：{}", ffl.getMvaccountId(), mva.getFreezeBalance().doubleValue());
+                if (ffl.getState() == 1 && mva.getSettleBalance().doubleValue() < ffl.getTxnamount()) {
+                    log.info("********************* frozenFundsLogs *********************** #结算账户资金金额不足,时间：{}", new Date());
+                    return message;
+                }
                 if (ffl.getState() == 2 && mva.getFreezeBalance().doubleValue() < ffl.getTxnamount()) {
                     log.info("********************* frozenFundsLogs *********************** #冻结账户资金金额不足,时间：{}", new Date());
                     return message;
