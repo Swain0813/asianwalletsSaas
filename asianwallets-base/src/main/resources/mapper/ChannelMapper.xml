@@ -298,6 +298,9 @@
             <if test="currency != null and currency != ''">
                 and ch.currency=#{currency}
             </if>
+            <if test="refundingIsReturnFee != null">
+                and ch.refunding_is_return_fee=#{refundingIsReturnFee}
+            </if>
         </where>
         ORDER BY ch.create_time desc
     </select>
