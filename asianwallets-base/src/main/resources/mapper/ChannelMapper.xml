@@ -80,7 +80,7 @@
         select
         <include refid="Base_Column_List"/>
         from channel
-        where channel_code = #{channelCode} where enabled = 1;
+        where channel_code = #{channelCode} AND enabled = 1;
     </select>
 
     <select id="selectByNameAndCurrency" resultMap="BaseResultMap">
