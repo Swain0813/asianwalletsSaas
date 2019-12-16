@@ -41,7 +41,8 @@ public class ClearingApplicationTests {
         //clearService.ClearForGroupBatch();
         //settleService.SettlementForBatch();
         //new RedisLockThread().start();
-        new RedisLockThread1().start();
+        //new RedisLockThread1().start();
+        new RedisLockThread2().start();
     }
 
     /**
@@ -137,7 +138,8 @@ public class ClearingApplicationTests {
             csFrozenFundsRequest.setMerchantId("M201912062672");
             csFrozenFundsRequest.setMerOrderNo("1");
             csFrozenFundsRequest.setTxncurrency("SGD");
-            csFrozenFundsRequest.setTxnamount(100.00);
+            csFrozenFundsRequest.setTxnamount(-100.00);
+            csFrozenFundsRequest.setMvaccountId("11111");
             csFrozenFundsRequest.setState(2);
             frozenFundsService.CSFrozenFunds(csFrozenFundsRequest);
 
