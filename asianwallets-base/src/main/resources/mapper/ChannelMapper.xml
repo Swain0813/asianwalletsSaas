@@ -80,7 +80,7 @@
         select
         <include refid="Base_Column_List"/>
         from channel
-        where channel_code = #{channelCode};
+        where channel_code = #{channelCode} where enabled = 1;
     </select>
 
     <select id="selectByNameAndCurrency" resultMap="BaseResultMap">
@@ -156,7 +156,7 @@
                ch.channel_refund_fee_rate,
                ch.channel_refund_min_rate,
                ch.channel_refund_max_rate,
-               ch.pay_type as payType,
+               ch.pay_type                  as payType,
 
                ch.pay_url                   as payUrl,
                ch.channel_single_select_url as channelSingleSelectUrl,
