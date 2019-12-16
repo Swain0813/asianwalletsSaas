@@ -28,10 +28,8 @@
         update account set
         <if test="freezeBalance != null">
             freeze_balance = freeze_balance+ #{freezeBalance},
-            version = #{version,jdbcType=BIGINT}+1,
             update_time = #{updateTime,jdbcType=TIMESTAMP}
             where id = #{id,jdbcType=VARCHAR}
-            and version = #{version,jdbcType=BIGINT}
         </if>
     </update>
 
@@ -43,10 +41,8 @@
             <if test="freezeBalance != null">
                 freeze_balance = freeze_balance+#{freezeBalance,jdbcType=DECIMAL},
             </if>
-            version = #{version,jdbcType=BIGINT}+1,
             update_time = #{updateTime,jdbcType=TIMESTAMP}
             where id = #{id,jdbcType=VARCHAR}
-            and version = #{version,jdbcType=BIGINT}
         </if>
     </update>
 
@@ -61,10 +57,8 @@
             <if test="remark != null">
                 remark =#{remark,jdbcType=VARCHAR},
             </if>
-            version = #{version,jdbcType=BIGINT}+1,
             update_time = #{updateTime,jdbcType=TIMESTAMP}
             where id = #{id,jdbcType=VARCHAR}
-            and version = #{version,jdbcType=BIGINT}
         </if>
     </update>
 
@@ -73,10 +67,8 @@
         set
         <if test="settleBalance != null">
             settle_balance = #{settleBalance,jdbcType=DECIMAL},
-            version = #{version,jdbcType=BIGINT}+1,
             update_time = #{updateTime,jdbcType=TIMESTAMP}
             where id = #{id,jdbcType=VARCHAR}
-            and version = #{version,jdbcType=BIGINT}
         </if>
     </update>
 
@@ -104,10 +96,8 @@
             <if test="remark != null">
                 remark =#{remark,jdbcType=VARCHAR},
             </if>
-            version = #{version,jdbcType=BIGINT}+1,
             update_time = #{updateTime,jdbcType=TIMESTAMP}
             where id = #{id,jdbcType=VARCHAR}
-            and version = #{version,jdbcType=BIGINT}
         </if>
     </update>
 

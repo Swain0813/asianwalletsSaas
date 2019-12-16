@@ -1,5 +1,6 @@
 package com.asianwallets.common.aspect;
 
+import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -55,7 +56,7 @@ public class LogAspectController {
             log.info("请求地址:" + request.getRequestURL().toString());
             log.info("请求方式:" + request.getMethod());
             log.info("请求类方法:" + joinPoint.getSignature());
-            log.info("请求类方法参数:" + Arrays.toString(joinPoint.getArgs()));
+            log.info("请求类方法参数:" + JSON.toJSONString(joinPoint.getArgs()));
             //String token = request.getHeader(AsianWalletConstant.tokenHeader);
             //if (StringUtils.isNotBlank(token)) {
             //    log.info("请求类TOKEN参数:" + token);

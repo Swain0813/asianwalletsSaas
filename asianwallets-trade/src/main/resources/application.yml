@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: asianwallets-trade
+  profiles:
+    active: @profileActive@
+  main:
+    allow-bean-definition-overriding: true
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 60000
+        readTimeout: 60000
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml     #mapper文件路径
+  type-aliases-package: com.asianwallets.trade.entity   #实体类的包路径
+#pagehelper分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: false
+  supportMethodsArguments: false
+  params: count=countSql
+
+#==================== 日志  ============================
+logging:
+  config: classpath:logback.xml

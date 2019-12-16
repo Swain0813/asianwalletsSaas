@@ -48,7 +48,7 @@ public class TcsFrozenFundsLogs{
 
     @ApiModelProperty(value = "状态")
     @Column(name = "state")
-    private Integer state;//1已冻结，2已解冻
+    private Integer state;//1加冻结，2解冻结
 
     @ApiModelProperty(value = "冻结时间")
     @Column(name = "frozenDatetime")

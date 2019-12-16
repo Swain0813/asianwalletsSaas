@@ -78,7 +78,7 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
                 return repqo;
             }
             TcsFrozenFundsLogs ffl = (TcsFrozenFundsLogs) obj[0];
-            Institution merchant = (Institution) obj[1];
+            Merchant merchant = (Merchant) obj[1];
             if ( ffl == null || merchant == null) {
                 //输入校验通过,但是返回商户虚拟户或者冻结记录为空
                 repqo.setRespCode(dm.getCode());
@@ -194,13 +194,13 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
             message.setMsg(Const.Code.MSG_TxnamountIllegal);
             return message;
         }
-        //mvaccountId验证
-        if (ffr.getMvaccountId() == null || ffr.getMvaccountId().equals("")) {
-            log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #mvaccountId验证不通过,时间：{}", new Date());
-            message.setCode(Const.Code.CODE_MvaccountIdIllegal);
-            message.setMsg(Const.Code.MSG_MvaccountIdIllegal);
-            return message;
-        }
+        ////mvaccountId验证
+        //if (ffr.getMvaccountId() == null || ffr.getMvaccountId().equals("")) {
+        //    log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #mvaccountId验证不通过,时间：{}", new Date());
+        //    message.setCode(Const.Code.CODE_MvaccountIdIllegal);
+        //    message.setMsg(Const.Code.MSG_MvaccountIdIllegal);
+        //    return message;
+        //}
         //state验证
         if (ffr.getState() != 1 && ffr.getState() != 2) {
             log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #state验证不通过,时间：{}", new Date());
