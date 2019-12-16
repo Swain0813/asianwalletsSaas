@@ -60,7 +60,7 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         if (institution == null) {
             throw new BusinessException(EResultEnum.INSTITUTION_DOES_NOT_EXIST.getCode());
         }
-        Channel channel = channelMapper.selectByPrimaryKey(merchantReportDTO.getChannelCode());
+        Channel channel = channelMapper.selectByChannelCode(merchantReportDTO.getChannelCode());
         if (channel == null) {
             throw new BusinessException(EResultEnum.CHANNEL_IS_NOT_EXISTS.getCode());
         }

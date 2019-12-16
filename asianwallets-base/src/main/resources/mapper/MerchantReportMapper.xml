@@ -60,6 +60,10 @@
         create_time as createTime,
         update_time as updateTime,
         create_time as completeTime,
+        channel_code as channelCode,
+        sub_appid as subAppid,
+        shop_code as shopCode,
+        shop_name as shopName,
         enabled,
         creator,
         modifier,
@@ -68,6 +72,9 @@
         extend2
         from merchant_report
         <where>
+            <if test="id != null and id !=''">
+                AND id = #{id}
+            </if>
             <if test="startTime != null and startTime != ''">
                 AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
             </if>

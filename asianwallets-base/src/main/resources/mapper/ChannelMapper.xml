@@ -80,7 +80,7 @@
         select
         <include refid="Base_Column_List"/>
         from channel
-        where channel_code = #{channelCode};
+        where channel_code = #{channelCode} AND enabled = 1;
     </select>
 
     <select id="selectByNameAndCurrency" resultMap="BaseResultMap">
@@ -122,6 +122,9 @@
             <if test="currency != null and currency != ''">
                 and ch.currency=#{currency}
             </if>
+            <if test="refundingIsReturnFee != null">
+                and ch.refunding_is_return_fee=#{refundingIsReturnFee}
+            </if>
         </where>
     </select>
 
@@ -156,7 +159,7 @@
                ch.channel_refund_fee_rate,
                ch.channel_refund_min_rate,
                ch.channel_refund_max_rate,
-               ch.pay_type as payType,
+               ch.pay_type                  as payType,
 
                ch.pay_url                   as payUrl,
                ch.channel_single_select_url as channelSingleSelectUrl,
@@ -294,6 +297,9 @@
             </if>
             <if test="currency != null and currency != ''">
                 and ch.currency=#{currency}
+            </if>
+            <if test="refundingIsReturnFee != null">
+                and ch.refunding_is_return_fee=#{refundingIsReturnFee}
             </if>
         </where>
         ORDER BY ch.create_time desc
