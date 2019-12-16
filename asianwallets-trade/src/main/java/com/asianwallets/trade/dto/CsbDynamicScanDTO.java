@@ -44,7 +44,7 @@ public class CsbDynamicScanDTO {
     private String operatorId;
 
     @NotNull(message = "50002")
-    @ApiModelProperty(value = "token")
+    @ApiModelProperty(value = "Token")
     private String token;
 
     @NotNull(message = "52008")

@@ -1,13 +1,13 @@
 package com.asianwallets.trade.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.exception.BusinessException;
-import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dto.CsbDynamicScanDTO;
 import com.asianwallets.trade.service.OfflineTradeService;
+import com.asianwallets.trade.vo.CsbDynamicScanVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,11 +26,12 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      * 线下同机构CSB动态扫码
      *
      * @param csbDynamicScanDTO 线下同机构CSB动态扫码输入实体
-     * @return BaseResponse
+     * @return 线下同机构CSB动态扫码输出实体
      */
     @Override
     @Transactional(rollbackFor = Exception.class, noRollbackFor = BusinessException.class)
-    public BaseResponse csbDynamicScan(CsbDynamicScanDTO csbDynamicScanDTO) {
+    public CsbDynamicScanVO csbDynamicScan(CsbDynamicScanDTO csbDynamicScanDTO) {
+        log.info("==================【线下CSB动态扫码】==================【请求参数】 csbDynamicScanDTO: {}", JSON.toJSONString(csbDynamicScanDTO));
         Orders orders = new Orders();
         orders.setMerchantId(csbDynamicScanDTO.getMerchantId());
         orders.setMerchantOrderId(csbDynamicScanDTO.getOrderNo());
@@ -45,6 +46,11 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         ordersMapper.insert(orders);
 //        throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
 //        int i = 1 / 0;
-        return null;
+        log.info("==================【线下CSB动态扫码】==================【下单结束】");
+        CsbDynamicScanVO csbDynamicScanVO = new CsbDynamicScanVO();
+        csbDynamicScanVO.setOrderNo(orders.getMerchantOrderId());
+        csbDynamicScanVO.setQrCodeUrl("www.baidu.com");
+        csbDynamicScanVO.setDecodeType("0");
+        return csbDynamicScanVO;
     }
 }
