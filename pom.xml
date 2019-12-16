@@ -23,9 +23,8 @@
         <module>asianwallets-task</module>
         <module>asianwallets-message</module>
         <module>asianwallets-channels</module>
-        <!--<module>asianwallet-trade</module>-->
-        <!--<module>asianwallet-finance</module>-->
         <module>asianwallets-clearing</module>
+        <module>asianwallets-trade</module>
     </modules>
 
     <properties>

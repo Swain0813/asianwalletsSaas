@@ -60,6 +60,7 @@ asianwallets-base/mvnw.cmd
 asianwallets-permissions/mvnw.cmd
 asianwallets-task/mvnw.cmd
 asianwallets-message/mvnw.cmd
+asianwallets-trade/mvnw.cmd
 mvnw.cmd
 asianwallets-base/target/
 asianwallets-permissions/target/
@@ -69,3 +70,4 @@ asianwallets-eureka/target/classes/application-server1.yml
 asianwallets-eureka/target/
 asianwallets-channels/target/
 asianwallets-clearing/target/
+asianwallets-trade/target/
