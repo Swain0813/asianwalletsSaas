@@ -194,13 +194,13 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
             message.setMsg(Const.Code.MSG_TxnamountIllegal);
             return message;
         }
-        //mvaccountId验证
-        if (ffr.getMvaccountId() == null || ffr.getMvaccountId().equals("")) {
-            log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #mvaccountId验证不通过,时间：{}", new Date());
-            message.setCode(Const.Code.CODE_MvaccountIdIllegal);
-            message.setMsg(Const.Code.MSG_MvaccountIdIllegal);
-            return message;
-        }
+        ////mvaccountId验证
+        //if (ffr.getMvaccountId() == null || ffr.getMvaccountId().equals("")) {
+        //    log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #mvaccountId验证不通过,时间：{}", new Date());
+        //    message.setCode(Const.Code.CODE_MvaccountIdIllegal);
+        //    message.setMsg(Const.Code.MSG_MvaccountIdIllegal);
+        //    return message;
+        //}
         //state验证
         if (ffr.getState() != 1 && ffr.getState() != 2) {
             log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #state验证不通过,时间：{}", new Date());

@@ -105,7 +105,7 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
                 mab.setMerchantid(ffl.getMerchantId());
                 mab.setOrganId(ffl.getOrganId());//所属机构号
                 mab.setMbuaccountId(null);
-                mab.setVaccounId(ffl.getMvaccountId());
+                mab.setVaccounId(mva.getAccountCode());
                 mab.setBalance(balance);
                 mab.setBalanceTimestamp(new Date());
                 mab.setSysAddDate(new Date());
