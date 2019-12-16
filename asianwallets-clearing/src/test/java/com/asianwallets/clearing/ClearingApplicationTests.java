@@ -1,10 +1,12 @@
 package com.asianwallets.clearing;
 import com.asianwallets.clearing.service.ClearService;
+import com.asianwallets.clearing.service.FrozenFundsService;
 import com.asianwallets.clearing.service.IntoAccountService;
 import com.asianwallets.clearing.service.SettleService;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.utils.DateToolUtils;
+import com.asianwallets.common.vo.clearing.CSFrozenFundsRequest;
 import com.asianwallets.common.vo.clearing.IntoAndOutMerhtAccountRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,11 +31,17 @@ public class ClearingApplicationTests {
     @Autowired
     private SettleService settleService;
 
+
+    @Autowired
+    private FrozenFundsService frozenFundsService;
+
+
     @Test
     public void test1(){
         //clearService.ClearForGroupBatch();
         //settleService.SettlementForBatch();
-        new RedisLockThread().start();
+        //new RedisLockThread().start();
+        new RedisLockThread1().start();
     }
 
     /**
@@ -92,5 +100,49 @@ public class ClearingApplicationTests {
         }
     }
 
+
+    /**
+     * 冻结
+     **/
+    class RedisLockThread1 extends Thread {
+        @Override
+        public void run() {
+
+            CSFrozenFundsRequest csFrozenFundsRequest = new CSFrozenFundsRequest();
+            csFrozenFundsRequest.setVersion("v1.0");
+            csFrozenFundsRequest.setInputCharset(1);
+            csFrozenFundsRequest.setLanguage(1);
+            csFrozenFundsRequest.setMerchantId("M201912062672");
+            csFrozenFundsRequest.setMerOrderNo("1");
+            csFrozenFundsRequest.setTxncurrency("SGD");
+            csFrozenFundsRequest.setTxnamount(100.00);
+            csFrozenFundsRequest.setMvaccountId("11111");
+            csFrozenFundsRequest.setState(1);
+            frozenFundsService.CSFrozenFunds(csFrozenFundsRequest);
+
+
+        }
+    }
+    /**
+     * 解冻结
+     **/
+    class RedisLockThread2 extends Thread {
+        @Override
+        public void run() {
+
+            CSFrozenFundsRequest csFrozenFundsRequest = new CSFrozenFundsRequest();
+            csFrozenFundsRequest.setVersion("v1.0");
+            csFrozenFundsRequest.setInputCharset(1);
+            csFrozenFundsRequest.setLanguage(1);
+            csFrozenFundsRequest.setMerchantId("M201912062672");
+            csFrozenFundsRequest.setMerOrderNo("1");
+            csFrozenFundsRequest.setTxncurrency("SGD");
+            csFrozenFundsRequest.setTxnamount(100.00);
+            csFrozenFundsRequest.setState(2);
+            frozenFundsService.CSFrozenFunds(csFrozenFundsRequest);
+
+
+        }
+    }
 
 }
