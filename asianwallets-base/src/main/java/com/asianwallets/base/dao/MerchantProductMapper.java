@@ -31,7 +31,7 @@ public interface MerchantProductMapper extends  BaseMapper<MerchantProduct> {
     int selectCountbyMerIdProId(@Param("merchantId") String merchantId, @Param("productId") String productId);
 
 
-    MerchantProduct getMerchantProductByMerIdAndProId(@Param("merchantid") String merchantid, @Param("productId") String productId);
+    MerchantProduct getMerchantProductByMerIdAndProId(@Param("merchantId") String merchantId, @Param("productId") String productId);
 
     /**
      * @Author YangXu

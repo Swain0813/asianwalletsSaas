@@ -24,7 +24,7 @@ public interface TcsCtFlowMapper extends BaseMapper<TcsCtFlow> {
      * @param currency
      * @return
      */
-    @Select("select sum(txnamount-fee+refundOrderFee) as unClearAmount from tcs_ctflow where merchantid = #{institutionCode} and txncurrency = #{currency} and CTstate=1")
+    @Select("select sum(txnamount) as unClearAmount from tcs_ctflow where merchantid = #{institutionCode} and txncurrency = #{currency} and CTstate=1")
     BigDecimal getUnClearAmount(@Param("institutionCode") String institutionCode, @Param("currency") String currency);
 
 }
