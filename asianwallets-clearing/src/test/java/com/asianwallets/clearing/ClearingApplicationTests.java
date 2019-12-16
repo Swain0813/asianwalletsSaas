@@ -38,10 +38,10 @@ public class ClearingApplicationTests {
 
     @Test
     public void test1(){
-        //clearService.ClearForGroupBatch();
-        //settleService.SettlementForBatch();
+        clearService.ClearForGroupBatch();
+        settleService.SettlementForBatch();
         //new RedisLockThread().start();
-        new RedisLockThread3().start();    //RF RV
+        //new RedisLockThread3().start();    //RF RV
         //new RedisLockThread1().start();  //加冻结
         //new RedisLockThread2().start();  //解冻结
     }
