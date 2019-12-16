@@ -472,7 +472,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 TcsCtFlow ctflow = new TcsCtFlow();
                 ctflow.setOrganId(st.getOrganId());
                 ctflow.setMerchantid(st.getMerchantid());
-                ctflow.setMerOrderNo(st.getMerOrderNo());
+                ctflow.setRefcnceFlow(st.getRefcnceFlow());
                 ctflow.setSltcurrency(st.getSltcurrency());
                 ctflow.setSysorderid(st.getSysorderid());
 

@@ -60,6 +60,8 @@
         create_time as createTime,
         update_time as updateTime,
         create_time as completeTime,
+        channel_code as channelCode,
+        sub_appid as subAppid,
         enabled,
         creator,
         modifier,

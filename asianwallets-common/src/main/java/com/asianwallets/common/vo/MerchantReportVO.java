@@ -33,6 +33,9 @@ public class MerchantReportVO {
     @ApiModelProperty(value = "通道名称")
     private String channelName;
 
+    @ApiModelProperty(value = "通道Code")
+    private String channelCode;
+
     @ApiModelProperty(value = "通道子商户号")
     private String subMerchantCode;
 
@@ -44,6 +47,9 @@ public class MerchantReportVO {
 
     @ApiModelProperty(value = "通道店铺编号")
     private String shopCode;
+
+    @ApiModelProperty(value = "SubAPPID")
+    private String subAppid;
 
     @ApiModelProperty(value = "报备完成时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
