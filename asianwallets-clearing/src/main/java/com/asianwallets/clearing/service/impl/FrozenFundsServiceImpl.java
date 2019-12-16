@@ -78,7 +78,7 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
                 return repqo;
             }
             TcsFrozenFundsLogs ffl = (TcsFrozenFundsLogs) obj[0];
-            Institution merchant = (Institution) obj[1];
+            Merchant merchant = (Merchant) obj[1];
             if ( ffl == null || merchant == null) {
                 //输入校验通过,但是返回商户虚拟户或者冻结记录为空
                 repqo.setRespCode(dm.getCode());
