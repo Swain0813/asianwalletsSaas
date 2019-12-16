@@ -136,10 +136,10 @@ public class ChannelDTO extends BasePageHelper {
     @ApiModelProperty(value = "是否报备")
     private Boolean isReport;
 
-    @ApiModelProperty(value = "报备形式")
+    @ApiModelProperty(value = "报备形式(1-接口,2-人工)")
     private Byte reportForm;
 
-    @ApiModelProperty(value = "退款时是否退还收单手续费(1-退还,2-不退还)")
+    @ApiModelProperty(value = "退款时是否退还收单手续费(1-退还,2-不退还,3-仅限当日退还)")
     private Byte refundingIsReturnFee;
 
     @ApiModelProperty(value = "通道代理商id")
