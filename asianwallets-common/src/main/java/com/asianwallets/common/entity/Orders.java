@@ -119,6 +119,10 @@ public class Orders extends BaseEntity {
     @Column(name = "product_name")
     private String productName;
 
+    @ApiModelProperty(value = "商品描述")
+    @Column(name = "product_description")
+    private String productDescription;
+
     @ApiModelProperty(value = "通道编号")
     @Column(name = "channel_code")
     private String channelCode;
