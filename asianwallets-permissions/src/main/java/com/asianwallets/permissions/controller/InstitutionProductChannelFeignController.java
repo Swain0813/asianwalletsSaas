@@ -59,7 +59,7 @@ public class InstitutionProductChannelFeignController extends BaseController {
 
     @ApiOperation(value = "分页查询机构参数设置")
     @PostMapping("/pageInstitutionRequests")
-    public BaseResponse pageInstitutionRequests(@RequestParam @ApiParam InstitutionRequestDTO institutionRequestDTO) {
+    public BaseResponse pageInstitutionRequests(@RequestBody @ApiParam InstitutionRequestDTO institutionRequestDTO) {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionRequestDTO),
                 "分页查询机构参数设置"));
         return institutionProductChannelFeign.pageInstitutionRequests(institutionRequestDTO);

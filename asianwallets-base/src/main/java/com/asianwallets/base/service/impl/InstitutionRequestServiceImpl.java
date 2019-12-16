@@ -56,10 +56,10 @@ public class InstitutionRequestServiceImpl implements InstitutionRequestService 
             if(StringUtils.isEmpty(institutionRequest.getTradeDirection())){
                 throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
             }
-            //如果该机构已经添加过机构请求参数设置,直接报信息已存在
+            //如果该机构已经添加过机构请求参数设置,已存在的场合则是修改
             List<InstitutionRequestParameters> lists = institutionRequestParametersMapper.getInstitutionRequest(institutionRequest.getInstitutionCode());
             if(lists!=null && lists.size()>0){
-                throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
+                return updateInstitutionRequest(username,institutionRequests);
             }
             //交易方向是线下的场合
             if(TradeConstant.TRADE_UPLINE==institutionRequest.getTradeDirection()){
@@ -130,7 +130,7 @@ public class InstitutionRequestServiceImpl implements InstitutionRequestService 
     public int updateInstitutionRequest(String username, List<InstitutionRequestDTO> institutionRequests){
         List<InstitutionRequestParameters> institutionRequestParameters = Lists.newArrayList();
         for(InstitutionRequestDTO institutionRequest:institutionRequests){
-             if(institutionRequest.getId()==null){
+             if(StringUtils.isEmpty(institutionRequest.getId())){
                  //如果没有id则说明是新增的场合
                  return addInstitutionRequest(username,institutionRequests);
              }

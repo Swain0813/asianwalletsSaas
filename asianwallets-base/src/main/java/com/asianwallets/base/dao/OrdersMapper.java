@@ -3,6 +3,7 @@ package com.asianwallets.base.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.vo.ExportOrdersVO;
 import com.asianwallets.common.vo.OrdersDetailVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -35,4 +36,12 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @return 订单详情输出实体
      */
     OrdersDetailVO selectOrdersDetailById(@Param("id") String id, @Param("language") String language);
+
+    /**
+     * 订单导出
+     *
+     * @param ordersDTO 订单实体
+     * @return 订单集合
+     */
+    List<ExportOrdersVO> exportOrders(OrdersDTO ordersDTO);
 }

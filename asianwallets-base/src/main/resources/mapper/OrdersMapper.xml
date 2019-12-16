@@ -121,6 +121,95 @@
         where imei = #{imei};
     </select>
 
+    <select id="exportOrders" resultType="com.asianwallets.common.vo.ExportOrdersVO">
+        SELECT
+        o.create_time as createTime,
+        o.channel_callback_time as channelCallbackTime,
+        o.id as orderId,
+        o.merchant_order_id as merchantOrderId,
+        o.merchant_id as merchantId,
+        o.merchant_name as merchantName,
+        o.channel_name as channelName,
+        concat(p.name,'-',o.trade_currency) as productName,
+        o.order_currency as orderCurrency,
+        o.order_amount as orderAmount,
+        o.fee,
+        o.channel_fee as channelFee,
+        o.exchange_rate as exchangeRate,
+        o.trade_currency as tradeCurrency,
+        o.trade_amount as tradeAmount,
+        o.trade_status as tradeStatus,
+        o.cancel_status as cancelStatus,
+        o.refund_status as refundStatus,
+        o.channel_number as channelNumber,
+        o.trade_direction as tradeDirection,
+        o.trade_type as tradeType,
+        o.req_ip as reqIp,
+        o.imei ,
+        p.name as payMethod,
+        o.product_name as goodsName,
+        o.payer_name as payerName,
+        o.payer_email as payerEmail,
+        o.remark
+        FROM orders o LEFT JOIN pay_type p on o.pay_method = p.extend1 AND p.`language`= #{language}
+        <where>
+            <if test="id != null and id != ''">
+                AND o.id = #{id}
+            </if>
+            <if test="merchantOrderId != null and merchantOrderId != ''">
+                AND o.merchant_order_id = #{merchantOrderId}
+            </if>
+            <if test="merchantId != null and merchantId != ''">
+                AND o.merchant_id = #{merchantId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                AND o.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+            </if>
+            <if test="institutionId != null and institutionId != ''">
+                AND o.institution_id = #{institutionId}
+            </if>
+            <if test="institutionName != null and institutionName != ''">
+                AND o.institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+            </if>
+            <if test="channelNumber != null and channelNumber != ''">
+                AND o.channel_number = #{channelNumber}
+            </if>
+            <if test="productCode != null">
+                AND o.product_code = #{productCode}
+            </if>
+            <if test="tradeStatus != null">
+                AND o.trade_status = #{tradeStatus}
+            </if>
+            <if test="cancelStatus != null">
+                AND o.cancel_status = #{cancelStatus}
+            </if>
+            <if test="refundStatus != null">
+                AND o.refund_status = #{refundStatus}
+            </if>
+            <if test="orderCurrency != null and orderCurrency != ''">
+                AND o.order_currency = #{orderCurrency}
+            </if>
+            <if test="startDate != null">
+                AND o.create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND o.create_time &lt;= #{endDate}
+            </if>
+            <if test="startPayFinishTime != null">
+                AND o.channel_callback_time &gt;= #{startPayFinishTime}
+            </if>
+            <if test="endPayFinishTime != null">
+                AND o.channel_callback_time &lt;= #{endPayFinishTime}
+            </if>
+            <if test="tradeType != null">
+                AND o.trade_type = #{tradeType}
+            </if>
+            <if test="deliveryStatus != null">
+                AND o.delivery_status = #{deliveryStatus}
+            </if>
+        </where>
+    </select>
+
     <select id="pageFindOrders" resultMap="BaseResultMap">
         SELECT
         o.id,

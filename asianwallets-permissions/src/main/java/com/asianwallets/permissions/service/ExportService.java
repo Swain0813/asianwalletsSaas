@@ -1,10 +1,7 @@
 package com.asianwallets.permissions.service;
 
 import cn.hutool.poi.excel.ExcelWriter;
-import com.asianwallets.common.vo.InstitutionExportVO;
-import com.asianwallets.common.vo.MerChannelExportVO;
-import com.asianwallets.common.vo.MerchantExportVO;
-import com.asianwallets.common.vo.MerchantProductExportVO;
+import com.asianwallets.common.vo.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,26 +19,36 @@ public interface ExportService {
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/28
      * @Descripate 导出商户
-     * @return
      **/
-    ExcelWriter getMerchantExcel(ArrayList<MerchantExportVO> merchantExportVOS,  Class clazz);
+    ExcelWriter getMerchantExcel(ArrayList<MerchantExportVO> merchantExportVOS, Class clazz);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 导出商户产品
-     * @return
      **/
     ExcelWriter getMerchantProductExcel(ArrayList<MerchantProductExportVO> merchantProExportVOS, Class clazz);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 导出商户通道
-     * @return
      **/
     ExcelWriter getMerchantChannelExcel(ArrayList<MerChannelExportVO> merchantChannelExportVOS, Class clazz);
+
+    /**
+     * 导出订单信息
+     *
+     * @param exportOrdersVOList  订单集合
+     * @param exportOrdersVOClass 订单导出class
+     * @param writer
+     * @return
+     */
+    ExcelWriter exportOrders(List<ExportOrdersVO> exportOrdersVOList, Class<ExportOrdersVO> exportOrdersVOClass, ExcelWriter writer);
 }

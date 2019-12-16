@@ -1,20 +1,23 @@
 package com.asianwallets.common.response;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * @version v1.0.0
+ * @classDesc: 功能描述: 返回信息创建
+ * @createTime 2018年7月2日 下午3:54:41
+ * @copyright: 上海众哈网络技术有限公司
+ */
 @Data
-@ApiModel(value = "通用返回实体", description = "通用返回实体")
 public class BaseResponse {
 
-    @ApiModelProperty(value = "响应码")
+    //错误码
     private String code;
 
-    @ApiModelProperty(value = "响应信息")
+    //信息描述
     private String msg;
 
-    @ApiModelProperty(value = "响应数据")
+    //具体的信息内容
     private Object data;
 
 }
