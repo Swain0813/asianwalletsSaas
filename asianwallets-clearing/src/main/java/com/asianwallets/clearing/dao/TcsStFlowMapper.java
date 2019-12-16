@@ -27,6 +27,6 @@ public interface TcsStFlowMapper extends BaseMapper<TcsStFlow> {
      * @Descripate 查询未结算的金额
      * @return
      **/
-    @Select("select sum(txnamount-fee+refundOrderFee) as unSettleAmount from tcs_stflow where merchantid = #{institutionCode} and txncurrency = #{currency} and STstate=1")
+    @Select("select sum(txnamount-fee+refundOrderFee) as unSettleAmount from tcs_stflow where merchantid = #{merchantid} and txncurrency = #{currency} and STstate=1")
     BigDecimal getUnSettleAmount(String merchantid, String txncurrency);
 }
