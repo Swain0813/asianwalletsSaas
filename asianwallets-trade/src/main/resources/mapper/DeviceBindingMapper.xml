@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.trade.dao.DeviceBindingMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.DeviceBinding">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="info_id" property="infoId" jdbcType="VARCHAR"/>
+        <result column="institution_code" property="institutionCode" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="agent_id" property="agentId" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="vendor_name" property="vendorName" jdbcType="VARCHAR"/>
+        <result column="model_name" property="modelName" jdbcType="VARCHAR"/>
+        <result column="info_name" property="infoName" jdbcType="VARCHAR"/>
+        <result column="imei" property="imei" jdbcType="VARCHAR"/>
+        <result column="sn" property="sn" jdbcType="VARCHAR"/>
+        <result column="operator" property="operator" jdbcType="VARCHAR"/>
+        <result column="use_type" property="useType" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="binding_time" property="bindingTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        info_id,
+        institution_code,
+        institution_name,
+        merchant_id,
+        merchant_name,
+        agent_id,
+        vendor_name,
+        model_name,
+        info_name,
+        imei,
+        sn,
+        operator,
+        use_type,
+        enabled,
+        binding_time,
+        create_time,
+        update_time,
+        creator,
+        modifier,
+        remark
+    </sql>
+
+    <select id="selectByMerchantIdAndImei" resultMap="BaseResultMap">
+        select *
+        from device_binding
+        where merchant_id = #{merchantId}
+          and imei = #{imei}
+          and enabled = 1
+    </select>
+</mapper>

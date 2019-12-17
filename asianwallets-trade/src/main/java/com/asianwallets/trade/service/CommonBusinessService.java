@@ -6,6 +6,14 @@ package com.asianwallets.trade.service;
 public interface CommonBusinessService {
 
     /**
+     * 校验MD5签名
+     *
+     * @param obj 验签对象
+     * @return 布尔值
+     */
+    boolean checkSignByMd5(Object obj);
+
+    /**
      * 校验重复请求【线上与线下下单】
      *
      * @param merchantId      商户编号
