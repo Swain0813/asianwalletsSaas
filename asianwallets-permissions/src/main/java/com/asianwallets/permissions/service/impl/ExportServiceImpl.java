@@ -180,14 +180,6 @@ public class ExportServiceImpl implements ExportService {
                             } else if ((String.valueOf((oMap.get(s)))).equals("false")) {
                                 oList2.add("禁用");
                             }
-                        } else if (s.equals("rateType")) {
-                            if ((String.valueOf((oMap.get(s)))).equals("1")) {
-                                oList2.add("单笔费率");
-                            } else if ((String.valueOf((oMap.get(s)))).equals("2")) {
-                                oList2.add("单笔定额");
-                            } else {
-                                oList2.add("");
-                            }
                         } else {
                             oList2.add(oMap.get(s));
                         }

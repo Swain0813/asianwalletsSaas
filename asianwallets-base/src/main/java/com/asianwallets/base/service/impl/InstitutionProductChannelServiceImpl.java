@@ -147,12 +147,13 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
     /**
      * 根据机构ID查询机构关联产品通道信息
      *
-     * @param insId 机构ID
+     * @param institutionId 机构ID
+     * @param merchantId    商户ID
      * @return 机构产品通道输出实体集合
      */
     @Override
-    public List<InstitutionProductChannelVO> getInsProChaByInsId(String insId) {
-        return institutionProductMapper.selectRelevantInfoByInstitutionId(insId, auditorProvider.getLanguage());
+    public List<InstitutionProductChannelVO> getInsProChaByInsId(String institutionId, String merchantId) {
+        return institutionProductMapper.selectRelevantInfoByInstitutionId(institutionId, merchantId, auditorProvider.getLanguage());
     }
 
     /**

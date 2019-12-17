@@ -1,4 +1,5 @@
 package com.asianwallets.base.controller;
+
 import com.asianwallets.base.service.InstitutionProductChannelService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
@@ -36,8 +37,8 @@ public class InstitutionProductChannelController extends BaseController {
 
     @ApiOperation(value = "根据机构ID查询机构关联产品通道信息")
     @GetMapping("/getInsProChaByInsId")
-    public BaseResponse getInsProChaByInsId(@RequestParam @ApiParam String insId) {
-        return ResultUtil.success(institutionProductChannelService.getInsProChaByInsId(insId));
+    public BaseResponse getInsProChaByInsId(@RequestParam(required = false) @ApiParam String insId, @RequestParam(required = false) @ApiParam String merId) {
+        return ResultUtil.success(institutionProductChannelService.getInsProChaByInsId(insId, merId));
     }
 
     @ApiOperation(value = "查询所有产品关联通道信息")
@@ -45,7 +46,6 @@ public class InstitutionProductChannelController extends BaseController {
     public BaseResponse getAllProCha() {
         return ResultUtil.success(institutionProductChannelService.getAllProCha());
     }
-
 
     @ApiOperation(value = "分页查询机构参数设置")
     @PostMapping("/pageInstitutionRequests")

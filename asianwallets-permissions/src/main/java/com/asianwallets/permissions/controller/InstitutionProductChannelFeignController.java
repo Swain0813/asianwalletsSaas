@@ -1,4 +1,5 @@
 package com.asianwallets.permissions.controller;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 
@@ -44,10 +46,10 @@ public class InstitutionProductChannelFeignController extends BaseController {
 
     @ApiOperation(value = "根据机构ID查询机构关联产品通道信息")
     @GetMapping("/getInsProChaByInsId")
-    public BaseResponse getInsProChaByInsId(@RequestParam @ApiParam String insId) {
+    public BaseResponse getInsProChaByInsId(@RequestParam(required = false) @ApiParam String insId, @RequestParam(required = false) @ApiParam String merId) {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(insId),
                 "根据机构ID查询机构关联产品通道信息"));
-        return institutionProductChannelFeign.getInsProChaByInsId(insId);
+        return institutionProductChannelFeign.getInsProChaByInsId(insId, merId);
     }
 
     @ApiOperation(value = "查询所有产品关联通道信息(前端用)")
