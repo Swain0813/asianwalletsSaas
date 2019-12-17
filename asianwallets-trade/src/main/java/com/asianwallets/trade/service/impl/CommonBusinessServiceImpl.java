@@ -1,15 +1,24 @@
 package com.asianwallets.trade.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.entity.Attestation;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.MD5Util;
+import com.asianwallets.common.utils.ReflexClazzUtils;
+import com.asianwallets.common.utils.SignTools;
+import com.asianwallets.trade.dao.AttestationMapper;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.Map;
 
 
 /**
@@ -24,6 +33,28 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
 
     @Autowired
     private RedisService redisService;
+
+    /**
+     * 校验MD5签名
+     *
+     * @param obj 验签对象
+     * @return 布尔值
+     */
+    @Override
+    public boolean checkSignByMd5(Object obj) {
+        Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
+        String sign = String.valueOf(map.get("sign"));
+        String merchantId = String.valueOf(map.get("merchantId"));
+        Attestation attestation = commonRedisDataService.getAttestationByMerchantId(merchantId);
+        if (attestation == null) {
+            return false;
+        }
+        String clearText = SignTools.getSignStr(map) + attestation.getMd5key();
+        log.info("===============【校验MD5签名】===============【签名前的明文】 clearText: {}", clearText);
+        String decryptSign = MD5Util.getMD5String(clearText);
+        log.info("===============【校验MD5签名】===============【签名后的密文】 decryptSign: {}", decryptSign);
+        return sign.equalsIgnoreCase(decryptSign);
+    }
 
     /**
      * 校验重复请求【线上与线下下单】
