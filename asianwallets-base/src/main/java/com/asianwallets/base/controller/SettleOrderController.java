@@ -4,6 +4,7 @@ import com.asianwallets.base.service.SettleOrderService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.SettleOrderDTO;
 import com.asianwallets.common.dto.SettleOrderExportDTO;
+import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import io.swagger.annotations.Api;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 机构结算交易相关接口
@@ -42,8 +45,8 @@ public class SettleOrderController extends BaseController {
 
     @ApiOperation(value = "机构结算审核导出")
     @PostMapping("/exportSettleOrder")
-    public BaseResponse exportSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO) {
-        return ResultUtil.success(settleOrderService.exportSettleOrder(settleOrderDTO));
+    public List<SettleOrder> exportSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO) {
+        return settleOrderService.exportSettleOrder(settleOrderDTO);
     }
 
 
