@@ -66,9 +66,10 @@
     <select id="pageFindMerProduct" resultMap="BaseResultMap">
         select
         mp.id, mp.merchant_id, mp.product_id,  mp.merchant_name,
-        case mp.product_abbrev
-        when 'null' then pt.name
-        else  mp.product_abbrev end ,
+        case
+        when mp.product_abbrev is null then pt.name
+        else mp.product_abbrev
+        end as product_abbrev,
         mp.trade_direction,  mp.trans_type, mp.pay_type,
        case  mp.rate_type
         when 'dic_7_1' then '单笔费率'
@@ -79,7 +80,7 @@
         mp.audit_status, mp.audit_remark, mp.effect_time, mp.create_time, mp.update_time, mp.creator, mp.modifier, mp.remark, mp.enabled, mp.ext1, mp.ext2,
         mp.ext3, mp.ext4, mp.ext5,
         mp.ext6, mp.ext7
-        from merchant_product mp left join product p on p.id = mp.merchant_id
+        from merchant_product mp left join product p on p.id = mp.product_id
         left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
         <where>
             <if test="merchantId!=null and merchantId != ''">
