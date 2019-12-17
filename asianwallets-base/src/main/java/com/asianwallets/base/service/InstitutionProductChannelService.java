@@ -33,10 +33,11 @@ public interface InstitutionProductChannelService {
     /**
      * 根据机构ID查询机构关联产品通道信息
      *
-     * @param insId 机构ID
+     * @param institutionId 机构ID
+     * @param merchantId    商户ID
      * @return 机构产品通道输出实体集合
      */
-    List<InstitutionProductChannelVO> getInsProChaByInsId(String insId);
+    List<InstitutionProductChannelVO> getInsProChaByInsId(String institutionId, String merchantId);
 
     /**
      * 查询所有产品关联通道信息

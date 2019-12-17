@@ -35,10 +35,10 @@ public class InstitutionProductChannelController extends BaseController {
         return ResultUtil.success(institutionProductChannelService.updateInsProChaByInsId(getSysUserVO().getUsername(), institutionProductChannelDTOList));
     }
 
-    @ApiOperation(value = "根据商户ID查询机构关联产品通道信息")
+    @ApiOperation(value = "根据机构ID查询机构关联产品通道信息")
     @GetMapping("/getInsProChaByInsId")
-    public BaseResponse getInsProChaByInsId(@RequestParam @ApiParam String merchantId) {
-        return ResultUtil.success(institutionProductChannelService.getInsProChaByInsId(merchantId));
+    public BaseResponse getInsProChaByInsId(@RequestParam(required = false) @ApiParam String institutionId, @RequestParam(required = false) @ApiParam String merchantId) {
+        return ResultUtil.success(institutionProductChannelService.getInsProChaByInsId(institutionId, merchantId));
     }
 
     @ApiOperation(value = "查询所有产品关联通道信息")
