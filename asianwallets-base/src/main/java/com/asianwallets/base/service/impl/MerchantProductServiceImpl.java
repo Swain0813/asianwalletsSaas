@@ -388,7 +388,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                         oldMerchantProductAudit.setAuditStatus(TradeConstant.AUDIT_FAIL);
                         //oldInstitutionProductAudit.setUpdateTime(new Date());
                         oldMerchantProductAudit.setModifier(name);
-                        oldMerchantProductAudit.setAuditRemark(auaditProductDTO.getRemarks());
+                        oldMerchantProductAudit.setAuditRemark(auaditProductDTO.getRemark());
                         merchantProductAuditMapper.updateByPrimaryKeySelective(oldMerchantProductAudit);
                         baseResponse.setCode(EResultEnum.EFFECTTIME_IS_ILLEGAL.getCode());//生效时间不合法
                         return baseResponse;
@@ -427,7 +427,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     oldMerchantProductAudit.setAuditStatus(TradeConstant.AUDIT_FAIL);
                     //oldInstitutionProductAudit.setUpdateTime(new Date());
                     oldMerchantProductAudit.setModifier(username);
-                    oldMerchantProductAudit.setAuditRemark(auaditProductDTO.getRemarks());
+                    oldMerchantProductAudit.setAuditRemark(auaditProductDTO.getRemark());
                     merchantProductAuditMapper.updateByPrimaryKeySelective(oldMerchantProductAudit);
 
                     MerchantProductHistory merchantProductHistory = new MerchantProductHistory();
@@ -445,6 +445,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     merchantProduct.setId(merProId);
                     merchantProduct.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
                     merchantProduct.setModifier(username);
+                    merchantProduct.setAuditRemark(auaditProductDTO.getRemark());
                     merchantProduct.setEnabled(true);
                     merchantProduct.setUpdateTime(new Date());
 
@@ -453,6 +454,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     merchantProductAudit.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
                     merchantProductAudit.setModifier(username);
                     //institutionProductAudit.setUpdateTime(new Date());
+                    merchantProductAudit.setAuditRemark(auaditProductDTO.getRemark());
                     merchantProductAudit.setEnabled(true);
                     merchantProduct.setCreateTime(merchantProductAudit.getUpdateTime());
 
@@ -508,7 +510,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     MerchantProduct merchantProduct = new MerchantProduct();
                     merchantProduct.setId(merProId);
                     merchantProduct.setAuditStatus(TradeConstant.AUDIT_FAIL);
-                    merchantProduct.setAuditRemark(auaditProductDTO.getRemarks());
+                    merchantProduct.setAuditRemark(auaditProductDTO.getRemark());
                     merchantProduct.setModifier(username);
                     merchantProduct.setUpdateTime(new Date());
                     num = merchantProductMapper.updateByPrimaryKeySelective(merchantProduct);
@@ -516,7 +518,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     MerchantProductAudit merchantProductAudit = new MerchantProductAudit();
                     merchantProductAudit.setId(merProId);
                     merchantProductAudit.setAuditStatus(TradeConstant.AUDIT_FAIL);
-                    merchantProductAudit.setAuditRemark(auaditProductDTO.getRemarks());
+                    merchantProductAudit.setAuditRemark(auaditProductDTO.getRemark());
                     merchantProductAudit.setModifier(username);
                     //institutionProductAudit.setUpdateTime(new Date());
                     merchantProductAuditMapper.updateByPrimaryKeySelective(merchantProductAudit);
