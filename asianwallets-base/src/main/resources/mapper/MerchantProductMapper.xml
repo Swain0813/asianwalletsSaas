@@ -66,10 +66,10 @@
     <select id="pageFindMerProduct" resultMap="BaseResultMap">
         select
         id,merchant_id,product_id, merchant_name, product_abbrev, trade_direction, trans_type,pay_type,
-       case rate_type
-        when 'dic_7_1' then '单笔费率'
-        when 'dic_7_2' then '单笔定额'
-        end,
+        case
+        when rate_type ='dic_7_1' then '单笔费率'
+        when rate_type ='dic_7_2' then '单笔定额'
+        end as rate_type,
         min_tate,max_tate,rate,add_value,limit_amount,daily_trading_count,float_rate,divided_ratio,divided_mode,
         fee_payer,refund_default,refund_rate_type,refund_min_tate,refund_max_tate,refund_rate,refund_add_value,settle_cycle,
         audit_status,audit_remark,effect_time,create_time,update_time,creator,modifier,remark,enabled,ext1,ext2,ext3,ext4,ext5,
