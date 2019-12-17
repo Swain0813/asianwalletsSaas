@@ -4,6 +4,7 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
 import com.asianwallets.trade.service.OnlineGatewayService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,9 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
      */
     @Override
     public OnlineTradeVO gateway(OnlineTradeDTO onlineTradeDTO) {
+        if (StringUtils.isEmpty(onlineTradeDTO.getIssuerId())) {
 
+        }
         return null;
     }
 }

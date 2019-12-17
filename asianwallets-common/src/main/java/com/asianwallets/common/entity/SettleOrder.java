@@ -84,6 +84,10 @@ public class SettleOrder extends BaseEntity {
     @Column(name = "settle_type")
     private Byte settleType;
 
+    @ApiModelProperty(value = "手续费")
+    @Column(name = "fee")
+    private BigDecimal fee;
+
     @ApiModelProperty(value = "批次交易手续费")
     @Column(name = "trade_fee")
     private BigDecimal tradeFee;

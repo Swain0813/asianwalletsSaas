@@ -59,7 +59,7 @@
         sub_merchant_name as subMerchantName,
         create_time as createTime,
         update_time as updateTime,
-        create_time as completeTime,
+        update_time as completeTime,
         channel_code as channelCode,
         sub_appid as subAppid,
         shop_code as shopCode,
