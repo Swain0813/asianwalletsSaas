@@ -3,7 +3,6 @@ package com.asianwallets.trade.controller;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
-import com.asianwallets.trade.dto.CsbDynamicScanDTO;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
 import com.asianwallets.trade.service.OfflineTradeService;
 import io.swagger.annotations.Api;
