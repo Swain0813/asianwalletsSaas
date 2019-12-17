@@ -27,6 +27,9 @@ public class InstitutionProductChannelVO {
     @ApiModelProperty(value = "支付方式")
     private String payType;
 
+    @ApiModelProperty(value = "支付方式ID")
+    private String payTypeId;
+
     @ApiModelProperty(value = "交易类型")
     private Byte transType;
 
