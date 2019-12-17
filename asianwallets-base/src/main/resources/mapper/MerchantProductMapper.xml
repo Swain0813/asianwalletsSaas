@@ -65,43 +65,49 @@
     </select>
     <select id="pageFindMerProduct" resultMap="BaseResultMap">
         select
-        id,merchant_id,product_id, merchant_name, product_abbrev, trade_direction, trans_type,pay_type,
-       case rate_type
+        mp.id, mp.merchant_id, mp.product_id,  mp.merchant_name,
+        case
+        when mp.product_abbrev is null then CONCAT(pt.name,pt.currency)
+        else mp.product_abbrev end as mp,product_abbrev,
+        mp.trade_direction,  mp.trans_type, mp.pay_type,
+       case  mp.rate_type
         when 'dic_7_1' then '单笔费率'
         when 'dic_7_2' then '单笔定额'
         end,
-        min_tate,max_tate,rate,add_value,limit_amount,daily_trading_count,float_rate,divided_ratio,divided_mode,
-        fee_payer,refund_default,refund_rate_type,refund_min_tate,refund_max_tate,refund_rate,refund_add_value,settle_cycle,
-        audit_status,audit_remark,effect_time,create_time,update_time,creator,modifier,remark,enabled,ext1,ext2,ext3,ext4,ext5,
-        ext6,ext7
-        from merchant_product
+        mp.min_tate,  mp.max_tate, mp.rate, mp.add_value, mp.limit_amount, mp.daily_trading_count, mp.float_rate, mp.divided_ratio, mp.divided_mode,
+        mp.fee_payer, mp.refund_default, mp.refund_rate_type, mp.refund_min_tate, mp.refund_max_tate, mp.refund_rate, mp.refund_add_value, mp.settle_cycle,
+        mp.audit_status, mp.audit_remark, mp.effect_time, mp.create_time, mp.update_time, mp.creator, mp.modifier, mp.remark, mp.enabled, mp.ext1, mp.ext2,
+        mp.ext3, mp.ext4, mp.ext5,
+        mp.ext6, mp.ext7
+        from merchant_product mp left join product p on p.id = mp.merchant_id
+        left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
         <where>
             <if test="merchantId!=null and merchantId != ''">
-                and merchant_id=#{merchantId}
+                and mp.merchant_id=#{merchantId}
             </if>
             <if test="merchantName != null and merchantName != ''">
-                and merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+                and mp.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
             </if>
             <if test="transType != null and transType != ''">
-                and trans_type=#{transType}
+                and mp.trans_type=#{transType}
             </if>
             <if test="tradeDirection != null and tradeDirection != ''">
-                and trade_direction=#{tradeDirection}
+                and mp.trade_direction=#{tradeDirection}
             </if>
             <if test="payType != null and payType != ''">
-                and pay_type=#{payType}
+                and mp.pay_type=#{payType}
             </if>
             <if test="enabled != null">
-                and enabled=#{enabled}
+                and mp.enabled=#{enabled}
             </if>
             <if test="auditStatus != null and auditStatus != ''">
-                and audit_status=#{auditStatus}
+                and mp.audit_status=#{auditStatus}
             </if>
             <if test="startTime != null and startTime != ''">
-                AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
+                AND mp.DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
             </if>
             <if test="endTime != null and endTime != ''">
-                AND DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
+                AND mp.DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
             </if>
         </where>
     </select>
