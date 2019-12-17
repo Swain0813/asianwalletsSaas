@@ -3,6 +3,7 @@ package com.asianwallets.trade.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.Attestation;
+import com.asianwallets.common.entity.Currency;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.trade.dao.AttestationMapper;
 import com.asianwallets.trade.dao.CurrencyMapper;
@@ -29,29 +30,29 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     private AttestationMapper attestationMapper;
 
     /**
-     * 根据币种获取币种默认值
+     * 根据币种编码获取币种
      *
-     * @param currency 币种
+     * @param code 币种编码
      * @return 默认值
      */
     @Override
-    public String getCurrencyDefaultValue(String currency) {
+    public Currency getCurrencyByCode(String code) {
         //当前币种的默认值
-        String defaultValue = null;
+        Currency currency = null;
         try {
-            defaultValue = redisService.get(AsianWalletConstant.CURRENCY_DEFAULT + "_" + currency);
-            if (StringUtils.isEmpty(defaultValue)) {
-                defaultValue = currencyMapper.selectByCurrency(currency);
-                if (StringUtils.isEmpty(defaultValue)) {
-                    log.info("==================【根据币种获取币种默认值】==================【币种默认值不存在】 currency: {}", currency);
+            currency = JSON.parseObject(redisService.get(AsianWalletConstant.CURRENCY_DEFAULT.concat(code)), Currency.class);
+            if (currency == null) {
+                currency = currencyMapper.selectByCurrency(code);
+                if (currency == null) {
+                    log.info("==================【根据币种编码获取币种】==================【币种不存在】 code: {}", code);
                     return null;
                 }
-                redisService.set(AsianWalletConstant.CURRENCY_DEFAULT + "_" + currency, defaultValue);
+                redisService.set(AsianWalletConstant.CURRENCY_DEFAULT + "_" + currency, JSON.toJSONString(currency));
             }
         } catch (Exception e) {
-            log.info("==================【根据币种获取币种默认值】==================【获取异常】", e);
+            log.info("==================【根据币种编码获取币种】==================【获取异常】", e);
         }
-        return defaultValue;
+        return currency;
     }
 
     /**

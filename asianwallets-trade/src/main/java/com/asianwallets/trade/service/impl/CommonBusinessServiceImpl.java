@@ -2,6 +2,7 @@ package com.asianwallets.trade.service.impl;
 
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.Attestation;
+import com.asianwallets.common.entity.Currency;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
@@ -73,7 +74,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     }
 
     /**
-     * 校验订单金额是否符合币种默认值【线上与线下下单】
+     * 校验订单币种是否支持与默认值【线上与线下下单】
      *
      * @param orderCurrency 订单币种
      * @param orderAmount   订单金额
@@ -82,11 +83,10 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     @Override
     public boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount) {
         //获取币种默认值
-        String defaultValue = commonRedisDataService.getCurrencyDefaultValue(orderCurrency);
-        if (StringUtils.isEmpty(defaultValue)) {
+        Currency currency = commonRedisDataService.getCurrencyByCode(orderCurrency);
+        if (currency == null) {
             throw new BusinessException(EResultEnum.PRODUCT_CURRENCY_NO_SUPPORT.getCode());
         }
-        String orderAmountStr = String.valueOf(orderAmount);
-        return new StringBuilder(defaultValue).reverse().indexOf(".") >= new StringBuilder(orderAmountStr).reverse().indexOf(".");
+        return new StringBuilder(currency.getDefaults()).reverse().indexOf(".") >= new StringBuilder(String.valueOf(orderAmount)).reverse().indexOf(".");
     }
 }
