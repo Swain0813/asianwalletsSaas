@@ -128,13 +128,12 @@ public class IntoAccountServiceImpl implements IntoAccountService {
                 return repqo;
             }
             //判断商户信息是否存在
-            Merchant merchant = null;
             try {
-                merchant = commonService.getMerchantInfo(ioma.getMerchantid());
+                Merchant merchant = commonService.getMerchantInfo(ioma.getMerchantid());
             } catch (Exception e) {
                 repqo.setRespCode(Const.CSCode.CODE_CS0005);
                 repqo.setRespMsg(Const.CSCode.MSG_CS0005);
-                log.info("********************************* 商户查询信息异常 ****************************");
+                log.info("********************************* 商户查询信息异常 ****************************"+ioma.getMerchantid());
                 return repqo;
             }
             //组装签名map
