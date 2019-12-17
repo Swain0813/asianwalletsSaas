@@ -68,7 +68,7 @@
         mp.id, mp.merchant_id, mp.product_id,  mp.merchant_name,
         case
         when mp.product_abbrev is null then CONCAT(pt.name,p.currency)
-        else mp.product_abbrev end as mp,product_abbrev,
+        else mp.product_abbrev end as mp.product_abbrev,
         mp.trade_direction,  mp.trans_type, mp.pay_type,
        case  mp.rate_type
         when 'dic_7_1' then '单笔费率'
