@@ -67,7 +67,7 @@
         select
         mp.id, mp.merchant_id, mp.product_id,  mp.merchant_name,
         case mp.product_abbrev
-        when null then pt.name
+        when 'null' then pt.name
         else  mp.product_abbrev end ,
         mp.trade_direction,  mp.trans_type, mp.pay_type,
        case  mp.rate_type
