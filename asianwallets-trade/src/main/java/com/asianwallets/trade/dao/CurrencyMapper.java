@@ -14,5 +14,5 @@ public interface CurrencyMapper extends BaseMapper<Currency> {
      * @param currency 币种
      * @return 默认值
      */
-    String selectByCurrency(String currency);
+    Currency selectByCurrency(String currency);
 }

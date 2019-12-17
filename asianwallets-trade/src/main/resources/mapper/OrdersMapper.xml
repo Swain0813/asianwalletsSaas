@@ -115,4 +115,9 @@
     remark3, remark4, remark5, remark6, remark7, remark8
   </sql>
 
+    <select id="selectByMerchantOrderId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from orders where merchant_order_id = #{merchantOrderId}
+    </select>
 </mapper>

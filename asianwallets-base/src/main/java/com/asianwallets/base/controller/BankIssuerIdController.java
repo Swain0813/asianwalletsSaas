@@ -3,7 +3,6 @@ package com.asianwallets.base.controller;
 import com.asianwallets.base.service.BankIssuerIdService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.BankIssuerIdDTO;
-import com.asianwallets.common.entity.Bank;
 import com.asianwallets.common.entity.BankIssuerId;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
