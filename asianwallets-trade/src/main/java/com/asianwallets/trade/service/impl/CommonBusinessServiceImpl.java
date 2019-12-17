@@ -55,7 +55,6 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         //获取币种默认值
         String defaultValue = commonRedisDataService.getCurrencyDefaultValue(orderCurrency);
         if (StringUtils.isEmpty(defaultValue)) {
-            log.info("=========【当前币种不支持】==========");
             throw new BusinessException(EResultEnum.PRODUCT_CURRENCY_NO_SUPPORT.getCode());
         }
         String orderAmountStr = String.valueOf(orderAmount);

@@ -31,21 +31,19 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     @Override
     public String getCurrencyDefaultValue(String currency) {
         //当前币种的默认值
-//        String defaultValue = redisService.get(AsianWalletConstant.CURRENCY_DEFAULT + "_" + currency);
-//        try {
-//            if (StringUtils.isEmpty(defaultValue)) {
-//                defaultValue = dictionaryMapper.selectByCurrency(currency);
-//                if (StringUtils.isEmpty(defaultValue)) {
-//                    //币种默认值不存在
-//                    log.info("==================【币种默认值】获取失败================== tradeCurrency:{}", currency);
-//                    return defaultValue;
-//                }
-//                redisService.set(AsianWalletConstant.CURRENCY_DEFAULT + "_" + currency, defaultValue);
-//            }
-//        } catch (Exception e) {
-//            log.error("同步币种默认值到redis里发生异常:", e.getMessage());
-//        }
-//        log.info("================== CommonService getCurrencyDefaultValue =================== defaultValue: {}", defaultValue);
-        return null;
+        String defaultValue = redisService.get(AsianWalletConstant.CURRENCY_DEFAULT + "_" + currency);
+        try {
+            if (StringUtils.isEmpty(defaultValue)) {
+                defaultValue = currencyMapper.selectByCurrency(currency);
+                if (StringUtils.isEmpty(defaultValue)) {
+                    log.info("==================【根据币种获取币种默认值】==================【币种默认值不存在】 currency: {}", currency);
+                    return defaultValue;
+                }
+                redisService.set(AsianWalletConstant.CURRENCY_DEFAULT + "_" + currency, defaultValue);
+            }
+        } catch (Exception e) {
+            log.info("==================【根据币种获取币种默认值】==================【获取异常】", e);
+        }
+        return defaultValue;
     }
 }

@@ -27,5 +27,9 @@
         create_time, update_time, creator, modifier, remark,defaults, extend1,extend2, extend3, extend4, extend5, extend6,enabled
     </sql>
 
-
+    <select id="selectByCurrency" resultType="String">
+        select defaults
+        from currency
+        where code = #{currency}
+    </select>
 </mapper>
