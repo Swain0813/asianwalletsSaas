@@ -269,7 +269,7 @@
         ch.channel_fee_type as channelFeeType,
         ch.update_time AS updateTime,
         ch.enabled AS enabled,
-        ch.channel_connect_method AS channelConnectMethod,
+        d.name AS channelConnectMethod,
         ch.creator AS creator,
         ch.modifier AS modifier,
         ch.remark AS remark,
@@ -277,11 +277,13 @@
         from channel ch,
         pay_type p,
         channel_bank cb,
-        bank b
+        bank b,
+        dictionary d
         <where>
             ch.id = cb.channel_id
             and cb.bank_id = b.id
             and p.extend1 = ch.pay_type
+            and ch.channel_fee_type = d.code
             and p.language=#{language}
             <if test="channelCode!=null and channelCode != ''">
                 and ch.channel_code=#{channelCode}
