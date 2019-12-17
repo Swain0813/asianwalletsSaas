@@ -55,8 +55,8 @@ public class MD5Util {
             messageDigest.update(bytes);
             bytes = messageDigest.digest();
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < bytes.length; i++) {
-                sb.append(HEX_DIGITS[(bytes[i] & 0xf0) >> 4] + "" + HEX_DIGITS[bytes[i] & 0xf]);
+            for (byte aByte : bytes) {
+                sb.append(HEX_DIGITS[(aByte & 0xf0) >> 4]).append(HEX_DIGITS[aByte & 0xf]);
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
