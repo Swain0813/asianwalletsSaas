@@ -12,67 +12,29 @@ import java.util.*;
 public class SignTools {
 
     /**
-     * 密文字符串的拼装处理
+     * 对Map中的值按字段名的ASCII码值按升序排序
      *
-     * @param m
-     * @return
+     * @param map 待排序Map
+     * @return 排序后的字符串
      */
-    public static String getSignStr(Map<String, String> m) {
-        String signstr = null;
-        if (m != null) {
-            /**
-             * 排序map
-             */
-            Map<String, String> map = new TreeMap<>(
-                    new Comparator<String>() {
-                        public int compare(String obj1, String obj2) {
-                            //
-                            return obj1.compareTo(obj2);
-                        }
-                    });
-
-            /**
-             * 将请求map中的参数进行排序
-             */
-            Set<String> ks = m.keySet();
-            if (ks != null) {
-                Iterator it = ks.iterator();
-                while (it.hasNext()) {
-                    String key = (String) it.next();
-                    if (key != null && !key.equals("")) {
-                        String value = m.get(key);
-                        if (value != null && !value.equals("") && !value.equals("null")) {
-                            map.put(key, value);
-                        }
-                    }
+    public static String getSignStr(Map<String, String> map) {
+        String signStr = null;
+        if (map != null) {
+            Map<String, String> sortMap = new TreeMap<>(Comparator.naturalOrder());
+            //将请求Map中的字段名按ASCII码值进行排序
+            for (String key : map.keySet()) {
+                if (!StringUtils.isEmpty(key) && !StringUtils.isEmpty(map.get(key))) {
+                    sortMap.put(key, map.get(key).trim());
                 }
-
             }
-
-            /**
-             * 取出value进行拼装签名前的字符
-             */
-            if (map != null && map.keySet() != null) {
-                StringBuffer sb = new StringBuffer();
-                Set<String> keySet = map.keySet();
-                Iterator<String> iter = keySet.iterator();
-                while (iter.hasNext()) {
-                    String key = iter.next();
-                    //System.out.println(key + ":" + map.get(key));
-                    //这里要去掉空串和null
-                    String val = map.get(key);
-                    if (val != null && !val.equals("") && !val.equals("null")) {
-                        sb.append(val.trim());
-                    }
-                }
-                signstr = sb.toString();
-                log.info("签名前的明文: " + signstr);
+            //拼接排序后Map中所有的值
+            StringBuilder sb = new StringBuilder();
+            for (String key : sortMap.keySet()) {
+                sb.append(sortMap.get(key));
             }
-
-
+            signStr = sb.toString();
         }
-        return signstr;
-
+        return signStr;
     }
 
 
@@ -263,18 +225,15 @@ public class SignTools {
     }
 
     public static void main(String[] args) {
-        Map<String, String> map = new TreeMap<>(
-                new Comparator<String>() {
-                    public int compare(String obj1, String obj2) {
-                        return obj2.compareTo(obj1);
-                    }
-                });
-
-        //Map<String, String> map = new TreeMap<>();
-        map.put("c","3");
-        map.put("a","1");
-        map.put("b","2");
-        System.out.println(map);
+        Map<String, String> map = new HashMap<>();
+        map.put("txnTime", "3");
+        map.put("txnstatus", "1");
+        map.put("b", "2");
+        map.put("c", "2");
+        map.put("e", "2");
+        map.put("cd", "2"); //b c cd e tT ts
+        String signStr = getSignStr(map);
+        System.out.println(signStr);
     }
 
 }

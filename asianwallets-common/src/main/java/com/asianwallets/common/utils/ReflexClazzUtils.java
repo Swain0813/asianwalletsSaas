@@ -1,8 +1,5 @@
-/**
- * @createTime: 2018年7月22日 下午9:40:58
- * @copyright: 上海投嶒网络技术有限公司
- */
 package com.asianwallets.common.utils;
+
 import com.asianwallets.common.constant.AsianWalletConstant;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +10,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * @author Wu, Hua-Zheng
- * @version v1.0.0
  * @classDesc: 功能描述: 反射工具类
- * @createTime 2018年7月22日 下午9:40:58
  * @copyright: 上海众哈网络技术有限公司
  */
 @Slf4j
@@ -166,7 +160,7 @@ public class ReflexClazzUtils {
     }
 
     /**
-     * 获取对象中的属性名与属性值
+     * 获取对象中的属性名与属性值(包括父类)
      *
      * @param f 对象
      * @return 属性名与属性值对应的Map
@@ -176,38 +170,38 @@ public class ReflexClazzUtils {
         // 获取f对象对应类中的所有属性域
         Field[] fields = f.getClass().getDeclaredFields();
         Field[] declaredFields = f.getClass().getSuperclass().getDeclaredFields();
-
-        for (int i = 0, len = fields.length; i < len; i++) {
+        //遍历子类
+        for (Field field : fields) {
             try {
                 // 对于每个属性，获取属性名
-                String varName = fields[i].getName();
+                String varName = field.getName();
                 // 获取原来的访问控制权限
-                boolean accessFlag = fields[i].isAccessible();
+                boolean accessFlag = field.isAccessible();
                 // 修改访问控制权限
-                fields[i].setAccessible(true);
+                field.setAccessible(true);
                 // 获取在对象f中属性fields[i]对应的对象中的变量
-                Object obj = fields[i].get(f);
+                Object obj = field.get(f);
                 map.put(varName, obj);
                 // 恢复访问控制权限
-                fields[i].setAccessible(accessFlag);
+                field.setAccessible(accessFlag);
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
         }
-
-        for (int i = 0, len = declaredFields.length; i < len; i++) {
+        //遍历父类
+        for (Field declaredField : declaredFields) {
             try {
                 // 对于每个属性，获取属性名
-                String varName = declaredFields[i].getName();
+                String varName = declaredField.getName();
                 // 获取原来的访问控制权限
-                boolean accessFlag = declaredFields[i].isAccessible();
+                boolean accessFlag = declaredField.isAccessible();
                 // 修改访问控制权限
-                declaredFields[i].setAccessible(true);
+                declaredField.setAccessible(true);
                 // 获取在对象f中属性fields[i]对应的对象中的变量
-                Object obj = declaredFields[i].get(f);
+                Object obj = declaredField.get(f);
                 map.put(varName, obj);
                 // 恢复访问控制权限
-                declaredFields[i].setAccessible(accessFlag);
+                declaredField.setAccessible(accessFlag);
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
@@ -215,23 +209,59 @@ public class ReflexClazzUtils {
         return map;
     }
 
+    /**
+     * 获取对象中的属性名与属性值
+     *
+     * @param f 对象
+     * @return 属性名与属性值对应的Map
+     */
     public static Map<String, Object> getCommonFieldNames(Object f) {
         Map<String, Object> map = new LinkedHashMap<>();
         // 获取f对象对应类中的所有属性域
         Field[] fields = f.getClass().getDeclaredFields();
-        for (int i = 0, len = fields.length; i < len; i++) {
+        for (Field field : fields) {
             try {
                 // 对于每个属性，获取属性名
-                String varName = fields[i].getName();
+                String varName = field.getName();
                 // 获取原来的访问控制权限
-                boolean accessFlag = fields[i].isAccessible();
+                boolean accessFlag = field.isAccessible();
                 // 修改访问控制权限
-                fields[i].setAccessible(true);
+                field.setAccessible(true);
                 // 获取在对象f中属性fields[i]对应的对象中的变量
-                Object obj = fields[i].get(f);
+                Object obj = field.get(f);
                 map.put(varName, obj);
                 // 恢复访问控制权限
-                fields[i].setAccessible(accessFlag);
+                field.setAccessible(accessFlag);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }
+        return map;
+    }
+
+    /**
+     * 获取对象中的属性名与属性值
+     *
+     * @param f 对象
+     * @return 属性名与属性值对应的Map
+     */
+    public static Map<String, String> getFieldForStringValue(Object f) {
+        Map<String, String> map = new LinkedHashMap<>();
+        // 获取f对象对应类中的所有属性域
+        Field[] fields = f.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                //对于每个属性，获取属性名
+                String varName = field.getName();
+                // 获取原来的访问控制权限
+                boolean accessFlag = field.isAccessible();
+                // 修改访问控制权限
+                field.setAccessible(true);
+                // 获取在对象f中属性fields[i]对应的对象中的变量
+                Object obj = field.get(f);
+                map.put(varName, String.valueOf(obj));
+                //恢复访问控制权限
+                field.setAccessible(accessFlag);
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
@@ -242,8 +272,8 @@ public class ReflexClazzUtils {
     /**
      * 获取对象中的空值属性
      *
-     * @param source
-     * @return
+     * @param source 原对象
+     * @return 空值数组
      */
     public static String[] getNullPropertyNames(Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
