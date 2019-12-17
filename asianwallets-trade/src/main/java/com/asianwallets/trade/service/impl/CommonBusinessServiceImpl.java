@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 
@@ -79,7 +80,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      * @return 布尔值
      */
     @Override
-    public boolean checkOrderCurrency(String orderCurrency, String orderAmount) {
+    public boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount) {
         //获取币种默认值
         String defaultValue = commonRedisDataService.getCurrencyDefaultValue(orderCurrency);
         if (StringUtils.isEmpty(defaultValue)) {

@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -28,22 +29,25 @@ public class ChannelExportVO {
     @ApiModelProperty(value = "通道币种")
     private String currency;
 
-    @ApiModelProperty(value = "通道的服务名称")//比如AD3_ONLINE,AD3_OFFLINE
-    private String channelEnName;
+    @ApiModelProperty(value = "通道最小限额")
+    private BigDecimal limitMinAmount;
+
+    @ApiModelProperty(value = "通道最大限额")
+    private BigDecimal limitMaxAmount;
+
+    @ApiModelProperty(value = "通道状态")
+    private Boolean enabled;
 
     @ApiModelProperty(value = "payCode")
-    private String payCode;//ad3的支付code
+    private String payCode;
 
     @ApiModelProperty(value = "优先级")
-    private String sort;//1最大
+    private String sort;
 
     @ApiModelProperty(value = "结算周期")
     private String settleCycle;
 
-    @ApiModelProperty(value = "通道状态")//启用禁用
-    private Boolean enabled;
-
-    @ApiModelProperty(value = "是否支持退款")//1支持 0不支持
+    @ApiModelProperty(value = "是否支持退款")
     private Boolean supportRefundState;
 
     @ApiModelProperty(value = "通道手续费类型")
@@ -55,20 +59,14 @@ public class ChannelExportVO {
     @ApiModelProperty(value = "通道费率最小值")
     private BigDecimal channelMinRate;
 
-    @ApiModelProperty(value = "通道最小限额")
-    private BigDecimal limitMinAmount;
-
-    @ApiModelProperty(value = "通道最大限额")
-    private BigDecimal limitMaxAmount;
-
     @ApiModelProperty(value = "通道费率最大值")
     private BigDecimal channelMaxRate;
 
-    @ApiModelProperty(value = "是否直连")//通道连接方式 1-直连 2-间连
-    private Byte channelConnectMethod;
-
     @ApiModelProperty(value = "银行名称")
     private String bankName;
+
+    @ApiModelProperty(value = "是否退还收单手续费")
+    private String refundingIsReturnFee;
 
     @ApiModelProperty(value = "创建者")
     private String creator;

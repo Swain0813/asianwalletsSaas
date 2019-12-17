@@ -94,6 +94,7 @@
         select
         ch.id,
         ch.create_time,
+        ch.creator,
         ch.channel_code,
         ch.channel_cn_name,
         p.name as pay_type,
@@ -266,10 +267,9 @@
         ch.limit_min_amount as limitMinAmount,
         ch.channel_min_rate as channelMinRate,
         ch.channel_max_rate as channelMaxRate,
-        ch.channel_fee_type as channelFeeType,
+        d.name as channelFeeType,
         ch.update_time AS updateTime,
         ch.enabled AS enabled,
-        ch.channel_connect_method AS channelConnectMethod,
         ch.creator AS creator,
         ch.modifier AS modifier,
         ch.remark AS remark,
@@ -277,12 +277,15 @@
         from channel ch,
         pay_type p,
         channel_bank cb,
-        bank b
+        bank b,
+        dictionary d
         <where>
             ch.id = cb.channel_id
             and cb.bank_id = b.id
             and p.extend1 = ch.pay_type
+            and ch.channel_fee_type = d.code
             and p.language=#{language}
+            and d.language=#{language}
             <if test="channelCode!=null and channelCode != ''">
                 and ch.channel_code=#{channelCode}
             </if>
