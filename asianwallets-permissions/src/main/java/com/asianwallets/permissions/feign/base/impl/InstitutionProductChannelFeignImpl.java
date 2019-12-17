@@ -22,7 +22,7 @@ public class InstitutionProductChannelFeignImpl implements InstitutionProductCha
     }
 
     @Override
-    public BaseResponse getInsProChaByInsId(String insId) {
+    public BaseResponse getInsProChaByInsId(String insId, String merId) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 

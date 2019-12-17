@@ -1,4 +1,5 @@
 package com.asianwallets.permissions.feign.base;
+
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
 import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.response.BaseResponse;
@@ -26,7 +27,7 @@ public interface InstitutionProductChannelFeign {
 
     @ApiOperation(value = "根据机构ID查询机构关联产品通道信息")
     @GetMapping("/insProCha/getInsProChaByInsId")
-    BaseResponse getInsProChaByInsId(@RequestParam("insId") @ApiParam String insId);
+    BaseResponse getInsProChaByInsId(@RequestParam("insId") @ApiParam String insId, @RequestParam("merId") @ApiParam String merId);
 
     @ApiOperation(value = "查询所有产品关联通道信息(前端用)")
     @PostMapping("/insProCha/getAllProCha")
