@@ -4,6 +4,7 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.trade.dto.CsbDynamicScanDTO;
+import com.asianwallets.trade.dto.OfflineTradeDTO;
 import com.asianwallets.trade.service.OfflineTradeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,8 +24,8 @@ public class OfflineTradeController extends BaseController {
 
     @ApiOperation(value = "线下同机构CSB动态扫码")
     @PostMapping("csbDynamicScan")
-    public BaseResponse csbDynamicScan(@RequestBody @ApiParam @Valid CsbDynamicScanDTO csbDynamicScanDTO) {
-        return ResultUtil.success(offlineTradeService.csbDynamicScan(csbDynamicScanDTO));
+    public BaseResponse csbDynamicScan(@RequestBody @ApiParam @Valid OfflineTradeDTO offlineTradeDTO) {
+        return ResultUtil.success(offlineTradeService.csbDynamicScan(offlineTradeDTO));
     }
 }
 

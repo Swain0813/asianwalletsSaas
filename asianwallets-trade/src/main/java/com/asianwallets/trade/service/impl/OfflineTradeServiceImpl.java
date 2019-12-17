@@ -5,7 +5,7 @@ import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.trade.dao.OrdersMapper;
-import com.asianwallets.trade.dto.CsbDynamicScanDTO;
+import com.asianwallets.trade.dto.OfflineTradeDTO;
 import com.asianwallets.trade.service.OfflineTradeService;
 import com.asianwallets.trade.vo.CsbDynamicScanVO;
 import lombok.extern.slf4j.Slf4j;
@@ -25,24 +25,24 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     /**
      * 线下同机构CSB动态扫码
      *
-     * @param csbDynamicScanDTO 线下同机构CSB动态扫码输入实体
+     * @param offlineTradeDTO 线下交易输入实体
      * @return 线下同机构CSB动态扫码输出实体
      */
     @Override
     @Transactional(rollbackFor = Exception.class, noRollbackFor = BusinessException.class)
-    public CsbDynamicScanVO csbDynamicScan(CsbDynamicScanDTO csbDynamicScanDTO) {
-        log.info("==================【线下CSB动态扫码】==================【请求参数】 csbDynamicScanDTO: {}", JSON.toJSONString(csbDynamicScanDTO));
+    public CsbDynamicScanVO csbDynamicScan(OfflineTradeDTO offlineTradeDTO) {
+        log.info("==================【线下CSB动态扫码】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
         Orders orders = new Orders();
-        orders.setMerchantId(csbDynamicScanDTO.getMerchantId());
-        orders.setMerchantOrderId(csbDynamicScanDTO.getOrderNo());
-        orders.setOrderCurrency(csbDynamicScanDTO.getOrderCurrency());
-        orders.setOrderAmount(csbDynamicScanDTO.getOrderAmount());
-        orders.setMerchantOrderTime(DateToolUtils.getReqDateG(csbDynamicScanDTO.getOrderTime()));
-        orders.setProductCode(csbDynamicScanDTO.getProductCode());
-        orders.setImei(csbDynamicScanDTO.getImei());
-        orders.setOperatorId(csbDynamicScanDTO.getOperatorId());
+        orders.setMerchantId(offlineTradeDTO.getMerchantId());
+        orders.setMerchantOrderId(offlineTradeDTO.getOrderNo());
+        orders.setOrderCurrency(offlineTradeDTO.getOrderCurrency());
+        orders.setOrderAmount(offlineTradeDTO.getOrderAmount());
+        orders.setMerchantOrderTime(DateToolUtils.getReqDateG(offlineTradeDTO.getOrderTime()));
+        orders.setProductCode(offlineTradeDTO.getProductCode());
+        orders.setImei(offlineTradeDTO.getImei());
+        orders.setOperatorId(offlineTradeDTO.getOperatorId());
         orders.setCreateTime(new Date());
-        orders.setCreator(csbDynamicScanDTO.getMerchantId());
+        orders.setCreator(offlineTradeDTO.getMerchantId());
         ordersMapper.insert(orders);
 //        throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
 //        int i = 1 / 0;

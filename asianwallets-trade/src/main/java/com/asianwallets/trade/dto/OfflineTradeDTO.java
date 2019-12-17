@@ -4,12 +4,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
-@ApiModel(value = "线下同机构CSB动态扫码输入实体", description = "线下同机构CSB动态扫码输入实体")
-public class CsbDynamicScanDTO {
+@ApiModel(value = "线下交易输入实体", description = "线下交易输入实体")
+public class OfflineTradeDTO {
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "商户编号")
@@ -51,4 +52,41 @@ public class CsbDynamicScanDTO {
     @ApiModelProperty(value = "签名")
     private String sign;
 
+    @ApiModelProperty(value = "线下BSC付款码")
+    private String authCode;
+
+
+    //----------------【非必填参数】---------------------
+    @ApiModelProperty(value = "服务器回调地址")
+    private String serverUrl;
+
+    @ApiModelProperty(value = "商品名称")
+    private String productName;
+
+    @ApiModelProperty(value = "商品描述")
+    private String productDescription;
+
+    @ApiModelProperty(value = "付款人账户")
+    private String payerAccount;
+
+    @ApiModelProperty(value = "付款人银行")
+    private String payerBank;
+
+    @ApiModelProperty(value = "付款人邮箱")
+    private String payerEmail;
+
+    @ApiModelProperty(value = "付款人电话")
+    private String payerPhone;
+
+    @ApiModelProperty(value = "语言")
+    private String language;
+
+    @ApiModelProperty(value = "remark1")
+    private String remark1;
+
+    @ApiModelProperty(value = "remark2")
+    private String remark2;
+
+    @ApiModelProperty(value = "remark3")
+    private String remark3;
 }
