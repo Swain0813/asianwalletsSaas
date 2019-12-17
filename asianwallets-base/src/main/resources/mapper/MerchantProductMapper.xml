@@ -65,7 +65,15 @@
     </select>
     <select id="pageFindMerProduct" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"></include>
+        id,merchant_id,product_id, merchant_name, product_abbrev, trade_direction, trans_type,pay_type,
+       case rate_type
+        when 'dic_7_1' then '单笔费率'
+        when 'dic_7_2' then '单笔定额'
+        end,
+        min_tate,max_tate,rate,add_value,limit_amount,daily_trading_count,float_rate,divided_ratio,divided_mode,
+        fee_payer,refund_default,refund_rate_type,refund_min_tate,refund_max_tate,refund_rate,refund_add_value,settle_cycle,
+        audit_status,audit_remark,effect_time,create_time,update_time,creator,modifier,remark,enabled,ext1,ext2,ext3,ext4,ext5,
+        ext6,ext7
         from merchant_product
         <where>
             <if test="merchantId!=null and merchantId != ''">

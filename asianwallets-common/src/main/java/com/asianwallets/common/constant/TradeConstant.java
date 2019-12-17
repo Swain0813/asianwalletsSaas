@@ -138,7 +138,7 @@ public class TradeConstant {
     public static final String ZH_CN = "zh-cn";//中文
 
     //下单重复请求redis key标识
-    public static final String REPEATED_REQUEST = "REPEATED_REQUEST";//重复请求key标识
+    public static final String REPEATED_REQUEST = "REPEATED_REQUEST";
 
 
     //---------------清结算类型
