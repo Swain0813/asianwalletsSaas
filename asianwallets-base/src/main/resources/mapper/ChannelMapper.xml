@@ -94,6 +94,7 @@
         select
         ch.id,
         ch.create_time,
+        ch.creator,
         ch.channel_code,
         ch.channel_cn_name,
         p.name as pay_type,

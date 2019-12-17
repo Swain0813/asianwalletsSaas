@@ -388,13 +388,14 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                         oldMerchantProductAudit.setAuditStatus(TradeConstant.AUDIT_FAIL);
                         //oldInstitutionProductAudit.setUpdateTime(new Date());
                         oldMerchantProductAudit.setModifier(name);
-                        oldMerchantProductAudit.setAuditRemark(auaditProductDTO.getRemark());
+                        oldMerchantProductAudit.setAuditRemark("生效时间不合法");
                         merchantProductAuditMapper.updateByPrimaryKeySelective(oldMerchantProductAudit);
                         baseResponse.setCode(EResultEnum.EFFECTTIME_IS_ILLEGAL.getCode());//生效时间不合法
                         return baseResponse;
                     }
                     //更改审核信息状态
                     oldMerchantProductAudit.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
+                    oldMerchantProductAudit.setAuditRemark(auaditProductDTO.getRemark());
                     merchantProductAuditMapper.updateByPrimaryKeySelective(oldMerchantProductAudit);
                     //根据配置动态生成cron表达式
                     Calendar calendar = Calendar.getInstance();
