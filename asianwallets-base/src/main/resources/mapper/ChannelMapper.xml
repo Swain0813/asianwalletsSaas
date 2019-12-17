@@ -267,10 +267,9 @@
         ch.limit_min_amount as limitMinAmount,
         ch.channel_min_rate as channelMinRate,
         ch.channel_max_rate as channelMaxRate,
-        ch.channel_fee_type as channelFeeType,
+        d.name as channelFeeType,
         ch.update_time AS updateTime,
         ch.enabled AS enabled,
-        d.name AS channelConnectMethod,
         ch.creator AS creator,
         ch.modifier AS modifier,
         ch.remark AS remark,
@@ -286,6 +285,7 @@
             and p.extend1 = ch.pay_type
             and ch.channel_fee_type = d.code
             and p.language=#{language}
+            and d.language=#{language}
             <if test="channelCode!=null and channelCode != ''">
                 and ch.channel_code=#{channelCode}
             </if>
