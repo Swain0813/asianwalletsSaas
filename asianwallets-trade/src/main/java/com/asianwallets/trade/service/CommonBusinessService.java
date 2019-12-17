@@ -1,5 +1,7 @@
 package com.asianwallets.trade.service;
 
+import java.math.BigDecimal;
+
 /**
  * 通用业务接口
  */
@@ -29,5 +31,5 @@ public interface CommonBusinessService {
      * @param orderAmount   订单金额
      * @return 布尔值
      */
-    boolean checkOrderCurrency(String orderCurrency, String orderAmount);
+    boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount);
 }
