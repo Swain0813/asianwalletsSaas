@@ -44,7 +44,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
                 defaultValue = currencyMapper.selectByCurrency(currency);
                 if (StringUtils.isEmpty(defaultValue)) {
                     log.info("==================【根据币种获取币种默认值】==================【币种默认值不存在】 currency: {}", currency);
-                    return defaultValue;
+                    return null;
                 }
                 redisService.set(AsianWalletConstant.CURRENCY_DEFAULT + "_" + currency, defaultValue);
             }

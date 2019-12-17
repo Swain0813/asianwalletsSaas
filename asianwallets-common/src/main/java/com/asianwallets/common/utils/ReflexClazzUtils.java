@@ -1,7 +1,3 @@
-/**
- * @createTime: 2018年7月22日 下午9:40:58
- * @copyright: 上海投嶒网络技术有限公司
- */
 package com.asianwallets.common.utils;
 
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -14,10 +10,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * @author Wu, Hua-Zheng
- * @version v1.0.0
  * @classDesc: 功能描述: 反射工具类
- * @createTime 2018年7月22日 下午9:40:58
  * @copyright: 上海众哈网络技术有限公司
  */
 @Slf4j
@@ -258,7 +251,7 @@ public class ReflexClazzUtils {
         Field[] fields = f.getClass().getDeclaredFields();
         for (Field field : fields) {
             try {
-                // 对于每个属性，获取属性名
+                //对于每个属性，获取属性名
                 String varName = field.getName();
                 // 获取原来的访问控制权限
                 boolean accessFlag = field.isAccessible();
@@ -267,7 +260,7 @@ public class ReflexClazzUtils {
                 // 获取在对象f中属性fields[i]对应的对象中的变量
                 Object obj = field.get(f);
                 map.put(varName, String.valueOf(obj));
-                // 恢复访问控制权限
+                //恢复访问控制权限
                 field.setAccessible(accessFlag);
             } catch (Exception e) {
                 log.error(e.getMessage());

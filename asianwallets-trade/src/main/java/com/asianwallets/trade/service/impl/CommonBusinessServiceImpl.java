@@ -1,7 +1,5 @@
 package com.asianwallets.trade.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.Attestation;
 import com.asianwallets.common.exception.BusinessException;
@@ -10,7 +8,6 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.MD5Util;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.utils.SignTools;
-import com.asianwallets.trade.dao.AttestationMapper;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,18 +39,18 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public boolean checkSignByMd5(Object obj) {
+        //将对象转换成Map
         Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
-        String sign = String.valueOf(map.get("sign"));
-        String merchantId = String.valueOf(map.get("merchantId"));
-        Attestation attestation = commonRedisDataService.getAttestationByMerchantId(merchantId);
+        Attestation attestation = commonRedisDataService.getAttestationByMerchantId(map.get("merchantId"));
         if (attestation == null) {
             return false;
         }
+        //将请求参数排序后与md5Key拼接
         String clearText = SignTools.getSignStr(map) + attestation.getMd5key();
         log.info("===============【校验MD5签名】===============【签名前的明文】 clearText: {}", clearText);
         String decryptSign = MD5Util.getMD5String(clearText);
         log.info("===============【校验MD5签名】===============【签名后的密文】 decryptSign: {}", decryptSign);
-        return sign.equalsIgnoreCase(decryptSign);
+        return map.get("sign").equalsIgnoreCase(decryptSign);
     }
 
     /**

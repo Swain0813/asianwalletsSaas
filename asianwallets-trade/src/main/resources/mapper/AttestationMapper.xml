@@ -15,40 +15,28 @@
         <result column="pubkey" property="pubkey" jdbcType="LONGVARCHAR"/>
         <result column="prikey" property="prikey" jdbcType="LONGVARCHAR"/>
     </resultMap>
+    <sql id="BaseSql">
+       id,
+       institution_id,
+       merchant_id,
+       pubkey,
+       prikey,
+       md5key,
+       mer_pubkey,
+       enabled,
+       create_time,
+       update_time,
+       creator,
+       modifier,
+       remark
+    </sql>
 
     <select id="selectByMerchantId" resultMap="BaseResultMap">
-        SELECT id,
-               institution_code,
-               pubkey,
-               prikey,
-               md5key,
-               type,
-               enabled,
-               create_time,
-               update_time,
-               creator,
-               modifier,
-               remark
+        SELECT
+        <include refid="BaseSql"/>
         FROM attestation
-        WHERE institution_code = #{institutionCode}
-          AND enabled = 1;
+        WHERE merchant_id = #{merchantId}
+        AND enabled = 1;
     </select>
 
-    <select id="selectPlatformInfo" resultType="com.asianwallets.common.entity.Attestation">
-        select id,
-               institution_code,
-               pubkey,
-               prikey,
-               md5key,
-               type,
-               enabled,
-               create_time,
-               update_time,
-               creator,
-               modifier,
-               remark
-        from attestation
-        where type = 3
-          and enabled = 1;
-    </select>
 </mapper>
