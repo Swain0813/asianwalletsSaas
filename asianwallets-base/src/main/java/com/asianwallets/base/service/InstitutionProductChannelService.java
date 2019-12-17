@@ -1,4 +1,5 @@
 package com.asianwallets.base.service;
+
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
 import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.entity.InstitutionProduct;
@@ -46,6 +47,7 @@ public interface InstitutionProductChannelService {
 
     /**
      * 分页查询机构参数设置
+     *
      * @param institutionRequestDTO
      * @return
      */
