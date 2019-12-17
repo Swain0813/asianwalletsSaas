@@ -1,10 +1,8 @@
 package com.asianwallets.common.entity;
-
 import com.asianwallets.common.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -13,7 +11,7 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(name = "settle_order")
-@ApiModel(value = "机构结算表", description = "机构结算表")
+@ApiModel(value = "商户结算表", description = "商户结算表")
 public class SettleOrder extends BaseEntity {
 
     @ApiModelProperty(value = "批次号")
