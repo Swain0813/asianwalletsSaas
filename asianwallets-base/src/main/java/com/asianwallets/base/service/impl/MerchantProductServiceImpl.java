@@ -1,4 +1,5 @@
 package com.asianwallets.base.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.base.dao.*;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -600,33 +602,35 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
      * @Descripate 修改机构通道
      **/
     @Override
-    public int updateMerchantChannel(String username, BatchUpdateSortDTO batchUpdateSort) {
+    public int updateMerchantChannel(String username, List<BatchUpdateSortDTO> batchUpdateSortDTO) {
         int num = 0;
-        if (StringUtils.isEmpty(batchUpdateSort.getEnabled()) && StringUtils.isEmpty(batchUpdateSort.getSort())) {
-            return num;
+        for (BatchUpdateSortDTO batchUpdateSort : batchUpdateSortDTO) {
+            if (StringUtils.isEmpty(batchUpdateSort.getEnabled()) && StringUtils.isEmpty(batchUpdateSort.getSort())) {
+                return num;
+            }
+            //这两个参数不为空,代表这是条需要修改的数据
+            MerchantChannel merchantChannel = merchantChannelMapper.selectByPrimaryKey(batchUpdateSort.getMerChannelId());
+            if (!StringUtils.isEmpty(batchUpdateSort.getSort())) {
+                merchantChannel.setSort(batchUpdateSort.getSort());
+            }
+            if (!StringUtils.isEmpty(batchUpdateSort.getEnabled())) {
+                merchantChannel.setEnabled(batchUpdateSort.getEnabled());
+            }
+            merchantChannel.setUpdateTime(new Date());
+            merchantChannel.setModifier(username);
+            num += merchantChannelMapper.updateByPrimaryKeySelective(merchantChannel);
+            List<String> list = merchantChannelMapper.selectChannelCodeByInsProId(merchantChannel.getMerProId());
+            //同步Redis
+            redisService.set(AsianWalletConstant.MERCHANTCHANNEL_CACHE_KEY.concat("_").concat(merchantChannel.getMerProId()), JSON.toJSONString(list));
         }
-        //这两个参数不为空,代表这是条需要修改的数据
-        MerchantChannel merchantChannel = merchantChannelMapper.selectByPrimaryKey(batchUpdateSort.getMerChannelId());
-        if (!StringUtils.isEmpty(batchUpdateSort.getSort())) {
-            merchantChannel.setSort(batchUpdateSort.getSort());
-        }
-        if (!StringUtils.isEmpty(batchUpdateSort.getEnabled())) {
-            merchantChannel.setEnabled(batchUpdateSort.getEnabled());
-        }
-        merchantChannel.setUpdateTime(new Date());
-        merchantChannel.setModifier(username);
-        num = merchantChannelMapper.updateByPrimaryKeySelective(merchantChannel);
-        List<String> list = merchantChannelMapper.selectChannelCodeByInsProId(merchantChannel.getMerProId());
-        //同步Redis
-        redisService.set(AsianWalletConstant.MERCHANTCHANNEL_CACHE_KEY.concat("_").concat(merchantChannel.getMerProId()), JSON.toJSONString(list));
         return num;
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 查询商户分配通道关联关系
-     * @return
      **/
     @Override
     public List<MerchantRelevantVO> getRelevantInfo(String merchantId) {
@@ -646,10 +650,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 导出商户产品信息
-     * @return
      **/
     @Override
     public List<MerchantProduct> exportMerProduct(MerchantProductDTO merchantProductDTO) {
@@ -657,10 +661,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/11
      * @Descripate 根据商户通道Id查询商户通道详情
-     * @return
      **/
     @Override
     public MerChannelVO getMerChannelInfoById(String merChannelId) {
@@ -668,10 +672,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/12
      * @Descripate 导出商户通道信息
-     * @return
      **/
     @Override
     public List<MerChannelVO> exportMerChannel(SearchChannelDTO searchChannelDTO) {

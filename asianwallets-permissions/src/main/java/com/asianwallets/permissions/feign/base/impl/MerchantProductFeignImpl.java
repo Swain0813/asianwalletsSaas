@@ -71,7 +71,7 @@ public class MerchantProductFeignImpl implements MerchantProductFeign {
     }
 
     @Override
-    public BaseResponse updateMerchantChannel(BatchUpdateSortDTO batchUpdateSort) {
+    public BaseResponse updateMerchantChannel(List<BatchUpdateSortDTO> batchUpdateSort) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 

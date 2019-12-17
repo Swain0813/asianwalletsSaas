@@ -101,7 +101,7 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
      * @Descripate 修改机构通道
      * @return
      **/
-    int updateMerchantChannel(String username, BatchUpdateSortDTO batchUpdateSort);
+    int updateMerchantChannel(String username, List<BatchUpdateSortDTO> batchUpdateSort);
 
     /**
      * @Author YangXu
