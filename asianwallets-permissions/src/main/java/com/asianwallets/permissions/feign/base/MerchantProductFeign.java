@@ -60,7 +60,7 @@ public interface MerchantProductFeign {
 
     @ApiOperation(value = "修改机构通道")
     @PostMapping("/merchantProduct/updateMerchantChannel")
-    BaseResponse updateMerchantChannel(@RequestBody @ApiParam BatchUpdateSortDTO batchUpdateSort);
+    BaseResponse updateMerchantChannel(@RequestBody @ApiParam List<BatchUpdateSortDTO> batchUpdateSort);
 
     @ApiOperation(value = "查询商户分配通道关联关系")
     @GetMapping("/merchantProduct/getRelevantInfo")

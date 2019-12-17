@@ -112,7 +112,7 @@ public class MerchantProductController extends BaseController {
 
     @ApiOperation(value = "修改机构通道")
     @PostMapping("/updateMerchantChannel")
-    public BaseResponse updateMerchantChannel(@RequestBody @ApiParam BatchUpdateSortDTO batchUpdateSort) {
+    public BaseResponse updateMerchantChannel(@RequestBody @ApiParam List<BatchUpdateSortDTO> batchUpdateSort) {
         return ResultUtil.success(merchantProductService.updateMerchantChannel(this.getSysUserVO().getUsername(), batchUpdateSort));
     }
 

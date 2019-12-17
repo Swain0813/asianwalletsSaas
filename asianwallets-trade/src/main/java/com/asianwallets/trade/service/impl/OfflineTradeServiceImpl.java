@@ -75,6 +75,14 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     @Transactional(rollbackFor = Exception.class, noRollbackFor = BusinessException.class)
     public CsbDynamicScanVO csbDynamicScan(OfflineTradeDTO offlineTradeDTO) {
         log.info("==================【线下CSB动态扫码】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
+        if (!commonBusinessService.repeatedRequests(offlineTradeDTO.getMerchantId(), offlineTradeDTO.getOrderNo())) {
+            log.info("==================【线下CSB】下单信息记录==================【重复请求】");
+            throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
+        }
+        if (!commonBusinessService.checkOrderCurrency(offlineTradeDTO.getOrderCurrency(), offlineTradeDTO.getOrderAmount())) {
+            log.info("==================【线下CSB】下单信息记录==================【订单金额不符合的当前币种默认值】");
+            throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
+        }
         Orders orders = new Orders();
         orders.setMerchantId(offlineTradeDTO.getMerchantId());
         orders.setMerchantOrderId(offlineTradeDTO.getOrderNo());
