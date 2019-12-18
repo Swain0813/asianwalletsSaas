@@ -13,6 +13,9 @@ public class BankIssuerIdVO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date createTime;
 
+    @ApiModelProperty(value = "主键ID")
+    private String id;
+
     @ApiModelProperty(value = "银行名称")
     private String bankName;
 
