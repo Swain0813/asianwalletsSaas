@@ -330,7 +330,6 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             double balance = 0.0;//正常资金变动前
             double fr_afterbalance = 0.0;//冻结资金变动后
             double fr_balance = 0.0;//冻结资金变动前
-            String mbuaccountId = null;
             String vaccounId = null;
             int result = 0;
             int result1 = 0;
@@ -381,7 +380,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 mab_fr.setAfterbalance(fr_afterbalance);
                 mab_fr.setOrganId(st.getOrganId());//所属机构编号
                 mab_fr.setMerchantid(st.getMerchantid());
-                mab_fr.setMbuaccountId(mbuaccountId);
+                mab_fr.setMbuaccountId(null);
                 mab_fr.setVaccounId(vaccounId);
                 mab_fr.setBalance(fr_balance);
                 mab_fr.setBalanceTimestamp(new Date());
@@ -418,12 +417,11 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             mab.setAfterbalance(afterbalance);
             mab.setOrganId(st.getOrganId());//所属机构编号
             mab.setMerchantid(st.getMerchantid());
-            mab.setMbuaccountId(mbuaccountId);
+            mab.setMbuaccountId(null);
             mab.setVaccounId(vaccounId);
             mab.setBalance(balance);
             mab.setBalanceTimestamp(new Date());
             mab.setSysAddDate(new Date());
-            //mab.setBalancetype(1);
             mab.setBalancetype(st.getBalancetype());
             mab.setBussinesstype(st.getBusinessType());
             mab.setCurrency(st.getTxncurrency());
