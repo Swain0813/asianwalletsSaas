@@ -44,7 +44,19 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     private ProductMapper productMapper;
 
     @Autowired
+    private MerchantProductMapper merchantProductMapper;
+
+    @Autowired
     private ChannelMapper channelMapper;
+
+    @Autowired
+    private MerchantChannelMapper merchantChannelMapper;
+
+    @Autowired
+    private ChannelBankMapper channelBankMapper;
+
+    @Autowired
+    private BankIssuerIdMapper bankIssuerIdMapper;
 
     /**
      * 根据币种编码获取币种
@@ -213,7 +225,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
      * @return 产品
      */
     @Override
-    public Product getProductByCode(String productCode) {
+    public Product getProductByCode(Integer productCode) {
         Product product = null;
         try {
             product = JSON.parseObject(redisService.get(AsianWalletConstant.PRODUCT_CACHE_CODE_KEY.concat("_") + productCode), Product.class);
@@ -230,6 +242,58 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         }
         log.info("==================【根据产品编码获取产品】==================【商户信息】 product: {}", JSON.toJSONString(product));
         return product;
+    }
+
+    /**
+     * 根据商户ID与产品ID查询商户产品
+     *
+     * @param merchantId 商户ID
+     * @param productId  产品ID
+     * @return 商户产品
+     */
+    @Override
+    public MerchantProduct getMerProByMerIdAndProId(String merchantId, String productId) {
+        MerchantProduct merchantProduct = null;
+        try {
+            merchantProduct = JSON.parseObject(redisService.get(AsianWalletConstant.MERCHANTPRODUCT_CACHE_KEY.concat("_").concat(merchantId.concat("_").concat(productId))), MerchantProduct.class);
+            if (merchantProduct == null) {
+                merchantProduct = merchantProductMapper.selectByMerchantIdAndProductId(merchantId, productId);
+                if (merchantProduct == null) {
+                    log.info("==================【根据商户ID与产品ID查询商户产品】==================【商户产品对象不存在】 merchantId: {} | productId: {}", merchantId, productId);
+                    return null;
+                }
+                redisService.set(AsianWalletConstant.MERCHANTPRODUCT_CACHE_KEY.concat("_").concat(merchantProduct.getMerchantId().concat("_").concat(merchantProduct.getProductId())), JSON.toJSONString(merchantProduct));
+            }
+        } catch (Exception e) {
+            log.info("==================【根据商户ID与产品ID查询商户产品】==================【获取异常】", e);
+        }
+        log.info("==================【根据商户ID与产品ID查询商户产品】==================【商户产品信息】 merchantProduct: {}", JSON.toJSONString(merchantProduct));
+        return merchantProduct;
+    }
+
+    /**
+     * 根据通道ID查询通道信息
+     *
+     * @param channelId 通道ID
+     */
+    @Override
+    public Channel getChannelById(String channelId) {
+        Channel channel = null;
+        try {
+            channel = JSON.parseObject(redisService.get(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channelId)), Channel.class);
+            if (channel == null) {
+                channel = channelMapper.selectByPrimaryKey(channelId);
+                if (channel == null) {
+                    log.info("==================【根据通道ID查询通道信息】==================【通道对象不存在】 channelId: {}", channelId);
+                    return null;
+                }
+                redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
+            }
+        } catch (Exception e) {
+            log.info("==================【根据通道ID查询通道信息】==================【获取异常】", e);
+        }
+        log.info("==================【根据通道ID查询通道信息】==================【通道信息】 channel: {}", JSON.toJSONString(channel));
+        return channel;
     }
 
     /**
