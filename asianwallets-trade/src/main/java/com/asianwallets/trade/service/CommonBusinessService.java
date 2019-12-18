@@ -19,7 +19,7 @@ public interface CommonBusinessService {
     boolean checkSignByMd5(Object obj);
 
     /**
-     * 校验线上签名
+     * 通用签名校验
      *
      * @param obj
      * @return boolean

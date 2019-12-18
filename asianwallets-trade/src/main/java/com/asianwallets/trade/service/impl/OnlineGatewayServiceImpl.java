@@ -79,12 +79,12 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         //信息落地
         log.info("---------------【线上直连收单输入实体】---------------OnlineTradeDTO:{}", JSON.toJSONString(onlineTradeDTO));
         //重复请求
-        if (commonBusinessService.repeatedRequests(onlineTradeDTO.getMerchantId(), onlineTradeDTO.getOrderNo())) {
+        if (!commonBusinessService.repeatedRequests(onlineTradeDTO.getMerchantId(), onlineTradeDTO.getOrderNo())) {
             log.info("-----------------【线上直连】下单信息记录--------------【重复请求】");
             throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
         }
         //检查币种默认值
-        if (commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount())) {
+        if (!commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount())) {
             log.info("-----------------【线上直连】下单信息记录--------------【订单金额不符合的当前币种默认值】");
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
@@ -93,7 +93,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 
 
         //签名校验
-        if (commonBusinessService.checkOnlineSign(onlineTradeDTO)) {
+        if (!commonBusinessService.checkOnlineSign(onlineTradeDTO)) {
             log.info("-----------------【线上直连】下单信息记录--------------【签名错误】");
             throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
         }
