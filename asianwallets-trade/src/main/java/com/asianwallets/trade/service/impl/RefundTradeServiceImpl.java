@@ -100,6 +100,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
 
         if (TradeConstant.ORDER_PAY_SUCCESS.equals(oldOrder.getTradeStatus())) {
         /*************************************************************** 订单是付款成功的场合 *************************************************************/
+        
 
         }else if (TradeConstant.ORDER_PAYING.equals(oldOrder.getTradeStatus())){
         /***************************************************************  订单是付款中的场合  *************************************************************/
@@ -146,7 +147,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
             }
             return TradeConstant.RF;
-        } else {
+        } else if((TradeConstant.ORDER_CLEAR_SUCCESS.equals(CTstatus) && TradeConstant.ORDER_SETTLE_WAIT.equals(STstatus))
+            || (TradeConstant.ORDER_CLEAR_WAIT.equals(CTstatus) && STstatus == null)
+        ){
             //部分退款的场合
             if (refundDTO.getRefundType() == 2) {
                 throw new BusinessException(EResultEnum.ORDER_NOT_SETTLE.getCode());
@@ -180,6 +183,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 }
             }
             return TradeConstant.RV;
+        }else if(CTstatus == null && STstatus == null){
+            return "PAYING";
+        }else{
+            throw new BusinessException(EResultEnum.ERROR.getCode());
         }
     }
 
