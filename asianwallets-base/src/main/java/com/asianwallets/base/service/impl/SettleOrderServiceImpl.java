@@ -1,6 +1,4 @@
 package com.asianwallets.base.service.impl;
-
-
 import com.asianwallets.base.dao.SettleOrderMapper;
 import com.asianwallets.base.service.SettleOrderService;
 import com.asianwallets.common.dto.SettleOrderDTO;
@@ -15,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 机构结算交易
+ * 结算交易
  */
 @Transactional
 @Service

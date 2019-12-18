@@ -52,28 +52,40 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 
     @Autowired
     private MerchantProductMapper merchantProductMapper;
+
     @Autowired
     private MerchantProductAuditMapper merchantProductAuditMapper;
+
     @Autowired
     private MerchantProductHistoryMapper merchantProductHistoryMapper;
+
     @Autowired
     private MerchantMapper merchantMapper;
+
     @Autowired
     private MerchantChannelMapper merchantChannelMapper;
+
     @Autowired
     private ChannelBankMapper channelBankMapper;
+
     @Autowired
     private RedisService redisService;
+
     @Autowired
     private QrtzJobDetailsMapper qrtzJobDetailsMapper;
+
     @Autowired
     private Scheduler scheduler;
+
     @Autowired
     private ProductMapper productMapper;
+
     @Autowired
     private AccountMapper accountMapper;
+
     @Autowired
     private SettleControlMapper settleControlMapper;
+
     @Autowired
     private AuditorProvider auditorProvider;
 
