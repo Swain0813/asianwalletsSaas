@@ -64,12 +64,15 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                 log.info("===============【校验MD5签名】===============【密钥不存在】");
                 return false;
             }
+            //取出签名字段
+            String sign = map.get("sign");
+            map.put("sign", null);
             //将请求参数排序后与md5Key拼接
             String clearText = SignTools.getSignStr(map) + attestation.getMd5key();
             log.info("===============【校验MD5签名】===============【签名前的明文】 clearText: {}", clearText);
             String decryptSign = MD5Util.getMD5String(clearText);
             log.info("===============【校验MD5签名】===============【签名后的密文】 decryptSign: {}", decryptSign);
-            return map.get("sign").equalsIgnoreCase(decryptSign);
+            return sign.equalsIgnoreCase(decryptSign);
         } catch (Exception e) {
             log.info("===============【校验MD5签名】===============【验签异常】", e);
         }
