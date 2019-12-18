@@ -18,8 +18,8 @@ public class AttestationDTO {
     @ApiModelProperty(value = "uuid")
     private String id;
 
-    @ApiModelProperty(value = "机构code")
-    private String institutionCode;
+    @ApiModelProperty(value = "商户id")
+    private String merchantId;
 
     @ApiModelProperty(value = "公钥")
     private String pubkey;
@@ -29,9 +29,6 @@ public class AttestationDTO {
 
     @ApiModelProperty(value = "签名")
     private String md5key;
-
-    /*@ApiModelProperty(value = "类型")//0-机构 1-机构绑定的平台(新增机构时会产生)  3-平台(仅用于收银台)
-    private Byte type;*/
 
     @ApiModelProperty(value = "启用禁用")
     private Boolean enabled;

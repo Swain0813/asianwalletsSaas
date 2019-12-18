@@ -19,23 +19,20 @@ public class AttestationVO {
     @ApiModelProperty(value = "uuid")
     private String id;
 
-    @ApiModelProperty(value = "机构code")
-    private String institutionCode;
+    @ApiModelProperty(value = "机构ID")
+    private String institutionId;
+
+    @ApiModelProperty(value = "商户ID")
+    private String merchantId;
 
     @ApiModelProperty(value = "商户公钥")
-    private String institutionPubkey;
-
-    @ApiModelProperty(value = "私钥")
-    private String prikey;
+    private String merchantPubkey;
 
     @ApiModelProperty(value = "平台公钥")
     private String platformPubkey;
 
     @ApiModelProperty(value = "签名")
     private String md5key;
-
-    @ApiModelProperty(value = "类型")
-    private Byte type;
 
     @ApiModelProperty(value = "启用禁用")
     private Boolean enabled;

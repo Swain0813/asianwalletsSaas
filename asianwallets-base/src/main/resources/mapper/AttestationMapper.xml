@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.AttestationMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Attestation">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="mer_pubkey" property="merPubkey" jdbcType="VARCHAR"/>
+        <result column="md5key" property="md5key" jdbcType="LONGVARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="pubkey" property="pubkey" jdbcType="LONGVARCHAR"/>
+        <result column="prikey" property="prikey" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <select id="selectKeyInfo" resultType="com.asianwallets.common.vo.AttestationVO">
+        select id,
+        institution_id as institutionId,
+        merchant_id as merchantId,
+        pubkey as platformPubkey,
+        md5key,
+        mer_pubkey as merchantPubkey,
+        enabled,
+        create_time as createTime,
+        update_time as updateTime,
+        creator, modifier, remark
+        from attestation
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="institutionId != null and institutionId != ''">
+                AND institutionId = #{institutionId}
+            </if>
+            <if test="merchantId != null and merchantId != ''">
+                AND merchant_id = #{merchantId}
+            </if>
+            <if test="pubkey != null and pubkey != ''">
+                AND pf_md5key = #{pubkey}
+            </if>
+            <if test="md5key != null and md5key != ''">
+                AND md5key = #{md5key}
+            </if>
+            <if test="createTime != null">
+                AND create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                AND update_time = #{updateTime}
+            </if>
+            <if test="creator != null and creator != ''">
+                AND creator = #{creator}
+            </if>
+            <if test="modifier != null and modifier != ''">
+                AND modifier = #{modifier}
+            </if>
+            <if test="remark != null and remark != ''">
+                AND remark = #{remark}
+            </if>
+            AND enabled = true
+        </where>
+    </select>
+
+
+    <select id="selectPlatformPub" resultType="com.asianwallets.common.vo.AttestationVO">
+        select id,
+               institution_id as institutionId,
+               merchant_id    as merchantId,
+               pubkey         as platformPubkey,
+               mer_pubkey     as merchantPubkey,
+               md5key,
+               enabled,
+               create_time    as createTime,
+               update_time    as updateTime,
+               creator,
+               modifier,
+               remark
+        from attestation
+        where merchant_id = #{merchantId}
+          and enabled = 1;
+    </select>
+
+    <select id="selectByMerchantId" resultType="java.lang.Integer">
+        select count(id)
+        from attestation
+        where merchant_id = #{merchantId}
+          and enabled = 1;
+    </select>
+
+    <select id="selectByPubKey" resultType="java.lang.Integer">
+        select count(*)
+        from attestation
+        where pubkey = #{pubKey}
+          and enabled = 1;
+    </select>
+
+</mapper>

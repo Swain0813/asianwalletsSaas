@@ -30,24 +30,10 @@ public class AttestationController extends BaseController {
         return ResultUtil.success(attestationService.getRSA());
     }
 
-    @ApiOperation(value = "添加密钥")
-    @PostMapping("/addKey")
-    public BaseResponse addKey(@RequestBody @ApiParam AttestationDTO attestationDTO) {
-        attestationDTO.setCreator(this.getSysUserVO().getUsername());
-        return ResultUtil.success(attestationService.addKey(attestationDTO));
-    }
-
     @ApiOperation(value = "查询公钥")
     @PostMapping("/pageKeyInfo")
     public BaseResponse pageKeyInfo(@RequestBody @ApiParam AttestationDTO attestationDTO) {
         return ResultUtil.success(attestationService.selectKeyInfo(attestationDTO));
-    }
-
-
-    @ApiOperation(value = "查询密钥所有信息")
-    @PostMapping("/pageAllKeyInfo")
-    public BaseResponse pageAllKeyInfo(@RequestBody @ApiParam AttestationDTO attestationDTO) {
-        return ResultUtil.success(attestationService.pageAllKeyInfo(attestationDTO));
     }
 
     @ApiOperation(value = "修改密钥信息")
@@ -55,13 +41,6 @@ public class AttestationController extends BaseController {
     public BaseResponse updateKeyInfo(@RequestBody @ApiParam AttestationDTO attestationDTO) {
         attestationDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(attestationService.updateKeyInfo(attestationDTO));
-    }
-
-    @ApiOperation(value = "启用禁用")
-    @PostMapping("/banKeyInfo")
-    public BaseResponse banKeyInfo(@RequestBody @ApiParam AttestationDTO attestationDTO) {
-        attestationDTO.setModifier(this.getSysUserVO().getUsername());
-        return ResultUtil.success(attestationService.banKeyInfo(attestationDTO));
     }
 
 }

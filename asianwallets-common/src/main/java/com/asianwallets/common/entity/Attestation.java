@@ -17,21 +17,25 @@ public class Attestation extends BaseEntity {
     @Column(name = "institution_id")
     private String institutionId;
 
-    @ApiModelProperty(value = "公钥")
+    @ApiModelProperty(value = "商户ID")
+    @Column(name = "merchant_id")
+    private String merchantId;
+
+    @ApiModelProperty(value = "平台公钥")
     @Column(name = "pubkey")
     private String pubkey;
 
-    @ApiModelProperty(value = "私钥")
+    @ApiModelProperty(value = "平台私钥")
     @Column(name = "prikey")
     private String prikey;
 
-    @ApiModelProperty(value = "签名")
+    @ApiModelProperty(value = "平台md5key")
     @Column(name = "md5key")
     private String md5key;
 
-    @ApiModelProperty(value = "类型")//0-机构的 1-机构对应平台的 3登录及收银台的
-    @Column(name = "type")
-    private Byte type;
+    @ApiModelProperty(value = "商户公钥")
+    @Column(name = "mer_pubkey")
+    private String merPubkey;
 
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")
