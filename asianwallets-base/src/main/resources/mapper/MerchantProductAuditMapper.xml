@@ -67,13 +67,14 @@
 		mp.trade_direction,  mp.trans_type, mp.pay_type,
 		d.name as rate_type,
 		mp.min_tate,  mp.max_tate, mp.rate, mp.add_value, mp.limit_amount, mp.daily_trading_count, mp.float_rate, mp.divided_ratio, mp.divided_mode,
-		mp.fee_payer, mp.refund_default, mp.refund_rate_type, mp.refund_min_tate, mp.refund_max_tate, mp.refund_rate, mp.refund_add_value, mp.settle_cycle,
+		mp.fee_payer, mp.refund_default, d1.name as refund_rate_type, mp.refund_min_tate, mp.refund_max_tate, mp.refund_rate, mp.refund_add_value, mp.settle_cycle,
 		mp.audit_status, mp.audit_remark, mp.effect_time, mp.create_time, mp.update_time, mp.creator, mp.modifier, mp.remark, mp.enabled, mp.ext1, mp.ext2,
 		mp.ext3, mp.ext4, mp.ext5,
 		mp.ext6, mp.ext7
 		from merchant_product_audit mp left join product p on p.id = mp.product_id
 		left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
 		left join dictionary d on mp.rate_type = d.code and d.language = #{language}
+		left join dictionary d1 on mp.refund_rate_type = d1.code and d1.language = #{language}
 		<where>
 			<if test="merchantId!=null and merchantId != ''">
 				and merchant_id=#{merchantId}
