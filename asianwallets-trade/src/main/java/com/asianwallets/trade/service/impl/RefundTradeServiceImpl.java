@@ -14,6 +14,8 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
+import com.asianwallets.trade.dao.TcsCtFlowMapper;
+import com.asianwallets.trade.dao.TcsStFlowMapper;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.RefundTradeService;
@@ -43,6 +45,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     private OrdersMapper ordersMapper;
     @Autowired
     private OrderRefundMapper orderRefundMapper;
+    @Autowired
+    private TcsCtFlowMapper tcsCtFlowMapper;
+    @Autowired
+    private TcsStFlowMapper tcsStFlowMapper;
     /**
      * @Author YangXu
      * @Date 2019/12/18

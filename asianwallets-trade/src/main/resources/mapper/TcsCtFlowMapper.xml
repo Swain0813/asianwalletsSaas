@@ -37,12 +37,5 @@
     feecurrency, channelCost, channelcostcurrency, addDatetime, txndesc, sltamount, sltcurrency,
     txnexrate, remark, gatewayFee, organId
   </sql>
-  <!--<select id="getCLLeftMoney" resultType="double" parameterType="com.asianwallets.common.entity.TcsCtFlow" >-->
-	   <!--select sum(txnamount) from tcs_ctflow where-->
-	   <!--merchantid=#{merchantid,jdbcType=VARCHAR}-->
-	   <!--and refcnceFlow=#{refcnceFlow,jdbcType=VARCHAR}-->
-	   <!--and sltcurrency=#{sltcurrency,jdbcType=VARCHAR}-->
-	   <!--and sysorderid=#{sysorderid,jdbcType=VARCHAR}-->
-    <!--</select>-->
 
 </mapper>

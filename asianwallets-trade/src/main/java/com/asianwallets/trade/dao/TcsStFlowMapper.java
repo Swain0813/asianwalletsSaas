@@ -16,13 +16,12 @@ public interface TcsStFlowMapper extends BaseMapper<TcsStFlow> {
 
     /**
      * @Author YangXu
-     * @Date 2019/7/29
-     * @Descripate 查询所有date时间之前的未结算订单
+     * @Date 2019/3/13
+     * @Descripate 根据系统订单号查询结算状态: 1-未结算，2-已结算
      * @return
      **/
-    List<TcsStFlow> selectList(TcsStFlow tcsStFlow);
-
-
+    @Select("select STstate from tcs_stflow where sysorderid = #{sysorderid} and refcnceFlow = #{sysorderid} and tradetype = 'ST'")
+    Integer getSTstatus(String sysorderid);
     /**
      * @Author YangXu
      * @Date 2019/12/12
