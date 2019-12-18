@@ -3,7 +3,9 @@ package com.asianwallets.trade.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.*;
+import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
+import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,9 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
 
     @Autowired
     private MerchantMapper merchantMapper;
+
+    @Autowired
+    private ChannelMapper channelMapper;
 
     /**
      * 根据币种编码获取币种
@@ -190,5 +195,33 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             log.info("==================【根据商户ID获取商户】==================【获取异常】", e);
         }
         return merchant;
+    }
+
+    /**
+     * 根据通道code从redis获取通道信息
+     *
+     * @param channelCode 通道code
+     */
+    @Override
+    public Channel getChannelByChannelCode(String channelCode) {
+        //从redis获取
+        Channel channel = JSON.parseObject(redisService.get(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channelCode)), Channel.class);
+        if (channel == null) {
+            //redis为空从数据库获取
+            channel = channelMapper.selectByChannelCode(channelCode);
+            if (channel == null) {
+                log.info("-----------------通道信息不存在 ----------------- channelCode:{}", channelCode);
+                //通道信息不存在
+                throw new BusinessException(EResultEnum.GET_CHANNEL_INFO_ERROR.getCode());
+            }
+            //同步redis
+            redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channelCode), JSON.toJSONString(channel));
+        }
+        if (!channel.getEnabled()) {
+            log.info("-----------------通道禁用 ----------------- channelCode:{}", channelCode);
+            throw new BusinessException(EResultEnum.CHANNEL_STATUS_ABNORMAL.getCode());
+        }
+        log.info("================== CommonService getChannelByChannelCode =================== channel: {}", JSON.toJSONString(channel));
+        return channel;
     }
 }
