@@ -109,8 +109,6 @@ public class AsianWalletConstant {
 
     public static final String ATTESTATION_CACHE_KEY = "attestationCacheKey";//秘钥管理表的缓存key
 
-    public static final String ATTESTATION_CACHE_PLATFORM_KEY = "attestationCachePlatformKey";//密钥管理表的平台私钥缓存
-
     /************************************** 账户 *******************************************************************************************/
     public static final String ACCOUNT_CACHE_KEY = "accountCacheKey";//key + 机构编号 + 币种
 

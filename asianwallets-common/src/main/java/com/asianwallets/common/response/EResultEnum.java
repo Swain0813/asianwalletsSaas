@@ -184,6 +184,7 @@ public enum EResultEnum {
     MERCHANT_DOES_NOT_EXIST("30036"),//商户不存在
     SHOP_CODE_EXIST("30037"),//通道店铺编号已存在
     MERCHANT_NOT_BELONG_TO_THE_INSTITUTION("30038"),//该商户不属于此机构
+    SECRET_IS_NOT_EXIST("30039"),//密钥不存在
 
 
     /****汇率模块的错误信息从40001开始--许文奇*****/

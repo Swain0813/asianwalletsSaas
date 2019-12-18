@@ -19,12 +19,20 @@ public class SettleOrder extends BaseEntity {
     private String batchNo;
 
     @ApiModelProperty(value = "机构编号")
-    @Column(name = "institution_code")
-    private String institutionCode;
+    @Column(name = "institution_id")
+    private String institutionId;
 
     @ApiModelProperty(value = "机构名称")
     @Column(name = "institution_name")
     private String institutionName;
+
+    @ApiModelProperty(value = "商户编号")
+    @Column(name = "merchant_id")
+    private String merchantId;
+
+    @ApiModelProperty(value = "商户名称")
+    @Column(name = "merchant_name")
+    private String merchantName;
 
     @ApiModelProperty(value = "交易币种")
     @Column(name = "txncurrency")
@@ -74,6 +82,10 @@ public class SettleOrder extends BaseEntity {
     @Column(name = "settle_type")
     private Byte settleType;
 
+    @ApiModelProperty(value = "手续费")
+    @Column(name = "fee")
+    private BigDecimal fee;
+
     @ApiModelProperty(value = "批次交易手续费")
     @Column(name = "trade_fee")
     private BigDecimal tradeFee;
@@ -85,6 +97,18 @@ public class SettleOrder extends BaseEntity {
     @ApiModelProperty(value = "交易汇率")
     @Column(name = "rate")
     private BigDecimal rate;
+
+    @ApiModelProperty(value = "费率类型")
+    @Column(name = "rate_type")
+    private BigDecimal rateType;
+
+    @ApiModelProperty(value = "费率")
+    @Column(name = "fee_rate")
+    private BigDecimal feeRate;
+
+    @ApiModelProperty(value = "反向汇率")
+    @Column(name = "reverse_rate")
+    private BigDecimal reverseRate;
 
     @ApiModelProperty(value = "结算金额")//结算金额=交易金额*交易汇率
     @Column(name = "settle_amount")
@@ -133,5 +157,21 @@ public class SettleOrder extends BaseEntity {
     @ApiModelProperty(value = "收款人地址")
     @Column(name = "receiver_address")
     private String receiverAddress;
+
+    @ApiModelProperty(value = "备注1")
+    @Column(name = "extend1")
+    private String extend1;
+
+    @ApiModelProperty(value = "备注2")
+    @Column(name = "extend2")
+    private String extend2;
+
+    @ApiModelProperty(value = "备注3")
+    @Column(name = "extend3")
+    private String extend3;
+
+    @ApiModelProperty(value = "备注4")
+    @Column(name = "extend4")
+    private String extend4;
 
 }

@@ -1,4 +1,5 @@
 package com.asianwallets.base.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.*;
 import com.asianwallets.base.service.MerchantService;
@@ -13,6 +14,7 @@ import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.utils.RSAUtils;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -21,8 +23,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -58,6 +62,8 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
     @Autowired
     private SysUserMapper sysUserMapper;
 
+    @Autowired
+    private AttestationMapper attestationMapper;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -88,7 +94,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
         BeanUtils.copyProperties(merchantDTO, merchantAudit);
         //商户编号
         String id = IDS.uniqueID().toString();
-        String merchantId ="M"+DateToolUtils.getReqDateE().concat(id.substring(id.length() - 4));
+        String merchantId = "M" + DateToolUtils.getReqDateE().concat(id.substring(id.length() - 4));
         merchant.setId(merchantId);
         merchant.setCreateTime(new Date());
         merchant.setCreator(name);
@@ -101,11 +107,32 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
         merchantAudit.setAuditStatus(TradeConstant.AUDIT_WAIT);
         merchantAudit.setEnabled(false);
         if (merchantMapper.insert(merchant) > 0) {
+
+
+            Attestation attestation = new Attestation();
+            attestation.setId(IDS.uuid2());//id
+            Map<String, String> rsaMap;
+            try {
+                rsaMap = RSAUtils.initKey();
+            } catch (Exception e) {
+                log.info("---------生成RSA公私钥错误---------");
+                throw new BusinessException(EResultEnum.KEY_GENERATION_FAILED.getCode());
+            }
+            attestation.setInstitutionId(merchantDTO.getInstitutionId());
+            attestation.setMerchantId(merchantId);
+            attestation.setPubkey(rsaMap.get("publicKey"));
+            attestation.setPrikey(rsaMap.get("privateKey"));
+            attestation.setEnabled(true);
+            attestation.setMd5key(IDS.uuid2());
+            attestation.setCreator(name);
+            attestation.setCreateTime(new Date());
+            attestationMapper.insert(attestation);
+
             //账号信息
             SysUser sysUser = new SysUser();
             String userId = IDS.uuid2();
             sysUser.setId(userId);
-            sysUser.setUsername("admin"+merchantId);
+            sysUser.setUsername("admin" + merchantId);
             sysUser.setPassword(encryptPassword("123456"));
             sysUser.setTradePassword(encryptPassword("123456"));//交易密码
             sysUser.setSysId(merchantId);
@@ -147,7 +174,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
                 SysUser sysUser1 = new SysUser();
                 String userId1 = IDS.uuid2();
                 sysUser1.setId(userId1);
-                sysUser1.setUsername("00"+merchantId);
+                sysUser1.setUsername("00" + merchantId);
                 sysUser1.setPassword(encryptPassword("123456"));
                 sysUser1.setTradePassword(encryptPassword("123456"));//交易密码
                 sysUser1.setSysId(merchantId);
@@ -205,7 +232,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
                 SysUser sysUser1 = new SysUser();
                 String userId1 = IDS.uuid2();
                 sysUser1.setId(userId1);
-                sysUser1.setUsername("00"+merchantId);
+                sysUser1.setUsername("00" + merchantId);
                 sysUser1.setPassword(encryptPassword("123456"));
                 sysUser1.setTradePassword(encryptPassword("123456"));//交易密码
                 sysUser1.setSysId(merchantId);
@@ -426,10 +453,10 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/28
      * @Descripate 导出商户
-     * @return
      **/
     @Override
     public List<Merchant> exportMerchant(MerchantDTO merchantDTO) {
@@ -438,10 +465,10 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/11/28
      * @Descripate 禁用启用商户
-     * @return
      **/
     @Override
     public int banMerchant(String username, String merchantId, Boolean enabled) {

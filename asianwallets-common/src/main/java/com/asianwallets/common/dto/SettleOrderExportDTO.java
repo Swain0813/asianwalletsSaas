@@ -36,10 +36,16 @@ public class SettleOrderExportDTO {
     private String remark;
 
     @ApiModelProperty(value = "机构编号")
-    private String institutionCode;
+    private String institutionId;
 
     @ApiModelProperty(value = "机构名称")
     private String institutionName;
+
+    @ApiModelProperty(value = "商户编号")
+    private String merchantId;
+
+    @ApiModelProperty(value = "商户名称")
+    private String merchantName;
 
     @ApiModelProperty(value = "交易币种")
     private String txncurrency;
