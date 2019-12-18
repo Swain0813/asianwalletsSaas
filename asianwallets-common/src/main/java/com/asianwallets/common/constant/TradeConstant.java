@@ -1,5 +1,8 @@
 package com.asianwallets.common.constant;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 常量类
  */
@@ -107,7 +110,7 @@ public class TradeConstant {
     public static final Byte REFUND_WAIT = 1; //退款中
     public static final Byte REFUND_SUCCESS = 2; //退款成功
     public static final Byte REFUND_FALID = 3; //退款失败
-    public static final Byte REFUND_SYS_FALID =4; //系统创建退款单失败
+    public static final Byte REFUND_SYS_FALID = 4; //系统创建退款单失败
 
     //---------------退款类型
     public static final Byte REFUND_TYPE_TOTAL = 1; //全额退款
@@ -220,6 +223,31 @@ public class TradeConstant {
     public static final String WECHAT_BSC_OFFLINE = "WECHAT_BSC_OFFLINE"; //wechat线下BSC扫码
     public static final String WECHAT_CSB_OFFLINE = "WECHAT_CSB_OFFLINE"; //wechat线下CSB扫码
     public static final String CLOUD_PAY_OFFLINE = "CLOUD_PAY_OFFLINE"; //云闪付线下
+    //------------通道包名地址
+    public static final Map<String, String> channelsMap = new HashMap<String, String>() {
+        {
+            put("AD3_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("EGHL_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("MEGAPAY_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("VTC_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("ENETS_ONLINE_BANK", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("ENETS_ONLINE_QRCODE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("HELP2PAY_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("NEXTPOS_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("NGANLUONG_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("ALIPAY_CSB_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("WECHAT_CSB_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("CLOUD_PAY_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("DOKU_PAY_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("AD3_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("NEXTPOS_CSB_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("ENETS_CSB_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("ALIPAY_BSC_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("WECHAT_BSC_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("WECHAT_CSB_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("CLOUD_PAY_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+        }
+    };
 
     //--------------发货状态
     public static final Byte UNSHIPPED = 1; //未发货
