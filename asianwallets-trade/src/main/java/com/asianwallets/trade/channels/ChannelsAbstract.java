@@ -61,4 +61,15 @@ public abstract class ChannelsAbstract {
     public abstract BaseResponse cancle(Orders orders, Channel channel);
 
 
+    /**
+     * @Author YangXu
+     * @Date 2019/12/18
+     * @Descripate  付款中撤销
+     * @return
+     **/
+    public abstract BaseResponse cancelPaying(Orders orders, Channel channel);
+
+
+
+
 }

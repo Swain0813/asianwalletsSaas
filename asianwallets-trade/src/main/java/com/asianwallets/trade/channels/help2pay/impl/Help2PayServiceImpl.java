@@ -77,6 +77,16 @@ public class Help2PayServiceImpl  extends ChannelsAbstract implements Help2PaySe
       };
 
 
+    /**
+     * @Author YangXu
+     * @Date 2019/12/18
+     * @Descripate  付款中撤销
+     * @return
+     **/
+    @Override
+    public BaseResponse cancelPaying(Orders orders, Channel channel){
+        return null;
+    };
 
 
 

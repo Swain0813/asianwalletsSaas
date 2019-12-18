@@ -43,11 +43,11 @@ public interface CommonRedisDataService {
     /**
      * 根据机构ID与交易方向查询获取机构请求参数
      *
-     * @param institutionId 机构ID
+     * @param institutionId  机构ID
      * @param tradeDirection 交易方向
      * @return 机构
      */
-    InstitutionRequestParameters getInstitutionRequestByIdAndDirection(String institutionId,Byte tradeDirection);
+    InstitutionRequestParameters getInstitutionRequestByIdAndDirection(String institutionId, Byte tradeDirection);
 
     /**
      * 根据商户ID获取商户
@@ -64,4 +64,11 @@ public interface CommonRedisDataService {
      * @return 产品
      */
     Product getProductByCode(String productCode);
+
+    /**
+     * 根据通道code从redis获取通道信息
+     *
+     * @param channelCode 通道code
+     */
+    Channel getChannelByChannelCode(String channelCode);
 }

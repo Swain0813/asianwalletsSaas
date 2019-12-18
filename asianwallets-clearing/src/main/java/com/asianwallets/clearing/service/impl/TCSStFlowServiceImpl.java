@@ -106,7 +106,6 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             try {
                 String mbuaccountId = null;
                 String vaccounId = null;
-                int result = 0;
                 int Fre_result = 0;//修改商户账户冻结资金字段结果
                 int Fre_result2 = 0;//插入冻结记录表结果
                 double afterbalance = 0.0;//变动后
@@ -129,7 +128,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 //查询结算算表中未结算算的金额
                 BigDecimal unSettleAmount = tcsStFlowMapper.getUnSettleAmount(stf.getMerchantid(), stf.getTxncurrency());
                 unSettleAmount = unSettleAmount == null ? BigDecimal.ZERO : unSettleAmount;
-                //结算表中未结算的金额+结算户的资金-冻结户+交易金额
+                //结算表中未结算的金额+结算户的资金-冻结户+(交易金额-手续费+退还收单手续费）
                 double secondMoney = ComDoubleUtil.addBySize(mva01.getSettleBalance().doubleValue(), unSettleAmount.doubleValue(), 2);
                 double totalMoney = ComDoubleUtil.subBySize(secondMoney, mva01.getFreezeBalance().doubleValue(), 2);
                 double outMoney = ComDoubleUtil.addBySize(totalMoney, stf.getTxnamount() - stf.getFee() + stf.getRefundOrderFee(), 2);
@@ -184,15 +183,16 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     mab.setTradetype(stf.getTradetype());
                     mab.setTxnamount(-1 * stf.getTxnamount());
                     mab.setType(3);//冻结户
-                    mab.setGatewayFee(Double.parseDouble("0"));//20170615添加的网关状态手续费
+                    //网关状态手续费
+                    mab.setGatewayFee(Double.parseDouble("0"));
                     mab.setSltcurrency(stf.getSltcurrency());
                     mab.setSltexrate(Double.parseDouble("1"));
                     mab.setSltamount(-1 * stf.getTxnamount());//结算资金
-                    mab.setRefundOrderFee(stf.getRefundOrderFee()); //退还手续费
+                    mab.setRefundOrderFee(stf.getRefundOrderFee()); //退还收单手续费
                     Fre_result2 = tmMerChTvAcctBalanceMapper.insertSelective(mab);
                 }
                 // 插入结算表
-                result = tcsStFlowMapper.insert(stf);
+                int result = tcsStFlowMapper.insert(stf);
                 if ((stf.getBalancetype() == 1 && result > 0) || (stf.getBalancetype() == 2 && result > 0 && Fre_result2 > 0)) {
                     baseResponse.setCode(Const.Code.OK);
                     baseResponse.setMsg(Const.Code.OK_MSG);
@@ -249,7 +249,6 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     totalTxnAmt += validateST.getTxnamount();
                     totalFee += validateST.getFee();
                     totalRefundFee += validateST.getRefundOrderFee();
-
                     //若是冻结资金，交易金额 - 手续费 + 退还手续费
                     if (validateST.getBalancetype() == 2) {
                         totalFreAmt = totalFreAmt + (validateST.getTxnamount() - validateST.getFee() + validateST.getRefundOrderFee());
@@ -280,8 +279,6 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return;
                 }
-
-
                 for (TcsStFlow st : list) {
                     //单个执行结算处理
                     BaseResponse dm = this.SettlementBase3(st);
@@ -333,7 +330,6 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             double balance = 0.0;//正常资金变动前
             double fr_afterbalance = 0.0;//冻结资金变动后
             double fr_balance = 0.0;//冻结资金变动前
-            String mbuaccountId = null;
             String vaccounId = null;
             int result = 0;
             int result1 = 0;
@@ -384,7 +380,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 mab_fr.setAfterbalance(fr_afterbalance);
                 mab_fr.setOrganId(st.getOrganId());//所属机构编号
                 mab_fr.setMerchantid(st.getMerchantid());
-                mab_fr.setMbuaccountId(mbuaccountId);
+                mab_fr.setMbuaccountId(null);
                 mab_fr.setVaccounId(vaccounId);
                 mab_fr.setBalance(fr_balance);
                 mab_fr.setBalanceTimestamp(new Date());
@@ -421,18 +417,16 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             mab.setAfterbalance(afterbalance);
             mab.setOrganId(st.getOrganId());//所属机构编号
             mab.setMerchantid(st.getMerchantid());
-            mab.setMbuaccountId(mbuaccountId);
+            mab.setMbuaccountId(null);
             mab.setVaccounId(vaccounId);
             mab.setBalance(balance);
             mab.setBalanceTimestamp(new Date());
             mab.setSysAddDate(new Date());
-            //mab.setBalancetype(1);
             mab.setBalancetype(st.getBalancetype());
             mab.setBussinesstype(st.getBusinessType());
             mab.setCurrency(st.getTxncurrency());
             mab.setFee(st.getFee());
             mab.setGatewayFee(st.getGatewayFee());
-            //20170511新增数据
             mab.setSltcurrency(st.getSltcurrency());
             mab.setSltexrate(st.getTxnexrate());
             mab.setRefundOrderFee(st.getRefundOrderFee());
@@ -475,9 +469,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 ctflow.setRefcnceFlow(st.getRefcnceFlow());
                 ctflow.setSltcurrency(st.getSltcurrency());
                 ctflow.setSysorderid(st.getSysorderid());
-
                 Double leftmoney = tcsCtFlowMapper.getCLLeftMoney(ctflow);//获取清算表中金额
-                //if (leftmoney == null || leftmoney.doubleValue() < 0) {
                 if (leftmoney == null) {
                     log.info("*************** SettlementBase3 结算基础方法 ************** 编号为：{}的结算流水 查询订单清算户剩余资金异常，或者查询处理过程中异常", record.getSTFlow());
                     //回滚
