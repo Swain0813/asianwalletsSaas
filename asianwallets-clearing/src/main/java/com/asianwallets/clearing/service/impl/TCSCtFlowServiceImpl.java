@@ -281,7 +281,11 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     st.setRefundOrderFeeCurrency(ct.getRefundOrderFeeCurrency());
                     st.setSTstate(1);
                     if (ct.getTxnamount() >= 0) {
-                        st.setTradetype("ST");//此时的交易类型要转换成结算：
+                        if(st.getTradetype().equals("RA")){
+                            st.setTradetype("RA");//此时的交易类型要转换成结算：
+                        }else{
+                            st.setTradetype("ST");//此时的交易类型要转换成结算：
+                        }
                         st.setNeedClear(2);//需要处理清算资金
                     } else {
                         st.setTradetype("RV");//此时的交易类型要转换成结算：

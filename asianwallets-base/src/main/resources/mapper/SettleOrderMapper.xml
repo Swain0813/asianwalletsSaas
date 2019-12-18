@@ -26,8 +26,10 @@
         <result column="fee_rate" property="feeRate" jdbcType="DECIMAL"/>
         <result column="reverse_rate" property="reverseRate" jdbcType="DECIMAL"/>
         <result column="settle_amount" property="settleAmount" jdbcType="DECIMAL"/>
+        <result column="settle_type" property="settleType" jdbcType="TINYINT"/>
         <result column="total_settle_amount" property="totalSettleAmount" jdbcType="DECIMAL"/>
         <result column="settle_channel" property="settleChannel" jdbcType="VARCHAR"/>
+        <result column="rate_type" property="rateType" jdbcType="VARCHAR"/>
         <result column="receiver_address" property="receiverAddress" jdbcType="VARCHAR"/>
         <result column="intermediary_bank_code" property="intermediaryBankCode" jdbcType="VARCHAR"/>
         <result column="intermediary_bank_name" property="intermediaryBankName" jdbcType="VARCHAR"/>
@@ -35,6 +37,8 @@
         <result column="intermediary_bank_account_no" property="intermediaryBankAccountNo" jdbcType="VARCHAR"/>
         <result column="intermediary_bank_country" property="intermediaryBankCountry" jdbcType="VARCHAR"/>
         <result column="intermediary_other_code" property="intermediaryOtherCode" jdbcType="VARCHAR"/>
+        <result column="institution_adress" property="institutionAdress" jdbcType="VARCHAR"/>
+        <result column="institution_postal_code" property="institutionPostalCode" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="creator" property="creator" jdbcType="VARCHAR"/>
@@ -50,14 +54,12 @@
     bank_name, swift_code, iban, bank_code, bank_currency, bankcode_currency,trade_status, trade_fee, fee_currency,
     rate, settle_amount,total_settle_amount, settle_channel,intermediary_bank_code,intermediary_bank_name,intermediary_bank_address,receiver_address,
     intermediary_bank_account_no,intermediary_bank_country,intermediary_other_code,create_time, update_time, creator, modifier, remark,
-    merchant_id,merchant_name,reverse_rate,rate_type,fee_rate,extend1,extend2,extend3,extend4,fee
+    merchant_id,merchant_name,reverse_rate,rate_type,fee_rate,extend1,extend2,extend3,extend4,fee,settle_type,institution_adress,institution_postal_code
     </sql>
 
     <select id="pageSettleOrder" resultMap="BaseResultMap">
-        select id,
-        batch_no,account_code,account_name,bank_name,bankcode_currency,trade_status,
-        rate, settle_amount,fee_currency,trade_fee,
-        total_settle_amount,settle_channel,create_time, update_time, creator, modifier, remark,merchant_id,merchant_name
+        select
+        <include refid="Base_Column_List"/>
         from settle_order
         <where>
             <if test="startDate!=null and startDate != ''">
