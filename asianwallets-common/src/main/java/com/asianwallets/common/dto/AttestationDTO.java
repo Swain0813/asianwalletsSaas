@@ -21,14 +21,11 @@ public class AttestationDTO {
     @ApiModelProperty(value = "商户id")
     private String merchantId;
 
-    @ApiModelProperty(value = "公钥")
-    private String pubkey;
+    @ApiModelProperty(value = "机构id")
+    private String institutionId;
 
-    @ApiModelProperty(value = "私钥")
-    private String prikey;
-
-    @ApiModelProperty(value = "签名")
-    private String md5key;
+    @ApiModelProperty(value = "商户公钥")
+    private String merPubkey;
 
     @ApiModelProperty(value = "启用禁用")
     private Boolean enabled;
