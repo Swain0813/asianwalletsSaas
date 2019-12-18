@@ -20,13 +20,10 @@ public interface CommonBusinessService {
 
     /**
      * 校验线上签名
-     * 亚洲钱包 rsa验签用
      *
-     * @param o
-     * @return
+     * @param obj
+     * @return boolean
      */
-    boolean checkOnlineSignMsg(Object o);
-
     boolean checkOnlineSign(Object obj);
 
     /**
