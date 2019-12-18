@@ -31,14 +31,6 @@ public class OnlineTradeDTO {
     @ApiModelProperty(value = "订单时间")
     private String orderTime;
 
-    //    @NotNull(message = "50002")
-    @ApiModelProperty(value = "产品编号")
-    private Integer productCode;
-
-    //    @NotNull(message = "50002")
-    @ApiModelProperty(value = "issuerId")
-    private String issuerId;
-
     @NotNull(message = "52008")
     @ApiModelProperty(value = "签名")
     private String sign;
@@ -51,8 +43,15 @@ public class OnlineTradeDTO {
     private String serverUrl;
 
     //----------------【非必填参数】---------------------
+
+    @ApiModelProperty(value = "issuerId")
+    private String issuerId;
+
+    @ApiModelProperty(value = "产品编号")
+    private Integer productCode;
+
     @ApiModelProperty(value = "浏览器回调地址")
-    private String browserUl;
+    private String browserUrl;
 
     @ApiModelProperty(value = "商品名称")
     private String productName;
@@ -62,6 +61,9 @@ public class OnlineTradeDTO {
 
     @ApiModelProperty(value = "付款人账户")
     private String payerAccount;
+
+    @ApiModelProperty(value = "付款人姓名")
+    private String payerName;
 
     @ApiModelProperty(value = "付款人银行")
     private String payerBank;

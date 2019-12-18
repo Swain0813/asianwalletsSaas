@@ -1,6 +1,7 @@
 package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.entity.InstitutionRequestParameters;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.OnlineTradeVO;
@@ -97,8 +98,51 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             log.info("-----------------【线上直连】下单信息记录--------------【签名错误】");
             throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
         }
-
+        //获取商户信息
 
         return null;
+    }
+
+
+    /**
+     * 校验请求参数
+     *
+     * @param onlineTradeDTO
+     * @param institutionRequestParameters 机构请求参数实体
+     */
+    private void checkRequestParameters(OnlineTradeDTO onlineTradeDTO, InstitutionRequestParameters institutionRequestParameters) {
+        if (institutionRequestParameters.getBrowserUrl() && StringUtils.isEmpty(onlineTradeDTO.getBrowserUrl())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (institutionRequestParameters.getProductName() && StringUtils.isEmpty(onlineTradeDTO.getProductName())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (institutionRequestParameters.getProductDescription() && StringUtils.isEmpty(onlineTradeDTO.getProductDescription())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (institutionRequestParameters.getPayerName() && StringUtils.isEmpty(onlineTradeDTO.getPayerName())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (institutionRequestParameters.getPayerPhone() && StringUtils.isEmpty(onlineTradeDTO.getPayerPhone())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (institutionRequestParameters.getPayerEmail() && StringUtils.isEmpty(onlineTradeDTO.getPayerEmail())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (institutionRequestParameters.getPayerBank() && StringUtils.isEmpty(onlineTradeDTO.getPayerBank())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (institutionRequestParameters.getLanguage() && StringUtils.isEmpty(onlineTradeDTO.getLanguage())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (institutionRequestParameters.getRemark1() && StringUtils.isEmpty(onlineTradeDTO.getRemark1())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (institutionRequestParameters.getRemark2() && StringUtils.isEmpty(onlineTradeDTO.getRemark2())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (institutionRequestParameters.getRemark3() && StringUtils.isEmpty(onlineTradeDTO.getRemark3())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
     }
 }
