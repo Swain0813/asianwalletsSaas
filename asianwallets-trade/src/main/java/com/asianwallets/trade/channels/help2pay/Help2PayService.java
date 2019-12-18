@@ -59,5 +59,14 @@ public interface Help2PayService {
      */
     public BaseResponse cancle(Orders orders, Channel channel);
 
+    /**
+     * @Author YangXu
+     * @Date 2019/12/18
+     * @Descripate  付款中撤销
+     * @return
+     **/
+    public   BaseResponse cancelPaying(Orders orders, Channel channel);
+
+
 
 }

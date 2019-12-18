@@ -58,9 +58,11 @@ public class RefundDTO {
     @ApiModelProperty(value = "Swift Code")
     private String swiftCode;
 
+    @NotNull(message = "50002")
     @ApiModelProperty(value = "签名")
     private String sign;
 
+    @NotNull(message = "50002")
     @ApiModelProperty(value = "签名类型 1为RSA 2为MD5")
     private String signType;
 
