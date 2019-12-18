@@ -1,5 +1,7 @@
 package com.asianwallets.trade.service;
 
+import com.asianwallets.common.vo.CalcExchangeRateVO;
+
 import java.math.BigDecimal;
 
 /**
@@ -14,6 +16,17 @@ public interface CommonBusinessService {
      * @return 布尔值
      */
     boolean checkSignByMd5(Object obj);
+
+    /**
+     * 换汇计算
+     *
+     * @param localCurrency   本币
+     * @param foreignCurrency 外币
+     * @param floatRate       浮动率
+     * @param amount          金额
+     * @return 换汇输出实体
+     */
+    CalcExchangeRateVO calcExchangeRate(String localCurrency, String foreignCurrency, BigDecimal floatRate, BigDecimal amount);
 
     /**
      * 校验重复请求【线上与线下下单】
@@ -32,4 +45,5 @@ public interface CommonBusinessService {
      * @return 布尔值
      */
     boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount);
+
 }

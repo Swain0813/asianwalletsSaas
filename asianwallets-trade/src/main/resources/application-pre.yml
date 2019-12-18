@@ -65,3 +65,6 @@ redis:
 
 #项目自定义配置
 custom:
+  warning:
+    email: 842505302@qq.com
+    mobile: 18800330943
