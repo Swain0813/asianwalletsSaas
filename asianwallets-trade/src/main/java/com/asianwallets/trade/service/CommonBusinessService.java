@@ -10,12 +10,21 @@ import java.math.BigDecimal;
 public interface CommonBusinessService {
 
     /**
+     * 线下
      * 校验MD5签名
      *
      * @param obj 验签对象
      * @return 布尔值
      */
     boolean checkSignByMd5(Object obj);
+
+    /**
+     * 线上校验签名
+     *
+     * @param obj 验签对象
+     * @return 布尔值
+     */
+    boolean checkOnlineSign(Object obj);
 
     /**
      * 换汇计算

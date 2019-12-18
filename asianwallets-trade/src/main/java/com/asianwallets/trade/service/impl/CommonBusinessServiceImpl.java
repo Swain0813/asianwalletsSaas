@@ -9,6 +9,7 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.MD5Util;
+import com.asianwallets.common.utils.RSAUtils;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.utils.SignTools;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -75,6 +77,47 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             return sign.equalsIgnoreCase(decryptSign);
         } catch (Exception e) {
             log.info("===============【校验MD5签名】===============【验签异常】", e);
+        }
+        return false;
+    }
+
+    /**
+     * 线上校验签名
+     *
+     * @param obj 验签对象
+     * @return 布尔值
+     */
+    @Override
+    public boolean checkOnlineSign(Object obj) {
+        Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
+        String sign = map.get("sign");
+        String signType = map.get("signType");
+        String institutionCode = map.get("merchantId");
+        if (sign == null || "".equals(sign)) {
+            throw new BusinessException(EResultEnum.SIGNATURE_CANNOT_BE_EMPTY.getCode());
+        }
+        Attestation attestation = commonRedisDataService.getAttestationByMerchantId((map.get("merchantId")));
+        if (attestation == null) {
+            log.info("===============【线上校验签名】===============【密钥不存在】");
+            return false;
+        }
+        if (signType.equals(TradeConstant.RSA)) {
+            Base64.Decoder decoder = Base64.getDecoder();
+            byte[] signMsg = decoder.decode(sign);
+            map.put("sign", null);
+            byte[] data = SignTools.getSignStr(map).getBytes();
+            try {
+                return RSAUtils.verify(data, signMsg, attestation.getMerPubkey());
+            } catch (Exception e) {
+                log.info("-----------  线上签名校验发生错误----------机构code:{},签名signMsg:{}", institutionCode, signMsg);
+            }
+        } else if (signType.equals(TradeConstant.MD5)) {
+            String str = SignTools.getSignStr(map) + attestation.getMd5key();
+            log.info("----------线上签名 MD5加密前明文----------str:{}", str);
+            String decryptSign = MD5Util.getMD5String(str);
+            if (sign.equalsIgnoreCase(decryptSign)) {
+                return true;
+            }
         }
         return false;
     }

@@ -43,6 +43,9 @@ public class OnlineTradeDTO {
     @ApiModelProperty(value = "签名")
     private String sign;
 
+    @ApiModelProperty(value = "签名方式")//1为RSA 2为MD5
+    private String signType;
+
     @NotNull(message = "52002")
     @ApiModelProperty(value = "服务器回调地址")
     private String serverUrl;
