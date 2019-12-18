@@ -25,7 +25,7 @@ public class FrozenFundsController {
     private FrozenFundsService frozenFundsService;
 
     @ApiOperation(value = "资金冻结/解冻接口")
-    @PostMapping("v1/CSFrozenFunds")
+    @PostMapping("/CSFrozenFunds")
     public CSFrozenFundsRequest CSFrozenFunds(@RequestBody @ApiParam CSFrozenFundsRequest ffr) {
         return frozenFundsService.CSFrozenFunds(ffr);
     }
