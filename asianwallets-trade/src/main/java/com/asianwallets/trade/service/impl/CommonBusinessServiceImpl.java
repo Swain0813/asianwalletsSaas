@@ -106,11 +106,11 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             try {
                 return RSAUtils.verify(data, signMsg, attestation.getMerPubkey());
             } catch (Exception e) {
-                log.info("-----------  线上签名校验发生错误----------机构code:{},签名signMsg:{}", institutionCode, signMsg);
+                log.info("-----------  【线上校验签名】 RSA校验发生错误----------机构code:{},签名signMsg:{}", institutionCode, signMsg);
             }
         } else if (signType.equals(TradeConstant.MD5)) {
             String str = SignTools.getSignStr(map) + attestation.getMd5key();
-            log.info("----------线上签名 MD5加密前明文----------str:{}", str);
+            log.info("----------【线上校验签名】 MD5加密前明文----------str:{}", str);
             String decryptSign = MD5Util.getMD5String(str);
             if (sign.equalsIgnoreCase(decryptSign)) {
                 return true;

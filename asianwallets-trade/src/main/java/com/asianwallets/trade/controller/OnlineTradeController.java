@@ -26,17 +26,6 @@ public class OnlineTradeController extends BaseController {
     @CrossOrigin
     public BaseResponse gateway(OnlineTradeDTO onlineTradeDTO) {
         return ResultUtil.success(onlineGatewayService.gateway(onlineTradeDTO));
-       /* if (StringUtils.isEmpty(baseResponse.getCode())) {
-            baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-            baseResponse.setMsg("SUCCESS");
-            return baseResponse;
-        } else {
-            //code不为空 msg不为空 返回通道的错误信息
-            if (!StringUtils.isEmpty(baseResponse.getMsg())) {
-                return baseResponse;
-            }
-            return ResultUtil.error(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
-        }*/
     }
 
    /* @ApiOperation(value = "模拟商户请求收单")
