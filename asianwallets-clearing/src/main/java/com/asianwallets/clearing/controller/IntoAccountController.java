@@ -22,7 +22,7 @@ public class IntoAccountController {
 
 
     @ApiOperation(value = "资金变动接口")
-    @PostMapping("v1/IntoAndOutMerhtAccount")
+    @PostMapping("/IntoAndOutMerhtAccount")
     public IntoAndOutMerhtAccountRequest intoAndOutMerhtAccount(@RequestBody @ApiParam IntoAndOutMerhtAccountRequest intoAndOutMerhtAccountRequest) {
         return intoAccountService.intoAndOutMerhtAccount(intoAndOutMerhtAccountRequest);
     }

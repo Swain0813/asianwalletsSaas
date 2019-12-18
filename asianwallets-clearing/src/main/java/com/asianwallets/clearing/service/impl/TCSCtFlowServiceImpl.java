@@ -103,7 +103,7 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
             unClearAmount = unClearAmount == null ? BigDecimal.ZERO : unClearAmount;
             //清算户资金+清算表中未清算的金额+交易金额  清算这边的手续费不算了，都统一到结算那边算
             double clearMoney = ComDoubleUtil.addBySize(account.getClearBalance().doubleValue(),unClearAmount.doubleValue(),2);
-            double outMoney = ComDoubleUtil.addBySize(clearMoney,ctf.getTxnamount(), 2);
+            double outMoney = ComDoubleUtil.addBySize(clearMoney,ctf.getTxnamount()-ctf.getFee()+ctf.getRefundOrderFee(), 2);
             if(outMoney<0){
                 log.info("*************** 清算 IntoAndOutMerhtCLAccount2 **************** 清算户资金必须大于等于0才能操作，结束时间：{}", new Date());
                 return baseResponse;
@@ -281,7 +281,7 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     st.setRefundOrderFeeCurrency(ct.getRefundOrderFeeCurrency());
                     st.setSTstate(1);
                     if (ct.getTxnamount() >= 0) {
-                        if(st.getTradetype().equals("RA")){
+                        if(ct.getTradetype().equals("RA")){
                             st.setTradetype("RA");//撤销失败的场合需要调账到清算表
                         }else{
                             st.setTradetype("ST");//此时的交易类型要转换成结算：
