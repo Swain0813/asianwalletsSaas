@@ -33,6 +33,9 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     private InstitutionMapper institutionMapper;
 
     @Autowired
+    private InstitutionRequestParametersMapper institutionRequestParametersMapper;
+
+    @Autowired
     private MerchantMapper merchantMapper;
 
     /**
@@ -135,6 +138,33 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             log.info("==================【根据机构ID获取机构】==================【获取异常】", e);
         }
         return institution;
+    }
+
+    /**
+     * 根据机构ID与交易方向查询获取机构请求参数
+     *
+     * @param institutionId  机构ID
+     * @param tradeDirection 交易方向
+     * @return 机构
+     */
+    @Override
+    public InstitutionRequestParameters getInstitutionRequestByIdAndDirection(String institutionId, Byte tradeDirection) {
+        InstitutionRequestParameters institutionRequestParameters = null;
+        try {
+            institutionRequestParameters = JSON.parseObject(redisService.get(AsianWalletConstant.INSTITUTION_REQPMS_CACHE_KEY.concat("_").concat(institutionId).concat("_") + tradeDirection), InstitutionRequestParameters.class);
+            if (institutionRequestParameters == null) {
+                institutionRequestParameters = institutionRequestParametersMapper.selectByInstitutionIdAndTradeDirection(institutionId, tradeDirection);
+                if (institutionRequestParameters == null) {
+                    log.info("==================【根据机构ID与交易方向查询获取机构请求参数】==================【机构请求参数对象不存在】 institutionId: {} | tradeDirection: {}", institutionId, tradeDirection);
+                    return null;
+                }
+                redisService.set(AsianWalletConstant.INSTITUTION_REQPMS_CACHE_KEY.concat("_").concat(institutionRequestParameters.getInstitutionCode()).concat("_") + institutionRequestParameters.getTradeDirection(),
+                        JSON.toJSONString(institutionRequestParameters));
+            }
+        } catch (Exception e) {
+            log.info("==================【根据机构ID与交易方向查询获取机构请求参数】==================【获取异常】", e);
+        }
+        return institutionRequestParameters;
     }
 
     /**

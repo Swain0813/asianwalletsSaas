@@ -41,6 +41,15 @@ public interface CommonRedisDataService {
     Institution getInstitutionById(String institutionId);
 
     /**
+     * 根据机构ID与交易方向查询获取机构请求参数
+     *
+     * @param institutionId 机构ID
+     * @param tradeDirection 交易方向
+     * @return 机构
+     */
+    InstitutionRequestParameters getInstitutionRequestByIdAndDirection(String institutionId,Byte tradeDirection);
+
+    /**
      * 根据商户ID获取商户
      *
      * @param merchantId 商户ID
