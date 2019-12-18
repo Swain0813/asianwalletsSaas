@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(name = "settle_order")
-@ApiModel(value = "商户结算表", description = "商户结算表")
+@ApiModel(value = "结算表", description = "结算表")
 public class SettleOrder extends BaseEntity {
 
     @ApiModelProperty(value = "批次号")
@@ -82,9 +82,18 @@ public class SettleOrder extends BaseEntity {
     @Column(name = "settle_type")
     private Byte settleType;
 
-    @ApiModelProperty(value = "手续费")
+    @ApiModelProperty(value = "结算手续费")
     @Column(name = "fee")
     private BigDecimal fee;
+
+    @ApiModelProperty(value = "结算手续费费率类型")
+    @Column(name = "rate_type")
+    private BigDecimal rateType;
+
+    @ApiModelProperty(value = "结算手续费费率")
+    @Column(name = "fee_rate")
+    private BigDecimal feeRate;
+
 
     @ApiModelProperty(value = "批次交易手续费")
     @Column(name = "trade_fee")
@@ -94,19 +103,11 @@ public class SettleOrder extends BaseEntity {
     @Column(name = "fee_currency")
     private String feeCurrency;
 
-    @ApiModelProperty(value = "交易汇率")
+    @ApiModelProperty(value = "汇率(结算币种对银行卡币种的汇率)")
     @Column(name = "rate")
     private BigDecimal rate;
 
-    @ApiModelProperty(value = "费率类型")
-    @Column(name = "rate_type")
-    private BigDecimal rateType;
-
-    @ApiModelProperty(value = "费率")
-    @Column(name = "fee_rate")
-    private BigDecimal feeRate;
-
-    @ApiModelProperty(value = "反向汇率")
+    @ApiModelProperty(value = "汇率(银行卡币种对结算币种的汇率)")
     @Column(name = "reverse_rate")
     private BigDecimal reverseRate;
 
