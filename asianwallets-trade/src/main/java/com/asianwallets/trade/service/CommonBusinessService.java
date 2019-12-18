@@ -16,6 +16,15 @@ public interface CommonBusinessService {
     boolean checkSignByMd5(Object obj);
 
     /**
+     * 校验线上签名
+     * 亚洲钱包 rsa验签用
+     *
+     * @param o
+     * @return
+     */
+    boolean checkOnlineSignMsg(Object o);
+
+    /**
      * 校验重复请求【线上与线下下单】
      *
      * @param merchantId      商户编号

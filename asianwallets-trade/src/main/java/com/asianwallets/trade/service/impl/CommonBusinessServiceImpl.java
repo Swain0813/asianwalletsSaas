@@ -1,5 +1,7 @@
 package com.asianwallets.trade.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.Attestation;
 import com.asianwallets.common.entity.Currency;
@@ -7,16 +9,19 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.MD5Util;
+import com.asianwallets.common.utils.RSAUtils;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.utils.SignTools;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.expression.StringValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Base64;
 import java.util.Map;
 
 
@@ -54,6 +59,51 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         log.info("===============【校验MD5签名】===============【签名后的密文】 decryptSign: {}", decryptSign);
         return map.get("sign").equalsIgnoreCase(decryptSign);
     }
+
+    /**
+     * 校验线上签名
+     *
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean checkOnlineSignMsg(Object o) {
+        Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(o);
+        String sign = String.valueOf(map.get("sign"));
+        if (sign == null || "".equals(sign)) {
+            throw new BusinessException(EResultEnum.SIGNATURE_CANNOT_BE_EMPTY.getCode());
+        }
+        if (map.get("serialVersionUID") != null) {
+            map.put("serialVersionUID", null);
+        }
+        if (map.get("reqIp") != null) {
+            map.put("reqIp", null);
+        }
+        if (map.get("sign") != null) {
+            map.put("sign", null);
+        }
+        if (map.get("sort") != null) {
+            map.put("sort", null);
+        }
+        if (map.get("order") != null) {
+            map.put("order", null);
+        }
+        Attestation attestation = commonRedisDataService.getAttestationByMerchantId(String.valueOf(map.get("merchantId")));
+        if (attestation == null) {
+            return false;
+        }
+        Base64.Decoder decoder = Base64.getDecoder();
+        byte[] signMsg = decoder.decode(sign);
+        map.put("sign", null);
+        byte[] data = SignTools.getSignStr(map).getBytes();
+        try {
+            return RSAUtils.verify(data, signMsg, attestation.getPubkey());
+        } catch (Exception e) {
+            log.info("----------- 签名校验发生错误----------merchantId:{},签名signMsg:{}", String.valueOf(map.get("merchantId")), signMsg);
+        }
+        return false;
+    }
+
 
     /**
      * 校验重复请求【线上与线下下单】
