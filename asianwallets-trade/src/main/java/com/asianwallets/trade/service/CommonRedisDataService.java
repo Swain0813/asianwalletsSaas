@@ -1,8 +1,6 @@
 package com.asianwallets.trade.service;
 
-import com.asianwallets.common.entity.Attestation;
-import com.asianwallets.common.entity.Currency;
-import com.asianwallets.common.entity.ExchangeRate;
+import com.asianwallets.common.entity.*;
 
 /**
  * 通用获取数据接口
@@ -33,4 +31,20 @@ public interface CommonRedisDataService {
      * @return 汇率
      */
     ExchangeRate getExchangeRateByCurrency(String localCurrency, String foreignCurrency);
+
+    /**
+     * 根据机构ID获取机构
+     *
+     * @param institutionId 机构ID
+     * @return 机构
+     */
+    Institution getInstitutionById(String institutionId);
+
+    /**
+     * 根据商户ID获取商户
+     *
+     * @param merchantId 商户ID
+     * @return 商户
+     */
+    Merchant getMerchantById(String merchantId);
 }

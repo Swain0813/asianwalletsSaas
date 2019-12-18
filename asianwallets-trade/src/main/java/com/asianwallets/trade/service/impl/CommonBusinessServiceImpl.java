@@ -165,7 +165,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             calcExchangeRateVO.setReverseRate(foreignToLocalRate.getBuyRate());
             //换汇成功
             calcExchangeRateVO.setExchangeStatus(TradeConstant.SWAP_SUCCESS);
-            log.info("==================【换汇计算】==================【换汇结果】 calcExchangeRateVO:{}", JSON.toJSONString(calcExchangeRateVO));
+            log.info("==================【换汇计算】==================【换汇结果】 calcExchangeRateVO: {}", JSON.toJSONString(calcExchangeRateVO));
         } catch (Exception e) {
             log.info("==================【换汇计算】==================【换汇异常】", e);
             calcExchangeRateVO.setExchangeStatus(TradeConstant.SWAP_FALID);
