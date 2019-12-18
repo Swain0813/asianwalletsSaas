@@ -3,7 +3,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -83,7 +82,7 @@ public class TmMerChTvAcctBalance{
     @Column(name = "fee")
     private Double fee;
 
-    @ApiModelProperty(value = "退还手续费")
+    @ApiModelProperty(value = "退还收单手续费")
     @Column(name = "refundOrderFee")
     private Double refundOrderFee;
 

@@ -19,12 +19,12 @@ public interface CommonBusinessService {
     boolean checkSignByMd5(Object obj);
 
     /**
-     * 线上校验签名
+     * 通用签名校验
      *
-     * @param obj 验签对象
-     * @return 布尔值
+     * @param obj
+     * @return boolean
      */
-    boolean checkOnlineSign(Object obj);
+    boolean checkUniversalSign(Object obj);
 
     /**
      * 换汇计算
