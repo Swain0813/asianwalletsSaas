@@ -288,4 +288,20 @@ public class ReflexClazzUtils {
         return emptyNames.toArray(result);
     }
 
+    /**
+     * 将对象转换为Map<String,String>类型
+     *
+     * @param oldMap
+     * @return
+     */
+    public static Map<String, String> objectMapToStringMap(Map<String, Object> oldMap) {
+        HashMap<String, String> newMap = new HashMap<>();
+        Set<String> set = oldMap.keySet();
+        for (String s : set) {
+            newMap.put(s, String.valueOf(oldMap.get(s)));
+        }
+        return newMap;
+    }
+
+
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.trade.dao.ExchangeRateMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.ExchangeRate">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="buy_rate" property="buyRate" jdbcType="DECIMAL"/>
+        <result column="sale_rate" property="saleRate" jdbcType="DECIMAL"/>
+        <result column="middle_rate" property="middleRate" jdbcType="DECIMAL"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="local_currency" property="localCurrency" jdbcType="VARCHAR"/>
+        <result column="foreign_currency" property="foreignCurrency" jdbcType="VARCHAR"/>
+        <result column="using_time" property="usingTime" jdbcType="TIMESTAMP"/>
+        <result column="overdue_time" property="overdueTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="commonSql">
+        id,
+        buy_rate,
+        sale_rate,
+        middle_rate,
+        enabled,
+        local_currency,
+        foreign_currency,
+        using_time,
+        overdue_time,
+        create_time,
+        update_time,
+        creator,
+        modifier,
+        remark
+    </sql>
+
+    <select id="selectByLocalCurrencyAndForeignCurrency" resultMap="BaseResultMap">
+        SELECT
+        <include refid="commonSql"></include>
+        FROM exchange_rate WHERE
+        local_currency = #{localCurrency} AND foreign_currency =#{foreignCurrency} AND enabled = 1
+    </select>
+</mapper>

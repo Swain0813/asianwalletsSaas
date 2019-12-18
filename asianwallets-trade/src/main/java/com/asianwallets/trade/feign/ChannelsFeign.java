@@ -13,7 +13,7 @@ import com.asianwallets.common.dto.vtc.VTCRequestDTO;
 import com.asianwallets.common.dto.wechat.*;
 import com.asianwallets.common.dto.xendit.XenditDTO;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.trade.feign.Impl.ChannelsFeignImpl;
+import com.asianwallets.trade.feign.impl.ChannelsFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -22,10 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 
-/**
- * 通道Feign
- */
-@FeignClient(value = "asianwallet-channels", fallback = ChannelsFeignImpl.class)
+@FeignClient(value = "asianwallets-channels", fallback = ChannelsFeignImpl.class)
 public interface ChannelsFeign {
 
     @ApiOperation(value = "支付宝线下BSC接口")

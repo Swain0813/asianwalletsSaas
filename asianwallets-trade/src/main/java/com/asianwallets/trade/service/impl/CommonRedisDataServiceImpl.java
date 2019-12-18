@@ -2,16 +2,13 @@ package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
-import com.asianwallets.common.entity.Attestation;
-import com.asianwallets.common.entity.Currency;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.redis.RedisService;
-import com.asianwallets.trade.dao.AttestationMapper;
-import com.asianwallets.trade.dao.CurrencyMapper;
+import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 /**
  * 通用获取数据接口
@@ -27,13 +24,22 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     private CurrencyMapper currencyMapper;
 
     @Autowired
+    private ExchangeRateMapper exchangeRateMapper;
+
+    @Autowired
     private AttestationMapper attestationMapper;
+
+    @Autowired
+    private InstitutionMapper institutionMapper;
+
+    @Autowired
+    private MerchantMapper merchantMapper;
 
     /**
      * 根据币种编码获取币种
      *
      * @param code 币种编码
-     * @return 默认值
+     * @return 币种
      */
     @Override
     public Currency getCurrencyByCode(String code) {
@@ -59,7 +65,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
      * 根据商户ID获取密钥对象
      *
      * @param merchantId 商户ID
-     * @return 默认值
+     * @return 密钥
      */
     @Override
     public Attestation getAttestationByMerchantId(String merchantId) {
@@ -72,11 +78,87 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
                     log.info("==================【根据商户ID获取密钥对象】==================【密钥对象不存在】 merchantId: {}", merchantId);
                     return null;
                 }
-                redisService.set(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_PF_").concat(merchantId), JSON.toJSONString(attestation));
+                redisService.set(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(merchantId), JSON.toJSONString(attestation));
             }
         } catch (Exception e) {
             log.info("==================【根据商户ID获取密钥对象】==================【获取异常】", e);
         }
         return attestation;
+    }
+
+    /**
+     * 根据本币与外币获取汇率
+     *
+     * @param localCurrency   本币
+     * @param foreignCurrency 外币
+     * @return 汇率
+     */
+    @Override
+    public ExchangeRate getExchangeRateByCurrency(String localCurrency, String foreignCurrency) {
+        ExchangeRate exchangeRate = null;
+        try {
+            exchangeRate = JSON.parseObject(redisService.get(AsianWalletConstant.EXCHANGERATE_CACHE_KEY.concat("_").concat(localCurrency).concat("_").concat(foreignCurrency)), ExchangeRate.class);
+            if (exchangeRate == null || !exchangeRate.getEnabled()) {
+                exchangeRate = exchangeRateMapper.selectByLocalCurrencyAndForeignCurrency(localCurrency, foreignCurrency);
+                if (exchangeRate == null) {
+                    log.info("==================【根据本币与外币获取汇率对象】==================【汇率对象不存在】 localCurrency: {} | foreignCurrency: {}", localCurrency, foreignCurrency);
+                    return null;
+                }
+                redisService.set(AsianWalletConstant.EXCHANGERATE_CACHE_KEY.concat("_").concat(localCurrency).concat("_").concat(foreignCurrency), JSON.toJSONString(exchangeRate));
+            }
+        } catch (Exception e) {
+            log.info("==================【根据本币与外币获取汇率对象】==================【获取异常】", e);
+        }
+        return exchangeRate;
+    }
+
+    /**
+     * 根据机构ID获取机构
+     *
+     * @param institutionId 机构ID
+     * @return 机构
+     */
+    @Override
+    public Institution getInstitutionById(String institutionId) {
+        Institution institution = null;
+        try {
+            institution = JSON.parseObject(redisService.get(AsianWalletConstant.INSTITUTION_CACHE_KEY.concat("_").concat(institutionId)), Institution.class);
+            if (institution == null) {
+                institution = institutionMapper.selectByPrimaryKey(institutionId);
+                if (institution == null) {
+                    log.info("==================【根据机构ID获取机构】==================【机构对象不存在】 institutionId: {}", institutionId);
+                    return null;
+                }
+                redisService.set(AsianWalletConstant.INSTITUTION_CACHE_KEY.concat("_").concat(institution.getId()), JSON.toJSONString(institution));
+            }
+        } catch (Exception e) {
+            log.info("==================【根据机构ID获取机构】==================【获取异常】", e);
+        }
+        return institution;
+    }
+
+    /**
+     * 根据商户ID获取商户
+     *
+     * @param merchantId 商户ID
+     * @return 商户
+     */
+    @Override
+    public Merchant getMerchantById(String merchantId) {
+        Merchant merchant = null;
+        try {
+            merchant = JSON.parseObject(redisService.get(AsianWalletConstant.MERCHANT_CACHE_KEY.concat("_").concat(merchantId)), Merchant.class);
+            if (merchant == null) {
+                merchant = merchantMapper.selectByPrimaryKey(merchantId);
+                if (merchant == null) {
+                    log.info("==================【根据商户ID获取商户】==================【商户对象不存在】 merchantId: {}", merchantId);
+                    return null;
+                }
+                redisService.set(AsianWalletConstant.MERCHANT_CACHE_KEY.concat("_").concat(merchant.getId()), JSON.toJSONString(merchant));
+            }
+        } catch (Exception e) {
+            log.info("==================【根据商户ID获取商户】==================【获取异常】", e);
+        }
+        return merchant;
     }
 }

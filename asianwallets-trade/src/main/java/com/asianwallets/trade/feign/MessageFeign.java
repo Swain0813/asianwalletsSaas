@@ -1,7 +1,7 @@
 package com.asianwallets.trade.feign;
 import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.trade.feign.Impl.MessageFeignImpl;
+import com.asianwallets.trade.feign.impl.MessageFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
-/**
- * 短信和邮件相关业务
- */
-@FeignClient(value = "asianwallet-message", fallback = MessageFeignImpl.class)
+@FeignClient(value = "asianwallets-message", fallback = MessageFeignImpl.class)
 public interface MessageFeign {
 
     @ApiOperation(value = "发送简单邮件")
