@@ -18,7 +18,7 @@ public class RefundDTO {
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "商户编号")
-    private String institutionId;
+    private String merchantId;
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "商户订单号")
