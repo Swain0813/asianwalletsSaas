@@ -18,7 +18,7 @@ public class RefundDTO {
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "商户编号")
-    private String institutionId;
+    private String merchantId;
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "商户订单号")
@@ -60,6 +60,8 @@ public class RefundDTO {
 
     @ApiModelProperty(value = "签名")
     private String sign;
+    @ApiModelProperty(value = "签名方式")
+    private String signType;
 
     @ApiModelProperty(value = "签名类型 1为RSA 2为MD5")
     private String signType;

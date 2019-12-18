@@ -282,7 +282,7 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     st.setSTstate(1);
                     if (ct.getTxnamount() >= 0) {
                         if(st.getTradetype().equals("RA")){
-                            st.setTradetype("RA");//此时的交易类型要转换成结算：
+                            st.setTradetype("RA");//撤销失败的场合需要调账到清算表
                         }else{
                             st.setTradetype("ST");//此时的交易类型要转换成结算：
                         }
