@@ -187,14 +187,34 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
         }
         Merchant merchant = commonRedisDataService.getMerchantById(offlineTradeDTO.getMerchantId());
+        if (merchant == null || !merchant.getEnabled()) {
+            log.info("==================【线下CSB动态扫码】==================【商户信息不合法】");
+            return null;
+        }
         Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
+        if (institution == null || !institution.getEnabled()) {
+            log.info("==================【线下CSB动态扫码】==================【机构信息不合法】");
+            return null;
+        }
         InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
-        Product product = commonRedisDataService.getProductByCode(offlineTradeDTO.getProductCode());
-        MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchant.getId(), product.getId());
+        if (institutionRequestParameters == null) {
+            log.info("==================【线下CSB动态扫码】==================【机构请求参数信息不合法】");
+            return null;
+        }
         //校验机构必填请求输入参数
         checkRequestParameters(offlineTradeDTO, institutionRequestParameters);
         //校验输入参数合法性
         checkParamValidity(offlineTradeDTO);
+        Product product = commonRedisDataService.getProductByCode(offlineTradeDTO.getProductCode());
+        if (product == null || !product.getEnabled()) {
+            log.info("==================【线下CSB动态扫码】==================【产品信息不合法】");
+            return null;
+        }
+        MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchant.getId(), product.getId());
+        if (merchantProduct == null || !merchantProduct.getEnabled()) {
+            log.info("==================【线下CSB动态扫码】==================【商户产品信息不合法】");
+            return null;
+        }
         //设置订单属性
         Orders orders = setAttributes(offlineTradeDTO);
         CsbDynamicScanVO csbDynamicScanVO = new CsbDynamicScanVO();
