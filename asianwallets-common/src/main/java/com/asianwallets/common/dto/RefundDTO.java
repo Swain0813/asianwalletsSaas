@@ -22,7 +22,7 @@ public class RefundDTO {
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "商户订单号")
-    private String orderNo; //要退的那笔收单交易的上送的商户流水号
+    private String orderNo;
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "退款类型 1：全额退款 2：部分退款")
@@ -66,12 +66,18 @@ public class RefundDTO {
     @ApiModelProperty(value = "签名类型 1为RSA 2为MD5")
     private String signType;
 
+    @ApiModelProperty(value = "设备编号")
+    private String terminalId;
+
+    @ApiModelProperty(value = "设备操作员")
+    private String operatorId;
+
     @ApiModelProperty(value = "token")
     private String token;
 
-    @ApiModelProperty(value = "交易方向")
+    @ApiModelProperty(value = "交易方向 1-线上 2-线下")
     @NotNull(message = "50002")
-    private Byte tradeDirection;//交易方向：1-线上 2-线下
+    private Byte tradeDirection;
 
     @ApiModelProperty(value = "交易密码")
     private String tradePassword;

@@ -50,7 +50,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
         }
 
-        //查询原订单
+        /**************************************************** 查询原订单 *************************************************/
         Orders oldOrder = ordersMapper.selectByMerchantOrderId(refundDTO.getOrderNo());
         if (oldOrder == null) {
             //商户订单号不存在
@@ -58,23 +58,32 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
 
         Channel channel = commonRedisDataService.getChannelByChannelCode(oldOrder.getChannelCode());
-
-        //线下的单子如果上游通道不支持退款直接报不支持退款
-        if (!channel.getSupportRefundState()) {
+        /********************************* 判断通道是否支持退款 线下不支持退款直接拒绝*************************************************/
+        if (TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection()) && !channel.getSupportRefundState()) {
             throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
         }
-        //原订单撤销成功和撤销中不能退款
+        /********************************* 原订单撤销成功和撤销中不能退款*************************************************/
         if (TradeConstant.ORDER_CANNELING.equals(oldOrder.getCancelStatus())||TradeConstant.ORDER_CANNEL_SUCCESS.equals(oldOrder.getCancelStatus())) {
             //撤销的单子不能退款--该交易已撤销
             throw new BusinessException(EResultEnum.REFUND_CANCEL_ERROR.getCode());
         }
-        //AD3-eNets退款只能当天退款---线下支付
+        /********************************* AD3-eNets退款只能当天退款---线下支付*************************************************/
         String channelCallbackTime = oldOrder.getChannelCallbackTime()==null? DateToolUtils.getReqDate(oldOrder.getCreateTime()):DateToolUtils.getReqDate(oldOrder.getChannelCallbackTime());
         String today = DateToolUtils.getReqDate();
         if (channel.getChannelCnName().toLowerCase().contains(AD3Constant.ENETS) && TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection())) {
             if (!channelCallbackTime.equals(today)) {
                 throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
             }
+        }
+
+
+
+        if (TradeConstant.ORDER_PAY_SUCCESS.equals(oldOrder.getTradeStatus())) {
+        /*************************************************************** 订单是付款成功的场合 *************************************************************/
+
+        }else if (TradeConstant.ORDER_PAYING.equals(oldOrder.getTradeStatus())){
+        /***************************************************************  订单是付款中的场合  *************************************************************/
+
         }
 
 
