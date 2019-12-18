@@ -60,8 +60,6 @@ public class RefundDTO {
 
     @ApiModelProperty(value = "签名")
     private String sign;
-    @ApiModelProperty(value = "签名方式")
-    private String signType;
 
     @ApiModelProperty(value = "签名类型 1为RSA 2为MD5")
     private String signType;
