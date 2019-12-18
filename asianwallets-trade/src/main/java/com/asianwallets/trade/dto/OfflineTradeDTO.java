@@ -57,8 +57,14 @@ public class OfflineTradeDTO {
 
 
     //----------------【非必填参数】---------------------
+    @ApiModelProperty(value = "银行机构号")
+    private String issuerId;
+
     @ApiModelProperty(value = "服务器回调地址")
     private String serverUrl;
+
+    @ApiModelProperty(value = "浏览器回调地址")
+    private String browserUrl;
 
     @ApiModelProperty(value = "商品名称")
     private String productName;
@@ -66,8 +72,8 @@ public class OfflineTradeDTO {
     @ApiModelProperty(value = "商品描述")
     private String productDescription;
 
-    @ApiModelProperty(value = "付款人账户")
-    private String payerAccount;
+    @ApiModelProperty(value = "付款人姓名")
+    private String payerName;
 
     @ApiModelProperty(value = "付款人银行")
     private String payerBank;
