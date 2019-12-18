@@ -1,13 +1,17 @@
 package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.InstitutionRequestParameters;
+import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.trade.channels.help2pay.Help2PayService;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
 import com.asianwallets.trade.service.CommonBusinessService;
+import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OnlineGatewayService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,9 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 
     @Autowired
     private CommonBusinessService commonBusinessService;
+
+    @Autowired
+    private CommonRedisDataService commonRedisDataService;
 
     /**
      * 网关收单
@@ -91,14 +98,17 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
 
         //可选参数校验
-
-
+        Merchant merchant = commonRedisDataService.getMerchantById(onlineTradeDTO.getMerchantId());
+        Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
+        InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
+        checkRequestParameters(onlineTradeDTO, institutionRequestParameters);
         //签名校验
         if (!commonBusinessService.checkUniversalSign(onlineTradeDTO)) {
             log.info("-----------------【线上直连】下单信息记录--------------【签名错误】");
             throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
         }
         //获取商户信息
+
 
         return null;
     }
