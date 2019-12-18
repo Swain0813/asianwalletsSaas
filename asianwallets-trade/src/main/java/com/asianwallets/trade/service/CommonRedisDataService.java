@@ -1,6 +1,7 @@
 package com.asianwallets.trade.service;
 
 import com.asianwallets.common.entity.Attestation;
+import com.asianwallets.common.entity.Currency;
 
 /**
  * 通用获取数据接口
@@ -8,12 +9,12 @@ import com.asianwallets.common.entity.Attestation;
 public interface CommonRedisDataService {
 
     /**
-     * 根据币种获取币种默认值
+     * 根据币种编码获取币种
      *
-     * @param currency 币种
+     * @param code 币种编码
      * @return 默认值
      */
-    String getCurrencyDefaultValue(String currency);
+    Currency getCurrencyByCode(String code);
 
     /**
      * 根据商户ID获取密钥对象

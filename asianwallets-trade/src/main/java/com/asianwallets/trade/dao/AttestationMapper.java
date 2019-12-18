@@ -14,9 +14,4 @@ public interface AttestationMapper extends BaseMapper<Attestation> {
      * @return 密钥对象
      */
     Attestation selectByMerchantId(@Param("merchantId") String merchantId);
-
-    /**
-     * 查询平台公私钥信息
-     */
-    Attestation selectPlatformInfo();
 }

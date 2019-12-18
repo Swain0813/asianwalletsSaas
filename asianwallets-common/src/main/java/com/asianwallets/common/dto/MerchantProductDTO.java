@@ -1,11 +1,9 @@
 package com.asianwallets.common.dto;
-
 import com.asianwallets.common.base.BasePageHelper;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -97,6 +95,7 @@ public class MerchantProductDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "语言")
     private String language;
+
     @ApiModelProperty(value = "起始时间")
     private String startTime;
 

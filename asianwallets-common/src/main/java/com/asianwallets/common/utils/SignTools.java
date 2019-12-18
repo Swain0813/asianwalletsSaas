@@ -12,33 +12,25 @@ import java.util.*;
 public class SignTools {
 
     /**
-     * 密文字符串的拼装处理
+     * 对Map中的值按字段名的ASCII码值按升序排序
      *
-     * @param map
-     * @return
+     * @param map 待排序Map
+     * @return 排序后的字符串
      */
     public static String getSignStr(Map<String, String> map) {
         String signStr = null;
         if (map != null) {
             Map<String, String> sortMap = new TreeMap<>(Comparator.naturalOrder());
-            //将请求map中的参数进行排序
-            Set<String> ks = map.keySet();
-            for (String key : ks) {
-                if (key != null && !key.equals("")) {
-                    String value = map.get(key);
-                    if (value != null && !value.equals("") && !value.equals("null")) {
-                        sortMap.put(key, value);
-                    }
+            //将请求Map中的字段名按ASCII码值进行排序
+            for (String key : map.keySet()) {
+                if (!StringUtils.isEmpty(key) && !StringUtils.isEmpty(map.get(key))) {
+                    sortMap.put(key, map.get(key).trim());
                 }
             }
-            //取出value进行拼装签名前的字符
+            //拼接排序后Map中所有的值
             StringBuilder sb = new StringBuilder();
-            Set<String> keySet = sortMap.keySet();
-            for (String key : keySet) {
-                String val = sortMap.get(key);
-                if (val != null && !val.equals("") && !val.equals("null")) {
-                    sb.append(val.trim());
-                }
+            for (String key : sortMap.keySet()) {
+                sb.append(sortMap.get(key));
             }
             signStr = sb.toString();
         }
@@ -233,18 +225,15 @@ public class SignTools {
     }
 
     public static void main(String[] args) {
-        Map<String, String> map = new TreeMap<>(
-                new Comparator<String>() {
-                    public int compare(String obj1, String obj2) {
-                        return obj2.compareTo(obj1);
-                    }
-                });
-
-        //Map<String, String> map = new TreeMap<>();
-        map.put("c", "3");
-        map.put("a", "1");
+        Map<String, String> map = new HashMap<>();
+        map.put("txnTime", "3");
+        map.put("txnstatus", "1");
         map.put("b", "2");
-        System.out.println(map);
+        map.put("c", "2");
+        map.put("e", "2");
+        map.put("cd", "2"); //b c cd e tT ts
+        String signStr = getSignStr(map);
+        System.out.println(signStr);
     }
 
 }

@@ -1,16 +1,14 @@
 package com.asianwallets.trade.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.Attestation;
+import com.asianwallets.common.entity.Currency;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.MD5Util;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.utils.SignTools;
-import com.asianwallets.trade.dao.AttestationMapper;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 
@@ -42,18 +41,18 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public boolean checkSignByMd5(Object obj) {
+        //将对象转换成Map
         Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
-        String sign = String.valueOf(map.get("sign"));
-        String merchantId = String.valueOf(map.get("merchantId"));
-        Attestation attestation = commonRedisDataService.getAttestationByMerchantId(merchantId);
+        Attestation attestation = commonRedisDataService.getAttestationByMerchantId(map.get("merchantId"));
         if (attestation == null) {
             return false;
         }
+        //将请求参数排序后与md5Key拼接
         String clearText = SignTools.getSignStr(map) + attestation.getMd5key();
         log.info("===============【校验MD5签名】===============【签名前的明文】 clearText: {}", clearText);
         String decryptSign = MD5Util.getMD5String(clearText);
         log.info("===============【校验MD5签名】===============【签名后的密文】 decryptSign: {}", decryptSign);
-        return sign.equalsIgnoreCase(decryptSign);
+        return map.get("sign").equalsIgnoreCase(decryptSign);
     }
 
     /**
@@ -75,20 +74,19 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     }
 
     /**
-     * 校验订单金额是否符合币种默认值【线上与线下下单】
+     * 校验订单币种是否支持与默认值【线上与线下下单】
      *
      * @param orderCurrency 订单币种
      * @param orderAmount   订单金额
      * @return 布尔值
      */
     @Override
-    public boolean checkOrderCurrency(String orderCurrency, String orderAmount) {
+    public boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount) {
         //获取币种默认值
-        String defaultValue = commonRedisDataService.getCurrencyDefaultValue(orderCurrency);
-        if (StringUtils.isEmpty(defaultValue)) {
+        Currency currency = commonRedisDataService.getCurrencyByCode(orderCurrency);
+        if (currency == null) {
             throw new BusinessException(EResultEnum.PRODUCT_CURRENCY_NO_SUPPORT.getCode());
         }
-        String orderAmountStr = String.valueOf(orderAmount);
-        return new StringBuilder(defaultValue).reverse().indexOf(".") >= new StringBuilder(orderAmountStr).reverse().indexOf(".");
+        return new StringBuilder(currency.getDefaults()).reverse().indexOf(".") >= new StringBuilder(String.valueOf(orderAmount)).reverse().indexOf(".");
     }
 }

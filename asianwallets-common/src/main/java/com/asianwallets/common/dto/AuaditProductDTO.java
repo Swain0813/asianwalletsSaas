@@ -20,7 +20,7 @@ public class AuaditProductDTO {
     public Boolean enabled;
 
     @ApiModelProperty(value = "备注")
-    public String remarks;
+    public String remark;
 
     @ApiModelProperty(value = "商户产品id集合")
     public List<String> merProId;

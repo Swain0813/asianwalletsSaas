@@ -1,4 +1,5 @@
 package com.asianwallets.clearing.service.impl;
+import com.alibaba.fastjson.JSON;
 import com.asianwallets.clearing.constant.Const;
 import com.asianwallets.clearing.dao.TcsSysConstMapper;
 import com.asianwallets.clearing.service.CommonService;
@@ -128,13 +129,13 @@ public class IntoAccountServiceImpl implements IntoAccountService {
                 return repqo;
             }
             //判断商户信息是否存在
-            Merchant merchant = null;
             try {
-                merchant = commonService.getMerchantInfo(ioma.getMerchantid());
+                Merchant merchant = commonService.getMerchantInfo(ioma.getMerchantid());
+                log.info("*******************************调用资金变动接口的商户信息*******************institution:{}", JSON.toJSON(merchant));
             } catch (Exception e) {
                 repqo.setRespCode(Const.CSCode.CODE_CS0005);
                 repqo.setRespMsg(Const.CSCode.MSG_CS0005);
-                log.info("********************************* 商户查询信息异常 ****************************");
+                log.info("********************************* 商户查询信息异常 ****************************"+ioma.getMerchantid());
                 return repqo;
             }
             //组装签名map
@@ -268,6 +269,12 @@ public class IntoAccountServiceImpl implements IntoAccountService {
         repqo.setChannelCostcurrency(ioma.getChannelCostcurrency());
         m1.put("gatewayFee", decimalFormat.format(ioma.getGatewayFee()));//交易状态手续费
         repqo.setGatewayFee(ioma.getGatewayFee());
+        //退还收单手续费的币种
+        m1.put("refundOrderFeeCurrency",ioma.getRefundOrderFeeCurrency());
+        repqo.setRefundOrderFeeCurrency(ioma.getRefundOrderFeeCurrency());
+        //退还收单手续费
+        m1.put("refundOrderFee",decimalFormat.format(ioma.getRefundOrderFee()));
+        repqo.setRefundOrderFee(ioma.getRefundOrderFee());
         return m1;
     }
 

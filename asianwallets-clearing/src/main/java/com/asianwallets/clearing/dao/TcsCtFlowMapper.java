@@ -19,7 +19,7 @@ public interface TcsCtFlowMapper extends BaseMapper<TcsCtFlow> {
     Double getCLLeftMoney(TcsCtFlow ctflow);
 
     /**
-     * 根据机构编号以及币种查询未结算的收单清算记录
+     * 根据机构编号以及币种查询未清算记录
      * @param institutionCode
      * @param currency
      * @return

@@ -241,7 +241,17 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public List<ChannelExportVO> exportChannel(ChannelDTO channelDTO) {
         channelDTO.setLanguage(auditorProvider.getLanguage());
-        return channelMapper.exportChannel(channelDTO);
+        List<ChannelExportVO> channelExportVOList = channelMapper.exportChannel(channelDTO);
+        for (ChannelExportVO channelExportVO : channelExportVOList) {
+            if ("1".equals(channelExportVO.getRefundingIsReturnFee())) {
+                channelExportVO.setRefundingIsReturnFee("退还");
+            } else if ("2".equals(channelExportVO.getRefundingIsReturnFee())) {
+                channelExportVO.setRefundingIsReturnFee("不退还");
+            } else if ("3".equals(channelExportVO.getRefundingIsReturnFee())) {
+                channelExportVO.setRefundingIsReturnFee("仅限当日退还");
+            }
+        }
+        return channelExportVOList;
     }
 
     /**
