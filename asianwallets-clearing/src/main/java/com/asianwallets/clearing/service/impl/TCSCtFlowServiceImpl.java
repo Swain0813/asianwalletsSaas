@@ -91,7 +91,6 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
         ctf.setRefundOrderFee(ioma.getRefundOrderFee());
         ctf.setRefundOrderFeeCurrency(ioma.getRefundOrderFeeCurrency());
         try {
-            int result = 0;
             if (ctf == null || ctf.getSltcurrency() == null || ctf.getTxncurrency() == null || ctf.getMerchantid() == null || ctf.getBusinessType() == 0) {
                 //输入参数为空，待清算的数据为空
                 log.info("*************** 清算 IntoAndOutMerhtCLAccount2 **************** 待清算的数据为空，结束时间：{}", new Date());
@@ -102,16 +101,14 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
             //查询清算表中未清算的金额
             BigDecimal unClearAmount =tcsCtFlowMapper.getUnClearAmount(ctf.getMerchantid(),ctf.getTxncurrency());
             unClearAmount = unClearAmount == null ? BigDecimal.ZERO : unClearAmount;
-            //清算户资金+清算表中未清算的金额+(交易金额-手续费)
+            //清算户资金+清算表中未清算的金额+交易金额  清算这边的手续费不算了，都统一到结算那边算
             double clearMoney = ComDoubleUtil.addBySize(account.getClearBalance().doubleValue(),unClearAmount.doubleValue(),2);
-            //double settleMoney = ComDoubleUtil.addBySize(clearMoney,account.getSettleBalance().doubleValue(),2);
-            //double totalMoney = ComDoubleUtil.subBySize(settleMoney,account.getFreezeBalance().doubleValue(),2);
-            double outMoney = ComDoubleUtil.addBySize( clearMoney,ctf.getTxnamount()-ctf.getFee()+ctf.getRefundOrderFee(), 2);
+            double outMoney = ComDoubleUtil.addBySize(clearMoney,ctf.getTxnamount(), 2);
             if(outMoney<0){
                 log.info("*************** 清算 IntoAndOutMerhtCLAccount2 **************** 清算户资金必须大于等于0才能操作，结束时间：{}", new Date());
                 return baseResponse;
             }
-            result = tcsCtFlowMapper.insertSelective(ctf);
+            int result = tcsCtFlowMapper.insertSelective(ctf);
             if (result > 0) {
                 baseResponse.setCode(Const.Code.OK);
                 baseResponse.setMsg(Const.Code.OK_MSG);
@@ -144,7 +141,6 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
         message.setMsg(Const.Code.FAILED_MSG);
         int allsize = 0;//总条数
         int successize = 0;//成功条数
-        String mbuaccountId = null;
         String key = Const.Redis.CLEARING_KEY + "_" + mid + "_" + currency;
         log.info("************ CLEARING_KEY *************** key:{}", key);
         if (redisService.lock(key, Const.Redis.expireTime)) {
@@ -199,9 +195,6 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     //先更新清算账户；
                     Account mva = new Account();
                     balance = ma2clnow.getClearBalance().doubleValue();//变动前余额
-                    //7/29修改
-                    //afterbalance = balance + ct.getTxnamount() - ct.getFee();//变动后余额
-                    //mva.setClearBalance(new BigDecimal(ct.getTxnamount()).subtract(new BigDecimal(ct.getFee())));//ysl-20190627 修改 变成 清算表中的金额-手续费
                     afterbalance = balance + ct.getTxnamount();//变动后余额
                     mva.setClearBalance(new BigDecimal(ct.getTxnamount()));//清算表中的金额
                     mva.setId(ma2clnow.getId());
@@ -225,7 +218,7 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     mab.setAfterbalance(afterbalance);
                     mab.setOrganId(ct.getOrganId());
                     mab.setMerchantid(ct.getMerchantid());
-                    mab.setMbuaccountId(mbuaccountId);
+                    mab.setMbuaccountId(null);
                     mab.setSysAddDate(new Date());
                     mab.setVaccounId(ma2cl.getId());//清算户编号
                     mab.setBalance(balance);
@@ -238,7 +231,8 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     mab.setGatewayFee(Double.parseDouble("0"));//清算流水中网关手续费为0，不做计算
                     mab.setSltcurrency(ct.getSltcurrency());//结算币种
                     mab.setSltexrate(ct.getTxnexrate());//结算汇率
-                    mab.setRefundOrderFee(ct.getRefundOrderFee());//退还手续费
+                    //退还收单手续费
+                    mab.setRefundOrderFee(Double.parseDouble("0"));
                     //要判断接口传入的交易金额是正数还是负数
                     if (ct.getTxnamount() >= 0) {
                         //表示收入，
@@ -256,6 +250,7 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     mab.setReferenceflow(ct.getRefcnceFlow());
                     mab.setRemark(ct.getRemark());
                     mab.setTradetype(ct.getTradetype());
+                    //清算账户
                     mab.setType(1);
                     //插入账户资金变动流水
                     int rows2 = tmMerChTvAcctBalanceMapper.insertSelective(mab);
@@ -272,9 +267,11 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     st.setSTFlow("SF" + IDS.uniqueID());
                     st.setAccountNo(ma2cl.getId());
                     st.setFee(ct.getFee());
-                    st.setGatewayFee(ct.getGatewayFee());//20170615添加的网关状态手续费
+                    //网关状态手续费
+                    st.setGatewayFee(ct.getGatewayFee());
                     st.setChannelCost(ct.getChannelCost());
-                    st.setOrganId(ct.getOrganId());//所属机构编号
+                    //所属机构编号
+                    st.setOrganId(ct.getOrganId());
                     st.setMerchantid(ct.getMerchantid());
                     st.setSysorderid(ct.getSysorderid());
                     st.setMerOrderNo(ct.getMerOrderNo());
@@ -338,6 +335,7 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                 if (allsize > 0 && successize > 0 && allsize == successize) {
                     //整个批次处理成功
                     log.info("**************** ClearForMerchantGroup 单组清算 ************** #整个批次处理成功，结束，时间：{}", new Date());
+                    log.info("**************** ClearForMerchantGroup 单组清算********* 本次清算跑批的总条数是:{}",allsize);
                     message.setCode(Const.Code.OK);
                     message.setMsg(Const.Code.OK_MSG);
                 } else {
