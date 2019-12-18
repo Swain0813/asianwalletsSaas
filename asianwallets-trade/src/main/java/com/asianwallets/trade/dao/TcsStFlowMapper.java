@@ -21,7 +21,7 @@ public interface TcsStFlowMapper extends BaseMapper<TcsStFlow> {
      * @return
      **/
     @Select("select STstate from tcs_stflow where sysorderid = #{sysorderid} and refcnceFlow = #{sysorderid} and tradetype = 'ST'")
-    Integer getSTstatus(String sysorderid);
+    Integer getSTstatus(@Param("sysorderid") String sysorderid);
     /**
      * @Author YangXu
      * @Date 2019/12/12

@@ -153,7 +153,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             }
             //撤销
             if (newRefundAmount.compareTo(oldOrder.getTradeAmount()) == 1) {
-                log.info("----------------- 校验退款参数 退款金额不合法 -------------- institution : {} ,refundDTO : {},oldOrder :{}", institution, JSON.toJSON(refundDTO), JSON.toJSON(oldOrder));
+                log.info("----------------- 校验退款参数 退款金额不合法 -------------- merchant : {} ,refundDTO : {},oldOrder :{}", JSON.toJSON(merchant), JSON.toJSON(refundDTO), JSON.toJSON(oldOrder));
                 throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
             }
             //线上退款,验证退款人的用户信息
