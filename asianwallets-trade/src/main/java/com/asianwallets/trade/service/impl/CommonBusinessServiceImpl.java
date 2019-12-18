@@ -1,22 +1,28 @@
 package com.asianwallets.trade.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.Attestation;
 import com.asianwallets.common.entity.Currency;
+import com.asianwallets.common.entity.ExchangeRate;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.MD5Util;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.utils.SignTools;
+import com.asianwallets.common.vo.CalcExchangeRateVO;
+import com.asianwallets.trade.feign.MessageFeign;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 
@@ -33,6 +39,15 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private MessageFeign messageFeign;
+
+    @Value("${custom.warning.mobile}")
+    private String warningMobile;
+
+    @Value("${custom.warning.email}")
+    private String warningEmail;
+
     /**
      * 校验MD5签名
      *
@@ -41,18 +56,78 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public boolean checkSignByMd5(Object obj) {
-        //将对象转换成Map
-        Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
-        Attestation attestation = commonRedisDataService.getAttestationByMerchantId(map.get("merchantId"));
-        if (attestation == null) {
-            return false;
+        try {
+            //将对象转换成Map
+            Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
+            Attestation attestation = commonRedisDataService.getAttestationByMerchantId(map.get("merchantId"));
+            if (attestation == null) {
+                log.info("===============【校验MD5签名】===============【密钥不存在】");
+                return false;
+            }
+            //将请求参数排序后与md5Key拼接
+            String clearText = SignTools.getSignStr(map) + attestation.getMd5key();
+            log.info("===============【校验MD5签名】===============【签名前的明文】 clearText: {}", clearText);
+            String decryptSign = MD5Util.getMD5String(clearText);
+            log.info("===============【校验MD5签名】===============【签名后的密文】 decryptSign: {}", decryptSign);
+            return map.get("sign").equalsIgnoreCase(decryptSign);
+        } catch (Exception e) {
+            log.info("===============【校验MD5签名】===============【验签异常】", e);
         }
-        //将请求参数排序后与md5Key拼接
-        String clearText = SignTools.getSignStr(map) + attestation.getMd5key();
-        log.info("===============【校验MD5签名】===============【签名前的明文】 clearText: {}", clearText);
-        String decryptSign = MD5Util.getMD5String(clearText);
-        log.info("===============【校验MD5签名】===============【签名后的密文】 decryptSign: {}", decryptSign);
-        return map.get("sign").equalsIgnoreCase(decryptSign);
+        return false;
+    }
+
+    /**
+     * 换汇计算
+     *
+     * @param localCurrency   本币
+     * @param foreignCurrency 外币
+     * @param floatRate       浮动率
+     * @param amount          金额
+     * @return 换汇输出实体
+     */
+    @Override
+    public CalcExchangeRateVO calcExchangeRate(String localCurrency, String foreignCurrency, BigDecimal floatRate, BigDecimal amount) {
+        CalcExchangeRateVO calcExchangeRateVO = new CalcExchangeRateVO();
+        calcExchangeRateVO.setExchangeTime(new Date());
+        try {
+            ExchangeRate localToForeignRate = commonRedisDataService.getExchangeRateByCurrency(localCurrency, foreignCurrency);
+            if (localToForeignRate == null || localToForeignRate.getBuyRate() == null) {
+                messageFeign.sendSimple(warningMobile, "换汇计算:查询汇率异常!本位币种:" + localCurrency + " 目标币种:" + foreignCurrency);
+                messageFeign.sendSimpleMail(warningEmail, "换汇计算:查询汇率异常!", "换汇计算:查询汇率异常!本位币种:" + localCurrency + " 目标币种:" + foreignCurrency);
+                calcExchangeRateVO.setExchangeStatus(TradeConstant.SWAP_FALID);
+                return calcExchangeRateVO;
+            }
+            ExchangeRate foreignToLocalRate = commonRedisDataService.getExchangeRateByCurrency(foreignCurrency, localCurrency);
+            if (foreignToLocalRate == null || foreignToLocalRate.getBuyRate() == null) {
+                messageFeign.sendSimple(warningMobile, "换汇计算:查询汇率异常!本位币种:" + foreignCurrency + " 目标币种:" + localCurrency);
+                messageFeign.sendSimpleMail(warningEmail, "换汇计算:查询汇率异常!", "换汇计算:查询汇率异常!本位币种:" + foreignCurrency + " 目标币种:" + localCurrency);
+                calcExchangeRateVO.setExchangeStatus(TradeConstant.SWAP_FALID);
+                return calcExchangeRateVO;
+            }
+            //浮动率为空,默认为0
+            if (floatRate == null) {
+                floatRate = new BigDecimal(0);
+            }
+            //换汇汇率 = 汇率 * (1 + 浮动率)
+            BigDecimal swapRate = localToForeignRate.getBuyRate().multiply(floatRate.add(new BigDecimal(1)));
+            //交易金额 = 订单金额 * 换汇汇率
+            BigDecimal tradeAmount = amount.multiply(swapRate);
+            //四舍五入保留2位
+            calcExchangeRateVO.setTradeAmount(tradeAmount.setScale(2, BigDecimal.ROUND_HALF_UP));
+            //换汇汇率
+            calcExchangeRateVO.setExchangeRate(swapRate);
+            //本币转外币汇率
+            calcExchangeRateVO.setOriginalRate(localToForeignRate.getBuyRate());
+            //外币转本币汇率
+            calcExchangeRateVO.setReverseRate(foreignToLocalRate.getBuyRate());
+            //换汇成功
+            calcExchangeRateVO.setExchangeStatus(TradeConstant.SWAP_SUCCESS);
+            log.info("==================【换汇计算】==================【换汇结果】 calcExchangeRateVO:{}", JSON.toJSONString(calcExchangeRateVO));
+        } catch (Exception e) {
+            log.info("==================【换汇计算】==================【换汇异常】", e);
+            calcExchangeRateVO.setExchangeStatus(TradeConstant.SWAP_FALID);
+        }
+        return calcExchangeRateVO;
     }
 
     /**
