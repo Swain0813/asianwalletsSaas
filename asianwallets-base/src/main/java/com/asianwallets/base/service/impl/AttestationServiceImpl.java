@@ -14,17 +14,13 @@ import com.asianwallets.common.utils.RSAUtils;
 import com.asianwallets.common.vo.AttestationVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import static com.asianwallets.common.utils.ReflexClazzUtils.getNullPropertyNames;
 
 /**
  * @author shenxinran
@@ -68,12 +64,7 @@ public class AttestationServiceImpl extends BaseServiceImpl<Attestation> impleme
      */
     @Override
     public List<AttestationVO> selectKeyInfo(AttestationDTO attestationDTO) {
-        List<AttestationVO> attestationVOS = new ArrayList<>();
-        if (!StringUtils.isBlank(attestationDTO.getMerchantId())) {
-            attestationVOS = attestationMapper.selectKeyInfo(attestationDTO);
-        }
-
-        return attestationVOS;
+        return attestationMapper.selectKeyInfo(attestationDTO);
     }
 
     /**
@@ -92,12 +83,17 @@ public class AttestationServiceImpl extends BaseServiceImpl<Attestation> impleme
         if (attestation == null) {
             throw new BusinessException(EResultEnum.SECRET_IS_NOT_EXIST.getCode());
         }
-        BeanUtils.copyProperties(attestationDTO, attestation, getNullPropertyNames(attestationDTO));
+        //设置空值，防止被修改
+        attestation.setPrikey(null);
+        attestation.setPubkey(null);
+        attestation.setMd5key(null);
+        //仅可修改商户公钥
+        attestation.setMerPubkey(attestationDTO.getMerPubkey());
         attestation.setUpdateTime(new Date());
         num = attestationMapper.updateByPrimaryKeySelective(attestation);
         try {
             //更新密钥信息后添加的redis里
-            redisService.set(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(attestationDTO.getMerchantId()), JSON.toJSONString(attestation));
+            redisService.set(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(attestation.getMerchantId()), JSON.toJSONString(attestation));
         } catch (Exception e) {
             throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
         }
