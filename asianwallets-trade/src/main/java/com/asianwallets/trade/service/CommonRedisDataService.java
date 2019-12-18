@@ -56,4 +56,12 @@ public interface CommonRedisDataService {
      * @return 商户
      */
     Merchant getMerchantById(String merchantId);
+
+    /**
+     * 根据产品编码获取产品
+     *
+     * @param productCode 产品编码
+     * @return 产品
+     */
+    Product getProductByCode(String productCode);
 }
