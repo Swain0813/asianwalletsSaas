@@ -20,7 +20,7 @@ public interface TcsStFlowMapper extends BaseMapper<TcsStFlow> {
      * @Descripate 根据系统订单号查询结算状态: 1-未结算，2-已结算
      * @return
      **/
-    @Select("select STstate from tcs_stflow where sysorderid = #{sysorderid} and refcnceFlow = #{sysorderid} and tradetype = 'ST'")
+    @Select("select STstate from tcs_stflow where refcnceFlow = #{sysorderid} and tradetype = 'ST'")
     Integer getSTstatus(@Param("sysorderid") String sysorderid);
     /**
      * @Author YangXu
