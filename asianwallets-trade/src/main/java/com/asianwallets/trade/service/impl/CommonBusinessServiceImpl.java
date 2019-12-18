@@ -82,7 +82,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     }
 
     /**
-     * 线上校验签名
+     * 通用签名校验
      *
      * @param obj 验签对象
      * @return 布尔值
@@ -92,13 +92,13 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
         String sign = map.get("sign");
         String signType = map.get("signType");
-        String institutionCode = map.get("merchantId");
+        String merchantId = map.get("merchantId");
         if (sign == null || "".equals(sign)) {
             throw new BusinessException(EResultEnum.SIGNATURE_CANNOT_BE_EMPTY.getCode());
         }
         Attestation attestation = commonRedisDataService.getAttestationByMerchantId((map.get("merchantId")));
         if (attestation == null) {
-            log.info("===============【线上校验签名】===============【密钥不存在】");
+            log.info("===============【通用签名校验方法】===============【密钥不存在】");
             return false;
         }
         if (signType.equals(TradeConstant.RSA)) {
@@ -109,11 +109,11 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             try {
                 return RSAUtils.verify(data, signMsg, attestation.getMerPubkey());
             } catch (Exception e) {
-                log.info("-----------  【线上校验签名】 RSA校验发生错误----------机构code:{},签名signMsg:{}", institutionCode, signMsg);
+                log.info("-----------  【通用签名校验】 RSA校验发生错误----------商户id:{},签名signMsg:{}", merchantId, signMsg);
             }
         } else if (signType.equals(TradeConstant.MD5)) {
             String str = SignTools.getSignStr(map) + attestation.getMd5key();
-            log.info("----------【线上校验签名】 MD5加密前明文----------str:{}", str);
+            log.info("----------【通用签名校验】 MD5加密前明文----------str:{}", str);
             String decryptSign = MD5Util.getMD5String(str);
             return sign.equalsIgnoreCase(decryptSign);
         }
