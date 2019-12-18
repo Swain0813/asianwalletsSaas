@@ -1,6 +1,5 @@
 package com.asianwallets.trade.service.impl;
 
-import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RefundDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -23,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RefundTradeServiceImpl implements RefundTradeService {
 
     @Autowired
-    private CommonBusinessService commonBusinessServicel;
+    private CommonBusinessService commonBusinessService;
 
 
     /**
@@ -41,16 +40,11 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         //验签
-        if (TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection())) {//线下
-            if (!commonBusinessServicel.checkSignByMd5(refundDTO)) {
-                throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());//验签不匹配
-            }
-        } else {
-            if (!commonBusinessServicel.checkOnlineSignMsg(refundDTO)) {
-                throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());//验签不匹配
-            }
+        //签名校验
+        if (!commonBusinessService.checkUniversalSign(refundDTO)) {
+            log.info("-----------------【退款】信息记录--------------【签名错误】");
+            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
         }
-
 
 
         return null;

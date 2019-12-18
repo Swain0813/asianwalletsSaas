@@ -93,7 +93,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 
 
         //签名校验
-        if (!commonBusinessService.checkOnlineSign(onlineTradeDTO)) {
+        if (!commonBusinessService.checkUniversalSign(onlineTradeDTO)) {
             log.info("-----------------【线上直连】下单信息记录--------------【签名错误】");
             throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
         }

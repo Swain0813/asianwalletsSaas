@@ -24,7 +24,7 @@ public interface CommonBusinessService {
      * @param obj
      * @return boolean
      */
-    boolean checkOnlineSign(Object obj);
+    boolean checkUniversalSign(Object obj);
 
     /**
      * 换汇计算

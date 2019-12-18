@@ -88,7 +88,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      * @return 布尔值
      */
     @Override
-    public boolean checkOnlineSign(Object obj) {
+    public boolean checkUniversalSign(Object obj) {
         Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
         String sign = map.get("sign");
         String signType = map.get("signType");
