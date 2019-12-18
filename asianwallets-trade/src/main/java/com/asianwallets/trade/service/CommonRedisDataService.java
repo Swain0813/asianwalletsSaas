@@ -1,10 +1,6 @@
 package com.asianwallets.trade.service;
 
-import com.alibaba.fastjson.JSON;
-import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.*;
-import com.asianwallets.common.exception.BusinessException;
-import com.asianwallets.common.response.EResultEnum;
 
 /**
  * 通用获取数据接口
@@ -60,6 +56,14 @@ public interface CommonRedisDataService {
      * @return 商户
      */
     Merchant getMerchantById(String merchantId);
+
+    /**
+     * 根据产品编码获取产品
+     *
+     * @param productCode 产品编码
+     * @return 产品
+     */
+    Product getProductByCode(String productCode);
 
     /**
      * 根据通道code从redis获取通道信息

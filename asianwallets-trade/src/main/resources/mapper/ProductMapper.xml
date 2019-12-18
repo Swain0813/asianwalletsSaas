@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.trade.dao.ProductMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Product">
+        <result column="id" property="id"/>
+        <result column="product_code" property="productCode"/>
+        <result column="product_name" property="productName"/>
+        <result column="product_details_logo" property="productDetailsLogo"/>
+        <result column="product_print_logo" property="productPrintLogo"/>
+        <result column="product_img" property="productImg"/>
+        <result column="trans_type" property="transType"/>
+        <result column="trade_direction" property="tradeDirection"/>
+        <result column="pay_type" property="payType"/>
+        <result column="currency" property="currency"/>
+        <result column="daily_total_amount" property="dailyTotalAmount"/>
+        <result column="daily_trading_count" property="dailyTradingCount"/>
+        <result column="limit_amount" property="limitAmount"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="remark" property="remark"/>
+        <result column="enabled" property="enabled"/>
+    </resultMap>
+
+    <select id="selectByProductCode" resultMap="BaseResultMap">
+
+    </select>
+</mapper>

@@ -41,6 +41,9 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     private MerchantMapper merchantMapper;
 
     @Autowired
+    private ProductMapper productMapper;
+
+    @Autowired
     private ChannelMapper channelMapper;
 
     /**
@@ -66,6 +69,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         } catch (Exception e) {
             log.info("==================【根据币种编码获取币种】==================【获取异常】", e);
         }
+        log.info("==================【根据币种编码获取币种】==================【币种信息】 currency: {}", JSON.toJSONString(currency));
         return currency;
     }
 
@@ -91,6 +95,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         } catch (Exception e) {
             log.info("==================【根据商户ID获取密钥对象】==================【获取异常】", e);
         }
+        log.info("==================【根据商户ID获取密钥对象】==================【密钥信息】 attestation: {}", JSON.toJSONString(attestation));
         return attestation;
     }
 
@@ -117,6 +122,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         } catch (Exception e) {
             log.info("==================【根据本币与外币获取汇率对象】==================【获取异常】", e);
         }
+        log.info("==================【根据本币与外币获取汇率对象】==================【汇率信息】 exchangeRate: {}", JSON.toJSONString(exchangeRate));
         return exchangeRate;
     }
 
@@ -142,6 +148,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         } catch (Exception e) {
             log.info("==================【根据机构ID获取机构】==================【获取异常】", e);
         }
+        log.info("==================【根据机构ID获取机构】==================【机构信息】 institution: {}", JSON.toJSONString(institution));
         return institution;
     }
 
@@ -169,6 +176,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         } catch (Exception e) {
             log.info("==================【根据机构ID与交易方向查询获取机构请求参数】==================【获取异常】", e);
         }
+        log.info("==================【根据机构ID与交易方向查询获取机构请求参数】==================【机构请求参数信息】 institutionRequestParameters: {}", JSON.toJSONString(institutionRequestParameters));
         return institutionRequestParameters;
     }
 
@@ -194,7 +202,34 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         } catch (Exception e) {
             log.info("==================【根据商户ID获取商户】==================【获取异常】", e);
         }
+        log.info("==================【根据商户ID获取商户】==================【商户信息】 merchant: {}", JSON.toJSONString(merchant));
         return merchant;
+    }
+
+    /**
+     * 根据产品编码获取产品
+     *
+     * @param productCode 产品编码
+     * @return 产品
+     */
+    @Override
+    public Product getProductByCode(String productCode) {
+        Product product = null;
+        try {
+            product = JSON.parseObject(redisService.get(AsianWalletConstant.PRODUCT_CACHE_CODE_KEY.concat("_") + productCode), Product.class);
+            if (product == null) {
+                product = productMapper.selectByProductCode(productCode);
+                if (product == null) {
+                    log.info("==================【根据产品编码获取产品】==================【产品对象不存在】 productCode: {}", productCode);
+                    return null;
+                }
+                redisService.set(AsianWalletConstant.PRODUCT_CACHE_CODE_KEY.concat("_") + productCode, JSON.toJSONString(product));
+            }
+        } catch (Exception e) {
+            log.info("==================【根据产品编码获取产品】==================【获取异常】", e);
+        }
+        log.info("==================【根据产品编码获取产品】==================【商户信息】 product: {}", JSON.toJSONString(product));
+        return product;
     }
 
     /**
