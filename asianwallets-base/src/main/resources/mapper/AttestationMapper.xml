@@ -34,7 +34,7 @@
                 AND id = #{id}
             </if>
             <if test="institutionId != null and institutionId != ''">
-                AND institutionId = #{institutionId}
+                AND institution_id = #{institutionId}
             </if>
             <if test="merchantId != null and merchantId != ''">
                 AND merchant_id = #{merchantId}
