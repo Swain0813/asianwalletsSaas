@@ -1,4 +1,4 @@
-package com.asianwallets.trade.feign.Impl;
+package com.asianwallets.trade.feign.impl;
 
 import com.asianwallets.common.dto.alipay.*;
 import com.asianwallets.common.dto.doku.DOKUReqDTO;
