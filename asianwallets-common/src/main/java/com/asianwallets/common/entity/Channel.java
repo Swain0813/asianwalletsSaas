@@ -1,6 +1,7 @@
 package com.asianwallets.common.entity;
 
 import com.asianwallets.common.base.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -114,6 +115,7 @@ public class Channel extends BaseEntity {
 
     @ApiModelProperty(value = "通道费率最大值")
     @Column(name = "channel_max_rate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private BigDecimal channelMaxRate;
 
     @ApiModelProperty(value = "通道手续费类型")
@@ -130,6 +132,7 @@ public class Channel extends BaseEntity {
 
     @ApiModelProperty(value = "通道网关费率最大值")
     @Column(name = "channel_gateway_max_rate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private BigDecimal channelGatewayMaxRate;
 
     @ApiModelProperty(value = "通道网关手续费类型")
@@ -214,6 +217,7 @@ public class Channel extends BaseEntity {
 
     @ApiModelProperty(value = "通道退款手续费最大值")
     @Column(name = "channel_refund_max_rate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private BigDecimal channelRefundMaxRate;
 
     @ApiModelProperty(value = "通道退款手续费最小值")
