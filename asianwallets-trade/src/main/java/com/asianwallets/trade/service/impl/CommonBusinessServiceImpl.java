@@ -296,9 +296,9 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         //查询出商户对应产品的费率信息
         if (merchantProduct.getRate() == null || merchantProduct.getRateType() == null || merchantProduct.getAddValue() == null) {
             log.info("----------------- 计费信息记录 ----------------费率:{},费率类型:{},机构产品信息:{}", merchantProduct.getRate(), merchantProduct.getRateType(), JSON.toJSONString(merchantProduct));
-            orders.setTradeStatus();
-            calcFeeVO.setChargeStatus(TradeConstant.CHARGE_STATUS_FALID);
-
+            orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
+            ordersMapper.insert(orders);
+            throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_CONFIGURATION_INFORMATION_ERROR.getCode());
         }
 
 

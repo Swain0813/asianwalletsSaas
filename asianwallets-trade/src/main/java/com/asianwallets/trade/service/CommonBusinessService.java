@@ -1,6 +1,11 @@
 package com.asianwallets.trade.service;
 
+import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.MerchantProduct;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
+import com.asianwallets.trade.vo.BasicInfoVO;
+import com.asianwallets.trade.vo.CalculateCostVO;
 
 import java.math.BigDecimal;
 
