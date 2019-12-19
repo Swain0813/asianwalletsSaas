@@ -271,16 +271,16 @@
             <if test="orderCurrency != null and orderCurrency != ''">
                 AND o.order_currency = #{orderCurrency}
             </if>
-            <if test="startDate != null">
+            <if test="startDate != null and startDate !=''">
                 AND o.create_time &gt;= #{startDate}
             </if>
-            <if test="endDate != null">
+            <if test="endDate != null and endDate !=''">
                 AND o.create_time &lt;= #{endDate}
             </if>
-            <if test="startPayFinishTime != null">
+            <if test="startPayFinishTime != null and startPayFinishTime !=''">
                 AND o.channel_callback_time &gt;= #{startPayFinishTime}
             </if>
-            <if test="endPayFinishTime != null">
+            <if test="endPayFinishTime != null and endPayFinishTime !=''">
                 AND o.channel_callback_time &lt;= #{endPayFinishTime}
             </if>
             <if test="tradeType != null">
