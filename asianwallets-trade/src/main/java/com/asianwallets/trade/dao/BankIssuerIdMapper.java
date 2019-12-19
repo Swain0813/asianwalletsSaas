@@ -13,4 +13,11 @@ import java.util.List;
 @Repository
 public interface BankIssuerIdMapper extends BaseMapper<BankIssuerId> {
 
+    /**
+     * 通过通道编号查询一条银行机构映射(limit 1)
+     *
+     * @param channelCode 通道编号
+     * @return 银行机构映射
+     */
+    BankIssuerId selectByChannelCode(String channelCode);
 }
