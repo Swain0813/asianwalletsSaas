@@ -1,5 +1,6 @@
 package com.asianwallets.common.vo.clearing;
 
+import com.asianwallets.common.entity.OrderRefund;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,7 +27,6 @@ public class FinancialFreezeDTO implements Serializable{
 
    private double txnamount;//交易金额
 
-   private String mvaccountId;//虚拟账户编号
 
    private int state;//状态：1加冻结，2解冻结
 
@@ -38,5 +38,15 @@ public class FinancialFreezeDTO implements Serializable{
 
    private String respMsg;//应答消息
 
+   public FinancialFreezeDTO() {
+   }
 
+   public FinancialFreezeDTO(int state, OrderRefund orderRefund) {
+      this.merchantId = orderRefund.getMerchantId();
+      this.merOrderNo = orderRefund.getId();
+      this.txncurrency = orderRefund.getOrderCurrency();
+      this.txnamount = -1*orderRefund.getOrderAmount().add(orderRefund.getRefundFee()).subtract(orderRefund.getRefundOrderFee()).doubleValue();
+      this.state = state;
+      this.desc = "";
+   }
 }
