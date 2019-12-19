@@ -52,11 +52,8 @@ public class RefundDTO {
     @ApiModelProperty(value = "付款人邮箱")
     private String payerEmail;
 
-    /**
-     * 2019-11-08 从付款人电话改成Swift Code
-     */
-    @ApiModelProperty(value = "Swift Code")
-    private String swiftCode;
+    @ApiModelProperty(value = "付款人电话")
+    private String payerPhone;
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "签名")

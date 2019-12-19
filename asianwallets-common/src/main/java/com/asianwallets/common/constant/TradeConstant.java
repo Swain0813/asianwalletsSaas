@@ -51,6 +51,11 @@ public class TradeConstant {
     public static final String FEE_TYPE_RATE = "dic_7_1"; //单笔费率
     public static final String FEE_TYPE_QUOTA = "dic_7_2"; //单笔定额
 
+    //----------是否退还收单手续费
+    public static final Byte REFUND_ORDER_FEE = 1; //退还
+    public static final Byte REFUND_NO_ORDER_FEE = 2; //不退还
+    public static final Byte REFUND_TODAY_ORDER_FEE = 3; //仅限当日退还
+
     //----------手续费付款方
     public static final Byte FEE_PAYER_IN = 1; //内扣
     public static final Byte FEE_PAYER_OUT = 2; //外扣
@@ -155,6 +160,7 @@ public class TradeConstant {
     public static final String WD = "WD"; //提款
     public static final String AA = "AA"; //调账
     public static final String PM = "PM"; //付款
+    public static final String PAYING = "PAYING"; //订单付款中
 
     //---------------线上订单的类型
     public static final Byte DIRECTCONNECTION = 1; //直连订单
