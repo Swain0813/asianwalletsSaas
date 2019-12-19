@@ -49,7 +49,7 @@ public abstract class ChannelsAbstract {
      * 退款方法
      * @return 通用响应实体
      */
-    public abstract BaseResponse refund(FundChangeDTO fundChangeDTO, OrderRefund orderRefund);
+    public abstract BaseResponse refund(OrderRefund orderRefund);
     /**
      * 撤销方法
      *

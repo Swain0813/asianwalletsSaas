@@ -290,29 +290,30 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      * @Descripate 退款操作
      **/
     @Override
-    public void doRefundOrder(OrderRefund orderRefund,Channel channel) {
+    public BaseResponse doRefundOrder(OrderRefund orderRefund,Channel channel) {
+        BaseResponse baseResponse = new BaseResponse();
         log.info("-----------------【退款】 orderRefund 信息记录-------------- orderRefund:【{}】", JSON.toJSONString(orderRefund));
-        FundChangeDTO fundChangeDTO = new FundChangeDTO(TradeConstant.RF, orderRefund);
-        BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+        FinancialFreezeDTO financialFreezeDTO = new FinancialFreezeDTO(1,orderRefund);
+        BaseResponse cFundChange = clearingService.freezingFunds(financialFreezeDTO);
         if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
             log.info("----------------- 退款操作doRefundOrder 上报队列 MQ_TK_SBQJSSB_DL -------------- orderRefund : {}", JSON.toJSON(orderRefund));
             RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             //rabbitMQSender.sendSleep(AD3MQConstant.MQ_TK_SBQJSSB_DL, JSON.toJSONString(rabbitMassage));
-            //baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
-            return;
+            //TODO
+            baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+            return baseResponse;
         }
 
 
         try {
             ChannelsAbstract channelsAbstract = (ChannelsAbstract)Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
-
-            channelsAbstract.refund(fundChangeDTO,orderRefund);
+            baseResponse = channelsAbstract.refund(orderRefund);
 
 
         }catch (Exception e){
 
         }
-
+        return baseResponse;
         //if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_ONLINE)) {
         //    //ad3线上退款
         //    ad3OnlineAcquireService.doUsRefundInRef(baseResponse, fundChangeDTO, orderRefund);
