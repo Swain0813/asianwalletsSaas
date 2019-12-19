@@ -51,6 +51,11 @@ public class TradeConstant {
     public static final String FEE_TYPE_RATE = "dic_7_1"; //单笔费率
     public static final String FEE_TYPE_QUOTA = "dic_7_2"; //单笔定额
 
+    //----------是否退还收单手续费
+    public static final Byte REFUND_ORDER_FEE = 1; //退还
+    public static final Byte REFUND_NO_ORDER_FEE = 2; //不退还
+    public static final Byte REFUND_TODAY_ORDER_FEE = 3; //仅限当日退还
+
     //----------手续费付款方
     public static final Byte FEE_PAYER_IN = 1; //内扣
     public static final Byte FEE_PAYER_OUT = 2; //外扣
