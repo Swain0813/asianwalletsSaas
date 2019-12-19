@@ -5,7 +5,6 @@ import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.trade.vo.BasicInfoVO;
-import com.asianwallets.trade.vo.CalculateCostVO;
 
 import java.math.BigDecimal;
 
@@ -71,9 +70,9 @@ public interface CommonBusinessService {
 
     /**
      * 计算手续费
+     *
      * @param basicInfoVO
      * @param orders
-     * @return
      */
-    CalculateCostVO calculateCost(BasicInfoVO basicInfoVO, Orders orders);
+    void calculateCost(BasicInfoVO basicInfoVO, Orders orders);
 }
