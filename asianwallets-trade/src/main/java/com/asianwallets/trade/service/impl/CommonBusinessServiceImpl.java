@@ -30,7 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class CommonBusinessServiceImpl implements CommonBusinessService {
+public class    CommonBusinessServiceImpl implements CommonBusinessService {
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
@@ -296,12 +296,14 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         if (!orders.getOrderCurrency().equals(basicInfoVO.getChannel().getCurrency()) && !basicInfoVO.getInstitution().getDcc()) {
             log.info("-----------------【计算手续费】-----------------交易币种与订单币种不一致 机构未开通DCC");
             orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
+            orders.setRemark("机构不支持DCC");
             ordersMapper.insert(orders);
             throw new BusinessException(EResultEnum.DCC_IS_NOT_OPEN.getCode());
         }
         //查询出商户对应产品的费率信息
         if (merchantProduct.getRate() == null || merchantProduct.getRateType() == null || merchantProduct.getAddValue() == null) {
             log.info("-----------------【计算手续费】-----------------商户产品配置信息错误 商户产品信息:{}", JSON.toJSONString(merchantProduct));
+            orders.setRemark("商户产品配置信息错误");
             orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
             ordersMapper.insert(orders);
             throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_CONFIGURATION_INFORMATION_ERROR.getCode());
@@ -336,6 +338,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         orders.setChargeTime(new Date());
         orders.setRateType(merchantProduct.getRateType());
         orders.setAddValue(merchantProduct.getAddValue());
+        orders.setFeePayer(merchantProduct.getFeePayer());
         log.info("-----------------【计费信息记录】-----------------计算手续费结束 手续费:{}", orderFee);
 
         log.info("-----------------【计费信息记录】-----------------计算通道手续费开始");
@@ -344,6 +347,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                 || channel.getChannelMaxRate() == null) {
             log.info("-----------------【计算通道手续费】-----------------通道计费信息错误 channel:{}", JSON.toJSONString(channel));
             orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
+            orders.setRemark("通道计费信息错误");
             ordersMapper.insert(orders);
             throw new BusinessException(EResultEnum.CALCCHANNEL_POUNDAGE_FAILURE.getCode());
         }
@@ -364,13 +368,15 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             //通道手续费=通道单笔定额
             channelFee = channel.getChannelRate();
         }
-        //TODO 此处四舍五入未添加 待测试
         orders.setChannelFee(channelFee);
         orders.setChannelFeeType(channel.getChannelFeeType());
         orders.setChannelRate(channel.getChannelRate());
         log.info("-----------------【计费信息记录】-----------------计算通道手续费结束 通道手续费:{}", channelFee);
-
-        CalcGatewayFee(orders, channel);
+        //计算通道网关手续费
+        if (TradeConstant.CHANNEL_GATEWAY_CHARGE_YES.equals(channel.getChannelGatewayCharge())
+                && TradeConstant.CHANNEL_GATEWAY_CHARGE_ALL_STATUS.equals(channel.getChannelGatewayStatus())) {
+            CalcGatewayFee(orders, channel);
+        }
     }
 
     /**
@@ -384,6 +390,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                 channel.getChannelGatewayMaxRate() == null) {
             log.info("-----------------【计算通道网关手续费】-----------------通道网关计费信息错误 channel:{}", JSON.toJSONString(channel));
             orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
+            orders.setRemark("通道网关计费信息错误");
             ordersMapper.insert(orders);
             throw new BusinessException(EResultEnum.CALCCHANNEL_GATEWAYPOUNDAGE_FAILURE.getCode());
         }
@@ -392,10 +399,10 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             //手续费=交易金额*费率
             channelGatewayFee = orders.getTradeAmount().multiply(channel.getChannelGatewayRate());
             //判断手续费是否小于最小值，大于最大值
-            if (channel.getChannelGatewayMinRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMinRate()) == -1) {
+            if (channel.getChannelGatewayMinRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMinRate()) < 0) {
                 channelGatewayFee = channel.getChannelGatewayMinRate();
             }
-            if (channel.getChannelGatewayMaxRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMaxRate()) == 1) {
+            if (channel.getChannelGatewayMaxRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMaxRate()) > 0) {
                 channelGatewayFee = channel.getChannelGatewayMaxRate();
             }
         }
@@ -410,5 +417,28 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         orders.setChannelGatewayFeeType(channel.getChannelGatewayFeeType());
         orders.setChannelGatewayRate(channel.getChannelGatewayRate());
         log.info("-----------------【计费信息记录】-----------------计算通道手续费结束 通道手续费:{}", channelGatewayFee);
+    }
+
+    /**
+     * 退款和撤销成功的场合
+     * @param orderRefund
+     */
+    @Override
+    public void updateOrderRefundSuccess(OrderRefund orderRefund){
+        if(orderRefund.getRemark()!=null && TradeConstant.RV.equals(orderRefund.getRemark())){
+            //撤销成功-更新订单的撤销状态
+            ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), null, TradeConstant.ORDER_CANNEL_SUCCESS);
+        }else{
+            //退款成功的场合
+            if (TradeConstant.REFUND_TYPE_TOTAL.equals(orderRefund.getRefundType())) {
+                ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_SUCCESS);
+            } else {
+                if (orderRefund.getRemark2().equals("全额")) {
+                    ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_SUCCESS);
+                } else {
+                    ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_PART_SUCCESS);
+                }
+            }
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.asianwallets.common.entity;
 
-import java.math.BigDecimal;
 import com.asianwallets.common.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,6 +8,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -122,22 +122,22 @@ public class MerchantProduct extends BaseEntity {
 	@Column(name ="divided_ratio")
 	private BigDecimal dividedRatio;
     /**
-     * 分润模式 1-分成 2-费用差
-     */
+	 * 分润模式 1-分成 2-费用差
+	 */
 	@ApiModelProperty(value = "分润模式 1-分成 2-费用差")
-	@Column(name ="divided_mode")
+	@Column(name = "divided_mode")
 	private Integer dividedMode;
-    /**
-     * 手续费付款方 1 ：内扣 2 ：外扣
-     */
+	/**
+	 * 手续费付款方 1 ：内扣 2 ：外扣
+	 */
 	@ApiModelProperty(value = "手续费付款方 1 ：内扣 2 ：外扣")
-	@Column(name ="fee_payer")
-	private Integer feePayer;
-    /**
-     * 退款是否收费
-     */
+	@Column(name = "fee_payer")
+	private Byte feePayer;
+	/**
+	 * 退款是否收费
+	 */
 	@ApiModelProperty(value = "退款是否收费")
-	@Column(name ="refund_default")
+	@Column(name = "refund_default")
 	private Boolean refundDefault;
     /**
      * 退款费率类型

@@ -56,6 +56,7 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
             log.info("***************** get lock success key :【{}】 ************** 流水号 ：{} ", key, ffl.getMerOrderNo());
             try {
                 Account mva = accountMapper.selectByMerchantIdAndCurrency(ffl.getMerchantId(), ffl.getTxncurrency());
+                ffl.setMvaccountId(mva.getId());
                 log.info("---------getVersion----------:{}",mva.getVersion());
                 if (mva == null) {
                     //虚拟账户不存在
@@ -103,37 +104,42 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
                 mab.setFlow("MV" + IDS.uniqueID());
                 mab.setAfterbalance(afterBalance);
                 mab.setMerchantid(ffl.getMerchantId());
-                mab.setOrganId(ffl.getOrganId());//所属机构号
+                mab.setOrganId(ffl.getOrganId());
                 mab.setMbuaccountId(null);
                 mab.setVaccounId(mva.getAccountCode());
                 mab.setBalance(balance);
                 mab.setBalanceTimestamp(new Date());
                 mab.setSysAddDate(new Date());
-                mab.setBalancetype(2);//冻结资金
+                mab.setBalancetype(2);
                 mab.setBussinesstype(1);
                 mab.setCurrency(ffl.getTxncurrency());
-                mab.setFee(Double.parseDouble("0"));//冻结资金中不显示手续费
+                mab.setFee(Double.parseDouble("0"));
                 mab.setReferenceflow(ffl.getMerOrderNo());
-                mab.setType(3);//冻结户
-                mab.setGatewayFee(Double.parseDouble("0"));//20170615添加的网关状态手续费
+                //冻结户
+                mab.setType(3);
+                mab.setGatewayFee(Double.parseDouble("0"));
                 mab.setSltcurrency(ffl.getTxncurrency());
                 mab.setSltexrate(Double.parseDouble("1"));
                 int rows2 = 0;
                 if (ffl.getState() == 1) {
                     log.info("*******************进入加冻结，插入结算记录的虚拟账户编号*********************:" + ffl.getMvaccountId());
                     //加冻结，插入结算记录
-                    mab.setTradetype("FZ");//冻结
+                    //冻结
+                    mab.setTradetype("FZ");
                     mab.setIncome(ffl.getTxnamount());
                     mab.setOutcome(Double.parseDouble("0"));
                     mab.setTxnamount(ffl.getTxnamount());
-                    mab.setSltamount(ffl.getTxnamount());//结算资金
+                    //结算资金
+                    mab.setSltamount(ffl.getTxnamount());
                 } else {
                     log.info("*******************进入解冻结，更新结算记录的虚拟账户编号*********************:" + ffl.getMvaccountId());
-                    mab.setTradetype("TW");//解冻
+                    //解冻
+                    mab.setTradetype("TW");
                     mab.setIncome(Double.parseDouble("0"));
                     mab.setOutcome(-1 * ffl.getTxnamount());
                     mab.setTxnamount(-1 * ffl.getTxnamount());
-                    mab.setSltamount(-1 * ffl.getTxnamount());//结算资金
+                    //结算资金
+                    mab.setSltamount(-1 * ffl.getTxnamount());
                 }
                 //插入账户余额变动记录表
                 rows2 = tmMerChTvAcctBalanceMapper.insertSelective(mab);

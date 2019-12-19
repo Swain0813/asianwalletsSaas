@@ -2,6 +2,7 @@ package com.asianwallets.trade.service;
 
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.MerchantProduct;
+import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.trade.vo.BasicInfoVO;
@@ -75,4 +76,10 @@ public interface CommonBusinessService {
      * @param orders
      */
     void calculateCost(BasicInfoVO basicInfoVO, Orders orders);
+
+    /**
+     * 退款和撤销成功的场合
+     * @param orderRefund
+     */
+    void updateOrderRefundSuccess(OrderRefund orderRefund);
 }

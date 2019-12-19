@@ -296,7 +296,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
                 orders.setRemark("机构不支持DCC");
                 orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
                 ordersMapper.insert(orders);
-                throw new BusinessException(EResultEnum.LIMIT_AMOUNT_ERROR.getCode());
+                throw new BusinessException(EResultEnum.DCC_IS_NOT_OPEN.getCode());
             }
             //换汇计算
             CalcExchangeRateVO calcExchangeRateVO = commonBusinessService.calcExchangeRate(orders.getOrderCurrency(), orders.getTradeCurrency(), basicInfoVO.getMerchantProduct().getFloatRate(), offlineTradeDTO.getOrderAmount());
@@ -322,7 +322,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         }
         //校验商户产品与通道的限额
         commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
-        //TODO 计算手续费
+        commonBusinessService.calculateCost(basicInfoVO, orders);
         orders.setReportChannelTime(new Date());
         orders.setTradeStatus(TradeConstant.ORDER_PAYING);
         log.info("==================【线下CSB动态扫码】==================【落地订单信息】 orders:{}", JSON.toJSONString(orders));

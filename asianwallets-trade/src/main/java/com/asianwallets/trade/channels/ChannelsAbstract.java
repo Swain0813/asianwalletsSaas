@@ -4,7 +4,6 @@ import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import org.springframework.stereotype.Component;
 
 
@@ -49,7 +48,7 @@ public abstract class ChannelsAbstract {
      * 退款方法
      * @return 通用响应实体
      */
-    public abstract BaseResponse refund(FundChangeDTO fundChangeDTO, OrderRefund orderRefund);
+    public abstract BaseResponse refund( Channel channel,OrderRefund orderRefund);
     /**
      * 撤销方法
      *
