@@ -21,6 +21,7 @@ import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.vo.ChannelDetailVO;
 import com.asianwallets.common.vo.ChannelExportVO;
+import com.asianwallets.common.vo.ChannelVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -215,7 +216,7 @@ public class ChannelServiceImpl implements ChannelService {
      * @return 修改条数
      */
     @Override
-    public PageInfo<Channel> pageFindChannel(ChannelDTO channelDTO) {
+    public PageInfo<ChannelVO> pageFindChannel(ChannelDTO channelDTO) {
         channelDTO.setLanguage(auditorProvider.getLanguage());
         channelDTO.setSort("ch.create_time");
         return new PageInfo<>(channelMapper.pageFindChannel(channelDTO));
