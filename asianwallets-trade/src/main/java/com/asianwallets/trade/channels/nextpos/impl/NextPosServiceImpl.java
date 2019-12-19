@@ -1,5 +1,6 @@
 package com.asianwallets.trade.channels.nextpos.impl;
 
+import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
@@ -26,7 +27,11 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
      * @return
      **/
     @Override
-    public BaseResponse refund(OrderRefund orderRefund) {
+    public BaseResponse refund(Channel channel,OrderRefund orderRefund) {
+
+
+
+
         return null;
     }
 }

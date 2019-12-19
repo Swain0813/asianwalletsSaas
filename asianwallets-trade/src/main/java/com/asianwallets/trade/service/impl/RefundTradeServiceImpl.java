@@ -305,7 +305,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         try {
             ChannelsAbstract channelsAbstract = (ChannelsAbstract)Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
-            baseResponse = channelsAbstract.refund(orderRefund);
+            baseResponse = channelsAbstract.refund(channel,orderRefund);
 
 
         }catch (Exception e){
