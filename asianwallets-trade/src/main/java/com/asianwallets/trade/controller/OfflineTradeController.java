@@ -1,8 +1,10 @@
 package com.asianwallets.trade.controller;
 
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
 import com.asianwallets.trade.service.OfflineTradeService;
 import io.swagger.annotations.Api;
@@ -26,5 +28,6 @@ public class OfflineTradeController extends BaseController {
     public BaseResponse csbDynamicScan(@RequestBody @ApiParam @Valid OfflineTradeDTO offlineTradeDTO) {
         return ResultUtil.success(offlineTradeService.csbDynamicScan(offlineTradeDTO));
     }
+
 }
 
