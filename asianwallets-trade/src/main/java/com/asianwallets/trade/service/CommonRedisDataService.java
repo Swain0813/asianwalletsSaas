@@ -63,7 +63,23 @@ public interface CommonRedisDataService {
      * @param productCode 产品编码
      * @return 产品
      */
-    Product getProductByCode(String productCode);
+    Product getProductByCode(Integer productCode);
+
+    /**
+     * 根据商户ID与产品ID查询商户产品
+     *
+     * @param merchantId 商户ID
+     * @param productId  产品ID
+     * @return 商户产品
+     */
+    MerchantProduct getMerProByMerIdAndProId(String merchantId, String productId);
+
+    /**
+     * 根据通道ID查询通道信息
+     *
+     * @param channelId 通道ID
+     */
+    Channel getChannelById(String channelId);
 
     /**
      * 根据通道code从redis获取通道信息

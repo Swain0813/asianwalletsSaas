@@ -13,5 +13,5 @@ public interface ProductMapper extends BaseMapper<Product> {
      * @param productCode 产品编码
      * @return 产品
      */
-    Product selectByProductCode(String productCode);
+    Product selectByProductCode(Integer productCode);
 }
