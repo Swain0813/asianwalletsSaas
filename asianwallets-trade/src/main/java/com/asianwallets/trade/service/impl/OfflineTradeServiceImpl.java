@@ -189,6 +189,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         Merchant merchant = commonRedisDataService.getMerchantById(offlineTradeDTO.getMerchantId());
         Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
         InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
+        Product product = commonRedisDataService.getProductByCode(offlineTradeDTO.getProductCode());
+        MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchant.getId(), product.getId());
         //校验机构必填请求输入参数
         checkRequestParameters(offlineTradeDTO, institutionRequestParameters);
         //校验输入参数合法性

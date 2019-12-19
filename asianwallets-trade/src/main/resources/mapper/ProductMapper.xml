@@ -23,7 +23,16 @@
         <result column="enabled" property="enabled"/>
     </resultMap>
 
-    <select id="selectByProductCode" resultMap="BaseResultMap">
+    <sql id="BaseSql">
+        id,product_code, product_name, product_details_logo, product_print_logo, product_img, trans_type, trade_direction, pay_type, currency,
+        daily_total_amount, daily_trading_count,limit_amount,
+        create_time, update_time, creator, modifier, remark,enabled
+    </sql>
 
+    <select id="selectByProductCode" resultMap="BaseResultMap">
+        select
+        <include refid="BaseSql"/>
+        from product
+        where product_code = #{productCode}
     </select>
 </mapper>
