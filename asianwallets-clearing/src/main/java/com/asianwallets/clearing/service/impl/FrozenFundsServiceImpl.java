@@ -225,7 +225,6 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
         }
         //检查签名
         signmap.put("merchantId", ffr.getMerchantId());
-        signmap.put("mvaccountId", ffr.getMvaccountId());
         signmap.put("state", ffr.getState() + "");
         signmap.put("desc", ffr.getDesc());
         signmap.put("merOrderNo", ffr.getMerOrderNo());
@@ -255,7 +254,7 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
         ffl.setId("FT" + IDS.uniqueID());
         ffl.setMerchantId(ffr.getMerchantId());
         ffl.setMerOrderNo(ffr.getMerOrderNo());
-        ffl.setMvaccountId(ffr.getMvaccountId());
+        //ffl.setMvaccountId(ffr.getMvaccountId());
         ffl.setState(ffr.getState());
         ffl.setTxnamount(ffr.getTxnamount());
         ffl.setTxncurrency(ffr.getTxncurrency());

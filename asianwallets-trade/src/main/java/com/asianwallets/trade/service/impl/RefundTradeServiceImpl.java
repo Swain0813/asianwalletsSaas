@@ -14,6 +14,7 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl;
@@ -239,9 +240,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 orderRefund.setRefundMode(TradeConstant.REFUND_MODE_PERSON);
                 orderRefundMapper.insert(orderRefund);
 
-                //上报清结算
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(type,orderRefund);
-                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+                //上报清结算 冻结金额
+                FinancialFreezeDTO financialFreezeDTO = new FinancialFreezeDTO(1,orderRefund);
+                BaseResponse cFundChange = clearingService.freezingFunds(financialFreezeDTO);
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
                         orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
                         orderRefund.setRemark("后台系统和机构系统退款订单接口上报清结算失败");
