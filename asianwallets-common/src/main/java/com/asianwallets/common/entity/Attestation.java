@@ -13,11 +13,11 @@ import javax.persistence.Table;
 @ApiModel(value = "密钥实体", description = "密钥数据")
 public class Attestation extends BaseEntity {
 
-    @ApiModelProperty(value = "机构ID")
+    @ApiModelProperty(value = "机构编号")
     @Column(name = "institution_id")
     private String institutionId;
 
-    @ApiModelProperty(value = "商户ID")
+    @ApiModelProperty(value = "商户编号")
     @Column(name = "merchant_id")
     private String merchantId;
 
