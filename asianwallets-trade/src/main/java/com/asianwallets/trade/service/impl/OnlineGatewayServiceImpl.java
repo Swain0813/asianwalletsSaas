@@ -216,40 +216,21 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 //        orders.setReportNumber("");
 //        orders.setReportChannelTime(new Date());
 //        orders.setChannelCallbackTime(new Date());
-//        orders.setUpChannelFee(new BigDecimal("0"));
-//        orders.setFloatRate(new BigDecimal("0"));
-//        orders.setAddValue(new BigDecimal("0"));
+        orders.setUpChannelFee(new BigDecimal("0"));
+
         orders.setPayerName(onlineTradeDTO.getPayerName());
         orders.setPayerAccount(onlineTradeDTO.getPayerAccount());
         orders.setPayerBank(onlineTradeDTO.getPayerBank());
         orders.setPayerEmail(onlineTradeDTO.getPayerEmail());
         orders.setPayerPhone(onlineTradeDTO.getPayerPhone());
         orders.setPayerAddress(onlineTradeDTO.getPayerAddress());
-//        orders.setInvoiceNo("");
-//        orders.setProviderName("");
-//        orders.setCourierCode("");
-//        orders.setDeliveryTime(new Date());
-//        orders.setDeliveryStatus((byte) 0);
-//        orders.setReceivedStatus((byte) 0);
-//        orders.setReceivedTime(new Date());
         orders.setProductSettleCycle(basicInfoVO.getMerchantProduct().getSettleCycle());
         orders.setIssuerId(basicInfoVO.getChannel().getIssuerId());
         orders.setBankName(basicInfoVO.getBankName());
         orders.setBrowserUrl(onlineTradeDTO.getBrowserUrl());
         orders.setServerUrl(onlineTradeDTO.getServerUrl());
-/*        orders.setFeePayer((byte)0);
-        orders.setRateType("");
-        orders.setRate(new BigDecimal("0"));
-        orders.setFee(new BigDecimal("0"));
-        orders.setChannelFeeType("");
-        orders.setChannelRate(new BigDecimal("0"));
-        orders.setChannelFee(new BigDecimal("0"));
-        orders.setChannelGatewayCharge((byte)0);
-        orders.setChannelGatewayStatus((byte)0);
-        orders.setChannelGatewayFeeType("");
-        orders.setChannelGatewayRate(new BigDecimal("0"));
-        orders.setChannelGatewayFee(new BigDecimal("0"));*/
-        orders.setLanguage("");
+        orders.setFeePayer((byte) 0);
+        orders.setLanguage(onlineTradeDTO.getLanguage());
         orders.setSign(onlineTradeDTO.getSign());
         orders.setCreateTime(new Date());
 
@@ -287,6 +268,11 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         //校验商户产品与通道的限额
         commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
         commonBusinessService.calculateCost(basicInfoVO, orders);
+        orders.setReportChannelTime(new Date());
+        orders.setTradeStatus(TradeConstant.ORDER_PAYING);
+        log.info("-----------------【线上直连】--------------【订单信息】 orders:{}", JSON.toJSONString(orders));
+        ordersMapper.insert(orders);
+        //上报通道
         return null;
     }
 
