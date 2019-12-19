@@ -218,13 +218,19 @@
 
 	<select id="exportMerChannel" resultMap="secondResultMap">
 		select mc.id as merChannelId, mp.merchant_id as merchantId,mp.merchant_name as merchantName,
-		mp.product_id as productId,mp.product_abbrev as productAbbrev,
+		mp.product_id as productId,
+		case
+		when mp.product_abbrev is null then concat(pt.name,"-",p.currency)
+		else mp.product_abbrev
+		end as productAbbrev,
 		ch.id as channelId, ch.channel_cn_name as channelName,
 		ch.currency as channelCurrency,b.bank_name as bankName,
 		mc.create_time,mc.update_time,mc.creator,mc.modifier,mc.enabled,
 		mc.sort
 		from merchant_channel mc
 		left join merchant_product mp on mp.id = mc.mer_pro_id
+		left join product p on p.id = mp.product_id
+		left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
 		left join channel_bank cb on cb.id = mc.cha_ban_id
 		left join channel ch on ch.id = cb.channel_id
 		left join bank b on b.id = cb.bank_id
