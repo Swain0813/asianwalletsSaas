@@ -293,9 +293,21 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     public CalculateCostVO calculateCost(BasicInfoVO basicInfoVO, Orders orders) {
         //机构产品
         MerchantProduct merchantProduct = basicInfoVO.getMerchantProduct();
+        if (!orders.getOrderCurrency().equals(basicInfoVO.getChannel().getCurrency())) {
+            if (!basicInfoVO.getInstitution().getDcc()) {
+                log.info("-----------------【计费信息记录】-----------------交易币种与订单币种不一致 机构未开通DCC");
+                orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
+                ordersMapper.insert(orders);
+                throw new BusinessException(EResultEnum.DCC_IS_NOT_OPEN.getCode());
+            }
+
+
+
+        }
+
         //查询出商户对应产品的费率信息
         if (merchantProduct.getRate() == null || merchantProduct.getRateType() == null || merchantProduct.getAddValue() == null) {
-            log.info("----------------- 计费信息记录 ----------------费率:{},费率类型:{},机构产品信息:{}", merchantProduct.getRate(), merchantProduct.getRateType(), JSON.toJSONString(merchantProduct));
+            log.info("-----------------【计费信息记录】-----------------费率:{},费率类型:{},机构产品信息:{}", merchantProduct.getRate(), merchantProduct.getRateType(), JSON.toJSONString(merchantProduct));
             orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
             ordersMapper.insert(orders);
             throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_CONFIGURATION_INFORMATION_ERROR.getCode());

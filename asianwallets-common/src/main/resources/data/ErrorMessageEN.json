@@ -106,6 +106,7 @@
   "10105": "Merchant is disabled",
   "10106": "Merchant product is disabled",
   "10107": "Merchant product configuration information error",
+  "10108": "DCC is not open",
 
   "20001": "The announcement id cannot be empty",
   "20002": "The announcement category cannot be empty",
