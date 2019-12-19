@@ -3,11 +3,10 @@ import com.asianwallets.clearing.service.ClearService;
 import com.asianwallets.clearing.service.FrozenFundsService;
 import com.asianwallets.clearing.service.IntoAccountService;
 import com.asianwallets.clearing.service.SettleService;
-import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.utils.DateToolUtils;
-import com.asianwallets.common.vo.clearing.CSFrozenFundsRequest;
-import com.asianwallets.common.vo.clearing.IntoAndOutMerhtAccountRequest;
+import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
@@ -52,7 +51,7 @@ public class ClearingApplicationTests {
     class RedisLockThread extends Thread {
         @Override
         public void run() {
-            IntoAndOutMerhtAccountRequest fundChangeDTO = new IntoAndOutMerhtAccountRequest();
+            FundChangeDTO fundChangeDTO = new FundChangeDTO();
             fundChangeDTO.setVersion("v1.0");
             fundChangeDTO.setInputCharset(1);
             fundChangeDTO.setLanguage(1);
@@ -77,7 +76,7 @@ public class ClearingApplicationTests {
             fundChangeDTO.setRemark("demo清结算接口测试");
             fundChangeDTO.setGatewayFee(0.00);//交易状态手续费
 
-            IntoAndOutMerhtAccountRequest fundChangeDTO1 = new IntoAndOutMerhtAccountRequest();
+            FundChangeDTO fundChangeDTO1 = new FundChangeDTO();
             BeanUtils.copyProperties(fundChangeDTO, fundChangeDTO1);
             fundChangeDTO1.setIsclear(1);//1：清算 2结算
             fundChangeDTO1.setBalancetype(1);//资金类型
@@ -92,11 +91,11 @@ public class ClearingApplicationTests {
             fundChangeDTO1.setSltcurrency("THB");//结算币种
             fundChangeDTO1.setFeecurrency("THB");//手续费币种
             fundChangeDTO1.setChannelCostcurrency("THB");//通道成本币种
-            List<IntoAndOutMerhtAccountRequest> list = new ArrayList<>();
+            List<FundChangeDTO> list = new ArrayList<>();
             list.add(fundChangeDTO1); //thb 101
             list.add(fundChangeDTO);  //sgd 101
 
-            for (IntoAndOutMerhtAccountRequest fundChange : list) {
+            for (FundChangeDTO fundChange : list) {
                 intoAccountService.intoAndOutMerhtAccount(fundChange);
             }
         }
@@ -110,7 +109,7 @@ public class ClearingApplicationTests {
         @Override
         public void run() {
 
-            CSFrozenFundsRequest csFrozenFundsRequest = new CSFrozenFundsRequest();
+            FinancialFreezeDTO csFrozenFundsRequest = new FinancialFreezeDTO();
             csFrozenFundsRequest.setVersion("v1.0");
             csFrozenFundsRequest.setInputCharset(1);
             csFrozenFundsRequest.setLanguage(1);
@@ -131,7 +130,7 @@ public class ClearingApplicationTests {
         @Override
         public void run() {
 
-            CSFrozenFundsRequest csFrozenFundsRequest = new CSFrozenFundsRequest();
+            FinancialFreezeDTO csFrozenFundsRequest = new FinancialFreezeDTO();
             csFrozenFundsRequest.setVersion("v1.0");
             csFrozenFundsRequest.setInputCharset(1);
             csFrozenFundsRequest.setLanguage(1);
@@ -155,7 +154,7 @@ public class ClearingApplicationTests {
     class RedisLockThread3 extends Thread {
         @Override
         public void run() {
-            IntoAndOutMerhtAccountRequest fundChangeDTO = new IntoAndOutMerhtAccountRequest();
+            FundChangeDTO fundChangeDTO = new FundChangeDTO();
             fundChangeDTO.setVersion("v1.0");
             fundChangeDTO.setInputCharset(1);
             fundChangeDTO.setLanguage(1);
@@ -182,7 +181,7 @@ public class ClearingApplicationTests {
             fundChangeDTO.setRefundOrderFee(1);
             fundChangeDTO.setRefundOrderFeeCurrency("SGD");
 
-            //IntoAndOutMerhtAccountRequest fundChangeDTO1 = new IntoAndOutMerhtAccountRequest();
+            //FundChangeDTO fundChangeDTO1 = new FundChangeDTO();
             //BeanUtils.copyProperties(fundChangeDTO, fundChangeDTO1);
             //fundChangeDTO1.setIsclear(2);//1：清算 2结算
             //fundChangeDTO1.setBalancetype(1);//资金类型
@@ -200,7 +199,7 @@ public class ClearingApplicationTests {
             //fundChangeDTO.setRefundOrderFee(1);
             //fundChangeDTO.setRefundOrderFeeCurrency("THB");
 
-            IntoAndOutMerhtAccountRequest fundChangeDTO1 = new IntoAndOutMerhtAccountRequest();
+            FundChangeDTO fundChangeDTO1 = new FundChangeDTO();
             BeanUtils.copyProperties(fundChangeDTO, fundChangeDTO1);
             fundChangeDTO1.setIsclear(1);//1：清算 2结算
             fundChangeDTO1.setBalancetype(1);//资金类型
@@ -218,11 +217,11 @@ public class ClearingApplicationTests {
             fundChangeDTO.setRefundOrderFee(1);
             fundChangeDTO.setRefundOrderFeeCurrency("THB");
 
-            List<IntoAndOutMerhtAccountRequest> list = new ArrayList<>();
+            List<FundChangeDTO> list = new ArrayList<>();
             list.add(fundChangeDTO1); //thb 101
             list.add(fundChangeDTO);  //sgd 101
 
-            for (IntoAndOutMerhtAccountRequest fundChange : list) {
+            for (FundChangeDTO fundChange : list) {
                 intoAccountService.intoAndOutMerhtAccount(fundChange);
             }
         }

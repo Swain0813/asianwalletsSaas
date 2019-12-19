@@ -27,5 +27,5 @@ public interface MerchantProductMapper extends BaseMapper<MerchantProduct> {
      * @param issuerId   issuerID
      * @return OnlineInfoVO
      */
-    List<OnlineInfoDetailVO> selectOnlineInfo(@Param("merchantId") String merchantId, @Param("issuerId") String issuerId);
+    List<OnlineInfoDetailVO> selectOnlineInfoDetail(@Param("merchantId") String merchantId, @Param("issuerId") String issuerId);
 }

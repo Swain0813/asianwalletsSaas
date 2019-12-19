@@ -74,6 +74,9 @@ public class OnlineTradeDTO {
     @ApiModelProperty(value = "付款人电话")
     private String payerPhone;
 
+    @ApiModelProperty(value = "付款人地址")
+    private String payerAddress;
+
     @ApiModelProperty(value = "语言")
     private String language;
 

@@ -1,6 +1,6 @@
 package com.asianwallets.clearing.controller;
 import com.asianwallets.clearing.service.FrozenFundsService;
-import com.asianwallets.common.vo.clearing.CSFrozenFundsRequest;
+import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,7 +26,7 @@ public class FrozenFundsController {
 
     @ApiOperation(value = "资金冻结/解冻接口")
     @PostMapping("/CSFrozenFunds")
-    public CSFrozenFundsRequest CSFrozenFunds(@RequestBody @ApiParam CSFrozenFundsRequest ffr) {
+    public FinancialFreezeDTO CSFrozenFunds(@RequestBody @ApiParam FinancialFreezeDTO ffr) {
         return frozenFundsService.CSFrozenFunds(ffr);
     }
 

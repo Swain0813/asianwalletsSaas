@@ -16,7 +16,7 @@ import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
-import com.asianwallets.common.vo.clearing.IntoAndOutMerhtAccountRequest;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,7 +58,7 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
      **/
     @Transactional
     @Override
-    public BaseResponse IntoAndOutMerhtSTAccount2(IntoAndOutMerhtAccountRequest ioma) {
+    public BaseResponse IntoAndOutMerhtSTAccount2(FundChangeDTO ioma) {
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setCode(Const.CSCode.CODE_CS0009);
         baseResponse.setMsg(Const.CSCode.MSG_CS0009);

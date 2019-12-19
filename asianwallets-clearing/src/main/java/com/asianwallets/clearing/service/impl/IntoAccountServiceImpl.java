@@ -12,7 +12,7 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.MD5;
 import com.asianwallets.common.utils.SignTools;
-import com.asianwallets.common.vo.clearing.IntoAndOutMerhtAccountRequest;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,8 +47,8 @@ public class IntoAccountServiceImpl implements IntoAccountService {
      * @Descripate 资金变动接口
      **/
     @Override
-    public IntoAndOutMerhtAccountRequest intoAndOutMerhtAccount(IntoAndOutMerhtAccountRequest ioma) {
-        IntoAndOutMerhtAccountRequest repqo = new IntoAndOutMerhtAccountRequest();
+    public FundChangeDTO intoAndOutMerhtAccount(FundChangeDTO ioma) {
+        FundChangeDTO repqo = new FundChangeDTO();
         try {
             if (!(ioma != null && ioma.getVersion() != null && !ioma.getVersion().equals("") && ioma.getInputCharset() > 0
                     && ioma.getLanguage() > 0 && ioma.getMerchantid() != null && !ioma.getMerchantid().equals("") && ioma.getIsclear() > 0
@@ -218,7 +218,7 @@ public class IntoAccountServiceImpl implements IntoAccountService {
      * @Date 2019/7/25
      * @Descripate 组装签名的map
      **/
-    public Map<String, String> doStrSingMap(IntoAndOutMerhtAccountRequest ioma, IntoAndOutMerhtAccountRequest repqo) {
+    public Map<String, String> doStrSingMap(FundChangeDTO ioma, FundChangeDTO repqo) {
         Map<String, String> m1 = new HashMap<>();
         //拼装签名参数
         DecimalFormat decimalFormat = new DecimalFormat("###0.00");//格式化设置

@@ -132,6 +132,7 @@ public enum EResultEnum {
     ORDER_PAYMENT_FAILED("10104"),//订单支付失败
     MERCHANT_IS_DISABLED("10105"),//商户被禁用
     MERCHANT_PRODUCT_IS_DISABLED("10106"),//商户产品被禁用
+    MERCHANT_PRODUCT_CONFIGURATION_INFORMATION_ERROR("10107"),//商户产品配置信息错误
 
     /****通知模块的错误信息从20001开始--杨善龙*****/
     NOTICE_ID_IS_NOT_NULL("20001"),//公告id不能为空
