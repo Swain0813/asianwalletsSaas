@@ -38,11 +38,11 @@ public class Product extends BaseEntity {
 	private String productImg;
 
 
-	@ApiModelProperty(value = "交易类型")//1-线上 2-线下
+	@ApiModelProperty(value = "产品类型")//产品类型:1-收款 2-付款
 	@Column(name ="trans_type")
 	private Integer transType;
 
-	@ApiModelProperty(value = "产品类型")//产品类型:1-收款 2-付款
+	@ApiModelProperty(value = "交易类型")//1-线上 2-线下
 	@Column(name ="trade_direction")
 	private Integer tradeDirection;
 
