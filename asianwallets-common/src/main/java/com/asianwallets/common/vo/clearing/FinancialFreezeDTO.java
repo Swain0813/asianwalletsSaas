@@ -42,11 +42,11 @@ public class FinancialFreezeDTO implements Serializable{
    }
 
    public FinancialFreezeDTO(int state, OrderRefund orderRefund) {
-      this.id = id;
       this.merchantId = orderRefund.getMerchantId();
-      this.merOrderNo = orderRefund.getMerchantOrderId();
+      this.merOrderNo = orderRefund.getId();
       this.txncurrency = orderRefund.getOrderCurrency();
       this.txnamount = -1*orderRefund.getOrderAmount().add(orderRefund.getRefundFee()).subtract(orderRefund.getRefundOrderFee()).doubleValue();
       this.state = state;
+      this.desc = "";
    }
 }
