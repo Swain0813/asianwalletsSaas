@@ -293,13 +293,15 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         log.info("-----------------【退款】 orderRefund 信息记录-------------- orderRefund:【{}】", JSON.toJSONString(orderRefund));
         FundChangeDTO fundChangeDTO = new FundChangeDTO(TradeConstant.RF, orderRefund);
         BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-        if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求失败
+        if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
             log.info("----------------- 退款操作doRefundOrder 上报队列 MQ_TK_SBQJSSB_DL -------------- orderRefund : {}", JSON.toJSON(orderRefund));
             RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             //rabbitMQSender.sendSleep(AD3MQConstant.MQ_TK_SBQJSSB_DL, JSON.toJSONString(rabbitMassage));
             //baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
             return;
         }
+
+
         try {
             ChannelsAbstract channelsAbstract = (ChannelsAbstract)Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
 
