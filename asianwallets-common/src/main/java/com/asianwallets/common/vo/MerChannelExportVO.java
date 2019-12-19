@@ -1,10 +1,8 @@
 package com.asianwallets.common.vo;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import java.util.Date;
 
 /**
@@ -20,13 +18,7 @@ public class MerChannelExportVO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
-    @ApiModelProperty(value = "机构id")
-    private String institutionId;
-
-    @ApiModelProperty(value = "机构名称")
-    private String institutionName;
-
-    @ApiModelProperty(value = "商户id")
+    @ApiModelProperty(value = "商户编号")
     private String merchantId;
 
     @ApiModelProperty(value = "商户名称")
@@ -45,7 +37,7 @@ public class MerChannelExportVO {
     private String bankName;
 
     @ApiModelProperty(value = "状态")
-    private String enabled;
+    private Boolean enabled;
 
     @ApiModelProperty(value = "优先级")
     private String sort;

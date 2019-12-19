@@ -223,6 +223,8 @@ public class ExportServiceImpl implements ExportService {
                                 oList2.add("启用");
                             } else if ((String.valueOf((oMap.get(s)))).equals("false")) {
                                 oList2.add("禁用");
+                            }else {
+                                oList2.add("");
                             }
                         } else {
                             oList2.add(oMap.get(s));

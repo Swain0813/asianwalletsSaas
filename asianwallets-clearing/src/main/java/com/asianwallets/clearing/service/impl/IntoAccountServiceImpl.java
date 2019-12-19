@@ -50,8 +50,7 @@ public class IntoAccountServiceImpl implements IntoAccountService {
     public FundChangeDTO intoAndOutMerhtAccount(FundChangeDTO ioma) {
         FundChangeDTO repqo = new FundChangeDTO();
         try {
-            if (!(ioma != null && ioma.getVersion() != null && !ioma.getVersion().equals("") && ioma.getInputCharset() > 0
-                    && ioma.getLanguage() > 0 && ioma.getMerchantid() != null && !ioma.getMerchantid().equals("") && ioma.getIsclear() > 0
+            if (!(ioma != null && ioma.getMerchantid() != null && !ioma.getMerchantid().equals("") && ioma.getIsclear() > 0
                     && ioma.getMerOrderNo() != null && !ioma.getMerOrderNo().equals("") && ioma.getTxncurrency() != null
                     && !ioma.getTxncurrency().equals("") && ioma.getTxnamount() != 0 && ioma.getShouldDealtime() != null && !ioma.getShouldDealtime().equals("")
                     && ioma.getBalancetype() > 0 && ioma.getSignMsg() != null && !ioma.getSignMsg().equals("") && ioma.getFeecurrency() != null
@@ -62,30 +61,6 @@ public class IntoAccountServiceImpl implements IntoAccountService {
                 repqo.setRespCode(Const.CSCode.CODE_CS0000);
                 repqo.setRespMsg(Const.CSCode.MSG_CS0000);
                 log.info("*********************************提交的报文为空****************************");
-                return repqo;
-            }
-            //判断版本号是否正常
-            if (!ioma.getVersion().equalsIgnoreCase("v1.0")) {
-                //提交的版本号有误
-                repqo.setRespCode(Const.CSCode.CODE_CS0001);
-                repqo.setRespMsg(Const.CSCode.MSG_CS0001);
-                log.info("*********************************提交的版本号有误****************************Version=" + ioma.getVersion() + "**********");
-                return repqo;
-            }
-            //判断字符集
-            if (ioma.getInputCharset() == 0 || ioma.getInputCharset() > 3) {
-                //提交的字符集有误");
-                repqo.setRespCode(Const.CSCode.CODE_CS0002);
-                repqo.setRespMsg(Const.CSCode.MSG_CS0002);
-                log.info("*********************************提交的字符集有误****************************");
-                return repqo;
-            }
-            //判断语言
-            if (ioma.getLanguage() == 0 || ioma.getLanguage() > 3) {
-                //提交的语言有误
-                repqo.setRespCode(Const.CSCode.CODE_CS0003);
-                repqo.setRespMsg(Const.CSCode.MSG_CS0003);
-                log.info("*********************************提交的字符集有误****************************");
                 return repqo;
             }
             //判断清结算类型
@@ -185,8 +160,6 @@ public class IntoAccountServiceImpl implements IntoAccountService {
                 repqo.setRespMsg(Const.CSCode.MSG_CS0009);
                 m2.put("respCode", Const.CSCode.CODE_CS0009);
                 m2.put("respMsg", Const.CSCode.MSG_CS0009);
-                repqo.setVersion(ioma.getVersion());
-                m2.put("version", ioma.getVersion());
                 repsingstr = SignTools.getSignStr(m2);
                 repsign = MD5.MD5Encode(md5key + repsingstr);
                 log.info("***************  IntoAndOutMerhtCLAccount2 **************** 查询返回签名明文：{}", repsingstr);
@@ -198,8 +171,6 @@ public class IntoAccountServiceImpl implements IntoAccountService {
             m2.put("respCode", "T000");
             repqo.setRespMsg("success");
             m2.put("respMsg", "success");
-            repqo.setVersion(ioma.getVersion());
-            m2.put("version", ioma.getVersion());
             repsingstr = SignTools.getSignStr(m2);
             repsign = MD5.MD5Encode(md5key + repsingstr);
             log.info("***************  IntoAndOutMerhtCLAccount2 **************** 查询返回签名明文：{}", repsingstr);
@@ -221,14 +192,8 @@ public class IntoAccountServiceImpl implements IntoAccountService {
     public Map<String, String> doStrSingMap(FundChangeDTO ioma, FundChangeDTO repqo) {
         Map<String, String> m1 = new HashMap<>();
         //拼装签名参数
-        DecimalFormat decimalFormat = new DecimalFormat("###0.00");//格式化设置
-        DecimalFormat decimalFormat5 = new DecimalFormat("###0.00000");//格式化设置
-        m1.put("version", ioma.getVersion());
-        repqo.setVersion(ioma.getVersion());
-        m1.put("inputCharset", ioma.getInputCharset() + "");
-        repqo.setInputCharset(ioma.getInputCharset());
-        m1.put("language", ioma.getLanguage() + "");
-        repqo.setLanguage(ioma.getLanguage());
+        DecimalFormat decimalFormat = new DecimalFormat("###0.00");
+        DecimalFormat decimalFormat5 = new DecimalFormat("###0.00000");
         m1.put("merchantid", ioma.getMerchantid());
         repqo.setMerchantid(ioma.getMerchantid());
         m1.put("isclear", ioma.getIsclear() + "");

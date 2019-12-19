@@ -15,11 +15,6 @@ import java.io.Serializable;
 public class FinancialFreezeDTO implements Serializable{
    private static final long serialVersionUID = 1L;
 
-   private String version;//版本号(v1.0)
-
-   private int inputCharset;//字符集(1:UTF-8)
-
-   private int language;//语言(1:简体中文)
 
    private String id;//系统编号
 
