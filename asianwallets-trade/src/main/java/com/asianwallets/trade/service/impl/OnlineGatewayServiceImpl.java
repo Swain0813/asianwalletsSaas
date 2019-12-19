@@ -15,7 +15,7 @@ import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OnlineGatewayService;
 import com.asianwallets.trade.vo.OnlineInfoDetailVO;
-import com.asianwallets.trade.vo.OnlineInfoVO;
+import com.asianwallets.trade.vo.BasicInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -178,13 +178,13 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
      * @param issuerId issuerId
      * @return OnlineInfoVO 线上基础信息实体
      */
-    private OnlineInfoVO getOnlineInfo(String merchantId, String issuerId) {
+    private BasicInfoVO getOnlineInfo(String merchantId, String issuerId) {
         List<OnlineInfoDetailVO> onlineInfoDetailVOList = merchantProductMapper.selectOnlineInfo(merchantId, issuerId);
         if (onlineInfoDetailVOList == null || onlineInfoDetailVOList.size() == 0) {
             log.info("-----------------【线上获取基础信息】-----------------商户产品通道信息不存在 直连从数据库查询关系信息为空");
             throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_CHANNEL_NOT_EXISTS.getCode());
         }
-        OnlineInfoVO onlineInfoVO = new OnlineInfoVO();
+        BasicInfoVO basicInfoVO = new BasicInfoVO();
         for (OnlineInfoDetailVO onlineInfoDetailVO : onlineInfoDetailVOList) {
             //通道
             Channel channel = commonRedisDataService.getChannelByChannelCode(onlineInfoDetailVO.getChannelCode());
@@ -207,12 +207,12 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                 log.info("-----------------【线上获取基础信息】----------------- 商户产品被禁用");
                 throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_IS_DISABLED.getCode());
             }
-            onlineInfoVO.setBankName(onlineInfoDetailVO.getBankName());
-            onlineInfoVO.setChannel(channel);
-            onlineInfoVO.setProduct(product);
-            onlineInfoVO.setMerchantProduct(merchantProduct);
+            basicInfoVO.setBankName(onlineInfoDetailVO.getBankName());
+            basicInfoVO.setChannel(channel);
+            basicInfoVO.setProduct(product);
+            basicInfoVO.setMerchantProduct(merchantProduct);
         }
-        return onlineInfoVO;
+        return basicInfoVO;
     }
 
 

@@ -157,6 +157,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         }
     }
 
+
     /**
      * 设置订单属性
      *
