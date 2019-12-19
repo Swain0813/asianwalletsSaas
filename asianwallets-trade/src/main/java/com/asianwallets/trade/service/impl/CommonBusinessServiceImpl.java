@@ -392,10 +392,10 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             //手续费=交易金额*费率
             channelGatewayFee = orders.getTradeAmount().multiply(channel.getChannelGatewayRate());
             //判断手续费是否小于最小值，大于最大值
-            if (channel.getChannelGatewayMinRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMinRate()) == -1) {
+            if (channel.getChannelGatewayMinRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMinRate()) < 0) {
                 channelGatewayFee = channel.getChannelGatewayMinRate();
             }
-            if (channel.getChannelGatewayMaxRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMaxRate()) == 1) {
+            if (channel.getChannelGatewayMaxRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMaxRate()) > 0) {
                 channelGatewayFee = channel.getChannelGatewayMaxRate();
             }
         }
