@@ -369,8 +369,11 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         orders.setChannelFeeType(channel.getChannelFeeType());
         orders.setChannelRate(channel.getChannelRate());
         log.info("-----------------【计费信息记录】-----------------计算通道手续费结束 通道手续费:{}", channelFee);
-
-        CalcGatewayFee(orders, channel);
+        //计算通道网关手续费
+        if (TradeConstant.CHANNEL_GATEWAY_CHARGE_YES.equals(channel.getChannelGatewayCharge())
+                && TradeConstant.CHANNEL_GATEWAY_CHARGE_ALL_STATUS.equals(channel.getChannelGatewayStatus())) {
+            CalcGatewayFee(orders, channel);
+        }
     }
 
     /**
@@ -392,10 +395,10 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             //手续费=交易金额*费率
             channelGatewayFee = orders.getTradeAmount().multiply(channel.getChannelGatewayRate());
             //判断手续费是否小于最小值，大于最大值
-            if (channel.getChannelGatewayMinRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMinRate()) == -1) {
+            if (channel.getChannelGatewayMinRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMinRate()) < 0) {
                 channelGatewayFee = channel.getChannelGatewayMinRate();
             }
-            if (channel.getChannelGatewayMaxRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMaxRate()) == 1) {
+            if (channel.getChannelGatewayMaxRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMaxRate()) > 0) {
                 channelGatewayFee = channel.getChannelGatewayMaxRate();
             }
         }
