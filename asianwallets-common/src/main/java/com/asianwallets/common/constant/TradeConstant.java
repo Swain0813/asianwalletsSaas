@@ -247,7 +247,7 @@ public class TradeConstant {
             put("CLOUD_PAY_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
             put("DOKU_PAY_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
             put("AD3_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
-            put("NEXTPOS_CSB_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("NEXTPOS_CSB_OFFLINE", "com.asianwallets.trade.channels.nextpos.impl.NextPosServiceImpl");
             put("ENETS_CSB_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
             put("ALIPAY_BSC_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
             put("WECHAT_BSC_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");

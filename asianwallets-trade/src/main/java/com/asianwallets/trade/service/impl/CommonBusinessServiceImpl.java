@@ -30,7 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class CommonBusinessServiceImpl implements CommonBusinessService {
+public class    CommonBusinessServiceImpl implements CommonBusinessService {
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
@@ -413,5 +413,28 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         orders.setChannelGatewayFeeType(channel.getChannelGatewayFeeType());
         orders.setChannelGatewayRate(channel.getChannelGatewayRate());
         log.info("-----------------【计费信息记录】-----------------计算通道手续费结束 通道手续费:{}", channelGatewayFee);
+    }
+
+    /**
+     * 退款和撤销成功的场合
+     * @param orderRefund
+     */
+    @Override
+    public void updateOrderRefundSuccess(OrderRefund orderRefund){
+        if(orderRefund.getRemark()!=null && TradeConstant.RV.equals(orderRefund.getRemark())){
+            //撤销成功-更新订单的撤销状态
+            ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), null, TradeConstant.ORDER_CANNEL_SUCCESS);
+        }else{
+            //退款成功的场合
+            if (TradeConstant.REFUND_TYPE_TOTAL.equals(orderRefund.getRefundType())) {
+                ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_SUCCESS);
+            } else {
+                if (orderRefund.getRemark2().equals("全额")) {
+                    ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_SUCCESS);
+                } else {
+                    ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_PART_SUCCESS);
+                }
+            }
+        }
     }
 }

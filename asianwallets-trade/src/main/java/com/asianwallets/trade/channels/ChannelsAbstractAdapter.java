@@ -29,7 +29,7 @@ public class ChannelsAbstractAdapter extends ChannelsAbstract {
     }
 
     @Override
-    public BaseResponse refund(OrderRefund orderRefund) {
+    public BaseResponse refund( Channel channel,OrderRefund orderRefund) {
         return null;
     }
 
