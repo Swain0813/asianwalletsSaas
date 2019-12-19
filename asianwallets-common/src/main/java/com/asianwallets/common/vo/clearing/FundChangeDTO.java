@@ -11,7 +11,7 @@ import java.util.Date;
  *
  */
 @Data
-public class IntoAndOutMerhtAccountRequest implements Serializable{
+public class FundChangeDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private String version;

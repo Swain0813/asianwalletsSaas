@@ -6,10 +6,7 @@ import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.MD5Util;
-import com.asianwallets.common.utils.RSAUtils;
-import com.asianwallets.common.utils.ReflexClazzUtils;
-import com.asianwallets.common.utils.SignTools;
+import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.feign.MessageFeign;
@@ -43,10 +40,10 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     private RedisService redisService;
 
     @Autowired
-    private OrdersMapper ordersMapper;
+    private MessageFeign messageFeign;
 
     @Autowired
-    private MessageFeign messageFeign;
+    private OrdersMapper ordersMapper;
 
     @Value("${custom.warning.mobile}")
     private String warningMobile;
@@ -135,6 +132,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public CalcExchangeRateVO calcExchangeRate(String localCurrency, String foreignCurrency, BigDecimal floatRate, BigDecimal amount) {
+        log.info("==================【换汇计算】==================【换汇开始】");
         CalcExchangeRateVO calcExchangeRateVO = new CalcExchangeRateVO();
         calcExchangeRateVO.setExchangeTime(new Date());
         try {
@@ -188,7 +186,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     @Override
     public boolean repeatedRequests(String merchantId, String merchantOrderId) {
         //拼接重复请求KEY
-        String redisKey = TradeConstant.REPEATED_REQUEST.concat(merchantId.concat("_").concat(merchantOrderId));
+        String redisKey = TradeConstant.REPEATED_REQUEST_KEY.concat(merchantId.concat("_").concat(merchantOrderId));
         if (!StringUtils.isEmpty(redisService.get(redisKey)) && redisService.get(redisKey).equals(merchantOrderId)) {
             return false;
         }
@@ -213,6 +211,77 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         return new StringBuilder(currency.getDefaults()).reverse().indexOf(".") >= new StringBuilder(String.valueOf(orderAmount)).reverse().indexOf(".");
     }
 
+    /**
+     * 校验商户产品与通道的限额【线上与线下下单】
+     *
+     * @param orders          订单
+     * @param merchantProduct 商户产品
+     * @param channel         通道
+     */
+    @Override
+    public void checkQuota(Orders orders, MerchantProduct merchantProduct, Channel channel) {
+        //校验通道限额
+        if ((channel.getLimitMinAmount() != null && channel.getLimitMaxAmount() != null) &&
+                (channel.getLimitMinAmount().compareTo(BigDecimal.ZERO) != 0 && channel.getLimitMaxAmount().compareTo(BigDecimal.ZERO) != 0)) {
+            if (orders.getTradeAmount().compareTo(channel.getLimitMinAmount()) < 0) {
+                log.info("==================【校验商户产品与通道的限额】==================【小于通道单笔金额限制】 TradeAmount: {} | LimitMinAmount: {} ", orders.getTradeAmount(), channel.getLimitMinAmount());
+                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+                orders.setRemark("小于通道单笔金额限制");
+                ordersMapper.insert(orders);
+                throw new BusinessException(EResultEnum.LESS_THAN_EEOR.getCode());
+            }
+            if (orders.getTradeAmount().compareTo(channel.getLimitMaxAmount()) > 0) {
+                log.info("==================【校验商户产品与通道的限额】==================【大于通道单笔金额限制】 TradeAmount: {} | LimitMaxAmount: {} ", orders.getTradeAmount(), channel.getLimitMaxAmount());
+                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+                orders.setRemark("大于通道单笔金额限制");
+                ordersMapper.insert(orders);
+                throw new BusinessException(EResultEnum.LIMIT_AMOUNT_ERROR.getCode());
+            }
+        }
+        //校验机构产品限额
+        if (merchantProduct.getAuditStatus() != null && TradeConstant.AUDIT_SUCCESS.equals(merchantProduct.getAuditStatus())) {
+            if (orders.getTradeAmount().compareTo(merchantProduct.getLimitAmount()) > 0) {
+                log.info("==================【校验商户产品与通道的限额】==================【交易金额大于商户产品单笔限额】");
+                orders.setRemark("交易金额大于商户产品单笔限额");
+                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+                ordersMapper.insert(orders);
+                throw new BusinessException(EResultEnum.LIMIT_AMOUNT_ERROR.getCode());
+            }
+            //获取今天日期
+            String todayDate = DateToolUtils.getReqDateE();
+            //日交易限额key
+            String dailyTotalAmountKey = TradeConstant.DAILY_TOTAL_AMOUNT_KEY.concat("_").concat(orders.getMerchantId()).concat("_").concat(String.valueOf(orders.getProductCode())).concat("_").concat(todayDate);
+            //日交易笔数key
+            String dailyTotalCountKey = TradeConstant.DAILY_TRADING_COUNT_KEY.concat("_").concat(orders.getMerchantId()).concat("_").concat(String.valueOf(orders.getProductCode()).concat("_").concat(todayDate));
+            String dailyAmount = redisService.get(dailyTotalAmountKey);
+            String dailyCount = redisService.get(dailyTotalCountKey);
+            if (StringUtils.isEmpty(dailyAmount) || StringUtils.isEmpty(dailyCount)) {
+                //用户第一次下单时
+                redisService.set(dailyTotalAmountKey, "0", 24 * 60 * 60);
+                redisService.set(dailyTotalCountKey, "0", 24 * 60 * 60);
+            } else {
+                //日交易笔数
+                Integer dailyTradingCount = Integer.parseInt(dailyCount);
+                if (dailyTradingCount >= merchantProduct.getDailyTradingCount()) {
+                    log.info("==================【校验商户产品与通道的限额】==================【日交易笔数不合法】 dailyTradingCount: {}", dailyTradingCount);
+                    orders.setRemark("日交易笔数不合法");
+                    orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+                    ordersMapper.insert(orders);
+                    throw new BusinessException(EResultEnum.TRADE_COUNT_ERROR.getCode());
+                }
+                //TODO 日交易限额
+        /*        BigDecimal dailyTotalAmount = new BigDecimal(dailyAmount);
+                if (dailyTotalAmount.compareTo(merchantProduct.getDailyTotalAmount()) >= 0) {
+                    log.info("==================【校验商户产品与通道的限额】==================【日交易金额不合法】 dailyTotalAmount: {}", dailyTotalAmount);
+                    orders.setRemark("日交易金额不合法");
+                    orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+                    ordersMapper.insert(orders);
+                    baseResponse.setCode(EResultEnum.TRADE_AMOUNT_ERROR.getCode());
+                    return baseResponse;
+                }*/
+            }
+        }
+    }
     /**
      * 计算手续费
      *

@@ -1,7 +1,7 @@
 package com.asianwallets.clearing.service;
 
 
-import com.asianwallets.common.vo.clearing.CSFrozenFundsRequest;
+import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 
 public interface FrozenFundsService {
 
@@ -13,5 +13,5 @@ public interface FrozenFundsService {
      * @Descripate 资金冻结/解冻接口
      * @return
      **/
-    CSFrozenFundsRequest CSFrozenFunds(CSFrozenFundsRequest ffr);
+    FinancialFreezeDTO CSFrozenFunds(FinancialFreezeDTO ffr);
 }

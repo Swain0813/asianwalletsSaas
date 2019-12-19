@@ -136,8 +136,8 @@ public class TradeConstant {
     public static final Byte REFUND_MODE_PERSON = 2; //人工退款
 
     //---------------交易限额限次
-    public static final String DAILY_TOTAL_AMOUNT = "DAILY_TOTAL_AMOUNT"; //日交易限额redis标记
-    public static final String DAILY_TRADING_COUNT = "DAILY_TRADING_COUNT"; //日交易笔数redis标记
+    public static final String DAILY_TOTAL_AMOUNT_KEY = "DAILY_TOTAL_AMOUNT_KEY"; //日交易限额redis标记
+    public static final String DAILY_TRADING_COUNT_KEY = "DAILY_TRADING_COUNT_KEY"; //日交易笔数redis标记
 
     //多语言
     public static final String ZH_HK = "zh-hk";//繁体
@@ -146,7 +146,7 @@ public class TradeConstant {
     public static final String ZH_CN = "zh-cn";//中文
 
     //下单重复请求redis key标识
-    public static final String REPEATED_REQUEST = "REPEATED_REQUEST";
+    public static final String REPEATED_REQUEST_KEY = "REPEATED_REQUEST_KEY";
 
 
     //---------------清结算类型
