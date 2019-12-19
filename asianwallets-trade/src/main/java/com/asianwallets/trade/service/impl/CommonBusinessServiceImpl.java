@@ -336,6 +336,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         orders.setChargeTime(new Date());
         orders.setRateType(merchantProduct.getRateType());
         orders.setAddValue(merchantProduct.getAddValue());
+        orders.setFeePayer(merchantProduct.getFeePayer());
         log.info("-----------------【计费信息记录】-----------------计算手续费结束 手续费:{}", orderFee);
 
         log.info("-----------------【计费信息记录】-----------------计算通道手续费开始");
