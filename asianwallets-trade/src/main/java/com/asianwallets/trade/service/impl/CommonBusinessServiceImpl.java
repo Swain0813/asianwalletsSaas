@@ -208,4 +208,6 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         }
         return new StringBuilder(currency.getDefaults()).reverse().indexOf(".") >= new StringBuilder(String.valueOf(orderAmount)).reverse().indexOf(".");
     }
+
+
 }

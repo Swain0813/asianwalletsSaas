@@ -55,4 +55,5 @@ public interface CommonBusinessService {
      */
     boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount);
 
+
 }
