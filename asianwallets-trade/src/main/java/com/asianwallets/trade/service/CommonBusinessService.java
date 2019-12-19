@@ -1,5 +1,8 @@
 package com.asianwallets.trade.service;
 
+import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.MerchantProduct;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 
 import java.math.BigDecimal;
@@ -55,5 +58,13 @@ public interface CommonBusinessService {
      */
     boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount);
 
+    /**
+     * 校验商户产品与通道的限额【线上与线下下单】
+     *
+     * @param orders          订单
+     * @param merchantProduct 商户产品
+     * @param channel         通道
+     */
+    void checkQuota(Orders orders, MerchantProduct merchantProduct, Channel channel);
 
 }
