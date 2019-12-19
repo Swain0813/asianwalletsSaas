@@ -303,8 +303,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
             return baseResponse;
         }
-
-
         try {
             ChannelsAbstract channelsAbstract = (ChannelsAbstract)Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
             baseResponse = channelsAbstract.refund(orderRefund);
