@@ -2,9 +2,7 @@ package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.TradeConstant;
-import com.asianwallets.common.entity.Attestation;
-import com.asianwallets.common.entity.Currency;
-import com.asianwallets.common.entity.ExchangeRate;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
@@ -13,9 +11,12 @@ import com.asianwallets.common.utils.RSAUtils;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.utils.SignTools;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
+import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.feign.MessageFeign;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
+import com.asianwallets.trade.vo.BasicInfoVO;
+import com.asianwallets.trade.vo.CalculateCostVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +41,9 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private OrdersMapper ordersMapper;
 
     @Autowired
     private MessageFeign messageFeign;
@@ -209,5 +213,26 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         return new StringBuilder(currency.getDefaults()).reverse().indexOf(".") >= new StringBuilder(String.valueOf(orderAmount)).reverse().indexOf(".");
     }
 
+    /**
+     * 计算手续费
+     *
+     * @param basicInfoVO
+     * @param orders
+     * @return
+     */
+    @Override
+    public CalculateCostVO calculateCost(BasicInfoVO basicInfoVO, Orders orders) {
+        //机构产品
+        MerchantProduct merchantProduct = basicInfoVO.getMerchantProduct();
+        //查询出商户对应产品的费率信息
+        if (merchantProduct.getRate() == null || merchantProduct.getRateType() == null || merchantProduct.getAddValue() == null) {
+            log.info("----------------- 计费信息记录 ----------------费率:{},费率类型:{},机构产品信息:{}", merchantProduct.getRate(), merchantProduct.getRateType(), JSON.toJSONString(merchantProduct));
+            orders.setTradeStatus();
+            calcFeeVO.setChargeStatus(TradeConstant.CHARGE_STATUS_FALID);
 
+        }
+
+
+        return null;
+    }
 }

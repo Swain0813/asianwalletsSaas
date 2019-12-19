@@ -1,4 +1,5 @@
 package com.asianwallets.trade.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
@@ -168,9 +169,10 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             throw new BusinessException(EResultEnum.INSTITUTION_ORDER_ID_EXIST.getCode());
         }
         //获取商户信息
-        BasicInfoVO onlineInfo = getOnlineInfo(onlineTradeDTO.getMerchantId(), onlineTradeDTO.getIssuerId());
+        BasicInfoVO basicInfoVO = getOnlineInfo(onlineTradeDTO.getMerchantId(), onlineTradeDTO.getIssuerId());
         //设置订单属性
         Orders orders = new Orders();
+        orders.setId(String.valueOf(IDS.uniqueID()));
         orders.setInstitutionId(institution.getId());
         orders.setInstitutionName(institution.getCnName());
         orders.setMerchantId(merchant.getId());
@@ -178,62 +180,60 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setSecondMerchantName("");
         orders.setSecondMerchantCode("");
         orders.setAgentCode(merchant.getAgentId());
-//  todo      orders.setAgentName(merchant.geta);
+        orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
         orders.setGroupMerchantCode("");
         orders.setGroupMerchantName("");
-        orders.setTradeType((byte)0);
-        orders.setTradeDirection((byte)0);
-        orders.setMerchantOrderTime(new Date());
-        orders.setMerchantOrderId("");
-        orders.setOrderAmount(new BigDecimal("0"));
-        orders.setOrderCurrency("");
-        orders.setImei("");
-        orders.setOperatorId("");
-        orders.setOrderForTradeRate(new BigDecimal("0"));
+        orders.setTradeType((byte) 0);
+        orders.setTradeDirection((byte) 0);
+        orders.setMerchantOrderTime(new Date(onlineTradeDTO.getOrderTime()));
+        orders.setMerchantOrderId(onlineTradeDTO.getOrderNo());
+        orders.setOrderAmount(onlineTradeDTO.getOrderAmount());
+        orders.setOrderCurrency(onlineTradeDTO.getOrderCurrency());
+/*        orders.setOrderForTradeRate(new BigDecimal("0"));
         orders.setTradeForOrderRate(new BigDecimal("0"));
         orders.setExchangeRate(new BigDecimal("0"));
         orders.setExchangeTime(new Date());
-        orders.setExchangeStatus((byte)0);
-        orders.setProductCode(0);
-        orders.setProductName("");
-        orders.setProductDescription("");
-        orders.setChannelCode("");
-        orders.setChannelName("");
-        orders.setTradeCurrency("");
-        orders.setTradeAmount(new BigDecimal("0"));
-        orders.setTradeStatus((byte)0);
-        orders.setCancelStatus((byte)0);
-        orders.setRefundStatus((byte)0);
-        orders.setConnectMethod((byte)0);
-        orders.setSettleStatus((byte)0);
-        orders.setChannelNumber("");
-        orders.setChargeStatus((byte)0);
-        orders.setChargeTime(new Date());
-        orders.setPayMethod("");
-        orders.setReqIp("");
-        orders.setChannelAmount(new BigDecimal("0"));
-        orders.setReportNumber("");
-        orders.setReportChannelTime(new Date());
-        orders.setChannelCallbackTime(new Date());
-        orders.setUpChannelFee(new BigDecimal("0"));
-        orders.setFloatRate(new BigDecimal("0"));
-        orders.setAddValue(new BigDecimal("0"));
-        orders.setPayerName("");
-        orders.setPayerAccount("");
-        orders.setPayerBank("");
-        orders.setPayerEmail("");
-        orders.setPayerPhone("");
-        orders.setPayerAddress("");
-        orders.setInvoiceNo("");
-        orders.setProviderName("");
-        orders.setCourierCode("");
-        orders.setDeliveryTime(new Date());
-        orders.setDeliveryStatus((byte)0);
-        orders.setReceivedStatus((byte)0);
-        orders.setReceivedTime(new Date());
-        orders.setProductSettleCycle("");
-        orders.setIssuerId("");
-        orders.setBankName("");
+        orders.setExchangeStatus((byte) 0);*/
+        orders.setProductCode(basicInfoVO.getProduct().getProductCode());
+        orders.setProductName(basicInfoVO.getProduct().getProductName());
+        orders.setProductDescription(onlineTradeDTO.getProductDescription());
+        orders.setChannelCode(basicInfoVO.getChannel().getChannelCode());
+        orders.setChannelName(basicInfoVO.getChannel().getChannelCnName());
+        orders.setTradeCurrency(basicInfoVO.getChannel().getCurrency());
+//        orders.setTradeAmount(new BigDecimal("0"));
+        orders.setTradeStatus(TradeConstant.PAYMENT_START);
+//        orders.setCancelStatus((byte) 0);
+//        orders.setRefundStatus((byte) 0);
+//        orders.setConnectMethod((byte) 0);
+//        orders.setSettleStatus((byte) 0);
+//        orders.setChannelNumber("");
+//        orders.setChargeStatus((byte) 0);
+//        orders.setChargeTime(new Date());
+        orders.setPayMethod(basicInfoVO.getMerchantProduct().getPayType());
+//        orders.setReqIp("");
+//        orders.setChannelAmount(new BigDecimal("0"));
+//        orders.setReportNumber("");
+//        orders.setReportChannelTime(new Date());
+//        orders.setChannelCallbackTime(new Date());
+//        orders.setUpChannelFee(new BigDecimal("0"));
+//        orders.setFloatRate(new BigDecimal("0"));
+//        orders.setAddValue(new BigDecimal("0"));
+        orders.setPayerName(onlineTradeDTO.getPayerName());
+        orders.setPayerAccount(onlineTradeDTO.getPayerAccount());
+        orders.setPayerBank(onlineTradeDTO.getPayerBank());
+        orders.setPayerEmail(onlineTradeDTO.getPayerEmail());
+        orders.setPayerPhone(onlineTradeDTO.getPayerPhone());
+        orders.setPayerAddress(onlineTradeDTO.getPayerAddress());
+//        orders.setInvoiceNo("");
+//        orders.setProviderName("");
+//        orders.setCourierCode("");
+//        orders.setDeliveryTime(new Date());
+//        orders.setDeliveryStatus((byte) 0);
+//        orders.setReceivedStatus((byte) 0);
+//        orders.setReceivedTime(new Date());
+        orders.setProductSettleCycle(basicInfoVO.getMerchantProduct().getSettleCycle());
+        orders.setIssuerId(basicInfoVO.getChannel().getIssuerId());
+        orders.setBankName(basicInfoVO.getBankName());
         orders.setBrowserUrl(onlineTradeDTO.getBrowserUrl());
         orders.setServerUrl(onlineTradeDTO.getServerUrl());
 /*        orders.setFeePayer((byte)0);
@@ -258,12 +258,10 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setRemark6("");
         orders.setRemark7("");
         orders.setRemark8("");
-        orders.setId(String.valueOf(IDS.uniqueID()));
         orders.setCreateTime(new Date());
         orders.setCreator("");
         orders.setModifier("");
         orders.setRemark("");
-
 
 
         return null;
@@ -271,8 +269,9 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 
     /**
      * 获取线上基础信息
+     *
      * @param merchantId 商户ID
-     * @param issuerId issuerId
+     * @param issuerId   issuerId
      * @return BasicInfoVO 线上基础信息实体
      */
     private BasicInfoVO getOnlineInfo(String merchantId, String issuerId) {
@@ -316,7 +315,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     /**
      * 校验请求参数
      *
-     * @param onlineTradeDTO 线上收单实体
+     * @param onlineTradeDTO               线上收单实体
      * @param institutionRequestParameters 机构请求参数实体
      */
     private void checkRequestParameters(OnlineTradeDTO onlineTradeDTO, InstitutionRequestParameters institutionRequestParameters) {
