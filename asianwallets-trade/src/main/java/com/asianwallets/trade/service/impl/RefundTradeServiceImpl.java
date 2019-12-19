@@ -3,7 +3,10 @@ package com.asianwallets.trade.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AD3Constant;
+import com.asianwallets.common.constant.AD3MQConstant;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.RefundDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
@@ -11,9 +14,13 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
+import com.asianwallets.trade.channels.ChannelsAbstract;
+import com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.feign.ClearingFeign;
+import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.RefundTradeService;
@@ -25,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.nio.channels.Channels;
 import java.util.Date;
 
 /**
@@ -54,7 +62,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     @Autowired
     private AccountMapper accountMapper;
     @Autowired
-    private ClearingFeign clearingFeign;
+    private ClearingService clearingService;
 
     /**
      * @return
@@ -220,21 +228,49 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
 
 
-        /********************************************************* 判断通道是否支持退款 *************************************************************/
-        //线下订单不支持退款上面已经拒绝 若是线上订单，通道不支持退款走人工退款
-        if (!channel.getSupportRefundState()) {
-            orderRefund.setRefundMode(TradeConstant.REFUND_MODE_PERSON);
+        if (TradeConstant.RV.equals(type) || TradeConstant.RF.equals(type)) {
+            /*************************************************************** 订单是付款成功的场合 *************************************************************/
+            //把原订单状态改为退款中
+            ordersMapper.updateOrderRefundStatus(refundDTO.getOrderNo(), TradeConstant.ORDER_REFUND_WAIT);
+
+            /********************************************************* 通道不支持支持退款 *************************************************************/
+            //线下订单不支持退款上面已经拒绝 若是线上订单，通道不支持退款走人工退款
+            if (!channel.getSupportRefundState()) {
+                log.info("-----------------【退款】信息记录-------------- 【通道不支持支持退款】");
+                orderRefund.setRefundMode(TradeConstant.REFUND_MODE_PERSON);
+                orderRefundMapper.insert(orderRefund);
+
+                //上报清结算 冻结金额
+                FinancialFreezeDTO financialFreezeDTO = new FinancialFreezeDTO(1,orderRefund);
+                BaseResponse cFundChange = clearingService.freezingFunds(financialFreezeDTO);
+                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
+                        orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
+                        orderRefund.setRemark("后台系统和机构系统退款订单接口上报清结算失败");
+                } else {//请求失败
+                    orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
+                    orderRefund.setRemark("后台系统和机构系统退款订单接口上报清结算失败");
+                }
+                //人工退款失败的场合更新退款单表的信息
+                orderRefundMapper.updaterefundOrder(orderRefund.getId(), orderRefund.getRefundStatus(), orderRefund.getRemark());
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());//人工退款失败
+                return baseResponse;
+            }
+
+            /********************************************************* 通道支持支持退款 *************************************************************/
+            log.info("-----------------【退款】信息记录-------------- 【通道支持支持退款】");
+            orderRefund.setRefundMode(TradeConstant.REFUND_MODE_AUTO);//退款方式 1：系统退款 2：人工退款
             orderRefundMapper.insert(orderRefund);
 
-            //上报清结算
-            FundChangeDTO fundChangeDTO = new FundChangeDTO();
+            //获取原订单的refCode字段(NextPos用)
+            orderRefund.setSign(oldOrder.getSign());
+            if (type.equals(TradeConstant.RF)) {
+                this.doRefundOrder(orderRefund,channel);
+            } else {
+                //this.doCancelOrder(orderRefund);
+            }
 
 
-        }
 
-
-        /*************************************************************** 订单是付款成功的场合 *************************************************************/
-        if (TradeConstant.RV.equals(type) || TradeConstant.RF.equals(type)) {
 
 
         } else if (TradeConstant.PAYING.equals(type)) {
@@ -245,6 +281,60 @@ public class RefundTradeServiceImpl implements RefundTradeService {
 
 
         return null;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/3/14
+     * @Descripate 退款操作
+     **/
+    @Override
+    public BaseResponse doRefundOrder(OrderRefund orderRefund,Channel channel) {
+        BaseResponse baseResponse = new BaseResponse();
+        log.info("-----------------【退款】 orderRefund 信息记录-------------- orderRefund:【{}】", JSON.toJSONString(orderRefund));
+        FinancialFreezeDTO financialFreezeDTO = new FinancialFreezeDTO(1,orderRefund);
+        BaseResponse cFundChange = clearingService.freezingFunds(financialFreezeDTO);
+        if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+            log.info("----------------- 退款操作doRefundOrder 上报队列 MQ_TK_SBQJSSB_DL -------------- orderRefund : {}", JSON.toJSON(orderRefund));
+            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+            //rabbitMQSender.sendSleep(AD3MQConstant.MQ_TK_SBQJSSB_DL, JSON.toJSONString(rabbitMassage));
+            //TODO
+            baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+            return baseResponse;
+        }
+
+
+        try {
+            ChannelsAbstract channelsAbstract = (ChannelsAbstract)Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
+            baseResponse = channelsAbstract.refund(orderRefund);
+
+
+        }catch (Exception e){
+
+        }
+        return baseResponse;
+        //if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_ONLINE)) {
+        //    //ad3线上退款
+        //    ad3OnlineAcquireService.doUsRefundInRef(baseResponse, fundChangeDTO, orderRefund);
+        //} else if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_OFFLINE)) {
+        //    //ad3线下退款
+        //    ad3Service.doUsRefundInRef(baseResponse, orderRefund, fundChangeDTO);
+        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_CSB_ONLINE) ||
+        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_BSC_OFFLINE) ||
+        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_CSB_OFFLINE)) {
+        //    //支付宝退款
+        //    aliPayService.aliPayRefund(orderRefund, fundChangeDTO, baseResponse);
+        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_CSB_ONLINE) ||
+        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_CSB_OFFLINE) ||
+        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_BSC_OFFLINE)) {
+        //    //微信退款
+        //    wechatService.wechatRefund(orderRefund, fundChangeDTO, baseResponse);
+        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.NEXTPOS_ONLINE) ||
+        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.NEXTPOS_CSB_OFFLINE)) {
+        //    //nextPos通道退款
+        //    megaPayService.megaPayNextPosRefund(orderRefund, fundChangeDTO, baseResponse);
+        //}
     }
 
     /**
