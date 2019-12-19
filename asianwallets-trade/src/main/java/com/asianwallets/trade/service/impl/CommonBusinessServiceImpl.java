@@ -364,7 +364,6 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             //通道手续费=通道单笔定额
             channelFee = channel.getChannelRate();
         }
-        //TODO 此处四舍五入未添加 待测试
         orders.setChannelFee(channelFee);
         orders.setChannelFeeType(channel.getChannelFeeType());
         orders.setChannelRate(channel.getChannelRate());
