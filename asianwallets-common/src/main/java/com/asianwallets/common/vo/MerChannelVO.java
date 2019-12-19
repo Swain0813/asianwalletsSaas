@@ -49,7 +49,7 @@ public class MerChannelVO {
     private String bankName;
 
     @ApiModelProperty(value = "状态")
-    private String enabled;
+    private Boolean enabled;
 
     @ApiModelProperty(value = "优先级")
     private String sort;
