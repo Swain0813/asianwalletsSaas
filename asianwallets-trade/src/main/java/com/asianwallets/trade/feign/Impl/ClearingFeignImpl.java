@@ -2,8 +2,8 @@ package com.asianwallets.trade.feign.Impl;
 
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.vo.clearing.CSFrozenFundsRequest;
-import com.asianwallets.common.vo.clearing.IntoAndOutMerhtAccountRequest;
+import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.feign.ClearingFeign;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +16,12 @@ import org.springframework.stereotype.Service;
 public class ClearingFeignImpl implements ClearingFeign {
 
     @Override
-    public IntoAndOutMerhtAccountRequest intoAndOutMerhtAccount(IntoAndOutMerhtAccountRequest intoAndOutMerhtAccountRequest) {
+    public FundChangeDTO intoAndOutMerhtAccount(FundChangeDTO fundChangeDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public CSFrozenFundsRequest CSFrozenFunds(CSFrozenFundsRequest ffr) {
+    public FinancialFreezeDTO CSFrozenFunds(FinancialFreezeDTO ffr) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

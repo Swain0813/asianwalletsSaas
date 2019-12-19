@@ -1,6 +1,6 @@
 package com.asianwallets.clearing.service;
 
-import com.asianwallets.common.vo.clearing.IntoAndOutMerhtAccountRequest;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 
 public interface IntoAccountService {
 
@@ -11,5 +11,5 @@ public interface IntoAccountService {
      * @Date 2019/7/25
      * @Descripate 资金变动接口
      **/
-    IntoAndOutMerhtAccountRequest intoAndOutMerhtAccount(IntoAndOutMerhtAccountRequest intoAndOutMerhtAccountRequest);
+    FundChangeDTO intoAndOutMerhtAccount(FundChangeDTO fundChangeDTO);
 }

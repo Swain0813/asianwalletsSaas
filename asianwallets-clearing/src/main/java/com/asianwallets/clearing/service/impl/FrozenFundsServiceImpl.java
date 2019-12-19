@@ -3,7 +3,6 @@ import com.asianwallets.clearing.constant.Const;
 import com.asianwallets.clearing.dao.*;
 import com.asianwallets.clearing.service.CommonService;
 import com.asianwallets.clearing.service.FrozenFundsService;
-import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.entity.TcsFrozenFundsLogs;
 import com.asianwallets.common.exception.BusinessException;
@@ -12,7 +11,7 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.utils.MD5;
 import com.asianwallets.common.utils.SignTools;
-import com.asianwallets.common.vo.clearing.CSFrozenFundsRequest;
+import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,8 +47,8 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
      * @Descripate 资金冻结/解冻接口
      **/
     @Override
-    public CSFrozenFundsRequest CSFrozenFunds(CSFrozenFundsRequest ffr) {
-        CSFrozenFundsRequest repqo = new CSFrozenFundsRequest();
+    public FinancialFreezeDTO CSFrozenFunds(FinancialFreezeDTO ffr) {
+        FinancialFreezeDTO repqo = new FinancialFreezeDTO();
         String md5key = tcsSysConstMapper.getCSAPI_MD5Key();
         if (md5key == null || md5key.equals("")) {
             //获取交易系统MD5Key为空
@@ -132,7 +131,7 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
      * @Date 2019/7/26
      * @Descripate 验证冻结接口请求参数方法
      **/
-    public BaseResponse verificationAPIInputParamter(CSFrozenFundsRequest ffr, String md5key) {
+    public BaseResponse verificationAPIInputParamter(FinancialFreezeDTO ffr, String md5key) {
         log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** 开始时间：{}" + new Date());
         BaseResponse message = new BaseResponse();
         message.setCode(Const.Code.FAILED);// 默认失败

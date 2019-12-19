@@ -12,7 +12,7 @@ import java.io.Serializable;
 * @Desc:清结算系统资金冻结/解冻请求实体类
 */
 @Data
-public class CSFrozenFundsRequest implements Serializable{
+public class FinancialFreezeDTO implements Serializable{
    private static final long serialVersionUID = 1L;
 
    private String version;//版本号(v1.0)
