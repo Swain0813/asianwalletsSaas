@@ -22,5 +22,5 @@ public interface RefundTradeService {
      * @Date 2019/3/14
      * @Descripate 退款操作
      **/
-     void doRefundOrder(OrderRefund orderRefund, Channel channel);
+    BaseResponse doRefundOrder(OrderRefund orderRefund, Channel channel);
 }
