@@ -52,9 +52,6 @@ public class ClearingApplicationTests {
         @Override
         public void run() {
             FundChangeDTO fundChangeDTO = new FundChangeDTO();
-            fundChangeDTO.setVersion("v1.0");
-            fundChangeDTO.setInputCharset(1);
-            fundChangeDTO.setLanguage(1);
             fundChangeDTO.setMerchantid("M201912062672");
             fundChangeDTO.setIsclear(1);//1：清算 2结算
             fundChangeDTO.setBalancetype(1);//资金类型
@@ -110,9 +107,6 @@ public class ClearingApplicationTests {
         public void run() {
 
             FinancialFreezeDTO csFrozenFundsRequest = new FinancialFreezeDTO();
-            csFrozenFundsRequest.setVersion("v1.0");
-            csFrozenFundsRequest.setInputCharset(1);
-            csFrozenFundsRequest.setLanguage(1);
             csFrozenFundsRequest.setMerchantId("M201912062672");
             csFrozenFundsRequest.setMerOrderNo("1");
             csFrozenFundsRequest.setTxncurrency("SGD");
@@ -131,9 +125,6 @@ public class ClearingApplicationTests {
         public void run() {
 
             FinancialFreezeDTO csFrozenFundsRequest = new FinancialFreezeDTO();
-            csFrozenFundsRequest.setVersion("v1.0");
-            csFrozenFundsRequest.setInputCharset(1);
-            csFrozenFundsRequest.setLanguage(1);
             csFrozenFundsRequest.setMerchantId("M201912062672");
             csFrozenFundsRequest.setMerOrderNo("1");
             csFrozenFundsRequest.setTxncurrency("SGD");
@@ -155,9 +146,6 @@ public class ClearingApplicationTests {
         @Override
         public void run() {
             FundChangeDTO fundChangeDTO = new FundChangeDTO();
-            fundChangeDTO.setVersion("v1.0");
-            fundChangeDTO.setInputCharset(1);
-            fundChangeDTO.setLanguage(1);
             fundChangeDTO.setMerchantid("M201912062672");
             fundChangeDTO.setIsclear(2);//1：清算 2结算
             fundChangeDTO.setBalancetype(1);//资金类型

@@ -56,6 +56,7 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
             log.info("***************** get lock success key :【{}】 ************** 流水号 ：{} ", key, ffl.getMerOrderNo());
             try {
                 Account mva = accountMapper.selectByMerchantIdAndCurrency(ffl.getMerchantId(), ffl.getTxncurrency());
+                ffl.setMvaccountId(mva.getId());
                 log.info("---------getVersion----------:{}",mva.getVersion());
                 if (mva == null) {
                     //虚拟账户不存在
