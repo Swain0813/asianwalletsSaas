@@ -159,6 +159,7 @@ public class TradeConstant {
     public static final String RV = "RV"; //撤销
     public static final String WD = "WD"; //提款
     public static final String AA = "AA"; //调账
+    public static final String RA = "RA"; //撤销调账
     public static final String PM = "PM"; //付款
     public static final String PAYING = "PAYING"; //订单付款中
 
@@ -167,8 +168,8 @@ public class TradeConstant {
     public static final Byte INDIRECTCONNECTION = 2; //间连订单
 
     //---------------资金类型
-    public static final String NORMAL_FUND = "1"; //正常资金
-    public static final String FROZEN_FUND = "2"; //冻结资金
+    public static final Integer NORMAL_FUND = 1; //正常资金
+    public static final Integer FROZEN_FUND = 2; //冻结资金
 
     //亚洲钱包清结算返回成功的场合
     public final static String CLEARING_SUCCESS = "T000";

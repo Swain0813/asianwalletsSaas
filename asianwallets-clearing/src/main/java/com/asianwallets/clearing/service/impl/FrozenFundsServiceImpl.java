@@ -144,27 +144,6 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
             log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** 请求参数为空,时间：{}", new Date());
             return message;
         }
-        //version验证
-        if (ffr.getVersion() == null || ffr.getVersion().equals("") || !ffr.getVersion().equals("v1.0")) {
-            log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** 验证不通过,时间：{}", new Date());
-            message.setCode(Const.Code.CODE_VersionIllegal);
-            message.setMsg(Const.Code.MSG_VersionIllegal);
-            return message;
-        }
-        //inputCharset验证,目前只能是1：UTF-8
-        if (ffr.getInputCharset() != 1) {
-            log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** InputCharset验证不通过,时间：{}", new Date());
-            message.setCode(Const.Code.CODE_InputCharsetIllegal);
-            message.setMsg(Const.Code.MSG_InputCharsetIllegal);
-            return message;
-        }
-        //language验证(1:简体中文)
-        if (ffr.getLanguage() != 1) {
-            log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #language验证不通过,时间：{}", new Date());
-            message.setCode(Const.Code.CODE_LanguageIllegal);
-            message.setMsg(Const.Code.MSG_LanguageIllegal);
-            return message;
-        }
         //merchantId验证
         if (ffr.getMerchantId() == null || ffr.getMerchantId().equals("")) {
             log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #merchantId验证不通过,时间：{}", new Date());
@@ -245,9 +224,6 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
             return message;
         }
         //检查签名
-        signmap.put("version", ffr.getVersion());
-        signmap.put("inputCharset", ffr.getInputCharset() + "");
-        signmap.put("language", ffr.getLanguage() + "");
         signmap.put("merchantId", ffr.getMerchantId());
         signmap.put("mvaccountId", ffr.getMvaccountId());
         signmap.put("state", ffr.getState() + "");
