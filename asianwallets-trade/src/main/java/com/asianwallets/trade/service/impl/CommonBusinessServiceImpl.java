@@ -296,12 +296,14 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
         if (!orders.getOrderCurrency().equals(basicInfoVO.getChannel().getCurrency()) && !basicInfoVO.getInstitution().getDcc()) {
             log.info("-----------------【计算手续费】-----------------交易币种与订单币种不一致 机构未开通DCC");
             orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
+            orders.setRemark("机构不支持DCC");
             ordersMapper.insert(orders);
             throw new BusinessException(EResultEnum.DCC_IS_NOT_OPEN.getCode());
         }
         //查询出商户对应产品的费率信息
         if (merchantProduct.getRate() == null || merchantProduct.getRateType() == null || merchantProduct.getAddValue() == null) {
             log.info("-----------------【计算手续费】-----------------商户产品配置信息错误 商户产品信息:{}", JSON.toJSONString(merchantProduct));
+            orders.setRemark("商户产品配置信息错误");
             orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
             ordersMapper.insert(orders);
             throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_CONFIGURATION_INFORMATION_ERROR.getCode());
@@ -336,6 +338,7 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
         orders.setChargeTime(new Date());
         orders.setRateType(merchantProduct.getRateType());
         orders.setAddValue(merchantProduct.getAddValue());
+        orders.setFeePayer(merchantProduct.getFeePayer());
         log.info("-----------------【计费信息记录】-----------------计算手续费结束 手续费:{}", orderFee);
 
         log.info("-----------------【计费信息记录】-----------------计算通道手续费开始");
@@ -344,6 +347,7 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
                 || channel.getChannelMaxRate() == null) {
             log.info("-----------------【计算通道手续费】-----------------通道计费信息错误 channel:{}", JSON.toJSONString(channel));
             orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
+            orders.setRemark("通道计费信息错误");
             ordersMapper.insert(orders);
             throw new BusinessException(EResultEnum.CALCCHANNEL_POUNDAGE_FAILURE.getCode());
         }
@@ -386,6 +390,7 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
                 channel.getChannelGatewayMaxRate() == null) {
             log.info("-----------------【计算通道网关手续费】-----------------通道网关计费信息错误 channel:{}", JSON.toJSONString(channel));
             orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
+            orders.setRemark("通道网关计费信息错误");
             ordersMapper.insert(orders);
             throw new BusinessException(EResultEnum.CALCCHANNEL_GATEWAYPOUNDAGE_FAILURE.getCode());
         }

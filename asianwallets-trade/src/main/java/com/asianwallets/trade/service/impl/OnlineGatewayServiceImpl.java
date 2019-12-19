@@ -184,39 +184,22 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
         orders.setGroupMerchantCode("");
         orders.setGroupMerchantName("");
-        orders.setTradeType((byte) 0);
-        orders.setTradeDirection((byte) 0);
+       /* orders.setTradeType();
+        orders.setTradeDirection(basicInfoVO.getProduct().getTradeDirection());*/
         orders.setMerchantOrderTime(new Date(onlineTradeDTO.getOrderTime()));
         orders.setMerchantOrderId(onlineTradeDTO.getOrderNo());
         orders.setOrderAmount(onlineTradeDTO.getOrderAmount());
         orders.setOrderCurrency(onlineTradeDTO.getOrderCurrency());
-/*        orders.setOrderForTradeRate(new BigDecimal("0"));
-        orders.setTradeForOrderRate(new BigDecimal("0"));
-        orders.setExchangeRate(new BigDecimal("0"));
-        orders.setExchangeTime(new Date());
-        orders.setExchangeStatus((byte) 0);*/
         orders.setProductCode(basicInfoVO.getProduct().getProductCode());
         orders.setProductName(basicInfoVO.getProduct().getProductName());
         orders.setProductDescription(onlineTradeDTO.getProductDescription());
         orders.setChannelCode(basicInfoVO.getChannel().getChannelCode());
         orders.setChannelName(basicInfoVO.getChannel().getChannelCnName());
         orders.setTradeCurrency(basicInfoVO.getChannel().getCurrency());
-//        orders.setTradeAmount(new BigDecimal("0"));
         orders.setTradeStatus(TradeConstant.PAYMENT_START);
-//        orders.setCancelStatus((byte) 0);
-//        orders.setRefundStatus((byte) 0);
-//        orders.setConnectMethod((byte) 0);
-//        orders.setSettleStatus((byte) 0);
-//        orders.setChannelNumber("");
-//        orders.setChargeStatus((byte) 0);
-//        orders.setChargeTime(new Date());
+
+
         orders.setPayMethod(basicInfoVO.getMerchantProduct().getPayType());
-//        orders.setReqIp("");
-//        orders.setChannelAmount(new BigDecimal("0"));
-//        orders.setReportNumber("");
-//        orders.setReportChannelTime(new Date());
-//        orders.setChannelCallbackTime(new Date());
-        orders.setUpChannelFee(new BigDecimal("0"));
 
         orders.setPayerName(onlineTradeDTO.getPayerName());
         orders.setPayerAccount(onlineTradeDTO.getPayerAccount());
