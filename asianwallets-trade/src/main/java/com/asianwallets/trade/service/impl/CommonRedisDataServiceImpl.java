@@ -6,11 +6,14 @@ import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 通用获取数据接口
@@ -320,7 +323,60 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             log.info("-----------------通道禁用 ----------------- channelCode:{}", channelCode);
             throw new BusinessException(EResultEnum.CHANNEL_STATUS_ABNORMAL.getCode());
         }
-        log.info("================== CommonService getChannelByChannelCode =================== channel: {}", JSON.toJSONString(channel));
+        log.info("================== CommonRedisDataServiceImpl getChannelByChannelCode =================== channel: {}", JSON.toJSONString(channel));
         return channel;
     }
+
+    /**
+     * 根据商户产品ID查询通道银行ID集合信息
+     *
+     * @param merProId 商户产品ID
+     * @return 通道银行ID集合
+     */
+    @Override
+    public List<String> getChaBankIdByMerProId(String merProId) {
+        List<String> chaBankIdList = null;
+        try {
+            chaBankIdList = JSON.parseArray(redisService.get(AsianWalletConstant.MERCHANTCHANNEL_CACHE_KEY.concat("_").concat(merProId)), String.class);
+            if (ArrayUtil.isEmpty(chaBankIdList)) {
+                chaBankIdList = merchantChannelMapper.selectByMerProId(merProId);
+                if (ArrayUtil.isEmpty(chaBankIdList)) {
+                    log.info("==================【根据商户产品ID查询通道银行ID集合信息】==================【通道对象不存在】 merProId: {}", merProId);
+                    return null;
+                }
+                redisService.set(AsianWalletConstant.MERCHANTCHANNEL_CACHE_KEY.concat("_").concat(merProId), JSON.toJSONString(chaBankIdList));
+            }
+        } catch (Exception e) {
+            log.info("==================【根据商户产品ID查询通道银行ID集合信息】==================【获取异常】", e);
+        }
+        log.info("==================【根据商户产品ID查询通道银行ID集合信息】==================【通道银行ID集合信息】 chaBankIdList: {}", JSON.toJSONString(chaBankIdList));
+        return chaBankIdList;
+    }
+
+    /**
+     * 根据通道银行ID查询通道银行
+     *
+     * @param chaBankId 通道银行ID
+     * @return 通道银行
+     */
+    @Override
+    public ChannelBank getChaBankById(String chaBankId) {
+        ChannelBank channelBank = null;
+        try {
+            channelBank = JSON.parseObject((AsianWalletConstant.CHANNEL_BANK_CACHE_KEY.concat("_").concat(chaBankId)), ChannelBank.class);
+            if (channelBank == null) {
+                channelBank = channelBankMapper.selectByPrimaryKey(chaBankId);
+                if (channelBank == null) {
+                    log.info("==================【根据通道银行ID查询通道银行】==================【通道银行对象不存在】 chaBankId: {}", chaBankId);
+                    return null;
+                }
+                redisService.set(AsianWalletConstant.CHANNEL_BANK_CACHE_KEY.concat("_").concat(channelBank.getId()), JSON.toJSONString(channelBank));
+            }
+        } catch (Exception e) {
+            log.info("==================【根据通道银行ID查询通道银行】==================【获取异常】", e);
+        }
+        log.info("==================【根据通道银行ID查询通道银行】==================【通道银行信息】 channelBank: {}", JSON.toJSONString(channelBank));
+        return channelBank;
+    }
+
 }

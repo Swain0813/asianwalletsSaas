@@ -104,6 +104,11 @@ public class AsianWalletConstant {
 
     /************************************** 机构 产品 机构产品 机构通道 通道*******************************************************************************************/
 
+    //通道银行缓存Key
+    public static final String CHANNEL_BANK_CACHE_KEY = "channelBankCacheKey";
+
+    //银行机构映射缓存key
+    public static final String BANK_ISSUER_ID_CACHE_KEY = "bankIssuerIdCacheKey";
 
     public static final String EXCHANGERATE_CACHE_KEY = "exchangeRateCacheKey";//汇率表的缓存key
 
@@ -116,9 +121,6 @@ public class AsianWalletConstant {
     public static final String CURRENCY_CACHE_KEY = "currencyCacheKey";//key + 币种
 
     public static final String PAYOUT_BALANCE_KEY = "payoutBalanceKey";//付款校检余额缓存key
-
-
-
 
 
     //清结算接口url的key值
@@ -154,7 +156,7 @@ public class AsianWalletConstant {
     public static final Integer OPERATION_USER = 1;//运维
     public static final Integer INSTITUTION_USER = 2;//机构
     public static final Integer MERCHANT_USER = 3;//普通商户
-    public static final Integer AGENCY_USER= 4;//代理商户
+    public static final Integer AGENCY_USER = 4;//代理商户
     public static final Integer GROUP_USER = 5;//集团商户
 
     //前端发布版本控制字段Key

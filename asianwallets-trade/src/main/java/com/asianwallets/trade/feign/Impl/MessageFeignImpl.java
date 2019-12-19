@@ -1,4 +1,5 @@
 package com.asianwallets.trade.feign.impl;
+
 import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
