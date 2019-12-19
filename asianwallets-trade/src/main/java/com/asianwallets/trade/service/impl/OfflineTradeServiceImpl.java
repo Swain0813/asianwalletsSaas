@@ -6,8 +6,10 @@ import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.vo.SysUserVO;
+import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.DeviceBindingMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.SysUserMapper;
@@ -23,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -46,6 +50,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     @Autowired
     private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private BankIssuerIdMapper bankIssuerIdMapper;
 
     /**
      * 校验请求参数
@@ -187,14 +194,67 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
         }
         Merchant merchant = commonRedisDataService.getMerchantById(offlineTradeDTO.getMerchantId());
+        if (merchant == null || !merchant.getEnabled()) {
+            log.info("==================【线下CSB动态扫码】==================【商户信息不合法】");
+            return null;
+        }
         Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
+        if (institution == null || !institution.getEnabled()) {
+            log.info("==================【线下CSB动态扫码】==================【机构信息不合法】");
+            return null;
+        }
         InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
-        Product product = commonRedisDataService.getProductByCode(offlineTradeDTO.getProductCode());
-        MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchant.getId(), product.getId());
+        if (institutionRequestParameters == null) {
+            log.info("==================【线下CSB动态扫码】==================【机构请求参数信息不合法】");
+            return null;
+        }
         //校验机构必填请求输入参数
         checkRequestParameters(offlineTradeDTO, institutionRequestParameters);
         //校验输入参数合法性
         checkParamValidity(offlineTradeDTO);
+        Product product = commonRedisDataService.getProductByCode(offlineTradeDTO.getProductCode());
+        if (product == null || !product.getEnabled()) {
+            log.info("==================【线下CSB动态扫码】==================【产品信息不合法】");
+            return null;
+        }
+        MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchant.getId(), product.getId());
+        if (merchantProduct == null || !merchantProduct.getEnabled()) {
+            log.info("==================【线下CSB动态扫码】==================【商户产品信息不合法】");
+            return null;
+        }
+        List<String> chaBankIdList = commonRedisDataService.getChaBankIdByMerProId(merchantProduct.getId());
+        if (ArrayUtil.isEmpty(chaBankIdList)) {
+            log.info("==================【线下CSB动态扫码】==================【通道银行信息不存在】");
+            return null;
+        }
+        List<ChannelBank> channelBankList = new ArrayList<>();
+        for (String chaBankId : chaBankIdList) {
+            ChannelBank channelBank = commonRedisDataService.getChaBankById(chaBankId);
+            if (channelBank != null) {
+                channelBankList.add(channelBank);
+            }
+        }
+        Channel channel = null;
+        BankIssuerId bankIssuerId = null;
+        for (ChannelBank channelBank : channelBankList) {
+            channel = commonRedisDataService.getChannelById(channelBank.getChannelId());
+            if (channel != null && channel.getEnabled()) {
+                bankIssuerId = bankIssuerIdMapper.selectByChannelCode(channel.getChannelCode());
+                if (bankIssuerId != null) {
+                    log.info("==================【线下CSB动态扫码】==================【通道】  channel: {}", JSON.toJSONString(channel));
+                    log.info("==================【线下CSB动态扫码】==================【银行机构映射】  bankIssuerId: {}", JSON.toJSONString(bankIssuerId));
+                    break;
+                }
+            }
+        }
+        if (channel == null || !channel.getEnabled()) {
+            log.info("==================【线下CSB动态扫码】==================【通道信息不合法】");
+            throw new BusinessException(EResultEnum.CHANNEL_IS_NOT_EXISTS.getCode());
+        }
+        if (bankIssuerId == null || !bankIssuerId.getEnabled()) {
+            log.info("==================【线下CSB动态扫码】==================【银行机构映射信息不合法】");
+            throw new BusinessException(EResultEnum.BANK_MAPPING_NO_EXIST.getCode());
+        }
         //设置订单属性
         Orders orders = setAttributes(offlineTradeDTO);
         CsbDynamicScanVO csbDynamicScanVO = new CsbDynamicScanVO();

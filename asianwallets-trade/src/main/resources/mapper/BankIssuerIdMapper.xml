@@ -30,4 +30,11 @@
         and enabled = 1;
     </select>
 
+    <select id="selectByChannelCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bank_issuer_id
+        where channel_code = #{channelCode} and enabled = 1 limit 1
+    </select>
+
 </mapper>
