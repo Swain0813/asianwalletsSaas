@@ -52,11 +52,34 @@
          fee_payer,refund_default,refund_rate_type,refund_min_tate,refund_max_tate,refund_rate,refund_add_value,settle_cycle,
          audit_status,audit_remark,effect_time,create_time,update_time,creator,modifier,remark,enabled,ext1,ext2,ext3,ext4,ext5,
          ext6,ext7
-  </sql>
+    </sql>
 
     <select id="selectByMerchantIdAndProductId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from merchant_product where merchant_id = #{merchantId} and product_id = #{productId}
+    </select>
+    <select id="selectOnlineInfo" resultType="com.asianwallets.trade.vo.OnlineInfoVO">
+        select mc.mer_pro_id  AS merProId,
+               b.bank_name    AS bankName,
+               p.product_code AS productCode,
+               c.channel_code AS channelCode
+        from merchant_product mp
+                 left join product p on p.id = mp.product_id
+                 left join merchant_channel mc on mp.id = mc.mer_pro_id
+                 left join channel_bank cb on mc.cha_ban_id = cb.id
+                 left join bank b on cb.bank_id = b.id
+                 left join channel c on c.id = cb.channel_id
+        WHERE mp.enabled = 1
+          AND mc.enabled = 1
+          AND cb.enabled = 1
+          AND b.enabled = 1
+          AND c.enabled = 1
+          AND p.enabled = 1
+          AND p.trade_direction = 1
+          and c.currency = p.currency
+          AND mp.merchant_id = #{merchantId}
+          AND b.issuer_id = #{issuerId}
+        ORDER BY mc.sort
     </select>
 </mapper>

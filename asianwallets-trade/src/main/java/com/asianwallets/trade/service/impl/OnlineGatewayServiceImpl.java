@@ -5,19 +5,26 @@ import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.InstitutionRequestParameters;
 import com.asianwallets.common.entity.Merchant;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.trade.channels.help2pay.Help2PayService;
+import com.asianwallets.trade.dao.MerchantProductMapper;
+import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OnlineGatewayService;
+import com.asianwallets.trade.vo.OnlineInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -32,6 +39,12 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
+
+    @Autowired
+    private OrdersMapper ordersMapper;
+
+    @Autowired
+    private MerchantProductMapper merchantProductMapper;
 
     /**
      * 网关收单
@@ -67,6 +80,22 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         return null;*/
     }
 
+
+    /* TODO 收银台查询订单
+    //查询订单号是否重复
+        Orders orders = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getMerchantId());
+        if (orders!=null) {
+            if (orders.getTradeStatus().equals(TradeConstant.PAYMENT_SUCCESS)) {
+                log.info("-----------------【线上直连】下单信息记录--------------【订单已支付】");
+                throw new BusinessException(EResultEnum.ORDER_PAID_ERROR.getCode());
+            }
+            if (orders.getTradeStatus().equals(TradeConstant.PAYMENT_FAIL)) {
+                log.info("-----------------【线上直连】下单信息记录--------------【订单已支付失败】");
+                throw new BusinessException(EResultEnum.ORDER_PAYMENT_FAILED.getCode());
+            }
+        }*/
+
+
     /**
      * 间连
      *
@@ -96,21 +125,47 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             log.info("-----------------【线上直连】下单信息记录--------------【订单金额不符合的当前币种默认值】");
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
-
-        //可选参数校验
-        Merchant merchant = commonRedisDataService.getMerchantById(onlineTradeDTO.getMerchantId());
-        Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
-        InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
-        checkRequestParameters(onlineTradeDTO, institutionRequestParameters);
         //签名校验
         if (!commonBusinessService.checkUniversalSign(onlineTradeDTO)) {
-            log.info("-----------------【线上直连】下单信息记录--------------【签名错误】");
-            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
+            log.info("-----------------【线上直连】下单信息记录--------------【签名不匹配】");
+            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+        }
+        //可选参数校验
+        Merchant merchant = commonRedisDataService.getMerchantById(onlineTradeDTO.getMerchantId());
+        if (merchant == null) {
+            log.info("-----------------【线上直连】下单信息记录--------------【商户不存在】");
+            throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
+        }
+        if (!merchant.getEnabled()) {
+            log.info("-----------------【线上直连】下单信息记录--------------【商户被禁用】");
+            throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
+        }
+        Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
+
+        InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
+        checkRequestParameters(onlineTradeDTO, institutionRequestParameters);
+        //校验订单金额
+        if (onlineTradeDTO.getOrderAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            log.info("-----------------【线上直连】下单信息记录--------------【订单金额不合法】");
+            throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
+        }
+        //查询订单号是否重复
+        Orders orders = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getMerchantId());
+        if (orders != null) {
+            log.info("-----------------【线上直连】下单信息记录-----------------订单号已存在");
+            throw new BusinessException(EResultEnum.INSTITUTION_ORDER_ID_EXIST.getCode());
         }
         //获取商户信息
-
-
+        getOnlineInfo(onlineTradeDTO.getMerchantId(), onlineTradeDTO.getIssuerId());
         return null;
+    }
+
+    private void getOnlineInfo(String merchantId, String issuerId) {
+        List<OnlineInfoVO> onlineInfoVOList = merchantProductMapper.selectOnlineInfo(merchantId, issuerId);
+        if (onlineInfoVOList == null || onlineInfoVOList.size() == 0) {
+            log.info("------------------ 商户产品通道信息不存在 直连从数据库查询关系信息为空  ------------------");
+            throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_CHANNEL_NOT_EXISTS.getCode());
+        }
     }
 
 
