@@ -4,6 +4,7 @@ import com.asianwallets.common.dto.ChannelDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.vo.ChannelDetailVO;
 import com.asianwallets.common.vo.ChannelExportVO;
+import com.asianwallets.common.vo.ChannelVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public interface ChannelService {
      * @param channelDTO 通道输入实体
      * @return 修改条数
      */
-    PageInfo<Channel> pageFindChannel(ChannelDTO channelDTO);
+    PageInfo<ChannelVO> pageFindChannel(ChannelDTO channelDTO);
 
     /**
      * 根据通道ID查询通道详情
