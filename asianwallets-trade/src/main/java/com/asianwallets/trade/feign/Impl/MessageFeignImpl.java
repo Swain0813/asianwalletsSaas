@@ -5,10 +5,13 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.feign.MessageFeign;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@Component
 public class MessageFeignImpl implements MessageFeign {
+
     @Override
     public BaseResponse sendSimpleMail(String sendTo, String title, String content) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
