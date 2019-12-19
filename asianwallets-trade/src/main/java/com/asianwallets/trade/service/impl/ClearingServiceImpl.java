@@ -45,13 +45,13 @@ public class ClearingServiceImpl implements ClearingService {
      */
     @Override
     public BaseResponse fundChange(FundChangeDTO fundChangeDTO) {
-        log.info("------------  交易项目 上报清结算 请求 fundChange ------------ fundChangeDTO : {} ", JSON.toJSON(fundChangeDTO));
+        log.info("------------  上报清结算 请求 fundChange ------------ fundChangeDTO : {} ", JSON.toJSON(fundChangeDTO));
         BaseResponse baseResponse = new BaseResponse();
         fundChangeDTO.setSignMsg(createSignature(fundChangeDTO));
         //比如亚洲钱包清结算系统没有启动或者没有响应的场合
         try {
             FundChangeDTO fundChangeVO = clearingFeign.intoAndOutMerhtAccount(fundChangeDTO);
-            log.info("------------  交易项目 上报清结算 返回 ------------ fundChangeVO : {} ", JSON.toJSON(fundChangeVO));
+            log.info("------------ 上报清结算 返回 ------------ fundChangeVO : {} ", JSON.toJSON(fundChangeVO));
             if (fundChangeVO != null && "T000".equals(fundChangeVO.getRespCode())) {
                 baseResponse.setData(fundChangeVO);
                 baseResponse.setMsg(fundChangeVO.getRespMsg());
@@ -62,7 +62,7 @@ public class ClearingServiceImpl implements ClearingService {
         }catch (Exception e){
             baseResponse.setCode("T001");
         }
-        log.info("------------  交易项目 上报清结算 返回 fundChange ------------ BaseResponse : {}", JSON.toJSON(baseResponse));
+        log.info("------------  上报清结算 返回 fundChange ------------ BaseResponse : {}", JSON.toJSON(baseResponse));
         return baseResponse;
     }
 

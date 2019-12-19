@@ -7,6 +7,7 @@ import com.asianwallets.common.vo.OrdersRefundDetailVO;
 import com.asianwallets.common.vo.OrdersRefundVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -26,4 +27,13 @@ public interface OrderRefundMapper extends BaseMapper<OrderRefund> {
      **/
     @Select("select sum(amount) from order_refund where order_id = #{orderId} and refund_status != 3")
     BigDecimal getTotalAmountByOrderId(@Param("orderId") String orderId);
+
+    /**
+     * 人工退款失败的场合更新退款单信息
+     * @param id
+     * @param remark
+     * @return
+     */
+    @Update("update order_refund set refund_status =#{status},remark =#{remark},update_time= NOW() where id = #{id} and refund_status=1")
+    int updaterefundOrder(@Param("id") String id,@Param("status") Byte status,@Param("remark") String remark);
 }
