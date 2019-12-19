@@ -1,5 +1,7 @@
 package com.asianwallets.trade.feign;
 
+import com.asianwallets.common.ChannelsRequestDTO;
+import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.dto.alipay.*;
 import com.asianwallets.common.dto.doku.DOKUReqDTO;
 import com.asianwallets.common.dto.eghl.EGHLRequestDTO;
@@ -124,4 +126,8 @@ public interface ChannelsFeign {
     @ApiOperation(value = "Doku收单接口")
     @PostMapping("doku/payment")
     BaseResponse dokuPay(DOKUReqDTO dokuReqDTO);
+
+    @ApiOperation(value = "AD3线下CSB")
+    @PostMapping("ad3/offlineCsb")
+    BaseResponse ad3OfflineCsb(@RequestBody @ApiParam AD3CSBScanPayDTO ad3CSBScanPayDTO, @RequestBody @ApiParam ChannelsRequestDTO channelsRequestDTO);
 }
