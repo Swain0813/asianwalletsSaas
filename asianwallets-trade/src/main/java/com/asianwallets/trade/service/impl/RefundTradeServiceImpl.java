@@ -98,11 +98,11 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         String type = this.checkRefundDTO(merchant, refundDTO, oldOrder, oldRefundAmount);
 
 
-        if (TradeConstant.ORDER_PAY_SUCCESS.equals(oldOrder.getTradeStatus())) {
+        if (TradeConstant.RV.equals(type)||TradeConstant.RF.equals(type)) {
         /*************************************************************** 订单是付款成功的场合 *************************************************************/
-        
 
-        }else if (TradeConstant.ORDER_PAYING.equals(oldOrder.getTradeStatus())){
+
+        }else if (TradeConstant.PAYING.equals(type)){
         /***************************************************************  订单是付款中的场合  *************************************************************/
 
         }
@@ -184,7 +184,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             }
             return TradeConstant.RV;
         }else if(CTstatus == null && STstatus == null){
-            return "PAYING";
+            return TradeConstant.PAYING;
         }else{
             throw new BusinessException(EResultEnum.ERROR.getCode());
         }

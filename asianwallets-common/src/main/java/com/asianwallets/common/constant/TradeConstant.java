@@ -155,6 +155,7 @@ public class TradeConstant {
     public static final String WD = "WD"; //提款
     public static final String AA = "AA"; //调账
     public static final String PM = "PM"; //付款
+    public static final String PAYING = "PAYING"; //订单付款中
 
     //---------------线上订单的类型
     public static final Byte DIRECTCONNECTION = 1; //直连订单
