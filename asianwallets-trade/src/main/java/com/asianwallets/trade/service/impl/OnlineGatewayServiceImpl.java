@@ -6,6 +6,7 @@ import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.trade.channels.help2pay.Help2PayService;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
@@ -250,20 +251,42 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setChannelGatewayFee(new BigDecimal("0"));*/
         orders.setLanguage("");
         orders.setSign(onlineTradeDTO.getSign());
-        orders.setRemark1("");
-        orders.setRemark2("");
-        orders.setRemark3("");
-        orders.setRemark4("");
-        orders.setRemark5("");
-        orders.setRemark6("");
-        orders.setRemark7("");
-        orders.setRemark8("");
         orders.setCreateTime(new Date());
-        orders.setCreator("");
-        orders.setModifier("");
-        orders.setRemark("");
 
-
+        //校验是否换汇
+        if (!orders.getTradeCurrency().equals(basicInfoVO.getChannel().getCurrency())) {
+            //校验机构DCC
+            if (!basicInfoVO.getInstitution().getDcc()) {
+                orders.setRemark("机构不支持DCC");
+                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+                ordersMapper.insert(orders);
+                throw new BusinessException(EResultEnum.DCC_IS_NOT_OPEN.getCode());
+            }
+            //换汇计算
+            CalcExchangeRateVO calcExchangeRateVO = commonBusinessService.calcExchangeRate(orders.getOrderCurrency(), orders.getTradeCurrency(), basicInfoVO.getMerchantProduct().getFloatRate(), onlineTradeDTO.getOrderAmount());
+            orders.setExchangeTime(calcExchangeRateVO.getExchangeTime());
+            orders.setExchangeStatus(calcExchangeRateVO.getExchangeStatus());
+            if (TradeConstant.SWAP_FALID.equals(calcExchangeRateVO.getExchangeStatus())) {
+                log.info("-----------------【线上直连】下单信息记录--------------【换汇失败】");
+                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+                orders.setRemark("换汇失败");
+                ordersMapper.insert(orders);
+                throw new BusinessException(EResultEnum.SYS_ERROR_CREATE_ORDER_FAIL.getCode());
+            }
+            orders.setExchangeRate(calcExchangeRateVO.getExchangeRate());
+            orders.setTradeAmount(calcExchangeRateVO.getTradeAmount());
+            orders.setOrderForTradeRate(calcExchangeRateVO.getOriginalRate());
+            orders.setTradeForOrderRate(calcExchangeRateVO.getReverseRate());
+        } else {
+            log.info("-----------------【线上直连】下单信息记录--------------【订单未换汇】");
+            orders.setTradeAmount(orders.getOrderAmount());
+            orders.setOrderForTradeRate(BigDecimal.ONE);
+            orders.setTradeForOrderRate(BigDecimal.ONE);
+            orders.setExchangeRate(BigDecimal.ONE);
+        }
+        //校验商户产品与通道的限额
+        commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        commonBusinessService.calculateCost(basicInfoVO, orders);
         return null;
     }
 
