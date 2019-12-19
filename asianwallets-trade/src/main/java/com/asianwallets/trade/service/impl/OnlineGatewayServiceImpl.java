@@ -184,8 +184,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
         orders.setGroupMerchantCode("");
         orders.setGroupMerchantName("");
-        orders.setTradeType();
-        orders.setTradeDirection(basicInfoVO.getProduct().getTradeDirection());
+       /* orders.setTradeType();
+        orders.setTradeDirection(basicInfoVO.getProduct().getTradeDirection());*/
         orders.setMerchantOrderTime(new Date(onlineTradeDTO.getOrderTime()));
         orders.setMerchantOrderId(onlineTradeDTO.getOrderNo());
         orders.setOrderAmount(onlineTradeDTO.getOrderAmount());
