@@ -1,6 +1,6 @@
 package com.asianwallets.clearing.controller;
 import com.asianwallets.clearing.service.IntoAccountService;
-import com.asianwallets.common.vo.clearing.IntoAndOutMerhtAccountRequest;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -23,8 +23,8 @@ public class IntoAccountController {
 
     @ApiOperation(value = "资金变动接口")
     @PostMapping("/IntoAndOutMerhtAccount")
-    public IntoAndOutMerhtAccountRequest intoAndOutMerhtAccount(@RequestBody @ApiParam IntoAndOutMerhtAccountRequest intoAndOutMerhtAccountRequest) {
-        return intoAccountService.intoAndOutMerhtAccount(intoAndOutMerhtAccountRequest);
+    public FundChangeDTO intoAndOutMerhtAccount(@RequestBody @ApiParam FundChangeDTO fundChangeDTO) {
+        return intoAccountService.intoAndOutMerhtAccount(fundChangeDTO);
     }
 
 

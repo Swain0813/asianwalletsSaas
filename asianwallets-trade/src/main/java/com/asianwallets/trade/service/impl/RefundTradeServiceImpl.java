@@ -11,7 +11,9 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.*;
+import com.asianwallets.trade.feign.ClearingFeign;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.RefundTradeService;
@@ -51,6 +53,8 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     private AuditorProvider auditorProvider;
     @Autowired
     private AccountMapper accountMapper;
+    @Autowired
+    private ClearingFeign clearingFeign;
 
     /**
      * @return
@@ -77,7 +81,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
         Channel channel = commonRedisDataService.getChannelByChannelCode(oldOrder.getChannelCode());
-        log.info("-----------------【退款】信息记录-------------- Channel:【{}】",JSON.toJSONString(channel));
+        log.info("-----------------【退款】信息记录-------------- Channel:【{}】", JSON.toJSONString(channel));
 
 
         /********************************* 判断通道是否支持退款 线下不支持退款直接拒绝*************************************************/
@@ -120,7 +124,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         } else if (newRefundAmount.compareTo(oldOrder.getOrderAmount()) == 0) {
             orderRefund.setRemark2("全额");
         }
-        log.info("-----------------【退款】信息记录-------------- 创建订单 OrderRefund ：【{}】",JSON.toJSONString(orderRefund));
+        log.info("-----------------【退款】信息记录-------------- 创建订单 OrderRefund ：【{}】", JSON.toJSONString(orderRefund));
 
 
         /***********************************************************  计算退还手续费  ******************************************************/
@@ -192,30 +196,41 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         /***************************************************************  判断账户余额  *************************************************************/
         //判断结算户金额
         Account account = accountMapper.getAccount(oldOrder.getMerchantId(), refundDTO.getRefundCurrency());
-        log.info("-----------------【退款】信息记录-------------- 当前 清算余额:【{}】，结算余额:【{}】,冻结余额:【{}】",account.getClearBalance(),account.getSettleBalance(),account.getFreezeBalance());
+        log.info("-----------------【退款】信息记录-------------- 当前 清算余额:【{}】，结算余额:【{}】,冻结余额:【{}】", account.getClearBalance(), account.getSettleBalance(), account.getFreezeBalance());
         //退款金额=退款金额+退款手续费-收单手续费
         BigDecimal add = refundDTO.getRefundAmount().add(poundage).subtract(refundOrderFee);
         //账户金额
         BigDecimal balanceAmount = BigDecimal.ZERO;
         if (type.equals(TradeConstant.RF)) {
             //查询结算表中未结算的金额
-            BigDecimal unSettleAmount = tcsStFlowMapper.getUnSettleAmount(oldOrder.getMerchantId(),oldOrder.getOrderCurrency());
+            BigDecimal unSettleAmount = tcsStFlowMapper.getUnSettleAmount(oldOrder.getMerchantId(), oldOrder.getOrderCurrency());
             unSettleAmount = unSettleAmount == null ? BigDecimal.ZERO : unSettleAmount;
             //退款的场合直接看结算户金额+未结算的金额-冻结户金额
             balanceAmount = account.getSettleBalance().add(unSettleAmount).subtract(account.getFreezeBalance());
-        }else{
+        } else {
             //查询清算表中未清算的金额
-            BigDecimal unClearAmount =tcsCtFlowMapper.getUnClearAmount(oldOrder.getMerchantId(),refundDTO.getRefundCurrency());
+            BigDecimal unClearAmount = tcsCtFlowMapper.getUnClearAmount(oldOrder.getMerchantId(), refundDTO.getRefundCurrency());
             unClearAmount = unClearAmount == null ? BigDecimal.ZERO : unClearAmount;
             //撤销的场合=未清算的记录+清算账户金额
             balanceAmount = unClearAmount.add(account.getClearBalance());
         }
-        log.info("-----------------【退款】信息记录-------------- 当前 退款金额余额:【{}】，账户余额:【{}】",add,balanceAmount);
+        log.info("-----------------【退款】信息记录-------------- 当前 退款金额余额:【{}】，账户余额:【{}】", add, balanceAmount);
         if (balanceAmount.compareTo(add) == -1) {
             throw new BusinessException(EResultEnum.INSUFFICIENT_ACCOUNT_BALANCE.getCode());
         }
 
 
+        /********************************************************* 判断通道是否支持退款 *************************************************************/
+        //线下订单不支持退款上面已经拒绝 若是线上订单，通道不支持退款走人工退款
+        if (!channel.getSupportRefundState()) {
+            orderRefund.setRefundMode(TradeConstant.REFUND_MODE_PERSON);
+            orderRefundMapper.insert(orderRefund);
+
+            //上报清结算
+            FundChangeDTO fundChangeDTO = new FundChangeDTO();
+
+
+        }
 
 
         /*************************************************************** 订单是付款成功的场合 *************************************************************/

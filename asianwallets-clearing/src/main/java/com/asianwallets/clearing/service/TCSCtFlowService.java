@@ -1,7 +1,7 @@
 package com.asianwallets.clearing.service;
 import com.asianwallets.common.entity.TcsCtFlow;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.vo.clearing.IntoAndOutMerhtAccountRequest;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface TCSCtFlowService {
      * @Descripate  清算账户资金变动处理，主要操作包含插入清算表记录
      * @return
      **/
-    BaseResponse IntoAndOutMerhtSTAccount2(IntoAndOutMerhtAccountRequest ioma);
+    BaseResponse IntoAndOutMerhtSTAccount2(FundChangeDTO ioma);
 
     /**
      * @return
