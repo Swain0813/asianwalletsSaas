@@ -13,7 +13,6 @@ import com.asianwallets.trade.feign.MessageFeign;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.vo.BasicInfoVO;
-import com.asianwallets.trade.vo.CalculateCostVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -282,38 +281,134 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             }
         }
     }
+
     /**
      * 计算手续费
      *
-     * @param basicInfoVO
-     * @param orders
-     * @return
+     * @param basicInfoVO 交易基础信息实体
+     * @param orders      orders
      */
     @Override
-    public CalculateCostVO calculateCost(BasicInfoVO basicInfoVO, Orders orders) {
+    public void calculateCost(BasicInfoVO basicInfoVO, Orders orders) {
+        log.info("-----------------【计费信息记录】-----------------计算手续费开始");
         //机构产品
         MerchantProduct merchantProduct = basicInfoVO.getMerchantProduct();
-        if (!orders.getOrderCurrency().equals(basicInfoVO.getChannel().getCurrency())) {
-            if (!basicInfoVO.getInstitution().getDcc()) {
-                log.info("-----------------【计费信息记录】-----------------交易币种与订单币种不一致 机构未开通DCC");
-                orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
-                ordersMapper.insert(orders);
-                throw new BusinessException(EResultEnum.DCC_IS_NOT_OPEN.getCode());
-            }
-
-
-
+        if (!orders.getOrderCurrency().equals(basicInfoVO.getChannel().getCurrency()) && !basicInfoVO.getInstitution().getDcc()) {
+            log.info("-----------------【计算手续费】-----------------交易币种与订单币种不一致 机构未开通DCC");
+            orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
+            ordersMapper.insert(orders);
+            throw new BusinessException(EResultEnum.DCC_IS_NOT_OPEN.getCode());
         }
-
         //查询出商户对应产品的费率信息
         if (merchantProduct.getRate() == null || merchantProduct.getRateType() == null || merchantProduct.getAddValue() == null) {
-            log.info("-----------------【计费信息记录】-----------------费率:{},费率类型:{},机构产品信息:{}", merchantProduct.getRate(), merchantProduct.getRateType(), JSON.toJSONString(merchantProduct));
+            log.info("-----------------【计算手续费】-----------------商户产品配置信息错误 商户产品信息:{}", JSON.toJSONString(merchantProduct));
             orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
             ordersMapper.insert(orders);
             throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_CONFIGURATION_INFORMATION_ERROR.getCode());
         }
+        BigDecimal orderFee = BigDecimal.ZERO;
+        //单笔费率
+        if (merchantProduct.getRateType().equals(TradeConstant.FEE_TYPE_RATE)) {
+            //手续费=交易金额*单笔费率+附加值
+            orderFee = orders.getTradeAmount().multiply(merchantProduct.getRate()).add(merchantProduct.getAddValue());
+            //判断手续费是否小于最小值，大于最大值
+            if (merchantProduct.getMinTate() != null && orderFee.compareTo(merchantProduct.getMinTate()) < 0) {
+                orderFee = merchantProduct.getMinTate();
+            }
+            if (merchantProduct.getMaxTate() != null && orderFee.compareTo(merchantProduct.getMaxTate()) > 0) {
+                orderFee = merchantProduct.getMaxTate();
+            }
+        }
+        //单笔定额
+        if (merchantProduct.getRateType().equals(TradeConstant.FEE_TYPE_QUOTA)) {
+            //手续费=单笔定额值+附加值
+            orderFee = merchantProduct.getRate().add(merchantProduct.getAddValue());
+        }
+        //订单币种与交易币种不一致时，转换为订单币种的手续费
+        if (!orders.getOrderCurrency().equals(orders.getTradeCurrency())) {
+            //将手续费转换成订单币种的金额
+            BigDecimal amount = orderFee.multiply(orders.getTradeForOrderRate());
+            //四舍五入保留2位
+            orderFee = amount.setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+        orders.setFee(orderFee);
+        orders.setChargeStatus(TradeConstant.CHARGE_STATUS_SUCCESS);
+        orders.setChargeTime(new Date());
+        orders.setRateType(merchantProduct.getRateType());
+        orders.setAddValue(merchantProduct.getAddValue());
+        log.info("-----------------【计费信息记录】-----------------计算手续费结束 手续费:{}", orderFee);
 
+        log.info("-----------------【计费信息记录】-----------------计算通道手续费开始");
+        Channel channel = basicInfoVO.getChannel();
+        if (channel.getChannelRate() == null || channel.getChannelMinRate() == null
+                || channel.getChannelMaxRate() == null) {
+            log.info("-----------------【计算通道手续费】-----------------通道计费信息错误 channel:{}", JSON.toJSONString(channel));
+            orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
+            ordersMapper.insert(orders);
+            throw new BusinessException(EResultEnum.CALCCHANNEL_POUNDAGE_FAILURE.getCode());
+        }
+        BigDecimal channelFee = BigDecimal.ZERO;
+        //通道单笔费率
+        if (channel.getChannelFeeType().equals(TradeConstant.FEE_TYPE_RATE)) {
+            //通道手续费=交易金额*费率
+            channelFee = orders.getTradeAmount().multiply(channel.getChannelRate());
+            //判断通道手续费是否小于最小值，大于最大值
+            if (channel.getChannelMinRate() != null && channelFee.compareTo(channel.getChannelMinRate()) < 0) {
+                channelFee = channel.getChannelMinRate();
+            }
+            if (channel.getChannelMaxRate() != null && channelFee.compareTo(channel.getChannelMaxRate()) > 0) {
+                channelFee = channel.getChannelMaxRate();
+            }
+        } else if (channel.getChannelFeeType().equals(TradeConstant.FEE_TYPE_QUOTA)) {
+            //通道单笔定额
+            //通道手续费=通道单笔定额
+            channelFee = channel.getChannelRate();
+        }
+        //TODO 此处四舍五入未添加 待测试
+        orders.setChannelFee(channelFee);
+        orders.setChannelFeeType(channel.getChannelFeeType());
+        orders.setChannelRate(channel.getChannelRate());
+        log.info("-----------------【计费信息记录】-----------------计算通道手续费结束 通道手续费:{}", channelFee);
 
-        return null;
+        CalcGatewayFee(orders, channel);
+    }
+
+    /**
+     * @param orders  订单
+     * @param channel 通道
+     */
+    private void CalcGatewayFee(Orders orders, Channel channel) {
+        log.info("-----------------【计费信息记录】-----------------计算通道网关手续费开始");
+        BigDecimal channelGatewayFee = BigDecimal.ZERO;
+        if (channel.getChannelGatewayRate() == null || channel.getChannelGatewayMinRate() == null ||
+                channel.getChannelGatewayMaxRate() == null) {
+            log.info("-----------------【计算通道网关手续费】-----------------通道网关计费信息错误 channel:{}", JSON.toJSONString(channel));
+            orders.setTradeStatus(TradeConstant.PAYMENT_FAIL);
+            ordersMapper.insert(orders);
+            throw new BusinessException(EResultEnum.CALCCHANNEL_GATEWAYPOUNDAGE_FAILURE.getCode());
+        }
+        //单笔费率
+        if (channel.getChannelGatewayFeeType().equals(TradeConstant.FEE_TYPE_RATE)) {
+            //手续费=交易金额*费率
+            channelGatewayFee = orders.getTradeAmount().multiply(channel.getChannelGatewayRate());
+            //判断手续费是否小于最小值，大于最大值
+            if (channel.getChannelGatewayMinRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMinRate()) == -1) {
+                channelGatewayFee = channel.getChannelGatewayMinRate();
+            }
+            if (channel.getChannelGatewayMaxRate() != null && channelGatewayFee.compareTo(channel.getChannelGatewayMaxRate()) == 1) {
+                channelGatewayFee = channel.getChannelGatewayMaxRate();
+            }
+        }
+        //单笔定额
+        if (channel.getChannelGatewayFeeType().equals(TradeConstant.FEE_TYPE_QUOTA)) {
+            //手续费=通道网关手续费
+            channelGatewayFee = channel.getChannelGatewayRate();
+        }
+        orders.setChannelGatewayFee(channelGatewayFee);
+        orders.setChannelGatewayCharge(channel.getChannelGatewayCharge());
+        orders.setChannelGatewayStatus(channel.getChannelGatewayStatus());
+        orders.setChannelGatewayFeeType(channel.getChannelGatewayFeeType());
+        orders.setChannelGatewayRate(channel.getChannelGatewayRate());
+        log.info("-----------------【计费信息记录】-----------------计算通道手续费结束 通道手续费:{}", channelGatewayFee);
     }
 }

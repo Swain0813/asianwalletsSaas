@@ -57,7 +57,7 @@ public abstract class ChannelsAbstract {
      * @param channel      通道
      * @return 通用响应实体
      */
-    public abstract BaseResponse cancle(Orders orders, Channel channel);
+    public abstract BaseResponse cancel(Orders orders, Channel channel);
 
 
     /**
@@ -67,8 +67,6 @@ public abstract class ChannelsAbstract {
      * @return
      **/
     public abstract BaseResponse cancelPaying(Orders orders, Channel channel);
-
-
 
 
 }

@@ -5,11 +5,13 @@ import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.common.vo.SysUserVO;
+import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.DeviceBindingMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
@@ -166,17 +168,25 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      */
     private BasicInfoVO getBasicAndCheck(OfflineTradeDTO offlineTradeDTO) {
         Merchant merchant = commonRedisDataService.getMerchantById(offlineTradeDTO.getMerchantId());
-        if (merchant == null || !merchant.getEnabled()) {
-            log.info("==================【线下收单】==================【商户信息不合法】");
-            return null;
+        if (merchant == null) {
+            log.info("==================【线下收单】==================【商户不存在】");
+            throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
+        }
+        if (!merchant.getEnabled()) {
+            log.info("==================【线下收单】==================【商户被禁用】");
+            throw new BusinessException(EResultEnum.MERCHANT_IS_DISABLED.getCode());
         }
         Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
-        if (institution == null || !institution.getEnabled()) {
-            log.info("==================【线下收单】==================【机构信息不合法】");
-            return null;
+        if (institution == null) {
+            log.info("==================【线下收单】==================【机构不存在】");
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
+        if (!institution.getEnabled()) {
+            log.info("==================【线下收单】==================【机构被禁用】");
+            throw new BusinessException(EResultEnum.INSTITUTION_DOES_NOT_EXIST.getCode());
         }
         InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
-        if (institutionRequestParameters == null || !institutionRequestParameters.getEnabled()) {
+        if (institutionRequestParameters == null) {
             log.info("==================【线下收单】==================【机构请求参数信息不合法】");
             return null;
         }
@@ -234,6 +244,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         basicsInfoVO.setProduct(product);
         basicsInfoVO.setChannel(channel);
         basicsInfoVO.setMerchantProduct(merchantProduct);
+        basicsInfoVO.setInstitution(institution);
         return basicsInfoVO;
     }
 
@@ -280,6 +291,13 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         Orders orders = setAttributes(offlineTradeDTO, basicInfoVO);
         //校验是否换汇
         if (!orders.getTradeCurrency().equals(basicInfoVO.getChannel().getCurrency())) {
+            //校验机构DCC
+            if (!basicInfoVO.getInstitution().getDcc()) {
+                orders.setRemark("机构不支持DCC");
+                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+                ordersMapper.insert(orders);
+                throw new BusinessException(EResultEnum.LIMIT_AMOUNT_ERROR.getCode());
+            }
             //换汇计算
             CalcExchangeRateVO calcExchangeRateVO = commonBusinessService.calcExchangeRate(orders.getOrderCurrency(), orders.getTradeCurrency(), basicInfoVO.getMerchantProduct().getFloatRate(), offlineTradeDTO.getOrderAmount());
             orders.setExchangeTime(calcExchangeRateVO.getExchangeTime());
@@ -289,7 +307,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
                 orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
                 orders.setRemark("换汇失败");
                 ordersMapper.insert(orders);
-                //换汇失败
                 throw new BusinessException(EResultEnum.SYS_ERROR_CREATE_ORDER_FAIL.getCode());
             }
             orders.setExchangeRate(calcExchangeRateVO.getExchangeRate());
@@ -297,11 +314,26 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             orders.setOrderForTradeRate(calcExchangeRateVO.getOriginalRate());
             orders.setTradeForOrderRate(calcExchangeRateVO.getReverseRate());
         } else {
-            log.info("==================【线下CSB】下单信息记录==================【订单未换汇】");
+            log.info("==================【线下CSB动态扫码】==================【订单未换汇】");
             orders.setTradeAmount(orders.getOrderAmount());
             orders.setOrderForTradeRate(BigDecimal.ONE);
             orders.setTradeForOrderRate(BigDecimal.ONE);
             orders.setExchangeRate(BigDecimal.ONE);
+        }
+        //校验商户产品与通道的限额
+        commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //TODO 计算手续费
+        orders.setReportChannelTime(new Date());
+        orders.setTradeStatus(TradeConstant.ORDER_PAYING);
+        log.info("==================【线下CSB动态扫码】==================【落地订单信息】 orders:{}", JSON.toJSONString(orders));
+        ordersMapper.insert(orders);
+        //上报通道
+        try {
+            ChannelsAbstract channelsAbstract = (ChannelsAbstract) Class.forName(TradeConstant.channelsMap.get(basicInfoVO.getChannel().getServiceNameMark())).newInstance();
+            BaseResponse baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
+        } catch (Exception e) {
+            log.info("==================【线下CSB动态扫码】==================【上报通道异常】", e);
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         CsbDynamicScanVO csbDynamicScanVO = new CsbDynamicScanVO();
         csbDynamicScanVO.setOrderNo(orders.getMerchantOrderId());
