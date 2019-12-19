@@ -19,4 +19,10 @@
         id, bank_name, issuer_id,currency, channel_code,enabled, create_time, update_time, creator, modifier, remark
     </sql>
 
+    <select id="selectByChannelCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bank_issuer_id
+        where channel_code = #{channelCode} and enabled = 1 limit 1
+    </select>
 </mapper>

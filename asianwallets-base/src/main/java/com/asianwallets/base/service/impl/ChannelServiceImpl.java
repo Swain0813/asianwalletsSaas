@@ -128,6 +128,9 @@ public class ChannelServiceImpl implements ChannelService {
         //同步Redis
         redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
         redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channel.getChannelCode()), JSON.toJSONString(channel));
+        for (ChannelBank channelBank : channelBankList) {
+            redisService.set(AsianWalletConstant.CHANNEL_BANK_CACHE_KEY.concat("_").concat(channelBank.getId()), JSON.toJSONString(channelBank));
+        }
         return channelMapper.insert(channel);
     }
 
@@ -205,6 +208,9 @@ public class ChannelServiceImpl implements ChannelService {
         //同步Redis
         redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
         redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channel.getChannelCode()), JSON.toJSONString(channel));
+        for (ChannelBank channelBank : channelBankList) {
+            redisService.set(AsianWalletConstant.CHANNEL_BANK_CACHE_KEY.concat("_").concat(channelBank.getId()), JSON.toJSONString(channelBank));
+        }
         return channelMapper.updateByPrimaryKeySelective(channel);
     }
 

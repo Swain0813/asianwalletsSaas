@@ -2,6 +2,8 @@ package com.asianwallets.trade.service;
 
 import com.asianwallets.common.entity.*;
 
+import java.util.List;
+
 /**
  * 通用获取数据接口
  */
@@ -78,6 +80,7 @@ public interface CommonRedisDataService {
      * 根据通道ID查询通道信息
      *
      * @param channelId 通道ID
+     * @return 通道
      */
     Channel getChannelById(String channelId);
 
@@ -87,4 +90,21 @@ public interface CommonRedisDataService {
      * @param channelCode 通道code
      */
     Channel getChannelByChannelCode(String channelCode);
+
+    /**
+     * 根据商户产品ID查询通道银行ID集合信息
+     *
+     * @param merProId 商户产品ID
+     * @return 通道银行ID集合
+     */
+    List<String> getChaBankIdByMerProId(String merProId);
+
+    /**
+     * 根据通道银行ID查询通道银行
+     *
+     * @param chaBankId 通道银行ID
+     * @return 通道银行
+     */
+    ChannelBank getChaBankById(String chaBankId);
+
 }
