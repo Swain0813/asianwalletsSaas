@@ -59,7 +59,7 @@
         <include refid="Base_Column_List"/>
         from merchant_product where merchant_id = #{merchantId} and product_id = #{productId}
     </select>
-    <select id="selectOnlineInfo" resultType="com.asianwallets.trade.vo.OnlineInfoVO">
+    <select id="selectOnlineInfo" resultType="com.asianwallets.trade.vo.OnlineInfoDetailVO">
         select mc.mer_pro_id  AS merProId,
                b.bank_name    AS bankName,
                p.product_code AS productCode,

@@ -2,20 +2,19 @@ package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.TradeConstant;
-import com.asianwallets.common.entity.Institution;
-import com.asianwallets.common.entity.InstitutionRequestParameters;
-import com.asianwallets.common.entity.Merchant;
-import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.trade.channels.help2pay.Help2PayService;
+import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.MerchantProductMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OnlineGatewayService;
+import com.asianwallets.trade.vo.OnlineInfoDetailVO;
 import com.asianwallets.trade.vo.OnlineInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,9 @@ import java.util.List;
 @Service
 @Transactional(rollbackFor = Exception.class, noRollbackFor = BusinessException.class)
 public class OnlineGatewayServiceImpl implements OnlineGatewayService {
+
+    @Autowired
+    private BankIssuerIdMapper bankIssuerIdMapper;
 
     @Autowired
     private Help2PayService help2PayService;
@@ -130,7 +132,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             log.info("-----------------【线上直连】下单信息记录--------------【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }
-        //可选参数校验
+        //商户
         Merchant merchant = commonRedisDataService.getMerchantById(onlineTradeDTO.getMerchantId());
         if (merchant == null) {
             log.info("-----------------【线上直连】下单信息记录--------------【商户不存在】");
@@ -138,11 +140,20 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
         if (!merchant.getEnabled()) {
             log.info("-----------------【线上直连】下单信息记录--------------【商户被禁用】");
-            throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
+            throw new BusinessException(EResultEnum.MERCHANT_IS_DISABLED.getCode());
         }
+        //机构
         Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
-
-        InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
+        if (institution == null) {
+            log.info("-----------------【线上直连】下单信息记录--------------【机构不存在】");
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
+        if (!institution.getEnabled()) {
+            log.info("-----------------【线上直连】下单信息记录--------------【机构被禁用】");
+            throw new BusinessException(EResultEnum.INSTITUTION_DOES_NOT_EXIST.getCode());
+        }
+        //可选参数校验
+        InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_ONLINE);
         checkRequestParameters(onlineTradeDTO, institutionRequestParameters);
         //校验订单金额
         if (onlineTradeDTO.getOrderAmount().compareTo(BigDecimal.ZERO) <= 0) {
@@ -157,22 +168,58 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
         //获取商户信息
         getOnlineInfo(onlineTradeDTO.getMerchantId(), onlineTradeDTO.getIssuerId());
+
         return null;
     }
 
-    private void getOnlineInfo(String merchantId, String issuerId) {
-        List<OnlineInfoVO> onlineInfoVOList = merchantProductMapper.selectOnlineInfo(merchantId, issuerId);
-        if (onlineInfoVOList == null || onlineInfoVOList.size() == 0) {
-            log.info("------------------ 商户产品通道信息不存在 直连从数据库查询关系信息为空  ------------------");
+    /**
+     * 获取线上基础信息
+     * @param merchantId 商户ID
+     * @param issuerId issuerId
+     * @return OnlineInfoVO 线上基础信息实体
+     */
+    private OnlineInfoVO getOnlineInfo(String merchantId, String issuerId) {
+        List<OnlineInfoDetailVO> onlineInfoDetailVOList = merchantProductMapper.selectOnlineInfo(merchantId, issuerId);
+        if (onlineInfoDetailVOList == null || onlineInfoDetailVOList.size() == 0) {
+            log.info("-----------------【线上获取基础信息】-----------------商户产品通道信息不存在 直连从数据库查询关系信息为空");
             throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_CHANNEL_NOT_EXISTS.getCode());
         }
+        OnlineInfoVO onlineInfoVO = new OnlineInfoVO();
+        for (OnlineInfoDetailVO onlineInfoDetailVO : onlineInfoDetailVOList) {
+            //通道
+            Channel channel = commonRedisDataService.getChannelByChannelCode(onlineInfoDetailVO.getChannelCode());
+            //映射表
+            BankIssuerId bankIssuerId = bankIssuerIdMapper.selectBankAndIssuerId(channel.getCurrency(), onlineInfoDetailVO.getBankName(), channel.getChannelCode());
+            if (bankIssuerId != null) {
+                channel.setIssuerId(bankIssuerId.getIssuerId());
+            } else {
+                continue;
+            }
+            //产品
+            Product product = commonRedisDataService.getProductByCode(onlineInfoDetailVO.getProductCode());
+            if (!product.getEnabled()) {
+                log.info("-----------------【线上获取基础信息】----------------- 产品被禁用");
+                throw new BusinessException(EResultEnum.PRODUCT_STATUS_ABNORMAL.getCode());
+            }
+            //商户产品
+            MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchantId, product.getId());
+            if (!merchantProduct.getEnabled()) {
+                log.info("-----------------【线上获取基础信息】----------------- 商户产品被禁用");
+                throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_IS_DISABLED.getCode());
+            }
+            onlineInfoVO.setBankName(onlineInfoDetailVO.getBankName());
+            onlineInfoVO.setChannel(channel);
+            onlineInfoVO.setProduct(product);
+            onlineInfoVO.setMerchantProduct(merchantProduct);
+        }
+        return onlineInfoVO;
     }
 
 
     /**
      * 校验请求参数
      *
-     * @param onlineTradeDTO
+     * @param onlineTradeDTO 线上收单实体
      * @param institutionRequestParameters 机构请求参数实体
      */
     private void checkRequestParameters(OnlineTradeDTO onlineTradeDTO, InstitutionRequestParameters institutionRequestParameters) {

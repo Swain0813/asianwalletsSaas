@@ -320,7 +320,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             log.info("-----------------通道禁用 ----------------- channelCode:{}", channelCode);
             throw new BusinessException(EResultEnum.CHANNEL_STATUS_ABNORMAL.getCode());
         }
-        log.info("================== CommonService getChannelByChannelCode =================== channel: {}", JSON.toJSONString(channel));
+        log.info("================== CommonRedisDataServiceImpl getChannelByChannelCode =================== channel: {}", JSON.toJSONString(channel));
         return channel;
     }
 }

@@ -2,7 +2,7 @@ package com.asianwallets.trade.dao;
 
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.MerchantProduct;
-import com.asianwallets.trade.vo.OnlineInfoVO;
+import com.asianwallets.trade.vo.OnlineInfoDetailVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -27,5 +27,5 @@ public interface MerchantProductMapper extends BaseMapper<MerchantProduct> {
      * @param issuerId   issuerID
      * @return OnlineInfoVO
      */
-    List<OnlineInfoVO> selectOnlineInfo(@Param("merchantId") String merchantId, @Param("issuerId") String issuerId);
+    List<OnlineInfoDetailVO> selectOnlineInfo(@Param("merchantId") String merchantId, @Param("issuerId") String issuerId);
 }

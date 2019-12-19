@@ -1,22 +1,25 @@
 package com.asianwallets.trade.vo;
 
+import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.MerchantProduct;
+import com.asianwallets.common.entity.Product;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(value = "线上查询基础数据vo", description = "线上查询基础数据vo")
+@ApiModel(value = "线上基础信息实体", description = "线上基础信息实体")
 public class OnlineInfoVO {
 
-    @ApiModelProperty("通道code")
-    private String channelCode;
+    @ApiModelProperty("产品")
+    private Product product;
 
-    @ApiModelProperty("merchant_product id")
-    private String merProId;
+    @ApiModelProperty("商户产品")
+    private MerchantProduct merchantProduct;
+
+    @ApiModelProperty("通道")
+    private Channel channel;
 
     @ApiModelProperty("银行名称")
     private String bankName;
-
-    @ApiModelProperty("产品code")
-    private String productCode;
 }

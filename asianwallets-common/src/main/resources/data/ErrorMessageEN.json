@@ -104,6 +104,7 @@
   "10103": "Insufficient minimum amount",
   "10104": "Order payment failed",
   "10105": "Merchant is disabled",
+  "10106": "Merchant product is disabled",
 
   "20001": "The announcement id cannot be empty",
   "20002": "The announcement category cannot be empty",
