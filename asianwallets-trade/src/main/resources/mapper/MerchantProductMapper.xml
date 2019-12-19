@@ -59,12 +59,12 @@
         <include refid="Base_Column_List"/>
         from merchant_product where merchant_id = #{merchantId} and product_id = #{productId}
     </select>
-    <select id="selectOnlineInfo" resultType="com.asianwallets.trade.vo.OnlineInfoDetailVO">
-        select mc.mer_pro_id  AS merProId,
+    <select id="selectOnlineInfoDetail" resultType="com.asianwallets.trade.vo.OnlineInfoDetailVO">
+        SELECT mc.mer_pro_id  AS merProId,
                b.bank_name    AS bankName,
                p.product_code AS productCode,
                c.channel_code AS channelCode
-        from merchant_product mp
+        FROM merchant_product mp
                  left join product p on p.id = mp.product_id
                  left join merchant_channel mc on mp.id = mc.mer_pro_id
                  left join channel_bank cb on mc.cha_ban_id = cb.id
@@ -77,7 +77,7 @@
           AND c.enabled = 1
           AND p.enabled = 1
           AND p.trade_direction = 1
-          and c.currency = p.currency
+          AND c.currency = p.currency
           AND mp.merchant_id = #{merchantId}
           AND b.issuer_id = #{issuerId}
         ORDER BY mc.sort
