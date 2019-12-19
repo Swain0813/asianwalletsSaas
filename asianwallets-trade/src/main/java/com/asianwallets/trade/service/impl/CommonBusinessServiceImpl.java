@@ -369,8 +369,11 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         orders.setChannelFeeType(channel.getChannelFeeType());
         orders.setChannelRate(channel.getChannelRate());
         log.info("-----------------【计费信息记录】-----------------计算通道手续费结束 通道手续费:{}", channelFee);
-
-        CalcGatewayFee(orders, channel);
+        //计算通道网关手续费
+        if (TradeConstant.CHANNEL_GATEWAY_CHARGE_YES.equals(channel.getChannelGatewayCharge())
+                && TradeConstant.CHANNEL_GATEWAY_CHARGE_ALL_STATUS.equals(channel.getChannelGatewayStatus())) {
+            CalcGatewayFee(orders, channel);
+        }
     }
 
     /**
