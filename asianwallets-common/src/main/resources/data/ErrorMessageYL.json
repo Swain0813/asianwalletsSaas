@@ -103,8 +103,7 @@
   "10102": "Số tiền rút không đủ",
   "10103": "Số tiền tối thiểu không đủ",
   "10104": "Thanh toán đơn hàng không thành công",
-  "10105": "Giá trị tham số không hợp pháp",
-
+  "10105": "Người bán bị vô hiệu hóa",
   "20001": "Id thông báo không thể rỗng",
   "20002": "Các hạng mục thông báo không thể rỗng",
   "20003": "Ngôn ngữ thông báo không phải là trống rỗng",
