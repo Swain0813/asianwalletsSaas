@@ -1,14 +1,13 @@
 package com.asianwallets.channels.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.Ad3Service;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
-import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
-import com.asianwallets.common.dto.ad3.AD3LoginDTO;
-import com.asianwallets.common.dto.ad3.LoginBizContentDTO;
+import com.asianwallets.common.dto.ad3.*;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
 import com.asianwallets.common.redis.RedisService;
@@ -20,6 +19,8 @@ import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.utils.SignTools;
 import com.asianwallets.common.vo.AD3CSBScanVO;
 import com.asianwallets.common.vo.AD3LoginVO;
+import com.asianwallets.common.vo.AD3RefundOrderVO;
+import com.asianwallets.common.vo.RefundAdResponseVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -154,6 +155,68 @@ public class Ad3ServiceImpl implements Ad3Service {
             log.info("=================【AD3线下CSB】=================【接口异常】", e);
             baseResponse.setCode(TradeConstant.HTTP_FAIL);
             baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+        }
+        return baseResponse;
+    }
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/20
+     * @Descripate AD3线下退款接口
+     * @return
+     **/
+    @Override
+    public BaseResponse offlineRefund(AD3ONOFFRefundDTO ad3ONOFFRefundDTO) {
+        BaseResponse baseResponse = new BaseResponse();
+        AD3RefundDTO ad3RefundDTO  = ad3ONOFFRefundDTO.getAd3RefundDTO();
+        Channel channel = ad3ONOFFRefundDTO.getChannel();
+        log.info("===========================【AD3线下退款接口】开始时间 =========================== ad3RefundDTO :{}",JSON.toJSONString(ad3RefundDTO));
+        HttpResponse httpResponse = HttpClientUtils.reqPost(channel.getRefundUrl() + "/posRefund.json", ad3RefundDTO, null);
+        log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}",JSON.toJSONString(httpResponse));
+        if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
+            AD3RefundOrderVO ad3RefundOrderVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3RefundOrderVO.class);
+            if (ad3RefundOrderVO.getRespCode() != null && ad3RefundOrderVO.getRespCode().equals(AD3Constant.AD3_OFFLINE_SUCCESS)) {
+                baseResponse.setCode(AD3Constant.AD3_ONLINE_SUCCESS);
+                baseResponse.setData(ad3RefundOrderVO);
+            }else{
+                baseResponse.setCode("T001");
+                baseResponse.setData(ad3RefundOrderVO);
+            }
+        }else{
+            baseResponse.setCode("T001");
+            baseResponse.setData(null);
+        }
+        return baseResponse;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/20
+     * @Descripate AD3线上退款接口
+     * @return
+     **/
+    @Override
+    public BaseResponse onlineRefund(AD3ONOFFRefundDTO ad3ONOFFRefundDTO) {
+        BaseResponse baseResponse = new BaseResponse();
+        Channel channel = ad3ONOFFRefundDTO.getChannel();
+        SendAdRefundDTO sendAdRefundDTO = ad3ONOFFRefundDTO.getSendAdRefundDTO();
+        log.info("===========================【AD3线下退款接口】开始时间 =========================== sendAdRefundDTO :{}",JSON.toJSONString(sendAdRefundDTO));
+        HttpResponse httpResponse = HttpClientUtils.reqPost(channel.getRefundUrl(), sendAdRefundDTO, null);
+        log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}",JSON.toJSONString(httpResponse));
+        if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
+            //请求成功
+            RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(httpResponse.getJsonObject().toJSONString(), RefundAdResponseVO.class);
+            if (refundAdResponseVO != null && refundAdResponseVO.getStatus().equals("1")) {
+                baseResponse.setCode(AD3Constant.AD3_ONLINE_SUCCESS);
+                baseResponse.setData(refundAdResponseVO);
+            }else{
+                baseResponse.setCode("T001");
+                baseResponse.setData(refundAdResponseVO);
+            }
+        }else{
+            baseResponse.setCode("T001");
+            baseResponse.setData(null);
         }
         return baseResponse;
     }
