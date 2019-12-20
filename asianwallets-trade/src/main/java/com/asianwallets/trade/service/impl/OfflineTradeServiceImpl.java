@@ -12,6 +12,7 @@ import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
+import com.asianwallets.trade.channels.ad3.Ad3Service;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.DeviceBindingMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
@@ -324,8 +325,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         return orders;
     }
 
-    @Autowired
-    private ChannelsFeign channelsFeign;
     /**
      * 线下同机构CSB动态扫码
      *
@@ -335,7 +334,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     @Override
     public CsbDynamicScanVO csbDynamicScan(OfflineTradeDTO offlineTradeDTO) {
         log.info("==================【线下CSB动态扫码】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
-        BaseResponse channelResponse = channelsFeign.ad3OfflineCsb(null);
         //重复请求
         if (!commonBusinessService.repeatedRequests(offlineTradeDTO.getMerchantId(), offlineTradeDTO.getOrderNo())) {
             log.info("==================【线下CSB动态扫码】==================【重复请求】");
