@@ -234,6 +234,7 @@ public class TradeConstant {
     public static final Map<String, String> channelsMap = new HashMap<String, String>() {
         {
             put("AD3_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
+            put("AD3_OFFLINE", "com.asianwallets.trade.channels.ad3.impl.Ad3ServiceImpl");
             put("EGHL_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
             put("MEGAPAY_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
             put("VTC_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
@@ -246,7 +247,6 @@ public class TradeConstant {
             put("WECHAT_CSB_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
             put("CLOUD_PAY_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
             put("DOKU_PAY_ONLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
-            put("AD3_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
             put("NEXTPOS_CSB_OFFLINE", "com.asianwallets.trade.channels.nextpos.impl.NextPosServiceImpl");
             put("ENETS_CSB_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");
             put("ALIPAY_BSC_OFFLINE", "com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl");

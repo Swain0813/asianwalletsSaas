@@ -1,5 +1,7 @@
 package com.asianwallets.trade.service.impl;
+
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
@@ -15,11 +17,11 @@ import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.vo.BasicInfoVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.Date;
@@ -31,7 +33,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class    CommonBusinessServiceImpl implements CommonBusinessService {
+public class CommonBusinessServiceImpl implements CommonBusinessService {
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
@@ -44,6 +46,9 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
 
     @Autowired
     private OrdersMapper ordersMapper;
+
+    @Autowired
+    private AuditorProvider auditorProvider;
 
     @Autowired
     private OrderRefundMapper orderRefundMapper;
@@ -242,7 +247,7 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
         }
         //校验机构产品限额
         if (merchantProduct.getAuditStatus() != null && TradeConstant.AUDIT_SUCCESS.equals(merchantProduct.getAuditStatus())) {
-            if (orders.getTradeAmount().compareTo(merchantProduct.getLimitAmount()) > 0) {
+            if (merchantProduct.getLimitAmount() != null && orders.getTradeAmount().compareTo(merchantProduct.getLimitAmount()) > 0) {
                 log.info("==================【校验商户产品与通道的限额】==================【交易金额大于商户产品单笔限额】");
                 orders.setRemark("交易金额大于商户产品单笔限额");
                 orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
@@ -264,7 +269,7 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
             } else {
                 //日交易笔数
                 Integer dailyTradingCount = Integer.parseInt(dailyCount);
-                if (dailyTradingCount >= merchantProduct.getDailyTradingCount()) {
+                if (merchantProduct.getDailyTradingCount() != null && dailyTradingCount >= merchantProduct.getDailyTradingCount()) {
                     log.info("==================【校验商户产品与通道的限额】==================【日交易笔数不合法】 dailyTradingCount: {}", dailyTradingCount);
                     orders.setRemark("日交易笔数不合法");
                     orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
@@ -273,7 +278,7 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
                 }
                 //TODO 日交易限额
         /*        BigDecimal dailyTotalAmount = new BigDecimal(dailyAmount);
-                if (dailyTotalAmount.compareTo(merchantProduct.getDailyTotalAmount()) >= 0) {
+                if (merchantProduct.getDailyTotalAmount() != null && dailyTotalAmount.compareTo(merchantProduct.getDailyTotalAmount()) >= 0) {
                     log.info("==================【校验商户产品与通道的限额】==================【日交易金额不合法】 dailyTotalAmount: {}", dailyTotalAmount);
                     orders.setRemark("日交易金额不合法");
                     orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
@@ -282,6 +287,39 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
                     return baseResponse;
                 }*/
             }
+        }
+    }
+
+    /**
+     * 截取Url
+     *
+     * @param serverUrl 服务器回调地址
+     * @param orders    订单
+     */
+    @Override
+    public void getUrl(String serverUrl, Orders orders) {
+        try {
+            if (!StringUtils.isEmpty(serverUrl)) {
+                String[] split = serverUrl.split("/");
+                StringBuffer sb = new StringBuffer();
+                if (serverUrl.contains("http")) {
+                    for (int i = 0; i < split.length; i++) {
+                        if (i == 2) {
+                            sb.append(split[i]);
+                            break;
+                        } else {
+                            sb.append(split[i]).append("/");
+                        }
+                    }
+                } else {
+                    sb.append(split[0]);
+                }
+                orders.setReqIp(String.valueOf(sb));//请求ip
+            } else {
+                orders.setReqIp(auditorProvider.getReqIp());//请求ip
+            }
+        } catch (Exception e) {
+            log.info("===============【截取网站URL异常】===============", e);
         }
     }
 
@@ -424,14 +462,15 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
 
     /**
      * 退款和撤销成功的场合
+     *
      * @param orderRefund
      */
     @Override
-    public void updateOrderRefundSuccess(OrderRefund orderRefund){
+    public void updateOrderRefundSuccess(OrderRefund orderRefund) {
         if(orderRefund.getRemark4()!=null && TradeConstant.RV.equals(orderRefund.getRemark4())){
             //撤销成功-更新订单的撤销状态
             ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), null, TradeConstant.ORDER_CANNEL_SUCCESS);
-        }else{
+        } else {
             //退款成功的场合
             if (TradeConstant.REFUND_TYPE_TOTAL.equals(orderRefund.getRefundType())) {
                 ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_SUCCESS);

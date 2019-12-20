@@ -9,12 +9,15 @@ import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3LoginDTO;
 import com.asianwallets.common.dto.ad3.LoginBizContentDTO;
+import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.HttpResponse;
 import com.asianwallets.common.utils.HttpClientUtils;
 import com.asianwallets.common.utils.MD5Util;
+import com.asianwallets.common.utils.ReflexClazzUtils;
+import com.asianwallets.common.utils.SignTools;
 import com.asianwallets.common.vo.AD3CSBScanVO;
 import com.asianwallets.common.vo.AD3LoginVO;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -34,26 +38,40 @@ public class Ad3ServiceImpl implements Ad3Service {
     @Autowired
     private RedisService redisService;
 
+    private String createSign(Object commonObj, Object businessObj, String token) {
+        Map<String, String> commonMap = ReflexClazzUtils.getFieldForStringValue(commonObj);
+        Map<String, String> businessMap = ReflexClazzUtils.getFieldForStringValue(businessObj);
+        commonMap.putAll(businessMap);
+        String signature = SignTools.getSignStr(commonMap);
+        String clearText = signature + "&" + token;
+        log.info("=================【AD3线下CSB】=================【签名前的明文】 clearText: {}", clearText);
+        //与token进行拼接MD5加密
+        String sign = MD5Util.getMD5String(clearText);
+        log.info("=================【AD3线下CSB】=================【签名后的密文】 sign: {}", sign);
+        return sign;
+    }
+
     /**
      * AD3登陆
      *
-     * @param channelsRequestDTO 通道请求实体
+     * @param ad3CSBScanPayDTO AD3线下CSB输入实体
      * @return AD3登陆响应参数
      */
-    private AD3LoginVO offlineLogin(AD3CSBScanPayDTO ad3CSBScanPayDTO, ChannelsRequestDTO channelsRequestDTO) {
+    private AD3LoginVO offlineLogin(AD3CSBScanPayDTO ad3CSBScanPayDTO) {
         AD3LoginVO ad3LoginVO = null;
         String token = redisService.get(AD3Constant.AD3_LOGIN_TOKEN);
         String terminalId = redisService.get(AD3Constant.AD3_LOGIN_TERMINAL);
+        Channel channel = ad3CSBScanPayDTO.getChannel();
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(terminalId)) {
             //AD3登陆业务参数实体
-            LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT, channelsRequestDTO.getExtend2(), MD5Util.getMD5String(channelsRequestDTO.getExtend3()), channelsRequestDTO.getExtend4());
+            LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT, channel.getExtend2(), MD5Util.getMD5String(channel.getExtend3()), channel.getExtend4());
             //AD3登陆公共参数实体
             AD3LoginDTO ad3LoginDTO = new AD3LoginDTO(ad3CSBScanPayDTO.getMerchantId(), bizContent);
             //先登出
-            HttpClientUtils.reqPost(channelsRequestDTO.getExtend5(), ad3LoginDTO, null);
+            HttpClientUtils.reqPost(channel.getExtend5(), ad3LoginDTO, null);
             //再登陆
             bizContent.setType(AD3Constant.LOGIN_IN);
-            HttpResponse httpResponse = HttpClientUtils.reqPost(channelsRequestDTO.getExtend5(), ad3LoginDTO, null);
+            HttpResponse httpResponse = HttpClientUtils.reqPost(channel.getExtend5(), ad3LoginDTO, null);
             //状态码为200
             if (httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
                 ad3LoginVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3LoginVO.class);
@@ -76,54 +94,67 @@ public class Ad3ServiceImpl implements Ad3Service {
     /**
      * AD3线下CSB
      *
-     * @param ad3CSBScanPayDTO   AD3线下CSB输入实体
-     * @param channelsRequestDTO 通道请求实体
+     * @param ad3CSBScanPayDTO AD3线下CSB输入实体
      * @return BaseResponse
      */
     @Override
-    public BaseResponse offlineCsb(AD3CSBScanPayDTO ad3CSBScanPayDTO, ChannelsRequestDTO channelsRequestDTO) {
-        log.info("=================【AD3线下CSB】=================【请求参数】 ad3CSBScanPayDTO: {} | channelsRequestDTO: {}", JSON.toJSONString(ad3CSBScanPayDTO), JSON.toJSONString(channelsRequestDTO));
-        ChannelsOrder channelsOrder = new ChannelsOrder();
-        channelsOrder.setId(ad3CSBScanPayDTO.getBizContent().getMerOrderNo());
-        channelsOrder.setMerchantOrderId(channelsRequestDTO.getMerchantOrderId());
-        channelsOrder.setTradeCurrency(channelsRequestDTO.getTradeCurrency());
-        channelsOrder.setTradeAmount(new BigDecimal(ad3CSBScanPayDTO.getBizContent().getMerorderAmount()));
-        channelsOrder.setReqIp(channelsRequestDTO.getReqIp());
-        channelsOrder.setServerUrl(ad3CSBScanPayDTO.getBizContent().getReceiveUrl());
-        channelsOrder.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
-        channelsOrder.setIssuerId(ad3CSBScanPayDTO.getBizContent().getIssuerId());
-        channelsOrder.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
-        channelsOrder.setMd5KeyStr(channelsRequestDTO.getMd5KeyStr());
-        channelsOrderMapper.insert(channelsOrder);
-
+    public BaseResponse offlineCsb(AD3CSBScanPayDTO ad3CSBScanPayDTO) {
+        log.info("=================【AD3线下CSB】=================【请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3CSBScanPayDTO));
         BaseResponse baseResponse = new BaseResponse();
-        //获取ad3的终端号和token
-        AD3LoginVO ad3LoginVO = offlineLogin(ad3CSBScanPayDTO, channelsRequestDTO);
-        if (ad3LoginVO == null) {
-            log.info("=================【AD3线下CSB】=================【AD3登陆接口异常】");
+        try {
+            ChannelsOrder channelsOrder = new ChannelsOrder();
+            channelsOrder.setId(ad3CSBScanPayDTO.getBizContent().getMerOrderNo());
+            channelsOrder.setMerchantOrderId(ad3CSBScanPayDTO.getMerchantOrderId());
+            channelsOrder.setTradeCurrency(ad3CSBScanPayDTO.getTradeCurrency());
+            channelsOrder.setTradeAmount(new BigDecimal(ad3CSBScanPayDTO.getBizContent().getMerorderAmount()));
+            channelsOrder.setReqIp(ad3CSBScanPayDTO.getReqIp());
+            channelsOrder.setServerUrl(ad3CSBScanPayDTO.getBizContent().getReceiveUrl());
+            channelsOrder.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
+            channelsOrder.setIssuerId(ad3CSBScanPayDTO.getBizContent().getIssuerId());
+            channelsOrder.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
+            channelsOrder.setMd5KeyStr(ad3CSBScanPayDTO.getMd5KeyStr());
+            channelsOrderMapper.insert(channelsOrder);
+            //获取AD3的终端号和Token
+            AD3LoginVO ad3LoginVO = offlineLogin(ad3CSBScanPayDTO);
+            if (ad3LoginVO == null) {
+                log.info("=================【AD3线下CSB】=================【AD3登陆接口异常】");
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                return baseResponse;
+            }
+            Channel channel = ad3CSBScanPayDTO.getChannel();
+            String payUrl = channel.getPayUrl();
+            ad3CSBScanPayDTO.setChannel(null);
+            ad3CSBScanPayDTO.setMerchantOrderId(null);
+            ad3CSBScanPayDTO.setReqIp(null);
+            ad3CSBScanPayDTO.setTradeCurrency(null);
+            ad3CSBScanPayDTO.setMd5KeyStr(null);
+            //生成签名
+            String sign = createSign(ad3CSBScanPayDTO, ad3CSBScanPayDTO.getBizContent(), ad3LoginVO.getToken());
+            ad3CSBScanPayDTO.setSignMsg(sign);
+            HttpResponse httpResponse = HttpClientUtils.reqPost(payUrl, ad3CSBScanPayDTO, null);
+            if (!httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
+                log.info("=================【AD3线下CSB】=================【响应状态码错误】");
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                return baseResponse;
+            }
+            AD3CSBScanVO csbScanVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3CSBScanVO.class);
+            log.info("=================【AD3线下CSB】=================【接口响应参数】 csbScanVO: {}", JSON.toJSONString(csbScanVO));
+            if (csbScanVO == null || !AD3Constant.AD3_OFFLINE_SUCCESS.equals(csbScanVO.getRespCode())) {
+                log.info("=================【AD3线下CSB】=================【响应业务码错误】");
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                return baseResponse;
+            }
+            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+            baseResponse.setData(csbScanVO.getCode_url());
+        } catch (Exception e) {
+            log.info("=================【AD3线下CSB】=================【接口异常】", e);
             baseResponse.setCode(TradeConstant.HTTP_FAIL);
             baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
-            return baseResponse;
         }
-        HttpResponse httpResponse = HttpClientUtils.reqPost(channelsRequestDTO.getPayUrl(), ad3CSBScanPayDTO, null);
-        if (!httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
-            log.info("=================【AD3线下CSB】=================【响应状态码错误】");
-            baseResponse.setCode(TradeConstant.HTTP_FAIL);
-            baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
-            return baseResponse;
-        }
-        //反序列化Json数据
-        AD3CSBScanVO csbScanVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3CSBScanVO.class);
-        log.info("=================【AD3线下CSB】=================【接口响应参数】 csbScanVO: {}", JSON.toJSONString(csbScanVO));
-        if (csbScanVO == null || !AD3Constant.AD3_OFFLINE_SUCCESS.equals(csbScanVO.getRespCode())) {
-            log.info("=================【AD3线下CSB】=================【响应业务码错误】");
-            baseResponse.setCode(TradeConstant.HTTP_FAIL);
-            baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
-            return baseResponse;
-        }
-        baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
-        baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
-        baseResponse.setData(csbScanVO.getCode_url());
         return baseResponse;
     }
 }

@@ -363,7 +363,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     public ChannelBank getChaBankById(String chaBankId) {
         ChannelBank channelBank = null;
         try {
-            channelBank = JSON.parseObject((AsianWalletConstant.CHANNEL_BANK_CACHE_KEY.concat("_").concat(chaBankId)), ChannelBank.class);
+            channelBank = JSON.parseObject(redisService.get(AsianWalletConstant.CHANNEL_BANK_CACHE_KEY.concat("_").concat(chaBankId)), ChannelBank.class);
             if (channelBank == null) {
                 channelBank = channelBankMapper.selectByPrimaryKey(chaBankId);
                 if (channelBank == null) {
