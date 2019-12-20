@@ -1,10 +1,9 @@
 package com.asianwallets.channels.controller;
 
 import com.asianwallets.channels.service.Ad3Service;
-import com.asianwallets.common.ChannelsRequestDTO;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.dto.ChannelsRequestDTO;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
-import com.asianwallets.common.dto.ad3.AD3LoginDTO;
 import com.asianwallets.common.response.BaseResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -3,7 +3,6 @@ package com.asianwallets.channels.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.Ad3Service;
-import com.asianwallets.common.ChannelsRequestDTO;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
