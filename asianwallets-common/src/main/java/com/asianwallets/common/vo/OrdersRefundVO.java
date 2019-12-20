@@ -35,6 +35,9 @@ public class OrdersRefundVO {
     @ApiModelProperty(value = "商户订单号")
     private String merchantOrderId;
 
+    @ApiModelProperty(value = "交易流水号")
+    private String orderId;
+
     @ApiModelProperty(value = "订单币种")
     private String orderCurrency;
 
