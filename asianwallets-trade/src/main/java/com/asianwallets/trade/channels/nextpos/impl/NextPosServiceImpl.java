@@ -8,12 +8,16 @@ import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.megapay.NextPosRefundDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
+import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.nextpos.NextPosService;
 import com.asianwallets.trade.dao.OrderRefundMapper;
+import com.asianwallets.trade.dao.ReconciliationMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
+import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +43,11 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
     private OrderRefundMapper orderRefundMapper;
     @Autowired
     private CommonBusinessService commonBusinessService;
+    @Autowired
+    private ReconciliationMapper reconciliationMapper;
+    @Autowired
+    private ClearingService clearingService;
+
 
     /**
      * @return
@@ -61,11 +70,26 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, String.valueOf(respMap.get("transactionID")), null);
                 //改原订单状态
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
-
-                
             } else {
                 //退款失败
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(TradeConstant.AA,orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                reconciliationMapper.insert(reconciliation);
+                FundChangeDTO fundChangeDTO = new FundChangeDTO(TradeConstant.AA,reconciliation);
+                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
+                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
+                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
+                    //改原订单状态
+                    commonBusinessService.updateOrderRefundFail(orderRefund);
+                } else {
+                    //请求失败
+                    orderRefund.setRemark3(JSON.toJSONString(fundChangeDTO));
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                    log.info("=================【NextPos退款】=================【退款操作 上报队列 MQ_QJS_TZSB_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+                    //rabbitMQSender.send(AD3MQConstant.MQ_QJS_TZSB_DL, JSON.toJSONString(rabbitMassage));
+                    //TODO
+                }
 
             }
         } else {

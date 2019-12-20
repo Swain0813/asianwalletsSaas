@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.asianwallets.base.dao.AccountMapper">
-
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Account">
 	<result column="id" property="id" />
@@ -21,4 +20,53 @@
 		<result column="enabled" property="enabled" />
 	</resultMap>
 
+	<sql id="Base_Column_List">
+        id, merchant_id, merchant_name,account_code, currency, settle_balance, clear_balance,
+    freeze_balance, version,create_time, update_time, creator, modifier, remark, enabled
+    </sql>
+
+	<resultMap id="SecondResultMap" type="com.asianwallets.common.vo.AccountListVO">
+		<id column="id" property="id" jdbcType="VARCHAR"/>
+		<result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
+		<result column="merchantName" property="merchantName" jdbcType="VARCHAR"/>
+		<result column="accountCode" property="accountCode" jdbcType="VARCHAR"/>
+		<result column="currency" property="currency" jdbcType="VARCHAR"/>
+		<result column="settleBalance" property="settleBalance" jdbcType="DECIMAL"/>
+		<result column="clearBalance" property="clearBalance" jdbcType="DECIMAL"/>
+		<result column="balance" property="balance" jdbcType="DECIMAL"/>
+		<result column="freezeBalance" property="freezeBalance" jdbcType="DECIMAL"/>
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+		<result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+		<result column="min_settle_amount" property="minSettleAmount" jdbcType="DECIMAL"/>
+		<result column="settle_switch" property="settleSwitch" jdbcType="BIT"/>
+		<result column="creator" property="creator" jdbcType="VARCHAR"/>
+		<result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="pageFindAccount" resultMap="SecondResultMap">
+		select
+		a.id as id ,a.merchant_name as merchantName,a.merchant_id as merchantId,a.account_code as
+		accountCode,a.currency as currency,a.settle_balance as settleBalance,a.clear_balance +
+		a.settle_balance -a.freeze_balance as balance,a.freeze_balance as freezeBalance,
+		a.clear_balance as clearBalance,a.create_time as create_time,a.update_time as
+		updateTime,a.creator,a.modifier,a.remark,s.min_settle_amount as min_settle_amount,
+		s.settle_switch as settle_switch
+		from account a left join settle_control s on a.id = s.account_id
+		<where>
+			<if test="merchantId!=null and merchantId != ''">
+				and a.merchant_id=#{merchantId}
+			</if>
+			<if test="accountId!=null and accountId != ''">
+				and a.id=#{accountId}
+			</if>
+			<if test="merchantName != null and merchantName != ''">
+				and a.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+			</if>
+			<if test="currency!=null and currency != ''">
+				and a.currency=#{currency}
+			</if>
+		</where>
+		order by a.create_time desc
+	</select>
 </mapper>

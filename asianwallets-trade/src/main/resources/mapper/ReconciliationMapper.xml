@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.trade.dao.ReconciliationMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Reconciliation">
+	<result column="id" property="id" />
+		<result column="order_id" property="orderId" />
+		<result column="refund_order_id" property="refundOrderId" />
+		<result column="channel_number" property="channelNumber" />
+		<result column="refund_channel_number" property="refundChannelNumber" />
+		<result column="merchant_order_id" property="merchantOrderId" />
+		<result column="reconciliation_type" property="reconciliationType" />
+		<result column="merchant_name" property="merchantName" />
+		<result column="merchant_id" property="merchantId" />
+		<result column="amount" property="amount" />
+		<result column="currency" property="currency" />
+		<result column="status" property="status" />
+		<result column="change_type" property="changeType" />
+		<result column="freeze_type" property="freezeType" />
+		<result column="account_type" property="accountType" />
+		<result column="sign" property="sign" />
+		<result column="remark1" property="remark1" />
+		<result column="remark2" property="remark2" />
+		<result column="remark3" property="remark3" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator" property="creator" />
+		<result column="modifier" property="modifier" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+</mapper>

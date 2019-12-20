@@ -280,7 +280,7 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "remark3")
     private String remark3;
 
-    @ApiModelProperty(value = "remark4")
+    @ApiModelProperty(value = "标注RV 或者 RF")
     @Column(name = "remark4")
     private String remark4;
 

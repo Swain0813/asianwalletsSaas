@@ -90,6 +90,7 @@
         <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
         <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
         <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR"/>
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
         <result column="order_amount" property="orderAmount" jdbcType="DECIMAL"/>
         <result column="order_currency" property="orderCurrency" jdbcType="VARCHAR"/>
         <result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
@@ -125,15 +126,14 @@
         merchant_id,
         merchant_name,
         merchant_order_id,
+        order_id,
         order_amount,
         order_currency,
         channel_name,
         trade_currency,
         trade_amount,
         refund_status,
-        case refund_status
-        when 2 then update_time
-        end update_time,
+        update_time,
         remark
         from order_refund
         <where>
@@ -163,6 +163,9 @@
             </if>
             <if test="endDate != null">
                 AND create_time &lt;= #{endDate}
+            </if>
+            <if test="orderId != null and orderId != ''">
+                AND order_id = #{orderId}
             </if>
         </where>
     </select>
