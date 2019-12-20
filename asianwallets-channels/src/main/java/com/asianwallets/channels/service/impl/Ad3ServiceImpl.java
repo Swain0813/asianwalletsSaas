@@ -10,6 +10,7 @@ import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.ad3.*;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.HttpResponse;
@@ -103,33 +104,30 @@ public class Ad3ServiceImpl implements Ad3Service {
         log.info("=================【AD3线下CSB】=================【请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3CSBScanPayDTO));
         BaseResponse baseResponse = new BaseResponse();
         try {
+            Orders orders = ad3CSBScanPayDTO.getOrders();
             ChannelsOrder channelsOrder = new ChannelsOrder();
             channelsOrder.setId(ad3CSBScanPayDTO.getBizContent().getMerOrderNo());
-            channelsOrder.setMerchantOrderId(ad3CSBScanPayDTO.getMerchantOrderId());
-            channelsOrder.setTradeCurrency(ad3CSBScanPayDTO.getTradeCurrency());
+            channelsOrder.setMerchantOrderId(orders.getMerchantOrderId());
+            channelsOrder.setTradeCurrency(orders.getTradeCurrency());
             channelsOrder.setTradeAmount(new BigDecimal(ad3CSBScanPayDTO.getBizContent().getMerorderAmount()));
-            channelsOrder.setReqIp(ad3CSBScanPayDTO.getReqIp());
+            channelsOrder.setReqIp(orders.getReqIp());
             channelsOrder.setServerUrl(ad3CSBScanPayDTO.getBizContent().getReceiveUrl());
             channelsOrder.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
             channelsOrder.setIssuerId(ad3CSBScanPayDTO.getBizContent().getIssuerId());
             channelsOrder.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
-            channelsOrder.setMd5KeyStr(ad3CSBScanPayDTO.getMd5KeyStr());
+            channelsOrder.setMd5KeyStr(ad3CSBScanPayDTO.getChannel().getMd5KeyStr());
             channelsOrderMapper.insert(channelsOrder);
             //获取AD3的终端号和Token
             AD3LoginVO ad3LoginVO = offlineLogin(ad3CSBScanPayDTO);
-            if (ad3LoginVO == null) {
+            if (ad3LoginVO == null || StringUtils.isEmpty(ad3LoginVO.getToken())) {
                 log.info("=================【AD3线下CSB】=================【AD3登陆接口异常】");
                 baseResponse.setCode(TradeConstant.HTTP_FAIL);
                 baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
                 return baseResponse;
             }
-            Channel channel = ad3CSBScanPayDTO.getChannel();
-            String payUrl = channel.getPayUrl();
+            String payUrl = ad3CSBScanPayDTO.getChannel().getPayUrl();
+            ad3CSBScanPayDTO.setOrders(null);
             ad3CSBScanPayDTO.setChannel(null);
-            ad3CSBScanPayDTO.setMerchantOrderId(null);
-            ad3CSBScanPayDTO.setReqIp(null);
-            ad3CSBScanPayDTO.setTradeCurrency(null);
-            ad3CSBScanPayDTO.setMd5KeyStr(null);
             //生成签名
             String sign = createSign(ad3CSBScanPayDTO, ad3CSBScanPayDTO.getBizContent(), ad3LoginVO.getToken());
             ad3CSBScanPayDTO.setSignMsg(sign);

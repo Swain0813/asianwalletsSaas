@@ -38,7 +38,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
         //CSB请求二维码接口公共参数实体
-        AD3CSBScanPayDTO ad3CSBScanPayDTO = new AD3CSBScanPayDTO(channel.getChannelMerchantId());
+        AD3CSBScanPayDTO ad3CSBScanPayDTO = new AD3CSBScanPayDTO(orders,channel);
         //CSB请求二维码接口业务参数实体
         CSBScanBizContentDTO csbScanBizContent = new CSBScanBizContentDTO(orders, channel);
         ad3CSBScanPayDTO.setBizContent(csbScanBizContent);

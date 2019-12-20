@@ -2,6 +2,7 @@ package com.asianwallets.common.dto.ad3;
 
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.Orders;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -32,24 +33,17 @@ public class AD3CSBScanPayDTO {
     @ApiModelProperty(value = "通道")
     private Channel channel;
 
-    @ApiModelProperty(value = "商户订单号")
-    private String merchantOrderId;
-
-    @ApiModelProperty(value = "md5KeyStr")
-    private String md5KeyStr;
-
-    @ApiModelProperty(value = "请求ip")
-    private String reqIp;
-
-    @ApiModelProperty(value = "交易币种")
-    private String tradeCurrency;
+    @ApiModelProperty(value = "订单")
+    private Orders orders;
 
     public AD3CSBScanPayDTO() {
     }
 
-    public AD3CSBScanPayDTO(String merchantId) {
+    public AD3CSBScanPayDTO(Orders orders, Channel channel) {
+        this.channel = channel;
         this.inputCharset = AD3Constant.CHARSET_UTF_8;
         this.language = AD3Constant.LANGUAGE_CN;
-        this.merchantId = merchantId;
+        this.merchantId = channel.getChannelMerchantId();
+        this.orders = orders;
     }
 }
