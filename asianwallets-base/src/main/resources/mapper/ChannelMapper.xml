@@ -171,7 +171,7 @@
                ch.only_today_order_refund   as onlyTodayOrderRefund,
                p.id                         as productId,
                p.product_code               as productCode,
-               p.trans_type                 as pTransType,
+               p.trade_direction            as pTransType,
                p.currency                   as pCurrency,
                p.pay_type                   as payType,
                b.id                         as bankID,
