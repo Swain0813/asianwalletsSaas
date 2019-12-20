@@ -22,6 +22,7 @@ import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OfflineTradeService;
+import com.asianwallets.trade.utils.HandlerContext;
 import com.asianwallets.trade.utils.SettleDateUtil;
 import com.asianwallets.trade.vo.BasicInfoVO;
 import com.asianwallets.trade.vo.CsbDynamicScanVO;
@@ -385,8 +386,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         ordersMapper.insert(orders);
         //上报通道
         CsbDynamicScanVO csbDynamicScanVO = new CsbDynamicScanVO();
+
         try {
-            ChannelsAbstract channelsAbstract = (ChannelsAbstract) Class.forName(TradeConstant.channelsMap.get(basicInfoVO.getChannel().getServiceNameMark())).newInstance();
+            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
             BaseResponse baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
             csbDynamicScanVO.setQrCodeUrl(String.valueOf(baseResponse.getData()));
         } catch (Exception e) {
@@ -398,4 +400,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         log.info("==================【线下CSB动态扫码】==================【下单结束】");
         return csbDynamicScanVO;
     }
+
+    @Autowired
+    private HandlerContext handlerContext;
 }
