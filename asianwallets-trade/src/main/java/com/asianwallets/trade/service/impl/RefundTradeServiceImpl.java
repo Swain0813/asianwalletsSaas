@@ -308,7 +308,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         ChannelsAbstract channelsAbstract = null;
         try {
-            //channelsAbstract = (ChannelsAbstract) Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
             channelsAbstract =  handlerContext.getInstance(channel.getServiceNameMark());
             log.info("=========================【退款】 doRefundOrder 信息记录 ========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
         } catch (Exception e) {

@@ -82,7 +82,6 @@ public class RefundOrderMQReceive {
             Channel channel = this.commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
             ChannelsAbstract channelsAbstract = null;
             try {
-                //channelsAbstract  = (ChannelsAbstract)Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
                 channelsAbstract =  handlerContext.getInstance(channel.getServiceNameMark());
             }catch (Exception e){
                 log.info("========================= 【TK_RF_FAIL_DL】 ChannelsAbstract ==================== Exception : 【{}】,rabbitMassage : 【{}】", e, JSON.toJSONString(rabbitMassage));
