@@ -20,6 +20,7 @@ import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.feign.ClearingFeign;
+import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
@@ -63,6 +64,8 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     private AccountMapper accountMapper;
     @Autowired
     private ClearingService clearingService;
+    @Autowired
+    private RabbitMQSender rabbitMQSender;
 
     /**
      * @return
@@ -299,8 +302,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
             log.info("----------------- 【退款】 doRefundOrder 上报队列 MQ_TK_SBQJSSB_DL -------------- orderRefund : 【{}】", JSON.toJSON(orderRefund));
             RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
-            //rabbitMQSender.sendSleep(AD3MQConstant.MQ_TK_SBQJSSB_DL, JSON.toJSONString(rabbitMassage));
-            //TODO
+            rabbitMQSender.send(AD3MQConstant.TK_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
             baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
             return baseResponse;
         }
