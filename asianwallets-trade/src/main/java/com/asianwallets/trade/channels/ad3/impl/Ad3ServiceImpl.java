@@ -61,7 +61,18 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
      **/
     @Override
     public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage){
+        BaseResponse baseResponse = new BaseResponse();
+        if(TradeConstant.TRADE_ONLINE.equals(orderRefund.getTradeDirection())){
+            log.info("==================【AD3线上退款】================== OrderRefund: {}", JSON.toJSONString(orderRefund));
 
-        return null;
+
+
+        }else if(TradeConstant.TRADE_UPLINE.equals(orderRefund.getTradeDirection())){
+            log.info("==================【AD3线下退款】================== OrderRefund: {}", JSON.toJSONString(orderRefund));
+
+
+
+        }
+        return baseResponse;
     }
 }

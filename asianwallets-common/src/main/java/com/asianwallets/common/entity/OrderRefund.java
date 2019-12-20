@@ -16,23 +16,23 @@ import java.util.Date;
 @ApiModel(value = "退款", description = "退款")
 public class OrderRefund extends BaseEntity {
 
-    @ApiModelProperty(value = "退款类型 - 1：全额退款 2：部分退款")
+    @ApiModelProperty(value = "退款类型")// 1：全额退款 2：部分退款
     @Column(name = "refund_type")
     private Byte refundType;
 
-    @ApiModelProperty(value = "退款方式 - 1：系统退款 2：人工退款")
+    @ApiModelProperty(value = "退款方式")//1：系统退款 2：人工退款
     @Column(name = "refund_mode")
     private Byte refundMode;
 
-    @ApiModelProperty(value = "退款状态 1:退款中 2:退款成功 3:退款失败 4:系统创建失败")
+    @ApiModelProperty(value = "退款状态")//1:退款中 2:退款成功 3:退款失败 4:系统创建失败
     @Column(name = "refund_status")
     private Byte refundStatus;
 
-    @ApiModelProperty(value = "产品类型:1-收款 2-付款")
+    @ApiModelProperty(value = "产品类型")//1-收款 2-付款
     @Column(name = "trade_type")
     private Byte tradeType;
 
-    @ApiModelProperty(value = "交易类型:1-线上 2-线下")
+    @ApiModelProperty(value = "交易类型")//1-线上 2-线下
     @Column(name = "trade_direction")
     private Byte tradeDirection;
 
@@ -60,11 +60,11 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "group_merchant_name")
     private String groupMerchantName;
 
-    @ApiModelProperty(value = "二级商户名称(非必填)")
+    @ApiModelProperty(value = "二级商户名称")
     @Column(name = "second_merchant_name")
     private String secondMerchantName;
 
-    @ApiModelProperty(value = "二级商户编码(非必填)")
+    @ApiModelProperty(value = "二级商户编码")
     @Column(name = "second_merchant_code")
     private String secondMerchantCode;
 
@@ -140,7 +140,7 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "exchange_time")
     private Date exchangeTime;
 
-    @ApiModelProperty(value = "换汇状态：1-换汇成功 2-换汇失败")
+    @ApiModelProperty(value = "换汇状态")//1-换汇成功 2-换汇失败
     @Column(name = "exchange_status")
     private Byte exchangeStatus;
 
@@ -164,7 +164,7 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "channel_number")
     private String channelNumber;
 
-    @ApiModelProperty(value = "付款方式即产品表中的支付方式")
+    @ApiModelProperty(value = "支付方式")
     @Column(name = "pay_method")
     private String payMethod;
 
@@ -172,11 +172,11 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "req_ip")
     private String reqIp;
 
-    @ApiModelProperty(value = "浮动率 必填")
+    @ApiModelProperty(value = "浮动率")
     @Column(name = "float_rate")
     private BigDecimal floatRate;
 
-    @ApiModelProperty(value = "附加值 必填")
+    @ApiModelProperty(value = "附加值")
     @Column(name = "add_value")
     private BigDecimal addValue;
 
@@ -212,7 +212,7 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "channel_rate")
     private BigDecimal channelRate;
 
-    @ApiModelProperty(value = "通道手续费类型(dic_7_1-单笔费率,dic_7_2-单笔定额)")
+    @ApiModelProperty(value = "通道手续费类型")//dic_7_1-单笔费率,dic_7_2-单笔定额
     @Column(name = "channel_fee_type")
     private String channelFeeType;
 
@@ -224,19 +224,19 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "channel_gateway_fee")
     private BigDecimal channelGatewayFee;
 
-    @ApiModelProperty(value = "通道网关手续费类型(dic_7_1-单笔费率,dic_7_2-单笔定额)")
+    @ApiModelProperty(value = "通道网关手续费类型")//dic_7_1-单笔费率,dic_7_2-单笔定额
     @Column(name = "channel_gateway_fee_type")
     private String channelGatewayFeeType;
 
-    @ApiModelProperty(value = "通道网关是否收取 1-收 2-不收")
+    @ApiModelProperty(value = "通道网关是否收取")//1-收 2-不收
     @Column(name = "channel_gateway_charge")
     private Byte channelGatewayCharge;
 
-    @ApiModelProperty(value = "通道网关收取状态 1-成功时收取 2-失败时收取 3-全收")
+    @ApiModelProperty(value = "通道网关收取状态")//1-成功时收取 2-失败时收取 3-全收
     @Column(name = "channel_gateway_status")
     private Byte channelGatewayStatus;
 
-    @ApiModelProperty(value = "产品结算周期 yyyyMMdd HHmmss")
+    @ApiModelProperty(value = "产品结算周期")
     @Column(name = "product_settle_cycle")
     private String productSettleCycle;
 
@@ -244,7 +244,7 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "channel_amount")
     private BigDecimal channelAmount;
 
-    @ApiModelProperty(value = "手续费承担方 1:商家 2:用户")
+    @ApiModelProperty(value = "手续费承担方")//1:商家 2:用户
     @Column(name = "fee_payer")
     private Byte feePayer;
 
@@ -252,7 +252,7 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "channel_fee")
     private BigDecimal channelFee;
 
-    @ApiModelProperty(value = "退款费率类型")
+    @ApiModelProperty(value = "退款费率类型")//dic_7_1-单笔费率,dic_7_2-单笔定额
     @Column(name = "refund_rate_type")
     private String refundRateType;
 

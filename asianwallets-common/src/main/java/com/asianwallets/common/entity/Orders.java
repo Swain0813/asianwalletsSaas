@@ -58,11 +58,11 @@ public class Orders extends BaseEntity {
     @Column(name = "group_merchant_name")
     private String groupMerchantName;
 
-    @ApiModelProperty(value = "产品类型 1-收款 2-付款")
+    @ApiModelProperty(value = "产品类型")//1-收款 2-付款
     @Column(name = "trade_type")
     private Byte tradeType;
 
-    @ApiModelProperty(value = "交易类型 1-线上 2-线下")
+    @ApiModelProperty(value = "交易类型")//1-线上 2-线下
     @Column(name = "trade_direction")
     private Byte tradeDirection;
 
@@ -107,7 +107,7 @@ public class Orders extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date exchangeTime;
 
-    @ApiModelProperty(value = "换汇状态 1-换汇成功 2-换汇失败")
+    @ApiModelProperty(value = "换汇状态")//1-换汇成功 2-换汇失败
     @Column(name = "exchange_status")
     private Byte exchangeStatus;
 
@@ -139,23 +139,23 @@ public class Orders extends BaseEntity {
     @Column(name = "trade_amount")
     private BigDecimal tradeAmount = BigDecimal.ZERO;
 
-    @ApiModelProperty(value = "交易状态 1-待付款 2-付款中 3-付款成功 4-付款失败 5-已过期")
+    @ApiModelProperty(value = "交易状态")//1-待付款 2-付款中 3-付款成功 4-付款失败 5-已过期
     @Column(name = "trade_status")
     private Byte tradeStatus;
 
-    @ApiModelProperty(value = "撤销状态 1-撤销中 2-撤销成功 3-撤销失败")
+    @ApiModelProperty(value = "撤销状态")//1-撤销中 2-撤销成功 3-撤销失败
     @Column(name = "cancel_status")
     private Byte cancelStatus;
 
-    @ApiModelProperty(value = "退款状态 1-退款中  2-部分退款成功 3-退款成功 4-退款失败")
+    @ApiModelProperty(value = "退款状态")//1-退款中  2-部分退款成功 3-退款成功 4-退款失败
     @Column(name = "refund_status")
     private Byte refundStatus;
 
-    @ApiModelProperty(value = "订单间连直连类型 1-直连 2-间连")
+    @ApiModelProperty(value = "订单间连直连类型")//1-直连 2-间连
     @Column(name = "connect_method")
     private Byte connectMethod;
 
-    @ApiModelProperty(value = "结算状态 1-待结算 2-结算成功 3-结算失败")
+    @ApiModelProperty(value = "结算状态")//1-待结算 2-结算成功 3-结算失败
     @Column(name = "settle_status")
     private Byte settleStatus;
 
@@ -163,7 +163,7 @@ public class Orders extends BaseEntity {
     @Column(name = "channel_number")
     private String channelNumber;
 
-    @ApiModelProperty(value = "计费状态 1-成功,2-失败")
+    @ApiModelProperty(value = "计费状态")//1-成功,2-失败
     @Column(name = "charge_status")
     private Byte chargeStatus;
 
@@ -251,11 +251,11 @@ public class Orders extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date deliveryTime;
 
-    @ApiModelProperty(value = "发货状态 1-未发货 2-已发货")
+    @ApiModelProperty(value = "发货状态")//1-未发货 2-已发货
     @Column(name = "delivery_status")
     private Byte deliveryStatus;
 
-    @ApiModelProperty(value = "签收状态  1-未签收 2-已签收 默认是未签收")
+    @ApiModelProperty(value = "签收状态")//1-未签收 2-已签收 默认是未签收
     @Column(name = "received_status")
     private Byte receivedStatus;
 
@@ -284,7 +284,7 @@ public class Orders extends BaseEntity {
     @Column(name = "server_url")
     private String serverUrl;
 
-    @ApiModelProperty(value = "手续费承担方 1:商家 2:用户")
+    @ApiModelProperty(value = "手续费承担方")//1:商家 2:用户
     @Column(name = "fee_payer")
     private Byte feePayer;
 
@@ -312,11 +312,11 @@ public class Orders extends BaseEntity {
     @Column(name = "channel_fee")
     private BigDecimal channelFee = BigDecimal.ZERO;
 
-    @ApiModelProperty(value = "通道网关是否收取 1-收 2-不收")
+    @ApiModelProperty(value = "通道网关是否收取")//1-收 2-不收
     @Column(name = "channel_gateway_charge")
     private Byte channelGatewayCharge;
 
-    @ApiModelProperty(value = "通道网关收取状态 1-成功时收取 2-失败时收取 3-全收")
+    @ApiModelProperty(value = "通道网关收取状态")//1-成功时收取 2-失败时收取 3-全收
     @Column(name = "channel_gateway_status")
     private Byte channelGatewayStatus;
 
