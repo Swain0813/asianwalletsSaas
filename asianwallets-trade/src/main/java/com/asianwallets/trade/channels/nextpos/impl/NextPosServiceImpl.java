@@ -37,7 +37,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @Transactional
-@HandlerType(TradeConstant.NEXTPOS_CSB_OFFLINE)
+@HandlerType(TradeConstant.NEXTPOS)
 public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextPosService {
 
     @Autowired
