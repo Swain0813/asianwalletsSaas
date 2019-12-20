@@ -158,11 +158,11 @@
             <if test="refundStatus !=null">
                 AND refund_status = #{refundStatus}
             </if>
-            <if test="startDate != null">
-                AND create_time &gt;= #{startDate}
+            <if test="startDate != null and startDate != '' ">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startDate}
             </if>
-            <if test="endDate != null">
-                AND create_time &lt;= #{endDate}
+            <if test="endDate != null and endDate != ''">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endDate}
             </if>
             <if test="orderId != null and orderId != ''">
                 AND order_id = #{orderId}
