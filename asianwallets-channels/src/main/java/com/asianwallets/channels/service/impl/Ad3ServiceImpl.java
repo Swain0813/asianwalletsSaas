@@ -8,6 +8,7 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3LoginDTO;
+import com.asianwallets.common.dto.ad3.CSBScanBizContentDTO;
 import com.asianwallets.common.dto.ad3.LoginBizContentDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
@@ -125,11 +126,15 @@ public class Ad3ServiceImpl implements Ad3Service {
                 return baseResponse;
             }
             String payUrl = ad3CSBScanPayDTO.getChannel().getPayUrl();
+            ad3CSBScanPayDTO.getBizContent().setTerminalId(ad3LoginVO.getTerminalId());
+            CSBScanBizContentDTO bizContent = ad3CSBScanPayDTO.getBizContent();
+            ad3CSBScanPayDTO.setBizContent(null);
             ad3CSBScanPayDTO.setOrders(null);
             ad3CSBScanPayDTO.setChannel(null);
             //生成签名
-            String sign = createSign(ad3CSBScanPayDTO, ad3CSBScanPayDTO.getBizContent(), ad3LoginVO.getToken());
+            String sign = createSign(ad3CSBScanPayDTO, bizContent, ad3LoginVO.getToken());
             ad3CSBScanPayDTO.setSignMsg(sign);
+            ad3CSBScanPayDTO.setBizContent(bizContent);
             HttpResponse httpResponse = HttpClientUtils.reqPost(payUrl, ad3CSBScanPayDTO, null);
             if (!httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
                 log.info("=================【AD3线下CSB】=================【响应状态码错误】");
