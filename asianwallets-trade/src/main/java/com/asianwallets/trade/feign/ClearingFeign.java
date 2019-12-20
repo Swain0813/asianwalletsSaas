@@ -2,7 +2,7 @@ package com.asianwallets.trade.feign;
 
 import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
-import com.asianwallets.trade.feign.Impl.ClearingFeignImpl;
+import com.asianwallets.trade.feign.impl.ClearingFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
