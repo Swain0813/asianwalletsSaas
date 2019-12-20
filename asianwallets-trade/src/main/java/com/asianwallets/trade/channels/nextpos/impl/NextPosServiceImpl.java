@@ -20,6 +20,7 @@ import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
+import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @Transactional
+@HandlerType(TradeConstant.NEXTPOS_CSB_OFFLINE)
 public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextPosService {
 
     @Autowired

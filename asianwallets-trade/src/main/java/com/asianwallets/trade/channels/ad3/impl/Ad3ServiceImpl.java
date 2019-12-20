@@ -12,6 +12,7 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
 import com.asianwallets.trade.feign.ChannelsFeign;
+import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@HandlerType(TradeConstant.AD3_OFFLINE)
 public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Service {
 
     @Autowired

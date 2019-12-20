@@ -1,5 +1,6 @@
 package com.asianwallets.trade.channels.help2pay.impl;
 
+import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
@@ -8,11 +9,13 @@ import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.help2pay.Help2PayService;
+import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@HandlerType(TradeConstant.HELP2PAY_ONLINE)
 public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help2PayService {
 
     /**
