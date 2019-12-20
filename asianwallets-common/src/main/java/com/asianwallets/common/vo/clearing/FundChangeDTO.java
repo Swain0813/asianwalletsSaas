@@ -114,7 +114,7 @@ public class FundChangeDTO implements Serializable {
         this.sysorderid = orderRefund.getOrderId();
         if (tradetype.equals(TradeConstant.RF)) {
             //退款
-            this.balancetype = TradeConstant.NORMAL_FUND;
+            this.balancetype = TradeConstant.FROZEN_FUND;
             //结算
             this.isclear = TradeConstant.SETTLE;
         } else if (tradetype.equals(TradeConstant.RV)) {
