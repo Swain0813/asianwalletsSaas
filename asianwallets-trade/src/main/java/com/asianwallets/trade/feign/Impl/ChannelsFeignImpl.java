@@ -1,6 +1,5 @@
 package com.asianwallets.trade.feign.impl;
 
-import com.asianwallets.common.ChannelsRequestDTO;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.dto.alipay.*;
 import com.asianwallets.common.dto.doku.DOKUReqDTO;
@@ -151,7 +150,7 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
-    public BaseResponse ad3OfflineCsb(AD3CSBScanPayDTO ad3CSBScanPayDTO, ChannelsRequestDTO channelsRequestDTO) {
+    public BaseResponse ad3OfflineCsb(AD3CSBScanPayDTO ad3CSBScanPayDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

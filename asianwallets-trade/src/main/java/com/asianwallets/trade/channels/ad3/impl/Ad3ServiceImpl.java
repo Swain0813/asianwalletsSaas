@@ -1,10 +1,14 @@
 package com.asianwallets.trade.channels.ad3.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.dto.ad3.CSBScanBizContentDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
 import com.asianwallets.trade.feign.ChannelsFeign;
@@ -26,8 +30,15 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         AD3CSBScanPayDTO ad3CSBScanPayDTO = new AD3CSBScanPayDTO(channel.getChannelMerchantId());
         //CSB请求二维码接口业务参数实体
         CSBScanBizContentDTO csbScanBizContent = new CSBScanBizContentDTO(orders, channel.getExtend2(), channel.getExtend3(), channel.getNotifyServerUrl(), channel);
-        //channelsFeign.ad3OfflineCsb()
+        ad3CSBScanPayDTO.setBizContent(csbScanBizContent);
+        log.info("==================【线下CSB动态扫码】==================【调用Channels服务请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3CSBScanPayDTO));
+        BaseResponse channelResponse = channelsFeign.ad3OfflineCsb(ad3CSBScanPayDTO);
+        log.info("==================【线下CSB动态扫码】==================【调用Channels服务响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
+        if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
         BaseResponse baseResponse = new BaseResponse();
-        return null;
+        baseResponse.setData(channelResponse.getData());
+        return baseResponse;
     }
 }
