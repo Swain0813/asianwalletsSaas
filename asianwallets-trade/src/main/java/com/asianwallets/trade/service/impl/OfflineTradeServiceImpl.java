@@ -12,13 +12,11 @@ import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
-import com.asianwallets.trade.channels.ad3.Ad3Service;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.DeviceBindingMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.SysUserMapper;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
-import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OfflineTradeService;
@@ -31,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,6 +58,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     @Autowired
     private BankIssuerIdMapper bankIssuerIdMapper;
+
+    @Autowired
+    private HandlerContext handlerContext;
 
     /**
      * 校验请求参数
@@ -386,7 +386,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         ordersMapper.insert(orders);
         //上报通道
         CsbDynamicScanVO csbDynamicScanVO = new CsbDynamicScanVO();
-
         try {
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
             BaseResponse baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
@@ -400,7 +399,4 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         log.info("==================【线下CSB动态扫码】==================【下单结束】");
         return csbDynamicScanVO;
     }
-
-    @Autowired
-    private HandlerContext handlerContext;
 }
