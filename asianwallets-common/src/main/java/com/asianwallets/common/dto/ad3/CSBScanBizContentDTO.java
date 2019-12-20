@@ -69,9 +69,9 @@ public class CSBScanBizContentDTO {
     public CSBScanBizContentDTO() {
     }
 
-    public CSBScanBizContentDTO(Orders orders, String terminalId, String operatorId, String receiveUrl, Channel channel) {
-        this.terminalId = terminalId;//终端编号
-        this.operatorId = operatorId;//操作员id
+    public CSBScanBizContentDTO(Orders orders, Channel channel) {
+        this.terminalId = channel.getExtend1();//终端编号
+        this.operatorId = channel.getExtend2();//操作员id
         this.merOrderNo = orders.getId();//订单id
         this.merorderDatetime = DateToolUtils.toString(new Date(), "yyyyMMddHHmmss");//订单时间
         this.merorderCurrency = orders.getTradeCurrency();//交易币种
@@ -86,7 +86,7 @@ public class CSBScanBizContentDTO {
         this.ext2 = StringUtils.isEmpty(orders.getRemark2()) ? "" : orders.getRemark2();//备注2
         this.ext3 = StringUtils.isEmpty(orders.getRemark3()) ? "" : orders.getRemark3();//备注3
         this.isCallBack = AD3Constant.NEED_CALLBACK;//是否需要回调,是
-        this.receiveUrl = receiveUrl;
+        this.receiveUrl = channel.getNotifyServerUrl();
     }
 
 }

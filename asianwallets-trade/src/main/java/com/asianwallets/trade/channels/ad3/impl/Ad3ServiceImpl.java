@@ -38,7 +38,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         //CSB请求二维码接口公共参数实体
         AD3CSBScanPayDTO ad3CSBScanPayDTO = new AD3CSBScanPayDTO(channel.getChannelMerchantId());
         //CSB请求二维码接口业务参数实体
-        CSBScanBizContentDTO csbScanBizContent = new CSBScanBizContentDTO(orders, channel.getExtend2(), channel.getExtend3(), channel.getNotifyServerUrl(), channel);
+        CSBScanBizContentDTO csbScanBizContent = new CSBScanBizContentDTO(orders, channel);
         ad3CSBScanPayDTO.setBizContent(csbScanBizContent);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【AD3线下CSB接口请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3CSBScanPayDTO));
         BaseResponse channelResponse = channelsFeign.ad3OfflineCsb(ad3CSBScanPayDTO);

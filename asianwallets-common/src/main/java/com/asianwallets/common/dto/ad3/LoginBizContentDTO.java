@@ -1,5 +1,6 @@
 package com.asianwallets.common.dto.ad3;
 
+import com.asianwallets.common.entity.Channel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -23,10 +24,10 @@ public class LoginBizContentDTO {
     public LoginBizContentDTO() {
     }
 
-    public LoginBizContentDTO(String type, String operatorId, String password, String imei) {
+    public LoginBizContentDTO(String type, Channel channel) {
         this.type = type;
-        this.operatorId = operatorId;
-        this.password = password;
-        this.imei = imei;
+        this.imei = channel.getExtend1();
+        this.operatorId = channel.getExtend2();
+        this.password = channel.getExtend3();
     }
 }
