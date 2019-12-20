@@ -72,8 +72,8 @@ public class Reconciliation extends BaseEntity {
      * 商户编号
      */
 	@ApiModelProperty(value = "商户编号")
-	@Column(name ="merchant_code")
-	private String merchantCode;
+	@Column(name ="merchant_id")
+	private String merchantId;
     /**
      * 请求金额
      */
@@ -97,7 +97,7 @@ public class Reconciliation extends BaseEntity {
      */
 	@ApiModelProperty(value = "资金变动类型 1-调账 2-资金冻结 3-资金解冻")
 	@Column(name ="change_type")
-	private Integer changeType;
+	private Byte changeType;
     /**
      * 冻结类型 1-冻结 2-预约冻结
      */
@@ -105,9 +105,9 @@ public class Reconciliation extends BaseEntity {
 	@Column(name ="freeze_type")
 	private Integer freezeType;
     /**
-     * 入账类型 1-冻结户 2-保证金户
+     * 入账类型  1-清算户 2-结算户 3-冻结户
      */
-	@ApiModelProperty(value = "入账类型 1-冻结户 2-保证金户")
+	@ApiModelProperty(value = "入账类型 1-清算户 2-结算户 3-冻结户")
 	@Column(name ="account_type")
 	private Integer accountType;
     /**

@@ -233,7 +233,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //把原订单状态改为退款中
             ordersMapper.updateOrderRefundStatus(refundDTO.getOrderNo(), TradeConstant.ORDER_REFUND_WAIT);
 
-            /********************************************************* 通道不支持支持退款 *************************************************************/
+            /********************************************************* 通道不支持退款 人工退款*************************************************************/
             //线下订单不支持退款上面已经拒绝 若是线上订单，通道不支持退款走人工退款
             if (!channel.getSupportRefundState()) {
                 log.info("-----------------【退款】信息记录-------------- 【通道不支持支持退款】");
@@ -264,6 +264,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //获取原订单的refCode字段(NextPos用)
             orderRefund.setSign(oldOrder.getSign());
             if (type.equals(TradeConstant.RF)) {
+                orderRefund.setRemark4(type);
                 this.doRefundOrder(orderRefund,channel);
             } else {
                 //this.doCancelOrder(orderRefund);

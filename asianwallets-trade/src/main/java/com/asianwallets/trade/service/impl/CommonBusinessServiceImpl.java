@@ -1,5 +1,6 @@
 package com.asianwallets.trade.service.impl;
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
@@ -7,12 +8,14 @@ import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
+import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.feign.MessageFeign;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.vo.BasicInfoVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -41,6 +44,9 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
 
     @Autowired
     private OrdersMapper ordersMapper;
+
+    @Autowired
+    private OrderRefundMapper orderRefundMapper;
 
     @Value("${custom.warning.mobile}")
     private String warningMobile;
@@ -422,7 +428,7 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public void updateOrderRefundSuccess(OrderRefund orderRefund){
-        if(orderRefund.getRemark()!=null && TradeConstant.RV.equals(orderRefund.getRemark())){
+        if(orderRefund.getRemark4()!=null && TradeConstant.RV.equals(orderRefund.getRemark4())){
             //撤销成功-更新订单的撤销状态
             ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), null, TradeConstant.ORDER_CANNEL_SUCCESS);
         }else{
@@ -437,5 +443,64 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
                 }
             }
         }
+    }
+
+    /**
+     * 退款和撤销失败的场合
+     * @param orderRefund
+     */
+    @Override
+    public void updateOrderRefundFail(OrderRefund orderRefund){
+        if(orderRefund.getRemark()!=null && TradeConstant.RV.equals(orderRefund.getRemark())){
+            //撤销失败
+            ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), null, TradeConstant.ORDER_CANNEL_FALID);
+        }else{
+            //退款失败的场合
+            if (TradeConstant.REFUND_TYPE_TOTAL.equals(orderRefund.getRefundType())) {
+                ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_FAIL);
+            } else {
+                BigDecimal oldRefundAmount = orderRefundMapper.getTotalAmountByOrderId(orderRefund.getOrderId()); //已退款金额
+                oldRefundAmount = oldRefundAmount == null ? BigDecimal.ZERO : oldRefundAmount;
+                if (oldRefundAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_FAIL);
+                }
+            }
+        }
+    }
+    /**
+     * @Author YangXu
+     * @Date 2019/12/20
+     * @Descripate 创建调账单
+     * @return
+     **/
+    @Override
+    public Reconciliation createReconciliation(String type,OrderRefund orderRefund, String remark) {
+        //调账订单id
+        String reconciliationId = "T" + IDS.uniqueID();
+        Reconciliation reconciliation = new Reconciliation();
+        reconciliation.setOrderId(orderRefund.getOrderId());
+        reconciliation.setRefundOrderId(orderRefund.getId());
+        reconciliation.setChannelNumber(orderRefund.getChannelNumber());
+        reconciliation.setRefundChannelNumber(orderRefund.getRefundChannelNumber());
+        reconciliation.setMerchantOrderId(orderRefund.getMerchantOrderId());
+        reconciliation.setReconciliationType(AsianWalletConstant.RECONCILIATION_IN);
+        reconciliation.setMerchantName(orderRefund.getMerchantName());
+        reconciliation.setMerchantId(orderRefund.getMerchantId());
+        reconciliation.setAmount(orderRefund.getOrderAmount().subtract(orderRefund.getRefundFee()).add(orderRefund.getRefundOrderFee()));
+        if(type.equals(TradeConstant.RA)){
+            reconciliation.setAccountType(1);
+        }else if(type.equals(TradeConstant.AA)){
+            reconciliation.setAccountType(2);
+        }
+        reconciliation.setCurrency(orderRefund.getOrderCurrency());
+        reconciliation.setStatus(TradeConstant.RECONCILIATION_WAIT);
+        reconciliation.setChangeType(TradeConstant.TRANSFER);
+        reconciliation.setRemark1(null);
+        reconciliation.setRemark2(null);
+        reconciliation.setRemark3(null);
+        reconciliation.setId(reconciliationId);
+        reconciliation.setCreateTime(new Date());
+        reconciliation.setRemark(remark);
+        return reconciliation;
     }
 }
