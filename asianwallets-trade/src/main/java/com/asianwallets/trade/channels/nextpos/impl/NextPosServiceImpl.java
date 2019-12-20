@@ -60,7 +60,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
      * @Descripate 退款接口
      **/
     @Override
-    public BaseResponse refund(Channel channel, OrderRefund orderRefund) {
+    public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         NextPosRefundDTO nextPosRefundDTO = new NextPosRefundDTO(orderRefund, channel);
         log.info("=================【NextPos退款】=================【请求Channels服务NextPos退款】请求参数 nextPosRefundDTO: {} ", JSON.toJSONString(nextPosRefundDTO));
@@ -88,8 +88,8 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                     commonBusinessService.updateOrderRefundFail(orderRefund);
                 } else {
                     //请求失败
-                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                    log.info("=================【NextPos退款】=================【退款操作 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
+                    log.info("=================【NextPos退款】=================【退款操作 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
                     rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMassage));
                 }
 
@@ -97,7 +97,9 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
         } else {
             //请求失败
             baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
-            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+            if(rabbitMassage ==null){
+                rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+            }
             log.info("===============【NextPos退款】===============【退款操作 请求失败上报队列 MQ_TK_NEXTPOS_QQSB_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
             rabbitMQSender.send(AD3MQConstant.TK_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }

@@ -86,7 +86,7 @@ public class RefundOrderMQReceive {
             }catch (Exception e){
                 log.info("========================= 【TK_RF_FAIL_DL】 ChannelsAbstract ==================== Exception : 【{}】,rabbitMassage : 【{}】", e, JSON.toJSONString(rabbitMassage));
             }
-            channelsAbstract.refund(channel,orderRefund);
+            channelsAbstract.refund(channel,orderRefund,null);
 
         } else {
             //三次上报清结算失败，则退款单就是退款失败更新退款单状态以及失败原因
@@ -158,7 +158,7 @@ public class RefundOrderMQReceive {
             }catch (Exception e){
                 log.info("========================= 【TK_RF_FAIL_DL】 ChannelsAbstract ==================== Exception : 【{}】,rabbitMassage : 【{}】", e, JSON.toJSONString(rabbitMassage));
             }
-            channelsAbstract.refund(channel,orderRefund);
+            channelsAbstract.refund(channel,orderRefund,rabbitMassage);
         }else {
             //预警机制
             messageFeign.sendSimple(developerMobile, "退款上请求上游失败 TK_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知

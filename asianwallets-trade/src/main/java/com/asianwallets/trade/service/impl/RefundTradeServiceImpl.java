@@ -313,7 +313,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         } catch (Exception e) {
             log.info("=========================【退款】 doRefundOrder Exception ========================= Exception:【{}】", e);
         }
-        baseResponse = channelsAbstract.refund(channel, orderRefund);
+        baseResponse = channelsAbstract.refund(channel, orderRefund,null);
         return baseResponse;
         //if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_ONLINE)) {
         //    //ad3线上退款
