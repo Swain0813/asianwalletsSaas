@@ -25,6 +25,7 @@ import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.RefundTradeService;
+import com.asianwallets.trade.utils.HandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -66,6 +67,8 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     private ClearingService clearingService;
     @Autowired
     private RabbitMQSender rabbitMQSender;
+    @Autowired
+    private HandlerContext handlerContext;
 
     /**
      * @return
@@ -305,7 +308,8 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         ChannelsAbstract channelsAbstract = null;
         try {
-            channelsAbstract = (ChannelsAbstract) Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
+            //channelsAbstract = (ChannelsAbstract) Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
+            channelsAbstract =  handlerContext.getInstance(channel.getServiceNameMark());
             log.info("=========================【退款】 doRefundOrder 信息记录 ========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
         } catch (Exception e) {
             log.info("=========================【退款】 doRefundOrder Exception ========================= Exception:【{}】", e);

@@ -19,6 +19,7 @@ import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
+import com.asianwallets.trade.utils.HandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,8 @@ public class RefundOrderMQReceive {
     private CommonRedisDataService commonRedisDataService;
     @Autowired
     private ReconciliationMapper reconciliationMapper;
+    @Autowired
+    private HandlerContext handlerContext;
 
     /**
      * @Author YangXu
@@ -79,7 +82,8 @@ public class RefundOrderMQReceive {
             Channel channel = this.commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
             ChannelsAbstract channelsAbstract = null;
             try {
-                channelsAbstract  = (ChannelsAbstract)Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
+                //channelsAbstract  = (ChannelsAbstract)Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
+                channelsAbstract =  handlerContext.getInstance(channel.getServiceNameMark());
             }catch (Exception e){
                 log.info("========================= 【TK_RF_FAIL_DL】 ChannelsAbstract ==================== Exception : 【{}】,rabbitMassage : 【{}】", e, JSON.toJSONString(rabbitMassage));
             }
