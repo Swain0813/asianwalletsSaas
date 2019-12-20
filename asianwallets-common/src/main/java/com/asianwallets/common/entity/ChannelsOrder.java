@@ -65,8 +65,8 @@ public class ChannelsOrder extends BaseEntity {
     private String serverUrl;
 
     @ApiModelProperty(value = "付款人电话")
-    @Column(name = "drawee_phone")
-    private String draweePhone;
+    @Column(name = "payer_phone")
+    private String payerPhone;
 
     //交易状态: 1-付款中  2-付款成功  3-付款失败
     @ApiModelProperty(value = "交易状态")

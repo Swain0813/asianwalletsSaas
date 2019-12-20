@@ -25,7 +25,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     private ChannelsFeign channelsFeign;
 
     /**
-     * AD3线下CSB接
+     * AD3线下CSB
      *
      * @param orders  订单
      * @param channel 通道
