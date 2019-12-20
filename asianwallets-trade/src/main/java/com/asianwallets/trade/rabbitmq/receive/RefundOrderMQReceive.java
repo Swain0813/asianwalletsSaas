@@ -1,7 +1,26 @@
 package com.asianwallets.trade.rabbitmq.receive;
 
+import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.AD3MQConstant;
+import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.RabbitMassage;
+import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.OrderRefund;
+import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
+import com.asianwallets.trade.channels.ChannelsAbstract;
+import com.asianwallets.trade.dao.OrderRefundMapper;
+import com.asianwallets.trade.feign.MessageFeign;
+import com.asianwallets.trade.rabbitmq.RabbitMQSender;
+import com.asianwallets.trade.service.ClearingService;
+import com.asianwallets.trade.service.CommonBusinessService;
+import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,9 +32,63 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class RefundOrderMQReceive {
 
+    @Value("${custom.developer.mobile}")
+    private String developerMobile;
 
+    @Value("${custom.developer.email}")
+    private String developerEmail;
+
+    @Autowired
+    private OrderRefundMapper orderRefundMapper;
+    @Autowired
+    private CommonBusinessService commonBusinessService;
+    @Autowired
+    private MessageFeign messageFeign;
+    @Autowired
+    private ClearingService clearingService;
+    @Autowired
+    private RabbitMQSender rabbitMQSender;
+    @Autowired
+    private CommonRedisDataService commonRedisDataService;
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/20
+     * @Descripate 退款RF请求失败
+     * @return
+     **/
     @RabbitListener(queues = "TK_RF_FAIL_DL")
-    public void processTZSB(String value) {
+    public void processRFSB(String value) {
+        RabbitMassage rabbitMassage = JSON.parseObject(value, RabbitMassage.class);
+        OrderRefund orderRefund = JSON.parseObject(rabbitMassage.getValue(), OrderRefund.class);
+        log.info("========================= 【TK_RF_FAIL_DL】 消费 ==================== rabbitMassage : 【{}】", JSON.toJSONString(rabbitMassage));
+        if (rabbitMassage.getCount() > 0) {
+            //请求次数减一
+            rabbitMassage.setCount(rabbitMassage.getCount() - 1);
+            FundChangeDTO fundChangeDTO = new FundChangeDTO(TradeConstant.RF, orderRefund);
+            BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+            if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                log.info("========================= 【TK_RF_FAIL_DL】 RF FAIL ==================== rabbitMassage : 【{}】",  JSON.toJSONString(rabbitMassage));
+                rabbitMQSender.send(AD3MQConstant.TK_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                return;
+            }
+            Channel channel = this.commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
+            ChannelsAbstract channelsAbstract = null;
+            try {
+                channelsAbstract  = (ChannelsAbstract)Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
+            }catch (Exception e){
+                log.info("========================= 【TK_RF_FAIL_DL】 ChannelsAbstract ==================== Exception : 【{}】,rabbitMassage : 【{}】", e, JSON.toJSONString(rabbitMassage));
+            }
+            channelsAbstract.refund(channel,orderRefund);
+
+        } else {
+            //三次上报清结算失败，则退款单就是退款失败更新退款单状态以及失败原因
+            orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null,"退款RF上报清结算失败:TK_RF_FAIL_DL");
+            //更新订单表
+            commonBusinessService.updateOrderRefundFail(orderRefund);
+            messageFeign.sendSimple(developerMobile, "退款上报清结算失败 TK_RF_FAIL_DL ：{ " + value + " }");
+            messageFeign.sendSimpleMail(developerEmail, "退款上报清结算失败 TK_RF_FAIL_DL 预警", "TK_RF_FAIL_DL 预警 ：{ " + value + " }");
+        }
 
     }
 }
