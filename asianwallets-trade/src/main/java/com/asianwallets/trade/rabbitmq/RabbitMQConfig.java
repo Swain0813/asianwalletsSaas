@@ -14,6 +14,6 @@ public class RabbitMQConfig {
 
 
     /********************************************************  退款接口相关队列 **********************************************************************/
-    //退款请求失败
+    //退款RF请求失败
     public final static String TK_RF_FAIL_DL = AD3MQConstant.TK_RF_FAIL_DL;
 }

@@ -244,11 +244,11 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 orderRefundMapper.insert(orderRefund);
 
                 //上报清结算
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(type,orderRefund);
+                FundChangeDTO fundChangeDTO = new FundChangeDTO(type, orderRefund);
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
-                        orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
-                        orderRefund.setRemark("后台系统和机构系统退款订单接口上报清结算失败");
+                    orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
+                    orderRefund.setRemark("后台系统和机构系统退款订单接口上报清结算失败");
                 } else {//请求失败
                     orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
                     orderRefund.setRemark("后台系统和机构系统退款订单接口上报清结算失败");
@@ -268,13 +268,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             orderRefund.setSign(oldOrder.getSign());
             if (type.equals(TradeConstant.RF)) {
                 orderRefund.setRemark4(type);
-                this.doRefundOrder(orderRefund,channel);
+                this.doRefundOrder(orderRefund, channel);
             } else {
                 //this.doCancelOrder(orderRefund);
             }
-
-
-
 
 
         } else if (TradeConstant.PAYING.equals(type)) {
@@ -294,10 +291,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      * @Descripate 退款操作
      **/
     @Override
-    public BaseResponse doRefundOrder(OrderRefund orderRefund,Channel channel) {
+    public BaseResponse doRefundOrder(OrderRefund orderRefund, Channel channel) {
         BaseResponse baseResponse = new BaseResponse();
         log.info("-----------------【退款】 doRefundOrder 信息记录-------------- orderRefund:【{}】", JSON.toJSONString(orderRefund));
-        FundChangeDTO fundChangeDTO = new FundChangeDTO(TradeConstant.RF,orderRefund);
+        FundChangeDTO fundChangeDTO = new FundChangeDTO(TradeConstant.RF, orderRefund);
         BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
         if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
             log.info("----------------- 【退款】 doRefundOrder 上报队列 MQ_TK_SBQJSSB_DL -------------- orderRefund : 【{}】", JSON.toJSON(orderRefund));
@@ -306,15 +303,14 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
             return baseResponse;
         }
+        ChannelsAbstract channelsAbstract = null;
         try {
-            log.info("-----------------【退款】 doRefundOrder 信息记录-------------- Channel ServiceName:【{}】",channel.getServiceNameMark());
-            ChannelsAbstract channelsAbstract = (ChannelsAbstract)Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
-            baseResponse = channelsAbstract.refund(channel,orderRefund);
-
-
-        }catch (Exception e){
-            log.info("-----------------【退款】 doRefundOrder Exception-------------- Exception:【{}】",e);
+            channelsAbstract = (ChannelsAbstract) Class.forName(TradeConstant.channelsMap.get(channel.getServiceNameMark())).newInstance();
+            log.info("-----------------【退款】 doRefundOrder 信息记录-------------- Channel ServiceName:【{}】", channel.getServiceNameMark());
+        } catch (Exception e) {
+            log.info("-----------------【退款】 doRefundOrder Exception-------------- Exception:【{}】", e);
         }
+        baseResponse = channelsAbstract.refund(channel, orderRefund);
         return baseResponse;
         //if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_ONLINE)) {
         //    //ad3线上退款
