@@ -1,5 +1,4 @@
 package com.asianwallets.trade.controller;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.TradeConstant;
@@ -10,8 +9,7 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.SysUserVO;
-import com.asianwallets.trade.dto.OnlineTradeDTO;
-import com.asianwallets.trade.feign.SysUserFeign;
+import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.service.RefundTradeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,12 +29,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(description = "退款接口")
 @RequestMapping("/refund")
 public class RefundTradeController extends BaseController {
+
     @Autowired
     private RedisService redisService;
-    @Autowired
-    private SysUserFeign sysUserFeign;
+
     @Autowired
     private RefundTradeService refundTradeService;
+
+    @Autowired
+    private CommonService commonService;
 
     @ApiOperation(value = "退款接口")
     @PostMapping("/refundOrder")
@@ -51,7 +52,7 @@ public class RefundTradeController extends BaseController {
             if(sysUserVO==null){//获取不到用户信息
                 throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
             }
-            if (sysUserFeign.checkPassword(refundDTO.getTradePassword(), sysUserVO.getTradePassword()).getData().equals("false")) {
+            if (!commonService.checkPassword(refundDTO.getTradePassword(), sysUserVO.getTradePassword())) {
                 throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
             }
         }

@@ -61,6 +61,8 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, String.valueOf(respMap.get("transactionID")), null);
                 //改原订单状态
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
+
+                
             } else {
                 //退款失败
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
