@@ -1,5 +1,4 @@
 package com.asianwallets.trade.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.Date;
@@ -202,7 +200,6 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount) {
-        //获取币种默认值
         Currency currency = commonRedisDataService.getCurrencyByCode(orderCurrency);
         if (currency == null) {
             throw new BusinessException(EResultEnum.PRODUCT_CURRENCY_NO_SUPPORT.getCode());
