@@ -172,11 +172,15 @@ public class FundChangeDTO implements Serializable {
      * @Descripate 调账
      * @return
      **/
-    public FundChangeDTO(String type, Reconciliation reconciliation) {
+    public FundChangeDTO(Reconciliation reconciliation) {
         this.merchantid = reconciliation.getMerchantId();
         this.refcnceFlow = reconciliation.getId();
         //交易类型 NT：收单，RF：退款，RV：撤销，WD：提款，AA:调账，TA:转账
-        this.tradetype = type;
+        if(reconciliation.getAccountType() == 1){
+            this.tradetype = TradeConstant.RA;
+        }else if(reconciliation.getAccountType() == 2){
+            this.tradetype = TradeConstant.AA;
+        }
         //机构订单号
         this.merOrderNo = reconciliation.getMerchantOrderId();
         //订单币种
@@ -192,16 +196,11 @@ public class FundChangeDTO implements Serializable {
         }
         //原订单id
         this.sysorderid = reconciliation.getOrderId();
-        if (type.equals(TradeConstant.RA)) {
-            //退款
+        if(reconciliation.getAccountType() == 1){
             this.balancetype = TradeConstant.NORMAL_FUND;
-            //结算
             this.isclear = TradeConstant.CLEARING;
-        } else if (type.equals(TradeConstant.AA)) {
-            //调账
-            //正常资金
+        }else if(reconciliation.getAccountType() == 2){
             this.balancetype = TradeConstant.NORMAL_FUND;
-            //清算
             this.isclear = TradeConstant.SETTLE;
         }
         this.txndesc = "";

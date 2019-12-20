@@ -77,7 +77,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 Reconciliation reconciliation = commonBusinessService.createReconciliation(TradeConstant.AA,orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                 reconciliationMapper.insert(reconciliation);
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(TradeConstant.AA,reconciliation);
+                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
@@ -87,9 +87,8 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 } else {
                     //请求失败
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                    log.info("=================【NextPos退款】=================【退款操作 上报队列 MQ_QJS_TZSB_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
-                    //rabbitMQSender.send(AD3MQConstant.MQ_QJS_TZSB_DL, JSON.toJSONString(rabbitMassage));
-                    //TODO
+                    log.info("=================【NextPos退款】=================【退款操作 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMassage));
                 }
 
             }
