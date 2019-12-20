@@ -1,4 +1,4 @@
-package com.asianwallets.common;
+package com.asianwallets.common.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

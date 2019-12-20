@@ -1,10 +1,14 @@
 package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base. BaseMapper;
+import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.entity.Account;
+import com.asianwallets.common.vo.AccountListVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * <p>
@@ -18,13 +22,11 @@ import org.springframework.stereotype.Repository;
 public interface AccountMapper extends  BaseMapper<Account> {
 
     /**
-     * 根据机构code和币种获取账户信息
-     * @param institutionId
-     * @param currency
+     * 分页查询账户信息
+     * @param accountSearchDTO
      * @return
      */
-    @Select("select account_code from account where institution_id = #{institutionId} and settle_currency = #{currency}")
-    String getAccountCode(@Param("institutionId") String institutionId, @Param("currency") String currency);
+    List<AccountListVO> pageFindAccount(AccountSearchDTO accountSearchDTO);
 
     /**
      * @Author YangXu

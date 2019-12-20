@@ -21,7 +21,7 @@ public class ProductChannelVO {
     @ApiModelProperty(value = "支付方式")
     private String payType;
 
-    @ApiModelProperty(value = "交易类型")
+    @ApiModelProperty(value = "交易方向")
     private Byte transType;
 
     @ApiModelProperty(value = "产品名称")

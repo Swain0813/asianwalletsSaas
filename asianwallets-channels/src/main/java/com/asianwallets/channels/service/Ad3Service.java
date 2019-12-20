@@ -1,7 +1,7 @@
 package com.asianwallets.channels.service;
 
 
-import com.asianwallets.common.ChannelsRequestDTO;
+import com.asianwallets.common.dto.ChannelsRequestDTO;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.response.BaseResponse;
 

@@ -14,7 +14,7 @@ public class ChannelDetailProductVO {
     @ApiModelProperty(value = "产品编号")
     private String productCode;
 
-    @ApiModelProperty(value = "交易类型")
+    @ApiModelProperty(value = "交易方向")
     private Byte transType;
 
     @ApiModelProperty(value = "支付类型")
