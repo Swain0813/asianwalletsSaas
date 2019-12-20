@@ -107,10 +107,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("===========【机构系统登录】==========【机构信息不存在!】");
             throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
         }
-        if (!institution.getEnabled()) {
-            log.info("===========【机构系统登录】==========【机构已禁用!】");
-            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
-        }
+//        if (!institution.getEnabled()) {
+//            log.info("===========【机构系统登录】==========【机构已禁用!】");
+//            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+//        }
         //拼接用户名
         String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
@@ -150,10 +150,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("===========【商户系统登录】==========【商户信息不存在!】");
             throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
         }
-        if (!merchant.getEnabled()) {
-            log.info("===========【商户系统登录】==========【商户已禁用!】");
-            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
-        }
+//        if (!merchant.getEnabled()) {
+//            log.info("===========【商户系统登录】==========【商户已禁用!】");
+//            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+//        }
         //拼接用户名
         String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
