@@ -124,7 +124,6 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setEmail(sysUserRoleDto.getEmail());
         sysUser.setCreator(username);
         sysUser.setCreateTime(new Date());
-        sysUser.setEnabled(true);
         //分配用户角色,用户权限信息
         allotSysRoleAndSysMenu(username, sysUser, sysUserRoleDto);
         return sysUserMapper.insert(sysUser);

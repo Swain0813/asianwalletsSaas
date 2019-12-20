@@ -67,6 +67,14 @@ public interface CommonBusinessService {
     void checkQuota(Orders orders, MerchantProduct merchantProduct, Channel channel);
 
     /**
+     * 截取Url
+     *
+     * @param serverUrl 服务器回调地址
+     * @param orders    订单
+     */
+    void getUrl(String serverUrl, Orders orders);
+
+    /**
      * 计算手续费
      *
      * @param basicInfoVO
@@ -76,6 +84,7 @@ public interface CommonBusinessService {
 
     /**
      * 退款和撤销成功的场合
+     *
      * @param orderRefund
      */
     void updateOrderRefundSuccess(OrderRefund orderRefund);

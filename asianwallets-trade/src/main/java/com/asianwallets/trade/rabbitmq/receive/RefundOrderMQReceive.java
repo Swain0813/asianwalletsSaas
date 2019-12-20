@@ -32,10 +32,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class RefundOrderMQReceive {
 
-    @Value("${custom.developer.mobile}")
+    @Value("${custom.warning.mobile}")
     private String developerMobile;
 
-    @Value("${custom.developer.email}")
+    @Value("${custom.warning.email}")
     private String developerEmail;
 
     @Autowired
