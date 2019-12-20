@@ -15,7 +15,7 @@ public class OrdersDTO extends BasePageHelper {
     private String id;
 
     @ApiModelProperty(value = "产品类型 1-收款 2-付款")
-    private String tradeType;
+    private Byte tradeType;
 
     @ApiModelProperty(value = "交易类型 1-线上 2-线下")
     private Byte tradeDirection;

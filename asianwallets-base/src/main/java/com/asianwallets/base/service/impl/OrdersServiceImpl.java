@@ -32,6 +32,7 @@ public class OrdersServiceImpl implements OrdersService {
      */
     @Override
     public PageInfo<Orders> pageFindOrders(OrdersDTO ordersDTO) {
+        ordersDTO.setLanguage(auditorProvider.getLanguage());
         return new PageInfo<>(ordersMapper.pageFindOrders(ordersDTO));
     }
 
