@@ -2,6 +2,7 @@ package com.asianwallets.trade.utils;
 
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.trade.channels.ChannelsAbstract;
 
 import java.util.Map;
 
@@ -20,12 +21,12 @@ public class HandlerContext {
      * @param type 实例类型
      * @return 抽象处理器
      */
-    public AbstractHandler getInstance(String type) {
+    public ChannelsAbstract getInstance(String type) {
         Class clazz = handlerMap.get(type);
         if (clazz == null) {
             throw new BusinessException(EResultEnum.ERROR.getCode());
         }
-        return (AbstractHandler) BeanTool.getBean(clazz);
+        return (ChannelsAbstract) BeanTool.getBean(clazz);
     }
 
 }
