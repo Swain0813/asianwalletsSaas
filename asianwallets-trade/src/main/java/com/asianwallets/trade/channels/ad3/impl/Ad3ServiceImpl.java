@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@HandlerType(TradeConstant.AD3_OFFLINE)
+@HandlerType(TradeConstant.AD3)
 public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Service {
 
     @Autowired

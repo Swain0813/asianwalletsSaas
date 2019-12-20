@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-@HandlerType(TradeConstant.HELP2PAY_ONLINE)
+@HandlerType(TradeConstant.HELP2PAY)
 public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help2PayService {
 
     /**

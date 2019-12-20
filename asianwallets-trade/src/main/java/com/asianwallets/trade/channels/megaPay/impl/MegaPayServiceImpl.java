@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @Transactional
-@HandlerType(TradeConstant.MEGAPAY_ONLINE)
+@HandlerType(TradeConstant.MEGAPAY)
 public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaPayService {
 
 
