@@ -129,7 +129,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         oldRefundAmount = oldRefundAmount == null ? BigDecimal.ZERO : oldRefundAmount;
         String type = this.checkRefundDTO(merchant, refundDTO, oldOrder, oldRefundAmount);
 
-        /***************************************************************  创建订单  *************************************************************/
+        /***************************************************************  创建退款单  *************************************************************/
         OrderRefund orderRefund = this.creatOrderRefundSys(refundDTO, oldOrder);
         orderRefund.setReqIp(reqIp);
         BigDecimal newRefundAmount = oldRefundAmount.add(refundDTO.getRefundAmount());
@@ -313,7 +313,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         } catch (Exception e) {
             log.info("=========================【退款】 doRefundOrder Exception ========================= Exception:【{}】", e);
         }
-        baseResponse = channelsAbstract.refund(channel, orderRefund);
+        baseResponse = channelsAbstract.refund(channel, orderRefund,null);
         return baseResponse;
         //if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_ONLINE)) {
         //    //ad3线上退款
@@ -446,6 +446,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         if (refundDTO.getRefundType() == 1) {
             orderRefund.setTradeAmount(oldOrder.getTradeAmount());//全额退款退原订单交易金额
         }
+        orderRefund.setTradeDirection(refundDTO.getTradeDirection());
         orderRefund.setMerchantOrderTime(DateToolUtils.parseDate(refundDTO.getRefundTime(), DateToolUtils.DATE_FORMAT_DATETIME));//商户请求退款时间(商户所在地)
         orderRefund.setOrderAmount(refundDTO.getRefundAmount());//商户请求退款金额
         orderRefund.setOrderCurrency(refundDTO.getRefundCurrency());//客户请求收单币种

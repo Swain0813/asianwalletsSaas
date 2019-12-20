@@ -1,5 +1,6 @@
 package com.asianwallets.trade.channels.nextpos;
 
+import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.response.BaseResponse;
@@ -14,5 +15,5 @@ public interface NextPosService {
      * @Descripate 退款接口
      * @return
      **/
-    BaseResponse refund(Channel channel,OrderRefund orderRefund);
+    BaseResponse refund(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
 }
