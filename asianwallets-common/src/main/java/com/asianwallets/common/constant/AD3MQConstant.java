@@ -13,4 +13,6 @@ public class AD3MQConstant {
     //调账失败队列
     public final static String RA_AA_FAIL_DL = AD3MQConstant.RA_AA_FAIL_DL;
 
+    public final static String TK_SB_FAIL_DL = AD3MQConstant.TK_SB_FAIL_DL;
+
 }

@@ -28,4 +28,10 @@ public class RabbitMQConfig {
     public Queue RA_AA_FAIL_DL() {
         return new Queue(RabbitMQConfig.RA_AA_FAIL_DL);
     }
+    //退款上报失败队列
+    public final static String TK_SB_FAIL_DL = AD3MQConstant.TK_SB_FAIL_DL;
+    @Bean
+    public Queue TK_SB_FAIL_DL() {
+        return new Queue(RabbitMQConfig.TK_SB_FAIL_DL);
+    }
 }

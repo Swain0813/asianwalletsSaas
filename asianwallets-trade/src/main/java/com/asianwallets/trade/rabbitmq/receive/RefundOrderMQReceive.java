@@ -135,8 +135,35 @@ public class RefundOrderMQReceive {
             messageFeign.sendSimple(developerMobile, "上报清结算调账失败队列 RA_AA_FAIL_DL 预警 ：{ " + value + " }");//短信通知
             messageFeign.sendSimpleMail(developerEmail, "上报清结算调账失败队列 RA_AA_FAIL_DL 预警", "RA_AA_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
         }
+    }
 
 
+    /**
+     * @Author YangXu
+     * @Date 2019/12/20
+     * @Descripate 退款上报失败队列
+     * @return
+     **/
+    @RabbitListener(queues = "TK_SB_FAIL_DL")
+    public void processTKSBSB(String value) {
+        RabbitMassage rabbitMassage = JSON.parseObject(value, RabbitMassage.class);
+        log.info("========================= 【TK_SB_FAIL_DL】 ==================== rabbitMassage : {} ", value);
+        if (rabbitMassage.getCount() > 0) {
+            rabbitMassage.setCount(rabbitMassage.getCount() - 1);//请求次数减一
+            OrderRefund orderRefund = JSON.parseObject(rabbitMassage.getValue(), OrderRefund.class);
+            Channel channel = this.commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
+            ChannelsAbstract channelsAbstract = null;
+            try {
+                channelsAbstract =  handlerContext.getInstance(channel.getServiceNameMark());
+            }catch (Exception e){
+                log.info("========================= 【TK_RF_FAIL_DL】 ChannelsAbstract ==================== Exception : 【{}】,rabbitMassage : 【{}】", e, JSON.toJSONString(rabbitMassage));
+            }
+            channelsAbstract.refund(channel,orderRefund);
+        }else {
+            //预警机制
+            messageFeign.sendSimple(developerMobile, "退款上请求上游失败 TK_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
+            messageFeign.sendSimpleMail(developerEmail, "退款上请求上游失败 TK_SB_FAIL_DL 预警", "RA_AA_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
+        }
 
 
     }
