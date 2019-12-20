@@ -28,11 +28,11 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "refund_status")
     private Byte refundStatus;
 
-    @ApiModelProperty(value = "交易类型:1-线上 2-线下")
+    @ApiModelProperty(value = "产品类型:1-收款 2-付款")
     @Column(name = "trade_type")
     private Byte tradeType;
 
-    @ApiModelProperty(value = "产品类型:1-收款 2-付款")
+    @ApiModelProperty(value = "交易类型:1-线上 2-线下")
     @Column(name = "trade_direction")
     private Byte tradeDirection;
 

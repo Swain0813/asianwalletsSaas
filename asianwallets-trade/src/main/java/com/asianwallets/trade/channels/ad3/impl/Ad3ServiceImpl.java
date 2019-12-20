@@ -2,9 +2,11 @@ package com.asianwallets.trade.channels.ad3.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.dto.ad3.CSBScanBizContentDTO;
 import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -49,5 +51,17 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setData(channelResponse.getData());
         return baseResponse;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/19
+     * @Descripate 退款接口
+     * @return
+     **/
+    @Override
+    public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage){
+
+        return null;
     }
 }
