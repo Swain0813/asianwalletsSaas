@@ -12,7 +12,7 @@
 		<result column="merchant_order_id" property="merchantOrderId" />
 		<result column="reconciliation_type" property="reconciliationType" />
 		<result column="merchant_name" property="merchantName" />
-		<result column="merchant_code" property="merchantCode" />
+		<result column="merchant_id" property="merchantId" />
 		<result column="amount" property="amount" />
 		<result column="currency" property="currency" />
 		<result column="status" property="status" />

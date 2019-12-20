@@ -3,6 +3,8 @@ package com.asianwallets.common.vo.clearing;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.OrderRefund;
+import com.asianwallets.common.entity.Reconciliation;
+import com.asianwallets.common.utils.DateToolUtils;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -162,6 +164,68 @@ public class FundChangeDTO implements Serializable {
         //通道成本 2位
         this.channelCost = 0.00;
         this.shouldDealtime = orderRefund.getProductSettleCycle();
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/20
+     * @Descripate 调账
+     * @return
+     **/
+    public FundChangeDTO(String type, Reconciliation reconciliation) {
+        this.merchantid = reconciliation.getMerchantId();
+        this.refcnceFlow = reconciliation.getId();
+        //交易类型 NT：收单，RF：退款，RV：撤销，WD：提款，AA:调账，TA:转账
+        this.tradetype = type;
+        //机构订单号
+        this.merOrderNo = reconciliation.getMerchantOrderId();
+        //订单币种
+        this.txncurrency = reconciliation.getCurrency();
+        if(reconciliation.getReconciliationType()==1){
+            //调入
+            this.txnamount = reconciliation.getAmount().doubleValue();
+            this.sltamount = reconciliation.getAmount().doubleValue();
+        }else{
+            //调出
+            this.txnamount = -1*reconciliation.getAmount().doubleValue();
+            this.sltamount = -1*reconciliation.getAmount().doubleValue();
+        }
+        //原订单id
+        this.sysorderid = reconciliation.getOrderId();
+        if (type.equals(TradeConstant.RA)) {
+            //退款
+            this.balancetype = TradeConstant.NORMAL_FUND;
+            //结算
+            this.isclear = TradeConstant.CLEARING;
+        } else if (type.equals(TradeConstant.AA)) {
+            //调账
+            //正常资金
+            this.balancetype = TradeConstant.NORMAL_FUND;
+            //清算
+            this.isclear = TradeConstant.SETTLE;
+        }
+        this.txndesc = "";
+        //汇率,2位
+        this.txnexrate = 0.00;
+            this.remark = "";
+        //结算币种
+        this.sltcurrency = reconciliation.getCurrency();
+
+        //网关手续费
+        this.gatewayFee = 0.00;
+        //手续费,2位
+        this.fee = 0.00;
+        //手续费币种
+        this.feecurrency = reconciliation.getCurrency();
+        //退还手续费,2位
+        this.refundOrderFee = 0.00;
+        //退还手续费币种
+        this.refundOrderFeeCurrency = reconciliation.getCurrency();
+        //通道成本 2位
+        this.channelCost = 0.00;
+        this.shouldDealtime = DateToolUtils.formatTimestamp.format(new Date());
+
+
     }
 
 }
