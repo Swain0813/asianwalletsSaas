@@ -22,7 +22,7 @@ public class Ad3Controller extends BaseController {
     private Ad3Service ad3Service;
 
     @ApiOperation(value = "AD3线下CSB接口")
-    @PostMapping("offlineCsb")
+    @PostMapping("/offlineCsb")
     public BaseResponse offlineCsb(@RequestBody @ApiParam AD3CSBScanPayDTO ad3CSBScanPayDTO) {
         return ad3Service.offlineCsb(ad3CSBScanPayDTO);
     }

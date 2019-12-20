@@ -11,13 +11,13 @@ import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
-import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.DeviceBindingMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.SysUserMapper;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
+import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OfflineTradeService;
@@ -111,21 +111,21 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      */
     private void checkParamValidity(OfflineTradeDTO offlineTradeDTO) {
         //验签
-        if (!commonBusinessService.checkSignByMd5(offlineTradeDTO)) {
-            log.info("==================【线下CSB动态扫码】==================【签名不匹配】");
-            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
-        }
+//        if (!commonBusinessService.checkSignByMd5(offlineTradeDTO)) {
+//            log.info("==================【线下CSB动态扫码】==================【签名不匹配】");
+//            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+//        }
         //校验订单金额
         if (offlineTradeDTO.getOrderAmount().compareTo(BigDecimal.ZERO) <= 0) {
             log.info("==================【线下CSB动态扫码】==================【订单金额不合法】");
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
         //校验Token信息
-        SysUserVO sysUserVO = JSON.parseObject(redisService.get(offlineTradeDTO.getToken()), SysUserVO.class);
-        if (sysUserVO == null || !(offlineTradeDTO.getOperatorId().concat(offlineTradeDTO.getMerchantId()).equals(sysUserVO.getUsername()))) {
-            log.info("==================【线下CSB动态扫码】==================【Token不合法】");
-            throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
-        }
+//        SysUserVO sysUserVO = JSON.parseObject(redisService.get(offlineTradeDTO.getToken()), SysUserVO.class);
+//        if (sysUserVO == null || !(offlineTradeDTO.getOperatorId().concat(offlineTradeDTO.getMerchantId()).equals(sysUserVO.getUsername()))) {
+//            log.info("==================【线下CSB动态扫码】==================【Token不合法】");
+//            throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
+//        }
         //校验币种信息
         if (!commonBusinessService.checkOrderCurrency(offlineTradeDTO.getOrderCurrency(), offlineTradeDTO.getOrderAmount())) {
             log.info("==================【线下CSB动态扫码】==================【订单金额不符合币种默认值】");
@@ -287,6 +287,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setMerchantOrderId(offlineTradeDTO.getOrderNo());
         orders.setOrderAmount(offlineTradeDTO.getOrderAmount());
         orders.setOrderCurrency(offlineTradeDTO.getOrderCurrency());
+        orders.setTradeCurrency(channel.getCurrency());
         orders.setImei(offlineTradeDTO.getImei());
         orders.setOperatorId(offlineTradeDTO.getOperatorId());
         orders.setProductCode(offlineTradeDTO.getProductCode());
@@ -297,7 +298,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setPayMethod(product.getPayType());
         commonBusinessService.getUrl(offlineTradeDTO.getServerUrl(), orders);
         //orders.setChannelAmount(new BigDecimal("0"));
-        //orders.setFloatRate(merchantProduct.getFloatRate());
+        orders.setFloatRate(merchantProduct.getFloatRate());
         orders.setReportChannelTime(new Date());
         orders.setPayerName(offlineTradeDTO.getPayerName());
         orders.setPayerBank(offlineTradeDTO.getPayerBank());
@@ -323,6 +324,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         return orders;
     }
 
+    @Autowired
+    private ChannelsFeign channelsFeign;
     /**
      * 线下同机构CSB动态扫码
      *
@@ -332,6 +335,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     @Override
     public CsbDynamicScanVO csbDynamicScan(OfflineTradeDTO offlineTradeDTO) {
         log.info("==================【线下CSB动态扫码】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
+        BaseResponse channelResponse = channelsFeign.ad3OfflineCsb(null);
         //重复请求
         if (!commonBusinessService.repeatedRequests(offlineTradeDTO.getMerchantId(), offlineTradeDTO.getOrderNo())) {
             log.info("==================【线下CSB动态扫码】==================【重复请求】");
@@ -342,7 +346,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         //设置订单属性
         Orders orders = setAttributes(offlineTradeDTO, basicInfoVO);
         //校验是否换汇
-        if (!orders.getTradeCurrency().equals(basicInfoVO.getChannel().getCurrency())) {
+        if (!orders.getOrderCurrency().equals(orders.getTradeCurrency())) {
             //校验机构DCC
             if (!basicInfoVO.getInstitution().getDcc()) {
                 orders.setRemark("机构不支持DCC");
@@ -374,6 +378,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         }
         //校验商户产品与通道的限额
         commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //计算手续费
         commonBusinessService.calculateCost(basicInfoVO, orders);
         orders.setReportChannelTime(new Date());
         orders.setTradeStatus(TradeConstant.ORDER_PAYING);
@@ -394,5 +399,4 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         log.info("==================【线下CSB动态扫码】==================【下单结束】");
         return csbDynamicScanVO;
     }
-
 }

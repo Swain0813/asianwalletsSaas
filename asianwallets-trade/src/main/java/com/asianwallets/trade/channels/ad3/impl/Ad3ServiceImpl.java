@@ -24,6 +24,13 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     @Autowired
     private ChannelsFeign channelsFeign;
 
+    /**
+     * AD3线下CSB接
+     *
+     * @param orders  订单
+     * @param channel 通道
+     * @return BaseResponse
+     */
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
         //CSB请求二维码接口公共参数实体
@@ -31,9 +38,9 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         //CSB请求二维码接口业务参数实体
         CSBScanBizContentDTO csbScanBizContent = new CSBScanBizContentDTO(orders, channel.getExtend2(), channel.getExtend3(), channel.getNotifyServerUrl(), channel);
         ad3CSBScanPayDTO.setBizContent(csbScanBizContent);
-        log.info("==================【线下CSB动态扫码】==================【调用Channels服务请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3CSBScanPayDTO));
+        log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【AD3线下CSB接口请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3CSBScanPayDTO));
         BaseResponse channelResponse = channelsFeign.ad3OfflineCsb(ad3CSBScanPayDTO);
-        log.info("==================【线下CSB动态扫码】==================【调用Channels服务响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
+        log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【AD3线下CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
         if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }

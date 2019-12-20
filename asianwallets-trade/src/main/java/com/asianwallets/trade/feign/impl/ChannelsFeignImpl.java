@@ -17,11 +17,10 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.feign.ChannelsFeign;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import javax.validation.Valid;
 
-@Service
+@Component
 public class ChannelsFeignImpl implements ChannelsFeign {
 
     @Override
@@ -60,7 +59,7 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
-    public BaseResponse nextPos(@Valid NextPosRequestDTO nextPosRequestDTO) {
+    public BaseResponse nextPos(NextPosRequestDTO nextPosRequestDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -75,7 +74,7 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
-    public BaseResponse aliPayCSB(@Valid AliPayCSBDTO aliPayCSBDTO) {
+    public BaseResponse aliPayCSB(AliPayCSBDTO aliPayCSBDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -85,47 +84,47 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
-    public BaseResponse xenditPay(@Valid XenditDTO xenditDTO) {
+    public BaseResponse xenditPay(XenditDTO xenditDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse alipayRefund(@Valid AliPayRefundDTO aliPayRefundDTO) {
+    public BaseResponse alipayRefund(AliPayRefundDTO aliPayRefundDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse wechatOfflineBSC(@Valid WechatBSCDTO wechatBSCDTO) {
+    public BaseResponse wechatOfflineBSC(WechatBSCDTO wechatBSCDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse wechatOfflineCSB(@Valid WechatCSBDTO wechatCSBDTO) {
+    public BaseResponse wechatOfflineCSB(WechatCSBDTO wechatCSBDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse wechatRefund(@Valid WechaRefundDTO wechaRefundDTO) {
+    public BaseResponse wechatRefund(WechaRefundDTO wechaRefundDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse alipayQuery(@Valid AliPayQueryDTO aliPayQueryDTO) {
+    public BaseResponse alipayQuery(AliPayQueryDTO aliPayQueryDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse wechatQuery(@Valid WechatQueryDTO wechatQueryDTO) {
+    public BaseResponse wechatQuery(WechatQueryDTO wechatQueryDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse alipayCancel(@Valid AliPayCancelDTO aliPayCancelDTO) {
+    public BaseResponse alipayCancel(AliPayCancelDTO aliPayCancelDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse wechatCancel(@Valid WechatCancelDTO wechatCancelDTO) {
+    public BaseResponse wechatCancel(WechatCancelDTO wechatCancelDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -145,7 +144,7 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
-    public BaseResponse megaPayQuery(@Valid MegaPayQueryDTO megaPayQueryDTO) {
+    public BaseResponse megaPayQuery(MegaPayQueryDTO megaPayQueryDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 

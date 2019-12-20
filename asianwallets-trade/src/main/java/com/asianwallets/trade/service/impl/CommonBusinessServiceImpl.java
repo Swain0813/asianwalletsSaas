@@ -242,7 +242,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         }
         //校验机构产品限额
         if (merchantProduct.getAuditStatus() != null && TradeConstant.AUDIT_SUCCESS.equals(merchantProduct.getAuditStatus())) {
-            if (orders.getTradeAmount().compareTo(merchantProduct.getLimitAmount()) > 0) {
+            if (merchantProduct.getLimitAmount() != null && orders.getTradeAmount().compareTo(merchantProduct.getLimitAmount()) > 0) {
                 log.info("==================【校验商户产品与通道的限额】==================【交易金额大于商户产品单笔限额】");
                 orders.setRemark("交易金额大于商户产品单笔限额");
                 orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
@@ -264,7 +264,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             } else {
                 //日交易笔数
                 Integer dailyTradingCount = Integer.parseInt(dailyCount);
-                if (dailyTradingCount >= merchantProduct.getDailyTradingCount()) {
+                if (merchantProduct.getDailyTradingCount() != null && dailyTradingCount >= merchantProduct.getDailyTradingCount()) {
                     log.info("==================【校验商户产品与通道的限额】==================【日交易笔数不合法】 dailyTradingCount: {}", dailyTradingCount);
                     orders.setRemark("日交易笔数不合法");
                     orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
@@ -273,7 +273,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                 }
                 //TODO 日交易限额
         /*        BigDecimal dailyTotalAmount = new BigDecimal(dailyAmount);
-                if (dailyTotalAmount.compareTo(merchantProduct.getDailyTotalAmount()) >= 0) {
+                if (merchantProduct.getDailyTotalAmount() != null && dailyTotalAmount.compareTo(merchantProduct.getDailyTotalAmount()) >= 0) {
                     log.info("==================【校验商户产品与通道的限额】==================【日交易金额不合法】 dailyTotalAmount: {}", dailyTotalAmount);
                     orders.setRemark("日交易金额不合法");
                     orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
