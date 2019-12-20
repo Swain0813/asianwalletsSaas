@@ -17,6 +17,7 @@ import com.asianwallets.trade.channels.nextpos.NextPosService;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.ReconciliationMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
+import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,8 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
     private ReconciliationMapper reconciliationMapper;
     @Autowired
     private ClearingService clearingService;
-
+    @Autowired
+    private RabbitMQSender rabbitMQSender;
 
     /**
      * @return
@@ -84,8 +86,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                     commonBusinessService.updateOrderRefundFail(orderRefund);
                 } else {
                     //请求失败
-                    orderRefund.setRemark3(JSON.toJSONString(fundChangeDTO));
-                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
                     log.info("=================【NextPos退款】=================【退款操作 上报队列 MQ_QJS_TZSB_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
                     //rabbitMQSender.send(AD3MQConstant.MQ_QJS_TZSB_DL, JSON.toJSONString(rabbitMassage));
                     //TODO
