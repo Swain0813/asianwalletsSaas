@@ -29,7 +29,7 @@ public class InstitutionProductChannelVO {
     @ApiModelProperty(value = "支付方式ID")
     private String payTypeId;
 
-    @ApiModelProperty(value = "交易类型")
+    @ApiModelProperty(value = "交易方向")
     private Byte transType;
 
     @ApiModelProperty(value = "产品名称")
