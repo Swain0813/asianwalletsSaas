@@ -133,9 +133,7 @@
         trade_currency,
         trade_amount,
         refund_status,
-        case refund_status
-        when 2 then update_time
-        end update_time,
+        update_time,
         remark
         from order_refund
         <where>
