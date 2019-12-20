@@ -64,7 +64,7 @@ public class Ad3ServiceImpl implements Ad3Service {
         Channel channel = ad3CSBScanPayDTO.getChannel();
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(terminalId)) {
             //AD3登陆业务参数实体
-            LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT, channel.getExtend2(), MD5Util.getMD5String(channel.getExtend3()), channel.getExtend4());
+            LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT, channel);
             //AD3登陆公共参数实体
             AD3LoginDTO ad3LoginDTO = new AD3LoginDTO(ad3CSBScanPayDTO.getMerchantId(), bizContent);
             //先登出
