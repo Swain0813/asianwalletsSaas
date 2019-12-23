@@ -144,28 +144,35 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         /***********************************************************  计算退还手续费  ******************************************************/
 
         BigDecimal refundOrderFee = BigDecimal.ZERO;
+        BigDecimal refundOrderFeeTrade = BigDecimal.ZERO;
         if (channel.getTransType() != null && TradeConstant.REFUND_ORDER_FEE == channel.getRefundingIsReturnFee()) {
             if ("全额".equals(orderRefund.getRemark2())) {
                 //如果是全额退款的场合则退还收单手续费金额=收单的手续费
                 refundOrderFee = oldOrder.getFee();
+                refundOrderFeeTrade = oldOrder.getFeeTrade();
             } else {
                 //如果是部分退款的场合则退还收单手续费金额=退款金额/原订单金额*收单手续费
                 refundOrderFee = refundDTO.getRefundAmount().divide(oldOrder.getOrderAmount()).multiply(oldOrder.getFee());
+                refundOrderFeeTrade = refundDTO.getRefundAmount().divide(oldOrder.getOrderAmount()).multiply(oldOrder.getFeeTrade());
             }
         } else if (channel.getTransType() != null && TradeConstant.REFUND_TODAY_ORDER_FEE == channel.getTransType()) {
             //仅限当日退还的场合需要退还收单手续费
             if (channelCallbackTime.equals(today) && "全额".equals(orderRefund.getRemark2())) {
                 //如果是全额退款的场合则退还收单手续费金额=收单的手续费
                 refundOrderFee = oldOrder.getFee();
+                refundOrderFeeTrade = oldOrder.getFeeTrade();
             } else if (channelCallbackTime.equals(today) && "部分".equals(orderRefund.getRemark2())) {
                 //如果是部分退款的场合则退还收单手续费金额=退款金额/原订单金额*收单手续费
                 refundOrderFee = refundDTO.getRefundAmount().divide(oldOrder.getOrderAmount()).multiply(oldOrder.getFee());
+                refundOrderFeeTrade = refundDTO.getRefundAmount().divide(oldOrder.getOrderAmount()).multiply(oldOrder.getFeeTrade());
             }
         }
         //五舍六入保留2位 只舍不入保留2位
         refundOrderFee = refundOrderFee.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+        refundOrderFeeTrade = refundOrderFeeTrade.setScale(2, BigDecimal.ROUND_HALF_DOWN);
         orderRefund.setRefundOrderFee(refundOrderFee);
-        log.info("=========================【退款】信息记录 ========================= 是否退还收单手续费:{},退还收单收单手续费金额:{},退款类型:{}******", channel.getRefundingIsReturnFee(), refundOrderFee, refundDTO.getRefundType());
+        orderRefund.setRefundOrderFeeTrade(refundOrderFeeTrade);
+        log.info("=========================【退款】信息记录 ========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{},退还收单手续费金额(订单):{},退款类型:{}******", channel.getRefundingIsReturnFee(), refundOrderFee,refundOrderFeeTrade, refundDTO.getRefundType());
 
 
         /***************************************************************  计算退款手续费  *************************************************************/
