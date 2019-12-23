@@ -53,7 +53,6 @@ public abstract class ChannelsAbstract {
     /**
      * 撤销方法
      *
-     * @param orders       订单
      * @param channel      通道
      * @return 通用响应实体
      */

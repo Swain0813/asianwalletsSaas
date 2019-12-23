@@ -16,4 +16,5 @@ public interface NextPosService {
      * @return
      **/
     BaseResponse refund(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
+
 }
