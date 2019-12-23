@@ -5,9 +5,11 @@ import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
+import com.asianwallets.common.utils.BCryptUtils;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.trade.channels.ChannelsAbstract;
@@ -15,12 +17,14 @@ import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.DeviceBindingMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.SysUserMapper;
+import com.asianwallets.trade.dto.OfflineLoginDTO;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OfflineTradeService;
 import com.asianwallets.trade.utils.HandlerContext;
 import com.asianwallets.trade.utils.SettleDateUtil;
+import com.asianwallets.trade.utils.TokenUtils;
 import com.asianwallets.trade.vo.BasicInfoVO;
 import com.asianwallets.trade.vo.CsbDynamicScanVO;
 import lombok.extern.slf4j.Slf4j;
@@ -38,10 +42,16 @@ import java.util.List;
 public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     @Autowired
+    private TokenUtils tokenUtils;
+
+    @Autowired
     private CommonBusinessService commonBusinessService;
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
+
+    @Autowired
+    private RedisService redisService;
 
     @Autowired
     private OrdersMapper ordersMapper;
@@ -57,6 +67,53 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     @Autowired
     private HandlerContext handlerContext;
+
+    /**
+     * 线下登录
+     *
+     * @param offlineLoginDTO 线下登录实体
+     * @return token
+     */
+    @Override
+    public String login(OfflineLoginDTO offlineLoginDTO) {
+        log.info("===========【线下登录】==========【请求参数】 offlineLoginDTO: {}", JSON.toJSONString(offlineLoginDTO));
+        //校验商户信息
+        Merchant merchant = commonRedisDataService.getMerchantById(offlineLoginDTO.getMerchantId());
+        if (merchant == null) {
+            log.info("===========【线下登录】==========【商户信息不存在】");
+            throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
+        }
+        if (!merchant.getEnabled()) {
+            log.info("===========【线下登录】==========【商户已禁用】");
+            throw new BusinessException(EResultEnum.MERCHANT_IS_DISABLED.getCode());
+        }
+        //校验商户绑定设备
+        DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(offlineLoginDTO.getMerchantId(), offlineLoginDTO.getImei());
+        if (deviceBinding == null) {
+            log.info("================【线下登录】================【设备未绑定】");
+            throw new BusinessException(EResultEnum.DEVICE_CODE_INVALID.getCode());
+        }
+        //拼接用户名
+        String username = offlineLoginDTO.getOperatorId().concat(offlineLoginDTO.getMerchantId());
+        SysUser sysUser = sysUserMapper.selectByUsername(username);
+        if (sysUser == null) {
+            log.info("===========【线下登录】==========【用户不存在】");
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        //校验密码
+        if (!BCryptUtils.matches(offlineLoginDTO.getPassword(), sysUser.getPassword())) {
+            log.info("===========【线下登录】==========【密码错误】");
+            throw new BusinessException(EResultEnum.USER_OR_PASSWORD_INCORRECT.getCode());
+        }
+        //生成Token
+        String token = tokenUtils.generateToken(sysUser.getUsername());
+        if (StringUtils.isEmpty(token)) {
+            log.info("===========【线下登录】==========【Token生成失败】");
+            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+        }
+        redisService.set(token, sysUser.getUsername());
+        return token;
+    }
 
     /**
      * 校验请求参数
@@ -132,11 +189,11 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
         //校验Token信息
-//        SysUserVO sysUserVO = JSON.parseObject(redisService.get(offlineTradeDTO.getToken()), SysUserVO.class);
-//        if (sysUserVO == null || !(offlineTradeDTO.getOperatorId().concat(offlineTradeDTO.getMerchantId()).equals(sysUserVO.getUsername()))) {
-//            log.info("==================【线下CSB动态扫码】==================【Token不合法】");
-//            throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
-//        }
+        String redisUserName = redisService.get(offlineTradeDTO.getToken());
+        if (StringUtils.isEmpty(redisUserName) || !(offlineTradeDTO.getOperatorId().concat(offlineTradeDTO.getMerchantId()).equals(redisUserName))) {
+            log.info("==================【线下CSB动态扫码】==================【Token不合法】");
+            throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
+        }
         //校验币种信息
         if (!commonBusinessService.checkOrderCurrency(offlineTradeDTO.getOrderCurrency(), offlineTradeDTO.getOrderAmount())) {
             log.info("==================【线下CSB动态扫码】==================【订单金额不符合币种默认值】");

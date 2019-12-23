@@ -80,6 +80,31 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     @Autowired
     private RedisService redisService;
 
+
+    /**
+     * AD3线上
+     *
+     * @param orders  订单
+     * @param channel 通道
+     * @return BaseResponse
+     */
+    public BaseResponse onlinePay(Orders orders, Channel channel) {
+        //封装参数
+        AD3OnlineAcquireDTO ad3OnlineAcquireDTO = new AD3OnlineAcquireDTO(orders, channel);
+        ad3OnlineAcquireDTO.setSignMsg(signMsg(ad3OnlineAcquireDTO));
+        log.info("-------AD3线上收单参数-------AD3OnlineAcquireDTO:{}", JSON.toJSON(ad3OnlineAcquireDTO));
+        //返回收款消息
+        log.info("-----------------URL---------------- type:{}**issuerId:{}**url:{}", channel.getChannelEnName(), channel.getIssuerId(), channel.getPayUrl());
+        log.info("==================【线上AD3收款】==================【调用Channels服务】【AD3线上收单接口请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3OnlineAcquireDTO));
+        BaseResponse channelResponse = channelsFeign.ad3OnlinePay(ad3OnlineAcquireDTO);
+        log.info("==================【线上AD3收款】==================【调用Channels服务】【AD3线上收单接口请求参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
+        if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+        return channelResponse;
+    }
+
+
     /**
      * AD3线下CSB
      *
@@ -98,6 +123,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         BaseResponse channelResponse = channelsFeign.ad3OfflineCsb(ad3CSBScanPayDTO);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【AD3线下CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
         if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【NextPos-CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         BaseResponse baseResponse = new BaseResponse();
@@ -130,7 +156,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                     RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
-                    log.info("==================【AD3线下退款】================== 【退款成功】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
+                    log.info("==================【AD3线上退款】================== 【退款成功】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     //退款成功
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
                     //改原订单状态
@@ -138,9 +164,11 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 } else if (response.getCode().equals("T001")) {
                     //退款失败
                     baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                    Reconciliation reconciliation = commonBusinessService.createReconciliation(TradeConstant.AA, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                    String type = orderRefund.getRemark4().equals(TradeConstant.RF )? TradeConstant.AA : TradeConstant.RA;
+                    Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                     reconciliationMapper.insert(reconciliation);
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+                    log.info("=========================【AD3线上退款】======================= 【调账 {}】， fundChangeDTO:【{}】",type, JSON.toJSONString(fundChangeDTO));
                     BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                     if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                         log.info("==================【AD3线上退款】================== 【调账成功】 cFundChange: {}", JSON.toJSONString(cFundChange));
@@ -160,7 +188,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             } else {
                 //请求失败
                 baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
-                if(rabbitMassage ==null){
+                if (rabbitMassage == null) {
                     rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
                 }
                 log.info("===============【AD3线上退款】===============【请求失败 上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
@@ -196,13 +224,15 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
                     //改原订单状态
                     commonBusinessService.updateOrderRefundSuccess(orderRefund);
-                }else{
+                } else {
                     //退款失败
                     log.info("==================【AD3线下退款】================== 【退款失败】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                    Reconciliation reconciliation = commonBusinessService.createReconciliation(TradeConstant.AA, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                    String type = orderRefund.getRemark4().equals(TradeConstant.RF )? TradeConstant.AA : TradeConstant.RA;
+                    Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                     reconciliationMapper.insert(reconciliation);
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+                    log.info("=========================【AD3线下退款】======================= 【调账 {}】， fundChangeDTO:【{}】",type, JSON.toJSONString(fundChangeDTO));
                     BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                     if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                         log.info("==================【AD3线下退款】================== 【调账成功】 cFundChange: {}", JSON.toJSONString(cFundChange));
@@ -219,10 +249,10 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                         rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
                     }
                 }
-            }else {
+            } else {
                 //请求失败
                 baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
-                if(rabbitMassage ==null){
+                if (rabbitMassage == null) {
                     rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
                 }
                 log.info("===============【AD3线下退款】===============【请求失败 上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
@@ -232,6 +262,28 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         return baseResponse;
     }
 
+    /**
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate    撤销
+     * @return
+     **/
+    @Override
+    public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        BaseResponse baseResponse = new BaseResponse();
+        return baseResponse;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate 退款不上报清结算
+     **/
+    @Override
+    public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        return null;
+    }
 
     /**
      * 对向ad3的请求进行签名
@@ -273,7 +325,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         String terminalId = redisService.get(AD3Constant.AD3_LOGIN_TERMINAL);
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(terminalId)) {
             //AD3登陆业务参数实体
-            LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT,channel);
+            LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT, channel);
             //AD3登陆公共参数实体
             AD3LoginDTO ad3LoginDTO = new AD3LoginDTO(channel.getChannelMerchantId(), bizContent);
             //先登出
@@ -297,6 +349,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         }
         return ad3LoginVO;
     }
+
     /**
      * 生成AD3认证签名
      *

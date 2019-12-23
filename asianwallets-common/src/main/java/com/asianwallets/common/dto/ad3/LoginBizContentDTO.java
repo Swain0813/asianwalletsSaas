@@ -27,8 +27,11 @@ public class LoginBizContentDTO {
 
     public LoginBizContentDTO(String type, Channel channel) {
         this.type = type;
+        //终端编号
         this.imei = channel.getExtend1();
+        //操作员ID
         this.operatorId = channel.getExtend2();
+        //登录密码
         this.password = MD5Util.getMD5String(channel.getExtend3());
     }
 }

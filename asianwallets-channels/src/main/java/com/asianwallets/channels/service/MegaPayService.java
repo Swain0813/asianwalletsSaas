@@ -28,7 +28,7 @@ public interface MegaPayService {
      * @Date 2019/5/28
      * @Descripate nextPos收单接口
      **/
-    BaseResponse nextPos(NextPosRequestDTO nextPosRequestDTO) throws Exception;
+    BaseResponse nextPosCsb(NextPosRequestDTO nextPosRequestDTO);
 
     /**
      * NextPos查询接口
