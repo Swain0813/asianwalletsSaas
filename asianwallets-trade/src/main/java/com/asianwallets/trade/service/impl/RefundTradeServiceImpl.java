@@ -82,7 +82,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         BaseResponse baseResponse = new BaseResponse();
         //签名校验
         if (!commonBusinessService.checkUniversalSign(refundDTO)) {
-            log.info("=========================【退款】信息记录 =========================【签名错误】");
+            log.info("=========================【退款 refundOrder】=========================【签名错误】");
             throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
         }
 
@@ -91,16 +91,16 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         Orders oldOrder = ordersMapper.selectByMerchantOrderId(refundDTO.getOrderNo());
         if (oldOrder == null) {
             //商户订单号不存在
-            log.info("=========================【退款】信息记录 =========================【商户订单号不存在】");
+            log.info("=========================【退款 refundOrder】=========================【商户订单号不存在】");
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
         Channel channel = commonRedisDataService.getChannelByChannelCode(oldOrder.getChannelCode());
-        log.info("=========================【退款】信息记录 ========================= Channel:【{}】", JSON.toJSONString(channel));
+        log.info("=========================【退款 refundOrder】========================= Channel:【{}】", JSON.toJSONString(channel));
 
 
         /********************************* 判断通道是否支持退款 线下不支持退款直接拒绝*************************************************/
         if (TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection()) && !channel.getSupportRefundState()) {
-            log.info("=========================【退款】信息记录 =========================【通道线下不支持退款】");
+            log.info("=========================【退款 refundOrder】=========================【通道线下不支持退款】");
             throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
         }
 
@@ -108,7 +108,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         /********************************* 原订单撤销成功和撤销中不能退款*************************************************/
         if (TradeConstant.ORDER_CANNELING.equals(oldOrder.getCancelStatus()) || TradeConstant.ORDER_CANNEL_SUCCESS.equals(oldOrder.getCancelStatus())) {
             //撤销的单子不能退款--该交易已撤销
-            log.info("=========================【退款】信息记录 =========================【该交易已撤销】");
+            log.info("=========================【退款 refundOrder】=========================【该交易已撤销】");
             throw new BusinessException(EResultEnum.REFUND_CANCEL_ERROR.getCode());
         }
 
@@ -138,7 +138,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         } else if (newRefundAmount.compareTo(oldOrder.getOrderAmount()) == 0) {
             orderRefund.setRemark2("全额");
         }
-        log.info("=========================【退款】信息记录 ========================= 创建订单 OrderRefund ：【{}】", JSON.toJSONString(orderRefund));
+        log.info("=========================【退款 refundOrder】========================= 创建订单 OrderRefund ：【{}】", JSON.toJSONString(orderRefund));
 
 
         /***********************************************************  计算退还手续费  ******************************************************/
@@ -172,7 +172,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         refundOrderFeeTrade = refundOrderFeeTrade.setScale(2, BigDecimal.ROUND_HALF_DOWN);
         orderRefund.setRefundOrderFee(refundOrderFee);
         orderRefund.setRefundOrderFeeTrade(refundOrderFeeTrade);
-        log.info("=========================【退款】信息记录 ========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{},退还收单手续费金额(订单):{},退款类型:{}******", channel.getRefundingIsReturnFee(), refundOrderFee, refundOrderFeeTrade, refundDTO.getRefundType());
+        log.info("=========================【退款 refundOrder】========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{},退还收单手续费金额(订单):{},退款类型:{}******", channel.getRefundingIsReturnFee(), refundOrderFee, refundOrderFeeTrade, refundDTO.getRefundType());
 
 
         /***************************************************************  计算退款手续费  *************************************************************/
@@ -183,7 +183,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         //退款收费
         if (merchantProduct.getRefundDefault()) {
             if (merchantProduct.getRefundRate() == null || merchantProduct.getRefundRateType() == null) {
-                log.info("=========================【退款】信息记录 =========================费率:{},费率类型:{}", merchantProduct.getRefundRate(), merchantProduct.getRefundRateType());
+                log.info("=========================【退款 refundOrder】=========================费率:{},费率类型:{}", merchantProduct.getRefundRate(), merchantProduct.getRefundRateType());
                 throw new BusinessException(EResultEnum.SYS_ERROR_CREATE_ORDER_FAIL.getCode());
             }
             //单笔费率
@@ -215,12 +215,12 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         //退款费率
         orderRefund.setRefundRate(merchantProduct.getRefundRate());
 
-        log.info("=========================【退款】信息记录 ========================= 退款是否收费:{},退款手续费金额:{},费率类型:{}******", merchantProduct.getRefundDefault(), poundage, merchantProduct.getRefundRateType());
+        log.info("=========================【退款 refundOrder】========================= 退款是否收费:{},退款手续费金额:{},费率类型:{}******", merchantProduct.getRefundDefault(), poundage, merchantProduct.getRefundRateType());
 
         /***************************************************************  判断账户余额  *************************************************************/
         //判断结算户金额
         Account account = accountMapper.getAccount(oldOrder.getMerchantId(), refundDTO.getRefundCurrency());
-        log.info("=========================【退款】信息记录 ========================= 当前 清算余额:【{}】，结算余额:【{}】,冻结余额:【{}】", account.getClearBalance(), account.getSettleBalance(), account.getFreezeBalance());
+        log.info("=========================【退款 refundOrder】========================= 当前 清算余额:【{}】，结算余额:【{}】,冻结余额:【{}】", account.getClearBalance(), account.getSettleBalance(), account.getFreezeBalance());
         //退款金额=退款金额+退款手续费-收单手续费
         BigDecimal add = BigDecimal.ZERO;
         if (orderRefund.getFeePayer() == 1) {
@@ -245,7 +245,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //撤销的场合=未清算的记录+清算账户金额
             balanceAmount = unClearAmount.add(account.getClearBalance());
         }
-        log.info("=========================【退款】信息记录 ========================= 当前 退款金额余额:【{}】，账户余额:【{}】", add, balanceAmount);
+        log.info("=========================【退款 refundOrder】========================= 当前 退款金额余额:【{}】，账户余额:【{}】", add, balanceAmount);
         if (balanceAmount.compareTo(add) == -1) {
             throw new BusinessException(EResultEnum.INSUFFICIENT_ACCOUNT_BALANCE.getCode());
         }
@@ -259,7 +259,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             /********************************************************* 通道不支持退款 人工退款*************************************************************/
             //线下订单不支持退款上面已经拒绝 若是线上订单，通道不支持退款走人工退款
             if (!channel.getSupportRefundState()) {
-                log.info("=========================【退款】信息记录 ========================= 【通道不支持退款 人工退款】");
+                log.info("=========================【退款 refundOrder】========================= 【通道不支持退款 人工退款】");
                 orderRefund.setRefundMode(TradeConstant.REFUND_MODE_PERSON);
                 orderRefundMapper.insert(orderRefund);
 
@@ -280,7 +280,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             }
 
             /********************************************************* 通道支持支持退款 *************************************************************/
-            log.info("=========================【退款】信息记录 ========================= 【通道支持支持退款】");
+            log.info("=========================【退款 refundOrder】========================= 【通道支持支持退款】");
             orderRefund.setRefundMode(TradeConstant.REFUND_MODE_AUTO);//退款方式 1：系统退款 2：人工退款
             orderRefundMapper.insert(orderRefund);
 
@@ -290,8 +290,14 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             baseResponse = this.doRefundOrder(orderRefund, channel);
         } else if (TradeConstant.PAYING.equals(type)) {
             /***************************************************************  订单是付款中的场合  *************************************************************/
-
-
+            ChannelsAbstract channelsAbstract = null;
+            try {
+                log.info("=========================【退款 付款中】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
+                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
+            } catch (Exception e) {
+                log.info("=========================【退款 付款中】========================= Exception:【{}】", e);
+            }
+            baseResponse = channelsAbstract.cancel(channel, orderRefund, null);
         }
 
 
