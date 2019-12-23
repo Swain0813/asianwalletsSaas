@@ -117,7 +117,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         if (TradeConstant.TRADE_ONLINE.equals(orderRefund.getTradeDirection())) {
 
             /**************************************************** AD3线上退款 *******************************************************/
-            log.info("==================【AD3线上退款】================== OrderRefund: {}", JSON.toJSONString(orderRefund));
             SendAdRefundDTO sendAdRefundDTO = new SendAdRefundDTO(channel.getChannelMerchantId(), orderRefund);
             sendAdRefundDTO.setMerchantSignType(merchantSignType);
             sendAdRefundDTO.setSignMsg(this.signMsg(sendAdRefundDTO));
@@ -125,8 +124,9 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             AD3ONOFFRefundDTO ad3ONOFFRefundDTO = new AD3ONOFFRefundDTO();
             ad3ONOFFRefundDTO.setChannel(channel);
             ad3ONOFFRefundDTO.setSendAdRefundDTO(sendAdRefundDTO);
+            log.info("=================【AD3线上退款】=================【请求Channels服务AD3线上退款】请求参数 ad3ONOFFRefundDTO: {} ", JSON.toJSONString(ad3ONOFFRefundDTO));
             BaseResponse response = channelsFeign.ad3OnlineRefund(ad3ONOFFRefundDTO);
-            log.info("==================【AD3线上退款】================== 【上游返回】 response: {}", JSON.toJSONString(response));
+            log.info("=================【AD3线上退款】=================【Channels服务响应】请求参数 response: {} ", JSON.toJSONString(response));
             if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                     RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
@@ -185,8 +185,9 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             AD3ONOFFRefundDTO ad3ONOFFRefundDTO = new AD3ONOFFRefundDTO();
             ad3ONOFFRefundDTO.setChannel(channel);
             ad3ONOFFRefundDTO.setAd3RefundDTO(ad3RefundDTO);
+            log.info("=================【AD3线下退款】=================【请求Channels服务AD3线下退款】请求参数 ad3ONOFFRefundDTO: {} ", JSON.toJSONString(ad3ONOFFRefundDTO));
             BaseResponse response = channelsFeign.ad3OfflineRefund(ad3ONOFFRefundDTO);
-            log.info("==================【AD3线下退款】================== 【上游返回】 response: {}", JSON.toJSONString(response));
+            log.info("=================【AD3线下退款】=================【Channels服务响应】请求参数 response: {} ", JSON.toJSONString(response));
             if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
                 RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {

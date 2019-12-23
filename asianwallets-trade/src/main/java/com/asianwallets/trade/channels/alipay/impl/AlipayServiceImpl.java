@@ -49,6 +49,7 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
     private ClearingService clearingService;
     @Autowired
     private RabbitMQSender rabbitMQSender;
+
     /**
      * @return
      * @Author YangXu
@@ -58,10 +59,10 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
     @Override
     public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
-        log.info("=====================【AliPay退款】==================== orderRefund : {} ", JSON.toJSON(orderRefund));
         AliPayRefundDTO aliPayRefundDTO = new AliPayRefundDTO(orderRefund, channel);
+        log.info("=================【AliPay退款】=================【请求Channels服务AliPay退款退款】请求参数 aliPayRefundDTO: {} ", JSON.toJSONString(aliPayRefundDTO));
         BaseResponse response = channelsFeign.alipayRefund(aliPayRefundDTO);
-        log.info("=====================【AliPay退款】==================== response : {} ", JSON.toJSON(response));
+        log.info("=================【AliPay退款】=================【Channels服务响应】请求参数 response: {} ", JSON.toJSONString(response));
         if (response.getCode().equals("200")) {
             //请求成功
             Map<String, String> map = (Map<String, String>) response.getData();
@@ -75,7 +76,7 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
             } else {
                 log.info("=====================【AliPay退款】==================== 【退款失败】 : {} ", JSON.toJSON(orderRefund));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(TradeConstant.AA,orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(TradeConstant.AA, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                 reconciliationMapper.insert(reconciliation);
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
@@ -97,7 +98,7 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
         } else {
             log.info("=====================【AliPay退款】==================== 【请求失败】 : {} ", JSON.toJSON(orderRefund));
             baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
-            if(rabbitMassage ==null){
+            if (rabbitMassage == null) {
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
             log.info("===============【AliPay退款】===============【请求失败 上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));

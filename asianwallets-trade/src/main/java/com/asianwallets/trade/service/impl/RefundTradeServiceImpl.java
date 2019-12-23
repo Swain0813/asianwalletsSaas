@@ -172,7 +172,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         refundOrderFeeTrade = refundOrderFeeTrade.setScale(2, BigDecimal.ROUND_HALF_DOWN);
         orderRefund.setRefundOrderFee(refundOrderFee);
         orderRefund.setRefundOrderFeeTrade(refundOrderFeeTrade);
-        log.info("=========================【退款】信息记录 ========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{},退还收单手续费金额(订单):{},退款类型:{}******", channel.getRefundingIsReturnFee(), refundOrderFee,refundOrderFeeTrade, refundDTO.getRefundType());
+        log.info("=========================【退款】信息记录 ========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{},退还收单手续费金额(订单):{},退款类型:{}******", channel.getRefundingIsReturnFee(), refundOrderFee, refundOrderFeeTrade, refundDTO.getRefundType());
 
 
         /***************************************************************  计算退款手续费  *************************************************************/
@@ -223,10 +223,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         log.info("=========================【退款】信息记录 ========================= 当前 清算余额:【{}】，结算余额:【{}】,冻结余额:【{}】", account.getClearBalance(), account.getSettleBalance(), account.getFreezeBalance());
         //退款金额=退款金额+退款手续费-收单手续费
         BigDecimal add = BigDecimal.ZERO;
-        if(orderRefund.getFeePayer()==1){
+        if (orderRefund.getFeePayer() == 1) {
             //商家承担
             add = refundDTO.getRefundAmount().add(poundage).subtract(refundOrderFee);
-        }else{
+        } else {
             //用户承担
             add = refundDTO.getRefundAmount();
         }
@@ -288,7 +288,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             orderRefund.setSign(oldOrder.getSign());
             if (type.equals(TradeConstant.RF)) {
                 orderRefund.setRemark4(type);
-                this.doRefundOrder(orderRefund, channel);
+                baseResponse = this.doRefundOrder(orderRefund, channel);
             } else {
                 //this.doCancelOrder(orderRefund);
             }
@@ -301,7 +301,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
 
 
-        return null;
+        return baseResponse;
     }
 
     /**
@@ -325,34 +325,13 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         ChannelsAbstract channelsAbstract = null;
         try {
-            channelsAbstract =  handlerContext.getInstance(channel.getServiceNameMark());
+            channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
             log.info("=========================【退款】 doRefundOrder 信息记录 ========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
         } catch (Exception e) {
             log.info("=========================【退款】 doRefundOrder Exception ========================= Exception:【{}】", e);
         }
-        baseResponse = channelsAbstract.refund(channel, orderRefund,null);
+        baseResponse = channelsAbstract.refund(channel, orderRefund, null);
         return baseResponse;
-        //if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_ONLINE)) {
-        //    //ad3线上退款
-        //    ad3OnlineAcquireService.doUsRefundInRef(baseResponse, fundChangeDTO, orderRefund);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_OFFLINE)) {
-        //    //ad3线下退款
-        //    ad3Service.doUsRefundInRef(baseResponse, orderRefund, fundChangeDTO);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_CSB_ONLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_BSC_OFFLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_CSB_OFFLINE)) {
-        //    //支付宝退款
-        //    aliPayService.aliPayRefund(orderRefund, fundChangeDTO, baseResponse);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_CSB_ONLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_CSB_OFFLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_BSC_OFFLINE)) {
-        //    //微信退款
-        //    wechatService.wechatRefund(orderRefund, fundChangeDTO, baseResponse);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.NEXTPOS_ONLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.NEXTPOS_CSB_OFFLINE)) {
-        //    //nextPos通道退款
-        //    megaPayService.megaPayNextPosRefund(orderRefund, fundChangeDTO, baseResponse);
-        //}
     }
 
     /**
