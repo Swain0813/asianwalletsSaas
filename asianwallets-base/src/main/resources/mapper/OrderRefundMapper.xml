@@ -73,6 +73,7 @@
         <result column="refund_rate_type" property="refundRateType" jdbcType="VARCHAR"/>
         <result column="refund_rate" property="refundRate" jdbcType="DECIMAL"/>
         <result column="refund_fee" property="refundFee" jdbcType="DECIMAL"/>
+        <result column="refund_fee_trade" property="refundFeeTrade" jdbcType="DECIMAL"/>
         <result column="refund_order_fee" property="refundOrderFee" jdbcType="DECIMAL"/>
         <result column="remark4" property="remark4" jdbcType="VARCHAR"/>
         <result column="remark5" property="remark5" jdbcType="VARCHAR"/>
@@ -113,7 +114,7 @@
     payer_phone, swift_code, sign, remark1, remark2, remark3, channel_rate, channel_fee_type, 
     channel_gateway_rate, channel_gateway_fee, channel_gateway_fee_type, channel_gateway_charge, 
     channel_gateway_status, product_settle_cycle, channel_amount, fee_payer, channel_fee, 
-    refund_rate_type, refund_rate, refund_fee, refund_order_fee, remark4, remark5, remark6, 
+    refund_rate_type, refund_rate, refund_fee,refund_fee_trade, refund_order_fee, remark4, remark5, remark6,
     remark7, remark8
     </sql>
 
@@ -193,7 +194,7 @@
                o.order_for_trade_rate                as orderForTradeRate,
                o.exchange_rate                       as exchangeRate,
                o.exchange_status                     as exchangeStatus,
-               o.remark1                             as exchangeRateRemark,
+               o.remark4                             as exchangeRateRemark,
 
 
                o.report_channel_time                 as reportChannelTime,
@@ -205,7 +206,7 @@
                o.payer_email                         as payerEmail,
                o.channel_callback_time               as channelCallbackTime,
                o.channel_fee                         as channelFee,
-               o.remark2                             as channelRemark,
+               o.remark5                             as channelRemark,
 
                ore.create_time                       as orderRefundCreateTime,
                ore.id                                as orderRefundId,
@@ -216,6 +217,7 @@
                ore.refund_status                     as refundStatus,
                ore.update_time                       as refundFinishTime,
                ore.refund_fee                        as refundFee,
+               ore.refund_fee_trade                  as refundFeeTrade,
                ore.remark                            as refundRemark,
 
                o.delivery_time                       as deliveryTime,
@@ -223,7 +225,7 @@
                o.invoice_no                          as invoiceNo,
                o.provider_name                       as providerName,
                o.delivery_status                     as deliveryStatus,
-               o.remark3                             as logisticsRemark
+               o.remark6                             as logisticsRemark
         FROM order_refund ore
                  left join orders o on ore.order_id = o.id
                  left join pay_type p on p.extend1 = o.pay_method and p.language = #{language}

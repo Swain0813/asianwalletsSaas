@@ -196,15 +196,18 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 //手续费=单笔定额值
                 poundage = merchantProduct.getRefundRate();
             }
+            //设置退款手续费交易币种
+            orderRefund.setRefundFeeTrade(poundage);
             //转为订单币种费率
             poundage = poundage.multiply(oldOrder.getTradeForOrderRate()).setScale(2, BigDecimal.ROUND_HALF_UP);
+            //设置退款手续费订单币种
+            orderRefund.setRefundFee(poundage);
         }
         //设置退款费率类型
         orderRefund.setRefundRateType(merchantProduct.getRefundRateType());
         //退款费率
         orderRefund.setRefundRate(merchantProduct.getRefundRate());
-        //设置退款手续费
-        orderRefund.setRefundFee(poundage);
+
         log.info("=========================【退款】信息记录 ========================= 退款是否收费:{},退款手续费金额:{},费率类型:{}******", merchantProduct.getRefundDefault(), poundage, merchantProduct.getRefundRateType());
 
         /***************************************************************  判断账户余额  *************************************************************/
