@@ -177,8 +177,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setInstitutionName(institution.getCnName());
         orders.setMerchantId(merchant.getId());
         orders.setMerchantName(merchant.getCnName());
-        orders.setSecondMerchantName("");
-        orders.setSecondMerchantCode("");
+        orders.setSecondMerchantName(merchant.getCnName());
+        orders.setSecondMerchantCode(merchant.getId());
         orders.setAgentCode(merchant.getAgentId());
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
         orders.setGroupMerchantCode("");
