@@ -18,11 +18,18 @@ public interface Ad3Service {
     BaseResponse offlineCSB(Orders orders, Channel channel);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/19
      * @Descripate 退款接口
-     * @return
      **/
     BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
 
+    /**
+     * 对向ad3的请求进行签名
+     *
+     * @param object
+     * @return
+     */
+    String signMsg(Object object);
 }

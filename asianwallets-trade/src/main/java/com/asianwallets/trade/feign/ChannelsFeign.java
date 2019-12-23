@@ -1,6 +1,7 @@
 package com.asianwallets.trade.feign;
 
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
+import com.asianwallets.common.dto.ad3.AD3ONOFFRefundDTO;
 import com.asianwallets.common.dto.alipay.*;
 import com.asianwallets.common.dto.doku.DOKUReqDTO;
 import com.asianwallets.common.dto.eghl.EGHLRequestDTO;
@@ -129,4 +130,12 @@ public interface ChannelsFeign {
     @ApiOperation(value = "AD3线下CSB")
     @PostMapping("/ad3/offlineCsb")
     BaseResponse ad3OfflineCsb(@RequestBody @ApiParam AD3CSBScanPayDTO ad3CSBScanPayDTO);
+
+    @ApiOperation(value = "AD3线下退款接口")
+    @PostMapping("/ad3/offlineRefund")
+    BaseResponse ad3OfflineRefund(@RequestBody @ApiParam AD3ONOFFRefundDTO ad3RefundDTO);
+
+    @ApiOperation(value = "AD3线上退款接口")
+    @PostMapping("/ad3/onlineRefund")
+    BaseResponse ad3OnlineRefund(@RequestBody @ApiParam AD3ONOFFRefundDTO sendAdRefundDTO);
 }
