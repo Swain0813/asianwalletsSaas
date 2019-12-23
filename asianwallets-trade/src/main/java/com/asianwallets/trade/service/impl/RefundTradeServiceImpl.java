@@ -332,27 +332,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         baseResponse = channelsAbstract.refund(channel, orderRefund,null);
         return baseResponse;
-        //if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_ONLINE)) {
-        //    //ad3线上退款
-        //    ad3OnlineAcquireService.doUsRefundInRef(baseResponse, fundChangeDTO, orderRefund);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_OFFLINE)) {
-        //    //ad3线下退款
-        //    ad3Service.doUsRefundInRef(baseResponse, orderRefund, fundChangeDTO);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_CSB_ONLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_BSC_OFFLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_CSB_OFFLINE)) {
-        //    //支付宝退款
-        //    aliPayService.aliPayRefund(orderRefund, fundChangeDTO, baseResponse);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_CSB_ONLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_CSB_OFFLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_BSC_OFFLINE)) {
-        //    //微信退款
-        //    wechatService.wechatRefund(orderRefund, fundChangeDTO, baseResponse);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.NEXTPOS_ONLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.NEXTPOS_CSB_OFFLINE)) {
-        //    //nextPos通道退款
-        //    megaPayService.megaPayNextPosRefund(orderRefund, fundChangeDTO, baseResponse);
-        //}
     }
 
     /**
