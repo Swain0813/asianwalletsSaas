@@ -77,7 +77,7 @@ public class RedisServiceImpl implements RedisService {
         try {
             jedis = getResource();
             jedis.set(key, value);
-            log.info("Redis set success - key: " + key + ", value: " + value);
+            log.info("==========【Redis Set Success】========== key: {} | value: {}", key, value);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Redis set error: " + e.getMessage() + " - " + key + ", value:" + value);

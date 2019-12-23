@@ -60,23 +60,23 @@ public class Ad3ServiceImpl implements Ad3Service {
     /**
      * AD3登陆
      *
-     * @param ad3CSBScanPayDTO AD3线下CSB输入实体
+     * @param channel 通道
      * @return AD3登陆响应参数
      */
-    private AD3LoginVO offlineLogin(AD3CSBScanPayDTO ad3CSBScanPayDTO) {
+    private AD3LoginVO offlineLogin(Channel channel) {
         AD3LoginVO ad3LoginVO = null;
         String token = redisService.get(AD3Constant.AD3_LOGIN_TOKEN);
         String terminalId = redisService.get(AD3Constant.AD3_LOGIN_TERMINAL);
-        Channel channel = ad3CSBScanPayDTO.getChannel();
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(terminalId)) {
             //AD3登陆业务参数实体
             LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT, channel);
             //AD3登陆公共参数实体
-            AD3LoginDTO ad3LoginDTO = new AD3LoginDTO(ad3CSBScanPayDTO.getMerchantId(), bizContent);
+            AD3LoginDTO ad3LoginDTO = new AD3LoginDTO(channel.getChannelMerchantId(), bizContent);
             //先登出
             HttpClientUtils.reqPost(channel.getExtend5(), ad3LoginDTO, null);
             //再登陆
             bizContent.setType(AD3Constant.LOGIN_IN);
+            //Channel的extend5存储的是AD3登录接口URL
             HttpResponse httpResponse = HttpClientUtils.reqPost(channel.getExtend5(), ad3LoginDTO, null);
             //状态码为200
             if (httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
@@ -126,7 +126,7 @@ public class Ad3ServiceImpl implements Ad3Service {
             channelsOrder.setPayerEmail(orders.getPayerEmail());
             channelsOrderMapper.insert(channelsOrder);
             //获取AD3的终端号和Token
-            AD3LoginVO ad3LoginVO = offlineLogin(ad3CSBScanPayDTO);
+            AD3LoginVO ad3LoginVO = offlineLogin(ad3CSBScanPayDTO.getChannel());
             if (ad3LoginVO == null || StringUtils.isEmpty(ad3LoginVO.getToken())) {
                 log.info("=================【AD3线下CSB】=================【AD3登陆接口异常】");
                 baseResponse.setCode(TradeConstant.HTTP_FAIL);
@@ -179,23 +179,23 @@ public class Ad3ServiceImpl implements Ad3Service {
     @Override
     public BaseResponse offlineRefund(AD3ONOFFRefundDTO ad3ONOFFRefundDTO) {
         BaseResponse baseResponse = new BaseResponse();
-        AD3RefundDTO ad3RefundDTO  = ad3ONOFFRefundDTO.getAd3RefundDTO();
+        AD3RefundDTO ad3RefundDTO = ad3ONOFFRefundDTO.getAd3RefundDTO();
         Channel channel = ad3ONOFFRefundDTO.getChannel();
-        log.info("===========================【AD3线下退款接口】开始时间 =========================== ad3RefundDTO :{}",JSON.toJSONString(ad3RefundDTO));
+        log.info("===========================【AD3线下退款接口】开始时间 =========================== ad3RefundDTO :{}", JSON.toJSONString(ad3RefundDTO));
         HttpResponse httpResponse = HttpClientUtils.reqPost(channel.getRefundUrl() + "/posRefund.json", ad3RefundDTO, null);
-        log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}",JSON.toJSONString(httpResponse));
+        log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}", JSON.toJSONString(httpResponse));
         if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
             AD3RefundOrderVO ad3RefundOrderVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3RefundOrderVO.class);
             if (ad3RefundOrderVO.getRespCode() != null && ad3RefundOrderVO.getRespCode().equals(AD3Constant.AD3_OFFLINE_SUCCESS)) {
                 baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
                 baseResponse.setMsg(AD3Constant.AD3_ONLINE_SUCCESS);
                 baseResponse.setData(ad3RefundOrderVO);
-            }else{
+            } else {
                 baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
                 baseResponse.setMsg("T001");
                 baseResponse.setData(ad3RefundOrderVO);
             }
-        }else{
+        } else {
             baseResponse.setCode(String.valueOf(302));
             baseResponse.setData(null);
         }
@@ -214,9 +214,9 @@ public class Ad3ServiceImpl implements Ad3Service {
         BaseResponse baseResponse = new BaseResponse();
         Channel channel = ad3ONOFFRefundDTO.getChannel();
         SendAdRefundDTO sendAdRefundDTO = ad3ONOFFRefundDTO.getSendAdRefundDTO();
-        log.info("===========================【AD3线下退款接口】开始时间 =========================== sendAdRefundDTO :{}",JSON.toJSONString(sendAdRefundDTO));
+        log.info("===========================【AD3线下退款接口】开始时间 =========================== sendAdRefundDTO :{}", JSON.toJSONString(sendAdRefundDTO));
         HttpResponse httpResponse = HttpClientUtils.reqPost(channel.getRefundUrl(), sendAdRefundDTO, null);
-        log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}",JSON.toJSONString(httpResponse));
+        log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}", JSON.toJSONString(httpResponse));
         if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
             //请求成功
             RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(httpResponse.getJsonObject().toJSONString(), RefundAdResponseVO.class);
@@ -224,12 +224,12 @@ public class Ad3ServiceImpl implements Ad3Service {
                 baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
                 baseResponse.setMsg(AD3Constant.AD3_ONLINE_SUCCESS);
                 baseResponse.setData(refundAdResponseVO);
-            }else{
+            } else {
                 baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
                 baseResponse.setMsg("T001");
                 baseResponse.setData(refundAdResponseVO);
             }
-        }else{
+        } else {
             baseResponse.setCode(String.valueOf(302));
             baseResponse.setData(null);
         }
