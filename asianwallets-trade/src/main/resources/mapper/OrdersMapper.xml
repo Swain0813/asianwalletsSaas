@@ -73,6 +73,7 @@
         <result column="rate_type" property="rateType" jdbcType="VARCHAR"/>
         <result column="rate" property="rate" jdbcType="DECIMAL"/>
         <result column="fee" property="fee" jdbcType="DECIMAL"/>
+        <result column="fee_trade" property="feeTrade" jdbcType="DECIMAL"/>
         <result column="channel_fee_type" property="channelFeeType" jdbcType="VARCHAR"/>
         <result column="channel_rate" property="channelRate" jdbcType="DECIMAL"/>
         <result column="channel_fee" property="channelFee" jdbcType="DECIMAL"/>
@@ -108,7 +109,7 @@
     report_number, report_channel_time, channel_callback_time, up_channel_fee, float_rate, 
     add_value, payer_name, payer_account, payer_bank, payer_email, payer_phone, payer_address, 
     invoice_no, provider_name, product_description,courier_code, delivery_time, delivery_status, received_status,
-    sign, received_time, product_settle_cycle, issuer_id, bank_name, browser_url, server_url, 
+    sign, received_time, product_settle_cycle, issuer_id, bank_name, browser_url, server_url,fee_trade,
     fee_payer, rate_type, rate, fee, channel_fee_type, channel_rate, channel_fee, channel_gateway_charge, 
     channel_gateway_status, channel_gateway_fee_type, channel_gateway_rate, channel_gateway_fee, 
     language, create_time, update_time, creator, modifier, remark, remark1, remark2, 

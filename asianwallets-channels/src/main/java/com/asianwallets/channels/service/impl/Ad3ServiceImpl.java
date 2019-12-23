@@ -120,6 +120,10 @@ public class Ad3ServiceImpl implements Ad3Service {
             channelsOrder.setIssuerId(ad3CSBScanPayDTO.getBizContent().getIssuerId());
             channelsOrder.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
             channelsOrder.setMd5KeyStr(ad3CSBScanPayDTO.getChannel().getMd5KeyStr());
+            channelsOrder.setPayerPhone(orders.getPayerPhone());
+            channelsOrder.setPayerName(orders.getPayerName());
+            channelsOrder.setPayerBank(orders.getPayerBank());
+            channelsOrder.setPayerEmail(orders.getPayerEmail());
             channelsOrderMapper.insert(channelsOrder);
             //获取AD3的终端号和Token
             AD3LoginVO ad3LoginVO = offlineLogin(ad3CSBScanPayDTO);
