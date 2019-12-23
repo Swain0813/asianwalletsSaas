@@ -111,6 +111,7 @@
             </if>
         </where>
     </select>
+
     <select id="exportMerProduct" resultMap="BaseResultMap">
         select
         mp.id, mp.merchant_id, mp.product_id,  mp.merchant_name,
