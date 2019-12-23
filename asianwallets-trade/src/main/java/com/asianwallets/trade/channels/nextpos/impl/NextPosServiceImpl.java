@@ -172,11 +172,31 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         //获取原订单的refCode字段(NextPos用)
-        orderRefund.setSign(ordersMapper.selectByPrimaryKey(orderRefund.getOrderId()).getSign());
+        Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
+        orderRefund.setSign(orders.getSign());
         NextPosRefundDTO nextPosRefundDTO = new NextPosRefundDTO(orderRefund, channel);
         log.info("=================【NextPos撤销 cancelPaying】=================【请求Channels服务NextPos退款】请求参数 nextPosRefundDTO: {} ", JSON.toJSONString(nextPosRefundDTO));
         BaseResponse response = channelsFeign.nextPosRefund(nextPosRefundDTO);
-        log.info("=================【NextPos退款】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+        log.info("=================【NextPos退款 cancelPaying】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+        if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            //请求成功
+            if (response.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
+                //退款成功
+                log.info("=================【NextPos退款 cancelPaying】=================【退款成功】");
+                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
+            } else {
+                //退款失败
+                log.info("=================【NextPos退款 cancelPaying】=================【退款失败】");
+                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
+            }
+        } else {
+            //请求失败
+            log.info("=================【NextPos退款 cancelPaying】=================【请求失败】");
+            log.info("----------------- 退款操作 请求失败上报队列 MQ_TK_WECHAT_QQSB_DL -------------- rabbitMassage: {} ", JSON.toJSON(rabbitMassage));
+            //rabbitMQSender.sendAd3Sleep(AD3MQConstant.MQ_AD3_REFUND, JSON.toJSONString(rabbitMassage));
+        //    TODO
+
+        }
 
         return baseResponse;
     }
