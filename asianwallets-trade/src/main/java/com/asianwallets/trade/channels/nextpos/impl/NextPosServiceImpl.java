@@ -85,7 +85,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                     //调账成功
-                    log.info("=================【NextPos退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                    log.info("=================【NextPos退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
                     reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
                     //改原订单状态
@@ -109,4 +109,62 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
         }
         return response;
     }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/19
+     * @Descripate 撤销接口
+     **/
+    @Override
+    public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        BaseResponse baseResponse = new BaseResponse();
+        NextPosRefundDTO nextPosRefundDTO = new NextPosRefundDTO(orderRefund, channel);
+        log.info("=================【NextPos撤销】=================【请求Channels服务NextPos退款】请求参数 nextPosRefundDTO: {} ", JSON.toJSONString(nextPosRefundDTO));
+        BaseResponse response = channelsFeign.nextPosRefund(nextPosRefundDTO);
+        log.info("=================【NextPos撤销】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+        if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            //请求成功
+            Map<String, Object> respMap = (Map<String, Object>) response.getData();
+            if (response.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
+                log.info("=================【NextPos撤销】=================【撤销成功】 response: {} ", JSON.toJSONString(response));
+                //撤销成功
+                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, String.valueOf(respMap.get("transactionID")), null);
+                //撤销订单状态
+                commonBusinessService.updateOrderRefundSuccess(orderRefund);
+            } else {
+                //退款失败
+                log.info("=================【NextPos撤销】=================【撤销失败】 response: {} ", JSON.toJSONString(response));
+                baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(TradeConstant.RA,orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                reconciliationMapper.insert(reconciliation);
+                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                    //调账成功
+                    log.info("=================【NextPos撤销】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
+                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
+                    //改原订单状态
+                    commonBusinessService.updateOrderRefundFail(orderRefund);
+                } else {
+                    //调账失败
+                    log.info("=================【NextPos撤销】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
+                    log.info("=================【NextPos撤销】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
+                }
+            }
+        } else {
+            //请求失败
+            baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+            if(rabbitMassage ==null){
+                rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+            }
+            log.info("===============【NextPos撤销】===============【请求失败 上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+            rabbitMQSender.send(AD3MQConstant.TK_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
+        }
+        return response;
+    }
+
 }
