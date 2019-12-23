@@ -5,10 +5,15 @@ import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
+import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
+import com.asianwallets.common.dto.ad3.CSBScanBizContentDTO;
 import com.asianwallets.common.dto.megapay.NextPosRefundDTO;
+import com.asianwallets.common.dto.megapay.NextPosRequestDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
+import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
@@ -42,16 +47,44 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
 
     @Autowired
     private ChannelsFeign channelsFeign;
+
     @Autowired
     private OrderRefundMapper orderRefundMapper;
+
     @Autowired
     private CommonBusinessService commonBusinessService;
+
     @Autowired
     private ReconciliationMapper reconciliationMapper;
+
     @Autowired
     private ClearingService clearingService;
+
     @Autowired
     private RabbitMQSender rabbitMQSender;
+
+    /**
+     * NextPos线下CSB
+     *
+     * @param orders  订单
+     * @param channel 通道
+     * @return BaseResponse
+     */
+    @Override
+    public BaseResponse offlineCSB(Orders orders, Channel channel) {
+        //NextPos-CSB接口请求实体
+        NextPosRequestDTO nextPosRequestDTO = new NextPosRequestDTO(orders, channel, channel.getNotifyServerUrl());
+        log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【NextPos-CSB接口请求参数】 nextPosRequestDTO: {}", JSON.toJSONString(nextPosRequestDTO));
+        BaseResponse channelResponse = channelsFeign.nextPosCsb(nextPosRequestDTO);
+        log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【NextPos-CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
+        if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            log.info("==================【线下CSB动态扫码】==================【Channels服务响应结果不正确】");
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setData(channelResponse.getData());
+        return baseResponse;
+    }
 
     /**
      * @return
@@ -79,11 +112,11 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 //退款失败
                 log.info("=================【NextPos退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                String type = orderRefund.getRemark4().equals(TradeConstant.RF )? TradeConstant.AA : TradeConstant.RA;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type,orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                 reconciliationMapper.insert(reconciliation);
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                log.info("=========================【NextPos退款】======================= 【调账 {}】， fundChangeDTO:【{}】",type, JSON.toJSONString(fundChangeDTO));
+                log.info("=========================【NextPos退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                     //调账成功
@@ -103,7 +136,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
         } else {
             //请求失败
             baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
-            if(rabbitMassage ==null){
+            if (rabbitMassage == null) {
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
             log.info("===============【NextPos退款】===============【请求失败 上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));

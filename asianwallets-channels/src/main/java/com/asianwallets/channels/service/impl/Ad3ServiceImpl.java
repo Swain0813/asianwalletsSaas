@@ -116,9 +116,9 @@ public class Ad3ServiceImpl implements Ad3Service {
             channelsOrder.setTradeAmount(new BigDecimal(ad3CSBScanPayDTO.getBizContent().getMerorderAmount()));
             channelsOrder.setReqIp(orders.getReqIp());
             channelsOrder.setServerUrl(ad3CSBScanPayDTO.getBizContent().getReceiveUrl());
-            channelsOrder.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
+            channelsOrder.setTradeStatus(TradeConstant.TRADE_WAIT);
             channelsOrder.setIssuerId(ad3CSBScanPayDTO.getBizContent().getIssuerId());
-            channelsOrder.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
+            channelsOrder.setOrderType(AD3Constant.TRADE_ORDER);
             channelsOrder.setMd5KeyStr(ad3CSBScanPayDTO.getChannel().getMd5KeyStr());
             channelsOrder.setPayerPhone(orders.getPayerPhone());
             channelsOrder.setPayerName(orders.getPayerName());
