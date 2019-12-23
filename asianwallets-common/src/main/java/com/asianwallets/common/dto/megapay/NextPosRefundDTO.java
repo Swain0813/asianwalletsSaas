@@ -57,7 +57,11 @@ public class NextPosRefundDTO {
         this.tradeNo = orderRefund.getSign();
         this.merRespPassword = channel.getMd5KeyStr();
         this.merRespID = channel.getPayCode();
-        this.amt = String.valueOf(orderRefund.getTradeAmount());
+        if(orderRefund.getFeePayer()==1){
+            this.amt = String.valueOf(orderRefund.getTradeAmount());
+        }else {
+            this.amt = String.valueOf(orderRefund.getTradeAmount().add(orderRefund.getRefundOrderFee()));
+        }
         this.channel = channel;
     }
 }

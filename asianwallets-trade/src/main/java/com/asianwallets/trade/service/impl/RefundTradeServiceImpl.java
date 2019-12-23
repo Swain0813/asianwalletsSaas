@@ -215,7 +215,14 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         Account account = accountMapper.getAccount(oldOrder.getMerchantId(), refundDTO.getRefundCurrency());
         log.info("=========================【退款】信息记录 ========================= 当前 清算余额:【{}】，结算余额:【{}】,冻结余额:【{}】", account.getClearBalance(), account.getSettleBalance(), account.getFreezeBalance());
         //退款金额=退款金额+退款手续费-收单手续费
-        BigDecimal add = refundDTO.getRefundAmount().add(poundage).subtract(refundOrderFee);
+        BigDecimal add = BigDecimal.ZERO;
+        if(orderRefund.getFeePayer()==1){
+            //商家承担
+            add = refundDTO.getRefundAmount().add(poundage).subtract(refundOrderFee);
+        }else{
+            //用户承担
+            add = refundDTO.getRefundAmount();
+        }
         //账户金额
         BigDecimal balanceAmount = BigDecimal.ZERO;
         if (type.equals(TradeConstant.RF)) {

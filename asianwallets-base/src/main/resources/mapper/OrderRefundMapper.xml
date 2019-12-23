@@ -75,6 +75,7 @@
         <result column="refund_fee" property="refundFee" jdbcType="DECIMAL"/>
         <result column="refund_fee_trade" property="refundFeeTrade" jdbcType="DECIMAL"/>
         <result column="refund_order_fee" property="refundOrderFee" jdbcType="DECIMAL"/>
+        <result column="refund_order_fee_trade" property="refundOrderFeeTrade" jdbcType="DECIMAL"/>
         <result column="remark4" property="remark4" jdbcType="VARCHAR"/>
         <result column="remark5" property="remark5" jdbcType="VARCHAR"/>
         <result column="remark6" property="remark6" jdbcType="VARCHAR"/>
@@ -104,17 +105,17 @@
 
     <sql id="Base_Column_List">
         id, refund_type, refund_mode, refund_status, trade_type, trade_direction, institution_code,
-    institution_name, agency_code, agency_name, group_merchant_code, group_merchant_name, 
+    institution_name, agency_code, agency_name, group_merchant_code, group_merchant_name,
     second_merchant_name, second_merchant_code, language,merchant_id,merchant_name, merchant_order_time, merchant_order_id,
-    order_amount, order_currency, order_for_trade_rate, trade_for_order_rate, channel_name, 
-    channel_code, product_name, product_code, imei, operator_id, token, exchange_rate, 
-    exchange_time, exchange_status, trade_currency, trade_amount, order_id, refund_channel_number, 
-    channel_number, pay_method, req_ip, create_time, update_time, creator, modifier, 
-    remark, float_rate, add_value, payer_name, payer_account, payer_bank, payer_email, 
-    payer_phone, swift_code, sign, remark1, remark2, remark3, channel_rate, channel_fee_type, 
-    channel_gateway_rate, channel_gateway_fee, channel_gateway_fee_type, channel_gateway_charge, 
-    channel_gateway_status, product_settle_cycle, channel_amount, fee_payer, channel_fee, 
-    refund_rate_type, refund_rate, refund_fee,refund_fee_trade, refund_order_fee, remark4, remark5, remark6,
+    order_amount, order_currency, order_for_trade_rate, trade_for_order_rate, channel_name,
+    channel_code, product_name, product_code, imei, operator_id, token, exchange_rate,
+    exchange_time, exchange_status, trade_currency, trade_amount, order_id, refund_channel_number,
+    channel_number, pay_method, req_ip, create_time, update_time, creator, modifier,
+    remark, float_rate, add_value, payer_name, payer_account, payer_bank, payer_email,
+    payer_phone, swift_code, sign, remark1, remark2, remark3, channel_rate, channel_fee_type,
+    channel_gateway_rate, channel_gateway_fee, channel_gateway_fee_type, channel_gateway_charge,
+    channel_gateway_status, product_settle_cycle, channel_amount, fee_payer, channel_fee,
+    refund_rate_type, refund_rate, refund_fee,refund_fee_trade, refund_order_fee,refund_order_fee_trade, remark4, remark5, remark6,
     remark7, remark8
     </sql>
 
