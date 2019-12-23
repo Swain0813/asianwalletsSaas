@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 @Service
@@ -120,6 +121,8 @@ public class Ad3ServiceImpl implements Ad3Service {
             channelsOrder.setPayerName(orders.getPayerName());
             channelsOrder.setPayerBank(orders.getPayerBank());
             channelsOrder.setPayerEmail(orders.getPayerEmail());
+            channelsOrder.setCreateTime(new Date());
+            channelsOrder.setCreator(orders.getCreator());
             channelsOrderMapper.insert(channelsOrder);
             //获取AD3的终端号和Token
             AD3LoginVO ad3LoginVO = offlineLogin(ad3CSBScanPayDTO.getChannel());

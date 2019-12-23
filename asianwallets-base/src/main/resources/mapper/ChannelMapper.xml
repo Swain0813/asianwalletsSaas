@@ -240,9 +240,9 @@
         <result column="notifyServerUrl" property="notifyServerUrl" jdbcType="VARCHAR"/>
         <result column="notifyBrowserUrl" property="notifyBrowserUrl" jdbcType="VARCHAR"/>
         <result column="channelSingleSelectUrl" property="channelSingleSelectUrl" jdbcType="VARCHAR"/>
-        <result column="voidUrl" property="currency" jdbcType="VARCHAR"/>
+        <result column="voidUrl" property="voidUrl" jdbcType="VARCHAR"/>
         <result column="refundUrl" property="refundUrl" jdbcType="VARCHAR"/>
-        <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="channelCode" property="channelCode" jdbcType="VARCHAR"/>
         <result column="onlyTodayOrderRefund" property="onlyTodayOrderRefund" jdbcType="BIT"/>
         <result column="extend1" property="extend1" jdbcType="VARCHAR"/>
         <result column="extend2" property="extend2" jdbcType="VARCHAR"/>

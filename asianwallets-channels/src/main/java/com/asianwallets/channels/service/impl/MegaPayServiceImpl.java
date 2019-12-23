@@ -201,6 +201,8 @@ public class MegaPayServiceImpl implements MegaPayService {
             channelsOrder.setPayerName(orders.getPayerName());
             channelsOrder.setPayerBank(orders.getPayerBank());
             channelsOrder.setPayerEmail(orders.getPayerEmail());
+            channelsOrder.setCreateTime(new Date());
+            channelsOrder.setCreator(orders.getCreator());
             channelsOrderMapper.insert(channelsOrder);
             Map<String, Object> paramMap = new HashMap<>(5);
             //商户号
