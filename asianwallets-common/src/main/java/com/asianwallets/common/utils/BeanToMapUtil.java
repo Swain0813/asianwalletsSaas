@@ -15,20 +15,18 @@ import java.util.Map;
 public class BeanToMapUtil {
     /**
      * java类转换成map集合
+     *
      * @param obj
      * @return
      */
     public static HashMap<String, Object> beanToMap(Object obj) {
-        HashMap<String, Object> params = new HashMap<String, Object>(0);
+        HashMap<String, Object> params = new HashMap<>(0);
         try {
             PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
             PropertyDescriptor[] descriptors = propertyUtilsBean.getPropertyDescriptors(obj);
-            for (int i = 0; i < descriptors.length; i++) {
-                String name = descriptors[i].getName();
-                if (!"class".equals(name)) {
-                    if (name.equals("url")) {
-                        continue;
-                    }
+            for (PropertyDescriptor descriptor : descriptors) {
+                String name = descriptor.getName();
+                if (!"class".equals(name) && !StringUtils.isEmpty(String.valueOf(propertyUtilsBean.getNestedProperty(obj, name)))) {
                     params.put(name, propertyUtilsBean.getNestedProperty(obj, name));
                 }
             }

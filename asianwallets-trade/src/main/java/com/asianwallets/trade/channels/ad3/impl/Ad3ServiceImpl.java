@@ -123,6 +123,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         BaseResponse channelResponse = channelsFeign.ad3OfflineCsb(ad3CSBScanPayDTO);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【AD3线下CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
         if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【NextPos-CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         BaseResponse baseResponse = new BaseResponse();

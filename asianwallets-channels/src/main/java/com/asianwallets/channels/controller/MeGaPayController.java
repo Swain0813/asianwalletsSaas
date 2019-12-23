@@ -47,9 +47,9 @@ public class MeGaPayController extends BaseController {
     }
 
     @ApiOperation(value = "nextPos收单接口")
-    @PostMapping("nextPos")
-    public BaseResponse nextPos(@RequestBody @ApiParam @Valid NextPosRequestDTO nextPosRequestDTO) throws Exception {
-        return megaPayService.nextPos(nextPosRequestDTO);
+    @PostMapping("/nextPosCsb")
+    public BaseResponse nextPosCsb(@RequestBody @ApiParam @Valid NextPosRequestDTO nextPosRequestDTO) throws Exception {
+        return megaPayService.nextPosCsb(nextPosRequestDTO);
     }
 
     @ApiOperation(value = "nextPos查询订单接口")

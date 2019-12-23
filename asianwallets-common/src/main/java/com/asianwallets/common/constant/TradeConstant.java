@@ -192,9 +192,9 @@ public class TradeConstant {
 
 
     //--------------通道订单交易状态
-    public static final String TRADE_WAIT = "1"; //待交易
-    public static final String TRADE_SUCCESS = "2"; //交易成功
-    public static final String TRADE_FALID = "3"; //交易失败
+    public static final Byte TRADE_WAIT = 1; //待交易
+    public static final Byte TRADE_SUCCESS = 2; //交易成功
+    public static final Byte TRADE_FALID = 3; //交易失败
 
     //------------线上通道标识
     public static final String AD3 = "AD3";

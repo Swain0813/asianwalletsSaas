@@ -84,9 +84,9 @@ public interface ChannelsFeign {
     @PostMapping("/megaPay/megaPayIDR")
     BaseResponse megaPayIDR(@RequestBody @ApiParam @Valid MegaPayIDRRequestDTO megaPayIDRRequestDTO);
 
-    @ApiOperation(value = "nextPos扫码接口")
-    @PostMapping("/megaPay/nextPos")
-    BaseResponse nextPos(@RequestBody @ApiParam @Valid NextPosRequestDTO nextPosRequestDTO);
+    @ApiOperation(value = "nextPos-Csb接口")
+    @PostMapping("/megaPay/nextPosCsb")
+    BaseResponse nextPosCsb(@RequestBody @ApiParam @Valid NextPosRequestDTO nextPosRequestDTO);
 
     @ApiOperation(value = "nextPos查询接口")
     @PostMapping("/megaPay/nextPosQuery")

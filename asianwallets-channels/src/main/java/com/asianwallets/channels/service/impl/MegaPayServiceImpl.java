@@ -1,4 +1,5 @@
 package com.asianwallets.channels.service.impl;
+
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpException;
 import cn.hutool.http.HttpRequest;
@@ -8,7 +9,9 @@ import com.asianwallets.channels.service.MegaPayService;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.megapay.*;
+import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.utils.HttpClientUtils;
@@ -23,6 +26,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
@@ -176,87 +180,92 @@ public class MegaPayServiceImpl implements MegaPayService {
      * @Descripate nextPos收单接口
      **/
     @Override
-    public BaseResponse nextPos(NextPosRequestDTO nextPosRequestDTO) throws Exception {
+    public BaseResponse nextPosCsb(NextPosRequestDTO nextPosRequestDTO) {
         log.info("==================【NextPos收单接口】==================【请求参数】 nextPosRequestDTO:{}", JSON.toJSONString(nextPosRequestDTO));
-        int num = channelsOrderMapper.selectCountById(nextPosRequestDTO.getEinv());
-        ChannelsOrder co;
-        if (num > 0) {
-            co = channelsOrderMapper.selectByPrimaryKey(nextPosRequestDTO.getEinv());
-        } else {
-            co = new ChannelsOrder();
-        }
-        co.setMerchantOrderId(nextPosRequestDTO.getInstitutionOrderId());
-        co.setTradeCurrency("SGD");
-        co.setTradeAmount(new BigDecimal(nextPosRequestDTO.getAmt()));
-        co.setReqIp(nextPosRequestDTO.getReqIp());
-        co.setServerUrl(nextPosRequestDTO.getReturn_url());
-        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
-        co.setId(nextPosRequestDTO.getEinv());
-        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
-        if (num > 0) {
-            co.setUpdateTime(new Date());
-            channelsOrderMapper.updateByPrimaryKeySelective(co);
-        } else {
-            co.setCreateTime(new Date());
-            channelsOrderMapper.insert(co);
-        }
         BaseResponse baseResponse = new BaseResponse();
-        PostMethod post = new PostMethod(nextPosRequestDTO.getChannel().getPayUrl());
-        HttpClient httpclient = new HttpClient();
-        NameValuePair[] param = {
-                new NameValuePair("merID", nextPosRequestDTO.getMerID()),//商户号
-                new NameValuePair("einv", nextPosRequestDTO.getEinv()),//订单号
-                new NameValuePair("amt", nextPosRequestDTO.getAmt()),//金额
-                //new NameValuePair("c_Email", dmsg.get("15916210566@163.com")),//顾客邮箱，非必填
-                new NameValuePair("product", nextPosRequestDTO.getProduct()),//产品名
-                new NameValuePair("return_url", nextPosRequestDTO.getReturn_url())//接受异步通知的URL
-        };
-        log.info("==================【NextPos收单接口】==================【NextPos接口请求参数】 param: {}", JSON.toJSONString(param));
-        post.setRequestBody(param);
-        //设置编码
-        httpclient.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
-        int status = httpclient.executeMethod(post);
-        String response = new String(post.getResponseBody(), StandardCharsets.UTF_8);
-        log.info("==================【NextPos收单接口】==================【NextPos接口响应参数】【状态码】 status:[{}], 【响应参数】 response:[{}]", status, response);
-        if (status == 200) {
-            //解析XML
-            Map<String, Object> respMap = XMLUtil.xml2Map(response);
-            log.info("==================【NextPos收单接口】==================【解析XML后的参数】 respMap:{}", JSON.toJSONString(respMap));
-            //有任何错误就会返回异常信息errMessage,和errDec,不会返回其他字段
-            if (!respMap.containsKey("errMessage")) {
-                //二维码字符串
-                String qrString = respMap.get("qrString").toString();
-                if (StringUtils.isEmpty(qrString)) {
-                    baseResponse.setCode(TradeConstant.HTTP_FAIL);
-                    baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
-                    return baseResponse;
-                }
-                //nextPos签名
-                String mark = respMap.get("mark").toString();
-                Base64 b64 = new Base64();
-                String encodeStr = b64.encodeToString(qrString.getBytes());
-                String clearText = encodeStr + nextPosRequestDTO.getMerRespPassword() + nextPosRequestDTO.getMerRespID();
-                log.info("==================【NextPos收单接口】==================【签名前的明文】 clearText:{}", clearText);
-                String mySign = MD5.MD5Encode(clearText).toUpperCase();
-                log.info("==================【NextPos收单接口】==================【签名后的密文】 mySign:{}", mySign);
-                //判断回签结果并处理
-                if (mySign.equals(mark)) {
-                    log.info("==================【NextPos收单接口】==================【出码成功!】");
-                    baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
-                    baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
-                    baseResponse.setData(qrString);
-                } else {
-                    log.info("==================【NextPos收单接口】==================【验证签名不通过】");
-                    baseResponse.setCode(TradeConstant.HTTP_FAIL);
-                    baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
-                }
-            } else {
-                log.info("==================【NextPos收单接口】==================【返回参数包含错误信息】 respMap:{}", JSON.toJSONString(respMap));
+        try {
+            Orders orders = nextPosRequestDTO.getOrders();
+            Channel channel = nextPosRequestDTO.getChannel();
+            ChannelsOrder channelsOrder = new ChannelsOrder();
+            channelsOrder.setId(orders.getId());
+            channelsOrder.setMerchantOrderId(orders.getMerchantOrderId());
+            channelsOrder.setTradeCurrency(orders.getTradeCurrency());
+            channelsOrder.setTradeAmount(new BigDecimal(nextPosRequestDTO.getAmt()));
+            channelsOrder.setReqIp(orders.getReqIp());
+            channelsOrder.setServerUrl(nextPosRequestDTO.getChannel().getNotifyServerUrl());
+            channelsOrder.setTradeStatus(TradeConstant.TRADE_WAIT);
+            channelsOrder.setIssuerId(channel.getIssuerId());
+            channelsOrder.setOrderType(AD3Constant.TRADE_ORDER);
+            channelsOrder.setMd5KeyStr(channel.getMd5KeyStr());
+            channelsOrder.setPayerPhone(orders.getPayerPhone());
+            channelsOrder.setPayerName(orders.getPayerName());
+            channelsOrder.setPayerBank(orders.getPayerBank());
+            channelsOrder.setPayerEmail(orders.getPayerEmail());
+            channelsOrderMapper.insert(channelsOrder);
+            Map<String, Object> paramMap = new HashMap<>(5);
+            //商户号
+            paramMap.put("merID", nextPosRequestDTO.getMerID());
+            //订单号
+            paramMap.put("einv", nextPosRequestDTO.getEinv());
+            //金额
+            paramMap.put("amt", nextPosRequestDTO.getAmt());
+            //产品名
+            paramMap.put("product", nextPosRequestDTO.getProduct());
+            paramMap.put("return_url", nextPosRequestDTO.getReturn_url());
+            log.info("==================【NextPos收单接口】==================【NextPos接口请求参数】 paramMap: {}", JSON.toJSONString(paramMap));
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(channel.getPayUrl())
+                    .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
+                    .form(paramMap)
+                    .timeout(20000)
+                    .execute();
+            int status = execute.getStatus();
+            String body = execute.body();
+            log.info("==================【NextPos收单接口】==================【NextPos接口响应参数】【状态码】 status: {} | 【响应参数】 body: {}", status, body);
+            if (status != 200 || StringUtils.isEmpty(body)) {
+                log.info("==================【NextPos收单接口】==================【响应结果不正确】");
                 baseResponse.setCode(TradeConstant.HTTP_FAIL);
                 baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                return baseResponse;
             }
-        } else {
-            log.info("==================【NextPos收单接口】==================【状态码不为200】 status:{}", JSON.toJSONString(response));
+            //解析XML响应参数
+            Map<String, Object> respMap = XMLUtil.xml2Map(body);
+            log.info("==================【NextPos收单接口】==================【解析XML后的参数】 respMap:{}", JSON.toJSONString(respMap));
+            //有任何错误就会返回异常信息errMessage,和errDec,不会返回其他字段
+            if (respMap.containsKey("errMessage")) {
+                log.info("==================【NextPos收单接口】==================【返回参数包含错误信息】");
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                return baseResponse;
+            }
+            //二维码字符串
+            String qrString = String.valueOf(respMap.get("qrString"));
+            if (StringUtils.isEmpty(qrString)) {
+                log.info("==================【NextPos收单接口】==================【二维码参数为空】");
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                return baseResponse;
+            }
+            //校验接口返回签名
+            String mark = respMap.get("mark").toString();
+            String encodeStr = new Base64().encodeToString(qrString.getBytes());
+            String clearText = encodeStr + channel.getMd5KeyStr() + channel.getPayCode();
+            log.info("==================【NextPos收单接口】==================【签名前的明文】 clearText:{}", clearText);
+            String mySign = MD5.MD5Encode(clearText).toUpperCase();
+            log.info("==================【NextPos收单接口】==================【签名后的密文】 mySign:{}", mySign);
+            //判断回签结果并处理
+            if (!mySign.equals(mark)) {
+                log.info("==================【NextPos收单接口】==================【验证返回签名不通过】");
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                return baseResponse;
+            }
+            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+            baseResponse.setData(qrString);
+            log.info("==================【NextPos收单接口】==================【出码成功】");
+            return baseResponse;
+        } catch (Exception e) {
+            log.info("==================【NextPos收单接口】==================【接口异常】", e);
             baseResponse.setCode(TradeConstant.HTTP_FAIL);
             baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
         }

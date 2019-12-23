@@ -61,7 +61,7 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
-    public BaseResponse nextPos(NextPosRequestDTO nextPosRequestDTO) {
+    public BaseResponse nextPosCsb(NextPosRequestDTO nextPosRequestDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
