@@ -109,4 +109,28 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
         }
         return baseResponse;
     }
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate    撤销
+     * @return
+     **/
+    @Override
+    public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        BaseResponse baseResponse = new BaseResponse();
+        return baseResponse;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate 退款不上报清结算
+     **/
+    @Override
+    public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        return null;
+    }
 }

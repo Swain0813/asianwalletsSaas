@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+
 
 @Repository
 public interface OrdersMapper extends BaseMapper<Orders> {
@@ -32,4 +34,11 @@ public interface OrdersMapper extends BaseMapper<Orders> {
     @Update("update orders set cancel_status=#{cancelStatus},modifier=#{deviceOperator},update_time=NOW() where merchant_order_id = #{merchantOrderId} and trade_status in (2,3)")
     int updateOrderCancelStatus(@Param("merchantOrderId") String merchantOrderId, @Param("deviceOperator") String deviceOperator, @Param("cancelStatus") Byte cancelStatus);
 
+    /**
+     * 根据AD3的查询订单信息更新亚洲钱包的订单信息状态
+     *
+     * @return
+     */
+    @Update("update orders set trade_status =#{status},channel_number=#{channelNumber},channel_callback_time=#{channelCallbackTime},update_time=NOW() where id = #{id} and trade_status=2")
+    int updateOrderByAd3Query(@Param("id") String id, @Param("status") Byte status, @Param("channelNumber") String channelNumber, @Param("channelCallbackTime") Date channelCallbackTime);
 }

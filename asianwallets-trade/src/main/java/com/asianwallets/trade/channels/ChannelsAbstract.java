@@ -65,7 +65,7 @@ public abstract class ChannelsAbstract {
      * @Descripate  付款中撤销
      * @return
      **/
-    public abstract BaseResponse cancelPaying(Orders orders, Channel channel);
+    public abstract BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
 
 
 }

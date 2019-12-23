@@ -10,6 +10,15 @@ import com.asianwallets.common.vo.AD3LoginVO;
 public interface Ad3Service {
 
     /**
+     * AD3线上
+     *
+     * @param orders  订单
+     * @param channel 通道
+     * @return BaseResponse
+     */
+    BaseResponse onlinePay(Orders orders, Channel channel);
+
+    /**
      * AD3线下CSB
      *
      * @param orders  订单
@@ -25,7 +34,20 @@ public interface Ad3Service {
      * @Descripate 退款接口
      **/
     BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
-
+    /**
+     * @Author YangXu
+     * @Date 2019/12/19
+     * @Descripate 撤销接口
+     * @return
+     **/
+    BaseResponse cancel(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
+    /**
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate 退款不上报清结算
+     * @return
+     **/
+    BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
     /**
      * 对向ad3的请求进行签名
      *

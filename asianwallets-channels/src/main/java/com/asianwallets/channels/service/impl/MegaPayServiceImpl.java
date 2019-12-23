@@ -202,7 +202,7 @@ public class MegaPayServiceImpl implements MegaPayService {
             channelsOrder.setPayerBank(orders.getPayerBank());
             channelsOrder.setPayerEmail(orders.getPayerEmail());
             channelsOrderMapper.insert(channelsOrder);
-            Map<String, Object> paramMap = new HashMap<>();
+            Map<String, Object> paramMap = new HashMap<>(5);
             //商户号
             paramMap.put("merID", nextPosRequestDTO.getMerID());
             //订单号
