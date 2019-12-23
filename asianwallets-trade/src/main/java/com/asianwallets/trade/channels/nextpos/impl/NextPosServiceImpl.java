@@ -141,9 +141,12 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS,
                         null, new Date()) == 1) {
                     //更新成功
+                    this.cancelPaying(channel,orderRefund, null);
                 } else {
                     //更新失败后去查询订单信息
-
+                    RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                    //rabbitMQSender.send(AD3MQConstant.TC_MQ_CANCEL_ORDER, JSON.toJSONString(rabbitOrderMsg));
+                    //TODO
                 }
             } else {
                 //请求失败
@@ -167,6 +170,14 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
      **/
     @Override
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
-        return null;
+        BaseResponse baseResponse = new BaseResponse();
+        //获取原订单的refCode字段(NextPos用)
+        orderRefund.setSign(ordersMapper.selectByPrimaryKey(orderRefund.getOrderId()).getSign());
+        NextPosRefundDTO nextPosRefundDTO = new NextPosRefundDTO(orderRefund, channel);
+        log.info("=================【NextPos撤销 cancelPaying】=================【请求Channels服务NextPos退款】请求参数 nextPosRefundDTO: {} ", JSON.toJSONString(nextPosRefundDTO));
+        BaseResponse response = channelsFeign.nextPosRefund(nextPosRefundDTO);
+        log.info("=================【NextPos退款】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+
+        return baseResponse;
     }
 }
