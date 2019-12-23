@@ -27,6 +27,6 @@
         select
         <include refid="Base_Column_List"></include>
         from sys_user
-        where username = #{username} and permission_type = 3 and enabled = 1
+        where username = #{username} and permission_type = 5 and enabled = 1
     </select>
 </mapper>

@@ -57,7 +57,7 @@ public class NganLuongServiceImpl implements NganLuongService {
         co.setPayerEmail(nganLuongDTO.getNganLuongRequestDTO().getBuyer_email());
         co.setBrowserUrl(nganLuongDTO.getNganLuongRequestDTO().getReturn_url());
         //co.setServerUrl("");
-        co.setDraweePhone(nganLuongDTO.getNganLuongRequestDTO().getBuyer_mobile());
+        co.setPayerPhone(nganLuongDTO.getNganLuongRequestDTO().getBuyer_mobile());
         co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         co.setIssuerId(nganLuongDTO.getNganLuongRequestDTO().getBank_code());
         co.setMd5KeyStr(nganLuongDTO.getNganLuongRequestDTO().getMerchant_password());

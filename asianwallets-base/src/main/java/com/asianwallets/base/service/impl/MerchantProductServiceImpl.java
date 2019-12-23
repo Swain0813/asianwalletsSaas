@@ -400,7 +400,6 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                         merchantProductHistoryMapper.insert(merchantProductHistory);
                         //原记录信息审核状态记录失败
                         oldMerchantProductAudit.setAuditStatus(TradeConstant.AUDIT_FAIL);
-                        //oldInstitutionProductAudit.setUpdateTime(new Date());
                         oldMerchantProductAudit.setModifier(name);
                         oldMerchantProductAudit.setAuditRemark("生效时间不合法");
                         merchantProductAuditMapper.updateByPrimaryKeySelective(oldMerchantProductAudit);
@@ -440,7 +439,6 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                 } else {
                     //非初次添加信息审核不通过
                     oldMerchantProductAudit.setAuditStatus(TradeConstant.AUDIT_FAIL);
-                    //oldInstitutionProductAudit.setUpdateTime(new Date());
                     oldMerchantProductAudit.setModifier(username);
                     oldMerchantProductAudit.setAuditRemark(auaditProductDTO.getRemark());
                     merchantProductAuditMapper.updateByPrimaryKeySelective(oldMerchantProductAudit);
@@ -468,7 +466,6 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     merchantProductAudit.setId(merProId);
                     merchantProductAudit.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
                     merchantProductAudit.setModifier(username);
-                    //institutionProductAudit.setUpdateTime(new Date());
                     merchantProductAudit.setAuditRemark(auaditProductDTO.getRemark());
                     merchantProductAudit.setEnabled(true);
                     merchantProduct.setCreateTime(merchantProductAudit.getUpdateTime());
@@ -535,7 +532,6 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     merchantProductAudit.setAuditStatus(TradeConstant.AUDIT_FAIL);
                     merchantProductAudit.setAuditRemark(auaditProductDTO.getRemark());
                     merchantProductAudit.setModifier(username);
-                    //institutionProductAudit.setUpdateTime(new Date());
                     merchantProductAuditMapper.updateByPrimaryKeySelective(merchantProductAudit);
 
                     MerchantProductHistory merchantProductAuditHistory = new MerchantProductHistory();

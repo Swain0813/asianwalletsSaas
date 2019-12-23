@@ -15,7 +15,7 @@
         <result column="payer_email" property="payerEmail" jdbcType="VARCHAR"/>
         <result column="browser_url" property="browserUrl" jdbcType="VARCHAR"/>
         <result column="server_url" property="serverUrl" jdbcType="VARCHAR"/>
-        <result column="drawee_phone" property="draweePhone" jdbcType="VARCHAR"/>
+        <result column="payer_phone" property="payerPhone" jdbcType="VARCHAR"/>
         <result column="trade_status" property="tradeStatus" jdbcType="TINYINT"/>
         <result column="issuer_id" property="issuerId" jdbcType="VARCHAR"/>
         <result column="md5_key_str" property="md5KeyStr" jdbcType="VARCHAR"/>
@@ -29,8 +29,8 @@
         <result column="remark3" property="remark3" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-        id, institution_order_id, channel_number, trade_currency, trade_amount, req_ip, drawee_name, order_type,
-    drawee_account, drawee_bank, drawee_email, browser_url, server_url, drawee_phone, issuer_id,md5_key_str,
+        id, merchant_order_id, channel_number, trade_currency, trade_amount, req_ip, payer_name, order_type,
+    payer_account, payer_bank, payer_email, browser_url, server_url, payer_phone, issuer_id,md5_key_str,
     trade_status, create_time, update_time, creator, modifier, remark, remark1, remark2, 
     remark3
     </sql>

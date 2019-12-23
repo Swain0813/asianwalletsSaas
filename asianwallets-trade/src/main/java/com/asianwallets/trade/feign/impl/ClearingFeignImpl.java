@@ -1,4 +1,4 @@
-package com.asianwallets.trade.feign.Impl;
+package com.asianwallets.trade.feign.impl;
 
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;

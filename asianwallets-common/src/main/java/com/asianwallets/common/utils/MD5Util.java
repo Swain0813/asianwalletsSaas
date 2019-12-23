@@ -74,7 +74,7 @@ public class MD5Util {
         return params.toString();
     }
 
-//    public static void main(String[] args) {
-//        System.out.println(getMD5String("123456"));
-//    }
+    public static void main(String[] args) {
+        System.out.println(getMD5String("123456"));
+    }
 }

@@ -56,7 +56,7 @@ public class EghlServiceImpl implements EghlService {
         co.setPayerEmail(eghlRequestDTO.getCustEmail());
         co.setBrowserUrl(eghlRequestDTO.getMerchantReturnURL());
         co.setServerUrl(eghlRequestDTO.getMerchantCallBackURL());
-        co.setDraweePhone(eghlRequestDTO.getCustPhone());
+        co.setPayerPhone(eghlRequestDTO.getCustPhone());
         co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
         co.setIssuerId(eghlRequestDTO.getIssuingBank());
         co.setMd5KeyStr(eghlRequestDTO.getMd5KeyStr());

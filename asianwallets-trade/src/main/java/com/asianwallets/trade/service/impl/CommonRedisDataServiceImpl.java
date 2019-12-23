@@ -291,6 +291,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
                     return null;
                 }
                 redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
+                redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channel.getChannelCode()), JSON.toJSONString(channel));
             }
         } catch (Exception e) {
             log.info("==================【根据通道ID查询通道信息】==================【获取异常】", e);
@@ -317,6 +318,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
                 throw new BusinessException(EResultEnum.GET_CHANNEL_INFO_ERROR.getCode());
             }
             //同步redis
+            redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
             redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channelCode), JSON.toJSONString(channel));
         }
         if (!channel.getEnabled()) {
@@ -363,7 +365,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     public ChannelBank getChaBankById(String chaBankId) {
         ChannelBank channelBank = null;
         try {
-            channelBank = JSON.parseObject((AsianWalletConstant.CHANNEL_BANK_CACHE_KEY.concat("_").concat(chaBankId)), ChannelBank.class);
+            channelBank = JSON.parseObject(redisService.get(AsianWalletConstant.CHANNEL_BANK_CACHE_KEY.concat("_").concat(chaBankId)), ChannelBank.class);
             if (channelBank == null) {
                 channelBank = channelBankMapper.selectByPrimaryKey(chaBankId);
                 if (channelBank == null) {

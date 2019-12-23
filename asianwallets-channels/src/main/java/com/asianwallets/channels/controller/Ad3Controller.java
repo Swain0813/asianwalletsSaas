@@ -1,10 +1,11 @@
 package com.asianwallets.channels.controller;
 
 import com.asianwallets.channels.service.Ad3Service;
-import com.asianwallets.common.ChannelsRequestDTO;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
-import com.asianwallets.common.dto.ad3.AD3LoginDTO;
+import com.asianwallets.common.dto.ad3.AD3ONOFFRefundDTO;
+import com.asianwallets.common.dto.ad3.AD3RefundDTO;
+import com.asianwallets.common.dto.ad3.SendAdRefundDTO;
 import com.asianwallets.common.response.BaseResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,8 +25,19 @@ public class Ad3Controller extends BaseController {
     private Ad3Service ad3Service;
 
     @ApiOperation(value = "AD3线下CSB接口")
-    @PostMapping("offlineCsb")
-    public BaseResponse offlineCsb(@RequestBody @ApiParam AD3CSBScanPayDTO ad3CSBScanPayDTO, @RequestBody @ApiParam ChannelsRequestDTO channelsRequestDTO) {
-        return ad3Service.offlineCsb(ad3CSBScanPayDTO, channelsRequestDTO);
+    @PostMapping("/offlineCsb")
+    public BaseResponse offlineCsb(@RequestBody @ApiParam AD3CSBScanPayDTO ad3CSBScanPayDTO) {
+        return ad3Service.offlineCsb(ad3CSBScanPayDTO);
+    }
+
+    @ApiOperation(value = "AD3线下退款接口")
+    @PostMapping("/offlineRefund")
+    public BaseResponse offlineRefund(@RequestBody @ApiParam AD3ONOFFRefundDTO ad3RefundDTO) {
+        return ad3Service.offlineRefund(ad3RefundDTO);
+    }
+    @ApiOperation(value = "AD3线上退款接口")
+    @PostMapping("/onlineRefund")
+    public BaseResponse onlineRefund(@RequestBody @ApiParam AD3ONOFFRefundDTO sendAdRefundDTO) {
+        return ad3Service.onlineRefund(sendAdRefundDTO);
     }
 }

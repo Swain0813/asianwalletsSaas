@@ -74,7 +74,7 @@
         concat(pt.NAME, '-', p.currency) AS productName,
         pt.NAME AS payType,
         pt.extend1 AS payTypeId,
-        p.trans_type AS transType
+        p.trade_direction AS transType
         FROM institution_product ip
         LEFT JOIN institution_channel ic ON ip.id = ic.ins_pro_id
         LEFT JOIN product p ON ip.product_id = p.id

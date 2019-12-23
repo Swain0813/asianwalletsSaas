@@ -1,6 +1,8 @@
 package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.config.AuditorProvider;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
@@ -8,6 +10,7 @@ import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
+import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.feign.MessageFeign;
 import com.asianwallets.trade.service.CommonBusinessService;
@@ -30,7 +33,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class    CommonBusinessServiceImpl implements CommonBusinessService {
+public class CommonBusinessServiceImpl implements CommonBusinessService {
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
@@ -43,6 +46,12 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
 
     @Autowired
     private OrdersMapper ordersMapper;
+
+    @Autowired
+    private AuditorProvider auditorProvider;
+
+    @Autowired
+    private OrderRefundMapper orderRefundMapper;
 
     @Value("${custom.warning.mobile}")
     private String warningMobile;
@@ -202,7 +211,6 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount) {
-        //获取币种默认值
         Currency currency = commonRedisDataService.getCurrencyByCode(orderCurrency);
         if (currency == null) {
             throw new BusinessException(EResultEnum.PRODUCT_CURRENCY_NO_SUPPORT.getCode());
@@ -239,7 +247,7 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
         }
         //校验机构产品限额
         if (merchantProduct.getAuditStatus() != null && TradeConstant.AUDIT_SUCCESS.equals(merchantProduct.getAuditStatus())) {
-            if (orders.getTradeAmount().compareTo(merchantProduct.getLimitAmount()) > 0) {
+            if (merchantProduct.getLimitAmount() != null && orders.getTradeAmount().compareTo(merchantProduct.getLimitAmount()) > 0) {
                 log.info("==================【校验商户产品与通道的限额】==================【交易金额大于商户产品单笔限额】");
                 orders.setRemark("交易金额大于商户产品单笔限额");
                 orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
@@ -261,7 +269,7 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
             } else {
                 //日交易笔数
                 Integer dailyTradingCount = Integer.parseInt(dailyCount);
-                if (dailyTradingCount >= merchantProduct.getDailyTradingCount()) {
+                if (merchantProduct.getDailyTradingCount() != null && dailyTradingCount >= merchantProduct.getDailyTradingCount()) {
                     log.info("==================【校验商户产品与通道的限额】==================【日交易笔数不合法】 dailyTradingCount: {}", dailyTradingCount);
                     orders.setRemark("日交易笔数不合法");
                     orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
@@ -270,7 +278,7 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
                 }
                 //TODO 日交易限额
         /*        BigDecimal dailyTotalAmount = new BigDecimal(dailyAmount);
-                if (dailyTotalAmount.compareTo(merchantProduct.getDailyTotalAmount()) >= 0) {
+                if (merchantProduct.getDailyTotalAmount() != null && dailyTotalAmount.compareTo(merchantProduct.getDailyTotalAmount()) >= 0) {
                     log.info("==================【校验商户产品与通道的限额】==================【日交易金额不合法】 dailyTotalAmount: {}", dailyTotalAmount);
                     orders.setRemark("日交易金额不合法");
                     orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
@@ -279,6 +287,39 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
                     return baseResponse;
                 }*/
             }
+        }
+    }
+
+    /**
+     * 截取Url
+     *
+     * @param serverUrl 服务器回调地址
+     * @param orders    订单
+     */
+    @Override
+    public void getUrl(String serverUrl, Orders orders) {
+        try {
+            if (!StringUtils.isEmpty(serverUrl)) {
+                String[] split = serverUrl.split("/");
+                StringBuffer sb = new StringBuffer();
+                if (serverUrl.contains("http")) {
+                    for (int i = 0; i < split.length; i++) {
+                        if (i == 2) {
+                            sb.append(split[i]);
+                            break;
+                        } else {
+                            sb.append(split[i]).append("/");
+                        }
+                    }
+                } else {
+                    sb.append(split[0]);
+                }
+                orders.setReqIp(String.valueOf(sb));//请求ip
+            } else {
+                orders.setReqIp(auditorProvider.getReqIp());//请求ip
+            }
+        } catch (Exception e) {
+            log.info("===============【截取网站URL异常】===============", e);
         }
     }
 
@@ -422,14 +463,15 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
 
     /**
      * 退款和撤销成功的场合
+     *
      * @param orderRefund
      */
     @Override
-    public void updateOrderRefundSuccess(OrderRefund orderRefund){
-        if(orderRefund.getRemark()!=null && TradeConstant.RV.equals(orderRefund.getRemark())){
+    public void updateOrderRefundSuccess(OrderRefund orderRefund) {
+        if(orderRefund.getRemark4()!=null && TradeConstant.RV.equals(orderRefund.getRemark4())){
             //撤销成功-更新订单的撤销状态
             ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), null, TradeConstant.ORDER_CANNEL_SUCCESS);
-        }else{
+        } else {
             //退款成功的场合
             if (TradeConstant.REFUND_TYPE_TOTAL.equals(orderRefund.getRefundType())) {
                 ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_SUCCESS);
@@ -441,5 +483,64 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
                 }
             }
         }
+    }
+
+    /**
+     * 退款和撤销失败的场合
+     * @param orderRefund
+     */
+    @Override
+    public void updateOrderRefundFail(OrderRefund orderRefund){
+        if(orderRefund.getRemark4()!=null && TradeConstant.RV.equals(orderRefund.getRemark4())){
+            //撤销失败
+            ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), null, TradeConstant.ORDER_CANNEL_FALID);
+        }else{
+            //退款失败的场合
+            if (TradeConstant.REFUND_TYPE_TOTAL.equals(orderRefund.getRefundType())) {
+                ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_FAIL);
+            } else {
+                BigDecimal oldRefundAmount = orderRefundMapper.getTotalAmountByOrderId(orderRefund.getOrderId()); //已退款金额
+                oldRefundAmount = oldRefundAmount == null ? BigDecimal.ZERO : oldRefundAmount;
+                if (oldRefundAmount.compareTo(BigDecimal.ZERO) == 0) {
+                    ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_FAIL);
+                }
+            }
+        }
+    }
+    /**
+     * @Author YangXu
+     * @Date 2019/12/20
+     * @Descripate 创建调账单
+     * @return
+     **/
+    @Override
+    public Reconciliation createReconciliation(String type,OrderRefund orderRefund, String remark) {
+        //调账订单id
+        String reconciliationId = "T" + IDS.uniqueID();
+        Reconciliation reconciliation = new Reconciliation();
+        reconciliation.setOrderId(orderRefund.getOrderId());
+        reconciliation.setRefundOrderId(orderRefund.getId());
+        reconciliation.setChannelNumber(orderRefund.getChannelNumber());
+        reconciliation.setRefundChannelNumber(orderRefund.getRefundChannelNumber());
+        reconciliation.setMerchantOrderId(orderRefund.getMerchantOrderId());
+        reconciliation.setReconciliationType(AsianWalletConstant.RECONCILIATION_IN);
+        reconciliation.setMerchantName(orderRefund.getMerchantName());
+        reconciliation.setMerchantId(orderRefund.getMerchantId());
+        reconciliation.setAmount(orderRefund.getOrderAmount().subtract(orderRefund.getRefundFee()).add(orderRefund.getRefundOrderFee()));
+        if(type.equals(TradeConstant.RA)){
+            reconciliation.setAccountType(1);
+        }else if(type.equals(TradeConstant.AA)){
+            reconciliation.setAccountType(2);
+        }
+        reconciliation.setCurrency(orderRefund.getOrderCurrency());
+        reconciliation.setStatus(TradeConstant.RECONCILIATION_WAIT);
+        reconciliation.setChangeType(TradeConstant.TRANSFER);
+        reconciliation.setRemark1(null);
+        reconciliation.setRemark2(null);
+        reconciliation.setRemark3(null);
+        reconciliation.setId(reconciliationId);
+        reconciliation.setCreateTime(new Date());
+        reconciliation.setRemark(remark);
+        return reconciliation;
     }
 }

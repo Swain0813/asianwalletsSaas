@@ -20,7 +20,7 @@
         SELECT pt.name                          as payType,
                p.id                             as productId,
                p.product_code                   as productCode,
-               p.trans_type                     as transType,
+               p.trade_direction                as transType,
                concat(pt.name, '-', p.currency) as productName,
                c.id                             as channelId,
                c.channel_code                   as channelCode,

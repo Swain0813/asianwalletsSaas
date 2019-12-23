@@ -1,9 +1,6 @@
 package com.asianwallets.trade.service;
 
-import com.asianwallets.common.entity.Channel;
-import com.asianwallets.common.entity.MerchantProduct;
-import com.asianwallets.common.entity.OrderRefund;
-import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.trade.vo.BasicInfoVO;
 
@@ -70,6 +67,14 @@ public interface CommonBusinessService {
     void checkQuota(Orders orders, MerchantProduct merchantProduct, Channel channel);
 
     /**
+     * 截取Url
+     *
+     * @param serverUrl 服务器回调地址
+     * @param orders    订单
+     */
+    void getUrl(String serverUrl, Orders orders);
+
+    /**
      * 计算手续费
      *
      * @param basicInfoVO
@@ -86,7 +91,21 @@ public interface CommonBusinessService {
 
     /**
      * 退款和撤销成功的场合
+     *
      * @param orderRefund
      */
     void updateOrderRefundSuccess(OrderRefund orderRefund);
+    /**
+     * 退款和撤销失败的场合
+     * @param orderRefund
+     */
+    void updateOrderRefundFail(OrderRefund orderRefund);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/20
+     * @Descripate 创建调账单
+     * @return
+     **/
+    Reconciliation createReconciliation(String type,OrderRefund orderRefund, String remark);
 }

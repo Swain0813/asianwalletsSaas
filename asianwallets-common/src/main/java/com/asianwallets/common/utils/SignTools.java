@@ -23,7 +23,7 @@ public class SignTools {
             Map<String, String> sortMap = new TreeMap<>(Comparator.naturalOrder());
             //将请求Map中的字段名按ASCII码值进行排序
             for (String key : map.keySet()) {
-                if (!StringUtils.isEmpty(key) && !StringUtils.isEmpty(map.get(key))) {
+                if (!StringUtils.isEmpty(key) && !StringUtils.isEmpty(map.get(key)) && !"null".equals(map.get(key))) {
                     sortMap.put(key, map.get(key).trim());
                 }
             }
