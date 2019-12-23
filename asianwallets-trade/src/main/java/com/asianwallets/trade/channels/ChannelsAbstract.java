@@ -57,7 +57,7 @@ public abstract class ChannelsAbstract {
      * @param channel      通道
      * @return 通用响应实体
      */
-    public abstract BaseResponse cancel(Orders orders, Channel channel);
+    public abstract BaseResponse cancel(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
 
 
     /**

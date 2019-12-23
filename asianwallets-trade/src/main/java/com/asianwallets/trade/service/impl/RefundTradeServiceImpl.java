@@ -172,7 +172,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         refundOrderFeeTrade = refundOrderFeeTrade.setScale(2, BigDecimal.ROUND_HALF_DOWN);
         orderRefund.setRefundOrderFee(refundOrderFee);
         orderRefund.setRefundOrderFeeTrade(refundOrderFeeTrade);
-        log.info("=========================【退款】信息记录 ========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{},退还收单手续费金额(订单):{},退款类型:{}******", channel.getRefundingIsReturnFee(), refundOrderFee,refundOrderFeeTrade, refundDTO.getRefundType());
+        log.info("=========================【退款】信息记录 ========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{},退还收单手续费金额(订单):{},退款类型:{}******", channel.getRefundingIsReturnFee(), refundOrderFee, refundOrderFeeTrade, refundDTO.getRefundType());
 
 
         /***************************************************************  计算退款手续费  *************************************************************/
@@ -223,10 +223,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         log.info("=========================【退款】信息记录 ========================= 当前 清算余额:【{}】，结算余额:【{}】,冻结余额:【{}】", account.getClearBalance(), account.getSettleBalance(), account.getFreezeBalance());
         //退款金额=退款金额+退款手续费-收单手续费
         BigDecimal add = BigDecimal.ZERO;
-        if(orderRefund.getFeePayer()==1){
+        if (orderRefund.getFeePayer() == 1) {
             //商家承担
             add = refundDTO.getRefundAmount().add(poundage).subtract(refundOrderFee);
-        }else{
+        } else {
             //用户承担
             add = refundDTO.getRefundAmount();
         }
@@ -288,12 +288,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             orderRefund.setSign(oldOrder.getSign());
             if (type.equals(TradeConstant.RF)) {
                 orderRefund.setRemark4(type);
-                this.doRefundOrder(orderRefund, channel);
+                baseResponse = this.doRefundOrder(orderRefund, channel);
             } else {
-                //this.doCancelOrder(orderRefund);
+                baseResponse = this.doCancelOrder(orderRefund, channel);
             }
-
-
         } else if (TradeConstant.PAYING.equals(type)) {
             /***************************************************************  订单是付款中的场合  *************************************************************/
 
@@ -301,7 +299,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
 
 
-        return null;
+        return baseResponse;
     }
 
     /**
@@ -313,46 +311,62 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     @Override
     public BaseResponse doRefundOrder(OrderRefund orderRefund, Channel channel) {
         BaseResponse baseResponse = new BaseResponse();
-        log.info("=========================【退款】 doRefundOrder 信息记录 ========================= orderRefund:【{}】", JSON.toJSONString(orderRefund));
+        log.info("=========================【退款 doRefundOrder】======================= 【doRefundOrder】 orderRefund:【{}】", JSON.toJSONString(orderRefund));
         FundChangeDTO fundChangeDTO = new FundChangeDTO(TradeConstant.RF, orderRefund);
+        log.info("=========================【退款 doRefundOrder】======================= 【清结算 RF】 fundChangeDTO:【{}】", JSON.toJSONString(fundChangeDTO));
         BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+        log.info("=========================【退款 doRefundOrder】======================= 【清结算 RF 返回】 cFundChange:【{}】", JSON.toJSONString(cFundChange));
         if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+            log.info("=========================【退款 doRefundOrder】======================= 【清结算 RF 上报失败】 cFundChange:【{}】", JSON.toJSONString(cFundChange));
             RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
-            log.info("=========================【退款】 doRefundOrder 上报队列 TK_RF_FAIL_DL ========================= RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
+            log.info("=========================【退款 doRefundOrder】=========================【上报队列 TK_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
             rabbitMQSender.send(AD3MQConstant.TK_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
             baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
             return baseResponse;
         }
         ChannelsAbstract channelsAbstract = null;
         try {
-            channelsAbstract =  handlerContext.getInstance(channel.getServiceNameMark());
-            log.info("=========================【退款】 doRefundOrder 信息记录 ========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
+            log.info("=========================【退款 doRefundOrder】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
+            channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
         } catch (Exception e) {
-            log.info("=========================【退款】 doRefundOrder Exception ========================= Exception:【{}】", e);
+            log.info("=========================【退款 doRefundOrder】========================= 【doRefundOrder Exception】 Exception:【{}】", e);
         }
-        baseResponse = channelsAbstract.refund(channel, orderRefund,null);
+        baseResponse = channelsAbstract.refund(channel, orderRefund, null);
         return baseResponse;
-        //if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_ONLINE)) {
-        //    //ad3线上退款
-        //    ad3OnlineAcquireService.doUsRefundInRef(baseResponse, fundChangeDTO, orderRefund);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(AD3Constant.AD3_OFFLINE)) {
-        //    //ad3线下退款
-        //    ad3Service.doUsRefundInRef(baseResponse, orderRefund, fundChangeDTO);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_CSB_ONLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_BSC_OFFLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.ALIPAY_CSB_OFFLINE)) {
-        //    //支付宝退款
-        //    aliPayService.aliPayRefund(orderRefund, fundChangeDTO, baseResponse);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_CSB_ONLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_CSB_OFFLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.WECHAT_BSC_OFFLINE)) {
-        //    //微信退款
-        //    wechatService.wechatRefund(orderRefund, fundChangeDTO, baseResponse);
-        //} else if (channel.getChannelEnName().equalsIgnoreCase(TradeConstant.NEXTPOS_ONLINE) ||
-        //        channel.getChannelEnName().equalsIgnoreCase(TradeConstant.NEXTPOS_CSB_OFFLINE)) {
-        //    //nextPos通道退款
-        //    megaPayService.megaPayNextPosRefund(orderRefund, fundChangeDTO, baseResponse);
-        //}
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/3/14
+     * @Descripate 撤销操作
+     **/
+    @Override
+    public BaseResponse doCancelOrder(OrderRefund orderRefund, Channel channel) {
+        BaseResponse baseResponse = new BaseResponse();
+        log.info("=========================【撤销 doCancelOrder】====================== orderRefund:【{}】", JSON.toJSONString(orderRefund));
+        //上报清结算撤销
+        FundChangeDTO fundChangeDTO = new FundChangeDTO(TradeConstant.RV, orderRefund);
+        log.info("=========================【撤销 doCancelOrder】======================= 【清结算 RV】 fundChangeDTO:【{}】", JSON.toJSONString(fundChangeDTO));
+        BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+        log.info("=========================【撤销 doCancelOrder】======================= 【清结算 RV 返回】 cFundChange:【{}】", JSON.toJSONString(cFundChange));
+        if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+            log.info("=========================【撤销 doCancelOrder】======================= 【清结算 RV 上报失败】 cFundChange:【{}】", JSON.toJSONString(cFundChange));
+            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+            log.info("=========================【撤销 doCancelOrder】=========================【上报队列 TK_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
+            rabbitMQSender.send(AD3MQConstant.TK_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
+            baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+            return baseResponse;
+        }
+        ChannelsAbstract channelsAbstract = null;
+        try {
+            log.info("=========================【撤销 doCancelOrder】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
+            channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
+        } catch (Exception e) {
+            log.info("=========================【撤销 doCancelOrder】========================= 【doRefundOrder Exception】 Exception:【{}】", e);
+        }
+        baseResponse = channelsAbstract.cancel(channel, orderRefund, null);
+        return baseResponse;
     }
 
     /**

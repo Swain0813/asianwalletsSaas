@@ -124,6 +124,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         //封装登录响应实体
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
+        //机构logo
+        response.setInstitutionLogo(org.springframework.util.StringUtils.isEmpty(institution.getInstitutionLogo())?null:institution.getInstitutionLogo());
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
             redisService.set(response.getToken(), JSON.toJSONString(sysUserVO), time * 60 * 60);

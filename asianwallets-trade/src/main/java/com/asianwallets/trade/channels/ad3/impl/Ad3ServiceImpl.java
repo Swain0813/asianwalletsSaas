@@ -142,7 +142,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         if (TradeConstant.TRADE_ONLINE.equals(orderRefund.getTradeDirection())) {
 
             /**************************************************** AD3线上退款 *******************************************************/
-            log.info("==================【AD3线上退款】================== OrderRefund: {}", JSON.toJSONString(orderRefund));
             SendAdRefundDTO sendAdRefundDTO = new SendAdRefundDTO(channel.getChannelMerchantId(), orderRefund);
             sendAdRefundDTO.setMerchantSignType(merchantSignType);
             sendAdRefundDTO.setSignMsg(this.signMsg(sendAdRefundDTO));
@@ -150,12 +149,13 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             AD3ONOFFRefundDTO ad3ONOFFRefundDTO = new AD3ONOFFRefundDTO();
             ad3ONOFFRefundDTO.setChannel(channel);
             ad3ONOFFRefundDTO.setSendAdRefundDTO(sendAdRefundDTO);
+            log.info("=================【AD3线上退款】=================【请求Channels服务AD3线上退款】请求参数 ad3ONOFFRefundDTO: {} ", JSON.toJSONString(ad3ONOFFRefundDTO));
             BaseResponse response = channelsFeign.ad3OnlineRefund(ad3ONOFFRefundDTO);
-            log.info("==================【AD3线上退款】================== 上游返回 response: {}", JSON.toJSONString(response));
+            log.info("=================【AD3线上退款】=================【Channels服务响应】请求参数 response: {} ", JSON.toJSONString(response));
             if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                     RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
-                    log.info("==================【AD3线下退款】================== 退款成功 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
+                    log.info("==================【AD3线下退款】================== 【退款成功】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     //退款成功
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
                     //改原订单状态
@@ -168,7 +168,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
                     BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                     if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                        log.info("==================【AD3线上退款】================== 调账成功 cFundChange: {}", JSON.toJSONString(cFundChange));
+                        log.info("==================【AD3线上退款】================== 【调账成功】 cFundChange: {}", JSON.toJSONString(cFundChange));
                         //调账成功
                         orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
                         reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
@@ -176,10 +176,10 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                         commonBusinessService.updateOrderRefundFail(orderRefund);
                     } else {
                         //调账失败
-                        log.info("==================【AD3线上退款】================== 调账失败 cFundChange: {}", JSON.toJSONString(cFundChange));
+                        log.info("==================【AD3线上退款】================== 【调账失败】 cFundChange: {}", JSON.toJSONString(cFundChange));
                         RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
                         log.info("=================【AD3线上退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                        rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                        rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
                     }
                 }
             } else {
@@ -210,26 +210,27 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             AD3ONOFFRefundDTO ad3ONOFFRefundDTO = new AD3ONOFFRefundDTO();
             ad3ONOFFRefundDTO.setChannel(channel);
             ad3ONOFFRefundDTO.setAd3RefundDTO(ad3RefundDTO);
+            log.info("=================【AD3线下退款】=================【请求Channels服务AD3线下退款】请求参数 ad3ONOFFRefundDTO: {} ", JSON.toJSONString(ad3ONOFFRefundDTO));
             BaseResponse response = channelsFeign.ad3OfflineRefund(ad3ONOFFRefundDTO);
-            log.info("==================【AD3线下退款】================== 上游返回 response: {}", JSON.toJSONString(response));
+            log.info("=================【AD3线下退款】=================【Channels服务响应】请求参数 response: {} ", JSON.toJSONString(response));
             if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
                 RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                     //退款成功
-                    log.info("==================【AD3线下退款】================== 退款成功 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
+                    log.info("==================【AD3线下退款】================== 【退款成功】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
                     //改原订单状态
                     commonBusinessService.updateOrderRefundSuccess(orderRefund);
                 } else {
                     //退款失败
-                    log.info("==================【AD3线下退款】================== 退款失败 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
+                    log.info("==================【AD3线下退款】================== 【退款失败】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                     Reconciliation reconciliation = commonBusinessService.createReconciliation(TradeConstant.AA, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                     reconciliationMapper.insert(reconciliation);
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
                     BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                     if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                        log.info("==================【AD3线下退款】================== 调账成功 cFundChange: {}", JSON.toJSONString(cFundChange));
+                        log.info("==================【AD3线下退款】================== 【调账成功】 cFundChange: {}", JSON.toJSONString(cFundChange));
                         //调账成功
                         orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
                         reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
@@ -237,10 +238,10 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                         commonBusinessService.updateOrderRefundFail(orderRefund);
                     } else {
                         //调账失败
-                        log.info("==================【AD3线下退款】================== 调账失败 cFundChange: {}", JSON.toJSONString(cFundChange));
+                        log.info("==================【AD3线下退款】================== 【调账失败】 cFundChange: {}", JSON.toJSONString(cFundChange));
                         RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
                         log.info("=================【AD3线下退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                        rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                        rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
                     }
                 }
             } else {

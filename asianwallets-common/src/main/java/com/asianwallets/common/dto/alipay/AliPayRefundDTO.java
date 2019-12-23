@@ -60,7 +60,11 @@ public class AliPayRefundDTO {
         this.partner = channel.getChannelMerchantId();
         this.partner_refund_id = orderRefund.getId();
         this.partner_trans_id = orderRefund.getOrderId();
-        this.refund_amount = String.valueOf(orderRefund.getTradeAmount());
+        if(orderRefund.getFeePayer()==1){
+            this.refund_amount = String.valueOf(orderRefund.getTradeAmount());
+        }else{
+            this.refund_amount = String.valueOf(orderRefund.getTradeAmount().add(orderRefund.getRefundOrderFeeTrade()));
+        }
         this.currency = orderRefund.getTradeCurrency();
         this.sign_type = "MD5";
         Map<String, String> reqmap = new HashMap<>();
