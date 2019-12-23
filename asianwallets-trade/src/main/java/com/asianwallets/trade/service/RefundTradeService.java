@@ -24,11 +24,4 @@ public interface RefundTradeService {
      **/
     BaseResponse doRefundOrder(OrderRefund orderRefund, Channel channel);
 
-    /**
-     * @return
-     * @Author YangXu
-     * @Date 2019/3/14
-     * @Descripate 撤销操作
-     **/
-    BaseResponse doCancelOrder(OrderRefund orderRefund, Channel channel);
 }

@@ -1,4 +1,4 @@
-package com.asianwallets.permissions.utils;
+package com.asianwallets.common.utils;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

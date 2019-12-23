@@ -5,9 +5,11 @@ import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
+import com.asianwallets.common.dto.megapay.NextPosQueryDTO;
 import com.asianwallets.common.dto.megapay.NextPosRefundDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -15,6 +17,7 @@ import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.nextpos.NextPosService;
 import com.asianwallets.trade.dao.OrderRefundMapper;
+import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.ReconciliationMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
@@ -27,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -52,6 +56,8 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
     private ClearingService clearingService;
     @Autowired
     private RabbitMQSender rabbitMQSender;
+    @Autowired
+    private OrdersMapper ordersMapper;
 
     /**
      * @return
@@ -79,13 +85,15 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 //退款失败
                 log.info("=================【NextPos退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(TradeConstant.AA,orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                 reconciliationMapper.insert(reconciliation);
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+                log.info("=========================【NextPos退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                     //调账成功
-                    log.info("=================【NextPos退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                    log.info("=================【NextPos退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
                     reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
                     //改原订单状态
@@ -101,12 +109,95 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
         } else {
             //请求失败
             baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
-            if(rabbitMassage ==null){
+            if (rabbitMassage == null) {
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
             log.info("===============【NextPos退款】===============【请求失败 上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
             rabbitMQSender.send(AD3MQConstant.TK_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return response;
+    }
+
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate 撤销
+     **/
+    @Override
+    public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        BaseResponse response = new BaseResponse();
+        NextPosQueryDTO nextPosQueryDTO = new NextPosQueryDTO(orderRefund.getOrderId(), channel);
+        log.info("=================【NextPos撤销】=================【请求Channels服务NextPos查询】请求参数 nextPosQueryDTO: {} ", JSON.toJSONString(nextPosQueryDTO));
+        BaseResponse baseResponse = channelsFeign.nextPosQuery(nextPosQueryDTO);
+        log.info("=================【NextPos撤销】=================【Channels服务响应】请求参数 baseResponse: {} ", JSON.toJSONString(baseResponse));
+        if (baseResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            //请求成功
+            Map<String, Object> map = (Map<String, Object>) baseResponse.getData();
+            if (baseResponse.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
+                //更新订单状态
+                //TODO 查询报文
+                if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS,
+                        null, new Date()) == 1) {
+                    //更新成功
+                    this.cancelPaying(channel,orderRefund, null);
+                } else {
+                    //更新失败后去查询订单信息
+                    RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                    //rabbitMQSender.send(AD3MQConstant.TC_MQ_CANCEL_ORDER, JSON.toJSONString(rabbitOrderMsg));
+                    //TODO
+                }
+            } else {
+                //请求失败
+                log.info("=================【NextPos撤销】=================【查询订单失败】请求参数 baseResponse: {} ", JSON.toJSONString(baseResponse));
+                //rabbitMQSender.send(AD3MQConstant.E_MQ_AD3_ORDER_QUERY, JSON.toJSONString(rabbitMassage));
+                //TODO
+            }
+        } else {
+            //请求失败
+            log.info("=================【NextPos撤销】=================【查询订单失败】请求参数 baseResponse: {} ", JSON.toJSONString(baseResponse));
+            //rabbitMQSender.send(AD3MQConstant.E_MQ_AD3_ORDER_QUERY, JSON.toJSONString(rabbitMassage))
+        }
+        return response;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate 退款不上报清结算
+     **/
+    @Override
+    public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        BaseResponse baseResponse = new BaseResponse();
+        //获取原订单的refCode字段(NextPos用)
+        Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
+        orderRefund.setSign(orders.getSign());
+        NextPosRefundDTO nextPosRefundDTO = new NextPosRefundDTO(orderRefund, channel);
+        log.info("=================【NextPos撤销 cancelPaying】=================【请求Channels服务NextPos退款】请求参数 nextPosRefundDTO: {} ", JSON.toJSONString(nextPosRefundDTO));
+        BaseResponse response = channelsFeign.nextPosRefund(nextPosRefundDTO);
+        log.info("=================【NextPos退款 cancelPaying】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+        if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            //请求成功
+            if (response.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
+                //退款成功
+                log.info("=================【NextPos退款 cancelPaying】=================【退款成功】");
+                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
+            } else {
+                //退款失败
+                log.info("=================【NextPos退款 cancelPaying】=================【退款失败】");
+                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
+            }
+        } else {
+            //请求失败
+            log.info("=================【NextPos退款 cancelPaying】=================【请求失败】");
+            log.info("----------------- 退款操作 请求失败上报队列 MQ_TK_WECHAT_QQSB_DL -------------- rabbitMassage: {} ", JSON.toJSON(rabbitMassage));
+            //rabbitMQSender.sendAd3Sleep(AD3MQConstant.MQ_AD3_REFUND, JSON.toJSONString(rabbitMassage));
+        //    TODO
+
+        }
+
+        return baseResponse;
     }
 }

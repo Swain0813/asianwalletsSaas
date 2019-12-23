@@ -53,7 +53,6 @@ public abstract class ChannelsAbstract {
     /**
      * 撤销方法
      *
-     * @param orders       订单
      * @param channel      通道
      * @return 通用响应实体
      */
@@ -66,7 +65,7 @@ public abstract class ChannelsAbstract {
      * @Descripate  付款中撤销
      * @return
      **/
-    public abstract BaseResponse cancelPaying(Orders orders, Channel channel);
+    public abstract BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
 
 
 }

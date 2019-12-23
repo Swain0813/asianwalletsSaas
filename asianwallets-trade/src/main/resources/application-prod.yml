@@ -68,6 +68,9 @@ custom:
   warning:
     email: 842505302@qq.com
     mobile: 18800330943
+  jwt:
+    secret: M2UwFPOfdPW2JqI5
+    token_expire_hour: 24
   #AD3提供的测试参数
   #线下的商户编号
   merchantCode: 20170921500044

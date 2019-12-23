@@ -21,7 +21,7 @@ import com.asianwallets.permissions.dto.SysUserDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
 import com.asianwallets.permissions.feign.message.MessageFeign;
 import com.asianwallets.permissions.service.SysUserService;
-import com.asianwallets.permissions.utils.BCryptUtils;
+import com.asianwallets.common.utils.BCryptUtils;
 import com.asianwallets.permissions.vo.SysUserDetailVO;
 import com.asianwallets.permissions.vo.SysUserSecVO;
 import com.github.pagehelper.PageInfo;

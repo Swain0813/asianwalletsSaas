@@ -56,23 +56,23 @@ public class Ad3ServiceImpl implements Ad3Service {
     /**
      * AD3登陆
      *
-     * @param ad3CSBScanPayDTO AD3线下CSB输入实体
+     * @param channel 通道
      * @return AD3登陆响应参数
      */
-    private AD3LoginVO offlineLogin(AD3CSBScanPayDTO ad3CSBScanPayDTO) {
+    private AD3LoginVO offlineLogin(Channel channel) {
         AD3LoginVO ad3LoginVO = null;
         String token = redisService.get(AD3Constant.AD3_LOGIN_TOKEN);
         String terminalId = redisService.get(AD3Constant.AD3_LOGIN_TERMINAL);
-        Channel channel = ad3CSBScanPayDTO.getChannel();
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(terminalId)) {
             //AD3登陆业务参数实体
             LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT, channel);
             //AD3登陆公共参数实体
-            AD3LoginDTO ad3LoginDTO = new AD3LoginDTO(ad3CSBScanPayDTO.getMerchantId(), bizContent);
+            AD3LoginDTO ad3LoginDTO = new AD3LoginDTO(channel.getChannelMerchantId(), bizContent);
             //先登出
             HttpClientUtils.reqPost(channel.getExtend5(), ad3LoginDTO, null);
             //再登陆
             bizContent.setType(AD3Constant.LOGIN_IN);
+            //Channel的extend5存储的是AD3登录接口URL
             HttpResponse httpResponse = HttpClientUtils.reqPost(channel.getExtend5(), ad3LoginDTO, null);
             //状态码为200
             if (httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
@@ -122,7 +122,7 @@ public class Ad3ServiceImpl implements Ad3Service {
             channelsOrder.setPayerEmail(orders.getPayerEmail());
             channelsOrderMapper.insert(channelsOrder);
             //获取AD3的终端号和Token
-            AD3LoginVO ad3LoginVO = offlineLogin(ad3CSBScanPayDTO);
+            AD3LoginVO ad3LoginVO = offlineLogin(ad3CSBScanPayDTO.getChannel());
             if (ad3LoginVO == null || StringUtils.isEmpty(ad3LoginVO.getToken())) {
                 log.info("=================【AD3线下CSB】=================【AD3登陆接口异常】");
                 baseResponse.setCode(TradeConstant.HTTP_FAIL);

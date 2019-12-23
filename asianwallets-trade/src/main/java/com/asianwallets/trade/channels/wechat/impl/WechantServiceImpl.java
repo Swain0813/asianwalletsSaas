@@ -77,9 +77,11 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
             } else {
                 log.info("=================【WeChant退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(TradeConstant.AA, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                String type = orderRefund.getRemark4().equals(TradeConstant.RF )? TradeConstant.AA : TradeConstant.RA;
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                 reconciliationMapper.insert(reconciliation);
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+                log.info("=========================【WeChant退款】======================= 【调账 {}】， fundChangeDTO:【{}】",type, JSON.toJSONString(fundChangeDTO));
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                     //调账成功
@@ -106,5 +108,28 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
             rabbitMQSender.send(AD3MQConstant.TK_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return baseResponse;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate    撤销
+     * @return
+     **/
+    @Override
+    public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        BaseResponse baseResponse = new BaseResponse();
+        return baseResponse;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate 退款不上报清结算
+     **/
+    @Override
+    public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        return null;
     }
 }
