@@ -12,7 +12,7 @@ public class AD3MQConstant {
     public final static String TK_RF_FAIL_DL = "TK_RF_FAIL_DL";
     //调账失败队列
     public final static String RA_AA_FAIL_DL = "RA_AA_FAIL_DL";
-
+    //退款上报失败队列
     public final static String TK_SB_FAIL_DL = "TK_SB_FAIL_DL";
 
 }
