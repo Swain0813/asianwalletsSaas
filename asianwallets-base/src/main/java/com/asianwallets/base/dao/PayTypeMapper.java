@@ -17,11 +17,11 @@ public interface PayTypeMapper extends BaseMapper<PayType> {
     /**
      * 通过支付方式中英文名查找
      *
-     * @param payTypeDTO
+     * @param name
      * @param language
      * @return
      */
-    PayType selectByNameAndLanguage(PayTypeDTO payTypeDTO, String language);
+    PayType selectByNameAndLanguage(@Param("name") String name, @Param("language") String language);
 
     /**
      * 分页查询

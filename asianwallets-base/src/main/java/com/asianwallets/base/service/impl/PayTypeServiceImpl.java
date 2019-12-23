@@ -43,7 +43,7 @@ public class PayTypeServiceImpl implements PayTypeService {
         if (StringUtils.isBlank(payTypeDTO.getName())) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        if (payTypeMapper.selectByNameAndLanguage(payTypeDTO, payTypeDTO.getLanguage()) != null) {
+        if (payTypeMapper.selectByNameAndLanguage(payTypeDTO.getName(), payTypeDTO.getLanguage()) != null) {
             throw new BusinessException(EResultEnum.PAYMENTMODE_EXIST.getCode());
         }
         if (StringUtils.isBlank(payTypeDTO.getId())) {
@@ -93,7 +93,7 @@ public class PayTypeServiceImpl implements PayTypeService {
         if (payType == null) {
             throw new BusinessException(EResultEnum.INFORMATION_DOES_NOT_EXIST.getCode());
         }
-        if (payTypeMapper.selectByNameAndLanguage(payTypeDTO, payTypeDTO.getLanguage()) != null) {
+        if (payTypeMapper.selectByNameAndLanguage(payTypeDTO.getName(), payTypeDTO.getLanguage()) != null) {
             throw new BusinessException(EResultEnum.PAYMENTMODE_EXIST.getCode());
         }
         String id = payType.getId();
