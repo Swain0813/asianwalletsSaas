@@ -18,9 +18,10 @@ public interface PayTypeMapper extends BaseMapper<PayType> {
      * 通过支付方式中英文名查找
      *
      * @param payTypeDTO
+     * @param language
      * @return
      */
-    PayType selectByName(PayTypeDTO payTypeDTO);
+    PayType selectByNameAndLanguage(PayTypeDTO payTypeDTO, String language);
 
     /**
      * 分页查询
