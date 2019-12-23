@@ -30,6 +30,9 @@ public class AuthenticationResponse {
     @ApiModelProperty("公钥")
     private String publicKey;
 
+    @ApiModelProperty("机构logo")
+    private String institutionLogo;
+
     @ApiModelProperty("角色集合")
     private List<ResRole> role;
 
