@@ -75,7 +75,7 @@ public class RefundOrderMQReceive {
             FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
             log.info("=========================【RV_RF_FAIL_DL】==================== 【上报清结算 {}】fundChangeDTO : 【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
             BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-            log.info("=========================【RV_RF_FAIL_DL】==================== 【上报清结算 返回】 cFundChange : 【{}】", JSON.toJSONString(cFundChange));
+            log.info("=========================【RV_RF_FAIL_DL】==================== 【上报清结算 {}返回】 cFundChange : 【{}】", orderRefund.getRemark4(),JSON.toJSONString(cFundChange));
             if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                 log.info("========================= 【RV_RF_FAIL_DL】 ==================== 【上报清结算 失败】 : 【{}】", JSON.toJSONString(rabbitMassage));
                 rabbitMQSender.send(AD3MQConstant.RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));

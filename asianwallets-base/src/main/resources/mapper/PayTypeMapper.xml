@@ -26,12 +26,12 @@
     modifier, remark, extend1, extend2, extend3, extend4, extend5, extend6
     </sql>
 
-    <select id="selectByName" resultMap="BaseResultMap">
+    <select id="selectByNameAndLanguage" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from pay_type
         where
-        name = #{name}
+        name = #{name} and language = #{language}
     </select>
 
     <select id="pagePayType" resultType="com.asianwallets.common.vo.PayTypeVO">

@@ -317,7 +317,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
         log.info("=========================【退款 doRefundOrder】======================= 【清结算 {} 返回】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
         if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-            log.info("=========================【退款 doRefundOrder】======================= 【清结算 RF 上报失败】 cFundChange:【{}】", JSON.toJSONString(cFundChange));
+            log.info("=========================【退款 doRefundOrder】======================= 【清结算 {} 上报失败】 cFundChange:【{}】",orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
             RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             log.info("=========================【退款 doRefundOrder】=========================【上报队列 RV_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
             rabbitMQSender.send(AD3MQConstant.RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
