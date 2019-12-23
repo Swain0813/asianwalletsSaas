@@ -1,11 +1,12 @@
 package com.asianwallets.common.entity;
-import java.math.BigDecimal;
 import com.asianwallets.common.base.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  * 产品表
@@ -39,12 +40,12 @@ public class Product extends BaseEntity {
 
 
 	@ApiModelProperty(value = "产品类型")//产品类型:1-收款 2-付款
-	@Column(name ="trans_type")
-	private Integer transType;
+	@Column(name = "trans_type")
+	private Byte transType;
 
 	@ApiModelProperty(value = "交易类型")//1-线上 2-线下
-	@Column(name ="trade_direction")
-	private Integer tradeDirection;
+	@Column(name = "trade_direction")
+	private Byte tradeDirection;
 
 	@ApiModelProperty(value = "支付方式(银联，网银，...）")
 	@Column(name ="pay_type")
