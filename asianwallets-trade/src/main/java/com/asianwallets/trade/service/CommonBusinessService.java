@@ -40,13 +40,13 @@ public interface CommonBusinessService {
     CalcExchangeRateVO calcExchangeRate(String localCurrency, String foreignCurrency, BigDecimal floatRate, BigDecimal amount);
 
     /**
-     * 换汇计算
+     * 下单换汇【线上与线下下单】
      *
      * @param basicInfoVO 基础信息
      * @param orders
      * @return 换汇输出实体
      */
-    void calcExchangeRateBak(BasicInfoVO basicInfoVO, Orders orders);
+    void swapRateByPayment(BasicInfoVO basicInfoVO, Orders orders);
 
     /**
      * 校验重复请求【线上与线下下单】

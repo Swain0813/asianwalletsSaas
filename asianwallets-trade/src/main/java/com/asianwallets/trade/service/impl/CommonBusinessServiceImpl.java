@@ -185,83 +185,48 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     }
 
     /**
-     * 换汇计算
+     * 下单换汇【线上与线下下单】
      *
      * @param basicInfoVO 基础信息
      * @param orders      订单
      */
     @Override
-    public void calcExchangeRateBak(BasicInfoVO basicInfoVO, Orders orders) {
-        log.info("==================【换汇计算】==================【换汇开始】");
+    public void swapRateByPayment(BasicInfoVO basicInfoVO, Orders orders) {
         String foreignCurrency = basicInfoVO.getChannel().getCurrency();
         String localCurrency = orders.getOrderCurrency();
         //币种一致时，不需要换汇
         if (foreignCurrency.equalsIgnoreCase(localCurrency)) {
-            log.info("==================【换汇计算】==================【币种相同】");
+            log.info("==================【下单换汇】==================【币种相同】");
             orders.setTradeAmount(orders.getOrderAmount());
             orders.setOrderForTradeRate(BigDecimal.ONE);
             orders.setTradeForOrderRate(BigDecimal.ONE);
             orders.setExchangeRate(BigDecimal.ONE);
             orders.setExchangeTime(new Date());
-            log.info("==================【换汇计算】==================【换汇结束】");
+            log.info("==================【下单换汇】==================【换汇结束】");
             return;
         }
         //校验机构DCC
         if (!basicInfoVO.getInstitution().getDcc()) {
-            orders.setRemark("机构不支持DCC");
+            orders.setRemark4("机构不支持DCC");
             orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
             ordersMapper.insert(orders);
             throw new BusinessException(EResultEnum.DCC_IS_NOT_OPEN.getCode());
         }
-        BigDecimal floatRate = basicInfoVO.getMerchantProduct().getFloatRate();
-        BigDecimal amount = orders.getOrderAmount();
-
-        try {
-            ExchangeRate localToForeignRate = commonRedisDataService.getExchangeRateByCurrency(localCurrency, foreignCurrency);
-            if (localToForeignRate == null || localToForeignRate.getBuyRate() == null) {
-                messageFeign.sendSimple(warningMobile, "换汇计算:查询汇率异常!本位币种:" + localCurrency + " 目标币种:" + foreignCurrency);
-                messageFeign.sendSimpleMail(warningEmail, "换汇计算:查询汇率异常!", "换汇计算:查询汇率异常!本位币种:" + localCurrency + " 目标币种:" + foreignCurrency);
-                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
-                orders.setRemark("换汇失败");
-                orders.setExchangeStatus(TradeConstant.SWAP_FALID);
-                ordersMapper.insert(orders);
-                throw new BusinessException(EResultEnum.SYS_ERROR_CREATE_ORDER_FAIL.getCode());
-            }
-            ExchangeRate foreignToLocalRate = commonRedisDataService.getExchangeRateByCurrency(foreignCurrency, localCurrency);
-            if (foreignToLocalRate == null || foreignToLocalRate.getBuyRate() == null) {
-                messageFeign.sendSimple(warningMobile, "换汇计算:查询汇率异常!本位币种:" + foreignCurrency + " 目标币种:" + localCurrency);
-                messageFeign.sendSimpleMail(warningEmail, "换汇计算:查询汇率异常!", "换汇计算:查询汇率异常!本位币种:" + foreignCurrency + " 目标币种:" + localCurrency);
-                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
-                orders.setRemark("换汇失败");
-                orders.setExchangeStatus(TradeConstant.SWAP_FALID);
-                ordersMapper.insert(orders);
-                throw new BusinessException(EResultEnum.SYS_ERROR_CREATE_ORDER_FAIL.getCode());
-            }
-            //浮动率为空,默认为0
-            if (floatRate == null) {
-                floatRate = new BigDecimal(0);
-            }
-            //换汇汇率 = 汇率 * (1 + 浮动率)
-            BigDecimal swapRate = localToForeignRate.getBuyRate().multiply(floatRate.add(new BigDecimal(1)));
-            //交易金额 = 订单金额 * 换汇汇率
-            BigDecimal tradeAmount = amount.multiply(swapRate);
-            //四舍五入保留2位
-            orders.setTradeAmount(tradeAmount.setScale(2, BigDecimal.ROUND_HALF_UP));
-            //换汇汇率
-            orders.setExchangeRate(swapRate);
-            //本币转外币汇率
-            orders.setOrderForTradeRate(localToForeignRate.getBuyRate());
-            //外币转本币汇率
-            orders.setTradeForOrderRate(foreignToLocalRate.getBuyRate());
-            //换汇成功
-            orders.setExchangeStatus(TradeConstant.SWAP_SUCCESS);
-            //换汇时间
-            orders.setExchangeTime(new Date());
-            log.info("==================【换汇计算】==================【换汇结果】 订单币种: {},交易币种:{},换汇汇率:{},本币转外币汇率:{},外币转本币汇率：{},换汇时间:{}", JSON.toJSONString(localCurrency),
-                    JSON.toJSONString(foreignCurrency), JSON.toJSONString(swapRate), JSON.toJSONString(localToForeignRate.getBuyRate()), JSON.toJSONString(foreignToLocalRate.getBuyRate()), JSON.toJSONString(orders.getExchangeTime()));
-        } catch (Exception e) {
-            log.info("==================【换汇计算】==================【换汇异常】", e);
+        //换汇计算
+        CalcExchangeRateVO calcExchangeRateVO = calcExchangeRate(orders.getOrderCurrency(), orders.getTradeCurrency(), basicInfoVO.getMerchantProduct().getFloatRate(), orders.getOrderAmount());
+        orders.setExchangeTime(calcExchangeRateVO.getExchangeTime());
+        orders.setExchangeStatus(calcExchangeRateVO.getExchangeStatus());
+        if (TradeConstant.SWAP_FALID.equals(calcExchangeRateVO.getExchangeStatus())) {
+            log.info("==================【下单换汇】==================【换汇失败】");
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+            orders.setRemark4("换汇失败");
+            ordersMapper.insert(orders);
+            throw new BusinessException(EResultEnum.SYS_ERROR_CREATE_ORDER_FAIL.getCode());
         }
+        orders.setExchangeRate(calcExchangeRateVO.getExchangeRate());
+        orders.setTradeAmount(calcExchangeRateVO.getTradeAmount());
+        orders.setOrderForTradeRate(calcExchangeRateVO.getOriginalRate());
+        orders.setTradeForOrderRate(calcExchangeRateVO.getReverseRate());
     }
 
     /**
