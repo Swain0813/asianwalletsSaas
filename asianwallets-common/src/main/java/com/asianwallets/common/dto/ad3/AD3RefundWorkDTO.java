@@ -63,7 +63,11 @@ public class AD3RefundWorkDTO {
         this.outRefundId = orderRefund.getId();//终端提交过来的退款流水号
         this.sysOrderNo = orderRefund.getChannelNumber();//交易系统订单流水号
         this.refundOrdertime = DateToolUtils.toString(new Date(), "yyyyMMddHHmmss");//退款时间
-        this.refundAmount = String.valueOf(orderRefund.getTradeAmount());//退款金额
+        if(orderRefund.getFeePayer()==1){
+            this.refundAmount = String.valueOf(orderRefund.getTradeAmount());//退款金额
+        }else{
+            this.refundAmount = String.valueOf(orderRefund.getTradeAmount().add(orderRefund.getRefundOrderFeeTrade()));//退款金额
+        }
         this.source = "1";//如:1，pos请求过来必须传1
         if(orderRefund.getRemark()!=null){//不为空的场合，直接从退款信息里获取
          this.ext1 = orderRefund.getRemark();
