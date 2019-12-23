@@ -33,7 +33,7 @@ public class ChannelsAbstractAdapter extends ChannelsAbstract {
     }
 
     @Override
-    public BaseResponse cancel(Orders orders, Channel channel) {
+    public BaseResponse cancel(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         return null;
     }
 
