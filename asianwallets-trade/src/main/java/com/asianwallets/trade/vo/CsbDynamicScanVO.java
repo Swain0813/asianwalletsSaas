@@ -1,5 +1,6 @@
 package com.asianwallets.trade.vo;
 
+import com.asianwallets.common.constant.TradeConstant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,6 +19,6 @@ public class CsbDynamicScanVO {
     private String qrCodeUrl;
 
     @ApiModelProperty(value = "解码类型")
-    private String decodeType;
+    private String decodeType = TradeConstant.NO_DECODE;
 
 }

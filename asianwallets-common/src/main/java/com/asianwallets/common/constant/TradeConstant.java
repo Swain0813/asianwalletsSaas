@@ -203,7 +203,6 @@ public class TradeConstant {
     public static final String NEXTPOS = "NEXTPOS";
 
 
-
     //--------------发货状态
     public static final Byte UNSHIPPED = 1; //未发货
     public static final Byte SHIPPED = 2; //已发货
@@ -216,6 +215,10 @@ public class TradeConstant {
     public static final String ACCOUNT_FREEZE = "1";//冻结账户
     public static final String ACCOUNT_MARGIN = "2";//保证金账户
     public static final Byte OTHER_ACCOUNT = 3;//其他账户
+
+    //------------线下二维码解码类型
+    public static final String NO_DECODE = "0";//不用解码
+    public static final String BASE_64 = "1";//Base64解码
 
     //----------机构结算交易的key
     public static final String FLAY_KEY = "SETTLE_ORDER_TASK";

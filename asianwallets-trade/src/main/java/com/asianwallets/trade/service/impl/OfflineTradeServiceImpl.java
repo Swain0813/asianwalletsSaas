@@ -1,6 +1,7 @@
 package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
@@ -42,9 +43,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
-
-    @Autowired
-    private RedisService redisService;
 
     @Autowired
     private OrdersMapper ordersMapper;
@@ -191,7 +189,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         }
         InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
         if (institutionRequestParameters == null) {
-            log.info("==================【线下收单】==================【机构请求参数信息不合法】");
+            log.info("==================【线下收单】==================【机构请求参数信息不存在】");
             return null;
         }
         //校验机构必填请求输入参数
@@ -354,9 +352,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setTradeStatus(TradeConstant.ORDER_PAYING);
         log.info("==================【线下CSB动态扫码】==================【落地订单信息】 orders:{}", JSON.toJSONString(orders));
         ordersMapper.insert(orders);
-        //上报通道
         CsbDynamicScanVO csbDynamicScanVO = new CsbDynamicScanVO();
         try {
+            //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
             BaseResponse baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
             csbDynamicScanVO.setQrCodeUrl(String.valueOf(baseResponse.getData()));
@@ -365,7 +363,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         csbDynamicScanVO.setOrderNo(orders.getMerchantOrderId());
-        csbDynamicScanVO.setDecodeType("0");
+        //Enets通道需要Base64解码
+        if (AD3Constant.ENETS.equalsIgnoreCase(basicInfoVO.getChannel().getIssuerId())) {
+            csbDynamicScanVO.setDecodeType(TradeConstant.BASE_64);
+        }
         log.info("==================【线下CSB动态扫码】==================【下单结束】");
         return csbDynamicScanVO;
     }
