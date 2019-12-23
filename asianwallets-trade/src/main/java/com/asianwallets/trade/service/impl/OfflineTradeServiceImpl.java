@@ -344,38 +344,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         BasicInfoVO basicInfoVO = getBasicAndCheck(offlineTradeDTO);
         //设置订单属性
         Orders orders = setAttributes(offlineTradeDTO, basicInfoVO);
-        //校验是否换汇
-        commonBusinessService.calcExchangeRateBak(basicInfoVO, orders);
-       /* if (!orders.getOrderCurrency().equals(orders.getTradeCurrency())) {
-            //校验机构DCC
-            if (!basicInfoVO.getInstitution().getDcc()) {
-                orders.setRemark("机构不支持DCC");
-                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
-                ordersMapper.insert(orders);
-                throw new BusinessException(EResultEnum.DCC_IS_NOT_OPEN.getCode());
-            }
-            //换汇计算
-            CalcExchangeRateVO calcExchangeRateVO = commonBusinessService.calcExchangeRate(orders.getOrderCurrency(), orders.getTradeCurrency(), basicInfoVO.getMerchantProduct().getFloatRate(), offlineTradeDTO.getOrderAmount());
-            orders.setExchangeTime(calcExchangeRateVO.getExchangeTime());
-            orders.setExchangeStatus(calcExchangeRateVO.getExchangeStatus());
-            if (TradeConstant.SWAP_FALID.equals(calcExchangeRateVO.getExchangeStatus())) {
-                log.info("==================【线下CSB动态扫码】==================【换汇失败】");
-                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
-                orders.setRemark("换汇失败");
-                ordersMapper.insert(orders);
-                throw new BusinessException(EResultEnum.SYS_ERROR_CREATE_ORDER_FAIL.getCode());
-            }
-            orders.setExchangeRate(calcExchangeRateVO.getExchangeRate());
-            orders.setTradeAmount(calcExchangeRateVO.getTradeAmount());
-            orders.setOrderForTradeRate(calcExchangeRateVO.getOriginalRate());
-            orders.setTradeForOrderRate(calcExchangeRateVO.getReverseRate());
-        } else {
-            log.info("==================【线下CSB动态扫码】==================【订单未换汇】");
-            orders.setTradeAmount(orders.getOrderAmount());
-            orders.setOrderForTradeRate(BigDecimal.ONE);
-            orders.setTradeForOrderRate(BigDecimal.ONE);
-            orders.setExchangeRate(BigDecimal.ONE);
-        }*/
+        //换汇
+        commonBusinessService.swapRateByPayment(basicInfoVO, orders);
         //校验商户产品与通道的限额
         commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
         //计算手续费

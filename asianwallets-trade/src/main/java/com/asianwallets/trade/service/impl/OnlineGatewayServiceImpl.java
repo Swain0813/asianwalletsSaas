@@ -217,7 +217,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setCreateTime(new Date());
 
         //校验是否换汇
-        commonBusinessService.calcExchangeRateBak(basicInfoVO, orders);
+        commonBusinessService.swapRateByPayment(basicInfoVO, orders);
         /*if (!orders.getTradeCurrency().equals(basicInfoVO.getChannel().getCurrency())) {
             //校验机构DCC
             if (!basicInfoVO.getInstitution().getDcc()) {
