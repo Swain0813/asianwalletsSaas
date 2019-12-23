@@ -8,7 +8,7 @@ package com.asianwallets.common.constant;
 public class AD3MQConstant {
 
     /********************************************************  退款接口相关队列 **********************************************************************/
-    //退款RF请求失败
+    //RF or RV请求失败
     public final static String RV_RF_FAIL_DL = "RV_RF_FAIL_DL";
     //调账失败队列
     public final static String RA_AA_FAIL_DL = "RA_AA_FAIL_DL";

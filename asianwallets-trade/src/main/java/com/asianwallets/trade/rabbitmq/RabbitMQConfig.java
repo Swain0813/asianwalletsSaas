@@ -16,7 +16,7 @@ public class RabbitMQConfig {
 
 
     /********************************************************  退款接口相关队列 **********************************************************************/
-    //退款RF请求失败
+    //RF or RV请求失败
     public final static String RV_RF_FAIL_DL = AD3MQConstant.RV_RF_FAIL_DL;
     @Bean
     public Queue RV_RF_FAIL_DL() {
