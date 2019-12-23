@@ -19,12 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * <p>
  * 银行卡表 服务实现类
- * </p>
- *
- * @author yx
- * @since 2019-11-25
  */
 @Service
 @Transactional

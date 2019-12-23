@@ -1,5 +1,4 @@
 package com.asianwallets.base.controller;
-
 import com.asianwallets.base.service.CountryService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.CountryDTO;
@@ -12,13 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * @ClassName CurrencyController
- * @Description 国家地区
- * @Author abc
- * @Date 2019/11/22 6:26
- * @Version 1.0
- */
+
 @RestController
 @RequestMapping("/country")
 @Api("国家地区")

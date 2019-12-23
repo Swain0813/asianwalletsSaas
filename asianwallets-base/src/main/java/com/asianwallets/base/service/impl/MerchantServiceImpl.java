@@ -23,18 +23,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 /**
- * <p>
- * 服务实现类
- * </p>
- *
- * @author yx
- * @since 2019-11-25
+ * 商户模块的实现类
  */
 @Service
 @Slf4j
@@ -67,7 +61,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public String encryptPassword(String password) {
+    private String encryptPassword(String password) {
         return passwordEncoder.encode(password);
     }
 

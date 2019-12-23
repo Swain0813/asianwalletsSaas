@@ -1,5 +1,4 @@
 package com.asianwallets.base.controller;
-
 import com.asianwallets.base.service.CurrencyService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.CurrencyDTO;
@@ -11,16 +10,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-/**
- * @ClassName CurrencyController
- * @Description 币种
- * @Author abc
- * @Date 2019/11/22 6:26
- * @Version 1.0
- */
 @RestController
 @RequestMapping("/currency")
 @Api("币种管理")

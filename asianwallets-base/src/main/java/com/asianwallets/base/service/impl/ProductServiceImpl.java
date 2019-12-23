@@ -1,5 +1,4 @@
 package com.asianwallets.base.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.ProductMapper;
 import com.asianwallets.base.service.ProductService;
@@ -19,17 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
-
 import java.util.Date;
 import java.util.List;
 
 /**
- * <p>
- * 产品表 服务实现类
- * </p>
- *
- * @author yx
- * @since 2019-12-05
+ * 产品管理模块的实现
  */
 @Slf4j
 @Service

@@ -144,16 +144,16 @@ public class Ad3ServiceImpl implements Ad3Service {
             ad3CSBScanPayDTO.setSignMsg(sign);
             ad3CSBScanPayDTO.setBizContent(bizContent);
             HttpResponse httpResponse = HttpClientUtils.reqPost(payUrl, ad3CSBScanPayDTO, null);
-            if (!httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
-                log.info("=================【AD3线下CSB】=================【响应状态码错误】");
+            if (httpResponse.getJsonObject() == null || !httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
+                log.info("=================【AD3线下CSB】=================【接口响应结果错误】");
                 baseResponse.setCode(TradeConstant.HTTP_FAIL);
                 baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
                 return baseResponse;
             }
-            AD3CSBScanVO csbScanVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3CSBScanVO.class);
+            AD3CSBScanVO csbScanVO = httpResponse.getJsonObject().toJavaObject(AD3CSBScanVO.class);
             log.info("=================【AD3线下CSB】=================【接口响应参数】 csbScanVO: {}", JSON.toJSONString(csbScanVO));
             if (csbScanVO == null || !AD3Constant.AD3_OFFLINE_SUCCESS.equals(csbScanVO.getRespCode())) {
-                log.info("=================【AD3线下CSB】=================【响应业务码错误】");
+                log.info("=================【AD3线下CSB】=================【业务响应结果错误】");
                 baseResponse.setCode(TradeConstant.HTTP_FAIL);
                 baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
                 return baseResponse;
@@ -171,10 +171,10 @@ public class Ad3ServiceImpl implements Ad3Service {
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/20
      * @Descripate AD3线下退款接口
-     * @return
      **/
     @Override
     public BaseResponse offlineRefund(AD3ONOFFRefundDTO ad3ONOFFRefundDTO) {
@@ -202,11 +202,12 @@ public class Ad3ServiceImpl implements Ad3Service {
         return baseResponse;
     }
 
+
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/20
      * @Descripate AD3线上退款接口
-     * @return
      **/
     @Override
     public BaseResponse onlineRefund(AD3ONOFFRefundDTO ad3ONOFFRefundDTO) {

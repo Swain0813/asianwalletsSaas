@@ -1,5 +1,4 @@
 package com.asianwallets.base.controller;
-
 import com.asianwallets.base.service.MccService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.MccDTO;
@@ -24,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/mcc")
-@Api("mcc")
+@Api("mcc管理")
 public class MccController extends BaseController {
 
     @Autowired

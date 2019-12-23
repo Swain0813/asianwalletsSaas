@@ -31,6 +31,7 @@ import static com.asianwallets.common.utils.ReflexClazzUtils.getNullPropertyName
 @Service
 @Transactional
 public class MerchantReportServiceImpl implements MerchantReportService {
+
     @Autowired
     private InstitutionMapper institutionMapper;
 
