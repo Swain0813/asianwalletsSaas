@@ -179,26 +179,29 @@ public class Ad3ServiceImpl implements Ad3Service {
     @Override
     public BaseResponse offlineRefund(AD3ONOFFRefundDTO ad3ONOFFRefundDTO) {
         BaseResponse baseResponse = new BaseResponse();
-        AD3RefundDTO ad3RefundDTO = ad3ONOFFRefundDTO.getAd3RefundDTO();
+        AD3RefundDTO ad3RefundDTO  = ad3ONOFFRefundDTO.getAd3RefundDTO();
         Channel channel = ad3ONOFFRefundDTO.getChannel();
-        log.info("===========================【AD3线下退款接口】开始时间 =========================== ad3RefundDTO :{}", JSON.toJSONString(ad3RefundDTO));
+        log.info("===========================【AD3线下退款接口】开始时间 =========================== ad3RefundDTO :{}",JSON.toJSONString(ad3RefundDTO));
         HttpResponse httpResponse = HttpClientUtils.reqPost(channel.getRefundUrl() + "/posRefund.json", ad3RefundDTO, null);
-        log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}", JSON.toJSONString(httpResponse));
+        log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}",JSON.toJSONString(httpResponse));
         if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
             AD3RefundOrderVO ad3RefundOrderVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3RefundOrderVO.class);
             if (ad3RefundOrderVO.getRespCode() != null && ad3RefundOrderVO.getRespCode().equals(AD3Constant.AD3_OFFLINE_SUCCESS)) {
-                baseResponse.setCode(AD3Constant.AD3_ONLINE_SUCCESS);
+                baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
+                baseResponse.setMsg(AD3Constant.AD3_ONLINE_SUCCESS);
                 baseResponse.setData(ad3RefundOrderVO);
-            } else {
-                baseResponse.setCode("T001");
+            }else{
+                baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
+                baseResponse.setMsg("T001");
                 baseResponse.setData(ad3RefundOrderVO);
             }
-        } else {
-            baseResponse.setCode("T001");
+        }else{
+            baseResponse.setCode(String.valueOf(302));
             baseResponse.setData(null);
         }
         return baseResponse;
     }
+
 
     /**
      * @return
@@ -211,21 +214,23 @@ public class Ad3ServiceImpl implements Ad3Service {
         BaseResponse baseResponse = new BaseResponse();
         Channel channel = ad3ONOFFRefundDTO.getChannel();
         SendAdRefundDTO sendAdRefundDTO = ad3ONOFFRefundDTO.getSendAdRefundDTO();
-        log.info("===========================【AD3线下退款接口】开始时间 =========================== sendAdRefundDTO :{}", JSON.toJSONString(sendAdRefundDTO));
+        log.info("===========================【AD3线下退款接口】开始时间 =========================== sendAdRefundDTO :{}",JSON.toJSONString(sendAdRefundDTO));
         HttpResponse httpResponse = HttpClientUtils.reqPost(channel.getRefundUrl(), sendAdRefundDTO, null);
-        log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}", JSON.toJSONString(httpResponse));
+        log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}",JSON.toJSONString(httpResponse));
         if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
             //请求成功
             RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(httpResponse.getJsonObject().toJSONString(), RefundAdResponseVO.class);
             if (refundAdResponseVO != null && refundAdResponseVO.getStatus().equals("1")) {
-                baseResponse.setCode(AD3Constant.AD3_ONLINE_SUCCESS);
+                baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
+                baseResponse.setMsg(AD3Constant.AD3_ONLINE_SUCCESS);
                 baseResponse.setData(refundAdResponseVO);
-            } else {
-                baseResponse.setCode("T001");
+            }else{
+                baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
+                baseResponse.setMsg("T001");
                 baseResponse.setData(refundAdResponseVO);
             }
-        } else {
-            baseResponse.setCode("T001");
+        }else{
+            baseResponse.setCode(String.valueOf(302));
             baseResponse.setData(null);
         }
         return baseResponse;

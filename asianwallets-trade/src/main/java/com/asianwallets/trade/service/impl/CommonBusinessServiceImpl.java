@@ -579,7 +579,11 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         reconciliation.setReconciliationType(AsianWalletConstant.RECONCILIATION_IN);
         reconciliation.setMerchantName(orderRefund.getMerchantName());
         reconciliation.setMerchantId(orderRefund.getMerchantId());
-        reconciliation.setAmount(orderRefund.getOrderAmount().subtract(orderRefund.getRefundFee()).add(orderRefund.getRefundOrderFee()));
+        if(orderRefund.getFeePayer()==1){
+            reconciliation.setAmount(orderRefund.getOrderAmount().subtract(orderRefund.getRefundFee()).add(orderRefund.getRefundOrderFee()));
+        }else {
+            reconciliation.setAmount(orderRefund.getOrderAmount());
+        }
         if (type.equals(TradeConstant.RA)) {
             reconciliation.setAccountType(1);
         } else if (type.equals(TradeConstant.AA)) {

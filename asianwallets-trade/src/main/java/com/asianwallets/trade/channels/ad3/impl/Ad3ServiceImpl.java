@@ -1,7 +1,9 @@
 package com.asianwallets.trade.channels.ad3.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3Constant;
+import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
@@ -12,15 +14,23 @@ import com.asianwallets.common.dto.ad3.SendAdRefundDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.utils.RSAUtils;
 import com.asianwallets.common.utils.SignTools;
+import com.asianwallets.common.vo.RefundAdResponseVO;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
+import com.asianwallets.trade.dao.OrderRefundMapper;
+import com.asianwallets.trade.dao.ReconciliationMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
+import com.asianwallets.trade.rabbitmq.RabbitMQSender;
+import com.asianwallets.trade.service.ClearingService;
+import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.utils.HandlerType;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +56,16 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
 
     @Autowired
     private ChannelsFeign channelsFeign;
+    @Autowired
+    private OrderRefundMapper orderRefundMapper;
+    @Autowired
+    private CommonBusinessService commonBusinessService;
+    @Autowired
+    private ReconciliationMapper reconciliationMapper;
+    @Autowired
+    private ClearingService clearingService;
+    @Autowired
+    private RabbitMQSender rabbitMQSender;
 
     /**
      * AD3线下CSB
@@ -82,6 +102,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         if (TradeConstant.TRADE_ONLINE.equals(orderRefund.getTradeDirection())) {
+            /*********************************************************************** AD3线上退款 *********************************************************************************/
             log.info("==================【AD3线上退款】================== OrderRefund: {}", JSON.toJSONString(orderRefund));
             SendAdRefundDTO sendAdRefundDTO = new SendAdRefundDTO(channel.getChannelMerchantId(), orderRefund);
             sendAdRefundDTO.setMerchantSignType(merchantSignType);
@@ -91,16 +112,50 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             ad3ONOFFRefundDTO.setChannel(channel);
             ad3ONOFFRefundDTO.setSendAdRefundDTO(sendAdRefundDTO);
             BaseResponse response = channelsFeign.ad3OnlineRefund(ad3ONOFFRefundDTO);
-            if (response.getCode().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
-                //请求成功
-
-
-            }else{
-
+            log.info("==================【AD3线上退款】================== 上游返回 response: {}", JSON.toJSONString(response));
+            if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
+                if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
+                    RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
+                    //退款成功
+                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
+                    //改原订单状态
+                    commonBusinessService.updateOrderRefundSuccess(orderRefund);
+                } else if (response.getCode().equals("T001")) {
+                    //退款失败
+                    baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
+                    Reconciliation reconciliation = commonBusinessService.createReconciliation(TradeConstant.AA, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                    reconciliationMapper.insert(reconciliation);
+                    FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+                    BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+                    if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
+                        orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
+                        reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
+                        //改原订单状态
+                        commonBusinessService.updateOrderRefundFail(orderRefund);
+                    } else {
+                        //调账失败
+                        RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
+                        log.info("=================【AD3线上退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+                        rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                    }
+                }
+            } else {
+                //请求失败
+                baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+                if(rabbitMassage ==null){
+                    rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                }
+                log.info("===============【AD3线上退款】===============【请求失败 上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+                rabbitMQSender.send(AD3MQConstant.TK_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
 
             }
         } else if (TradeConstant.TRADE_UPLINE.equals(orderRefund.getTradeDirection())) {
+            /*********************************************************************** AD3线下退款 *********************************************************************************/
             log.info("==================【AD3线下退款】================== OrderRefund: {}", JSON.toJSONString(orderRefund));
+
+
+
+
 
 
         }
