@@ -73,7 +73,7 @@ public class RefundOrderMQReceive {
             //请求次数减一
             rabbitMassage.setCount(rabbitMassage.getCount() - 1);
             FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
-            log.info("=========================【RV_RF_FAIL_DL】==================== 【上报清结算】 【{}】 fundChangeDTO : 【{}】", orderRefund.getRemark4(),JSON.toJSONString(fundChangeDTO));
+            log.info("=========================【RV_RF_FAIL_DL】==================== 【上报清结算 {}】fundChangeDTO : 【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
             BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
             log.info("=========================【RV_RF_FAIL_DL】==================== 【上报清结算 返回】 cFundChange : 【{}】", JSON.toJSONString(cFundChange));
             if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
@@ -89,13 +89,7 @@ public class RefundOrderMQReceive {
             } catch (Exception e) {
                 log.info("========================= 【RV_RF_FAIL_DL】 ==================== 【Exception】 e : 【{}】", e);
             }
-            if(orderRefund.getRemark4().equals(TradeConstant.RF)){
-                log.info("========================= 【RV_RF_FAIL_DL】 ==================== 【退款】");
-                channelsAbstract.refund(channel, orderRefund, null);
-            }else if(orderRefund.getRemark4().equals(TradeConstant.RV)){
-                log.info("========================= 【RV_RF_FAIL_DL】 ==================== 【撤销】");
-                channelsAbstract.cancel(channel, orderRefund, null);
-            }
+            channelsAbstract.refund(channel, orderRefund, null);
         } else {
             //三次上报清结算失败，则退款单就是退款失败更新退款单状态以及失败原因
             orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, "上报清结算失败:RV_RF_FAIL_DL");
@@ -121,7 +115,7 @@ public class RefundOrderMQReceive {
             rabbitMassage.setCount(rabbitMassage.getCount() - 1);
             Reconciliation reconciliation = JSON.parseObject(rabbitMassage.getValue(), Reconciliation.class);
             FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-            log.info("========================= 【RA_AA_FAIL_DL】 ==================== 【上报清结算】 AccountType:【{}】，【fundChangeDTO】: {} ",reconciliation.getAccountType(), JSON.toJSONString(fundChangeDTO));
+            log.info("========================= 【RA_AA_FAIL_DL】 ==================== 【上报清结算】 AccountType:【{}】，【fundChangeDTO】: {} ", reconciliation.getAccountType(), JSON.toJSONString(fundChangeDTO));
             BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
             log.info("========================= 【RA_AA_FAIL_DL】 ==================== 【上报清结算 返回】 cFundChange : {} ", JSON.toJSONString(cFundChange));
             if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
