@@ -105,7 +105,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
             if(rabbitMassage ==null){
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
-            log.info("===============【NextPos退款】===============【退款操作 请求失败上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+            log.info("===============【NextPos退款】===============【请求失败 上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
             rabbitMQSender.send(AD3MQConstant.TK_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return response;
