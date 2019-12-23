@@ -22,4 +22,12 @@ public interface AlipayService {
      * @return
      **/
     BaseResponse cancel(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate 退款不上报清结算
+     * @return
+     **/
+    BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
 }

@@ -33,6 +33,13 @@ public interface Ad3Service {
      **/
     BaseResponse cancel(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
     /**
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate 退款不上报清结算
+     * @return
+     **/
+    BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
+    /**
      * 对向ad3的请求进行签名
      *
      * @param object

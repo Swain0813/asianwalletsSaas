@@ -249,6 +249,17 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     }
 
     /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate 退款不上报清结算
+     **/
+    @Override
+    public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        return null;
+    }
+
+    /**
      * 对向ad3的请求进行签名
      *
      * @param object
