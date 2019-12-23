@@ -78,6 +78,13 @@ public interface CommonBusinessService {
     void calculateCost(BasicInfoVO basicInfoVO, Orders orders);
 
     /**
+     * 计算通道网关手续费
+     * @param orders  订单
+     * @param channel 通道
+     */
+     void CalcGatewayFee(Orders orders, Channel channel);
+
+    /**
      * 退款和撤销成功的场合
      * @param orderRefund
      */

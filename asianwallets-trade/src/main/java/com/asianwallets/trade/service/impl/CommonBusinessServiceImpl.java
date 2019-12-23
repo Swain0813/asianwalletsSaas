@@ -380,10 +380,11 @@ public class    CommonBusinessServiceImpl implements CommonBusinessService {
     }
 
     /**
+     * 计算通道网关手续费
      * @param orders  订单
      * @param channel 通道
      */
-    private void CalcGatewayFee(Orders orders, Channel channel) {
+    public void CalcGatewayFee(Orders orders, Channel channel) {
         log.info("-----------------【计费信息记录】-----------------计算通道网关手续费开始");
         BigDecimal channelGatewayFee = BigDecimal.ZERO;
         if (channel.getChannelGatewayRate() == null || channel.getChannelGatewayMinRate() == null ||
