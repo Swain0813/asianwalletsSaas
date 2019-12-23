@@ -154,11 +154,19 @@ public class FundChangeDTO implements Serializable {
         //网关手续费
         this.gatewayFee = 0.00;
         //手续费,2位
-        this.fee = orderRefund.getRefundFee().doubleValue();
+        if (orderRefund.getFeePayer() == 1) {
+            this.fee = orderRefund.getRefundFee().doubleValue();
+        } else {
+            this.fee = 0.00;
+        }
         //手续费币种
         this.feecurrency = orderRefund.getOrderCurrency();
         //退还手续费,2位
-        this.refundOrderFee = orderRefund.getRefundOrderFee().doubleValue();
+        if (orderRefund.getFeePayer() == 1) {
+            this.refundOrderFee = orderRefund.getRefundOrderFee().doubleValue();
+        } else {
+            this.refundOrderFee = 0.00;
+        }
         //退还手续费币种
         this.refundOrderFeeCurrency = orderRefund.getOrderCurrency();
         //通道成本 2位
@@ -167,46 +175,46 @@ public class FundChangeDTO implements Serializable {
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/20
      * @Descripate 调账
-     * @return
      **/
     public FundChangeDTO(Reconciliation reconciliation) {
         this.merchantid = reconciliation.getMerchantId();
         this.refcnceFlow = reconciliation.getId();
         //交易类型 NT：收单，RF：退款，RV：撤销，WD：提款，AA:调账，TA:转账
-        if(reconciliation.getAccountType() == 1){
+        if (reconciliation.getAccountType() == 1) {
             this.tradetype = TradeConstant.RA;
-        }else if(reconciliation.getAccountType() == 2){
+        } else if (reconciliation.getAccountType() == 2) {
             this.tradetype = TradeConstant.AA;
         }
         //机构订单号
         this.merOrderNo = reconciliation.getMerchantOrderId();
         //订单币种
         this.txncurrency = reconciliation.getCurrency();
-        if(reconciliation.getReconciliationType()==1){
+        if (reconciliation.getReconciliationType() == 1) {
             //调入
             this.txnamount = reconciliation.getAmount().doubleValue();
             this.sltamount = reconciliation.getAmount().doubleValue();
-        }else{
+        } else {
             //调出
-            this.txnamount = -1*reconciliation.getAmount().doubleValue();
-            this.sltamount = -1*reconciliation.getAmount().doubleValue();
+            this.txnamount = -1 * reconciliation.getAmount().doubleValue();
+            this.sltamount = -1 * reconciliation.getAmount().doubleValue();
         }
         //原订单id
         this.sysorderid = reconciliation.getOrderId();
-        if(reconciliation.getAccountType() == 1){
+        if (reconciliation.getAccountType() == 1) {
             this.balancetype = TradeConstant.NORMAL_FUND;
             this.isclear = TradeConstant.CLEARING;
-        }else if(reconciliation.getAccountType() == 2){
+        } else if (reconciliation.getAccountType() == 2) {
             this.balancetype = TradeConstant.NORMAL_FUND;
             this.isclear = TradeConstant.SETTLE;
         }
         this.txndesc = "";
         //汇率,2位
         this.txnexrate = 0.00;
-            this.remark = "";
+        this.remark = "";
         //结算币种
         this.sltcurrency = reconciliation.getCurrency();
 

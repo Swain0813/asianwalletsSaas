@@ -268,9 +268,12 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "refund_fee_trade")
     private BigDecimal refundFeeTrade;
 
-    @ApiModelProperty(value = "退还收单手续费金额")
+    @ApiModelProperty(value = "退还收单手续费金额（订单币种）")
     @Column(name = "refund_order_fee")
     private BigDecimal refundOrderFee;
+    @ApiModelProperty(value = "退还收单手续费金额(交易币种)")
+    @Column(name = "refund_order_fee_trade")
+    private BigDecimal refundOrderFeeTrade;
 
     @ApiModelProperty(value = "备注1")
     @Column(name = "remark1")
