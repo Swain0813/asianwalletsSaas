@@ -265,7 +265,6 @@ public class MegaPayServiceImpl implements MegaPayService {
             baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
             baseResponse.setData(qrString);
             log.info("==================【NextPos收单接口】==================【出码成功】");
-            return baseResponse;
         } catch (Exception e) {
             log.info("==================【NextPos收单接口】==================【接口异常】", e);
             baseResponse.setCode(TradeConstant.HTTP_FAIL);

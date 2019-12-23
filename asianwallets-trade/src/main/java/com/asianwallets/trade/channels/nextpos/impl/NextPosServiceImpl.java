@@ -5,8 +5,6 @@ import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
-import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
-import com.asianwallets.common.dto.ad3.CSBScanBizContentDTO;
 import com.asianwallets.common.dto.megapay.NextPosQueryDTO;
 import com.asianwallets.common.dto.megapay.NextPosRefundDTO;
 import com.asianwallets.common.dto.megapay.NextPosRequestDTO;
@@ -33,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
