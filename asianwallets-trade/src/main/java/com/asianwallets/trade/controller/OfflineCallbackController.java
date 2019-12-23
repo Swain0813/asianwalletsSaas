@@ -1,0 +1,63 @@
+package com.asianwallets.trade.controller;
+
+import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.utils.ArrayUtil;
+import com.asianwallets.trade.channels.ad3.Ad3Service;
+import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
+import com.asianwallets.trade.service.CommonService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+
+@RestController
+@Slf4j
+@Api(description = "线下回调接口")
+@RequestMapping("/offlineCallback")
+public class OfflineCallbackController extends BaseController {
+
+    @Autowired
+    private Ad3Service ad3Service;
+
+    @Autowired
+    private CommonService commonService;
+
+//    @ApiOperation(value = "ad3线下服务器回调接口")
+//    @PostMapping("/ad3ServerCallback")
+//    public String ad3Callback(HttpServletRequest request) {
+//        Map<String, String[]> parameterMap = request.getParameterMap();
+//        if (ArrayUtil.isEmpty(parameterMap)) {
+//            log.info("=================【AD3线下回调接口信息记录】=================【回调参数记录为空】");
+//            throw new BusinessException(EResultEnum.CALLBACK_PARAMETER_IS_NULL.getCode());
+//        }
+//        log.info("=================【AD3线下回调接口信息记录】=================【回调参数记录】 parameterMap:{}", JSON.toJSONString(parameterMap));
+//        HashMap<String, String> dtoMap = new HashMap<>();
+//        Set<String> set = parameterMap.keySet();
+//        for (String key : set) {
+//            dtoMap.put(key, parameterMap.get(key)[0]);
+//        }
+//        AD3OfflineCallbackDTO ad3OfflineCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), AD3OfflineCallbackDTO.class);
+//        log.info("=================【AD3线下回调接口信息记录】=================【JSON解析后的回调参数记录】 ad3OfflineCallbackDTO:{}", JSON.toJSONString(ad3OfflineCallbackDTO));
+//        return ad3Service.ad3Callback(ad3OfflineCallbackDTO);
+//    }
+}
