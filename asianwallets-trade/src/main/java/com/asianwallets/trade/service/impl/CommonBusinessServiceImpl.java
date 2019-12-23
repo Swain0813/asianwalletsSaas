@@ -395,6 +395,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_CONFIGURATION_INFORMATION_ERROR.getCode());
         }
         BigDecimal orderFee = BigDecimal.ZERO;
+        BigDecimal feeTrade = BigDecimal.ZERO;
         //单笔费率
         if (merchantProduct.getRateType().equals(TradeConstant.FEE_TYPE_RATE)) {
             //手续费=交易金额*单笔费率+附加值
@@ -418,8 +419,14 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             BigDecimal amount = orderFee.multiply(orders.getTradeForOrderRate());
             //四舍五入保留2位
             orderFee = amount.setScale(2, BigDecimal.ROUND_HALF_UP);
+            feeTrade = orderFee;
+        } else {
+            feeTrade = orderFee;
         }
+        //手续费(订单币种对交易币种的手续费)
         orders.setFee(orderFee);
+        //手续费(交易币种对订单币种的手续费)
+        orders.setFeeTrade(feeTrade);
         orders.setChargeStatus(TradeConstant.CHARGE_STATUS_SUCCESS);
         orders.setChargeTime(new Date());
         orders.setRateType(merchantProduct.getRateType());
