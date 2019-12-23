@@ -27,12 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * <p>
- * 机构表 服务实现类
- * </p>
- *
- * @author yx
- * @since 2019-11-22
+ * 机构模块的实现类
  */
 @Service
 @Slf4j
@@ -41,14 +36,19 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
 
     @Autowired
     private InstitutionMapper institutionMapper;
+
     @Autowired
     private InstitutionAuditMapper institutionAuditMapper;
+
     @Autowired
     private InstitutionHistoryMapper institutionHistoryMapper;
+
     @Autowired
     private RedisService redisService;
+
     @Autowired
     private AuditorProvider auditorProvider;
+
     @Autowired
     private SysUserMapper sysUserMapper;
 
@@ -57,7 +57,7 @@ public class InstitutionServiceImpl extends BaseServiceImpl<Institution> impleme
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public String encryptPassword(String password) {
+    private String encryptPassword(String password) {
         return passwordEncoder.encode(password);
     }
 

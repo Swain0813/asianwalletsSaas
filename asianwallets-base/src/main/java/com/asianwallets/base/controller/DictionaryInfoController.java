@@ -1,5 +1,4 @@
 package com.asianwallets.base.controller;
-
 import com.asianwallets.base.service.DictionaryInfoService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.DictionaryInfoAllDTO;

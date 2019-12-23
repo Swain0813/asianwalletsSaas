@@ -1,5 +1,4 @@
 package com.asianwallets.base.service.impl;
-
 import com.asianwallets.base.dao.ChannelMapper;
 import com.asianwallets.base.dao.MccChannelMapper;
 import com.asianwallets.base.dao.MccMapper;
@@ -17,7 +16,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -29,13 +27,13 @@ import java.util.stream.Collectors;
 public class MccChannelServiceImpl implements MccChannelService {
 
     @Autowired
-    MccChannelMapper mccChannelMapper;
+    private MccChannelMapper mccChannelMapper;
 
     @Autowired
-    MccMapper mccMapper;
+    private MccMapper mccMapper;
 
     @Autowired
-    ChannelMapper channelMapper;
+    private ChannelMapper channelMapper;
 
     /**
      * 添加
@@ -152,8 +150,6 @@ public class MccChannelServiceImpl implements MccChannelService {
             }
             mccChannelExportVOS.add(mccChannelExportVO);
         }
-
-
         return mccChannelExportVOS;
     }
 }

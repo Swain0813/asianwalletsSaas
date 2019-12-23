@@ -1,5 +1,4 @@
 package com.asianwallets.base.controller;
-
 import com.asianwallets.base.service.AttestationService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.AttestationDTO;
@@ -11,11 +10,6 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * @author shenxinran
- * @Date: 2019/2/15 19:26
- * @Description: 密钥Controller 层
- */
 @RestController
 @RequestMapping("/attestation")
 @Api(description = "密钥管理")
