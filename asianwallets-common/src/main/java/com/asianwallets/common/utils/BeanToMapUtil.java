@@ -26,6 +26,9 @@ public class BeanToMapUtil {
             for (int i = 0; i < descriptors.length; i++) {
                 String name = descriptors[i].getName();
                 if (!"class".equals(name)) {
+                    if (name.equals("url")) {
+                        continue;
+                    }
                     params.put(name, propertyUtilsBean.getNestedProperty(obj, name));
                 }
             }

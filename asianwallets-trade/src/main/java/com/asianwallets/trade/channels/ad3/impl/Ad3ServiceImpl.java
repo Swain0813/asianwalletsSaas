@@ -80,6 +80,31 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     @Autowired
     private RedisService redisService;
 
+
+    /**
+     * AD3线上
+     *
+     * @param orders  订单
+     * @param channel 通道
+     * @return BaseResponse
+     */
+    public BaseResponse onlinePay(Orders orders, Channel channel) {
+        //封装参数
+        AD3OnlineAcquireDTO ad3OnlineAcquireDTO = new AD3OnlineAcquireDTO(orders, channel);
+        ad3OnlineAcquireDTO.setSignMsg(signMsg(ad3OnlineAcquireDTO));
+        log.info("-------AD3线上收单参数-------AD3OnlineAcquireDTO:{}", JSON.toJSON(ad3OnlineAcquireDTO));
+        //返回收款消息
+        log.info("-----------------URL---------------- type:{}**issuerId:{}**url:{}", channel.getChannelEnName(), channel.getIssuerId(), channel.getPayUrl());
+        log.info("==================【线上AD3收款】==================【调用Channels服务】【AD3线上收单接口请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3OnlineAcquireDTO));
+        BaseResponse channelResponse = channelsFeign.ad3OnlinePay(ad3OnlineAcquireDTO);
+        log.info("==================【线上AD3收款】==================【调用Channels服务】【AD3线上收单接口请求参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
+        if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+        return channelResponse;
+    }
+
+
     /**
      * AD3线下CSB
      *
@@ -160,7 +185,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             } else {
                 //请求失败
                 baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
-                if(rabbitMassage ==null){
+                if (rabbitMassage == null) {
                     rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
                 }
                 log.info("===============【AD3线上退款】===============【请求失败 上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
@@ -195,7 +220,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
                     //改原订单状态
                     commonBusinessService.updateOrderRefundSuccess(orderRefund);
-                }else{
+                } else {
                     //退款失败
                     log.info("==================【AD3线下退款】================== 退款失败 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
@@ -218,10 +243,10 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                         rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMassage));
                     }
                 }
-            }else {
+            } else {
                 //请求失败
                 baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
-                if(rabbitMassage ==null){
+                if (rabbitMassage == null) {
                     rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
                 }
                 log.info("===============【AD3线下退款】===============【请求失败 上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
@@ -272,7 +297,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         String terminalId = redisService.get(AD3Constant.AD3_LOGIN_TERMINAL);
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(terminalId)) {
             //AD3登陆业务参数实体
-            LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT,channel);
+            LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT, channel);
             //AD3登陆公共参数实体
             AD3LoginDTO ad3LoginDTO = new AD3LoginDTO(channel.getChannelMerchantId(), bizContent);
             //先登出
@@ -296,6 +321,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         }
         return ad3LoginVO;
     }
+
     /**
      * 生成AD3认证签名
      *

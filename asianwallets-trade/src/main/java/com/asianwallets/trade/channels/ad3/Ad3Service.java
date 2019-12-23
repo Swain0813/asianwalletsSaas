@@ -10,6 +10,15 @@ import com.asianwallets.common.vo.AD3LoginVO;
 public interface Ad3Service {
 
     /**
+     * AD3线上
+     *
+     * @param orders  订单
+     * @param channel 通道
+     * @return BaseResponse
+     */
+    BaseResponse onlinePay(Orders orders, Channel channel);
+
+    /**
      * AD3线下CSB
      *
      * @param orders  订单

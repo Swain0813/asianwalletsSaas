@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.OnlineTradeVO;
+import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.channels.help2pay.Help2PayService;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.MerchantProductMapper;
@@ -16,6 +18,7 @@ import com.asianwallets.trade.dto.OnlineTradeDTO;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OnlineGatewayService;
+import com.asianwallets.trade.utils.HandlerContext;
 import com.asianwallets.trade.utils.SettleDateUtil;
 import com.asianwallets.trade.vo.BasicInfoVO;
 import com.asianwallets.trade.vo.OnlineInfoDetailVO;
@@ -51,6 +54,9 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 
     @Autowired
     private MerchantProductMapper merchantProductMapper;
+
+    @Autowired
+    private HandlerContext handlerContext;
 
     /**
      * 网关收单
@@ -152,7 +158,17 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         log.info("-----------------【线上直连】--------------【订单信息】 orders:{}", JSON.toJSONString(orders));
         ordersMapper.insert(orders);
         //上报通道
-        return null;
+        OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
+        try {
+            //上报通道
+            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
+            BaseResponse baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
+            onlineTradeVO.setCode_url(String.valueOf(baseResponse.getData()));
+        } catch (Exception e) {
+            log.info("==================【线上直连】==================【上报通道异常】", e);
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+        return onlineTradeVO;
     }
 
     /**
@@ -348,36 +364,47 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
      */
     private void checkRequestParameters(OnlineTradeDTO onlineTradeDTO, InstitutionRequestParameters institutionRequestParameters) {
         if (institutionRequestParameters.getBrowserUrl() && StringUtils.isEmpty(onlineTradeDTO.getBrowserUrl())) {
+            log.info("==================【线上收单校验机构请求参数】==================【浏览器回调地址为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getProductName() && StringUtils.isEmpty(onlineTradeDTO.getProductName())) {
+            log.info("==================【线上收单校验机构请求参数】==================【商品名称为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getProductDescription() && StringUtils.isEmpty(onlineTradeDTO.getProductDescription())) {
+            log.info("==================【线上收单校验机构请求参数】==================【商品描述为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getPayerName() && StringUtils.isEmpty(onlineTradeDTO.getPayerName())) {
+            log.info("==================【线上收单校验机构请求参数】==================【付款人姓名为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getPayerPhone() && StringUtils.isEmpty(onlineTradeDTO.getPayerPhone())) {
+            log.info("==================【线上收单校验机构请求参数】==================【付款人手机为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getPayerEmail() && StringUtils.isEmpty(onlineTradeDTO.getPayerEmail())) {
+            log.info("==================【线上收单校验机构请求参数】==================【付款人邮箱为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getPayerBank() && StringUtils.isEmpty(onlineTradeDTO.getPayerBank())) {
+            log.info("==================【线上收单校验机构请求参数】==================【付款人银行为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getLanguage() && StringUtils.isEmpty(onlineTradeDTO.getLanguage())) {
+            log.info("==================【线上收单校验机构请求参数】==================【语言为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getRemark1() && StringUtils.isEmpty(onlineTradeDTO.getRemark1())) {
+            log.info("==================【线上收单校验机构请求参数】==================【备注1为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getRemark2() && StringUtils.isEmpty(onlineTradeDTO.getRemark2())) {
+            log.info("==================【线上收单校验机构请求参数】==================【备注2为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getRemark3() && StringUtils.isEmpty(onlineTradeDTO.getRemark3())) {
+            log.info("==================【线上收单校验机构请求参数】==================【备注3为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
     }
