@@ -299,8 +299,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             }
             baseResponse = channelsAbstract.cancel(channel, orderRefund, null);
         }
-
-
         return baseResponse;
     }
 
