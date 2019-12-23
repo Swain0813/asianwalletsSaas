@@ -72,14 +72,14 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         //当前币种的默认值
         Currency currency = null;
         try {
-            currency = JSON.parseObject(redisService.get(AsianWalletConstant.CURRENCY_DEFAULT.concat(code)), Currency.class);
+            currency = JSON.parseObject(redisService.get(AsianWalletConstant.CURRENCY_CACHE_KEY.concat("_").concat(code)), Currency.class);
             if (currency == null) {
                 currency = currencyMapper.selectByCurrency(code);
                 if (currency == null) {
                     log.info("==================【根据币种编码获取币种】==================【币种不存在】 code: {}", code);
                     return null;
                 }
-                redisService.set(AsianWalletConstant.CURRENCY_DEFAULT + "_" + currency, JSON.toJSONString(currency));
+                redisService.set(AsianWalletConstant.CURRENCY_CACHE_KEY.concat("_").concat(code), JSON.toJSONString(currency));
             }
         } catch (Exception e) {
             log.info("==================【根据币种编码获取币种】==================【获取异常】", e);

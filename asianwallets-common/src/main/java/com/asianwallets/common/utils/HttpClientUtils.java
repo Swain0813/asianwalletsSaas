@@ -145,7 +145,6 @@ public class HttpClientUtils {
         client.getHttpConnectionManager().getParams().setSoTimeout(30000);
         client.getHttpConnectionManager().getParams().setConnectionTimeout(30000);
         log.info("HttpClientUtils-reqPost]==>请求参数, url: {}, params: {}, headMap: {}", url, JSON.toJSONString(params), headMap);
-
         try {
             PostMethod method = new PostMethod(url);
             method.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
