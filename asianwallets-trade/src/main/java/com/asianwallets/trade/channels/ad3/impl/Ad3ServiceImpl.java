@@ -154,7 +154,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                         log.info("==================【AD3线上退款】================== 调账失败 cFundChange: {}", JSON.toJSONString(cFundChange));
                         RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
                         log.info("=================【AD3线上退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                        rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                        rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
                     }
                 }
             } else {
@@ -215,7 +215,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                         log.info("==================【AD3线下退款】================== 调账失败 cFundChange: {}", JSON.toJSONString(cFundChange));
                         RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
                         log.info("=================【AD3线下退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                        rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                        rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
                     }
                 }
             }else {
