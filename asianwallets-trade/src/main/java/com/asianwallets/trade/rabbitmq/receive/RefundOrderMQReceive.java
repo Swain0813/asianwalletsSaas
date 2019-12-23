@@ -134,7 +134,7 @@ public class RefundOrderMQReceive {
                 if (reconciliation.getAccountType() == 1) {
                     orderRefund.setRemark4(TradeConstant.RA);
                 } else if (reconciliation.getAccountType() == 2) {
-                    orderRefund.setRemark4(TradeConstant.RA);
+                    orderRefund.setRemark4(TradeConstant.AA);
                 }
                 commonBusinessService.updateOrderRefundFail(orderRefund);
             } else {
