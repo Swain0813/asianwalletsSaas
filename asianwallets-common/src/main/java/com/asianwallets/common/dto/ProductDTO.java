@@ -42,12 +42,12 @@ public class ProductDTO extends BasePageHelper {
      * 交易类型（1-收、2-付）
      */
     @ApiModelProperty(value = "交易类型（1-收、2-付）")
-    private Integer transType;
+    private Byte transType;
     /**
      * 交易场景：1-线上 2-线下
      */
     @ApiModelProperty(value = "交易场景：1-线上 2-线下")
-    private Integer tradeDirection;
+    private Byte tradeDirection;
     /**
      * 支付方式(银联，网银，...）
      */

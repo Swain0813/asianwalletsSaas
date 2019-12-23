@@ -1,5 +1,7 @@
 package com.asianwallets.channels.service.impl;
 
+import cn.hutool.http.Header;
+import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
@@ -7,21 +9,15 @@ import com.asianwallets.channels.service.Ad3Service;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
-import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
-import com.asianwallets.common.dto.ad3.AD3LoginDTO;
-import com.asianwallets.common.dto.ad3.CSBScanBizContentDTO;
-import com.asianwallets.common.dto.ad3.LoginBizContentDTO;
 import com.asianwallets.common.dto.ad3.*;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.HttpResponse;
-import com.asianwallets.common.utils.HttpClientUtils;
-import com.asianwallets.common.utils.MD5Util;
-import com.asianwallets.common.utils.ReflexClazzUtils;
-import com.asianwallets.common.utils.SignTools;
+import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.AD3CSBScanVO;
 import com.asianwallets.common.vo.AD3LoginVO;
 import com.asianwallets.common.vo.AD3RefundOrderVO;
@@ -116,9 +112,9 @@ public class Ad3ServiceImpl implements Ad3Service {
             channelsOrder.setTradeAmount(new BigDecimal(ad3CSBScanPayDTO.getBizContent().getMerorderAmount()));
             channelsOrder.setReqIp(orders.getReqIp());
             channelsOrder.setServerUrl(ad3CSBScanPayDTO.getBizContent().getReceiveUrl());
-            channelsOrder.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
+            channelsOrder.setTradeStatus(TradeConstant.TRADE_WAIT);
             channelsOrder.setIssuerId(ad3CSBScanPayDTO.getBizContent().getIssuerId());
-            channelsOrder.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
+            channelsOrder.setOrderType(AD3Constant.TRADE_ORDER);
             channelsOrder.setMd5KeyStr(ad3CSBScanPayDTO.getChannel().getMd5KeyStr());
             channelsOrder.setPayerPhone(orders.getPayerPhone());
             channelsOrder.setPayerName(orders.getPayerName());
@@ -234,5 +230,31 @@ public class Ad3ServiceImpl implements Ad3Service {
             baseResponse.setData(null);
         }
         return baseResponse;
+    }
+
+    /**
+     * AD3 线上收款
+     *
+     * @param ad3OnlineAcquireDTO AD3线上收单接口参数实体
+     * @return BaseResponse
+     */
+    @Override
+    public BaseResponse onlinePay(AD3OnlineAcquireDTO ad3OnlineAcquireDTO) {
+        BaseResponse response = new BaseResponse();
+        cn.hutool.http.HttpResponse execute = HttpRequest.post(ad3OnlineAcquireDTO.getUrl())
+                .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
+                .form(BeanToMapUtil.beanToMap(ad3OnlineAcquireDTO))
+                .timeout(10000)
+                .execute();
+        int status = execute.getStatus();
+        String body = execute.body();
+        log.info("----------------------向上游接口发送订单接口返回----------------------http状态码:{},body:{}", status, JSON.toJSON(body));
+        //判断HTTP状态码
+        if (status != AsianWalletConstant.HTTP_SUCCESS_STATUS || StringUtils.isEmpty(body)) {
+            response.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
+            return response;
+        }
+        response.setData(body);
+        return response;
     }
 }

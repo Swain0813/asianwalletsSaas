@@ -23,7 +23,7 @@ public interface CommonBusinessService {
     /**
      * 通用签名校验
      *
-     * @param obj
+     * @param obj 验签实体
      * @return boolean
      */
     boolean checkUniversalSign(Object obj);
@@ -43,7 +43,7 @@ public interface CommonBusinessService {
      * 下单换汇【线上与线下下单】
      *
      * @param basicInfoVO 基础信息
-     * @param orders
+     * @param orders      订单实体
      * @return 换汇输出实体
      */
     void swapRateByPayment(BasicInfoVO basicInfoVO, Orders orders);
@@ -86,8 +86,8 @@ public interface CommonBusinessService {
     /**
      * 计算手续费
      *
-     * @param basicInfoVO
-     * @param orders
+     * @param basicInfoVO 基础信息实体
+     * @param orders 订单实体
      */
     void calculateCost(BasicInfoVO basicInfoVO, Orders orders);
 
@@ -102,22 +102,22 @@ public interface CommonBusinessService {
     /**
      * 退款和撤销成功的场合
      *
-     * @param orderRefund
+     * @param orderRefund 退款订单实体
      */
     void updateOrderRefundSuccess(OrderRefund orderRefund);
 
     /**
      * 退款和撤销失败的场合
      *
-     * @param orderRefund
+     * @param orderRefund 退款订单实体
      */
     void updateOrderRefundFail(OrderRefund orderRefund);
 
     /**
-     * @return
+     * @return Reconciliation
      * @Author YangXu
      * @Date 2019/12/20
-     * @Descripate 创建调账单
+     * @Description 创建调账单
      **/
     Reconciliation createReconciliation(String type, OrderRefund orderRefund, String remark);
 }
