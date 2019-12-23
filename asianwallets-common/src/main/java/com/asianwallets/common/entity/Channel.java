@@ -191,6 +191,26 @@ public class Channel extends BaseEntity {
     @Column(name = "extend5")
     private String extend5;
 
+    @ApiModelProperty(value = "扩展字段6")
+    @Column(name = "extend6")
+    private String extend6;
+
+    @ApiModelProperty(value = "扩展字段7")
+    @Column(name = "extend7")
+    private String extend7;
+
+    @ApiModelProperty(value = "扩展字段8")
+    @Column(name = "extend8")
+    private String extend8;
+
+    @ApiModelProperty(value = "扩展字段9")
+    @Column(name = "extend9")
+    private String extend9;
+
+    @ApiModelProperty(value = "扩展字段10")
+    @Column(name = "extend10")
+    private String extend10;
+
     @ApiModelProperty(value = "是否报备")
     @Column(name = "is_report")
     private Boolean isReport;

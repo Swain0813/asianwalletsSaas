@@ -81,15 +81,16 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 reconciliationMapper.insert(reconciliation);
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
+                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                    //请求成功
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
                     reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
                     //改原订单状态
                     commonBusinessService.updateOrderRefundFail(orderRefund);
                 } else {
-                    //请求失败
+                    //调账失败
                     RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                    log.info("=================【NextPos退款】=================【退款操作 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+                    log.info("=================【NextPos退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
                     rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMassage));
                 }
 
@@ -100,7 +101,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
             if(rabbitMassage ==null){
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
-            log.info("===============【NextPos退款】===============【退款操作 请求失败上报队列 MQ_TK_NEXTPOS_QQSB_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+            log.info("===============【NextPos退款】===============【退款操作 请求失败上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
             rabbitMQSender.send(AD3MQConstant.TK_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return response;
