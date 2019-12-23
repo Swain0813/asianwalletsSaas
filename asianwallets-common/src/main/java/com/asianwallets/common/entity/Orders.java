@@ -296,9 +296,13 @@ public class Orders extends BaseEntity {
     @Column(name = "rate")
     private BigDecimal rate = BigDecimal.ZERO;
 
-    @ApiModelProperty(value = "手续费")
+    @ApiModelProperty(value = "手续费(订单币种对交易币种的手续费)")
     @Column(name = "fee")
     private BigDecimal fee = BigDecimal.ZERO;
+
+    @ApiModelProperty(value = "手续费(交易币种对订单币种的手续费)")
+    @Column(name = "fee_trade")
+    private BigDecimal feeTrade = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "通道手续费类型")
     @Column(name = "channel_fee_type")
