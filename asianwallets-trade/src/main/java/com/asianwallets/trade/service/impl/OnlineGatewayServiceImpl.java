@@ -6,7 +6,6 @@ import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
-import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.trade.channels.help2pay.Help2PayService;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
@@ -218,7 +217,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setCreateTime(new Date());
 
         //校验是否换汇
-        if (!orders.getTradeCurrency().equals(basicInfoVO.getChannel().getCurrency())) {
+        commonBusinessService.calcExchangeRateBak(basicInfoVO, orders);
+        /*if (!orders.getTradeCurrency().equals(basicInfoVO.getChannel().getCurrency())) {
             //校验机构DCC
             if (!basicInfoVO.getInstitution().getDcc()) {
                 orders.setRemark("机构不支持DCC");
@@ -247,7 +247,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             orders.setOrderForTradeRate(BigDecimal.ONE);
             orders.setTradeForOrderRate(BigDecimal.ONE);
             orders.setExchangeRate(BigDecimal.ONE);
-        }
+        }*/
         //校验商户产品与通道的限额
         commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
         commonBusinessService.calculateCost(basicInfoVO, orders);

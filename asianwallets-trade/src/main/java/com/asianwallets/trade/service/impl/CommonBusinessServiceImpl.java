@@ -185,6 +185,86 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     }
 
     /**
+     * 换汇计算
+     *
+     * @param basicInfoVO 基础信息
+     * @param orders      订单
+     */
+    @Override
+    public void calcExchangeRateBak(BasicInfoVO basicInfoVO, Orders orders) {
+        log.info("==================【换汇计算】==================【换汇开始】");
+        String foreignCurrency = basicInfoVO.getChannel().getCurrency();
+        String localCurrency = orders.getOrderCurrency();
+        //币种一致时，不需要换汇
+        if (foreignCurrency.equalsIgnoreCase(localCurrency)) {
+            log.info("==================【换汇计算】==================【币种相同】");
+            orders.setTradeAmount(orders.getOrderAmount());
+            orders.setOrderForTradeRate(BigDecimal.ONE);
+            orders.setTradeForOrderRate(BigDecimal.ONE);
+            orders.setExchangeRate(BigDecimal.ONE);
+            orders.setExchangeTime(new Date());
+            log.info("==================【换汇计算】==================【换汇结束】");
+            return;
+        }
+        //校验机构DCC
+        if (!basicInfoVO.getInstitution().getDcc()) {
+            orders.setRemark("机构不支持DCC");
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+            ordersMapper.insert(orders);
+            throw new BusinessException(EResultEnum.DCC_IS_NOT_OPEN.getCode());
+        }
+        BigDecimal floatRate = basicInfoVO.getMerchantProduct().getFloatRate();
+        BigDecimal amount = orders.getOrderAmount();
+
+        try {
+            ExchangeRate localToForeignRate = commonRedisDataService.getExchangeRateByCurrency(localCurrency, foreignCurrency);
+            if (localToForeignRate == null || localToForeignRate.getBuyRate() == null) {
+                messageFeign.sendSimple(warningMobile, "换汇计算:查询汇率异常!本位币种:" + localCurrency + " 目标币种:" + foreignCurrency);
+                messageFeign.sendSimpleMail(warningEmail, "换汇计算:查询汇率异常!", "换汇计算:查询汇率异常!本位币种:" + localCurrency + " 目标币种:" + foreignCurrency);
+                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+                orders.setRemark("换汇失败");
+                orders.setExchangeStatus(TradeConstant.SWAP_FALID);
+                ordersMapper.insert(orders);
+                throw new BusinessException(EResultEnum.SYS_ERROR_CREATE_ORDER_FAIL.getCode());
+            }
+            ExchangeRate foreignToLocalRate = commonRedisDataService.getExchangeRateByCurrency(foreignCurrency, localCurrency);
+            if (foreignToLocalRate == null || foreignToLocalRate.getBuyRate() == null) {
+                messageFeign.sendSimple(warningMobile, "换汇计算:查询汇率异常!本位币种:" + foreignCurrency + " 目标币种:" + localCurrency);
+                messageFeign.sendSimpleMail(warningEmail, "换汇计算:查询汇率异常!", "换汇计算:查询汇率异常!本位币种:" + foreignCurrency + " 目标币种:" + localCurrency);
+                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+                orders.setRemark("换汇失败");
+                orders.setExchangeStatus(TradeConstant.SWAP_FALID);
+                ordersMapper.insert(orders);
+                throw new BusinessException(EResultEnum.SYS_ERROR_CREATE_ORDER_FAIL.getCode());
+            }
+            //浮动率为空,默认为0
+            if (floatRate == null) {
+                floatRate = new BigDecimal(0);
+            }
+            //换汇汇率 = 汇率 * (1 + 浮动率)
+            BigDecimal swapRate = localToForeignRate.getBuyRate().multiply(floatRate.add(new BigDecimal(1)));
+            //交易金额 = 订单金额 * 换汇汇率
+            BigDecimal tradeAmount = amount.multiply(swapRate);
+            //四舍五入保留2位
+            orders.setTradeAmount(tradeAmount.setScale(2, BigDecimal.ROUND_HALF_UP));
+            //换汇汇率
+            orders.setExchangeRate(swapRate);
+            //本币转外币汇率
+            orders.setOrderForTradeRate(localToForeignRate.getBuyRate());
+            //外币转本币汇率
+            orders.setTradeForOrderRate(foreignToLocalRate.getBuyRate());
+            //换汇成功
+            orders.setExchangeStatus(TradeConstant.SWAP_SUCCESS);
+            //换汇时间
+            orders.setExchangeTime(new Date());
+            log.info("==================【换汇计算】==================【换汇结果】 订单币种: {},交易币种:{},换汇汇率:{},本币转外币汇率:{},外币转本币汇率：{},换汇时间:{}", JSON.toJSONString(localCurrency),
+                    JSON.toJSONString(foreignCurrency), JSON.toJSONString(swapRate), JSON.toJSONString(localToForeignRate.getBuyRate()), JSON.toJSONString(foreignToLocalRate.getBuyRate()), JSON.toJSONString(orders.getExchangeTime()));
+        } catch (Exception e) {
+            log.info("==================【换汇计算】==================【换汇异常】", e);
+        }
+    }
+
+    /**
      * 校验重复请求【线上与线下下单】
      *
      * @param merchantId      商户编号
@@ -422,6 +502,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
 
     /**
      * 计算通道网关手续费
+     *
      * @param orders  订单
      * @param channel 通道
      */
@@ -468,7 +549,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public void updateOrderRefundSuccess(OrderRefund orderRefund) {
-        if(orderRefund.getRemark4()!=null && TradeConstant.RV.equals(orderRefund.getRemark4())){
+        if (orderRefund.getRemark4() != null && TradeConstant.RV.equals(orderRefund.getRemark4())) {
             //撤销成功-更新订单的撤销状态
             ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), null, TradeConstant.ORDER_CANNEL_SUCCESS);
         } else {
@@ -487,14 +568,15 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
 
     /**
      * 退款和撤销失败的场合
+     *
      * @param orderRefund
      */
     @Override
-    public void updateOrderRefundFail(OrderRefund orderRefund){
-        if(orderRefund.getRemark4()!=null && TradeConstant.RV.equals(orderRefund.getRemark4())){
+    public void updateOrderRefundFail(OrderRefund orderRefund) {
+        if (orderRefund.getRemark4() != null && TradeConstant.RV.equals(orderRefund.getRemark4())) {
             //撤销失败
             ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), null, TradeConstant.ORDER_CANNEL_FALID);
-        }else{
+        } else {
             //退款失败的场合
             if (TradeConstant.REFUND_TYPE_TOTAL.equals(orderRefund.getRefundType())) {
                 ordersMapper.updateOrderRefundStatus(orderRefund.getMerchantOrderId(), TradeConstant.ORDER_REFUND_FAIL);
@@ -507,14 +589,15 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             }
         }
     }
+
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/20
      * @Descripate 创建调账单
-     * @return
      **/
     @Override
-    public Reconciliation createReconciliation(String type,OrderRefund orderRefund, String remark) {
+    public Reconciliation createReconciliation(String type, OrderRefund orderRefund, String remark) {
         //调账订单id
         String reconciliationId = "T" + IDS.uniqueID();
         Reconciliation reconciliation = new Reconciliation();
@@ -527,9 +610,9 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         reconciliation.setMerchantName(orderRefund.getMerchantName());
         reconciliation.setMerchantId(orderRefund.getMerchantId());
         reconciliation.setAmount(orderRefund.getOrderAmount().subtract(orderRefund.getRefundFee()).add(orderRefund.getRefundOrderFee()));
-        if(type.equals(TradeConstant.RA)){
+        if (type.equals(TradeConstant.RA)) {
             reconciliation.setAccountType(1);
-        }else if(type.equals(TradeConstant.AA)){
+        } else if (type.equals(TradeConstant.AA)) {
             reconciliation.setAccountType(2);
         }
         reconciliation.setCurrency(orderRefund.getOrderCurrency());

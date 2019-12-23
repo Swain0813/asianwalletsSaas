@@ -10,7 +10,6 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
-import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.DeviceBindingMapper;
@@ -346,7 +345,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         //设置订单属性
         Orders orders = setAttributes(offlineTradeDTO, basicInfoVO);
         //校验是否换汇
-        if (!orders.getOrderCurrency().equals(orders.getTradeCurrency())) {
+        commonBusinessService.calcExchangeRateBak(basicInfoVO, orders);
+       /* if (!orders.getOrderCurrency().equals(orders.getTradeCurrency())) {
             //校验机构DCC
             if (!basicInfoVO.getInstitution().getDcc()) {
                 orders.setRemark("机构不支持DCC");
@@ -375,7 +375,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             orders.setOrderForTradeRate(BigDecimal.ONE);
             orders.setTradeForOrderRate(BigDecimal.ONE);
             orders.setExchangeRate(BigDecimal.ONE);
-        }
+        }*/
         //校验商户产品与通道的限额
         commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
         //计算手续费

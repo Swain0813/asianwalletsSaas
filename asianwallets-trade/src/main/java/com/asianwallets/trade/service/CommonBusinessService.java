@@ -40,6 +40,15 @@ public interface CommonBusinessService {
     CalcExchangeRateVO calcExchangeRate(String localCurrency, String foreignCurrency, BigDecimal floatRate, BigDecimal amount);
 
     /**
+     * 换汇计算
+     *
+     * @param basicInfoVO 基础信息
+     * @param orders
+     * @return 换汇输出实体
+     */
+    void calcExchangeRateBak(BasicInfoVO basicInfoVO, Orders orders);
+
+    /**
      * 校验重复请求【线上与线下下单】
      *
      * @param merchantId      商户编号
@@ -84,10 +93,11 @@ public interface CommonBusinessService {
 
     /**
      * 计算通道网关手续费
+     *
      * @param orders  订单
      * @param channel 通道
      */
-     void CalcGatewayFee(Orders orders, Channel channel);
+    void CalcGatewayFee(Orders orders, Channel channel);
 
     /**
      * 退款和撤销成功的场合
@@ -95,17 +105,19 @@ public interface CommonBusinessService {
      * @param orderRefund
      */
     void updateOrderRefundSuccess(OrderRefund orderRefund);
+
     /**
      * 退款和撤销失败的场合
+     *
      * @param orderRefund
      */
     void updateOrderRefundFail(OrderRefund orderRefund);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/20
      * @Descripate 创建调账单
-     * @return
      **/
-    Reconciliation createReconciliation(String type,OrderRefund orderRefund, String remark);
+    Reconciliation createReconciliation(String type, OrderRefund orderRefund, String remark);
 }
