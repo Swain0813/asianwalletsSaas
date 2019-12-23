@@ -6,10 +6,8 @@ import java.util.Date;
 import java.math.BigDecimal;
 
 /**
- * @description:
- * @author: YangXu
- * @create: 2019-12-10 17:24
- **/
+ * 商户产品导出参数
+ */
 @Data
 public class MerchantProductExportVO {
 
@@ -24,13 +22,16 @@ public class MerchantProductExportVO {
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 
-    @ApiModelProperty(value = "交易场景")
-    private Integer tradeDirection;
-
     @ApiModelProperty(value = "产品名称")
     private String productAbbrev;
 
-    @ApiModelProperty(value = "费率类型 (1-单笔费率,2-单笔定额)")
+    @ApiModelProperty(value = "交易类型")
+    private Integer tradeDirection;
+
+    @ApiModelProperty(value = "结算周期")
+    private String settleCycle;
+
+    @ApiModelProperty(value = "费率类型")
     private String rateType;
 
     @ApiModelProperty(value = "费率")
@@ -54,8 +55,5 @@ public class MerchantProductExportVO {
 
     @ApiModelProperty(value = "审核备注")
     private String auditRemark;
-
-
-
 
 }

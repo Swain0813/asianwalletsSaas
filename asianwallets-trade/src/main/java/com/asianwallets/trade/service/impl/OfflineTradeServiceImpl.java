@@ -1,10 +1,10 @@
 package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
-import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
@@ -44,9 +44,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     private CommonRedisDataService commonRedisDataService;
 
     @Autowired
-    private RedisService redisService;
-
-    @Autowired
     private OrdersMapper ordersMapper;
 
     @Autowired
@@ -69,39 +66,51 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      */
     private void checkRequestParameters(OfflineTradeDTO offlineTradeDTO, InstitutionRequestParameters institutionRequestParameters) {
         if (institutionRequestParameters.getBrowserUrl() && StringUtils.isEmpty(offlineTradeDTO.getBrowserUrl())) {
+            log.info("==================【线下收单校验机构请求参数】==================【浏览器回调地址为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getIssuerId() && StringUtils.isEmpty(offlineTradeDTO.getIssuerId())) {
+            log.info("==================【线下收单校验机构请求参数】==================【银行机构号为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getProductName() && StringUtils.isEmpty(offlineTradeDTO.getProductName())) {
+            log.info("==================【线下收单校验机构请求参数】==================【商品名称为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getProductDescription() && StringUtils.isEmpty(offlineTradeDTO.getProductDescription())) {
+            log.info("==================【线下收单校验机构请求参数】==================【商品描述为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getPayerName() && StringUtils.isEmpty(offlineTradeDTO.getPayerName())) {
+            log.info("==================【线下收单校验机构请求参数】==================【付款人姓名为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getPayerPhone() && StringUtils.isEmpty(offlineTradeDTO.getPayerPhone())) {
+            log.info("==================【线下收单校验机构请求参数】==================【付款人手机为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getPayerEmail() && StringUtils.isEmpty(offlineTradeDTO.getPayerEmail())) {
+            log.info("==================【线下收单校验机构请求参数】==================【付款人邮箱为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getPayerBank() && StringUtils.isEmpty(offlineTradeDTO.getPayerBank())) {
+            log.info("==================【线下收单校验机构请求参数】==================【付款人银行为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getLanguage() && StringUtils.isEmpty(offlineTradeDTO.getLanguage())) {
+            log.info("==================【线下收单校验机构请求参数】==================【语言为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getRemark1() && StringUtils.isEmpty(offlineTradeDTO.getRemark1())) {
+            log.info("==================【线下收单校验机构请求参数】==================【备注1为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getRemark2() && StringUtils.isEmpty(offlineTradeDTO.getRemark2())) {
+            log.info("==================【线下收单校验机构请求参数】==================【备注2为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         if (institutionRequestParameters.getRemark3() && StringUtils.isEmpty(offlineTradeDTO.getRemark3())) {
+            log.info("==================【线下收单校验机构请求参数】==================【备注3为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
     }
@@ -191,7 +200,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         }
         InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
         if (institutionRequestParameters == null) {
-            log.info("==================【线下收单】==================【机构请求参数信息不合法】");
+            log.info("==================【线下收单】==================【机构请求参数信息不存在】");
             return null;
         }
         //校验机构必填请求输入参数
@@ -354,9 +363,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setTradeStatus(TradeConstant.ORDER_PAYING);
         log.info("==================【线下CSB动态扫码】==================【落地订单信息】 orders:{}", JSON.toJSONString(orders));
         ordersMapper.insert(orders);
-        //上报通道
         CsbDynamicScanVO csbDynamicScanVO = new CsbDynamicScanVO();
         try {
+            //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
             BaseResponse baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
             csbDynamicScanVO.setQrCodeUrl(String.valueOf(baseResponse.getData()));
@@ -365,7 +374,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         csbDynamicScanVO.setOrderNo(orders.getMerchantOrderId());
-        csbDynamicScanVO.setDecodeType("0");
+        //Enets通道需要Base64解码
+        if (AD3Constant.ENETS.equalsIgnoreCase(basicInfoVO.getChannel().getIssuerId())) {
+            csbDynamicScanVO.setDecodeType(TradeConstant.BASE_64);
+        }
         log.info("==================【线下CSB动态扫码】==================【下单结束】");
         return csbDynamicScanVO;
     }

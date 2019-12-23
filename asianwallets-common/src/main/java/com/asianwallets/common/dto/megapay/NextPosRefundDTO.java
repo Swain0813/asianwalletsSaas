@@ -60,7 +60,7 @@ public class NextPosRefundDTO {
         if(orderRefund.getFeePayer()==1){
             this.amt = String.valueOf(orderRefund.getTradeAmount());
         }else {
-            this.amt = String.valueOf(orderRefund.getTradeAmount().add(orderRefund.getRefundOrderFee()));
+            this.amt = String.valueOf(orderRefund.getTradeAmount().add(orderRefund.getRefundOrderFeeTrade()));
         }
         this.channel = channel;
     }

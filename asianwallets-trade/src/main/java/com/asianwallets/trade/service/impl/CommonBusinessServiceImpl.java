@@ -192,21 +192,26 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public void swapRateByPayment(BasicInfoVO basicInfoVO, Orders orders) {
-        String foreignCurrency = basicInfoVO.getChannel().getCurrency();
-        String localCurrency = orders.getOrderCurrency();
-        //币种一致时，不需要换汇
-        if (foreignCurrency.equalsIgnoreCase(localCurrency)) {
-            log.info("==================【下单换汇】==================【币种相同】");
+        if (StringUtils.isEmpty(orders.getOrderCurrency()) || StringUtils.isEmpty(orders.getTradeCurrency())) {
+            log.info("==================【下单换汇】==================【换汇币种为空】");
+            orders.setRemark4("换汇币种为空");
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+            ordersMapper.insert(orders);
+            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+        }
+        //币种一致时,不需要换汇
+        if (orders.getOrderCurrency().equalsIgnoreCase(orders.getTradeCurrency())) {
+            log.info("==================【下单换汇】==================【币种相同,无需换汇】");
             orders.setTradeAmount(orders.getOrderAmount());
             orders.setOrderForTradeRate(BigDecimal.ONE);
             orders.setTradeForOrderRate(BigDecimal.ONE);
             orders.setExchangeRate(BigDecimal.ONE);
             orders.setExchangeTime(new Date());
-            log.info("==================【下单换汇】==================【换汇结束】");
             return;
         }
         //校验机构DCC
         if (!basicInfoVO.getInstitution().getDcc()) {
+            log.info("==================【下单换汇】==================【机构不支持DCC】");
             orders.setRemark4("机构不支持DCC");
             orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
             ordersMapper.insert(orders);
@@ -581,7 +586,11 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         reconciliation.setReconciliationType(AsianWalletConstant.RECONCILIATION_IN);
         reconciliation.setMerchantName(orderRefund.getMerchantName());
         reconciliation.setMerchantId(orderRefund.getMerchantId());
-        reconciliation.setAmount(orderRefund.getOrderAmount().subtract(orderRefund.getRefundFee()).add(orderRefund.getRefundOrderFee()));
+        if(orderRefund.getFeePayer()==1){
+            reconciliation.setAmount(orderRefund.getOrderAmount().subtract(orderRefund.getRefundFee()).add(orderRefund.getRefundOrderFee()));
+        }else {
+            reconciliation.setAmount(orderRefund.getOrderAmount());
+        }
         if (type.equals(TradeConstant.RA)) {
             reconciliation.setAccountType(1);
         } else if (type.equals(TradeConstant.AA)) {

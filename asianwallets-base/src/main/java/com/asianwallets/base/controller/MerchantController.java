@@ -10,17 +10,8 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.asianwallets.common.base.BaseController;
-
 import java.util.List;
 
-/**
- * <p>
- *  前端控制器
- * </p>
- *
- * @author yx
- * @since 2019-11-25
- */
 @Api(description = "商户管理")
 @RestController
 @RequestMapping("/merchant")

@@ -1,5 +1,4 @@
 package com.asianwallets.base.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.base.dao.*;
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,12 +36,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * <p>
- * 服务实现类
- * </p>
- *
- * @author yx
- * @since 2019-12-09
+ * 商户产品的实现类
  */
 @Slf4j
 @Service

@@ -12,14 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import com.asianwallets.common.base.BaseController;
 import java.util.List;
 
-/**
- * <p>
- * 银行卡表 前端控制器
- * </p>
- *
- * @author yx
- * @since 2019-11-25
- */
+
 @Api(description = "结算信息管理")
 @RestController
 @RequestMapping("/bankCard")

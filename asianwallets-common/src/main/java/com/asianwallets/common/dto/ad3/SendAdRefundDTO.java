@@ -59,7 +59,11 @@ public class SendAdRefundDTO {
         this.merchantId = merchantOnlineCode;
         this.merOrderNo = orderRefund.getOrderId();
         this.sysOrderNo = orderRefund.getChannelNumber();
-        this.refundAmount =  String.valueOf(orderRefund.getTradeAmount());
+        if(orderRefund.getFeePayer()==1){
+            this.refundAmount =  String.valueOf(orderRefund.getTradeAmount());
+        }else{
+            this.refundAmount =  String.valueOf(orderRefund.getTradeAmount().add(orderRefund.getRefundOrderFeeTrade()));
+        }
         this.refundOrdertime = DateToolUtils.getReqDateyyyyMMddHHmmss(orderRefund.getCreateTime());
         this.ext1=orderRefund.getId();
         this.merchantSignType="2";

@@ -163,6 +163,36 @@ public class ChannelDTO extends BasePageHelper {
     @ApiModelProperty(value = "仅当日交易可退款(0-否,1-是)")
     private Boolean onlyTodayOrderRefund;
 
+    @ApiModelProperty(value = "扩展字段1")
+    private String extend1;
+
+    @ApiModelProperty(value = "扩展字段2")
+    private String extend2;
+
+    @ApiModelProperty(value = "扩展字段3")
+    private String extend3;
+
+    @ApiModelProperty(value = "扩展字段4")
+    private String extend4;
+
+    @ApiModelProperty(value = "扩展字段5")
+    private String extend5;
+
+    @ApiModelProperty(value = "扩展字段6")
+    private String extend6;
+
+    @ApiModelProperty(value = "扩展字段7")
+    private String extend7;
+
+    @ApiModelProperty(value = "扩展字段8")
+    private String extend8;
+
+    @ApiModelProperty(value = "扩展字段9")
+    private String extend9;
+
+    @ApiModelProperty(value = "扩展字段10")
+    private String extend10;
+
     @ApiModelProperty(value = "产品ID集合")
     private List<String> productIdList;
 

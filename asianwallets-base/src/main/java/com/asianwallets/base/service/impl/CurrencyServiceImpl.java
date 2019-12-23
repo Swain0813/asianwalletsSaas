@@ -1,5 +1,4 @@
 package com.asianwallets.base.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.CurrencyMapper;
 import com.asianwallets.base.service.CurrencyService;
@@ -10,6 +9,7 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.vo.CurrencyExportVO;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
@@ -18,18 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
-
 import java.util.Date;
 import java.util.List;
 
-import static com.asianwallets.common.utils.ReflexClazzUtils.getNullPropertyNames;
-
 /**
- * @ClassName CurrencyServiceImpl
- * @Description 币种
- * @Author abc
- * @Date 2019/11/22 6:36
- * @Version 1.0
+ * 币种管理
  */
 @Service
 @Transactional
@@ -84,7 +77,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         if (c == null) {
             throw new BusinessException(EResultEnum.INFORMATION_DOES_NOT_EXIST.getCode());
         }
-        BeanUtils.copyProperties(currencyDTO, c, getNullPropertyNames(currencyDTO));
+        BeanUtils.copyProperties(currencyDTO, c, ReflexClazzUtils.getNullPropertyNames(currencyDTO));
         c.setUpdateTime(new Date());
         int result = currencyMapper.updateByPrimaryKeySelective(c);
         if (result != 0) {

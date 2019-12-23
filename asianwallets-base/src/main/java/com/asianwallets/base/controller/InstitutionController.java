@@ -13,14 +13,6 @@ import com.asianwallets.common.base.BaseController;
 
 import java.util.List;
 
-/**
- * <p>
- * 机构表 前端控制器
- * </p>
- *
- * @author yx
- * @since 2019-11-22
- */
 @RestController
 @RequestMapping("/institution")
 @Api(description = "机构管理")

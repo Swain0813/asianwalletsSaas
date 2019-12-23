@@ -51,6 +51,11 @@
         <result column="extend3" property="extend3" jdbcType="VARCHAR"/>
         <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
         <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
+        <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
+        <result column="extend7" property="extend7" jdbcType="VARCHAR"/>
+        <result column="extend8" property="extend8" jdbcType="VARCHAR"/>
+        <result column="extend9" property="extend9" jdbcType="VARCHAR"/>
+        <result column="extend10" property="extend10" jdbcType="VARCHAR"/>
         <result column="is_report" property="isReport" jdbcType="BIT"/>
         <result column="report_form" property="reportForm" jdbcType="TINYINT"/>
         <result column="refunding_is_return_fee" property="refundingIsReturnFee" jdbcType="TINYINT"/>
@@ -72,7 +77,8 @@
         channel_rate, channel_fee_type, channel_min_rate, channel_max_rate,
         channel_gateway_rate, channel_gateway_min_rate, channel_gateway_max_rate, channel_gateway_fee_type, channel_gateway_charge, channel_gateway_status,
         modifier, remark, enabled, support_refund_state, refund_url, sort, pay_url, void_url, order_validity,
-        extend1, extend2, extend3, extend4, extend5, is_report, report_form, refunding_is_return_fee, channel_agent_id,
+        extend1, extend2, extend3, extend4, extend5, extend6, extend7, extend8, extend9, extend10,
+        is_report, report_form, refunding_is_return_fee, channel_agent_id,
         channel_refund_fee_type, channel_refund_fee_rate, channel_refund_max_rate, channel_refund_min_rate
     </sql>
 

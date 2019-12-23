@@ -5,6 +5,7 @@ import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.vo.AD3LoginVO;
 
 public interface Ad3Service {
 
@@ -18,11 +19,34 @@ public interface Ad3Service {
     BaseResponse offlineCSB(Orders orders, Channel channel);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/19
      * @Descripate 退款接口
-     * @return
      **/
     BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
 
+    /**
+     * 对向ad3的请求进行签名
+     *
+     * @param object
+     * @return
+     */
+    String signMsg(Object object);
+    /**
+     * 获取终端编号和token
+     *
+     * @return
+     */
+    AD3LoginVO getTerminalIdAndToken(Channel channel);
+
+    /**
+     * 生成AD3认证签名
+     *
+     * @param commonObj   AD3公共参数输入实体
+     * @param businessObj AD3业务参数输入实体
+     * @param token       token
+     * @return ad3签名
+     */
+    String createAD3Signature(Object commonObj, Object businessObj, String token);
 }
