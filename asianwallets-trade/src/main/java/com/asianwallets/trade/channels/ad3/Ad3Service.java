@@ -25,7 +25,13 @@ public interface Ad3Service {
      * @Descripate 退款接口
      **/
     BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
-
+    /**
+     * @Author YangXu
+     * @Date 2019/12/19
+     * @Descripate 撤销接口
+     * @return
+     **/
+    BaseResponse cancel(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
     /**
      * 对向ad3的请求进行签名
      *

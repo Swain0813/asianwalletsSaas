@@ -236,6 +236,17 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         return baseResponse;
     }
 
+    /**
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate    撤销
+     * @return
+     **/
+    @Override
+    public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        BaseResponse baseResponse = new BaseResponse();
+        return baseResponse;
+    }
 
     /**
      * 对向ad3的请求进行签名

@@ -109,4 +109,16 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
         }
         return baseResponse;
     }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate    撤销
+     * @return
+     **/
+    @Override
+    public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        BaseResponse baseResponse = new BaseResponse();
+        return baseResponse;
+    }
 }
