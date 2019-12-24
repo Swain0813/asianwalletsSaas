@@ -95,4 +95,44 @@ public class RabbitMQConfig {
     public Queue fundChangeFailQueue() {
         return new Queue(RabbitMQConfig.MQ_PLACE_ORDER_FUND_CHANGE_FAIL);
     }
+
+    /* ===========================================【回调商户服务器失败队列】=============================================== */
+    //回调失败队列
+    public static final String MQ_AW_CALLBACK_URL_FAIL = AD3MQConstant.MQ_AW_CALLBACK_URL_FAIL;
+    //回调失败队列死信队列
+    public static final String E_MQ_AW_CALLBACK_URL_FAIL = AD3MQConstant.E_MQ_AW_CALLBACK_URL_FAIL;
+    //回调失败队列路由Key
+    public static final String MQ_AW_CALLBACK_URL_FAIL_KEY = AD3MQConstant.MQ_AW_CALLBACK_URL_FAIL_KEY;
+    //回调失败队列交换机
+    public static final String MQ_AW_CALLBACK_URL_FAIL_EXCHANGE = AD3MQConstant.MQ_AW_CALLBACK_URL_FAIL_EXCHANGE;
+
+    //声明回调失败队列
+    @Bean
+    public Queue callBackFailQueue() {
+        return new Queue(RabbitMQConfig.MQ_AW_CALLBACK_URL_FAIL, true, false, false);
+    }
+
+    //声明回调失败交换机
+    @Bean
+    public DirectExchange exchangeCallBack() {
+        return new DirectExchange(MQ_AW_CALLBACK_URL_FAIL_EXCHANGE);
+    }
+
+    //绑定回调失败队列到回调失败交换机,并通过指定的RoutingKey路由
+    @Bean
+    public Binding deadLetterBindingCallBack() {
+        return BindingBuilder.bind(callBackFailQueue()).to(exchangeCallBack()).with(MQ_AW_CALLBACK_URL_FAIL_KEY);
+    }
+
+    //回调失败队列的配置死信队列,即入队队列
+    @Bean
+    public Queue deadLetterCallBack() {
+        Map<String, Object> args = new HashMap<>();
+        //延迟队列2分钟
+        args.put("x-message-ttl", 1000 * 60 * 2);
+        args.put("x-dead-letter-exchange", MQ_AW_CALLBACK_URL_FAIL_EXCHANGE);
+        args.put("x-dead-letter-routing-key", MQ_AW_CALLBACK_URL_FAIL_KEY);
+        return new Queue(E_MQ_AW_CALLBACK_URL_FAIL, true, false, false, args);
+    }
+
 }

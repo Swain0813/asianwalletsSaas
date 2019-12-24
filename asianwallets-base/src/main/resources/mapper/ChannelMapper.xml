@@ -72,7 +72,7 @@
         id, channel_code, channel_en_name, channel_cn_name, channel_img, country, country_type, trans_type, pay_type,
         currency, settle_cycle, channel_single_select_url, channel_batch_select_url, limit_min_amount, limit_max_amount,
         create_time, channel_merchant_id, md5_key_str,
-        update_time, creator, pay_code,
+        update_time, creator, pay_code,service_name_mark,
         issuer_id, channel_connect_method, only_today_order_refund, notify_server_url, notify_browser_url,
         channel_rate, channel_fee_type, channel_min_rate, channel_max_rate,
         channel_gateway_rate, channel_gateway_min_rate, channel_gateway_max_rate, channel_gateway_fee_type, channel_gateway_charge, channel_gateway_status,
