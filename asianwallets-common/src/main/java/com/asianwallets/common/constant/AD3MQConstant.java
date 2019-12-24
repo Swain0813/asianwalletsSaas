@@ -14,5 +14,7 @@ public class AD3MQConstant {
     public final static String RA_AA_FAIL_DL = "RA_AA_FAIL_DL";
     //退款上报失败队列
     public final static String TK_SB_FAIL_DL = "TK_SB_FAIL_DL";
+    //撤销更新订单失败
+    public final static String CX_GX_FAIL_DL = "CX_GX_FAIL_DL";
 
 }

@@ -173,8 +173,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                     } else {
                         //更新失败后去查询订单信息
                         RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
-                        //rabbitMQSender.send(AD3MQConstant.TC_MQ_CANCEL_ORDER, JSON.toJSONString(rabbitOrderMsg));
-                        //TODO
+                        rabbitMQSender.send(AD3MQConstant.CX_GX_FAIL_DL, JSON.toJSONString(rabbitOrderMsg));
                     }
                 } else if (map.get(channel.getPayCode()).equals("PAYERROR")) {
                     //交易失败

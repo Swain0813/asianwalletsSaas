@@ -34,4 +34,10 @@ public class RabbitMQConfig {
     public Queue TK_SB_FAIL_DL() {
         return new Queue(RabbitMQConfig.TK_SB_FAIL_DL);
     }
+    //撤销更新失败队列
+    public final static String CX_GX_FAIL_DL = AD3MQConstant.CX_GX_FAIL_DL;
+    @Bean
+    public Queue CX_GX_FAIL_DL() {
+        return new Queue(RabbitMQConfig.CX_GX_FAIL_DL);
+    }
 }
