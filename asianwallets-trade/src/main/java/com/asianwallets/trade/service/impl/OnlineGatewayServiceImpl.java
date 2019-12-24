@@ -216,13 +216,13 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             log.info("-----------------【线上直连】下单信息记录--------------【重复请求】");
             throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
         }
-        //签名校验
+       /* //签名校验
         if (!commonBusinessService.checkUniversalSign(onlineTradeDTO)) {
             log.info("-----------------【线上直连】下单信息记录--------------【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
-        }
+        }*/
         //查询订单号是否重复
-        Orders oldOrder = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getMerchantId());
+        Orders oldOrder = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getOrderNo());
         if (oldOrder != null) {
             log.info("-----------------【线上直连】下单信息记录-----------------订单号已存在");
             throw new BusinessException(EResultEnum.INSTITUTION_ORDER_ID_EXIST.getCode());
@@ -351,6 +351,10 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             basicInfoVO.setChannel(channel);
             basicInfoVO.setProduct(product);
             basicInfoVO.setMerchantProduct(merchantProduct);
+        }
+        if (basicInfoVO.getChannel() == null) {
+            log.info("-----------------【线上获取基础信息】-----------------映射表信息未配置");
+            throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_CHANNEL_NOT_EXISTS.getCode());
         }
         return basicInfoVO;
     }

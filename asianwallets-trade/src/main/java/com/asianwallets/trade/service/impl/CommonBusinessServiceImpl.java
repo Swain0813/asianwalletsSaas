@@ -98,6 +98,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public boolean checkUniversalSign(Object obj) {
+        log.info("===============【通用签名校验方法】===============【验签开始】");
         Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
         String sign = map.get("sign");
         String signType = map.get("signType");
@@ -126,6 +127,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             String decryptSign = MD5Util.getMD5String(str);
             return sign.equalsIgnoreCase(decryptSign);
         }
+        log.info("===============【通用签名校验方法】===============【验签结束】");
         return false;
     }
 

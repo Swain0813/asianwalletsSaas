@@ -98,14 +98,15 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     public Attestation getAttestationByMerchantId(String merchantId) {
         Attestation attestation = null;
         try {
-            attestation = JSON.parseObject(redisService.get(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat(merchantId)), Attestation.class);
+            attestation = JSON.parseObject(redisService.get(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(merchantId)), Attestation.class);
             if (attestation == null) {
                 attestation = attestationMapper.selectByMerchantId(merchantId);
                 if (attestation == null) {
                     log.info("==================【根据商户ID获取密钥对象】==================【密钥对象不存在】 merchantId: {}", merchantId);
                     return null;
+                } else {
+                    redisService.set(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(merchantId), JSON.toJSONString(attestation));
                 }
-                redisService.set(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(merchantId), JSON.toJSONString(attestation));
             }
         } catch (Exception e) {
             log.info("==================【根据商户ID获取密钥对象】==================【获取异常】", e);
