@@ -116,6 +116,23 @@
     remark3, remark4, remark5, remark6, remark7, remark8
   </sql>
 
+    <resultMap id="DccReportMap" type="com.asianwallets.common.vo.DccReportVO">
+        <result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchantName" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="merchantOrderId" property="merchantOrderId" jdbcType="VARCHAR"/>
+        <result column="tradeAmount" property="tradeAmount" jdbcType="DECIMAL"/>
+        <result column="orderCurrency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <result column="tradeCurrency" property="tradeCurrency" jdbcType="VARCHAR"/>
+        <result column="tradeAmount" property="tradeAmount" jdbcType="DECIMAL"/>
+        <result column="exchangeRate" property="exchangeRate" jdbcType="DECIMAL"/>
+        <result column="orderForTradeRate" property="orderForTradeRate" jdbcType="DECIMAL"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="channelCallbackTime" property="channelCallbackTime" jdbcType="TIMESTAMP"/>
+        <result column="tradeStatus" property="tradeStatus" jdbcType="TINYINT"/>
+        <result column="channelName" property="channelName" jdbcType="VARCHAR"/>
+        <result column="floatRate" property="floatRate" jdbcType="DECIMAL"/>
+    </resultMap>
+
     <select id="selectByImei" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -351,5 +368,44 @@
                  left join order_refund ore on o.id = ore.order_id
                  left join pay_type p on p.extend1 = o.pay_method and p.language = #{language}
         WHERE o.id = #{id}
+    </select>
+
+    <select id="pageDccReport" resultMap="DccReportMap">
+        select create_time as createTime,
+        merchant_id as merchantId,
+        merchant_name as merchantName,
+        merchant_order_id as merchantOrderId,
+        id as id,
+        order_currency as orderCurrency,
+        order_amount as orderAmount,
+        trade_amount as tradeAmount,
+        trade_currency as tradeCurrency,
+        exchange_rate as exchangeRate,
+        order_for_trade_rate as orderForTradeRate,
+        float_rate as floatRate,
+        channel_name as channelName,
+        channel_callback_time as channelCallbackTime,
+        trade_status as tradeStatus from orders where trade_status = 3
+        <if test="id != null and id != ''">
+            AND id = #{id}
+        </if>
+        <if test="merchantOrderId != null and merchantOrderId != ''">
+            AND merchant_order_id = #{merchantOrderId}
+        </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND merchant_id = #{merchantId}
+        </if>
+        <if test="merchantName != null and merchantName != ''">
+            AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+        </if>
+        <if test="orderCurrency != null and orderCurrency != ''">
+            AND order_currency = #{orderCurrency}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND create_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND create_time &lt;= #{endDate}
+        </if>
     </select>
 </mapper>
