@@ -25,7 +25,7 @@ public interface OrderRefundMapper extends BaseMapper<OrderRefund> {
      * @Descripate 根据原订单id查询退款总金额
      * @return
      **/
-    @Select("select sum(amount) from order_refund where order_id = #{orderId} and refund_status != 3")
+    @Select("select sum(order_amount) from order_refund where order_id = #{orderId} and refund_status != 3")
     BigDecimal getTotalAmountByOrderId(@Param("orderId") String orderId);
 
     /**
