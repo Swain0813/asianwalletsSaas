@@ -167,8 +167,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
             if (baseResponse.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
                 //更新订单状态
                 //TODO 查询报文
-                if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS,
-                        null, new Date()) == 1) {
+                if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS,null, new Date()) == 1) {
                     //更新成功
                     this.cancelPaying(channel,orderRefund, null);
                 } else {
