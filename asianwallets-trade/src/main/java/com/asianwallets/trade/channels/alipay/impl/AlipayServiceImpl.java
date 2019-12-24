@@ -54,6 +54,7 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
     private RabbitMQSender rabbitMQSender;
     @Autowired
     private OrdersMapper ordersMapper;
+
     /**
      * @return
      * @Author YangXu
@@ -71,6 +72,7 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
             //请求成功
             Map<String, String> map = (Map<String, String>) response.getData();
             if (response.getMsg().equals("success")) {
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 //退款成功
                 log.info("=====================【AliPay退款】==================== 退款成功 : {} ", JSON.toJSON(orderRefund));
                 //退款成功
@@ -78,13 +80,14 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
                 //改原订单状态
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
             } else {
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=====================【AliPay退款】==================== 【退款失败】 : {} ", JSON.toJSON(orderRefund));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                String type = orderRefund.getRemark4().equals(TradeConstant.RF )? TradeConstant.AA : TradeConstant.RA;
+                String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
                 Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                 reconciliationMapper.insert(reconciliation);
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                log.info("=========================【AliPay退款】======================= 【调账 {}】， fundChangeDTO:【{}】",type, JSON.toJSONString(fundChangeDTO));
+                log.info("=========================【AliPay退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                     //调账成功
@@ -103,7 +106,7 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
             }
         } else {
             log.info("=====================【AliPay退款】==================== 【请求失败】 : {} ", JSON.toJSON(orderRefund));
-            baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
             if (rabbitMassage == null) {
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
@@ -116,10 +119,10 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/23
-     * @Descripate    撤销
-     * @return
+     * @Descripate 撤销
      **/
     @Override
     public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
@@ -139,32 +142,37 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
                 //查询成功，查看交易状态
                 if (map.get("alipay_trans_status").equals("TRADE_SUCCESS")) {
                     //交易成功
-                    if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS,null, new Date()) == 1) {
+                    if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS, null, new Date()) == 1) {
                         //更新成功
-                        this.cancelPaying(channel, orderRefund,null);
+                        response = this.cancelPaying(channel, orderRefund, null);
                     } else {
                         //更新失败后去查询订单信息
+                        response.setCode(EResultEnum.REFUNDING.getCode());
                         log.info("=================【AliPay撤销】================= 【更新失败】orderId : {}", orderRefund.getOrderId());
                         rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
                     }
-                }else{
+                } else {
                     //交易失败
+                    response.setCode(EResultEnum.REFUND_FAIL.getCode());
                     log.info("=================【AliPay撤销】================= 【交易失败】orderId : {}", orderRefund.getOrderId());
                     ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_FAILD, null, new Date());
                 }
-            }else if ((map.get("is_success").equals("F") && !map.get("error").equals("SYSTEM_ERROR"))
+            } else if ((map.get("is_success").equals("F") && !map.get("error").equals("SYSTEM_ERROR"))
                     || (map.get("is_success").equals("T") && map.get("result_code").equals("FAIL") && !map.get("detail_error_code").equals("SYSTEM_ERROR"))) {
                 //明确查询失败
                 //请求失败
+                response.setCode(EResultEnum.REFUNDING.getCode());
                 log.info("=================【AliPay撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
                 rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
             } else {
                 //请求失败
+                response.setCode(EResultEnum.REFUNDING.getCode());
                 log.info("=================【AliPay撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
                 rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
             }
-        }else{
+        } else {
             //请求失败
+            response.setCode(EResultEnum.REFUNDING.getCode());
             log.info("=================【AliPay撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
             rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
@@ -188,16 +196,19 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
             //请求成功
             if (response.getMsg().equals("success")) {
                 //撤销成功
-                log.info("=================【AliPay撤销 cancelPaying】=================【撤销成功】orderId : {}",orderRefund.getOrderId());
-                ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(),orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
+                response.setCode(EResultEnum.REFUNDING.getCode());
+                log.info("=================【AliPay撤销 cancelPaying】=================【撤销成功】orderId : {}", orderRefund.getOrderId());
+                ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
             } else {
                 //撤销失败
-                log.info("=================【AliPay撤销 cancelPaying】=================【撤销失败】orderId : {}",orderRefund.getOrderId());
+                response.setCode(EResultEnum.REFUND_FAIL.getCode());
+                log.info("=================【AliPay撤销 cancelPaying】=================【撤销失败】orderId : {}", orderRefund.getOrderId());
                 ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
             }
         } else {//请求失败
             //请求失败
-            log.info("=================【AliPay撤销 cancelPaying】=================【请求失败】orderId : {}",orderRefund.getOrderId());
+            response.setCode(EResultEnum.REFUNDING.getCode());
+            log.info("=================【AliPay撤销 cancelPaying】=================【请求失败】orderId : {}", orderRefund.getOrderId());
             RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             if (rabbitMassage == null) {
                 rabbitMassage = rabbitOrderMsg;
