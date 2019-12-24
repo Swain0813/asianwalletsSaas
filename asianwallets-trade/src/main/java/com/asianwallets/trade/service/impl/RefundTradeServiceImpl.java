@@ -120,10 +120,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
 
 
-        /********************************* AD3-eNets退款只能当天退款---线下支付*************************************************/
+        /********************************* 只能当天退款*************************************************/
         String channelCallbackTime = oldOrder.getChannelCallbackTime() == null ? DateToolUtils.getReqDate(oldOrder.getCreateTime()) : DateToolUtils.getReqDate(oldOrder.getChannelCallbackTime());
         String today = DateToolUtils.getReqDate();
-        if (channel.getChannelCnName().toLowerCase().contains(AD3Constant.ENETS) && TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection())) {
+        if (channel.getOnlyTodayOrderRefund()) {
             if (!channelCallbackTime.equals(today)) {
                 throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
             }
