@@ -121,4 +121,10 @@
         <include refid="Base_Column_List"/>
         from orders where merchant_order_id = #{merchantOrderId}
     </select>
+
+    <update id="updateOrderRemark">
+           update orders
+        set remark = #{remark}
+        where id = #{id};
+    </update>
 </mapper>

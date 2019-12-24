@@ -1,31 +1,44 @@
 package com.asianwallets.trade.service.impl;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.http.Header;
+import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.config.AuditorProvider;
+import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.*;
+import com.asianwallets.common.entity.Currency;
+import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
+import com.asianwallets.trade.dao.AccountMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
+import com.asianwallets.trade.dao.SettleControlMapper;
 import com.asianwallets.trade.feign.MessageFeign;
+import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.vo.BasicInfoVO;
+import com.asianwallets.trade.vo.CalcFeeVO;
+import com.asianwallets.trade.vo.OnlineCallbackURLVO;
+import com.asianwallets.trade.vo.OnlineCallbackVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -53,11 +66,69 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     @Autowired
     private OrderRefundMapper orderRefundMapper;
 
+    @Autowired
+    private AccountMapper accountMapper;
+
+    @Autowired
+    private SettleControlMapper settleControlMapper;
+
+    @Autowired
+    private RabbitMQSender rabbitMQSender;
+
     @Value("${custom.warning.mobile}")
     private String warningMobile;
 
     @Value("${custom.warning.email}")
     private String warningEmail;
+
+    /**
+     * 使用机构对应平台的RSA私钥生成签名【回调时用】
+     *
+     * @param obj 对象
+     * @return 签名
+     */
+    @Override
+    public String generateSignatureUsePlatRSA(Object obj) {
+        Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
+        Attestation attestation = commonRedisDataService.getAttestationByMerchantId(map.get("merchantId"));
+        if (attestation == null) {
+            log.info("===============【使用机构对应平台的私钥生成签名】===============【密钥不存在】");
+            return null;
+        }
+        String clearText = SignTools.getSignStr(map);
+        log.info("===============【使用机构对应平台的私钥生成签名】==============【签名前的明文】 clearText:{}", clearText);
+        byte[] msg = clearText.getBytes();
+        String sign = null;
+        try {
+            sign = RSAUtils.sign(msg, attestation.getPrikey());
+            log.info("===============【使用机构对应平台的私钥生成签名】==============【签名后的密文】 sign:{}", sign);
+        } catch (Exception e) {
+            log.info("===============【使用机构对应平台的私钥生成签名】==============【签名异常】", e);
+        }
+        return sign;
+    }
+
+    /**
+     * 使用机构对应平台的MD5生成签名【回调时用】
+     *
+     * @param obj 对象
+     * @return 签名
+     */
+    @Override
+    public String generateSignatureUsePlatMD5(Object obj) {
+        Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
+        Attestation attestation = commonRedisDataService.getAttestationByMerchantId(map.get("merchantId"));
+        if (attestation == null) {
+            log.info("===============【使用机构对应平台的MD5生成签名】===============【密钥不存在】");
+            return null;
+        }
+        map.put("sign", null);
+        String clearText = SignTools.getSignStr(map) + attestation.getMd5key();
+        log.info("===============【使用机构对应平台的MD5生成签名】==============【签名前的明文】 clearText:{}", clearText);
+        String sign = MD5Util.getMD5String(clearText);
+        log.info("===============【使用机构对应平台的MD5生成签名】==============【签名后的密文】 sign:{}", sign);
+        return sign;
+    }
 
     /**
      * 校验MD5签名
@@ -586,9 +657,9 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         reconciliation.setReconciliationType(AsianWalletConstant.RECONCILIATION_IN);
         reconciliation.setMerchantName(orderRefund.getMerchantName());
         reconciliation.setMerchantId(orderRefund.getMerchantId());
-        if(orderRefund.getFeePayer()==1){
+        if (orderRefund.getFeePayer() == 1) {
             reconciliation.setAmount(orderRefund.getOrderAmount().subtract(orderRefund.getRefundFee()).add(orderRefund.getRefundOrderFee()));
-        }else {
+        } else {
             reconciliation.setAmount(orderRefund.getOrderAmount());
         }
         if (type.equals(TradeConstant.RA)) {
@@ -606,5 +677,259 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         reconciliation.setCreateTime(new Date());
         reconciliation.setRemark(remark);
         return reconciliation;
+    }
+
+    /**
+     * 创建商户对应币种的账户
+     *
+     * @param orders 订单
+     */
+    @Override
+    public void createAccount(Orders orders) {
+        try {
+            //添加账户
+            Account account = new Account();
+            account.setId(IDS.uuid2());
+            account.setAccountCode(IDS.uniqueID().toString());
+            account.setMerchantId(orders.getMerchantId());
+            account.setMerchantName(orders.getMerchantName());
+            account.setCurrency(orders.getOrderCurrency());
+            //默认结算金额为0
+            account.setSettleBalance(BigDecimal.ZERO);
+            //默认清算金额为0
+            account.setClearBalance(BigDecimal.ZERO);
+            //默认冻结金额为0
+            account.setFreezeBalance(BigDecimal.ZERO);
+            account.setEnabled(true);
+            account.setCreateTime(new Date());
+            account.setCreator("sys");
+            account.setRemark("下单时系统自动创建的对应订单币种的账户");
+            SettleControl settleControl = new SettleControl();
+            settleControl.setAccountId(account.getId());
+            settleControl.setId(IDS.uuid2());
+            settleControl.setMinSettleAmount(BigDecimal.ZERO);
+            settleControl.setSettleSwitch(false);
+            settleControl.setCreateTime(new Date());
+            settleControl.setEnabled(true);
+            settleControl.setCreator("sys");
+            settleControl.setRemark("下单时系统自动创建自动创建币种的结算控制信息");
+            if (accountMapper.insertSelective(account) > 0 && settleControlMapper.insertSelective(settleControl) > 0) {
+                redisService.set(AsianWalletConstant.ACCOUNT_CACHE_KEY.concat("_").concat(orders.getMerchantId()).concat("_").concat(orders.getOrderCurrency()), JSON.toJSONString(account));
+            }
+        } catch (Exception e) {
+            log.error("===============【创建商户对应币种的账户】==============【创建异常】", e);
+        }
+    }
+
+    /**
+     * 配置限额限次信息
+     *
+     * @param merchantId  商户编号
+     * @param productCode 产品编号
+     * @param amount      金额
+     */
+    @Override
+    public void quota(String merchantId, Integer productCode, BigDecimal amount) {
+        log.info("=============【添加限额限次】============= START");
+        //今日日期
+        String todayDate = DateToolUtils.getReqDateE();
+        //添加分布式锁
+        String lockQuota = AsianWalletConstant.QUOTA + "_" + merchantId.concat("_").concat(String.valueOf(productCode)).concat("_").concat(todayDate);
+        try {
+            //日交易限额key
+            String dailyTotalAmountKey = TradeConstant.DAILY_TOTAL_AMOUNT.concat("_").concat(merchantId).concat("_").concat(productCode.toString()).concat("_").concat(todayDate);
+            //日交易笔数key
+            String dailyTotalCountKey = TradeConstant.DAILY_TRADING_COUNT.concat("_").concat(merchantId).concat("_").concat(productCode.toString()).concat("_").concat(todayDate);
+            if (redisService.lock(lockQuota, 30 * 1000)) {
+                String dailyAmount = redisService.get(dailyTotalAmountKey);
+                String dailyCount = redisService.get(dailyTotalCountKey);
+                if (StringUtils.isEmpty(dailyAmount) || StringUtils.isEmpty(dailyCount)) {
+                    dailyAmount = "0";
+                    dailyCount = "0";
+                }
+                //日交易限额
+                BigDecimal dailyTotalAmount = new BigDecimal(dailyAmount);
+                //日交易笔数
+                int dailyTradingCount = Integer.parseInt(dailyCount);
+                //加上交易金额
+                dailyTotalAmount = dailyTotalAmount.add(amount);
+                //加上交易笔数
+                dailyTradingCount = dailyTradingCount + 1;
+                redisService.set(dailyTotalAmountKey, String.valueOf(dailyTotalAmount), 24 * 60 * 60);
+                redisService.set(dailyTotalCountKey, String.valueOf(dailyTradingCount), 24 * 60 * 60);
+                log.info("=============【添加限额限次】=============【添加限额限次信息成功】");
+            } else {
+                log.info("=============【添加限额限次】=============【获取分布式锁异常】");
+            }
+        } catch (NumberFormatException e) {
+            log.error("=============【添加限额限次】=============【添加异常】", e);
+        } finally {
+            //释放锁
+            redisService.releaseLock(lockQuota);
+            log.info("=============【添加限额限次】============= END");
+        }
+    }
+
+    /**
+     * 回调时计算通道网关手续费【回调交易成功时收取】
+     *
+     * @param orders orders
+     */
+    @Override
+    public void calcCallBackGatewayFeeSuccess(Orders orders) {
+        try {
+            //获取通道信息
+            Channel channel = commonRedisDataService.getChannelByChannelCode(orders.getChannelCode());
+            if (channel.getChannelGatewayRate() != null && TradeConstant.CHANNEL_GATEWAY_CHARGE_YES.equals(channel.getChannelGatewayCharge())
+                    && TradeConstant.CHANNEL_GATEWAY_CHARGE_SUCCESS_STATUS.equals(channel.getChannelGatewayStatus())) {
+                CalcFeeVO channelGatewayPoundage = calcChannelGatewayPoundage(orders.getTradeAmount(), channel);
+                //通道网关手续费
+                orders.setChannelGatewayFee(channelGatewayPoundage.getFee());
+                int i = ordersMapper.updateByPrimaryKeySelective(orders);
+                if (i == 1) {
+                    log.info("===============【计算支付成功时的通道网关手续费成功】===============");
+                }
+            }
+        } catch (Exception e) {
+            log.error("===============【计算支付成功时的通道网关手续费发生异常】===============", e);
+        }
+    }
+
+    /**
+     * 回调时计算通道网关手续费【回调交易失败时收取】
+     *
+     * @param orders orders
+     */
+    @Override
+    public void calcCallBackGatewayFeeFailed(Orders orders) {
+        try {
+            //获取通道信息
+            Channel channel = commonRedisDataService.getChannelByChannelCode(orders.getChannelCode());
+            if (channel.getChannelGatewayRate() != null && TradeConstant.CHANNEL_GATEWAY_CHARGE_YES.equals(channel.getChannelGatewayCharge())
+                    && TradeConstant.CHANNEL_GATEWAY_CHARGE_FAILURE_STATUS.equals(channel.getChannelGatewayStatus())) {
+                CalcFeeVO channelGatewayPoundage = calcChannelGatewayPoundage(orders.getTradeAmount(), channel);
+                //通道网关手续费
+                orders.setChannelGatewayFee(channelGatewayPoundage.getFee());
+                int i = ordersMapper.updateByPrimaryKeySelective(orders);
+                if (i == 1) {
+                    log.info("===============【计算支付失败时的通道网关手续费成功】===============");
+                }
+            }
+        } catch (Exception e) {
+            log.error("===============【计算支付失败时的通道网关手续费发生异常】===============", e);
+        }
+    }
+
+    /**
+     * 计算通道网关手续费【回调时用】
+     *
+     * @param amount 交易金额
+     * @return CalcFeeVO  通道费用输出实体
+     */
+    @Override
+    public CalcFeeVO calcChannelGatewayPoundage(BigDecimal amount, Channel channel) {
+        BigDecimal poundage = new BigDecimal(0);
+        CalcFeeVO calcFeeVO = new CalcFeeVO();
+        //单笔费率
+        if (channel.getChannelGatewayFeeType().equals(TradeConstant.FEE_TYPE_RATE)) {
+            if (channel.getChannelGatewayRate() == null || channel.getChannelGatewayMinRate() == null ||
+                    channel.getChannelGatewayMaxRate() == null) {
+                calcFeeVO.setChargeStatus(TradeConstant.CHARGE_STATUS_FALID);
+                return calcFeeVO;
+            }
+            //手续费=交易金额*费率
+            poundage = amount.multiply(channel.getChannelGatewayRate());
+            //判断手续费是否小于最小值，大于最大值
+            if (channel.getChannelGatewayMinRate() != null && poundage.compareTo(channel.getChannelGatewayMinRate()) == -1) {
+                poundage = channel.getChannelGatewayMinRate();
+            }
+            if (channel.getChannelGatewayMaxRate() != null && poundage.compareTo(channel.getChannelGatewayMaxRate()) == 1) {
+                poundage = channel.getChannelGatewayMaxRate();
+            }
+        }
+        //单笔定额
+        if (channel.getChannelGatewayFeeType().equals(TradeConstant.FEE_TYPE_QUOTA)) {
+            if (channel.getChannelGatewayRate() == null) {
+                calcFeeVO.setChargeStatus(TradeConstant.CHARGE_STATUS_FALID);
+                return calcFeeVO;
+            }
+            //手续费=通道网关手续费
+            poundage = channel.getChannelGatewayRate();
+        }
+        //通道网关手续费
+        calcFeeVO.setFee(poundage);
+        calcFeeVO.setChargeStatus(TradeConstant.CHARGE_STATUS_SUCCESS);
+        calcFeeVO.setChargeTime(new Date());
+        return calcFeeVO;
+    }
+
+    /**
+     * 回调商户服务器地址【回调接口】
+     *
+     * @param orders 订单
+     */
+    @Override
+    public void replyReturnUrl(Orders orders) {
+        log.info("==================【回调商户服务器】==================【回调订单信息记录】 orders: {}", JSON.toJSONString(orders));
+        OnlineCallbackURLVO onlineCallbackURLVO = new OnlineCallbackURLVO(orders);
+        OnlineCallbackVO onlineCallbackVO = onlineCallbackURLVO.getOnlineCallbackVO();
+        if (orders.getTradeDirection().equals(TradeConstant.TRADE_ONLINE)) {
+            //线上签名
+            onlineCallbackVO.setSign(generateSignatureUsePlatRSA(onlineCallbackVO));
+        } else {
+            //线下签名
+            onlineCallbackVO.setSign(generateSignatureUsePlatMD5((onlineCallbackVO)));
+        }
+        log.info("==================【回调商户服务器】==================【商户回调接口URL记录】  serverUrl: {}", orders.getServerUrl());
+        log.info("==================【回调商户服务器】==================【回调参数记录】  onlineCallbackVO: {}", JSON.toJSON(onlineCallbackVO));
+        try {
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(orders.getServerUrl())
+                    .header(Header.CONTENT_TYPE, "application/json")
+                    .body(JSON.toJSONString(onlineCallbackVO))
+                    .timeout(30000)
+                    .execute();
+            String body = execute.body();
+            log.info("==================【回调商户服务器】==================【HTTP状态码】 status: {}  | 【响应结果记录】 body: {}", execute.getStatus(), body);
+            if (StringUtils.isEmpty(body) || !body.equalsIgnoreCase(AsianWalletConstant.CALLBACK_SUCCESS)) {
+                log.info("==================【回调商户服务器】==================【商户响应结果不正确,上报回调商户队列】 【MQ_AW_CALLBACK_URL_FAIL】");
+                RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(onlineCallbackURLVO));
+                rabbitMQSender.send(AD3MQConstant.E_MQ_AW_CALLBACK_URL_FAIL, JSON.toJSONString(rabbitMassage));
+            }
+        } catch (Exception e) {
+            log.info("==================【回调商户服务器】==================【httpException异常,上报回调商户队列】 【MQ_AW_CALLBACK_URL_FAIL】", e);
+            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(onlineCallbackURLVO));
+            rabbitMQSender.send(AD3MQConstant.E_MQ_AW_CALLBACK_URL_FAIL, JSON.toJSONString(rabbitMassage));
+        }
+    }
+
+    /**
+     * 支付成功发送邮件给付款人
+     *
+     * @param orders 订单
+     */
+    @Override
+    @Async
+    public void sendEmail(Orders orders) {
+        log.info("*********************支付成功发送支付通知邮件 Start*************************************");
+        try {
+            if (!StringUtils.isEmpty(orders.getPayerEmail())) {
+                log.info("*******************支付成功订单对应的付款人邮箱是: ******************* email: {}", orders.getPayerEmail());
+                Map<String, Object> map = new HashMap<>();
+                map.put("orderCurrency", orders.getOrderCurrency());//订单币种
+                map.put("amount", orders.getOrderAmount());//订单金额
+                map.put("reqIp", orders.getReqIp());//请求的网站url
+                SimpleDateFormat sf = new SimpleDateFormat("MMM dd,yyyy", Locale.ENGLISH);//外国时间格式
+                map.put("channelCallbackTime", sf.format(orders.getChannelCallbackTime()));//支付完成时间
+                map.put("merchantOrderId", orders.getMerchantOrderId());//机构订单号
+                map.put("productName", orders.getProductName());//商品名称
+                map.put("issuerId", orders.getBankName());//付款银行
+                map.put("referenceNo", orders.getId());//AW交易流水号
+                messageFeign.sendTemplateMail(orders.getPayerEmail(), orders.getLanguage(), Status._1, map);
+            }
+        } catch (Exception e) {
+            messageFeign.sendSimple("18800330943", "支付成功发送支付通知邮件失败:" + orders.getPayerEmail());
+            log.error("支付成功发送支付通知邮件失败: {}==={}", orders.getPayerEmail(), e.getMessage());
+        }
+        log.info("*********************支付成功发送支付通知邮件 End*************************************");
     }
 }

@@ -85,7 +85,7 @@ public interface CommonRedisDataService {
     Channel getChannelById(String channelId);
 
     /**
-     * 根据通道code从redis获取通道信息
+     * 根据通道编号获取通道信息
      *
      * @param channelCode 通道code
      */
@@ -107,4 +107,12 @@ public interface CommonRedisDataService {
      */
     ChannelBank getChaBankById(String chaBankId);
 
+    /**
+     * 根据商户编号和币种查询账户
+     *
+     * @param merchantId 商户号
+     * @param currency   币种
+     * @return 账户
+     */
+    Account getAccountByMerchantIdAndCurrency(String merchantId, String currency);
 }

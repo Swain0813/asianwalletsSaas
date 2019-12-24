@@ -15,6 +15,15 @@ public class AD3MQConstant {
     //退款上报失败队列
     public final static String TK_SB_FAIL_DL = "TK_SB_FAIL_DL";
 
+    //支付成功上报清结算失败队列
+    public static final String MQ_PLACE_ORDER_FUND_CHANGE_FAIL = "MQ_PLACE_ORDER_FUND_CHANGE_FAIL";
+
+    /* ===========================================      回调队列       =============================================== */
+    public static final String MQ_AW_CALLBACK_URL_FAIL = "MQ_AW_CALLBACK_URL_FAIL";//回调商户失败队列
+    public static final String E_MQ_AW_CALLBACK_URL_FAIL = "E_MQ_AW_CALLBACK_URL_FAIL";//回调商户失败队列死信队列
+    public static final String MQ_AW_CALLBACK_URL_FAIL_KEY = "MQ_AW_CALLBACK_URL_FAIL_KEY";//回调商户失败队列key
+    public static final String MQ_AW_CALLBACK_URL_FAIL_EXCHANGE = "MQ_AW_CALLBACK_URL_FAIL_EXCHANGE";//回调商户失败队列
+
     //撤销更新订单失败
     public final static String CX_GX_FAIL_DL = "CX_GX_FAIL_DL";
     public static final String E_CX_GX_FAIL_DL = "E_CX_GX_FAIL_DL";
