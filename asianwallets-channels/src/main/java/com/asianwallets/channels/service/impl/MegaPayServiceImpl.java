@@ -201,6 +201,8 @@ public class MegaPayServiceImpl implements MegaPayService {
             channelsOrder.setPayerName(orders.getPayerName());
             channelsOrder.setPayerBank(orders.getPayerBank());
             channelsOrder.setPayerEmail(orders.getPayerEmail());
+            channelsOrder.setCreateTime(new Date());
+            channelsOrder.setCreator(orders.getCreator());
             channelsOrderMapper.insert(channelsOrder);
             Map<String, Object> paramMap = new HashMap<>(5);
             //商户号
@@ -263,7 +265,6 @@ public class MegaPayServiceImpl implements MegaPayService {
             baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
             baseResponse.setData(qrString);
             log.info("==================【NextPos收单接口】==================【出码成功】");
-            return baseResponse;
         } catch (Exception e) {
             log.info("==================【NextPos收单接口】==================【接口异常】", e);
             baseResponse.setCode(TradeConstant.HTTP_FAIL);
