@@ -12,6 +12,12 @@ import java.util.Date;
 @Repository
 public interface OrdersMapper extends BaseMapper<Orders> {
 
+    /**
+     * 根据商户订单号查询订单
+     *
+     * @param merchantOrderId 商户订单号
+     * @return 订单
+     */
     Orders selectByMerchantOrderId(String merchantOrderId);
 
     /**
@@ -41,4 +47,12 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      */
     @Update("update orders set trade_status =#{status},channel_number=#{channelNumber},channel_callback_time=#{channelCallbackTime},update_time=NOW() where id = #{id} and trade_status=2")
     int updateOrderByAd3Query(@Param("id") String id, @Param("status") Byte status, @Param("channelNumber") String channelNumber, @Param("channelCallbackTime") Date channelCallbackTime);
+
+    /**
+     * 修改订单remark
+     *
+     * @param id     订单号
+     * @param remark 备注
+     */
+    void updateOrderRemark(@Param("id") String id, @Param("remark") String remark);
 }

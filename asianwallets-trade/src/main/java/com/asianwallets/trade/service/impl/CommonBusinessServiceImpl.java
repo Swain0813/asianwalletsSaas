@@ -366,8 +366,8 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                 throw new BusinessException(EResultEnum.LIMIT_AMOUNT_ERROR.getCode());
             }
         }
-        //校验机构产品限额
-        if (merchantProduct.getAuditStatus() != null && TradeConstant.AUDIT_SUCCESS.equals(merchantProduct.getAuditStatus())) {
+        //TODO 校验机构产品限额
+/*        if (merchantProduct.getAuditStatus() != null && TradeConstant.AUDIT_SUCCESS.equals(merchantProduct.getAuditStatus())) {
             if (merchantProduct.getLimitAmount() != null && orders.getTradeAmount().compareTo(merchantProduct.getLimitAmount()) > 0) {
                 log.info("==================【校验商户产品与通道的限额】==================【交易金额大于商户产品单笔限额】");
                 orders.setRemark("交易金额大于商户产品单笔限额");
@@ -398,7 +398,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                     throw new BusinessException(EResultEnum.TRADE_COUNT_ERROR.getCode());
                 }
                 //TODO 日交易限额
-        /*        BigDecimal dailyTotalAmount = new BigDecimal(dailyAmount);
+                BigDecimal dailyTotalAmount = new BigDecimal(dailyAmount);
                 if (merchantProduct.getDailyTotalAmount() != null && dailyTotalAmount.compareTo(merchantProduct.getDailyTotalAmount()) >= 0) {
                     log.info("==================【校验商户产品与通道的限额】==================【日交易金额不合法】 dailyTotalAmount: {}", dailyTotalAmount);
                     orders.setRemark("日交易金额不合法");
@@ -406,9 +406,9 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                     ordersMapper.insert(orders);
                     baseResponse.setCode(EResultEnum.TRADE_AMOUNT_ERROR.getCode());
                     return baseResponse;
-                }*/
+                }
             }
-        }
+        }*/
     }
 
     /**

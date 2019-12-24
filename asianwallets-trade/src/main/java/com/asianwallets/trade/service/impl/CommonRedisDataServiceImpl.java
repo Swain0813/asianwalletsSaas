@@ -304,31 +304,29 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     }
 
     /**
-     * 根据通道code从redis获取通道信息
+     * 根据通道编号获取通道信息
      *
      * @param channelCode 通道code
      */
     @Override
     public Channel getChannelByChannelCode(String channelCode) {
-        //从redis获取
-        Channel channel = JSON.parseObject(redisService.get(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channelCode)), Channel.class);
-        if (channel == null) {
-            //redis为空从数据库获取
-            channel = channelMapper.selectByChannelCode(channelCode);
-            if (channel == null) {
-                log.info("-----------------通道信息不存在 ----------------- channelCode:{}", channelCode);
-                //通道信息不存在
-                throw new BusinessException(EResultEnum.GET_CHANNEL_INFO_ERROR.getCode());
+        Channel channel = null;
+        try {
+            channel = JSON.parseObject(redisService.get(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channelCode)), Channel.class);
+            if (channel == null || !channel.getEnabled()) {
+                channel = channelMapper.selectByChannelCode(channelCode);
+                if (channel == null) {
+                    log.info("==================【根据通道编号获取通道信息】==================【通道信息不存在】");
+                    throw new BusinessException(EResultEnum.GET_CHANNEL_INFO_ERROR.getCode());
+                }
+                redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
+                redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channelCode), JSON.toJSONString(channel));
             }
-            //同步redis
-            redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
-            redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channelCode), JSON.toJSONString(channel));
+        } catch (Exception e) {
+            log.info("==================【根据通道编号获取通道信息】==================【获取异常】", e);
+            throw new BusinessException(EResultEnum.GET_CHANNEL_INFO_ERROR.getCode());
         }
-        if (!channel.getEnabled()) {
-            log.info("-----------------通道禁用 ----------------- channelCode:{}", channelCode);
-            throw new BusinessException(EResultEnum.CHANNEL_STATUS_ABNORMAL.getCode());
-        }
-        log.info("================== CommonRedisDataServiceImpl getChannelByChannelCode =================== channel: {}", JSON.toJSONString(channel));
+        log.info("==================【根据通道编号获取通道信息】==================【通道信息】 channel: {}", JSON.toJSONString(channel));
         return channel;
     }
 

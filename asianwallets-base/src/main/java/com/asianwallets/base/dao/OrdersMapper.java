@@ -1,8 +1,10 @@
 package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base.BaseMapper;
+import com.asianwallets.common.dto.DccReportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.vo.DccReportVO;
 import com.asianwallets.common.vo.ExportOrdersVO;
 import com.asianwallets.common.vo.OrdersDetailVO;
 import org.apache.ibatis.annotations.Param;
@@ -44,4 +46,11 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @return 订单集合
      */
     List<ExportOrdersVO> exportOrders(OrdersDTO ordersDTO);
+
+    /**
+     *DCC报表查询
+     * @param dccReportDTO
+     * @return
+     */
+    List<DccReportVO> pageDccReport(DccReportDTO dccReportDTO);
 }
