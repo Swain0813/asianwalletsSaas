@@ -333,6 +333,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             log.info("=================【AD3线上退款】=================【Channels服务响应】请求参数 response: {} ", JSON.toJSONString(response));
             if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
+                    baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                     RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
                     log.info("==================【AD3线上退款】================== 【退款成功】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     //退款成功
@@ -341,7 +342,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     commonBusinessService.updateOrderRefundSuccess(orderRefund);
                 } else if (response.getCode().equals("T001")) {
                     //退款失败
-                    baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
+                    baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                     String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
                     Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                     reconciliationMapper.insert(reconciliation);
@@ -365,7 +366,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 }
             } else {
                 //请求失败
-                baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+                baseResponse.setCode(EResultEnum.REFUNDING.getCode());
                 if (rabbitMassage == null) {
                     rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
                 }
@@ -398,6 +399,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                     //退款成功
+                    baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                     log.info("==================【AD3线下退款】================== 【退款成功】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
                     //改原订单状态
@@ -405,7 +407,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 } else {
                     //退款失败
                     log.info("==================【AD3线下退款】================== 【退款失败】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
-                    baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
+                    baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                     String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
                     Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                     reconciliationMapper.insert(reconciliation);
@@ -429,7 +431,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 }
             } else {
                 //请求失败
-                baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+                baseResponse.setCode(EResultEnum.REFUNDING.getCode());
                 if (rabbitMassage == null) {
                     rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
                 }
