@@ -112,7 +112,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
 
 
-        /********************************* 原订单撤销成功和撤销中不能退款*************************************************/
+        /**************************************** 原订单撤销成功和撤销中不能退款 *************************************************/
         if (TradeConstant.ORDER_CANNELING.equals(oldOrder.getCancelStatus()) || TradeConstant.ORDER_CANNEL_SUCCESS.equals(oldOrder.getCancelStatus())) {
             //撤销的单子不能退款--该交易已撤销
             log.info("=========================【退款 refundOrder】=========================【该交易已撤销】");
@@ -120,7 +120,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
 
 
-        /********************************* 只能当天退款*************************************************/
+        /******************************************** 判断通道是否仅限当天退款 *************************************************/
         String channelCallbackTime = oldOrder.getChannelCallbackTime() == null ? DateToolUtils.getReqDate(oldOrder.getCreateTime()) : DateToolUtils.getReqDate(oldOrder.getChannelCallbackTime());
         String today = DateToolUtils.getReqDate();
         if (channel.getOnlyTodayOrderRefund()) {
