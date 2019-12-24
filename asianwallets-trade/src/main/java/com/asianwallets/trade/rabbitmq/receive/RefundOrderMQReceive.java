@@ -177,8 +177,6 @@ public class RefundOrderMQReceive {
             messageFeign.sendSimple(developerMobile, "退款上请求上游失败 TK_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
             messageFeign.sendSimpleMail(developerEmail, "退款上请求上游失败 TK_SB_FAIL_DL 预警", "RA_AA_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
         }
-
-
     }
 
     /**
@@ -204,7 +202,7 @@ public class RefundOrderMQReceive {
                 log.info("=========================【CX_GX_FAIL_DL】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
                 channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
             } catch (Exception e) {
-                log.info("=========================【CX_GX_FAIL_DL】========================= 【doRefundOrder Exception】 Exception:【{}】", e);
+                log.info("=========================【CX_GX_FAIL_DL】========================= 【Exception】 Exception:【{}】", e);
             }
 
             if (TradeConstant.ORDER_PAY_SUCCESS.equals(order.getTradeStatus())) {
@@ -236,5 +234,36 @@ public class RefundOrderMQReceive {
             messageFeign.sendSimple(developerMobile, "撤销更新订单失败 CX_GX_FAIL_DL 预警 ：{ " + value + " }");//短信通知
             messageFeign.sendSimpleMail(developerEmail, "撤销更新订单失败 CX_GX_FAIL_DL 预警", "CX_GX_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
         }
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/20
+     * @Descripate 撤销上报上游失败
+     **/
+    @RabbitListener(queues = "CX_SB_FAIL_DL")
+    public void processCXSBSB(String value) {
+        RabbitMassage rabbitMassage = JSON.parseObject(value, RabbitMassage.class);
+        log.info("========================= 【CX_SB_FAIL_DL】 ====================【消费】 rabbitMassage : 【{}】 ", value);
+        if (rabbitMassage.getCount() > 0) {
+            rabbitMassage.setCount(rabbitMassage.getCount() - 1);//请求次数减一
+            OrderRefund orderRefund = JSON.parseObject(rabbitMassage.getValue(), OrderRefund.class);
+            Channel channel = this.commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
+            ChannelsAbstract channelsAbstract = null;
+            try {
+                log.info("=========================【CX_SB_FAIL_DL】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
+                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
+            } catch (Exception e) {
+                log.info("========================= 【CX_SB_FAIL_DL】==================== 【channelsAbstract Exception】 : 【{}】", e);
+            }
+            channelsAbstract.cancelPaying(channel, orderRefund, rabbitMassage);
+        } else {
+            //预警机制
+            messageFeign.sendSimple(developerMobile, "退款上请求上游失败 TK_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
+            messageFeign.sendSimpleMail(developerEmail, "退款上请求上游失败 TK_SB_FAIL_DL 预警", "RA_AA_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
+        }
+
+
     }
 }

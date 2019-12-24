@@ -74,4 +74,11 @@ public class RabbitMQConfig {
         return new Queue(E_CX_GX_FAIL_DL, true, false, false, args);
     }
 
+    //撤销上报上游失败
+    public final static String CX_SB_FAIL_DL = AD3MQConstant.CX_SB_FAIL_DL;
+    @Bean
+    public Queue CX_SB_FAIL_DL() {
+        return new Queue(RabbitMQConfig.CX_SB_FAIL_DL);
+    }
+
 }

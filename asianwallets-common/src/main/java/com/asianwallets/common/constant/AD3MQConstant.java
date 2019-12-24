@@ -21,4 +21,6 @@ public class AD3MQConstant {
     public static final String CX_GX_FAIL_DL_KEY = "CX_GX_FAIL_DL_KEY";
     public static final String CX_GX_FAIL_DL_EXCHANGE = "CX_GX_FAIL_DL_EXCHANGE";
 
+    //撤销上报上游失败
+    public final static String CX_SB_FAIL_DL = "CX_SB_FAIL_DL";
 }
