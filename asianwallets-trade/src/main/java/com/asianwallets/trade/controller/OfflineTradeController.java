@@ -2,6 +2,7 @@ package com.asianwallets.trade.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.trade.dto.OfflineLoginDTO;
@@ -28,7 +29,7 @@ public class OfflineTradeController extends BaseController {
     public BaseResponse login(@RequestBody @ApiParam @Valid OfflineLoginDTO offlineLoginDTO) {
         String token = offlineTradeService.login(offlineLoginDTO);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("token",token);
+        jsonObject.put("token", token);
         return ResultUtil.success(jsonObject);
     }
 
@@ -38,5 +39,16 @@ public class OfflineTradeController extends BaseController {
         return ResultUtil.success(offlineTradeService.csbDynamicScan(offlineTradeDTO));
     }
 
+    @ApiOperation(value = "线下同机构BSC动态扫码")
+    @PostMapping("bscDynamicScan")
+    public BaseResponse bscDynamicScan(@RequestBody @ApiParam @Valid OfflineTradeDTO offlineTradeDTO) {
+        return ResultUtil.success(offlineTradeService.bscDynamicScan(offlineTradeDTO));
+    }
+
+    @ApiOperation(value = "线下查询订单列表【对外API】")
+    @PostMapping("checkOrder")
+    public BaseResponse checkOrder(@RequestBody @ApiParam @Valid OfflineCheckOrdersDTO offlineCheckOrdersDTO) {
+        return ResultUtil.success(offlineTradeService.checkOrder(offlineCheckOrdersDTO));
+    }
 }
 

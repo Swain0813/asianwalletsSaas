@@ -310,6 +310,18 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     }
 
     /**
+     * AD3线下BSC
+     *
+     * @param orders  订单
+     * @param channel 通道
+     * @return BaseResponse
+     */
+    @Override
+    public BaseResponse offlineBSC(Orders orders, Channel channel, String authCode) {
+        return super.offlineBSC(orders, channel, authCode);
+    }
+
+    /**
      * @return
      * @Author YangXu
      * @Date 2019/12/19
@@ -513,6 +525,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         return response;
     }
 
+
     /**
      * @return
      * @Author YangXu
@@ -591,6 +604,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         }
         return signMsg;
     }
+
+
 
     /**
      * 获取终端编号和token
