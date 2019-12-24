@@ -460,7 +460,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     }
 
     /**
-     * 后台和机构退款设置属性值
+     * 创建退款订单
      *
      * @param refundDTO
      * @param oldOrder
