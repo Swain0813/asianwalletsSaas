@@ -198,7 +198,7 @@ public class RefundOrderMQReceive {
             Orders order = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
             Channel channel = this.commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
             log.info("========================= 【CX_GX_FAIL_DL】 ==================== orderId : 【{}】, status :【{}】 ", order.getId(), order.getTradeStatus());
-            
+
             ChannelsAbstract channelsAbstract = null;
             try {
                 log.info("=========================【CX_GX_FAIL_DL】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
@@ -223,11 +223,11 @@ public class RefundOrderMQReceive {
                 }
                 orderRefund.setRemark4(type);
 
-                channelsAbstract.refund(channel, orderRefund, null);
+                channelsAbstract.refund(channel, orderRefund, rabbitMassage);
 
             } else if (TradeConstant.ORDER_PAYING.equals(order.getTradeStatus())) {//付款中的队列继续放进查询队列
                 log.info("========================= 【CX_GX_FAIL_DL】 ====================【付款中】 orderId : 【{}】, status :【{}】 ", order.getId(), order.getTradeStatus());
-                channelsAbstract.cancel(channel, orderRefund, null);
+                channelsAbstract.cancel(channel, orderRefund, rabbitMassage);
             } else {
                 log.info("========================= 【CX_GX_FAIL_DL】 ====================【其他状态】 orderId : 【{}】, status :【{}】 ", order.getId(), order.getTradeStatus());
             }
