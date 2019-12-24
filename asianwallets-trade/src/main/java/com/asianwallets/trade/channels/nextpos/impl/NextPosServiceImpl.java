@@ -165,27 +165,33 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
             //请求成功
             Map<String, Object> map = (Map<String, Object>) baseResponse.getData();
             if (baseResponse.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
-                //更新订单状态
-                //TODO 查询报文
-                if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS,
-                        null, new Date()) == 1) {
-                    //更新成功
-                    this.cancelPaying(channel,orderRefund, null);
+                if (map.get(channel.getPayCode()).equals("SUCCESS")) {
+                    //更新订单状态
+                    if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS,null, new Date()) == 1) {
+                        //更新成功
+                        this.cancelPaying(channel,orderRefund, null);
+                    } else {
+                        //更新失败后去查询订单信息
+                        RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                        //rabbitMQSender.send(AD3MQConstant.TC_MQ_CANCEL_ORDER, JSON.toJSONString(rabbitOrderMsg));
+                        //TODO
+                    }
+                } else if (map.get(channel.getPayCode()).equals("PAYERROR")) {
+                    //交易失败
+                    log.info("=================【NextPos撤销】================= 【交易失败】orderId : {}",orderRefund.getOrderId());
+                    ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_FAILD,null, new Date());
                 } else {
-                    //更新失败后去查询订单信息
-                    RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
-                    //rabbitMQSender.send(AD3MQConstant.TC_MQ_CANCEL_ORDER, JSON.toJSONString(rabbitOrderMsg));
-                    //TODO
+                    log.info("=================【NextPos撤销】================= 【其他状态】orderId : {}",orderRefund.getOrderId());
                 }
             } else {
                 //请求失败
-                log.info("=================【NextPos撤销】=================【查询订单失败】请求参数 baseResponse: {} ", JSON.toJSONString(baseResponse));
+                log.info("=================【NextPos撤销】=================【查询订单失败】orderId : {}",orderRefund.getOrderId());
                 //rabbitMQSender.send(AD3MQConstant.E_MQ_AD3_ORDER_QUERY, JSON.toJSONString(rabbitMassage));
                 //TODO
             }
         } else {
             //请求失败
-            log.info("=================【NextPos撤销】=================【查询订单失败】请求参数 baseResponse: {} ", JSON.toJSONString(baseResponse));
+            log.info("=================【NextPos撤销】=================【查询订单失败】orderId : {}",orderRefund.getOrderId());
             //rabbitMQSender.send(AD3MQConstant.E_MQ_AD3_ORDER_QUERY, JSON.toJSONString(rabbitMassage))
         }
         return response;
