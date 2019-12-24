@@ -72,6 +72,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     private RabbitMQSender rabbitMQSender;
 
     @Autowired
+    private ReconciliationMapper reconciliationMapper;
+
+    @Autowired
     private HandlerContext handlerContext;
 
     /**
@@ -353,15 +356,34 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     public BaseResponse artificialRefund(String username, String refundOrderId, Boolean enabled, String remark) {
         BaseResponse baseResponse = new BaseResponse();
         OrderRefund orderRefund = orderRefundMapper.selectByPrimaryKey(refundOrderId);
+        log.info("=========================【人工退款】========================= refundOrderId:【{}】,审核是否通过：【{}】，审核人：【{}】", refundOrderId,enabled,username);
         if (enabled) {
             //审核通过
-            //退款成功
             orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, null, remark);
             //改原订单状态
             commonBusinessService.updateOrderRefundSuccess(orderRefund);
         }else{
             //审核不通过
-
+            //退款失败
+            Reconciliation reconciliation = commonBusinessService.createReconciliation(orderRefund.getRemark4(), orderRefund, "人工退款审核不通过");
+            reconciliationMapper.insert(reconciliation);
+            FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+            log.info("=========================【人工退款】======================= 【调账 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
+            BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+            if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                //调账成功
+                log.info("=================【人工退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, remark);
+                reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
+                //改原订单状态
+                commonBusinessService.updateOrderRefundFail(orderRefund);
+            } else {
+                //调账失败
+                log.info("=================【人工退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
+                log.info("=================【人工退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+                rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
+            }
         }
         return baseResponse;
     }
