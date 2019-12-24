@@ -459,14 +459,13 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     merchantProductAuditMapper.updateByPrimaryKeySelective(merchantProductAudit);
 
                     //添加账户
-                    Account account = new Account();
-                    //账户关联表 自动结算开关和最小提现金额
-                    SettleControl settleControl = new SettleControl();
                     String currency = productMapper.selectByPrimaryKey(merchantProductMapper.selectByPrimaryKey(merProId).getProductId()).getCurrency();
                     if (accountMapper.getCountByinstitutionIdAndCurry(oldMerchantProduct.getMerchantId(), currency) == 0) {
+                        Account account = new Account();
                         account.setAccountCode(IDS.uniqueID().toString());
                         account.setMerchantId(oldMerchantProduct.getMerchantId());
-                        account.setMerchantName(merchantMapper.selectByPrimaryKey(oldMerchantProduct.getMerchantId()).getCnName());
+                        account.setMerchantName(oldMerchantProduct.getMerchantName());
+                        account.setMerchantType(merchant.getMerchantType());
                         account.setCurrency(currency);//币种
                         account.setId(IDS.uuid2());
                         account.setSettleBalance(BigDecimal.ZERO);//默认结算金额为0
@@ -476,9 +475,9 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                         account.setCreateTime(new Date());//创建时间
                         account.setCreator(username);//创建人
                         account.setRemark("产品信息审核通过后自动创建币种的账户");
-                        //账户关联表id
+                        //账户关联表 自动结算开关和最小提现金额
+                        SettleControl settleControl = new SettleControl();
                         settleControl.setId(IDS.uuid2());
-                        //账户id
                         settleControl.setAccountId(account.getId());
                         //设置最小提现金额为0
                         settleControl.setMinSettleAmount(BigDecimal.ZERO);
