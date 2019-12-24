@@ -469,6 +469,11 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         ad3QuerySingleOrderDTO.setBizContent(queryBizContent);
         ad3QuerySingleOrderDTO.setSignMsg(querySign);
 
+        AD3ONOFFRefundDTO ad3ONOFFRefundDTO = new AD3ONOFFRefundDTO();
+        ad3ONOFFRefundDTO.setChannel(channel);
+        ad3ONOFFRefundDTO.setAd3QuerySingleOrderDTO(ad3QuerySingleOrderDTO);
+
+        BaseResponse baseResponse = channelsFeign.query(ad3ONOFFRefundDTO);
 
 
 

@@ -39,4 +39,12 @@ public interface Ad3Service {
      * @return BaseResponse
      */
     BaseResponse onlinePay(AD3OnlineAcquireDTO ad3OnlineAcquireDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/24
+     * @Descripate AD3查询接口
+     * @return
+     **/
+    BaseResponse query(AD3ONOFFRefundDTO ad3ONOFFRefundDTO);
 }

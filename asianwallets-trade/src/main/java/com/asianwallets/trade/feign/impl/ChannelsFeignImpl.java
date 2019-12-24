@@ -19,7 +19,9 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.feign.ChannelsFeign;
+import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Component
@@ -167,6 +169,10 @@ public class ChannelsFeignImpl implements ChannelsFeign {
 
     @Override
     public BaseResponse ad3OnlineRefund(AD3ONOFFRefundDTO sendAdRefundDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+    @Override
+    public BaseResponse  query(@RequestBody @ApiParam AD3ONOFFRefundDTO ad3ONOFFRefundDTO){
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

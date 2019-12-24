@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.Ad3Service;
 import com.asianwallets.common.constant.AD3Constant;
+import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.ad3.*;
@@ -213,9 +214,9 @@ public class Ad3ServiceImpl implements Ad3Service {
         BaseResponse baseResponse = new BaseResponse();
         Channel channel = ad3ONOFFRefundDTO.getChannel();
         SendAdRefundDTO sendAdRefundDTO = ad3ONOFFRefundDTO.getSendAdRefundDTO();
-        log.info("===========================【AD3线下退款接口】开始时间 =========================== sendAdRefundDTO :{}", JSON.toJSONString(sendAdRefundDTO));
+        log.info("===========================【AD3线上退款接口】开始时间 =========================== sendAdRefundDTO :{}", JSON.toJSONString(sendAdRefundDTO));
         HttpResponse httpResponse = HttpClientUtils.reqPost(channel.getRefundUrl(), sendAdRefundDTO, null);
-        log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}", JSON.toJSONString(httpResponse));
+        log.info("===========================【AD3线上退款接口】结束时间 =========================== httpResponse:{}", JSON.toJSONString(httpResponse));
         if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
             //请求成功
             RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(httpResponse.getJsonObject().toJSONString(), RefundAdResponseVO.class);
@@ -259,5 +260,41 @@ public class Ad3ServiceImpl implements Ad3Service {
         }
         response.setData(body);
         return response;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/24
+     * @Descripate AD3查询接口
+     **/
+    @Override
+    public BaseResponse query(AD3ONOFFRefundDTO ad3ONOFFRefundDTO) {
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setCode("T001");
+        log.info("===========================【AD3查询接口】开始时间 =========================== ad3ONOFFRefundDTO :{}", JSON.toJSONString(ad3ONOFFRefundDTO));
+        HttpResponse httpResponse = HttpClientUtils.reqPost(ad3ONOFFRefundDTO.getChannel().getChannelSingleSelectUrl(), ad3ONOFFRefundDTO.getAd3QuerySingleOrderDTO(), null);
+        log.info("===========================【AD3线上退款接口】结束时间 =========================== httpResponse:{}", JSON.toJSONString(httpResponse));
+        if (httpResponse == null || !httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
+            //请求失败
+            baseResponse.setCode("T001");
+            return baseResponse;
+        }
+        //反序列化Json数据
+        AD3OrdersVO ad3OrdersVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3OrdersVO.class);
+        if (ad3OrdersVO == null || !ad3OrdersVO.getRespCode().equals(AD3Constant.AD3_OFFLINE_SUCCESS)) {
+            baseResponse.setCode("T001");
+            return baseResponse;
+        }
+        if (ad3OrdersVO == null || !ad3OrdersVO.getRespCode().equals(AD3Constant.AD3_OFFLINE_SUCCESS)) {
+            //业务失败
+            baseResponse.setCode("T001");
+            return baseResponse;
+        }else{
+                //查询成功
+                baseResponse.setCode("T000");
+                baseResponse.setData(ad3OrdersVO);
+        }
+        return baseResponse;
     }
 }
