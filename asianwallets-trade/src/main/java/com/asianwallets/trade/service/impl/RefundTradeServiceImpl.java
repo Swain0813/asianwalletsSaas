@@ -365,7 +365,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }else{
             //审核不通过
             //退款失败
-            Reconciliation reconciliation = commonBusinessService.createReconciliation(orderRefund.getRemark4(), orderRefund, "人工退款审核不通过");
+            Reconciliation reconciliation = commonBusinessService.createReconciliation(orderRefund.getRemark4(), orderRefund, remark);
             reconciliationMapper.insert(reconciliation);
             FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
             log.info("=========================【人工退款】======================= 【调账 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
