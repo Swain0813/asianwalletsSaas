@@ -217,12 +217,12 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             //请求成功
             if (response.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
-                //退款成功
-                log.info("=================【NextPos退款 cancelPaying】=================【退款成功】orderId : {}",orders.getId());
+                //撤销成功
+                log.info("=================【NextPos退款 cancelPaying】=================【撤销成功】orderId : {}",orders.getId());
                 ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
             } else {
-                //退款失败
-                log.info("=================【NextPos退款 cancelPaying】=================【退款失败】orderId : {}",orders.getId());
+                //撤销失败
+                log.info("=================【NextPos退款 cancelPaying】=================【撤销失败】orderId : {}",orders.getId());
                 ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
             }
         } else {

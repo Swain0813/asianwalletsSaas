@@ -256,6 +256,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
 
 
         if (TradeConstant.RV.equals(type) || TradeConstant.RF.equals(type)) {
+            orderRefund.setRemark4(type);
             /*************************************************************** 订单是付款成功的场合 *************************************************************/
             //把原订单状态改为退款中
             ordersMapper.updateOrderRefundStatus(refundDTO.getOrderNo(), TradeConstant.ORDER_REFUND_WAIT);
@@ -290,7 +291,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
 
             //获取原订单的refCode字段(NextPos用)
             orderRefund.setSign(oldOrder.getSign());
-            orderRefund.setRemark4(type);
             baseResponse = this.doRefundOrder(orderRefund, channel);
         } else if (TradeConstant.PAYING.equals(type)) {
             /***************************************************************  订单是付款中的场合  *************************************************************/
@@ -340,6 +340,29 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             log.info("=========================【退款 doRefundOrder】========================= 【doRefundOrder Exception】 Exception:【{}】", e);
         }
         baseResponse = channelsAbstract.refund(channel, orderRefund, null);
+        return baseResponse;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/24
+     * @Descripate 人工退款接口
+     * @return
+     **/
+    @Override
+    public BaseResponse artificialRefund(String username, String refundOrderId, Boolean enabled, String remark) {
+        BaseResponse baseResponse = new BaseResponse();
+        OrderRefund orderRefund = orderRefundMapper.selectByPrimaryKey(refundOrderId);
+        if (enabled) {
+            //审核通过
+            //退款成功
+            orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, null, remark);
+            //改原订单状态
+            commonBusinessService.updateOrderRefundSuccess(orderRefund);
+        }else{
+            //审核不通过
+
+        }
         return baseResponse;
     }
 

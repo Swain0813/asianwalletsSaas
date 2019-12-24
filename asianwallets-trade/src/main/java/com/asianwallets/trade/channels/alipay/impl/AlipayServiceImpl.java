@@ -187,12 +187,12 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
         if (response.getCode().equals("200")) {
             //请求成功
             if (response.getMsg().equals("success")) {
-                //退款成功
-                log.info("=================【AliPay撤销 cancelPaying】=================【退款成功】orderId : {}",orderRefund.getOrderId());
+                //撤销成功
+                log.info("=================【AliPay撤销 cancelPaying】=================【撤销成功】orderId : {}",orderRefund.getOrderId());
                 ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(),orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
             } else {
-                //退款失败
-                log.info("=================【AliPay撤销 cancelPaying】=================【退款失败】orderId : {}",orderRefund.getOrderId());
+                //撤销失败
+                log.info("=================【AliPay撤销 cancelPaying】=================【撤销失败】orderId : {}",orderRefund.getOrderId());
                 ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
             }
         } else {//请求失败

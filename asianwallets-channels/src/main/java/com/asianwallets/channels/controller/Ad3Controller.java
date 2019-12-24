@@ -46,4 +46,10 @@ public class Ad3Controller extends BaseController {
     public BaseResponse onlinePay(@RequestBody @ApiParam AD3OnlineAcquireDTO ad3OnlineAcquireDTO) {
         return ad3Service.onlinePay(ad3OnlineAcquireDTO);
     }
+
+    @ApiOperation(value = "AD3查询接口")
+    @PostMapping("/query")
+    public BaseResponse query(@RequestBody @ApiParam AD3ONOFFRefundDTO ad3ONOFFRefundDTO) {
+        return ad3Service.query(ad3ONOFFRefundDTO);
+    }
 }
