@@ -40,4 +40,12 @@ public interface OrdersService {
      * @return
      */
     PageInfo<DccReportVO> getDccReport(DccReportDTO dccReportDTO);
+
+
+    /**
+     *DCC报表导出
+     * @param dccReportDTO
+     * @return
+     */
+    List<DccReportVO> exportDccReport(DccReportDTO dccReportDTO);
 }
