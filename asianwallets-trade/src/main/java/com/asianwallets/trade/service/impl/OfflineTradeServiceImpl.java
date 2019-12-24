@@ -258,26 +258,34 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
         if (institutionRequestParameters == null) {
             log.info("==================【线下收单】==================【机构请求参数信息不存在】");
-            return null;
+            throw new BusinessException(EResultEnum.INSTITUTION_REQUEST_DOES_NOT_EXIST.getCode());
         }
         //校验机构必填请求输入参数
         checkRequestParameters(offlineTradeDTO, institutionRequestParameters);
         //校验输入参数合法性
         checkParamValidity(offlineTradeDTO);
         Product product = commonRedisDataService.getProductByCode(offlineTradeDTO.getProductCode());
-        if (product == null || !product.getEnabled()) {
-            log.info("==================【线下收单】==================【产品信息不合法】");
-            return null;
+        if (product == null) {
+            log.info("==================【线下收单】==================【产品信息不存在】");
+            throw new BusinessException(EResultEnum.PRODUCT_DOES_NOT_EXIST.getCode());
+        }
+        if (!product.getEnabled()) {
+            log.info("==================【线下收单】==================【产品信息已禁用】");
+            throw new BusinessException(EResultEnum.GET_PRODUCT_INFO_ERROR.getCode());
         }
         MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchant.getId(), product.getId());
-        if (merchantProduct == null || !merchantProduct.getEnabled()) {
-            log.info("==================【线下收单】==================【商户产品信息不合法】");
-            return null;
+        if (merchantProduct == null) {
+            log.info("==================【线下收单】==================【商户产品信息不存在】");
+            throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_DOES_NOT_EXIST.getCode());
+        }
+        if (!merchantProduct.getEnabled()) {
+            log.info("==================【线下收单】==================【商户产品信息已禁用】");
+            throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_IS_DISABLED.getCode());
         }
         List<String> chaBankIdList = commonRedisDataService.getChaBankIdByMerProId(merchantProduct.getId());
         if (ArrayUtil.isEmpty(chaBankIdList)) {
             log.info("==================【线下收单】==================【通道银行信息不存在】");
-            return null;
+            throw new BusinessException(EResultEnum.CHANNEL_BANK_DOES_NOT_EXIST.getCode());
         }
         List<ChannelBank> channelBankList = new ArrayList<>();
         for (String chaBankId : chaBankIdList) {
@@ -299,12 +307,16 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
                 }
             }
         }
-        if (channel == null || !channel.getEnabled()) {
+        if (channel == null) {
             log.info("==================【线下收单】==================【通道信息不合法】");
             throw new BusinessException(EResultEnum.CHANNEL_IS_NOT_EXISTS.getCode());
         }
-        if (bankIssuerId == null || !bankIssuerId.getEnabled()) {
-            log.info("==================【线下收单】==================【银行机构映射信息不合法】");
+        if (!channel.getEnabled()) {
+            log.info("==================【线下收单】==================【通道信息不合法】");
+            throw new BusinessException(EResultEnum.CHANNEL_STATUS_ABNORMAL.getCode());
+        }
+        if (bankIssuerId == null) {
+            log.info("==================【线下收单】==================【银行机构映射信息不存在】");
             throw new BusinessException(EResultEnum.BANK_MAPPING_NO_EXIST.getCode());
         }
         BasicInfoVO basicsInfoVO = new BasicInfoVO();
