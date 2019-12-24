@@ -28,6 +28,12 @@ public class ResultUtil {
         return response;
     }
 
+    public static BaseResponse success(String code, String msg) {
+        BaseResponse response = new BaseResponse();
+        response.setCode(code);
+        response.setMsg(msg);
+        return response;
+    }
     /**
      * @methodDesc: 功能描述: 操作成功不返回消息
      * @author Wu, Hua-Zheng

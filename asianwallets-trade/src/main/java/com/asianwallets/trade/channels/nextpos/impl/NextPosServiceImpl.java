@@ -105,6 +105,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
             //请求成功
             Map<String, Object> respMap = (Map<String, Object>) response.getData();
             if (response.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 log.info("=================【NextPos退款】=================【退款成功】 response: {} ", JSON.toJSONString(response));
                 //退款成功
                 orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, String.valueOf(respMap.get("transactionID")), null);
@@ -112,6 +113,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
             } else {
                 //退款失败
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=================【NextPos退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
@@ -137,7 +139,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
             }
         } else {
             //请求失败
-            baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
             if (rabbitMassage == null) {
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
@@ -173,25 +175,30 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                     //更新订单状态
                     if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS, null, new Date()) == 1) {
                         //更新成功
-                        this.cancelPaying(channel, orderRefund, null);
+                        response = this.cancelPaying(channel, orderRefund, null);
                     } else {
+                        response.setCode(EResultEnum.REFUNDING.getCode());
                         //更新失败后去查询订单信息
                         rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
                     }
                 } else if (map.get(channel.getPayCode()).equals("PAYERROR")) {
                     //交易失败
+                    response.setCode(EResultEnum.REFUND_FAIL.getCode());
                     log.info("=================【NextPos撤销】================= 【交易失败】orderId : {}", orderRefund.getOrderId());
                     ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_FAILD, null, new Date());
                 } else {
+                    response.setCode(EResultEnum.REFUND_FAIL.getCode());
                     log.info("=================【NextPos撤销】================= 【其他状态】orderId : {}", orderRefund.getOrderId());
                 }
             } else {
                 //请求失败
+                response.setCode(EResultEnum.REFUNDING.getCode());
                 log.info("=================【NextPos撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
                 rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
             }
         } else {
             //请求失败
+            response.setCode(EResultEnum.REFUNDING.getCode());
             log.info("=================【NextPos撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
             rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
@@ -218,16 +225,19 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
             //请求成功
             if (response.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
                 //撤销成功
-                log.info("=================【NextPos退款 cancelPaying】=================【撤销成功】orderId : {}",orders.getId());
+                response.setCode(EResultEnum.SUCCESS.getCode());
+                log.info("=================【NextPos退款 cancelPaying】=================【撤销成功】orderId : {}", orders.getId());
                 ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
             } else {
                 //撤销失败
-                log.info("=================【NextPos退款 cancelPaying】=================【撤销失败】orderId : {}",orders.getId());
+                response.setCode(EResultEnum.REFUND_FAIL.getCode());
+                log.info("=================【NextPos退款 cancelPaying】=================【撤销失败】orderId : {}", orders.getId());
                 ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
             }
         } else {
             //请求失败
-            log.info("=================【NextPos退款 cancelPaying】=================【请求失败】orderId : {}",orders.getId());
+            response.setCode(EResultEnum.REFUNDING.getCode());
+            log.info("=================【NextPos退款 cancelPaying】=================【请求失败】orderId : {}", orders.getId());
             RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             if (rabbitMassage == null) {
                 rabbitMassage = rabbitOrderMsg;

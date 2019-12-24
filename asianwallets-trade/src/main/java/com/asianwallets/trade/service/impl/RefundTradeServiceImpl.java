@@ -72,6 +72,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     private RabbitMQSender rabbitMQSender;
 
     @Autowired
+    private ReconciliationMapper reconciliationMapper;
+
+    @Autowired
     private HandlerContext handlerContext;
 
     /**
@@ -109,7 +112,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
 
 
-        /********************************* 原订单撤销成功和撤销中不能退款*************************************************/
+        /**************************************** 原订单撤销成功和撤销中不能退款 *************************************************/
         if (TradeConstant.ORDER_CANNELING.equals(oldOrder.getCancelStatus()) || TradeConstant.ORDER_CANNEL_SUCCESS.equals(oldOrder.getCancelStatus())) {
             //撤销的单子不能退款--该交易已撤销
             log.info("=========================【退款 refundOrder】=========================【该交易已撤销】");
@@ -117,10 +120,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
 
 
-        /********************************* AD3-eNets退款只能当天退款---线下支付*************************************************/
+        /******************************************** 判断通道是否仅限当天退款 *************************************************/
         String channelCallbackTime = oldOrder.getChannelCallbackTime() == null ? DateToolUtils.getReqDate(oldOrder.getCreateTime()) : DateToolUtils.getReqDate(oldOrder.getChannelCallbackTime());
         String today = DateToolUtils.getReqDate();
-        if (channel.getChannelCnName().toLowerCase().contains(AD3Constant.ENETS) && TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection())) {
+        if (channel.getOnlyTodayOrderRefund()) {
             if (!channelCallbackTime.equals(today)) {
                 throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
             }
@@ -353,15 +356,34 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     public BaseResponse artificialRefund(String username, String refundOrderId, Boolean enabled, String remark) {
         BaseResponse baseResponse = new BaseResponse();
         OrderRefund orderRefund = orderRefundMapper.selectByPrimaryKey(refundOrderId);
+        log.info("=========================【人工退款】========================= refundOrderId:【{}】,审核是否通过：【{}】，审核人：【{}】", refundOrderId,enabled,username);
         if (enabled) {
             //审核通过
-            //退款成功
             orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, null, remark);
             //改原订单状态
             commonBusinessService.updateOrderRefundSuccess(orderRefund);
         }else{
             //审核不通过
-
+            //退款失败
+            Reconciliation reconciliation = commonBusinessService.createReconciliation(orderRefund.getRemark4(), orderRefund, remark);
+            reconciliationMapper.insert(reconciliation);
+            FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+            log.info("=========================【人工退款】======================= 【调账 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
+            BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+            if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                //调账成功
+                log.info("=================【人工退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, remark);
+                reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
+                //改原订单状态
+                commonBusinessService.updateOrderRefundFail(orderRefund);
+            } else {
+                //调账失败
+                log.info("=================【人工退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
+                log.info("=================【人工退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+                rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
+            }
         }
         return baseResponse;
     }
