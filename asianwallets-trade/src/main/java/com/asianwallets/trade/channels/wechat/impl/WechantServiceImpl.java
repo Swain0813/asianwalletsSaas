@@ -182,12 +182,12 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
             Map<String, String> map = (Map<String, String>) response.getData();
             if (map != null && map.get("return_code") != null && map.get("return_code").equals("SUCCESS")
                     && map.get("result_code") != null && !map.get("result_code").equals("") && map.get("result_code").equals("SUCCESS")) {
-                //退款成功
-                log.info("=================【WeChant撤销 cancelPaying】=================【退款成功】orderId : {}",orderRefund.getOrderId());
+                //撤销成功
+                log.info("=================【WeChant撤销 cancelPaying】=================【撤销成功】orderId : {}",orderRefund.getOrderId());
                 ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
             } else {
-                //退款失败
-                log.info("=================【WeChant撤销 cancelPaying】=================【退款失败】orderId : {}",orderRefund.getOrderId());
+                //撤销失败
+                log.info("=================【WeChant撤销 cancelPaying】=================【撤销失败】orderId : {}",orderRefund.getOrderId());
                 ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
             }
         } else {

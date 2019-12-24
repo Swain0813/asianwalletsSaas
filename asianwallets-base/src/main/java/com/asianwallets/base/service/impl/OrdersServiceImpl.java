@@ -78,4 +78,24 @@ public class OrdersServiceImpl implements OrdersService {
         }
         return new PageInfo<>(dccReportList);
     }
+
+    /**
+     *DCC报表导出
+     * @param dccReportExportDTO
+     * @return
+     */
+    @Override
+    public List<DccReportVO> exportDccReport(DccReportDTO dccReportExportDTO) {
+        List<DccReportVO> dccReportList = ordersMapper.pageDccReport(dccReportExportDTO);
+        if (dccReportList != null && dccReportList.size() != 0) {
+            for (DccReportVO dccReportVO : dccReportList) {
+                if (!StringUtils.isEmpty(dccReportVO.getOrderForTradeRate())) {
+                    //浮动金额=交易金额-订单金额*原始汇率
+                    dccReportVO.setFloatAmount(dccReportVO.getTradeAmount().subtract(dccReportVO.getOrderAmount().multiply(dccReportVO.getOrderForTradeRate()).setScale(2, BigDecimal.ROUND_HALF_UP)));
+                }
+            }
+        }
+        return dccReportList;
+    }
+
 }

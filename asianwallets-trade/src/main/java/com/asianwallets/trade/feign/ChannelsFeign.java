@@ -143,4 +143,8 @@ public interface ChannelsFeign {
     @ApiOperation(value = "AD3线上退款接口")
     @PostMapping("/ad3/onlineRefund")
     BaseResponse ad3OnlineRefund(@RequestBody @ApiParam AD3ONOFFRefundDTO sendAdRefundDTO);
+
+    @ApiOperation(value = "AD3查询接口")
+    @PostMapping("/ad3/query")
+    BaseResponse query(@RequestBody @ApiParam AD3ONOFFRefundDTO ad3ONOFFRefundDTO);
 }
