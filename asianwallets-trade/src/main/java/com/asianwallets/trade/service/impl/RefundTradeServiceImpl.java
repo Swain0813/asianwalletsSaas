@@ -290,12 +290,16 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             baseResponse = this.doRefundOrder(orderRefund, channel);
         } else if (TradeConstant.PAYING.equals(type)) {
             /***************************************************************  订单是付款中的场合  *************************************************************/
+            if (TradeConstant.TRADE_ONLINE.equals(refundDTO.getTradeDirection())) {
+                log.info("=========================【退款 refundOrder】=========================【线上通道不支持撤销】");
+                throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
+            }
             ChannelsAbstract channelsAbstract = null;
             try {
-                log.info("=========================【退款 付款中】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
+                log.info("=========================【退款 refundOrder】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
                 channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
             } catch (Exception e) {
-                log.info("=========================【退款 付款中】========================= Exception:【{}】", e);
+                log.info("=========================【退款 refundOrder】========================= Exception:【{}】", e);
             }
             baseResponse = channelsAbstract.cancel(channel, orderRefund, null);
         }
