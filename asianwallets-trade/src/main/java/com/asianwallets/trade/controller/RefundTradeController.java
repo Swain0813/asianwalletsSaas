@@ -13,12 +13,10 @@ import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.service.RefundTradeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @description: 退款
@@ -64,6 +62,13 @@ public class RefundTradeController extends BaseController {
         } else {
             return ResultUtil.error(baseResponse.getMsg(), this.getErrorMsgMap(baseResponse.getMsg()));
         }
+    }
+
+    @ApiOperation(value = "人工退款接口")
+    @GetMapping("artificialRefund")
+    public BaseResponse artificialRefund(@RequestParam @ApiParam String refundOrderId, Boolean enabled, String remark) {
+        BaseResponse baseResponse = refundTradeService.artificialRefund(this.getSysUserVO().getUsername(), refundOrderId, enabled,remark);
+        return ResultUtil.success(baseResponse);
     }
 
 
