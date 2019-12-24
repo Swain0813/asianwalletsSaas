@@ -61,6 +61,9 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     @Autowired
     private BankIssuerIdMapper bankIssuerIdMapper;
 
+    @Autowired
+    private AccountMapper accountMapper;
+
     /**
      * 根据币种编码获取币种
      *
@@ -381,4 +384,30 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         return channelBank;
     }
 
+    /**
+     * 根据商户编号和币种查询账户
+     *
+     * @param merchantId 商户号
+     * @param currency   币种
+     * @return 账户
+     */
+    @Override
+    public Account getAccountByMerchantIdAndCurrency(String merchantId, String currency) {
+        Account account = null;
+        try {
+            account = JSON.parseObject(redisService.get(AsianWalletConstant.ACCOUNT_CACHE_KEY.concat("_").concat(merchantId).concat("_").concat(currency)), Account.class);
+            if (account == null) {
+                account = accountMapper.getAccount(merchantId, currency);
+                if (account == null) {
+                    log.info("==================【根据商户编号和币种查询账户】==================【账户对象不存在】 merchantId: {} | currency: {}", merchantId, currency);
+                    return null;
+                }
+                redisService.set(AsianWalletConstant.ACCOUNT_CACHE_KEY.concat("_").concat(merchantId).concat("_").concat(currency), JSON.toJSONString(account));
+            }
+        } catch (Exception e) {
+            log.info("==================【根据商户编号和币种查询账户】==================【获取异常】", e);
+        }
+        log.info("==================【根据商户编号和币种查询账户】==================【账户信息】 account: {}", JSON.toJSONString(account));
+        return account;
+    }
 }

@@ -107,4 +107,12 @@ public interface CommonRedisDataService {
      */
     ChannelBank getChaBankById(String chaBankId);
 
+    /**
+     * 根据商户编号和币种查询账户
+     *
+     * @param merchantId 商户号
+     * @param currency   币种
+     * @return 账户
+     */
+    Account getAccountByMerchantIdAndCurrency(String merchantId, String currency);
 }

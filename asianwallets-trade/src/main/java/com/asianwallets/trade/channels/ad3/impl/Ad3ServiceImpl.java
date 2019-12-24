@@ -12,6 +12,7 @@ import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
+import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
@@ -24,19 +25,26 @@ import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
 import com.asianwallets.trade.dao.OrderRefundMapper;
+import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.ReconciliationMapper;
+import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
+import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
+import com.asianwallets.trade.vo.FundChangeVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.entity.Example;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -72,6 +80,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     @Autowired
     private CommonBusinessService commonBusinessService;
     @Autowired
+    private CommonRedisDataService commonRedisDataService;
+    @Autowired
     private ReconciliationMapper reconciliationMapper;
     @Autowired
     private ClearingService clearingService;
@@ -79,6 +89,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     private RabbitMQSender rabbitMQSender;
     @Autowired
     private RedisService redisService;
+    @Autowired
+    private OrdersMapper ordersMapper;
 
 
     /**
@@ -104,6 +116,181 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         return channelResponse;
     }
 
+    /**
+     * 生成AD3线下回调签名
+     *
+     * @param obj obj
+     * @return AD3回调签名
+     */
+    private static String createSign(Object obj, String token) {
+        //获得对象属性名对应的属性值Map
+        Map<String, Object> objMap = ReflexClazzUtils.getCommonFieldNames(obj);
+        HashMap<String, String> paramMap = new HashMap<>();
+        //转换成String
+        for (String str : objMap.keySet()) {
+            paramMap.put(str, String.valueOf(objMap.get(str)));
+        }
+        paramMap.put("signMsg", null);
+        //排序,去空,将属性值按属性名首字母升序排序
+        String signature = SignTools.getSignStr(paramMap);
+        String clearText = signature + "&" + token;
+        log.info("=================【AD3线下回调接口信息记录】=================【签名前的明文】 clearText: {}", clearText);
+        return MD5Util.getMD5String(clearText);
+    }
+
+    /**
+     * 校验ad3输入参数
+     *
+     * @param ad3OfflineCallbackDTO ad3线下回调输入实体
+     * @return
+     */
+    private void checkParam(AD3OfflineCallbackDTO ad3OfflineCallbackDTO) {
+        if (ad3OfflineCallbackDTO == null) {
+            log.info("=================【AD3线下回调接口信息记录】=================【回调参数为空】");
+            throw new BusinessException(EResultEnum.CALLBACK_PARAMETER_IS_NULL.getCode());
+        }
+        if (StringUtils.isEmpty(ad3OfflineCallbackDTO.getMerorderNo())) {
+            log.info("=================【AD3线下回调接口信息记录】=================【订单号为空】");
+            //订单号
+            throw new BusinessException(EResultEnum.CALLBACK_PARAMETER_IS_NULL.getCode());
+        }
+        if (StringUtils.isEmpty(ad3OfflineCallbackDTO.getStatus())) {
+            log.info("=================【AD3线下回调接口信息记录】=================【订单状态为空】");
+            //订单状态
+            throw new BusinessException(EResultEnum.CALLBACK_PARAMETER_IS_NULL.getCode());
+        }
+        if (StringUtils.isEmpty(ad3OfflineCallbackDTO.getSignMsg())) {
+            log.info("=================【AD3线下回调接口信息记录】=================【签名为空】");
+            //签名
+            throw new BusinessException(EResultEnum.CALLBACK_PARAMETER_IS_NULL.getCode());
+        }
+    }
+
+    /**
+     * ad3线下回调
+     *
+     * @param ad3OfflineCallbackDTO ad3线下回调输入实体
+     * @return
+     */
+    @Override
+    public String ad3ServerCallback(AD3OfflineCallbackDTO ad3OfflineCallbackDTO) {
+        //校验输入参数
+        checkParam(ad3OfflineCallbackDTO);
+        //生成签名
+        String mySign = createSign(ad3OfflineCallbackDTO, redisService.get(AD3Constant.AD3_LOGIN_TOKEN));
+        log.info("=================【AD3线下回调接口信息记录】=================【回调签名】 mySign: {} ad3Sign: {}", mySign, ad3OfflineCallbackDTO.getSignMsg());
+        //验签
+        if (!ad3OfflineCallbackDTO.getSignMsg().equals(mySign)) {
+            log.info("=================【AD3线下回调接口信息记录】=================【签名不匹配】");
+            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
+        }
+        //查询订单信息
+        Orders orders = ordersMapper.selectByPrimaryKey(ad3OfflineCallbackDTO.getMerorderNo());
+        //校验业务信息
+        if (orders == null) {
+            //订单信息不存在
+            log.info("=================【AD3线下回调接口信息记录】=================【回调订单信息不存在】");
+            throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
+        }
+        log.info("=================【AD3线下回调接口信息记录】=================【回调订单信息记录】 orders: {}", JSON.toJSONString(orders));
+        //校验交易金额与交易币种
+        BigDecimal ad3Amount = new BigDecimal(ad3OfflineCallbackDTO.getMerorderAmount());
+        BigDecimal tradeAmount = orders.getTradeAmount();
+        if (ad3Amount.compareTo(tradeAmount) != 0 || !ad3OfflineCallbackDTO.getMerorderCurrency().equals(orders.getTradeCurrency())) {
+            log.info("=================【AD3线下回调接口信息记录】=================【订单信息不匹配】");
+            throw new BusinessException(EResultEnum.ORDER_INFO_NO_MATCHING.getCode());
+        }
+        //校验订单状态
+        if (!TradeConstant.ORDER_PAYING.equals(orders.getTradeStatus())) {
+            log.info("=================【AD3线下回调接口信息记录】=================【订单状态不为支付中】");
+            return "success";
+        }
+        //通道流水号
+        orders.setChannelNumber(ad3OfflineCallbackDTO.getTxnId());
+        //通道回调时间
+        orders.setChannelCallbackTime(DateToolUtils.getDateFromString(ad3OfflineCallbackDTO.getTxnDate(), "yyyyMMddHHmmss"));
+        //修改时间
+        orders.setUpdateTime(new Date());
+        Example example = new Example(Orders.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("tradeStatus", "2");
+        criteria.andEqualTo("id", orders.getId());
+        if (AD3Constant.ORDER_SUCCESS.equals(ad3OfflineCallbackDTO.getStatus())) {
+            log.info("=================【AD3线下回调接口信息记录】=================【订单已支付成功】 orderId: {}", orders.getId());
+            //未发货
+            orders.setDeliveryStatus(TradeConstant.UNSHIPPED);
+            //未签收
+            orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
+            orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
+            //更新订单信息
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                log.info("=================【AD3线下回调接口信息记录】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
+                //计算支付成功时的通道网关手续费
+                commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
+                //TODO 添加日交易限额与日交易笔数
+                //commonBusinessService.quota(orders.getMerchantId(), orders.getProductCode(), orders.getTradeAmount());
+                //支付成功后向用户发送邮件
+                commonBusinessService.sendEmail(orders);
+                try {
+                    //账户信息不存在的场合创建对应的账户信息
+                    if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
+                        log.info("=================【AD3线下回调接口信息记录】=================【上报清结算前线下下单创建账户信息】");
+                        commonBusinessService.createAccount(orders);
+                    }
+                    //TODO 分润
+//                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
+//                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+//                    }
+                    //更新成功,上报清结算
+                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
+                    //上报清结算资金变动接口
+                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
+                    if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
+                        //请求成功
+                        FundChangeVO fundChangeVO = (FundChangeVO) fundChangeResponse.getData();
+                        if (!fundChangeVO.getRespCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                            //业务处理失败
+                            log.info("=================【AD3线下回调接口信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                        }
+                    } else {
+                        log.info("=================【AD3线下回调接口信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                    }
+                } catch (Exception e) {
+                    log.error("=================【AD3线下回调接口信息记录】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                    rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                }
+            } else {
+                log.info("=================【AD3线下回调接口信息记录】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        } else if (AD3Constant.ORDER_FAILED.equals(ad3OfflineCallbackDTO.getStatus())) {
+            log.info("=================【AD3线下回调接口信息记录】=================【订单已支付失败】 orderId: {}", orders.getId());
+            //支付失败
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+            //计算支付失败时的通道网关手续费
+            commonBusinessService.calcCallBackGatewayFeeFailed(orders);
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                log.info("=================【AD3线下回调接口信息记录】=================【订单支付失败后更新数据库成功】 orderId: {}", orders.getId());
+            } else {
+                log.info("=================【AD3线下回调接口信息记录】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        } else {
+            log.info("=================【AD3线下回调接口信息记录】=================【订单为其他状态】 orderId: {}", orders.getId());
+        }
+        try {
+            //商户服务器回调地址不为空,回调商户服务器
+            if (!StringUtils.isEmpty(orders.getServerUrl())) {
+                commonBusinessService.replyReturnUrl(orders);
+            }
+        } catch (Exception e) {
+            log.error("=================【AD3线下回调接口信息记录】=================【回调商户异常】", e);
+        }
+        return "success";
+    }
 
     /**
      * AD3线下CSB
@@ -164,11 +351,11 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 } else if (response.getCode().equals("T001")) {
                     //退款失败
                     baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                    String type = orderRefund.getRemark4().equals(TradeConstant.RF )? TradeConstant.AA : TradeConstant.RA;
+                    String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
                     Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                     reconciliationMapper.insert(reconciliation);
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                    log.info("=========================【AD3线上退款】======================= 【调账 {}】， fundChangeDTO:【{}】",type, JSON.toJSONString(fundChangeDTO));
+                    log.info("=========================【AD3线上退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
                     BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                     if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                         log.info("==================【AD3线上退款】================== 【调账成功】 cFundChange: {}", JSON.toJSONString(cFundChange));
@@ -228,11 +415,11 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     //退款失败
                     log.info("==================【AD3线下退款】================== 【退款失败】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                    String type = orderRefund.getRemark4().equals(TradeConstant.RF )? TradeConstant.AA : TradeConstant.RA;
+                    String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
                     Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                     reconciliationMapper.insert(reconciliation);
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                    log.info("=========================【AD3线下退款】======================= 【调账 {}】， fundChangeDTO:【{}】",type, JSON.toJSONString(fundChangeDTO));
+                    log.info("=========================【AD3线下退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
                     BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                     if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                         log.info("==================【AD3线下退款】================== 【调账成功】 cFundChange: {}", JSON.toJSONString(cFundChange));
@@ -263,10 +450,10 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/23
-     * @Descripate    撤销
-     * @return
+     * @Descripate 撤销
      **/
     @Override
     public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {

@@ -174,6 +174,10 @@ public class TradeConstant {
     //亚洲钱包清结算返回成功的场合
     public final static String CLEARING_SUCCESS = "T000";
 
+    //---------------交易限额限次
+    public static final String DAILY_TOTAL_AMOUNT = "DAILY_TOTAL_AMOUNT"; //日交易限额redis标记
+    public static final String DAILY_TRADING_COUNT = "DAILY_TRADING_COUNT"; //日交易笔数redis标记
+
     //--------------调账状态
     public static final int RECONCILIATION_WAIT = 1; //待调账
     public static final int RECONCILIATION_SUCCESS = 2; //调账成功
@@ -206,6 +210,10 @@ public class TradeConstant {
     //--------------发货状态
     public static final Byte UNSHIPPED = 1; //未发货
     public static final Byte SHIPPED = 2; //已发货
+
+    //--------------签收状态
+    public static final Byte NO_RECEIVED = 1; //未签收
+    public static final Byte RECEIVED = 2; //已签收
 
     //------------冻结类型
     public static final Byte FREEZING_FUND = 1;//资金冻结
