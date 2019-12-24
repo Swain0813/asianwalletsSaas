@@ -1,5 +1,4 @@
 package com.asianwallets.trade.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AD3Constant;
@@ -14,12 +13,9 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
-import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
-import com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl;
 import com.asianwallets.trade.dao.*;
-import com.asianwallets.trade.feign.ClearingFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
@@ -32,9 +28,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
-import java.nio.channels.Channels;
 import java.util.Date;
 
 /**
@@ -49,24 +43,34 @@ public class RefundTradeServiceImpl implements RefundTradeService {
 
     @Autowired
     private CommonBusinessService commonBusinessService;
+
     @Autowired
     private CommonRedisDataService commonRedisDataService;
+
     @Autowired
     private OrdersMapper ordersMapper;
+
     @Autowired
     private OrderRefundMapper orderRefundMapper;
+
     @Autowired
     private TcsCtFlowMapper tcsCtFlowMapper;
+
     @Autowired
     private TcsStFlowMapper tcsStFlowMapper;
+
     @Autowired
     private AuditorProvider auditorProvider;
+
     @Autowired
     private AccountMapper accountMapper;
+
     @Autowired
     private ClearingService clearingService;
+
     @Autowired
     private RabbitMQSender rabbitMQSender;
+
     @Autowired
     private HandlerContext handlerContext;
 
