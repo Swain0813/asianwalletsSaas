@@ -310,6 +310,18 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     }
 
     /**
+     * AD3线下BSC
+     *
+     * @param orders  订单
+     * @param channel 通道
+     * @return BaseResponse
+     */
+    @Override
+    public BaseResponse offlineBSC(Orders orders, Channel channel, String authCode) {
+        return super.offlineBSC(orders, channel, authCode);
+    }
+
+    /**
      * @return
      * @Author YangXu
      * @Date 2019/12/19
@@ -333,6 +345,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             log.info("=================【AD3线上退款】=================【Channels服务响应】请求参数 response: {} ", JSON.toJSONString(response));
             if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
+                    baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                     RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
                     log.info("==================【AD3线上退款】================== 【退款成功】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     //退款成功
@@ -341,7 +354,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     commonBusinessService.updateOrderRefundSuccess(orderRefund);
                 } else if (response.getCode().equals("T001")) {
                     //退款失败
-                    baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
+                    baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                     String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
                     Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                     reconciliationMapper.insert(reconciliation);
@@ -365,7 +378,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 }
             } else {
                 //请求失败
-                baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+                baseResponse.setCode(EResultEnum.REFUNDING.getCode());
                 if (rabbitMassage == null) {
                     rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
                 }
@@ -398,6 +411,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                     //退款成功
+                    baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                     log.info("==================【AD3线下退款】================== 【退款成功】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
                     //改原订单状态
@@ -405,7 +419,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 } else {
                     //退款失败
                     log.info("==================【AD3线下退款】================== 【退款失败】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
-                    baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
+                    baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                     String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
                     Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
                     reconciliationMapper.insert(reconciliation);
@@ -429,7 +443,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 }
             } else {
                 //请求失败
-                baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+                baseResponse.setCode(EResultEnum.REFUNDING.getCode());
                 if (rabbitMassage == null) {
                     rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
                 }
@@ -457,7 +471,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         AD3LoginVO ad3LoginVO = this.getTerminalIdAndToken(channel);
         if (ad3LoginVO == null) {
             log.info("************退款时 --- 退款操作AD3登录时未获取到终端号和token*****************ad3LoginVO：{}", JSON.toJSON(ad3LoginVO));
-            response.setMsg(EResultEnum.REFUNDING.getCode());
+            response.setCode(EResultEnum.REFUND_FAIL.getCode());
             return response;
         }
 
@@ -486,27 +500,31 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 log.info("=================【AD3撤销】=================【交易成功】orderId : {}", orderRefund.getOrderId());
                 if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS,
                         ad3OrdersVO.getTxnId(),DateUtil.parse(ad3OrdersVO.getTxnDate(), "yyyyMMddHHmmss")) == 1) {//更新成功
-                    this.cancelPaying(channel, orderRefund, null);
+                    response =  this.cancelPaying(channel, orderRefund, null);
                 } else {//更新失败后去查询订单信息
                     rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
                 }
 
             } else if (ad3OrdersVO.getState().equals(AD3Constant.ORDER_IN_TRADING)) {
                 //交易中
+                response.setCode(EResultEnum.REFUNDING.getCode());
                 log.info("=================【AD3撤销】=================【交易中】orderId : {}", orderRefund.getOrderId());
                 rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
             }else {
+                response.setCode(EResultEnum.REFUND_FAIL.getCode());
                 //支付失败
                 log.info("=================【AD3撤销】=================【支付失败】orderId : {}", orderRefund.getOrderId());
                 ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_FAILD,ad3OrdersVO.getTxnId(), DateUtil.parse(ad3OrdersVO.getTxnDate(), "yyyyMMddHHmmss"));
             }
         }else{
             //请求失败
+            response.setCode(EResultEnum.REFUNDING.getCode());
             log.info("=================【AD3撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
             rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return response;
     }
+
 
     /**
      * @return
@@ -521,7 +539,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         AD3LoginVO ad3LoginVO = this.getTerminalIdAndToken(channel);
         if (ad3LoginVO == null) {
             log.info("************退款时 --- 退款操作AD3登录时未获取到终端号和token*****************ad3LoginVO：{}", JSON.toJSON(ad3LoginVO));
-            response.setMsg(EResultEnum.REFUNDING.getCode());
+            response.setCode(EResultEnum.REFUND_FAIL.getCode());
             return response;
         }
         AD3RefundDTO ad3RefundDTO = new AD3RefundDTO(channel.getChannelMerchantId());
@@ -537,16 +555,19 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         if (baseResponse.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
             RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
             if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
+                response.setCode(EResultEnum.SUCCESS.getCode());
                 //撤销成功
                 log.info("=================【NextPos退款 cancelPaying】=================【撤销成功】orderId : {}",orderRefund.getOrderId());
                 ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
             }else {
+                response.setCode(EResultEnum.REFUND_FAIL.getCode());
                 //撤销失败
                 log.info("=================【NextPos退款 cancelPaying】=================【撤销失败】orderId : {}",orderRefund.getOrderId());
                 ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
             }
         }else{
             //请求失败
+            response.setCode(EResultEnum.REFUNDING.getCode());
             if (rabbitMassage == null) {
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
@@ -583,6 +604,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         }
         return signMsg;
     }
+
+
 
     /**
      * 获取终端编号和token

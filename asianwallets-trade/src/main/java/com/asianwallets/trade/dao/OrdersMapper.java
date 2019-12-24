@@ -2,11 +2,14 @@ package com.asianwallets.trade.dao;
 
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
+import com.asianwallets.trade.vo.OfflineCheckOrdersVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 
 @Repository
@@ -55,4 +58,12 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @param remark 备注
      */
     void updateOrderRemark(@Param("id") String id, @Param("remark") String remark);
+
+    /**
+     * 线下查询订单列表
+     *
+     * @param offlineCheckOrdersDTO 查询订单输入实体
+     * @return 订单集合
+     */
+    List<OfflineCheckOrdersVO> offlineCheckOrders(OfflineCheckOrdersDTO offlineCheckOrdersDTO);
 }

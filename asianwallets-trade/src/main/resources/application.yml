@@ -21,7 +21,7 @@ mybatis:
 pagehelper:
   helperDialect: mysql
   reasonable: false
-  supportMethodsArguments: false
+  supportMethodsArguments: true
   params: count=countSql
 
 #==================== 日志  ============================

@@ -127,7 +127,7 @@ public class RefundOrderMQReceive {
             if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                 //请求成功
                 log.info("========================= 【RA_AA_FAIL_DL】 ==================== 【请求成功】 cFundChange : {} ", JSON.toJSONString(cFundChange));
-                orderRefundMapper.updateStatuts(reconciliation.getRefundOrderId(), TradeConstant.REFUND_FALID, null, null);
+                orderRefundMapper.updateStatuts(reconciliation.getRefundOrderId(), TradeConstant.REFUND_FALID, null, reconciliation.getRemark());
                 reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
                 //改原订单状态
                 OrderRefund orderRefund = orderRefundMapper.selectByPrimaryKey(reconciliation.getId());

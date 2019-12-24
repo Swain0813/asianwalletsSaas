@@ -17,6 +17,7 @@ import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.DeviceBindingMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.SysUserMapper;
+import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OfflineLoginDTO;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
 import com.asianwallets.trade.service.CommonBusinessService;
@@ -26,7 +27,9 @@ import com.asianwallets.trade.utils.HandlerContext;
 import com.asianwallets.trade.utils.SettleDateUtil;
 import com.asianwallets.trade.utils.TokenUtils;
 import com.asianwallets.trade.vo.BasicInfoVO;
+import com.asianwallets.trade.vo.BscDynamicScanVO;
 import com.asianwallets.trade.vo.CsbDynamicScanVO;
+import com.asianwallets.trade.vo.OfflineCheckOrdersVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -178,7 +181,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      * @param offlineTradeDTO 线下交易输入实体
      */
     private void checkParamValidity(OfflineTradeDTO offlineTradeDTO) {
-        //验签
+//        //验签
 //        if (!commonBusinessService.checkSignByMd5(offlineTradeDTO)) {
 //            log.info("==================【线下CSB动态扫码】==================【签名不匹配】");
 //            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
@@ -449,5 +452,79 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         }
         log.info("==================【线下CSB动态扫码】==================【下单结束】");
         return csbDynamicScanVO;
+    }
+
+    /**
+     * 线下同机构BSC动态扫码
+     *
+     * @param offlineTradeDTO 线下交易输入实体
+     * @return 线下同机构BSC动态扫码输出实体
+     */
+    @Override
+    public BscDynamicScanVO bscDynamicScan(OfflineTradeDTO offlineTradeDTO) {
+        log.info("==================【线下BSC动态扫码】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
+        if (StringUtils.isEmpty(offlineTradeDTO.getAuthCode())) {
+            log.info("==================【线下BSC动态扫码】==================【付款编码为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        //重复请求
+        if (!commonBusinessService.repeatedRequests(offlineTradeDTO.getMerchantId(), offlineTradeDTO.getOrderNo())) {
+            log.info("==================【线下BSC动态扫码】==================【重复请求】");
+            throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
+        }
+        //获取收单基础信息并校验
+        BasicInfoVO basicInfoVO = getBasicAndCheck(offlineTradeDTO);
+        //设置订单属性
+        Orders orders = setAttributes(offlineTradeDTO, basicInfoVO);
+        //换汇
+        commonBusinessService.swapRateByPayment(basicInfoVO, orders);
+        //校验商户产品与通道的限额
+        commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //计算手续费
+        commonBusinessService.calculateCost(basicInfoVO, orders);
+        orders.setReportChannelTime(new Date());
+        orders.setTradeStatus(TradeConstant.ORDER_PAYING);
+        log.info("==================【线下BSC动态扫码】==================【落地订单信息】 orders:{}", JSON.toJSONString(orders));
+        ordersMapper.insert(orders);
+        try {
+            //上报通道
+            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
+            channelsAbstract.offlineBSC(orders, basicInfoVO.getChannel(), offlineTradeDTO.getAuthCode());
+        } catch (Exception e) {
+            log.info("==================【线下BSC动态扫码】==================【上报通道异常】", e);
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+        log.info("==================【线下BSC动态扫码】==================【下单结束】");
+        return new BscDynamicScanVO(orders, offlineTradeDTO.getOrderTime());
+    }
+
+    /**
+     * 线下查询订单列表
+     *
+     * @param offlineCheckOrdersDTO 查询订单输入实体
+     * @return 订单集合
+     */
+    @Override
+    public List<OfflineCheckOrdersVO> checkOrder(OfflineCheckOrdersDTO offlineCheckOrdersDTO) {
+        log.info("==================【线下查询订单】==================【请求参数】 offlineCheckOrdersDTO: {}", JSON.toJSONString(offlineCheckOrdersDTO));
+        //验签
+//        if (!commonBusinessService.checkSignByMd5(offlineCheckOrdersDTO)) {
+//            log.info("==================【线下查询订单】==================【签名不匹配】");
+//            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+//        }
+        //校验设备
+        checkDevice(offlineCheckOrdersDTO.getMerchantId(), offlineCheckOrdersDTO.getImei(), offlineCheckOrdersDTO.getOperatorId());
+        //页码默认为1
+        if (offlineCheckOrdersDTO.getPageNum() == null) {
+            offlineCheckOrdersDTO.setPageNum(1);
+        }
+        //每页默认30
+        if (offlineCheckOrdersDTO.getPageSize() == null) {
+            offlineCheckOrdersDTO.setPageSize(30);
+        }
+        //分页查询订单
+        List<OfflineCheckOrdersVO> offlineCheckOrdersVOList = ordersMapper.offlineCheckOrders(offlineCheckOrdersDTO);
+        log.info("==================【线下查询订单】==================【响应参数】 offlineOrdersVOS: {}", JSON.toJSONString(offlineCheckOrdersVOList));
+        return offlineCheckOrdersVOList;
     }
 }

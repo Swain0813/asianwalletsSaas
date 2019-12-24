@@ -74,12 +74,14 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
             if (map != null && map.get("return_code") != null && map.get("return_code").equals("SUCCESS")
                     && map.get("result_code") != null && !map.get("result_code").equals("") && map.get("result_code").equals("SUCCESS")) {
                 //退款成功
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 log.info("=================【WeChant退款】=================【退款成功】 response: {} ", JSON.toJSONString(response));
                 //退款成功
                 orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, map.get("refund_id"), null);
                 //改原订单状态
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
             } else {
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=================【WeChant退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
@@ -105,7 +107,7 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
             }
         } else {
             //请求失败
-            baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
             if (rabbitMassage == null) {
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
