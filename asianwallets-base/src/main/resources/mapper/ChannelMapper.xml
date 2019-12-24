@@ -169,6 +169,7 @@
                ch.pay_type                  as payType,
                ch.pay_url                   as payUrl,
                ch.channel_single_select_url as channelSingleSelectUrl,
+               ch.channel_batch_select_url  as channelBatchSelectUrl,
                ch.void_url                  as voidUrl,
                ch.refund_url                as refundUrl,
                ch.notify_server_url         as notifyServerUrl,
@@ -240,6 +241,7 @@
         <result column="notifyServerUrl" property="notifyServerUrl" jdbcType="VARCHAR"/>
         <result column="notifyBrowserUrl" property="notifyBrowserUrl" jdbcType="VARCHAR"/>
         <result column="channelSingleSelectUrl" property="channelSingleSelectUrl" jdbcType="VARCHAR"/>
+        <result column="channelBatchSelectUrl" property="channelBatchSelectUrl" jdbcType="VARCHAR"/>
         <result column="voidUrl" property="voidUrl" jdbcType="VARCHAR"/>
         <result column="refundUrl" property="refundUrl" jdbcType="VARCHAR"/>
         <result column="channelCode" property="channelCode" jdbcType="VARCHAR"/>
