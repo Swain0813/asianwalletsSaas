@@ -49,7 +49,7 @@ public class RefundTradeController extends BaseController {
                 throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
             }
             SysUserVO sysUserVO = JSON.parseObject(redisService.get(refundDTO.getToken()), SysUserVO.class);
-            if(sysUserVO==null){//获取不到用户信息
+            if(sysUserVO==null){
                 throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
             }
             if (!commonService.checkPassword(refundDTO.getTradePassword(), sysUserVO.getTradePassword())) {
