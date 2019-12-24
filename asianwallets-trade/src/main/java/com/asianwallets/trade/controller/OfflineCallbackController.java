@@ -42,22 +42,22 @@ public class OfflineCallbackController extends BaseController {
     @Autowired
     private CommonService commonService;
 
-//    @ApiOperation(value = "ad3线下服务器回调接口")
-//    @PostMapping("/ad3ServerCallback")
-//    public String ad3Callback(HttpServletRequest request) {
-//        Map<String, String[]> parameterMap = request.getParameterMap();
-//        if (ArrayUtil.isEmpty(parameterMap)) {
-//            log.info("=================【AD3线下回调接口信息记录】=================【回调参数记录为空】");
-//            throw new BusinessException(EResultEnum.CALLBACK_PARAMETER_IS_NULL.getCode());
-//        }
-//        log.info("=================【AD3线下回调接口信息记录】=================【回调参数记录】 parameterMap:{}", JSON.toJSONString(parameterMap));
-//        HashMap<String, String> dtoMap = new HashMap<>();
-//        Set<String> set = parameterMap.keySet();
-//        for (String key : set) {
-//            dtoMap.put(key, parameterMap.get(key)[0]);
-//        }
-//        AD3OfflineCallbackDTO ad3OfflineCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), AD3OfflineCallbackDTO.class);
-//        log.info("=================【AD3线下回调接口信息记录】=================【JSON解析后的回调参数记录】 ad3OfflineCallbackDTO:{}", JSON.toJSONString(ad3OfflineCallbackDTO));
-//        return ad3Service.ad3Callback(ad3OfflineCallbackDTO);
-//    }
+    @ApiOperation(value = "ad3线下服务器回调接口")
+    @PostMapping("/ad3ServerCallback")
+    public String ad3ServerCallback(HttpServletRequest request) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        if (ArrayUtil.isEmpty(parameterMap)) {
+            log.info("=================【AD3线下回调接口信息记录】=================【回调参数记录为空】");
+            throw new BusinessException(EResultEnum.CALLBACK_PARAMETER_IS_NULL.getCode());
+        }
+        log.info("=================【AD3线下回调接口信息记录】=================【回调参数记录】 parameterMap:{}", JSON.toJSONString(parameterMap));
+        Map<String, String> paramMap = new HashMap<>();
+        Set<String> keySet = parameterMap.keySet();
+        for (String key : keySet) {
+            paramMap.put(key, parameterMap.get(key)[0]);
+        }
+        AD3OfflineCallbackDTO ad3OfflineCallbackDTO = JSON.parseObject(JSON.toJSONString(paramMap), AD3OfflineCallbackDTO.class);
+        log.info("=================【AD3线下回调接口信息记录】=================【JSON解析后的回调参数记录】 ad3OfflineCallbackDTO:{}", JSON.toJSONString(ad3OfflineCallbackDTO));
+        return ad3Service.ad3ServerCallback(ad3OfflineCallbackDTO);
+    }
 }

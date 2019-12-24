@@ -73,11 +73,11 @@ public interface Ad3Service {
      */
     String createAD3Signature(Object commonObj, Object businessObj, String token);
 
-//    /**
-//     * ad3线下回调
-//     *
-//     * @param ad3OfflineCallbackDTO ad3线下回调输入实体
-//     * @return
-//     */
-//    String ad3Callback(AD3OfflineCallbackDTO ad3OfflineCallbackDTO);
+    /**
+     * ad3线下回调
+     *
+     * @param ad3OfflineCallbackDTO ad3线下回调输入实体
+     * @return
+     */
+    String ad3ServerCallback(AD3OfflineCallbackDTO ad3OfflineCallbackDTO);
 }
