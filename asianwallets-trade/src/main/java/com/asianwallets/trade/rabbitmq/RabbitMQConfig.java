@@ -88,11 +88,11 @@ public class RabbitMQConfig {
     }
 
     //=================================【支付成功后上报清结算失败队列】==========================================================
-//    public final static String MQ_PLACE_ORDER_FUND_CHANGE_FAIL = AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL;
-//
-//
-//    @Bean
-//    public Queue operateRecordPlaceOrderFundChangeFail() {
-//        return new Queue(RabbitMQConfig.MQ_PLACE_ORDER_FUND_CHANGE_FAIL);
-//    }
+    public final static String MQ_PLACE_ORDER_FUND_CHANGE_FAIL = AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL;
+
+    //上报清结算失败队列
+    @Bean
+    public Queue fundChangeFailQueue() {
+        return new Queue(RabbitMQConfig.MQ_PLACE_ORDER_FUND_CHANGE_FAIL);
+    }
 }
