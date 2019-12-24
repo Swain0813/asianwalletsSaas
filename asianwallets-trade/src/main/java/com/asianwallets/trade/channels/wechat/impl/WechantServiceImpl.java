@@ -144,7 +144,7 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
                         this.cancelPaying(channel, orderRefund,null);
                     } else {//更新失败后去查询订单信息
                         log.info("=================【WeChant撤销】================= 【更新失败】orderId : {}", orderRefund.getOrderId());
-                        rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitOrderMsg));
+                        rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
                     }
                 } else {
                     //交易失败
@@ -174,7 +174,7 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         WechaRefundDTO wechaRefundDTO = new WechaRefundDTO(orderRefund, channel);
-        log.info("=================【WeChant撤销 cancelPaying】=================【请求Channels服务NextPos退款】请求参数 wechaRefundDTO: {} ", JSON.toJSONString(wechaRefundDTO));
+        log.info("=================【WeChant撤销 cancelPaying】=================【请求Channels服务WeChant退款】请求参数 wechaRefundDTO: {} ", JSON.toJSONString(wechaRefundDTO));
         BaseResponse response = channelsFeign.wechatRefund(wechaRefundDTO);
         log.info("=================【WeChant撤销 cancelPaying】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
         if (response.getCode().equals("200")) {
