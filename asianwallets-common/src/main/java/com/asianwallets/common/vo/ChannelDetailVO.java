@@ -24,6 +24,9 @@ public class ChannelDetailVO {
     @ApiModelProperty(value = "通道中文名称")
     private String channelCnName;
 
+    @ApiModelProperty(value = "通道服务名称表示")
+    private String serviceNameMark;
+
     @ApiModelProperty(value = "通道图片")
     private String channelImg;
 

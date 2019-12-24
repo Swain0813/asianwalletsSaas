@@ -176,6 +176,7 @@
                ch.notify_browser_url        as notifyBrowserUrl,
                ch.channel_code              as channelCode,
                ch.only_today_order_refund   as onlyTodayOrderRefund,
+               ch.service_name_mark         as serviceNameMark,
                ch.extend1,
                ch.extend2,
                ch.extend3,
@@ -236,6 +237,7 @@
         <result column="channel_refund_min_rate" property="channelRefundMinRate" jdbcType="DECIMAL"/>
         <result column="channel_refund_max_rate" property="channelRefundMaxRate" jdbcType="DECIMAL"/>
         <result column="payType" property="payType" jdbcType="VARCHAR"/>
+        <result column="serviceNameMark" property="serviceNameMark" jdbcType="VARCHAR"/>
 
         <result column="payUrl" property="payUrl" jdbcType="VARCHAR"/>
         <result column="notifyServerUrl" property="notifyServerUrl" jdbcType="VARCHAR"/>
