@@ -241,20 +241,10 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
 //                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
 //                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
 //                    }
-                    //更新成功,上报清结算
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     //上报清结算资金变动接口
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
-                        //请求成功
-                        FundChangeVO fundChangeVO = (FundChangeVO) fundChangeResponse.getData();
-                        if (!fundChangeVO.getRespCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                            //业务处理失败
-                            log.info("=================【AD3线下回调接口信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                        }
-                    } else {
+                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
                         log.info("=================【AD3线下回调接口信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
                         RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                         rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));

@@ -173,6 +173,8 @@ public class TradeConstant {
 
     //亚洲钱包清结算返回成功的场合
     public final static String CLEARING_SUCCESS = "T000";
+    //亚洲钱包清结算返回失败的场合
+    public final static String CLEARING_FAIL = "T001";
 
     //---------------交易限额限次
     public static final String DAILY_TOTAL_AMOUNT = "DAILY_TOTAL_AMOUNT"; //日交易限额redis标记
