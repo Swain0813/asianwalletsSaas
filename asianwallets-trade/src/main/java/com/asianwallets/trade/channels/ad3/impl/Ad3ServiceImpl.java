@@ -447,8 +447,42 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
      **/
     @Override
     public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
-        BaseResponse baseResponse = new BaseResponse();
-        return baseResponse;
+        RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+        if (rabbitMassage == null) {
+            rabbitMassage = rabbitOrderMsg;
+        }
+        BaseResponse response = new BaseResponse();
+        //获取ad3的终端号和token
+        AD3LoginVO ad3LoginVO = this.getTerminalIdAndToken(channel);
+        if (ad3LoginVO == null) {
+            log.info("************退款时 --- 退款操作AD3登录时未获取到终端号和token*****************ad3LoginVO：{}", JSON.toJSON(ad3LoginVO));
+            response.setMsg(EResultEnum.REFUNDING.getCode());
+            return response;
+        }
+
+        //AD3通道订单信息-查询订单接口公共参数实体
+        AD3QuerySingleOrderDTO ad3QuerySingleOrderDTO = new AD3QuerySingleOrderDTO(channel.getChannelMerchantId());//商户号
+        //查询订单接业务共参数实体
+        QueryOneOrderBizContentDTO queryBizContent = new QueryOneOrderBizContentDTO(ad3LoginVO.getTerminalId(), channel.getExtend2(),1, orderRefund.getOrderId(), "");
+        //生成查询签名
+        String querySign = this.createAD3Signature(ad3QuerySingleOrderDTO, queryBizContent, ad3LoginVO.getToken());
+        ad3QuerySingleOrderDTO.setBizContent(queryBizContent);
+        ad3QuerySingleOrderDTO.setSignMsg(querySign);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return response;
     }
 
     /**
