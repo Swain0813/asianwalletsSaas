@@ -39,6 +39,24 @@ public interface SysUserService {
     int updateSysUserByOperation(String username, SysUserRoleDto sysUserRoleDto);
 
     /**
+     * 机构后台新增用户角色,用户权限信息
+     *
+     * @param username       用户名
+     * @param sysUserRoleDto 用户角色输入实体
+     * @return 修改条数
+     */
+    int addSysUserByInstitution(String username, SysUserRoleDto sysUserRoleDto);
+
+    /**
+     * 机构后台修改用户角色,用户权限信息
+     *
+     * @param username       用户名
+     * @param sysUserRoleDto 用户角色输入实体
+     * @return 修改条数
+     */
+    int updateSysUserByInstitution(String username, SysUserRoleDto sysUserRoleDto);
+
+    /**
      * 分页查询用户信息
      *
      * @param sysUserSecDto 角色权限输入实体
@@ -87,4 +105,6 @@ public interface SysUserService {
      * @param institutionDTO
      */
     void openAccountEmail(InstitutionDTO institutionDTO);
+
+
 }

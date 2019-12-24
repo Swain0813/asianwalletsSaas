@@ -46,6 +46,22 @@ public class SysUserController extends BaseController {
         return ResultUtil.success(sysUserService.updateSysUserByOperation(getSysUserVO().getUsername(), sysUserRoleDto));
     }
 
+    @ApiOperation(value = "机构后台添加用户角色,用户权限信息")
+    @PostMapping("/addSysUserByInstitution")
+    public BaseResponse addSysUserByInstitution(@RequestBody @ApiParam SysUserRoleDto sysUserRoleDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysUserRoleDto),
+                "机构后台添加用户角色"));
+        return ResultUtil.success(sysUserService.addSysUserByInstitution(getSysUserVO().getUsername(), sysUserRoleDto));
+    }
+
+    @ApiOperation(value = "机构后台修改用户角色,用户权限信息")
+    @PostMapping("/updateSysUserByInstitution")
+    public BaseResponse updateSysUserByInstitution(@RequestBody @ApiParam SysUserRoleDto sysUserRoleDto) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(sysUserRoleDto),
+                "机构后台修改用户角色"));
+        return ResultUtil.success(sysUserService.updateSysUserByInstitution(getSysUserVO().getUsername(), sysUserRoleDto));
+    }
+
     @ApiOperation(value = "重置密码")
     @GetMapping("/resetPassword")
     public BaseResponse resetPassword(@RequestParam @ApiParam String userId) {
