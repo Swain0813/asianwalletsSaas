@@ -480,7 +480,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setPayerBank(refundDTO.getPayerBank());//付款人银行
         orderRefund.setPayerEmail(refundDTO.getPayerEmail());//付款人邮箱
         orderRefund.setPayerPhone(refundDTO.getPayerPhone());//付款人电话
-        orderRefund.setSwiftCode(refundDTO.getSwiftCode());//Swift Code
+                orderRefund.setSwiftCode(refundDTO.getSwiftCode());//Swift Code
         orderRefund.setChannelRate(null);//通道费率
         orderRefund.setChannelFee(null);
         orderRefund.setChannelFeeType(null);

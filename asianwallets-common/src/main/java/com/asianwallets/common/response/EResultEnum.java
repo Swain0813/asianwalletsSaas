@@ -186,6 +186,7 @@ public enum EResultEnum {
     INFORMATION_DOES_NOT_EXIST("30031"),//信息不存在
     MCC_EXIST("30032"),//mcc已存在
     MCC_DOES_NOT_EXIST("30033"),//mcc不存在
+    DICINFO_CURRENCY_DEFAULT_IS_NULL("30034"),//币种默认值不能为空
     MERCHANT_DOES_NOT_EXIST("30036"),//商户不存在
     SHOP_CODE_EXIST("30037"),//通道店铺编号已存在
     MERCHANT_NOT_BELONG_TO_THE_INSTITUTION("30038"),//该商户不属于此机构
