@@ -1,8 +1,6 @@
 package com.asianwallets.trade.rabbitmq.receive;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
-import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.Channel;
@@ -10,7 +8,6 @@ import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.*;
@@ -43,24 +40,34 @@ public class RefundOrderMQReceive {
 
     @Autowired
     private OrderRefundMapper orderRefundMapper;
+
     @Autowired
     private CommonBusinessService commonBusinessService;
+
     @Autowired
     private MessageFeign messageFeign;
+
     @Autowired
     private ClearingService clearingService;
+
     @Autowired
     private RabbitMQSender rabbitMQSender;
+
     @Autowired
     private CommonRedisDataService commonRedisDataService;
+
     @Autowired
     private ReconciliationMapper reconciliationMapper;
+
     @Autowired
     private HandlerContext handlerContext;
+
     @Autowired
     private OrdersMapper ordersMapper;
+
     @Autowired
     private TcsCtFlowMapper tcsCtFlowMapper;
+
     @Autowired
     private TcsStFlowMapper tcsStFlowMapper;
 
@@ -263,7 +270,5 @@ public class RefundOrderMQReceive {
             messageFeign.sendSimple(developerMobile, "退款上请求上游失败 TK_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
             messageFeign.sendSimpleMail(developerEmail, "退款上请求上游失败 TK_SB_FAIL_DL 预警", "RA_AA_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
         }
-
-
     }
 }
