@@ -34,7 +34,7 @@
 
     <select id="pageGetSysRole" resultMap="BaseResultMap">
         select
-        id,create_time,update_time,remark,creator,modifier,role_name,role_code,description,enabled,sort
+        id,sys_id,create_time,update_time,remark,creator,modifier,role_name,role_code,description,enabled,sort
         from sys_role
         <where>
             <if test="roleName != null and roleName != ''">
