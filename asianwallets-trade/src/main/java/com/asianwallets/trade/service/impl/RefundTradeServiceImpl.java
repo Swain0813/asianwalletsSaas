@@ -517,9 +517,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setChannelGatewayFeeType(null);
         orderRefund.setChannelGatewayStatus(null);
         orderRefund.setCreateTime(new Date());//创建时间
-        orderRefund.setUpdateTime(new Date());//修改时间
-        orderRefund.setCreator(refundDTO.getModifier());//创建人
-        orderRefund.setModifier(refundDTO.getModifier());//修改人
+        orderRefund.setCreator(refundDTO.getModifier()==null?refundDTO.getOperatorId():refundDTO.getModifier());//创建人
+        orderRefund.setUpdateTime(null);//修改时间
+        orderRefund.setModifier(null);//修改人
         return orderRefund;
     }
 
