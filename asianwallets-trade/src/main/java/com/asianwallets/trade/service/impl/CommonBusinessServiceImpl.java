@@ -8,8 +8,8 @@ import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
-import com.asianwallets.common.entity.*;
 import com.asianwallets.common.entity.Currency;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
@@ -262,6 +262,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             orders.setOrderForTradeRate(BigDecimal.ONE);
             orders.setTradeForOrderRate(BigDecimal.ONE);
             orders.setExchangeRate(BigDecimal.ONE);
+            orders.setExchangeStatus(TradeConstant.SWAP_SUCCESS);
             orders.setExchangeTime(new Date());
             return;
         }
