@@ -125,8 +125,8 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
                 exchangeRate = exchangeRateMapper.selectByLocalCurrencyAndForeignCurrency(localCurrency, foreignCurrency);
                 if (exchangeRate == null) {
                     log.info("==================【根据本币与外币获取汇率对象】==================【汇率对象不存在】 localCurrency: {} | foreignCurrency: {}", localCurrency, foreignCurrency);
-                    //汇率信息不存在
-                    throw new BusinessException(EResultEnum.EXCHANGERATE_IS_NOT_EXIST.getCode());
+                    //外面调用此方法的自己在外面判断
+                    return null;
                 }
                 redisService.set(AsianWalletConstant.EXCHANGERATE_CACHE_KEY.concat("_").concat(localCurrency).concat("_").concat(foreignCurrency), JSON.toJSONString(exchangeRate));
             }
