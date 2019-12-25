@@ -19,6 +19,9 @@ public class AccountListVO{
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 
+    @ApiModelProperty(value = "商户类型")//3普通商户 4代理商户 5集团商户
+    private String merchantType;
+
     //@ApiModelProperty(value = "账户编号")
     private String accountCode;
 

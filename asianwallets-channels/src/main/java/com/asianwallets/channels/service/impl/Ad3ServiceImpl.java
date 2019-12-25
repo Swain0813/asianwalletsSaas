@@ -169,6 +169,16 @@ public class Ad3ServiceImpl implements Ad3Service {
         return baseResponse;
     }
 
+    /**
+     * AD3线下BSC
+     *
+     * @param ad3CSBScanPayDTO AD3线下BSC输入实体
+     * @return BaseResponse
+     */
+    @Override
+    public BaseResponse offlineBsc(AD3BSCScanPayDTO ad3CSBScanPayDTO) {
+        return null;
+    }
 
     /**
      * @return
@@ -290,10 +300,10 @@ public class Ad3ServiceImpl implements Ad3Service {
             //业务失败
             baseResponse.setCode("T001");
             return baseResponse;
-        }else{
-                //查询成功
-                baseResponse.setCode("T000");
-                baseResponse.setData(ad3OrdersVO);
+        } else {
+            //查询成功
+            baseResponse.setCode("T000");
+            baseResponse.setData(ad3OrdersVO);
         }
         return baseResponse;
     }

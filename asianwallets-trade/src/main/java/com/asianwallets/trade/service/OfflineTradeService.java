@@ -36,7 +36,7 @@ public interface OfflineTradeService {
     BscDynamicScanVO bscDynamicScan(OfflineTradeDTO offlineTradeDTO);
 
     /**
-     * 线下查询订单列表
+     * 线下查询订单列表【对外API】
      *
      * @param offlineCheckOrdersDTO 查询订单输入实体
      * @return 订单集合

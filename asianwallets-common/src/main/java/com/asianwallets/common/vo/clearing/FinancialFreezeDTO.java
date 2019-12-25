@@ -1,46 +1,73 @@
 package com.asianwallets.common.vo.clearing;
-
 import com.asianwallets.common.entity.OrderRefund;
 import lombok.Data;
-
 import java.io.Serializable;
 
 /**
-* @Package :com.cbpay.bean.pojo.CSAPI
-* @ClassName:CSFrozenFundsRequest
-* @Author :admin
-* @Date:2018年7月24日 下午1:51:42
-* @Desc:清结算系统资金冻结/解冻请求实体类
-*/
+ * 清结算系统资金冻结/解冻请求实体类
+ */
 @Data
 public class FinancialFreezeDTO implements Serializable{
    private static final long serialVersionUID = 1L;
 
+   /**
+    * 系统编号
+    */
+   private String id;
 
-   private String id;//系统编号
+   /**
+    * 商户号
+    */
+   private String merchantId;
 
-   private String merchantId;//商户号
+   /**
+    * 商户订单号
+    */
+   private String merOrderNo;
 
-   private String merOrderNo;//商户订单号
+   /**
+    * 交易币种
+    */
+   private String txncurrency;
 
-   private String txncurrency;//交易币种
+   /**
+    * 交易金额
+    */
+   private double txnamount;
 
-   private double txnamount;//交易金额
+   /**
+    * 状态：1加冻结，2解冻结
+    */
+   private int state;
 
+   /**
+    * 备注(state=1的时候表示加冻结描述，state=2的时候表示解冻结描述)
+    */
+   private String desc;
 
-   private int state;//状态：1加冻结，2解冻结
+   /**
+    * 签名信息
+    */
+   private String signMsg;
 
-   private String desc;//备注(state=1的时候表示加冻结描述，state=2的时候表示解冻结描述)
+   /**
+    * 应答code
+    */
+   private String respCode;
 
-   private String signMsg;//签名信息
-
-   private String respCode;//应答code
-
-   private String respMsg;//应答消息
+   /**
+    * 应答消息
+    */
+   private String respMsg;
 
    public FinancialFreezeDTO() {
    }
 
+   /**
+    *退款用
+    * @param state
+    * @param orderRefund
+    */
    public FinancialFreezeDTO(int state, OrderRefund orderRefund) {
       this.merchantId = orderRefund.getMerchantId();
       this.merOrderNo = orderRefund.getId();

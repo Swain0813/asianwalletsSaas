@@ -2,6 +2,7 @@ package com.asianwallets.channels.controller;
 
 import com.asianwallets.channels.service.Ad3Service;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.dto.ad3.AD3BSCScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3ONOFFRefundDTO;
 import com.asianwallets.common.dto.ad3.AD3OnlineAcquireDTO;
@@ -27,6 +28,12 @@ public class Ad3Controller extends BaseController {
     @PostMapping("/offlineCsb")
     public BaseResponse offlineCsb(@RequestBody @ApiParam AD3CSBScanPayDTO ad3CSBScanPayDTO) {
         return ad3Service.offlineCsb(ad3CSBScanPayDTO);
+    }
+
+    @ApiOperation(value = "AD3线下BSC接口")
+    @PostMapping("/offlineBsc")
+    public BaseResponse offlineBsc(@RequestBody @ApiParam AD3BSCScanPayDTO ad3CSBScanPayDTO) {
+        return ad3Service.offlineBsc(ad3CSBScanPayDTO);
     }
 
     @ApiOperation(value = "AD3线下退款接口")
