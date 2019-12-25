@@ -1,13 +1,10 @@
 package com.asianwallets.common.vo.clearing;
-
-import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.utils.DateToolUtils;
 import lombok.Data;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -21,6 +18,7 @@ public class FundChangeDTO implements Serializable {
 
     //商户号
     public String merchantid;
+
     //清结算类型，1：清算，2结算
     public int isclear;
 
@@ -28,38 +26,55 @@ public class FundChangeDTO implements Serializable {
      * 参考流水号，所属业务表,eg:退款表记录flow,提款表记录flow
      */
     public String refcnceFlow;
+
     //交易类型
     public String tradetype;
+
     //商户订单号
     public String merOrderNo;
+
     //交易币种
     public String txncurrency;
+
     //交易金额
     public Double txnamount;
+
     //交易描述
     public String txndesc;
+
     //交易汇率
     public double txnexrate;
+
     //备注
     public String remark;
+
     //结算金额
     public double sltamount;
+
     //结算币种
     public String sltcurrency;
+
     //手续费币种
     public String feecurrency;
+
     //退还手续费币种
     public String refundOrderFeeCurrency;
+
     //退还手续费
     public double refundOrderFee;
+
     //通道成本币种
     public String channelCostcurrency;
+
     //交易状态手续费
     public double gatewayFee;
+
     //清算状态
     public int state;
+
     //应该清算时间
     public String shouldDealtime;
+
     //实际清算时间
     public Date actualCTtime;
 
@@ -85,10 +100,13 @@ public class FundChangeDTO implements Serializable {
      * 1：正常资金，2：冻结资金
      */
     public int balancetype;
+
     //签名信息
     public String signMsg;
+
     //应答code
     public String respCode;
+
     //应答消息
     public String respMsg;
 
@@ -99,7 +117,6 @@ public class FundChangeDTO implements Serializable {
 
     /**
      * 退款用
-     *
      * @param tradetype
      * @param orderRefund
      */
@@ -171,16 +188,15 @@ public class FundChangeDTO implements Serializable {
         //退还手续费币种
         this.refundOrderFeeCurrency = orderRefund.getOrderCurrency();
         //通道成本 2位
-        this.channelCost = 0.00;
+        this.channelCost = orderRefund.getChannelFee().doubleValue();
+        this.channelCostcurrency = orderRefund.getTradeCurrency();
         this.shouldDealtime = orderRefund.getProductSettleCycle();
     }
 
     /**
-     * @return
-     * @Author YangXu
-     * @Date 2019/12/20
-     * @Descripate 调账
-     **/
+     * 调账用
+     * @param reconciliation
+     */
     public FundChangeDTO(Reconciliation reconciliation) {
         this.merchantid = reconciliation.getMerchantId();
         this.refcnceFlow = reconciliation.getId();
@@ -218,7 +234,7 @@ public class FundChangeDTO implements Serializable {
         this.remark = "";
         //结算币种
         this.sltcurrency = reconciliation.getCurrency();
-
+        this.txnexrate = 1;
         //网关手续费
         this.gatewayFee = 0.00;
         //手续费,2位
@@ -231,21 +247,18 @@ public class FundChangeDTO implements Serializable {
         this.refundOrderFeeCurrency = reconciliation.getCurrency();
         //通道成本 2位
         this.channelCost = 0.00;
+        this.channelCostcurrency =reconciliation.getCurrency();
         this.shouldDealtime = DateToolUtils.formatTimestamp.format(new Date());
 
 
     }
 
     /**
-     * 根据订单信息调用清结算的资金变动接口
      * 收单用
-     *
      * @param orders
      * @param tradeType
      */
     public FundChangeDTO(Orders orders, String tradeType) {
-//        this.inputCharset = AD3Constant.CHARSET_UTF_8;//编码
-//        this.language = AD3Constant.LANGUAGE_CN;//语言
         //商户号
         this.merchantid = orders.getMerchantId();
         //是否清算

@@ -1,6 +1,5 @@
 package com.asianwallets.trade.service.impl;
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -91,10 +90,6 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     public String generateSignatureUsePlatRSA(Object obj) {
         Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
         Attestation attestation = commonRedisDataService.getAttestationByMerchantId(map.get("merchantId"));
-        if (attestation == null) {
-            log.info("===============【使用机构对应平台的私钥生成签名】===============【密钥不存在】");
-            return null;
-        }
         String clearText = SignTools.getSignStr(map);
         log.info("===============【使用机构对应平台的私钥生成签名】==============【签名前的明文】 clearText:{}", clearText);
         byte[] msg = clearText.getBytes();
@@ -118,10 +113,6 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     public String generateSignatureUsePlatMD5(Object obj) {
         Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
         Attestation attestation = commonRedisDataService.getAttestationByMerchantId(map.get("merchantId"));
-        if (attestation == null) {
-            log.info("===============【使用机构对应平台的MD5生成签名】===============【密钥不存在】");
-            return null;
-        }
         map.put("sign", null);
         String clearText = SignTools.getSignStr(map) + attestation.getMd5key();
         log.info("===============【使用机构对应平台的MD5生成签名】==============【签名前的明文】 clearText:{}", clearText);
@@ -142,10 +133,6 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             //将对象转换成Map
             Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
             Attestation attestation = commonRedisDataService.getAttestationByMerchantId(map.get("merchantId"));
-            if (attestation == null) {
-                log.info("===============【校验MD5签名】===============【密钥不存在】");
-                return false;
-            }
             //取出签名字段
             String sign = map.get("sign");
             map.put("sign", null);
@@ -178,10 +165,6 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             throw new BusinessException(EResultEnum.SIGNATURE_CANNOT_BE_EMPTY.getCode());
         }
         Attestation attestation = commonRedisDataService.getAttestationByMerchantId((map.get("merchantId")));
-        if (attestation == null) {
-            log.info("===============【通用签名校验方法】===============【密钥不存在】");
-            return false;
-        }
         if (signType.equals(TradeConstant.RSA)) {
             Base64.Decoder decoder = Base64.getDecoder();
             byte[] signMsg = decoder.decode(sign);
@@ -330,14 +313,11 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      *
      * @param orderCurrency 订单币种
      * @param orderAmount   订单金额
+     * @param currency      币种
      * @return 布尔值
      */
     @Override
-    public boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount) {
-        Currency currency = commonRedisDataService.getCurrencyByCode(orderCurrency);
-        if (currency == null) {
-            throw new BusinessException(EResultEnum.PRODUCT_CURRENCY_NO_SUPPORT.getCode());
-        }
+    public boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount, Currency currency) {
         return new StringBuilder(currency.getDefaults()).reverse().indexOf(".") >= new StringBuilder(String.valueOf(orderAmount)).reverse().indexOf(".");
     }
 
@@ -411,6 +391,23 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                 }
             }
         }*/
+    }
+
+    /**
+     * 截取币种默认值
+     *
+     * @param orders   订单
+     * @param currency 币种
+     */
+    @Override
+    public void interceptDigit(Orders orders, Currency currency) {
+        int bitPos = currency.getDefaults().indexOf(".");
+        int numOfBits = 0;
+        if (bitPos != -1) {
+            numOfBits = currency.getDefaults().length() - bitPos - 1;
+        }
+        //交易金额
+        orders.setTradeAmount((orders.getTradeAmount().setScale(numOfBits, BigDecimal.ROUND_HALF_UP)));
     }
 
     /**

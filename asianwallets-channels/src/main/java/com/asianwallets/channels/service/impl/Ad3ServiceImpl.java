@@ -18,10 +18,7 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.HttpResponse;
 import com.asianwallets.common.utils.*;
-import com.asianwallets.common.vo.AD3CSBScanVO;
-import com.asianwallets.common.vo.AD3LoginVO;
-import com.asianwallets.common.vo.AD3RefundOrderVO;
-import com.asianwallets.common.vo.RefundAdResponseVO;
+import com.asianwallets.common.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -171,12 +168,75 @@ public class Ad3ServiceImpl implements Ad3Service {
     /**
      * AD3线下BSC
      *
-     * @param ad3CSBScanPayDTO AD3线下BSC输入实体
+     * @param ad3BSCScanPayDTO AD3线下BSC输入实体
      * @return BaseResponse
      */
     @Override
-    public BaseResponse offlineBsc(AD3BSCScanPayDTO ad3CSBScanPayDTO) {
-        return null;
+    public BaseResponse offlineBsc(AD3BSCScanPayDTO ad3BSCScanPayDTO) {
+        log.info("=================【AD3线下BSC】=================【请求参数】 ad3BSCScanPayDTO: {}", JSON.toJSONString(ad3BSCScanPayDTO));
+        BaseResponse baseResponse = new BaseResponse();
+        try {
+            Orders orders = ad3BSCScanPayDTO.getOrders();
+            ChannelsOrder channelsOrder = new ChannelsOrder();
+            channelsOrder.setId(ad3BSCScanPayDTO.getBizContent().getMerOrderNo());
+            channelsOrder.setMerchantOrderId(orders.getMerchantOrderId());
+            channelsOrder.setTradeCurrency(orders.getTradeCurrency());
+            channelsOrder.setTradeAmount(new BigDecimal(ad3BSCScanPayDTO.getBizContent().getMerorderAmount()));
+            channelsOrder.setReqIp(orders.getReqIp());
+            channelsOrder.setServerUrl(ad3BSCScanPayDTO.getBizContent().getReceiveUrl());
+            channelsOrder.setTradeStatus(TradeConstant.TRADE_WAIT);
+            channelsOrder.setIssuerId(ad3BSCScanPayDTO.getBizContent().getIssuerId());
+            channelsOrder.setOrderType(AD3Constant.TRADE_ORDER);
+            channelsOrder.setMd5KeyStr(ad3BSCScanPayDTO.getChannel().getMd5KeyStr());
+            channelsOrder.setPayerPhone(orders.getPayerPhone());
+            channelsOrder.setPayerName(orders.getPayerName());
+            channelsOrder.setPayerBank(orders.getPayerBank());
+            channelsOrder.setPayerEmail(orders.getPayerEmail());
+            channelsOrder.setCreateTime(new Date());
+            channelsOrder.setCreator(orders.getCreator());
+            channelsOrderMapper.insert(channelsOrder);
+            //获取AD3的终端号和Token
+            AD3LoginVO ad3LoginVO = offlineLogin(ad3BSCScanPayDTO.getChannel());
+            if (ad3LoginVO == null || StringUtils.isEmpty(ad3LoginVO.getToken())) {
+                log.info("=================【AD3线下BSC】=================【AD3登陆接口异常】");
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                return baseResponse;
+            }
+            String payUrl = ad3BSCScanPayDTO.getChannel().getPayUrl();
+            ad3BSCScanPayDTO.getBizContent().setTerminalId(ad3LoginVO.getTerminalId());
+            BSCScanBizContentDTO bizContent = ad3BSCScanPayDTO.getBizContent();
+            ad3BSCScanPayDTO.setBizContent(null);
+            ad3BSCScanPayDTO.setOrders(null);
+            ad3BSCScanPayDTO.setChannel(null);
+            //生成签名
+            String sign = createSign(ad3BSCScanPayDTO, bizContent, ad3LoginVO.getToken());
+            ad3BSCScanPayDTO.setSignMsg(sign);
+            ad3BSCScanPayDTO.setBizContent(bizContent);
+            HttpResponse httpResponse = HttpClientUtils.reqPost(payUrl, ad3BSCScanPayDTO, null);
+            if (httpResponse.getJsonObject() == null || !httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
+                log.info("=================【AD3线下BSC】=================【接口响应结果错误】");
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                return baseResponse;
+            }
+            AD3BSCScanVO ad3BSCScanVO = httpResponse.getJsonObject().toJavaObject(AD3BSCScanVO.class);
+            log.info("=================【AD3线下BSC】=================【接口响应参数】 ad3BSCScanVO: {}", JSON.toJSONString(ad3BSCScanVO));
+            if (ad3BSCScanVO == null) {
+                log.info("=================【AD3线下BSC】=================【业务响应结果错误】");
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                return baseResponse;
+            }
+            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+            baseResponse.setData(ad3BSCScanVO);
+        } catch (Exception e) {
+            log.info("=================【AD3线下BSC】=================【接口异常】", e);
+            baseResponse.setCode(TradeConstant.HTTP_FAIL);
+            baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+        }
+        return baseResponse;
     }
 
     /**
@@ -195,7 +255,7 @@ public class Ad3ServiceImpl implements Ad3Service {
         log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}", JSON.toJSONString(httpResponse));
         if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
             AD3RefundOrderVO ad3RefundOrderVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3RefundOrderVO.class);
-            if (ad3RefundOrderVO.getRespCode() != null && ad3RefundOrderVO.getRespCode().equals(AD3Constant.AD3_OFFLINE_SUCCESS)) {
+            if (ad3RefundOrderVO.getRespCode() != null && AD3Constant.AD3_OFFLINE_SUCCESS.equals(ad3RefundOrderVO.getRespCode())) {
                 baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
                 baseResponse.setMsg(AD3Constant.AD3_ONLINE_SUCCESS);
                 baseResponse.setData(ad3RefundOrderVO);
@@ -229,7 +289,7 @@ public class Ad3ServiceImpl implements Ad3Service {
         if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
             //请求成功
             RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(httpResponse.getJsonObject().toJSONString(), RefundAdResponseVO.class);
-            if (refundAdResponseVO != null && refundAdResponseVO.getStatus().equals("1")) {
+            if (refundAdResponseVO != null &&"1".equals(refundAdResponseVO.getStatus())) {
                 baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
                 baseResponse.setMsg(AD3Constant.AD3_ONLINE_SUCCESS);
                 baseResponse.setData(refundAdResponseVO);

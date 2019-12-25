@@ -129,12 +129,13 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     private BaseResponse directConnection(OnlineTradeDTO onlineTradeDTO) {
         //信息落地
         log.info("---------------【线上直连收单输入实体】---------------OnlineTradeDTO:{}", JSON.toJSONString(onlineTradeDTO));
+        Currency currency = commonRedisDataService.getCurrencyByCode(onlineTradeDTO.getOrderCurrency());
         //检查订单
-        checkOnlineOrders(onlineTradeDTO);
+        checkOnlineOrders(onlineTradeDTO, currency);
         //检查商户信息
         Merchant merchant = checkMerchant(onlineTradeDTO);
         //检查机构信息
-        Institution institution = checkInstitution(merchant);
+        Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
         //可选参数校验
         InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_ONLINE);
         checkRequestParameters(onlineTradeDTO, institutionRequestParameters);
@@ -153,6 +154,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         commonBusinessService.swapRateByPayment(basicInfoVO, orders);
         //校验商户产品与通道的限额
         commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //截取币种默认值
+        commonBusinessService.interceptDigit(orders, currency);
         //计算手续费
         commonBusinessService.calculateCost(basicInfoVO, orders);
         orders.setReportChannelTime(new Date());
@@ -186,24 +189,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
     }
 
-    /**
-     * 检查机构信息
-     *
-     * @param merchant 商户
-     * @return Institution
-     */
-    private Institution checkInstitution(Merchant merchant) {
-        Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
-        if (institution == null) {
-            log.info("-----------------【线上直连】下单信息记录--------------【机构不存在】");
-            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
-        }
-        if (!institution.getEnabled()) {
-            log.info("-----------------【线上直连】下单信息记录--------------【机构被禁用】");
-            throw new BusinessException(EResultEnum.INSTITUTION_DOES_NOT_EXIST.getCode());
-        }
-        return institution;
-    }
 
     /**
      * 检查商户信息
@@ -225,7 +210,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         return merchant;
     }
 
-    private void checkOnlineOrders(OnlineTradeDTO onlineTradeDTO) {
+    private void checkOnlineOrders(OnlineTradeDTO onlineTradeDTO, Currency currency) {
         //重复请求
         if (!commonBusinessService.repeatedRequests(onlineTradeDTO.getMerchantId(), onlineTradeDTO.getOrderNo())) {
             log.info("-----------------【线上直连】下单信息记录--------------【重复请求】");
@@ -243,7 +228,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             throw new BusinessException(EResultEnum.INSTITUTION_ORDER_ID_EXIST.getCode());
         }*/
         //检查币种默认值
-        if (!commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount())) {
+        if (!commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount(), currency)) {
             log.info("-----------------【线上直连】下单信息记录--------------【订单金额不符合的当前币种默认值】");
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
@@ -354,16 +339,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             }
             //产品
             Product product = commonRedisDataService.getProductByCode(onlineInfoDetailVO.getProductCode());
-            if (!product.getEnabled()) {
-                log.info("-----------------【线上获取基础信息】----------------- 产品被禁用");
-                throw new BusinessException(EResultEnum.PRODUCT_STATUS_ABNORMAL.getCode());
-            }
             //商户产品
             MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchantId, product.getId());
-            if (!merchantProduct.getEnabled()) {
-                log.info("-----------------【线上获取基础信息】----------------- 商户产品被禁用");
-                throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_IS_DISABLED.getCode());
-            }
             basicInfoVO.setBankName(onlineInfoDetailVO.getBankName());
             basicInfoVO.setChannel(channel);
             basicInfoVO.setProduct(product);

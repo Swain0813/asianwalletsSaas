@@ -1,12 +1,7 @@
 package com.asianwallets.trade.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
-import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.response.HttpResponse;
-import com.asianwallets.common.utils.HttpClientUtils;
 import com.asianwallets.common.utils.MD5Util;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.utils.SignTools;
@@ -18,8 +13,6 @@ import com.asianwallets.trade.service.ClearingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +28,7 @@ public class ClearingServiceImpl implements ClearingService {
 
     @Autowired
     private ClearingFeign clearingFeign;
+
     @Autowired
     private TcsSysConstMapper tcsSysConstMapper;
 
@@ -48,9 +42,9 @@ public class ClearingServiceImpl implements ClearingService {
     public BaseResponse fundChange(FundChangeDTO fundChangeDTO) {
         log.info("------------  上报清结算 资金变动接口 ------------ fundChangeDTO : {} ", JSON.toJSON(fundChangeDTO));
         BaseResponse baseResponse = new BaseResponse();
-        fundChangeDTO.setSignMsg(createSignature(fundChangeDTO));
-        //比如亚洲钱包清结算系统没有启动或者没有响应的场合
         try {
+            //调用资金变动接口的签名
+            fundChangeDTO.setSignMsg(createSignature(fundChangeDTO));
             FundChangeDTO fundChangeVO = clearingFeign.intoAndOutMerhtAccount(fundChangeDTO);
             log.info("------------ 上报清结算 资金变动接口 返回 ------------ fundChangeVO : {} ", JSON.toJSON(fundChangeVO));
             if (fundChangeVO != null && "T000".equals(fundChangeVO.getRespCode())) {
@@ -61,6 +55,7 @@ public class ClearingServiceImpl implements ClearingService {
                 baseResponse.setCode("T001");
             }
         } catch (Exception e) {
+            log.info("************资金变动接口发生异常**************",e.getMessage());
             baseResponse.setCode("T001");
         }
         log.info("------------  上报清结算 返回 fundChange ------------ BaseResponse : {}", JSON.toJSON(baseResponse));
@@ -76,9 +71,9 @@ public class ClearingServiceImpl implements ClearingService {
     public BaseResponse freezingFunds(FinancialFreezeDTO financialFreezeDTO) {
         log.info("------------ 上报清结算 资金冻结接口 ------------ financialFreezeDTO : {} ", JSON.toJSON(financialFreezeDTO));
         BaseResponse baseResponse = new BaseResponse();
-        financialFreezeDTO.setSignMsg(createSignature(financialFreezeDTO));
-
         try {
+            //调用资金冻结接口生成签名
+            financialFreezeDTO.setSignMsg(createSignature(financialFreezeDTO));
             FinancialFreezeDTO financialFreezeVO = clearingFeign.CSFrozenFunds(financialFreezeDTO);
             log.info("------------ 上报清结算 资金冻结接口 返回 ------------ financialFreezeVO : {} ", JSON.toJSON(financialFreezeVO));
             if (financialFreezeVO != null && "T000".equals(financialFreezeVO.getRespCode())) {
@@ -89,6 +84,7 @@ public class ClearingServiceImpl implements ClearingService {
                 baseResponse.setCode("T001");
             }
         }catch (Exception e){
+            log.info("*************资金冻结接口发生异常**************",e.getMessage());
             baseResponse.setCode("T001");
         }
         log.info("------------ 交易项目 上报清结算 返回 fundChange ------------ BaseResponse : {}", JSON.toJSON(baseResponse));
@@ -110,7 +106,7 @@ public class ClearingServiceImpl implements ClearingService {
         }
         //密文字符串拼装处理
         String str = SignTools.getSignStr(paramMap);
-        String md5Key = tcsSysConstMapper.getCSAPI_MD5Key();
+        String md5Key = tcsSysConstMapper.selectUrlByKey(AsianWalletConstant.CSAPI_MD5KEY);
         String signature = MD5Util.getMD5String(md5Key + str).toLowerCase();
         log.info("*******************交易项目 生成清结算接口签名: ****************", signature);
         return signature;

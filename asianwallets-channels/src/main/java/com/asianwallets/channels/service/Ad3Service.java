@@ -20,10 +20,10 @@ public interface Ad3Service {
     /**
      * AD3线下BSC
      *
-     * @param ad3CSBScanPayDTO   AD3线下BSC输入实体
+     * @param ad3BSCScanPayDTO   AD3线下BSC输入实体
      * @return BaseResponse
      */
-    BaseResponse offlineBsc(AD3BSCScanPayDTO ad3CSBScanPayDTO);
+    BaseResponse offlineBsc(AD3BSCScanPayDTO ad3BSCScanPayDTO);
 
 
     /**

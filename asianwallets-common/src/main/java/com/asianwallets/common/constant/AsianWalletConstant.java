@@ -45,17 +45,11 @@ public class AsianWalletConstant {
     //币种类型dic_code的默认值
     public static final String CURRENCY_CODE = "dic_2";//币种
 
-    //支付方式dic_code的默认值
-    public static final String PAY_METHOD_CODE = "dic_3";//支付方式
-
     //结算周期dic_code的默认值
     public static final String SETTLEMENT_CODE = "dic_4";//结算周期
 
     //节假日批量上传数目限制值
     public static final int UPLOAD_LIMIT = 300;
-
-    //币种默认值
-    public static final String CURRENCY_DEFAULT = "currencyDefault";
 
     //导出excel
     //注释信息
@@ -84,14 +78,8 @@ public class AsianWalletConstant {
     // productCacheKey_dic_3_3_USD_1        key+支付方式+币种+交易方向
     public static final String PRODUCT_CACHE_TYPE_KEY = "productTypeCacheKey";//产品表的缓存key
 
-    // institutionProductCacheKey_fce0ebc7afd64224b2357b993be95dbf_ca05e0cb1791433386824cd1c603fe76          key+机构id+产品id
-    public static final String INSTITUTIONPRODUCT_CACHE_KEY = "institutionProductCacheKey";//机构产品中间表的缓存key
-
     // institutionProductCacheKey_fce0ebc7afd64224b2357b993be95dbf_ca05e0cb1791433386824cd1c603fe76          key+商户id+产品id
     public static final String MERCHANTPRODUCT_CACHE_KEY = "merchantProductCacheKey";//商户产品中间表的缓存key
-
-    // institutionChannelCacheKey_242e7c2f738f4ebd9a6f91399bdeafef          key+机构产品ID
-    public static final String INSTITUTIONCHANNEL_CACHE_KEY = "institutionChannelCacheKey";//机构通道中间表的缓存key
 
     // institutionChannelCacheKey_242e7c2f738f4ebd9a6f91399bdeafef          key+商户产品ID
     public static final String MERCHANTCHANNEL_CACHE_KEY = "merchantChannelCacheKey";//商户通道中间表的缓存key
@@ -107,9 +95,6 @@ public class AsianWalletConstant {
     //通道银行缓存Key
     public static final String CHANNEL_BANK_CACHE_KEY = "channelBankCacheKey";
 
-    //银行机构映射缓存key
-    public static final String BANK_ISSUER_ID_CACHE_KEY = "bankIssuerIdCacheKey";
-
     public static final String EXCHANGERATE_CACHE_KEY = "exchangeRateCacheKey";//汇率表的缓存key
 
     public static final String ATTESTATION_CACHE_KEY = "attestationCacheKey";//秘钥管理表的缓存key
@@ -124,12 +109,6 @@ public class AsianWalletConstant {
 
 
     //清结算接口url的key值
-    public static final String CSAPI_URL_FROZENFUNDSJSON = "CSAPI_URL_FrozenFundsJSON";//冻结资金接口
-
-    public static final String CSAPI_URL_INTOACCOUNTJSON = "CSAPI_URL_IntoAccountJSON";//账户变动接口
-
-    public static final String CSAPI_URL_TRANSFERACCOUNTJSON = "CSAPI_URL_TransferAccountJSON";//转账接口
-
     public static final String CSAPI_MD5KEY = "CSAPI_MD5key";//MD5 key
 
     //调账类型
