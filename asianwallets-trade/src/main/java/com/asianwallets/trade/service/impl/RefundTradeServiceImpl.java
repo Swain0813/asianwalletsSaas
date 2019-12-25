@@ -262,13 +262,14 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
                     orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);
                     orderRefund.setRemark("人工退款上报清结算成功");
+                    baseResponse.setCode(EResultEnum.REFUNDING.getCode());//人工退款失败
                 } else {//请求失败
                     orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
                     orderRefund.setRemark("人工退款上报清结算失败");
+                    baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());//人工退款失败
                 }
                 //人工退款失败的场合更新退款单表的信息
                 orderRefundMapper.updaterefundOrder(orderRefund.getId(), orderRefund.getRefundStatus(), orderRefund.getRemark());
-                baseResponse.setCode(EResultEnum.REFUNDING.getCode());//人工退款失败
                 return baseResponse;
             }
 
