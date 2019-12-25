@@ -37,7 +37,6 @@ import java.util.Date;
  **/
 @Slf4j
 @Service
-@Transactional
 public class RefundTradeServiceImpl implements RefundTradeService {
 
     @Autowired
@@ -87,10 +86,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         //返回结果
         BaseResponse baseResponse = new BaseResponse();
         //签名校验
-        if (!commonBusinessService.checkUniversalSign(refundDTO)) {
-            log.info("=========================【退款 refundOrder】=========================【签名错误】");
-            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
-        }
+        //if (!commonBusinessService.checkUniversalSign(refundDTO)) {
+        //    log.info("=========================【退款 refundOrder】=========================【签名错误】");
+        //    throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
+        //}
         /**************************************************** 查询原订单 *************************************************/
         Orders oldOrder = ordersMapper.selectByMerchantOrderId(refundDTO.getOrderNo());
         if (oldOrder == null) {
