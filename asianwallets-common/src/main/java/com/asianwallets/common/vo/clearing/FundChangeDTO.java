@@ -233,7 +233,7 @@ public class FundChangeDTO implements Serializable {
         this.remark = "";
         //结算币种
         this.sltcurrency = reconciliation.getCurrency();
-
+        this.txnexrate = 1;
         //网关手续费
         this.gatewayFee = 0.00;
         //手续费,2位
@@ -246,6 +246,7 @@ public class FundChangeDTO implements Serializable {
         this.refundOrderFeeCurrency = reconciliation.getCurrency();
         //通道成本 2位
         this.channelCost = 0.00;
+        this.channelCostcurrency =reconciliation.getCurrency();
         this.shouldDealtime = DateToolUtils.formatTimestamp.format(new Date());
 
 
