@@ -39,9 +39,11 @@ public class AD3BSCScanPayDTO {
     public AD3BSCScanPayDTO() {
     }
 
-    public AD3BSCScanPayDTO(String merchantId) {
+    public AD3BSCScanPayDTO(Orders orders, Channel channel) {
         this.inputCharset = AD3Constant.CHARSET_UTF_8;//编码
         this.language = AD3Constant.LANGUAGE_CN;//语言
-        this.merchantId = merchantId;//商户号
+        this.merchantId = channel.getChannelMerchantId();//商户号
+        this.orders = orders;
+        this.channel = channel;
     }
 }

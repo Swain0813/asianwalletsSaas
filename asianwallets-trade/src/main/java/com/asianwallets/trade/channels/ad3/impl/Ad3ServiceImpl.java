@@ -320,7 +320,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     @Override
     public BaseResponse offlineBSC(Orders orders, Channel channel, String authCode) {
         //BSC请求二维码接口公共参数实体
-        AD3BSCScanPayDTO ad3BSCScanPayDTO = new AD3BSCScanPayDTO(channel.getChannelMerchantId());
+        AD3BSCScanPayDTO ad3BSCScanPayDTO = new AD3BSCScanPayDTO(orders, channel);
         //BSC支付接口业务参数实体
         BSCScanBizContentDTO bscScanBizContentDTO = new BSCScanBizContentDTO(orders, authCode, channel);
         ad3BSCScanPayDTO.setBizContent(bscScanBizContentDTO);
@@ -328,7 +328,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         BaseResponse channelResponse = channelsFeign.ad3OfflineBsc(ad3BSCScanPayDTO);
         log.info("==================【线下BSC动态扫码】==================【调用Channels服务】【AD3线下BSC接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
         if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
-            log.info("==================【线下CSB动态扫码】==================【Channels服务响应结果不正确】");
+            log.info("==================【线下BSC动态扫码】==================【Channels服务响应结果不正确】");
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         AD3BSCScanVO ad3BSCScanVO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), AD3BSCScanVO.class);
