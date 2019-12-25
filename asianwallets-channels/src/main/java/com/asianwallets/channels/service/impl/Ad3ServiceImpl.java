@@ -230,7 +230,7 @@ public class Ad3ServiceImpl implements Ad3Service {
         if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
             //请求成功
             RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(httpResponse.getJsonObject().toJSONString(), RefundAdResponseVO.class);
-            if (refundAdResponseVO != null && refundAdResponseVO.getStatus().equals("1")) {
+            if (refundAdResponseVO != null &&"1".equals(refundAdResponseVO.getStatus())) {
                 baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
                 baseResponse.setMsg(AD3Constant.AD3_ONLINE_SUCCESS);
                 baseResponse.setData(refundAdResponseVO);
