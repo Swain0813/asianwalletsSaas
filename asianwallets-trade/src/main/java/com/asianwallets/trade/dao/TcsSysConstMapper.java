@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 public interface TcsSysConstMapper extends BaseMapper<TcsSysConst> {
 
 
-    @Select("select t.value from tcs_sys_const t where t.key = 'CSAPI_MD5key'")
-    String getCSAPI_MD5Key();
+    @Select("select value from tcs_sys_const where `key` = #{key}")
+    String selectUrlByKey(String key);
 
 }

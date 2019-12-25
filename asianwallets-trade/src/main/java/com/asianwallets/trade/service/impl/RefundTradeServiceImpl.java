@@ -1,7 +1,6 @@
 package com.asianwallets.trade.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.config.AuditorProvider;
-import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
@@ -38,7 +37,6 @@ import java.util.Date;
  **/
 @Slf4j
 @Service
-@Transactional
 public class RefundTradeServiceImpl implements RefundTradeService {
 
     @Autowired
@@ -85,15 +83,13 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      **/
     @Override
     public BaseResponse refundOrder(RefundDTO refundDTO, String reqIp) {
-
+        //返回结果
         BaseResponse baseResponse = new BaseResponse();
         //签名校验
-        if (!commonBusinessService.checkUniversalSign(refundDTO)) {
-            log.info("=========================【退款 refundOrder】=========================【签名错误】");
-            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
-        }
-
-
+        //if (!commonBusinessService.checkUniversalSign(refundDTO)) {
+        //    log.info("=========================【退款 refundOrder】=========================【签名错误】");
+        //    throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
+        //}
         /**************************************************** 查询原订单 *************************************************/
         Orders oldOrder = ordersMapper.selectByMerchantOrderId(refundDTO.getOrderNo());
         if (oldOrder == null) {
@@ -103,23 +99,17 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         Channel channel = commonRedisDataService.getChannelByChannelCode(oldOrder.getChannelCode());
         log.info("=========================【退款 refundOrder】========================= Channel:【{}】", JSON.toJSONString(channel));
-
-
         /********************************* 判断通道是否支持退款 线下不支持退款直接拒绝*************************************************/
         if (TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection()) && !channel.getSupportRefundState()) {
             log.info("=========================【退款 refundOrder】=========================【通道线下不支持退款】");
             throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
         }
-
-
         /**************************************** 原订单撤销成功和撤销中不能退款 *************************************************/
         if (TradeConstant.ORDER_CANNELING.equals(oldOrder.getCancelStatus()) || TradeConstant.ORDER_CANNEL_SUCCESS.equals(oldOrder.getCancelStatus())) {
             //撤销的单子不能退款--该交易已撤销
             log.info("=========================【退款 refundOrder】=========================【该交易已撤销】");
             throw new BusinessException(EResultEnum.REFUND_CANCEL_ERROR.getCode());
         }
-
-
         /******************************************** 判断通道是否仅限当天退款 *************************************************/
         String channelCallbackTime = oldOrder.getChannelCallbackTime() == null ? DateToolUtils.getReqDate(oldOrder.getCreateTime()) : DateToolUtils.getReqDate(oldOrder.getChannelCallbackTime());
         String today = DateToolUtils.getReqDate();
@@ -128,7 +118,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
             }
         }
-
         /*****************************************************  校验退款单参数 判断退款类型 *****************************************************/
         Merchant merchant = commonRedisDataService.getMerchantById(refundDTO.getMerchantId());
         //已退款金额
@@ -137,7 +126,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         String type = this.checkRefundDTO(merchant, refundDTO, oldOrder, oldRefundAmount);
 
         /***************************************************************  创建退款单  *************************************************************/
-        OrderRefund orderRefund = this.creatOrderRefundSys(refundDTO, oldOrder);
+        OrderRefund orderRefund = this.createOrderRefund(refundDTO, oldOrder);
         orderRefund.setReqIp(reqIp);
         BigDecimal newRefundAmount = oldRefundAmount.add(refundDTO.getRefundAmount());
         if (newRefundAmount.compareTo(oldOrder.getOrderAmount()) == -1) {
@@ -469,13 +458,13 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     }
 
     /**
-     * 后台和机构退款设置属性值
+     * 创建退款订单
      *
      * @param refundDTO
      * @param oldOrder
      * @return
      */
-    public OrderRefund creatOrderRefundSys(RefundDTO refundDTO, Orders oldOrder) {
+    public OrderRefund createOrderRefund(RefundDTO refundDTO, Orders oldOrder) {
         OrderRefund orderRefund = new OrderRefund();
         BeanUtils.copyProperties(oldOrder, orderRefund);
         orderRefund.setLanguage(auditorProvider.getLanguage());//语言
@@ -507,6 +496,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setPayerBank(refundDTO.getPayerBank());//付款人银行
         orderRefund.setPayerEmail(refundDTO.getPayerEmail());//付款人邮箱
         orderRefund.setPayerPhone(refundDTO.getPayerPhone());//付款人电话
+        orderRefund.setSwiftCode(refundDTO.getSwiftCode());//Swift Code
         orderRefund.setChannelRate(null);//通道费率
         orderRefund.setChannelFee(null);
         orderRefund.setChannelFeeType(null);
@@ -526,9 +516,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setChannelGatewayFeeType(null);
         orderRefund.setChannelGatewayStatus(null);
         orderRefund.setCreateTime(new Date());//创建时间
-        orderRefund.setUpdateTime(new Date());//修改时间
-        orderRefund.setCreator(refundDTO.getModifier());//创建人
-        orderRefund.setModifier(refundDTO.getModifier());//修改人
+        orderRefund.setCreator(refundDTO.getModifier()==null?refundDTO.getOperatorId():refundDTO.getModifier());//创建人
+        orderRefund.setUpdateTime(null);//修改时间
+        orderRefund.setModifier(null);//修改人
         return orderRefund;
     }
 

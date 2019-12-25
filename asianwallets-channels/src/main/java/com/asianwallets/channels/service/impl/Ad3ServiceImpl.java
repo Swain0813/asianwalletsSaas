@@ -169,6 +169,16 @@ public class Ad3ServiceImpl implements Ad3Service {
         return baseResponse;
     }
 
+    /**
+     * AD3线下BSC
+     *
+     * @param ad3CSBScanPayDTO AD3线下BSC输入实体
+     * @return BaseResponse
+     */
+    @Override
+    public BaseResponse offlineBsc(AD3BSCScanPayDTO ad3CSBScanPayDTO) {
+        return null;
+    }
 
     /**
      * @return
@@ -186,7 +196,7 @@ public class Ad3ServiceImpl implements Ad3Service {
         log.info("===========================【AD3线下退款接口】结束时间 =========================== httpResponse:{}", JSON.toJSONString(httpResponse));
         if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
             AD3RefundOrderVO ad3RefundOrderVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3RefundOrderVO.class);
-            if (ad3RefundOrderVO.getRespCode() != null && ad3RefundOrderVO.getRespCode().equals(AD3Constant.AD3_OFFLINE_SUCCESS)) {
+            if (ad3RefundOrderVO.getRespCode() != null && AD3Constant.AD3_OFFLINE_SUCCESS.equals(ad3RefundOrderVO.getRespCode())) {
                 baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
                 baseResponse.setMsg(AD3Constant.AD3_ONLINE_SUCCESS);
                 baseResponse.setData(ad3RefundOrderVO);
@@ -220,7 +230,7 @@ public class Ad3ServiceImpl implements Ad3Service {
         if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
             //请求成功
             RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(httpResponse.getJsonObject().toJSONString(), RefundAdResponseVO.class);
-            if (refundAdResponseVO != null && refundAdResponseVO.getStatus().equals("1")) {
+            if (refundAdResponseVO != null &&"1".equals(refundAdResponseVO.getStatus())) {
                 baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
                 baseResponse.setMsg(AD3Constant.AD3_ONLINE_SUCCESS);
                 baseResponse.setData(refundAdResponseVO);
@@ -290,10 +300,10 @@ public class Ad3ServiceImpl implements Ad3Service {
             //业务失败
             baseResponse.setCode("T001");
             return baseResponse;
-        }else{
-                //查询成功
-                baseResponse.setCode("T000");
-                baseResponse.setData(ad3OrdersVO);
+        } else {
+            //查询成功
+            baseResponse.setCode("T000");
+            baseResponse.setData(ad3OrdersVO);
         }
         return baseResponse;
     }
