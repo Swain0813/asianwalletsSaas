@@ -24,4 +24,10 @@
         select cb.id as chabankId , ch.sort as sort from channel_bank cb ,channel ch
         where cb.channel_id = #{channelId} and cb.bank_id = #{bankId} and cb.channel_id = ch.id
     </select>
+
+    <select id="selectByChannelId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from channel_bank where channel_id = #{channelId}
+    </select>
 </mapper>
