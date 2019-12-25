@@ -265,8 +265,8 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(type, orderRefund);
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
-                    orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
-                    orderRefund.setRemark("后台系统和机构系统退款订单接口上报清结算失败");
+                    orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);
+                    orderRefund.setRemark("后台系统和机构系统退款订单接口上报清结算成功");
                 } else {//请求失败
                     orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
                     orderRefund.setRemark("后台系统和机构系统退款订单接口上报清结算失败");
