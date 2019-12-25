@@ -111,7 +111,8 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             throw new BusinessException(EResultEnum.REFUND_CANCEL_ERROR.getCode());
         }
         /******************************************** 判断通道是否仅限当天退款 *************************************************/
-        String channelCallbackTime = oldOrder.getChannelCallbackTime() == null ? DateToolUtils.getReqDate(oldOrder.getCreateTime()) : DateToolUtils.getReqDate(oldOrder.getChannelCallbackTime());
+        String channelCallbackTime = oldOrder.getChannelCallbackTime() == null ? DateToolUtils.getReqDate(oldOrder.getCreateTime())
+                :DateToolUtils.getReqDate(oldOrder.getChannelCallbackTime());
         String today = DateToolUtils.getReqDate();
         if (channel.getOnlyTodayOrderRefund()) {
             if (!channelCallbackTime.equals(today)) {
@@ -168,7 +169,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setRefundOrderFee(refundOrderFee);
         //退还收单手续费 交易币种的收单手续费
         orderRefund.setRefundOrderFeeTrade(refundOrderFeeTrade);
-        log.info("=========================【退款 refundOrder】========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{},退还收单手续费金额(交易):{},退款类型:{}******", channel.getRefundingIsReturnFee(), refundOrderFee, refundOrderFeeTrade, refundDTO.getRefundType());
+        log.info("=========================【退款 refundOrder】========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{}," +
+                        "退还收单手续费金额(交易):{},退款类型:{}******", channel.getRefundingIsReturnFee(),
+                refundOrderFee, refundOrderFeeTrade, refundDTO.getRefundType());
         /***************************************************************  计算退款手续费  *************************************************************/
         //退款手续费
         BigDecimal poundage = BigDecimal.ZERO;
@@ -197,6 +200,8 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 //手续费=单笔定额值
                 poundage = merchantProduct.getRefundRate();
             }
+            //退款手续费交易币种 四舍五入保留2位
+            poundage =poundage.setScale(2, BigDecimal.ROUND_HALF_UP);
             //设置退款手续费交易币种
             orderRefund.setRefundFeeTrade(poundage);
             //转为订单币种费率
@@ -208,7 +213,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setRefundRateType(merchantProduct.getRefundRateType());
         //退款费率
         orderRefund.setRefundRate(merchantProduct.getRefundRate());
-
         log.info("=========================【退款 refundOrder】========================= 退款是否收费:{},退款手续费金额:{},费率类型:{}******", merchantProduct.getRefundDefault(), poundage, merchantProduct.getRefundRateType());
 
         /***************************************************************  判断账户余额  *************************************************************/
