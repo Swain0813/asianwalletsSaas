@@ -1,4 +1,5 @@
 package com.asianwallets.trade.service.impl;
+
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -309,11 +311,11 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      *
      * @param orderCurrency 订单币种
      * @param orderAmount   订单金额
+     * @param currency      币种
      * @return 布尔值
      */
     @Override
-    public boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount) {
-        Currency currency = commonRedisDataService.getCurrencyByCode(orderCurrency);
+    public boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount, Currency currency) {
         return new StringBuilder(currency.getDefaults()).reverse().indexOf(".") >= new StringBuilder(String.valueOf(orderAmount)).reverse().indexOf(".");
     }
 
@@ -387,6 +389,23 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                 }
             }
         }*/
+    }
+
+    /**
+     * 截取币种默认值
+     *
+     * @param orders   订单
+     * @param currency 币种
+     */
+    @Override
+    public void interceptDigit(Orders orders, Currency currency) {
+        int bitPos = currency.getDefaults().indexOf(".");
+        int numOfBits = 0;
+        if (bitPos != -1) {
+            numOfBits = currency.getDefaults().length() - bitPos - 1;
+        }
+        //交易金额
+        orders.setTradeAmount((orders.getTradeAmount().setScale(numOfBits, BigDecimal.ROUND_HALF_UP)));
     }
 
     /**

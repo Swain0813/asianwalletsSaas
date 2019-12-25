@@ -127,8 +127,9 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     private OnlineTradeVO directConnection(OnlineTradeDTO onlineTradeDTO) {
         //信息落地
         log.info("---------------【线上直连收单输入实体】---------------OnlineTradeDTO:{}", JSON.toJSONString(onlineTradeDTO));
+        Currency currency = commonRedisDataService.getCurrencyByCode(onlineTradeDTO.getOrderCurrency());
         //检查订单
-        checkOnlineOrders(onlineTradeDTO);
+        checkOnlineOrders(onlineTradeDTO, currency);
         //检查商户信息
         Merchant merchant = checkMerchant(onlineTradeDTO);
         //检查机构信息
@@ -151,6 +152,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         commonBusinessService.swapRateByPayment(basicInfoVO, orders);
         //校验商户产品与通道的限额
         commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //截取币种默认值
+        commonBusinessService.interceptDigit(orders, currency);
         //计算手续费
         commonBusinessService.calculateCost(basicInfoVO, orders);
         orders.setReportChannelTime(new Date());
@@ -192,7 +195,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         return merchant;
     }
 
-    private void checkOnlineOrders(OnlineTradeDTO onlineTradeDTO) {
+    private void checkOnlineOrders(OnlineTradeDTO onlineTradeDTO, Currency currency) {
         //重复请求
         if (!commonBusinessService.repeatedRequests(onlineTradeDTO.getMerchantId(), onlineTradeDTO.getOrderNo())) {
             log.info("-----------------【线上直连】下单信息记录--------------【重复请求】");
@@ -210,7 +213,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             throw new BusinessException(EResultEnum.INSTITUTION_ORDER_ID_EXIST.getCode());
         }
         //检查币种默认值
-        if (!commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount())) {
+        if (!commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount(), currency)) {
             log.info("-----------------【线上直连】下单信息记录--------------【订单金额不符合的当前币种默认值】");
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
