@@ -127,7 +127,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         String type = this.checkRefundDTO(merchant, refundDTO, oldOrder, oldRefundAmount);
 
         /***************************************************************  创建退款单  *************************************************************/
-        OrderRefund orderRefund = this.creatOrderRefundSys(refundDTO, oldOrder);
+        OrderRefund orderRefund = this.createOrderRefund(refundDTO, oldOrder);
         orderRefund.setReqIp(reqIp);
         BigDecimal newRefundAmount = oldRefundAmount.add(refundDTO.getRefundAmount());
         if (newRefundAmount.compareTo(oldOrder.getOrderAmount()) == -1) {
@@ -465,7 +465,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      * @param oldOrder
      * @return
      */
-    public OrderRefund creatOrderRefundSys(RefundDTO refundDTO, Orders oldOrder) {
+    public OrderRefund createOrderRefund(RefundDTO refundDTO, Orders oldOrder) {
         OrderRefund orderRefund = new OrderRefund();
         BeanUtils.copyProperties(oldOrder, orderRefund);
         orderRefund.setLanguage(auditorProvider.getLanguage());//语言
@@ -497,6 +497,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setPayerBank(refundDTO.getPayerBank());//付款人银行
         orderRefund.setPayerEmail(refundDTO.getPayerEmail());//付款人邮箱
         orderRefund.setPayerPhone(refundDTO.getPayerPhone());//付款人电话
+        orderRefund.setSwiftCode(refundDTO.getSwiftCode());//Swift Code
         orderRefund.setChannelRate(null);//通道费率
         orderRefund.setChannelFee(null);
         orderRefund.setChannelFeeType(null);
