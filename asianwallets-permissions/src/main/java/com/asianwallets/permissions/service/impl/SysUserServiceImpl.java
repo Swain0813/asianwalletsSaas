@@ -380,7 +380,9 @@ public class SysUserServiceImpl implements SysUserService {
                 if (!StringUtils.isEmpty(sysUserSecVO.getSysId())) {
                     sysUserSecVO.setUsername(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
                     sysUserSecVO.setCreator(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
-                    sysUserSecVO.setModifier(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
+                    if (!StringUtils.isEmpty(sysUserSecVO.getModifier())) {
+                        sysUserSecVO.setModifier(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
+                    }
                 }
             }
         }
