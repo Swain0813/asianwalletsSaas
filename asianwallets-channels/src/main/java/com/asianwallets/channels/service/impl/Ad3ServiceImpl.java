@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.Ad3Service;
 import com.asianwallets.common.constant.AD3Constant;
-import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.ad3.*;
@@ -257,8 +256,8 @@ public class Ad3ServiceImpl implements Ad3Service {
         BaseResponse response = new BaseResponse();
         String url = ad3OnlineAcquireDTO.getUrl();
         ad3OnlineAcquireDTO.setUrl(null);
-//        JSONObject.fromObject(this).toString()
-        System.out.println(ad3OnlineAcquireDTO);
+        //AD3差错打印代码
+        //System.out.println(ad3OnlineAcquireDTO);
         cn.hutool.http.HttpResponse execute = HttpRequest.post(url)
                 .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                 .form(BeanToMapUtil.beanToMap(ad3OnlineAcquireDTO))
@@ -313,3 +312,7 @@ public class Ad3ServiceImpl implements Ad3Service {
         return baseResponse;
     }
 }
+
+
+
+

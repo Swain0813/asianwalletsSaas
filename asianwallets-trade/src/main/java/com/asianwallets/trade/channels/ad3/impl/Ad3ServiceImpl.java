@@ -13,7 +13,6 @@ import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
-import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
@@ -21,6 +20,7 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.HttpResponse;
 import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.AD3LoginVO;
+import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.common.vo.RefundAdResponseVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
@@ -35,8 +35,6 @@ import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
-import com.asianwallets.trade.vo.AD3OnlineVO;
-import com.asianwallets.trade.vo.FundChangeVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,24 +117,24 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         String aD3ReturnParameter = (String) channelResponse.getData();
-        AD3OnlineVO ad3OnlineVO = new AD3OnlineVO();
+        OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
         if (aD3ReturnParameter.replaceAll("\\s*", "").matches(".*html.*")) {
             //网银
-            ad3OnlineVO.setRespCode("T000");
-            ad3OnlineVO.setCode_url(aD3ReturnParameter);
-            ad3OnlineVO.setType(TradeConstant.ONLINE_BANKING);
-            channelResponse.setData(ad3OnlineVO);
+            onlineTradeVO.setRespCode("T000");
+            onlineTradeVO.setCode_url(aD3ReturnParameter);
+            onlineTradeVO.setType(TradeConstant.ONLINE_BANKING);
+            channelResponse.setData(onlineTradeVO);
             return channelResponse;
         } else {
             //扫码
-            ad3OnlineVO = JSON.parseObject(aD3ReturnParameter, AD3OnlineVO.class);
-            if (!ad3OnlineVO.getRespCode().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
+            onlineTradeVO = JSON.parseObject(aD3ReturnParameter, OnlineTradeVO.class);
+            if (!onlineTradeVO.getRespCode().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                 channelResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
                 return channelResponse;
             }
-            ad3OnlineVO.setType(channel.getIssuerId().toUpperCase());
-            log.info("------------AD3线上收单通道响应参数------------ad3OnlineVO:{}", JSON.toJSON(ad3OnlineVO));
-            channelResponse.setData(ad3OnlineVO);
+            onlineTradeVO.setType(channel.getIssuerId().toUpperCase());
+            log.info("------------AD3线上收单通道响应参数------------ad3OnlineVO:{}", JSON.toJSONString(onlineTradeVO));
+            channelResponse.setData(onlineTradeVO);
             return channelResponse;
         }
     }
@@ -502,7 +500,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         //AD3通道订单信息-查询订单接口公共参数实体
         AD3QuerySingleOrderDTO ad3QuerySingleOrderDTO = new AD3QuerySingleOrderDTO(channel.getChannelMerchantId());//商户号
         //查询订单接业务共参数实体
-        QueryOneOrderBizContentDTO queryBizContent = new QueryOneOrderBizContentDTO(ad3LoginVO.getTerminalId(), channel.getExtend2(),1, orderRefund.getOrderId(), "");
+        QueryOneOrderBizContentDTO queryBizContent = new QueryOneOrderBizContentDTO(ad3LoginVO.getTerminalId(), channel.getExtend2(), 1, orderRefund.getOrderId(), "");
         //生成查询签名
         String querySign = this.createAD3Signature(ad3QuerySingleOrderDTO, queryBizContent, ad3LoginVO.getToken());
         ad3QuerySingleOrderDTO.setBizContent(queryBizContent);
@@ -516,15 +514,15 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         BaseResponse baseResponse = channelsFeign.query(ad3ONOFFRefundDTO);
         log.info("=================【AD3撤销】=================【Channels服务响应】请求参数 baseResponse: {} ", JSON.toJSONString(baseResponse));
 
-        if(baseResponse.getCode().equals("T000")){
+        if (baseResponse.getCode().equals("T000")) {
             //请求成功
-            AD3OrdersVO ad3OrdersVO = JSON.parseObject(baseResponse.getData().toString(),AD3OrdersVO.class);
+            AD3OrdersVO ad3OrdersVO = JSON.parseObject(baseResponse.getData().toString(), AD3OrdersVO.class);
             if (ad3OrdersVO.getState().equals(AD3Constant.ORDER_SUCCESS)) {
                 //交易成功
                 log.info("=================【AD3撤销】=================【交易成功】orderId : {}", orderRefund.getOrderId());
                 if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS,
-                        ad3OrdersVO.getTxnId(),DateUtil.parse(ad3OrdersVO.getTxnDate(), "yyyyMMddHHmmss")) == 1) {//更新成功
-                    response =  this.cancelPaying(channel, orderRefund, null);
+                        ad3OrdersVO.getTxnId(), DateUtil.parse(ad3OrdersVO.getTxnDate(), "yyyyMMddHHmmss")) == 1) {//更新成功
+                    response = this.cancelPaying(channel, orderRefund, null);
                 } else {//更新失败后去查询订单信息
                     rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
                 }
@@ -534,13 +532,13 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 response.setCode(EResultEnum.REFUNDING.getCode());
                 log.info("=================【AD3撤销】=================【交易中】orderId : {}", orderRefund.getOrderId());
                 rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
-            }else {
+            } else {
                 response.setCode(EResultEnum.REFUND_FAIL.getCode());
                 //支付失败
                 log.info("=================【AD3撤销】=================【支付失败】orderId : {}", orderRefund.getOrderId());
-                ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_FAILD,ad3OrdersVO.getTxnId(), DateUtil.parse(ad3OrdersVO.getTxnDate(), "yyyyMMddHHmmss"));
+                ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_FAILD, ad3OrdersVO.getTxnId(), DateUtil.parse(ad3OrdersVO.getTxnDate(), "yyyyMMddHHmmss"));
             }
-        }else{
+        } else {
             //请求失败
             response.setCode(EResultEnum.REFUNDING.getCode());
             log.info("=================【AD3撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
@@ -581,15 +579,15 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                 response.setCode(EResultEnum.SUCCESS.getCode());
                 //撤销成功
-                log.info("=================【NextPos退款 cancelPaying】=================【撤销成功】orderId : {}",orderRefund.getOrderId());
+                log.info("=================【NextPos退款 cancelPaying】=================【撤销成功】orderId : {}", orderRefund.getOrderId());
                 ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
-            }else {
+            } else {
                 response.setCode(EResultEnum.REFUND_FAIL.getCode());
                 //撤销失败
-                log.info("=================【NextPos退款 cancelPaying】=================【撤销失败】orderId : {}",orderRefund.getOrderId());
+                log.info("=================【NextPos退款 cancelPaying】=================【撤销失败】orderId : {}", orderRefund.getOrderId());
                 ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
             }
-        }else{
+        } else {
             //请求失败
             response.setCode(EResultEnum.REFUNDING.getCode());
             if (rabbitMassage == null) {
@@ -628,7 +626,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         }
         return signMsg;
     }
-
 
 
     /**
