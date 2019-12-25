@@ -82,7 +82,6 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setPassword(BCryptUtils.encode(sysUserRoleDto.getPassword()));
         sysUser.setTradePassword(BCryptUtils.encode(sysUserRoleDto.getTradePassword()));
         sysUser.setLanguage(auditorProvider.getLanguage());
-        sysUser.setUsername(sysUserRoleDto.getUsername());
         sysUser.setPermissionType(sysUserRoleDto.getPermissionType());
         sysUser.setName(sysUserRoleDto.getName());
         sysUser.setEmail(sysUserRoleDto.getEmail());
@@ -145,6 +144,7 @@ public class SysUserServiceImpl implements SysUserService {
         }
         //创建角色
         SysUser sysUser = createSysUser(username, sysUserRoleDto);
+        sysUser.setUsername(sysUserRoleDto.getUsername());
         //分配用户角色,用户权限信息
         allotSysRoleAndSysMenu(username, sysUser, sysUserRoleDto);
         return sysUserMapper.insert(sysUser);
@@ -187,6 +187,7 @@ public class SysUserServiceImpl implements SysUserService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int addSysUserByInstitution(String username, SysUserRoleDto sysUserRoleDto) {
         //判断机构是否存在
         BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(sysUserRoleDto.getSysId());
@@ -206,6 +207,8 @@ public class SysUserServiceImpl implements SysUserService {
         }
         //创建角色
         SysUser sysUser = createSysUser(username, sysUserRoleDto);
+        sysUser.setUsername(sysUserRoleDto.getUsername() + sysUserRoleDto.getSysId());
+        sysUser.setSysId(sysUserRoleDto.getSysId());
         //分配用户角色,用户权限信息
         allotSysRoleAndSysMenu(username, sysUser, sysUserRoleDto);
         return sysUserMapper.insert(sysUser);
@@ -219,6 +222,7 @@ public class SysUserServiceImpl implements SysUserService {
      * @return 修改条数
      */
     @Override
+    @Transactional
     public int updateSysUserByInstitution(String username, SysUserRoleDto sysUserRoleDto) {
         BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(sysUserRoleDto.getSysId());
         Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
@@ -238,6 +242,7 @@ public class SysUserServiceImpl implements SysUserService {
         //修改角色
         BeanUtils.copyProperties(sysUserRoleDto, dbSysUser);
         dbSysUser.setId(sysUserRoleDto.getUserId());
+        dbSysUser.setUsername(sysUserRoleDto.getUsername() + sysUserRoleDto.getSysId());
         dbSysUser.setUpdateTime(new Date());
         dbSysUser.setModifier(username);
         //删除用户角色表中的信息
@@ -356,10 +361,20 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public PageInfo<SysUserSecVO> pageGetSysUser(SysUserDto sysUserDto) {
         List<SysUserSecVO> sysUserList = new ArrayList<>();
+        sysUserDto.setSort("s.create_time");
         if (AsianWalletConstant.OPERATION.equals(sysUserDto.getPermissionType())) {
             //运营系统
-            sysUserDto.setSort("s.create_time");
             sysUserList = sysUserMapper.pageGetSysUserByOperation(sysUserDto);
+        } else {
+            sysUserDto.setUsername(sysUserDto.getUsername() + sysUserDto.getSysId());
+            sysUserList = sysUserMapper.pageGetSysUserByOperation(sysUserDto);
+            for (SysUserSecVO sysUserSecVO : sysUserList) {
+                if (!StringUtils.isEmpty(sysUserSecVO.getSysId())) {
+                    sysUserSecVO.setUsername(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
+                    sysUserSecVO.setCreator(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
+                    sysUserSecVO.setModifier(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
+                }
+            }
         }
         return new PageInfo<>(sysUserList);
     }
