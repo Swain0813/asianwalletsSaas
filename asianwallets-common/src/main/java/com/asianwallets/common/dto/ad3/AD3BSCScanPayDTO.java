@@ -1,6 +1,8 @@
 package com.asianwallets.common.dto.ad3;
 
 import com.asianwallets.common.constant.AD3Constant;
+import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.Orders;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,6 +28,13 @@ public class AD3BSCScanPayDTO {
 
     @ApiModelProperty(value = "签名")
     private String signMsg;
+
+    //以下是非必填参数
+    @ApiModelProperty(value = "通道")
+    private Channel channel;
+
+    @ApiModelProperty(value = "订单")
+    private Orders orders;
 
     public AD3BSCScanPayDTO() {
     }

@@ -81,15 +81,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     public String login(OfflineLoginDTO offlineLoginDTO) {
         log.info("===========【线下登录】==========【请求参数】 offlineLoginDTO: {}", JSON.toJSONString(offlineLoginDTO));
         //校验商户信息
-        Merchant merchant = commonRedisDataService.getMerchantById(offlineLoginDTO.getMerchantId());
-        if (merchant == null) {
-            log.info("===========【线下登录】==========【商户信息不存在】");
-            throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
-        }
-        if (!merchant.getEnabled()) {
-            log.info("===========【线下登录】==========【商户已禁用】");
-            throw new BusinessException(EResultEnum.MERCHANT_IS_DISABLED.getCode());
-        }
+        commonRedisDataService.getMerchantById(offlineLoginDTO.getMerchantId());
         //校验商户绑定设备
         DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(offlineLoginDTO.getMerchantId(), offlineLoginDTO.getImei());
         if (deviceBinding == null) {
@@ -241,55 +233,15 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      */
     private BasicInfoVO getBasicAndCheck(OfflineTradeDTO offlineTradeDTO) {
         Merchant merchant = commonRedisDataService.getMerchantById(offlineTradeDTO.getMerchantId());
-        if (merchant == null) {
-            log.info("==================【线下收单】==================【商户不存在】");
-            throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
-        }
-        if (!merchant.getEnabled()) {
-            log.info("==================【线下收单】==================【商户被禁用】");
-            throw new BusinessException(EResultEnum.MERCHANT_IS_DISABLED.getCode());
-        }
         Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
-        if (institution == null) {
-            log.info("==================【线下收单】==================【机构不存在】");
-            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
-        }
-        if (!institution.getEnabled()) {
-            log.info("==================【线下收单】==================【机构被禁用】");
-            throw new BusinessException(EResultEnum.INSTITUTION_DOES_NOT_EXIST.getCode());
-        }
         InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
-        if (institutionRequestParameters == null) {
-            log.info("==================【线下收单】==================【机构请求参数信息不存在】");
-            throw new BusinessException(EResultEnum.INSTITUTION_REQUEST_DOES_NOT_EXIST.getCode());
-        }
         //校验机构必填请求输入参数
         checkRequestParameters(offlineTradeDTO, institutionRequestParameters);
         //校验输入参数合法性
         checkParamValidity(offlineTradeDTO);
         Product product = commonRedisDataService.getProductByCode(offlineTradeDTO.getProductCode());
-        if (product == null) {
-            log.info("==================【线下收单】==================【产品信息不存在】");
-            throw new BusinessException(EResultEnum.PRODUCT_DOES_NOT_EXIST.getCode());
-        }
-        if (!product.getEnabled()) {
-            log.info("==================【线下收单】==================【产品信息已禁用】");
-            throw new BusinessException(EResultEnum.GET_PRODUCT_INFO_ERROR.getCode());
-        }
         MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchant.getId(), product.getId());
-        if (merchantProduct == null) {
-            log.info("==================【线下收单】==================【商户产品信息不存在】");
-            throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_DOES_NOT_EXIST.getCode());
-        }
-        if (!merchantProduct.getEnabled()) {
-            log.info("==================【线下收单】==================【商户产品信息已禁用】");
-            throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_IS_DISABLED.getCode());
-        }
         List<String> chaBankIdList = commonRedisDataService.getChaBankIdByMerProId(merchantProduct.getId());
-        if (ArrayUtil.isEmpty(chaBankIdList)) {
-            log.info("==================【线下收单】==================【通道银行信息不存在】");
-            throw new BusinessException(EResultEnum.CHANNEL_BANK_DOES_NOT_EXIST.getCode());
-        }
         List<ChannelBank> channelBankList = new ArrayList<>();
         for (String chaBankId : chaBankIdList) {
             ChannelBank channelBank = commonRedisDataService.getChaBankById(chaBankId);
@@ -301,13 +253,11 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         BankIssuerId bankIssuerId = null;
         for (ChannelBank channelBank : channelBankList) {
             channel = commonRedisDataService.getChannelById(channelBank.getChannelId());
-            if (channel != null && channel.getEnabled()) {
-                bankIssuerId = bankIssuerIdMapper.selectByChannelCode(channel.getChannelCode());
-                if (bankIssuerId != null) {
-                    log.info("==================【线下收单】==================【通道】  channel: {}", JSON.toJSONString(channel));
-                    log.info("==================【线下收单】==================【银行机构映射】  bankIssuerId: {}", JSON.toJSONString(bankIssuerId));
-                    break;
-                }
+            bankIssuerId = bankIssuerIdMapper.selectByChannelCode(channel.getChannelCode());
+            if (bankIssuerId != null) {
+                log.info("==================【线下收单】==================【通道】  channel: {}", JSON.toJSONString(channel));
+                log.info("==================【线下收单】==================【银行机构映射】  bankIssuerId: {}", JSON.toJSONString(bankIssuerId));
+                break;
             }
         }
         if (channel == null) {
@@ -357,10 +307,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 //        orders.setSecondMerchantCode("");
         if (!StringUtils.isEmpty(merchant.getAgentId())) {
             Merchant agentMerchant = commonRedisDataService.getMerchantById(merchant.getAgentId());
-            if (agentMerchant != null) {
-                orders.setAgentCode(agentMerchant.getId());
-                orders.setAgentName(agentMerchant.getCnName());
-            }
+            orders.setAgentCode(agentMerchant.getId());
+            orders.setAgentName(agentMerchant.getCnName());
         }
 //        orders.setGroupMerchantCode("");
 //        orders.setGroupMerchantName("");

@@ -191,20 +191,44 @@ public class ChannelServiceImpl implements ChannelService {
         }
         productChannelMapper.insertList(productChannelList);
         //删除通道银行关联关系
-        channelBankMapper.deleteByChannelId(channelDTO.getChannelId());
+//        channelBankMapper.deleteByChannelId(channelDTO.getChannelId());
+//        List<ChannelBank> channelBankList = new ArrayList<>();
+//        for (String bankId : channelDTO.getBankIdList()) {
+//            ChannelBank channelBank = new ChannelBank();
+//            channelBank.setId(IDS.uuid2());
+//            channelBank.setBankId(bankId);
+//            channelBank.setChannelId(channelDTO.getChannelId());
+//            channelBank.setCreator(username);
+//            channelBank.setModifier(username);
+//            channelBank.setCreateTime(new Date());
+//            channelBank.setUpdateTime(new Date());
+//            channelBank.setEnabled(true);
+//            channelBankList.add(channelBank);
+//        }
+        //原数据库银行关联数据
+        List<ChannelBank> originalList = channelBankMapper.selectByChannelId(channelDTO.getChannelId());
+        //需要添加数据
         List<ChannelBank> channelBankList = new ArrayList<>();
         for (String bankId : channelDTO.getBankIdList()) {
-            ChannelBank channelBank = new ChannelBank();
-            channelBank.setId(IDS.uuid2());
-            channelBank.setBankId(bankId);
-            channelBank.setChannelId(channelDTO.getChannelId());
-            channelBank.setCreator(username);
-            channelBank.setModifier(username);
-            channelBank.setCreateTime(new Date());
-            channelBank.setUpdateTime(new Date());
-            channelBank.setEnabled(true);
-            channelBankList.add(channelBank);
+            boolean flag = true;
+            for (ChannelBank channelBank : originalList) {
+                if (bankId.equals(channelBank.getBankId())) {
+                    flag = false;
+                    channelBankList.add(channelBank);
+                }
+            }
+            if (flag) {
+                ChannelBank channelBank = new ChannelBank();
+                channelBank.setId(IDS.uuid2());
+                channelBank.setBankId(bankId);
+                channelBank.setChannelId(channelDTO.getChannelId());
+                channelBank.setCreator(username);
+                channelBank.setEnabled(true);
+                channelBank.setCreateTime(new Date());
+                channelBankList.add(channelBank);
+            }
         }
+        channelBankMapper.deleteByChannelId(channelDTO.getChannelId());
         channelBankMapper.insertList(channelBankList);
         //同步Redis
         redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));

@@ -119,7 +119,7 @@ public class MccChannelFeignServiceImpl implements MccChannelFeignService {
     private Channel checkChannelCode(String code) {
         Channel channel = channelMapper.selectByChannelCode(code);
         if (channel == null) {
-            throw new BusinessException(EResultEnum.CHANNEL_DOES_NOT_EXIST.getCode());
+            throw new BusinessException(EResultEnum.CHANNEL_IS_NOT_EXISTS.getCode());
         }
         return channel;
     }
