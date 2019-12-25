@@ -158,7 +158,7 @@ public enum EResultEnum {
     DICINFO_TYPE_VALUE_NOT_EXIST("30002"),//字典类型不存在
     DICINFO_LANGUAGE_IS_NULL("30003"),//语言不能为空
     REPEATED_ADDITION("30004"),//信息已存在
-    DICINFO_CURRENCY_DEFAULT_IS_NULL("30005"),//币种默认值不能为空
+    INSTITUTION_REQUST_PARA_IS_NOT_EXIST("30005"),//机构请求参数信息不存在
     DICINFO_TYPE_IS_NULL("30006"),//字典信息不能为空
     DICINFO_NAME_IS_NULL("30007"),//字典名称不能为空
     DICINFO_CODE_IS_NULL("30008"),//字典数据识别码不能为空
@@ -187,7 +187,6 @@ public enum EResultEnum {
     INFORMATION_DOES_NOT_EXIST("30031"),//信息不存在
     MCC_EXIST("30032"),//mcc已存在
     MCC_DOES_NOT_EXIST("30033"),//mcc不存在
-    CHANNEL_DOES_NOT_EXIST("30034"),//通道不存在
     INSTITUTION_DOES_NOT_EXIST("30035"),//机构不存在
     MERCHANT_DOES_NOT_EXIST("30036"),//商户不存在
     SHOP_CODE_EXIST("30037"),//通道店铺编号已存在
