@@ -72,9 +72,9 @@ public class BSCScanBizContentDTO {
     public BSCScanBizContentDTO() {
     }
 
-    public BSCScanBizContentDTO(Orders orders, String terminalId, String operatorId, String authCode, Channel channel) {
-        this.terminalId = terminalId;//终端编号
-        this.operatorId = operatorId;//操作员id
+    public BSCScanBizContentDTO(Orders orders, String authCode, Channel channel) {
+        this.terminalId = channel.getExtend1();//终端编号
+        this.operatorId = channel.getExtend2();//操作员id
         this.merOrderNo = orders.getId();//订单id
         this.merorderDatetime = DateToolUtils.toString(new Date(), "yyyyMMddHHmmss");//订单时间
         this.merorderCurrency = orders.getTradeCurrency();//交易币种
