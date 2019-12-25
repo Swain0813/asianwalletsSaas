@@ -133,6 +133,63 @@
         <result column="floatRate" property="floatRate" jdbcType="DECIMAL"/>
     </resultMap>
 
+    <resultMap id="DetailMap" type="com.asianwallets.common.vo.OrdersDetailVO">
+        <result column="orderCreateTime" property="orderCreateTime"/>
+        <result column="merchantOrderId" property="merchantOrderId"/>
+        <result column="orderId" property="orderId"/>
+        <result column="orderCurrency" property="orderCurrency"/>
+        <result column="orderAmount" property="orderAmount"/>
+        <result column="fee" property="fee"/>
+        <result column="addValue" property="addValue"/>
+        <result column="payType" property="payType"/>
+        <result column="reqIp" property="reqIp"/>
+        <result column="imei" property="imei"/>
+        <result column="operatorId" property="operatorId"/>
+        <result column="tradeStatus" property="tradeStatus"/>
+        <result column="ordersRemark" property="ordersRemark"/>
+
+        <result column="exchangeTime" property="exchangeTime"/>
+        <result column="tradeAmount" property="tradeAmount"/>
+        <result column="tradeCurrency" property="tradeCurrency"/>
+        <result column="floatRate" property="floatRate"/>
+        <result column="orderForTradeRate" property="orderForTradeRate"/>
+        <result column="exchangeRate" property="exchangeRate"/>
+        <result column="exchangeStatus" property="exchangeStatus"/>
+        <result column="exchangeRateRemark" property="exchangeRateRemark"/>
+
+        <result column="reportChannelTime" property="reportChannelTime"/>
+        <result column="channelNumber" property="channelNumber"/>
+        <result column="channelName" property="channelName"/>
+        <result column="payerName" property="payerName"/>
+        <result column="payerAccount" property="payerAccount"/>
+        <result column="payerBank" property="payerBank"/>
+        <result column="payerEmail" property="payerEmail"/>
+        <result column="channelCallbackTime" property="channelCallbackTime"/>
+        <result column="channelFee" property="channelFee"/>
+        <result column="channelRemark" property="channelRemark"/>
+
+        <result column="deliveryTime" property="deliveryTime"/>
+        <result column="productName" property="productName"/>
+        <result column="invoiceNo" property="invoiceNo"/>
+        <result column="providerName" property="providerName"/>
+        <result column="deliveryStatus" property="deliveryStatus"/>
+        <result column="remark6" property="logisticsRemark"/>
+
+        <collection javaType="list" property="ordersDetailRefundVOS" resultMap="RefundDetailVO"/>
+    </resultMap>
+    <resultMap id="RefundDetailVO" type="com.asianwallets.common.vo.OrdersDetailRefundVO">
+        <result column="orderRefundCreateTime" property="orderRefundCreateTime"/>
+        <result column="orderRefundId" property="orderRefundId"/>
+        <result column="orderRefundAmount" property="orderRefundAmount"/>
+        <result column="refundExchangeRate" property="refundExchangeRate"/>
+        <result column="refundChannelAmount" property="refundChannelAmount"/>
+        <result column="refundTradeCurrency" property="refundTradeCurrency"/>
+        <result column="refundStatus" property="refundStatus"/>
+        <result column="refundFinishTime" property="refundFinishTime"/>
+        <result column="refundFee" property="refundFee"/>
+        <result column="refundRemark" property="refundRemark"/>
+    </resultMap>
+
     <select id="selectByImei" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -310,7 +367,7 @@
         </where>
     </select>
 
-    <select id="selectOrdersDetailById" resultType="com.asianwallets.common.vo.OrdersDetailVO">
+    <select id="selectOrdersDetailById" resultMap="DetailMap">
         SELECT o.create_time                         as orderCreateTime,
                o.merchant_order_id                   as merchantOrderId,
                o.id                                  as orderId,
