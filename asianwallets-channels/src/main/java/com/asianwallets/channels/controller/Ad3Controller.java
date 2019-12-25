@@ -32,8 +32,8 @@ public class Ad3Controller extends BaseController {
 
     @ApiOperation(value = "AD3线下BSC接口")
     @PostMapping("/offlineBsc")
-    public BaseResponse offlineBsc(@RequestBody @ApiParam AD3BSCScanPayDTO ad3CSBScanPayDTO) {
-        return ad3Service.offlineBsc(ad3CSBScanPayDTO);
+    public BaseResponse offlineBsc(@RequestBody @ApiParam AD3BSCScanPayDTO ad3BSCScanPayDTO) {
+        return ad3Service.offlineBsc(ad3BSCScanPayDTO);
     }
 
     @ApiOperation(value = "AD3线下退款接口")
