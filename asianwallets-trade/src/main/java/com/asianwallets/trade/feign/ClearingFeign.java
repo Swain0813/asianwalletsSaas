@@ -1,5 +1,4 @@
 package com.asianwallets.trade.feign;
-
 import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.feign.impl.ClearingFeignImpl;

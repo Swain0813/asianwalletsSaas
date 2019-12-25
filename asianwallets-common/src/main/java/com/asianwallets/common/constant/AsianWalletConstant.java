@@ -124,12 +124,6 @@ public class AsianWalletConstant {
 
 
     //清结算接口url的key值
-    public static final String CSAPI_URL_FROZENFUNDSJSON = "CSAPI_URL_FrozenFundsJSON";//冻结资金接口
-
-    public static final String CSAPI_URL_INTOACCOUNTJSON = "CSAPI_URL_IntoAccountJSON";//账户变动接口
-
-    public static final String CSAPI_URL_TRANSFERACCOUNTJSON = "CSAPI_URL_TransferAccountJSON";//转账接口
-
     public static final String CSAPI_MD5KEY = "CSAPI_MD5key";//MD5 key
 
     //调账类型
