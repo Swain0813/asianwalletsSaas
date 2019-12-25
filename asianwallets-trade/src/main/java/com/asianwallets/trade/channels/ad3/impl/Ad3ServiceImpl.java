@@ -434,7 +434,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
                     //改原订单状态
                     commonBusinessService.updateOrderRefundSuccess(orderRefund);
-                } else if (response.getCode().equals("T001")) {
+                } else if (response.getMsg().equals("T001")) {
                     //退款失败
                     baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                     String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;

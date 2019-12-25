@@ -55,6 +55,9 @@ public class RefundDTO {
     @ApiModelProperty(value = "付款人电话")
     private String payerPhone;
 
+    @ApiModelProperty(value = "Swift Code")
+    private String swiftCode;
+
     @NotNull(message = "50002")
     @ApiModelProperty(value = "签名")
     private String sign;

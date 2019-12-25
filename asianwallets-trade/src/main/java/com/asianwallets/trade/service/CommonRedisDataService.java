@@ -5,20 +5,19 @@ import com.asianwallets.common.entity.*;
 import java.util.List;
 
 /**
- * 通用获取数据接口
+ * 从redis里通用获取数据接口
  */
 public interface CommonRedisDataService {
 
     /**
-     * 根据币种编码获取币种
-     *
-     * @param code 币种编码
-     * @return 币种
+     * 根据币种编码获取币种信息
+     * @param code
+     * @return
      */
     Currency getCurrencyByCode(String code);
 
     /**
-     * 根据商户ID获取密钥对象
+     * 根据商户编号获取密钥对象
      *
      * @param merchantId 商户ID
      * @return 密钥

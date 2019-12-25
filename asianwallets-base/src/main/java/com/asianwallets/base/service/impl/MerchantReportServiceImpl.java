@@ -59,7 +59,7 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         //判断机构 商户 通道 是否存在
         Institution institution = institutionMapper.selectByPrimaryKey(merchantReportDTO.getInstitutionId());
         if (institution == null) {
-            throw new BusinessException(EResultEnum.INSTITUTION_DOES_NOT_EXIST.getCode());
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
         }
         Channel channel = channelMapper.selectByChannelCode(merchantReportDTO.getChannelCode());
         if (channel == null) {

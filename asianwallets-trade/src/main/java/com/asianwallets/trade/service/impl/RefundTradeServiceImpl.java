@@ -37,7 +37,6 @@ import java.util.Date;
  **/
 @Slf4j
 @Service
-@Transactional
 public class RefundTradeServiceImpl implements RefundTradeService {
 
     @Autowired
@@ -87,10 +86,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         //返回结果
         BaseResponse baseResponse = new BaseResponse();
         //签名校验
-        if (!commonBusinessService.checkUniversalSign(refundDTO)) {
-            log.info("=========================【退款 refundOrder】=========================【签名错误】");
-            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
-        }
+        //if (!commonBusinessService.checkUniversalSign(refundDTO)) {
+        //    log.info("=========================【退款 refundOrder】=========================【签名错误】");
+        //    throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
+        //}
         /**************************************************** 查询原订单 *************************************************/
         Orders oldOrder = ordersMapper.selectByMerchantOrderId(refundDTO.getOrderNo());
         if (oldOrder == null) {
@@ -119,7 +118,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
             }
         }
-
         /*****************************************************  校验退款单参数 判断退款类型 *****************************************************/
         Merchant merchant = commonRedisDataService.getMerchantById(refundDTO.getMerchantId());
         //已退款金额
@@ -128,7 +126,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         String type = this.checkRefundDTO(merchant, refundDTO, oldOrder, oldRefundAmount);
 
         /***************************************************************  创建退款单  *************************************************************/
-        OrderRefund orderRefund = this.creatOrderRefundSys(refundDTO, oldOrder);
+        OrderRefund orderRefund = this.createOrderRefund(refundDTO, oldOrder);
         orderRefund.setReqIp(reqIp);
         BigDecimal newRefundAmount = oldRefundAmount.add(refundDTO.getRefundAmount());
         if (newRefundAmount.compareTo(oldOrder.getOrderAmount()) == -1) {
@@ -466,7 +464,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      * @param oldOrder
      * @return
      */
-    public OrderRefund creatOrderRefundSys(RefundDTO refundDTO, Orders oldOrder) {
+    public OrderRefund createOrderRefund(RefundDTO refundDTO, Orders oldOrder) {
         OrderRefund orderRefund = new OrderRefund();
         BeanUtils.copyProperties(oldOrder, orderRefund);
         orderRefund.setLanguage(auditorProvider.getLanguage());//语言
@@ -498,6 +496,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setPayerBank(refundDTO.getPayerBank());//付款人银行
         orderRefund.setPayerEmail(refundDTO.getPayerEmail());//付款人邮箱
         orderRefund.setPayerPhone(refundDTO.getPayerPhone());//付款人电话
+        orderRefund.setSwiftCode(refundDTO.getSwiftCode());//Swift Code
         orderRefund.setChannelRate(null);//通道费率
         orderRefund.setChannelFee(null);
         orderRefund.setChannelFeeType(null);
@@ -517,9 +516,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setChannelGatewayFeeType(null);
         orderRefund.setChannelGatewayStatus(null);
         orderRefund.setCreateTime(new Date());//创建时间
-        orderRefund.setUpdateTime(new Date());//修改时间
-        orderRefund.setCreator(refundDTO.getModifier());//创建人
-        orderRefund.setModifier(refundDTO.getModifier());//修改人
+        orderRefund.setCreator(refundDTO.getModifier()==null?refundDTO.getOperatorId():refundDTO.getModifier());//创建人
+        orderRefund.setUpdateTime(null);//修改时间
+        orderRefund.setModifier(null);//修改人
         return orderRefund;
     }
 
