@@ -5,7 +5,7 @@ import com.asianwallets.common.entity.*;
 import java.util.List;
 
 /**
- * 通用获取数据接口
+ * 从redis里通用获取数据接口
  */
 public interface CommonRedisDataService {
 
