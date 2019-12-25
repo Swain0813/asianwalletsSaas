@@ -20,9 +20,11 @@ import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OnlineGatewayService;
 import com.asianwallets.trade.utils.HandlerContext;
 import com.asianwallets.trade.utils.SettleDateUtil;
+import com.asianwallets.trade.vo.AD3OnlineVO;
 import com.asianwallets.trade.vo.BasicInfoVO;
 import com.asianwallets.trade.vo.OnlineInfoDetailVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -163,7 +165,19 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
             BaseResponse baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
-            onlineTradeVO.setCode_url(String.valueOf(baseResponse.getData()));
+            //间联
+            if (!StringUtils.isEmpty(baseResponse.getData()) && TradeConstant.INDIRECTCONNECTION.equals(orders.getConnectMethod())) {
+                AD3OnlineVO ad3OnlineVO = (AD3OnlineVO) baseResponse.getData();
+                if (!StringUtils.isEmpty(ad3OnlineVO.getRespCode())) {
+
+                    BeanUtils.copyProperties(ad3OnlineVO, onlineTradeVO);
+                    onlineTradeVO.setTradeAmount(orders.getTradeAmount());
+                    onlineTradeVO.setTradeCurrency(orders.getTradeCurrency());
+                    return onlineTradeVO;
+                }
+            }
+//            return baseResponse;
+//            onlineTradeVO.setCode_url(String.valueOf(baseResponse.getData()));
         } catch (Exception e) {
             log.info("==================【线上直连】==================【上报通道异常】", e);
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
@@ -221,12 +235,12 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             log.info("-----------------【线上直连】下单信息记录--------------【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }*/
-        //查询订单号是否重复
+       /* //查询订单号是否重复
         Orders oldOrder = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getOrderNo());
         if (oldOrder != null) {
             log.info("-----------------【线上直连】下单信息记录-----------------订单号已存在");
             throw new BusinessException(EResultEnum.INSTITUTION_ORDER_ID_EXIST.getCode());
-        }
+        }*/
         //检查币种默认值
         if (!commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount())) {
             log.info("-----------------【线上直连】下单信息记录--------------【订单金额不符合的当前币种默认值】");
@@ -256,6 +270,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setSecondMerchantName(merchant.getCnName());
         orders.setSecondMerchantCode(merchant.getId());
         orders.setAgentCode(merchant.getAgentId());
+        //INDIRECTCONNECTION 间连
+        orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.DIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
 //        orders.setGroupMerchantCode("");
 //        orders.setGroupMerchantName("");

@@ -1,8 +1,5 @@
 package com.asianwallets.common.constant;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 常量类
  */
@@ -244,4 +241,18 @@ public class TradeConstant {
             "<body onload=\"onLoadHandler()\"><form name=\"asianwallets\" action=\"";
     public static final String END = "\" method=\"POST\"></form></body>" +
             "</html>";
+
+    //--------------AD3收单类型
+    public static final String SCAN_CODE = "1"; //扫码
+    public static final String ONLINE_BANKING = "NETBANK"; //网银
+    public static final String CHANNELS = "CHANNELS"; //通道网银系统
+    public static final String ENETS_BANK = "ENETS_BANK"; //enets网银
+    public static final String NEXTPOS_AD3 = "TAIQR"; //NEXTPOST线上扫码
+    public static final String ALIPAY = "ALIPAY"; //ALIPAY线上扫码
+    public static final String WECHAT = "WECHAT"; //WECHAT线上扫码
+    public static final String CLOUD = "CLOUD"; //云闪付
+
+    //---------------线上订单的类型
+//    public static final Byte DIRECTCONNECTION = 1; //直连订单
+//    public static final Byte INDIRECTCONNECTION = 2; //间连订单
 }

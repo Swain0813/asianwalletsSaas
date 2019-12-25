@@ -7,6 +7,7 @@ import com.asianwallets.common.entity.Orders;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 
@@ -130,5 +131,37 @@ public class AD3OnlineAcquireDTO {
         this.productPrice = "";
         this.productCurrency = "";
         this.merchantSignType = "2";//1为使用平台提供的密钥 2为使用自己生成的密钥
+    }
+
+    @Override
+    public String toString() {
+        return "" +
+                "version:" + (StringUtils.isEmpty(version) ? "" : version) + '\n' +
+                "inputCharset:" + (StringUtils.isEmpty(inputCharset) ? "" : inputCharset) + '\n' +
+                "language:" + (StringUtils.isEmpty(language) ? "" : language) + '\n' +
+                "merchantId:" + (StringUtils.isEmpty(merchantId) ? "" : merchantId) + '\n' +
+                "merOrderNo:" + (StringUtils.isEmpty(merOrderNo) ? "" : merOrderNo) + '\n' +
+                "merorderDatetime:" + (StringUtils.isEmpty(merorderDatetime) ? "" : merorderDatetime) + '\n' +
+                "merorderCurrency:" + (StringUtils.isEmpty(merorderCurrency) ? "" : merorderCurrency) + '\n' +
+                "merorderAmount:" + (StringUtils.isEmpty(merorderAmount) ? "" : merorderAmount) + '\n' +
+                "pickupUrl:" + (StringUtils.isEmpty(pickupUrl) ? "" : pickupUrl) + '\n' +
+                "receiveUrl:" + (StringUtils.isEmpty(receiveUrl) ? "" : receiveUrl) + '\n' +
+                "payType:" + (StringUtils.isEmpty(payType) ? "" : payType) + '\n' +
+                "issuerId:" + (StringUtils.isEmpty(issuerId) ? "" : issuerId) + '\n' +
+                "ext1:" + (StringUtils.isEmpty(ext1) ? "" : ext1) + '\n' +
+                "ext2:" + (StringUtils.isEmpty(ext2) ? "" : ext2) + '\n' +
+                "ext3:" + (StringUtils.isEmpty(ext3) ? "" : ext3) + '\n' +
+                "businessType:" + (StringUtils.isEmpty(businessType) ? "" : businessType) + '\n' +
+                "payerName:" + (StringUtils.isEmpty(payerName) ? "" : payerName) + '\n' +
+                "payerEmail:" + (StringUtils.isEmpty(payerEmail) ? "" : payerEmail) + '\n' +
+                "payerTelephone:" + (StringUtils.isEmpty(payerTelephone) ? "" : payerTelephone) + '\n' +
+                "productId:" + (StringUtils.isEmpty(productId) ? "" : productId) + '\n' +
+                "productName:" + (StringUtils.isEmpty(productName) ? "" : productName) + '\n' +
+                "productNum:" + (StringUtils.isEmpty(productNum) ? "" : productNum) + '\n' +
+                "productPrice:" + (StringUtils.isEmpty(productPrice) ? "" : productPrice) + '\n' +
+                "productCurrency:" + (StringUtils.isEmpty(productCurrency) ? "" : productCurrency) + '\n' +
+                "merchantSignType:" + (StringUtils.isEmpty(merchantSignType) ? "" : merchantSignType) + '\n' +
+                "signMsg:" + (StringUtils.isEmpty(signMsg) ? "" : signMsg) + '\n' +
+                "url:" + (StringUtils.isEmpty(url) ? "" : url) + '\n';
     }
 }

@@ -244,7 +244,11 @@ public class Ad3ServiceImpl implements Ad3Service {
     @Override
     public BaseResponse onlinePay(AD3OnlineAcquireDTO ad3OnlineAcquireDTO) {
         BaseResponse response = new BaseResponse();
-        cn.hutool.http.HttpResponse execute = HttpRequest.post(ad3OnlineAcquireDTO.getUrl())
+        String url = ad3OnlineAcquireDTO.getUrl();
+        ad3OnlineAcquireDTO.setUrl(null);
+//        JSONObject.fromObject(this).toString()
+        System.out.println(ad3OnlineAcquireDTO);
+        cn.hutool.http.HttpResponse execute = HttpRequest.post(url)
                 .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                 .form(BeanToMapUtil.beanToMap(ad3OnlineAcquireDTO))
                 .timeout(10000)
@@ -257,6 +261,7 @@ public class Ad3ServiceImpl implements Ad3Service {
             response.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
             return response;
         }
+        response.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
         response.setData(body);
         return response;
     }

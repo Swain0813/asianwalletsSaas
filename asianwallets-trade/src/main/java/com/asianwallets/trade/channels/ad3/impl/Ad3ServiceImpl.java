@@ -30,6 +30,7 @@ import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.utils.HandlerType;
+import com.asianwallets.trade.vo.AD3OnlineVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,10 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     public BaseResponse onlinePay(Orders orders, Channel channel) {
         //封装参数
         AD3OnlineAcquireDTO ad3OnlineAcquireDTO = new AD3OnlineAcquireDTO(orders, channel);
+        String url = ad3OnlineAcquireDTO.getUrl();
+        ad3OnlineAcquireDTO.setUrl(null);
         ad3OnlineAcquireDTO.setSignMsg(signMsg(ad3OnlineAcquireDTO));
+        ad3OnlineAcquireDTO.setUrl(url);
         log.info("-------AD3线上收单参数-------AD3OnlineAcquireDTO:{}", JSON.toJSON(ad3OnlineAcquireDTO));
         //返回收款消息
         log.info("-----------------URL---------------- type:{}**issuerId:{}**url:{}", channel.getChannelEnName(), channel.getIssuerId(), channel.getPayUrl());
@@ -101,7 +105,27 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
-        return channelResponse;
+        String aD3ReturnParameter = (String) channelResponse.getData();
+        AD3OnlineVO ad3OnlineVO = new AD3OnlineVO();
+        if (aD3ReturnParameter.replaceAll("\\s*", "").matches(".*html.*")) {
+            //网银
+            ad3OnlineVO.setRespCode("T000");
+            ad3OnlineVO.setCode_url(aD3ReturnParameter);
+            ad3OnlineVO.setType(TradeConstant.ONLINE_BANKING);
+            channelResponse.setData(ad3OnlineVO);
+            return channelResponse;
+        } else {
+            //扫码
+            ad3OnlineVO = JSON.parseObject(aD3ReturnParameter, AD3OnlineVO.class);
+            if (!ad3OnlineVO.getRespCode().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
+                channelResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
+                return channelResponse;
+            }
+            ad3OnlineVO.setType(channel.getIssuerId().toUpperCase());
+            log.info("------------AD3线上收单通道响应参数------------ad3OnlineVO:{}", JSON.toJSON(ad3OnlineVO));
+            channelResponse.setData(ad3OnlineVO);
+            return channelResponse;
+        }
     }
 
 
