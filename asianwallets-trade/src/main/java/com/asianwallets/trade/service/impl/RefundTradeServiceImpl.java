@@ -1,4 +1,5 @@
 package com.asianwallets.trade.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -124,7 +125,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         oldRefundAmount = oldRefundAmount == null ? BigDecimal.ZERO : oldRefundAmount;
         String type = this.checkRefundDTO(refundDTO,oldOrder,oldRefundAmount);
         /***************************************************************  创建退款单  *************************************************************/
-        OrderRefund orderRefund = this.createOrderRefund(refundDTO, oldOrder);
+        OrderRefund orderRefund = this.createOrderRefund(channel, refundDTO, oldOrder);
         orderRefund.setReqIp(reqIp);
         BigDecimal newRefundAmount = oldRefundAmount.add(refundDTO.getRefundAmount());
         if (newRefundAmount.compareTo(oldOrder.getOrderAmount()) == -1) {
@@ -314,7 +315,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
         log.info("=========================【退款 doRefundOrder】======================= 【清结算 {} 返回】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
         if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-            log.info("=========================【退款 doRefundOrder】======================= 【清结算 {} 上报失败】 cFundChange:【{}】",orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+            log.info("=========================【退款 doRefundOrder】======================= 【清结算 {} 上报失败】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
             RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             log.info("=========================【退款 doRefundOrder】=========================【上报队列 RV_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
             rabbitMQSender.send(AD3MQConstant.RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
@@ -333,22 +334,22 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/24
      * @Descripate 人工退款接口
-     * @return
      **/
     @Override
     public BaseResponse artificialRefund(String username, String refundOrderId, Boolean enabled, String remark) {
         BaseResponse baseResponse = new BaseResponse();
         OrderRefund orderRefund = orderRefundMapper.selectByPrimaryKey(refundOrderId);
-        log.info("=========================【人工退款】========================= refundOrderId:【{}】,审核是否通过：【{}】，审核人：【{}】", refundOrderId,enabled,username);
+        log.info("=========================【人工退款】========================= refundOrderId:【{}】,审核是否通过：【{}】，审核人：【{}】", refundOrderId, enabled, username);
         if (enabled) {
             //审核通过
             orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, null, remark);
             //改原订单状态
             commonBusinessService.updateOrderRefundSuccess(orderRefund);
-        }else{
+        } else {
             //审核不通过
             //退款失败
             Reconciliation reconciliation = commonBusinessService.createReconciliation(orderRefund.getRemark4(), orderRefund, remark);
@@ -444,7 +445,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      * @param oldOrder
      * @return
      */
-    public OrderRefund createOrderRefund(RefundDTO refundDTO, Orders oldOrder) {
+    public OrderRefund createOrderRefund(Channel channel, RefundDTO refundDTO, Orders oldOrder) {
         OrderRefund orderRefund = new OrderRefund();
         BeanUtils.copyProperties(oldOrder, orderRefund);
         orderRefund.setLanguage(auditorProvider.getLanguage());//语言
@@ -477,10 +478,30 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setPayerBank(refundDTO.getPayerBank());//付款人银行
         orderRefund.setPayerEmail(refundDTO.getPayerEmail());//付款人邮箱
         orderRefund.setPayerPhone(refundDTO.getPayerPhone());//付款人电话
-                orderRefund.setSwiftCode(refundDTO.getSwiftCode());//Swift Code
-        orderRefund.setChannelRate(null);//通道费率
-        orderRefund.setChannelFee(null);
-        orderRefund.setChannelFeeType(null);
+
+        //通道退款费率
+        if (channel.getSupportRefundState()) {
+            orderRefund.setChannelRate(channel.getChannelRefundFeeRate());//通道费率
+            orderRefund.setChannelFeeType(channel.getChannelRefundFeeType());
+            if (channel.getChannelRefundFeeType().equals(TradeConstant.FEE_TYPE_RATE)) {
+                BigDecimal fl = orderRefund.getTradeAmount().multiply(channel.getChannelRefundFeeRate()).setScale(2, BigDecimal.ROUND_UP);
+                if (channel.getChannelRefundMaxRate() != null && fl.compareTo(channel.getChannelRefundMaxRate()) == 1) {
+                    fl = channel.getChannelRefundMaxRate();
+                }
+                if (channel.getChannelRefundMinRate() != null && fl.compareTo(channel.getChannelRefundMinRate()) == -1) {
+                    fl = channel.getChannelRefundMinRate();
+                }
+                orderRefund.setChannelFee(fl);
+            } else {
+                orderRefund.setChannelFee(channel.getChannelRefundMaxRate());
+            }
+        } else {
+            orderRefund.setChannelRate(null);//通道费率
+            orderRefund.setChannelFeeType(null);
+            orderRefund.setChannelFee(null);
+        }
+
+        orderRefund.setSwiftCode(refundDTO.getSwiftCode());//Swift Code
         //退款时的应结算时间就是当前退款时间
         orderRefund.setProductSettleCycle(DateToolUtils.formatTimestamp.format(new Date()));
         //备注
@@ -497,7 +518,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setChannelGatewayFeeType(null);
         orderRefund.setChannelGatewayStatus(null);
         orderRefund.setCreateTime(new Date());//创建时间
-        orderRefund.setCreator(refundDTO.getModifier()==null?refundDTO.getOperatorId():refundDTO.getModifier());//创建人
+        orderRefund.setCreator(refundDTO.getModifier() == null ? refundDTO.getOperatorId() : refundDTO.getModifier());//创建人
         orderRefund.setUpdateTime(null);//修改时间
         orderRefund.setModifier(null);//修改人
         return orderRefund;

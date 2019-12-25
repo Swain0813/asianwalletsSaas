@@ -13,6 +13,7 @@ import com.asianwallets.permissions.service.SysRoleService;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,7 +98,7 @@ public class SysRoleServiceImpl implements SysRoleService {
             sysRoleMenu.setMenuId(menuId);
             sysRoleMenu.setRoleId(dbSysRole.getId());
             sysRoleMenu.setCreator(username);
-            sysRoleMenu.setCreateTime  (new Date());
+            sysRoleMenu.setCreateTime(new Date());
             roleMenuList.add(sysRoleMenu);
         }
         if (roleMenuList.size() == 0) {
@@ -137,6 +138,15 @@ public class SysRoleServiceImpl implements SysRoleService {
      */
     @Override
     public PageInfo<SysRole> pageGetSysRole(SysRoleDto sysRoleDto) {
+        List<SysRole> sysRoles = sysRoleMapper.pageGetSysRole(sysRoleDto);
+        for (SysRole sysRole : sysRoles) {
+            if (sysRole != null && !StringUtils.isEmpty(sysRole.getSysId())) {
+                sysRole.setCreator(sysRole.getCreator().replace(sysRole.getSysId(), ""));
+                if (!StringUtils.isEmpty(sysRole.getModifier())) {
+                    sysRole.setModifier(sysRole.getModifier().replace(sysRole.getSysId(), ""));
+                }
+            }
+        }
         return new PageInfo<>(sysRoleMapper.pageGetSysRole(sysRoleDto));
     }
 
