@@ -121,4 +121,78 @@
         <include refid="Base_Column_List"/>
         from orders where merchant_order_id = #{merchantOrderId}
     </select>
+
+    <update id="updateOrderRemark">
+           update orders
+        set remark = #{remark}
+        where id = #{id};
+    </update>
+
+    <select id="offlineCheckOrders" resultMap="OfflineCheckOrdersVOMap">
+        SELECT
+        id as referenceNo,
+        merchant_id as merchantId,
+        merchant_name as merchantName,
+        merchant_order_id as orderNo,
+        merchant_order_time as orderTime,
+        order_amount as orderAmount,
+        order_currency as orderCurrency,
+        trade_type as tradeType,
+        trade_status as txnstatus,
+        refund_status as refundStatus,
+        cancel_status as reverseStatus,
+        channel_callback_time as txnTime,
+        imei as imei,
+        operator_id as operatorId,
+        fee as fee
+        FROM orders
+        <where>
+            <if test="referenceNo != null and referenceNo != ''">
+                AND id = #{referenceNo}
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                AND merchant_order_Id = #{orderNo}
+            </if>
+            <if test="merchantId != null and merchantId != ''">
+                AND merchant_Id = #{merchantId}
+            </if>
+            <if test="imei != null and imei != ''">
+                AND imei = #{imei}
+            </if>
+            <if test="operatorId != null and operatorId != ''">
+                AND operator_id =#{operatorId}
+            </if>
+            <if test="txnStatus != null">
+                AND trade_status = #{txnStatus}
+            </if>
+            <if test="refundStatus != null">
+                AND refund_status = #{refundStatus}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null  and endDate != ''">
+                AND create_time &lt;= #{endDate}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <resultMap id="OfflineCheckOrdersVOMap" type="com.asianwallets.trade.vo.OfflineCheckOrdersVO">
+        <id column="referenceNo" property="referenceNo" jdbcType="VARCHAR"/>
+        <result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchantName" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="orderNo" property="orderNo" jdbcType="VARCHAR"/>
+        <result column="orderTime" property="orderTime" jdbcType="TIMESTAMP"/>
+        <result column="orderAmount" property="orderAmount" jdbcType="DECIMAL"/>
+        <result column="orderCurrency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <result column="tradeType" property="tradeType" jdbcType="TINYINT"/>
+        <result column="txnStatus" property="txnStatus" jdbcType="TINYINT"/>
+        <result column="refundStatus" property="refundStatus" jdbcType="TINYINT"/>
+        <result column="reverseStatus" property="reverseStatus" jdbcType="TINYINT"/>
+        <result column="txnTime" property="txnTime" jdbcType="TIMESTAMP"/>
+        <result column="imei" property="imei" jdbcType="VARCHAR"/>
+        <result column="operatorId" property="operatorId" jdbcType="VARCHAR"/>
+        <result column="fee" property="fee" jdbcType="DECIMAL"/>
+    </resultMap>
 </mapper>

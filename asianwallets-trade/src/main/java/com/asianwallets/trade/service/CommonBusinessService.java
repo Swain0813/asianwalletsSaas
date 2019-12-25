@@ -1,8 +1,11 @@
 package com.asianwallets.trade.service;
 
 import com.asianwallets.common.entity.*;
+import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.trade.vo.BasicInfoVO;
+import com.asianwallets.trade.vo.CalcFeeVO;
+import org.aspectj.weaver.ast.Or;
 
 import java.math.BigDecimal;
 
@@ -10,6 +13,22 @@ import java.math.BigDecimal;
  * 通用业务接口
  */
 public interface CommonBusinessService {
+
+    /**
+     * 使用机构对应平台的RSA私钥生成签名【回调时用】
+     *
+     * @param obj 对象
+     * @return 签名
+     */
+    String generateSignatureUsePlatRSA(Object obj);
+
+    /**
+     * 使用机构对应平台的MD5生成签名【回调时用】
+     *
+     * @param obj 对象
+     * @return 签名
+     */
+    String generateSignatureUsePlatMD5(Object obj);
 
     /**
      * 线下
@@ -87,7 +106,7 @@ public interface CommonBusinessService {
      * 计算手续费
      *
      * @param basicInfoVO 基础信息实体
-     * @param orders 订单实体
+     * @param orders      订单实体
      */
     void calculateCost(BasicInfoVO basicInfoVO, Orders orders);
 
@@ -120,4 +139,57 @@ public interface CommonBusinessService {
      * @Description 创建调账单
      **/
     Reconciliation createReconciliation(String type, OrderRefund orderRefund, String remark);
+
+    /**
+     * 创建商户对应币种的账户
+     *
+     * @param orders 订单
+     */
+    void createAccount(Orders orders);
+
+    /**
+     * 配置限额限次信息
+     *
+     * @param merchantId  商户编号
+     * @param productCode 产品编号
+     * @param amount      金额
+     */
+    void quota(String merchantId, Integer productCode, BigDecimal amount);
+
+    /**
+     * 回调时计算通道网关手续费【回调交易成功时收取】
+     *
+     * @param orders orders
+     */
+    void calcCallBackGatewayFeeSuccess(Orders orders);
+
+    /**
+     * 回调时计算通道网关手续费【回调交易失败时收取】     *
+     *
+     * @param orders orders
+     */
+    void calcCallBackGatewayFeeFailed(Orders orders);
+
+    /**
+     * 计算通道网关手续费【回调时用】
+     *
+     * @param amount  订单金额
+     * @param channel 通道
+     * @return CalcFeeVO  通道费用输出实体
+     */
+    CalcFeeVO calcChannelGatewayPoundage(BigDecimal amount, Channel channel);
+
+    /**
+     * 回调商户服务器地址【回调接口】
+     *
+     * @param orders 订单
+     */
+    void replyReturnUrl(Orders orders);
+
+    /**
+     * 支付成功发送邮件给付款人
+     *
+     * @param orders 订单
+     */
+    void sendEmail(Orders orders);
 }

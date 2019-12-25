@@ -1,6 +1,7 @@
 package com.asianwallets.channels.service;
 
 
+import com.asianwallets.common.dto.ad3.AD3BSCScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3ONOFFRefundDTO;
 import com.asianwallets.common.dto.ad3.AD3OnlineAcquireDTO;
@@ -15,6 +16,15 @@ public interface Ad3Service {
      * @return BaseResponse
      */
     BaseResponse offlineCsb(AD3CSBScanPayDTO ad3CSBScanPayDTO);
+
+    /**
+     * AD3线下BSC
+     *
+     * @param ad3CSBScanPayDTO   AD3线下BSC输入实体
+     * @return BaseResponse
+     */
+    BaseResponse offlineBsc(AD3BSCScanPayDTO ad3CSBScanPayDTO);
+
 
     /**
      * @Author YangXu
@@ -39,4 +49,13 @@ public interface Ad3Service {
      * @return BaseResponse
      */
     BaseResponse onlinePay(AD3OnlineAcquireDTO ad3OnlineAcquireDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/24
+     * @Descripate AD3查询接口
+     * @return
+     **/
+    BaseResponse query(AD3ONOFFRefundDTO ad3ONOFFRefundDTO);
+
 }

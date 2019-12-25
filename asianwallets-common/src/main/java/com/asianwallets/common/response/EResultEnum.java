@@ -134,6 +134,10 @@ public enum EResultEnum {
     MERCHANT_PRODUCT_IS_DISABLED("10106"),//商户产品被禁用
     MERCHANT_PRODUCT_CONFIGURATION_INFORMATION_ERROR("10107"),//商户产品配置信息错误
     DCC_IS_NOT_OPEN("10108"),//DCC未开通
+    INSTITUTION_REQUEST_DOES_NOT_EXIST("10109"),//机构请求参数不存在
+    PRODUCT_DOES_NOT_EXIST("10110"),//产品信息不存在
+    MERCHANT_PRODUCT_DOES_NOT_EXIST("10111"),//商户产品信息不存在
+    CHANNEL_BANK_DOES_NOT_EXIST("10112"),//通道银行信息不存在
 
     /****通知模块的错误信息从20001开始--杨善龙*****/
     NOTICE_ID_IS_NOT_NULL("20001"),//公告id不能为空

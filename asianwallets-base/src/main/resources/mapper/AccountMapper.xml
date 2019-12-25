@@ -6,6 +6,7 @@
 	<result column="id" property="id" />
 		<result column="merchant_id" property="merchantId" />
 		<result column="merchant_name" property="merchantName" />
+		<result column="merchant_type" property="merchantType" />
 		<result column="account_code" property="accountCode" />
 		<result column="currency" property="currency" />
 		<result column="settle_balance" property="settleBalance" />
@@ -21,7 +22,7 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-        id, merchant_id, merchant_name,account_code, currency, settle_balance, clear_balance,
+        id, merchant_id, merchant_name,account_code, merchant_type,currency, settle_balance, clear_balance,
     freeze_balance, version,create_time, update_time, creator, modifier, remark, enabled
     </sql>
 
@@ -29,6 +30,7 @@
 		<id column="id" property="id" jdbcType="VARCHAR"/>
 		<result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
 		<result column="merchantName" property="merchantName" jdbcType="VARCHAR"/>
+		<result column="merchantType" property="merchantType" jdbcType="VARCHAR"/>
 		<result column="accountCode" property="accountCode" jdbcType="VARCHAR"/>
 		<result column="currency" property="currency" jdbcType="VARCHAR"/>
 		<result column="settleBalance" property="settleBalance" jdbcType="DECIMAL"/>
@@ -46,8 +48,9 @@
 
 	<select id="pageFindAccount" resultMap="SecondResultMap">
 		select
-		a.id as id ,a.merchant_name as merchantName,a.merchant_id as merchantId,a.account_code as
-		accountCode,a.currency as currency,a.settle_balance as settleBalance,a.clear_balance +
+		a.id as id ,a.merchant_name as merchantName,a.merchant_type as merchantType,
+		a.merchant_id as merchantId,a.account_code as accountCode,a.currency as currency,
+		a.settle_balance as settleBalance,a.clear_balance +
 		a.settle_balance -a.freeze_balance as balance,a.freeze_balance as freezeBalance,
 		a.clear_balance as clearBalance,a.create_time as create_time,a.update_time as
 		updateTime,a.creator,a.modifier,a.remark,s.min_settle_amount as min_settle_amount,
@@ -59,6 +62,9 @@
 			</if>
 			<if test="accountId!=null and accountId != ''">
 				and a.id=#{accountId}
+			</if>
+			<if test="merchantType!=null and merchantType != ''">
+				and a.merchant_type=#{merchantType}
 			</if>
 			<if test="merchantName != null and merchantName != ''">
 				and a.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')

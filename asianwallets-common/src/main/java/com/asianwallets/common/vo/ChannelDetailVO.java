@@ -1,4 +1,5 @@
 package com.asianwallets.common.vo;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,6 +23,9 @@ public class ChannelDetailVO {
 
     @ApiModelProperty(value = "通道中文名称")
     private String channelCnName;
+
+    @ApiModelProperty(value = "通道服务名称表示")
+    private String serviceNameMark;
 
     @ApiModelProperty(value = "通道图片")
     private String channelImg;
@@ -121,6 +125,9 @@ public class ChannelDetailVO {
 
     @ApiModelProperty(value = "通道单个查询url")
     private String channelSingleSelectUrl;
+
+    @ApiModelProperty(value = "通道批量查询url")
+    private String channelBatchSelectUrl;
 
     @ApiModelProperty(value = "撤销url")
     private String voidUrl;

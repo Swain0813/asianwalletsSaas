@@ -1,5 +1,6 @@
 package com.asianwallets.trade.feign.impl;
 
+import com.asianwallets.common.dto.ad3.AD3BSCScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3ONOFFRefundDTO;
 import com.asianwallets.common.dto.ad3.AD3OnlineAcquireDTO;
@@ -19,7 +20,9 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.feign.ChannelsFeign;
+import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Component
@@ -156,6 +159,11 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
+    public BaseResponse ad3OfflineBsc(AD3BSCScanPayDTO ad3CSBScanPayDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
     public BaseResponse ad3OnlinePay(AD3OnlineAcquireDTO ad3OnlineAcquireDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
@@ -167,6 +175,11 @@ public class ChannelsFeignImpl implements ChannelsFeign {
 
     @Override
     public BaseResponse ad3OnlineRefund(AD3ONOFFRefundDTO sendAdRefundDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse query(@RequestBody @ApiParam AD3ONOFFRefundDTO ad3ONOFFRefundDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

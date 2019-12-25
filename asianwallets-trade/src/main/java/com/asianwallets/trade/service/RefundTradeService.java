@@ -24,4 +24,12 @@ public interface RefundTradeService {
      **/
     BaseResponse doRefundOrder(OrderRefund orderRefund, Channel channel);
 
+
+    /**
+     * @Author YangXu
+     * @Date 2019/12/24
+     * @Descripate 人工退款接口
+     * @return
+     **/
+    BaseResponse artificialRefund(String username, String refundOrderId, Boolean enabled, String remark);
 }

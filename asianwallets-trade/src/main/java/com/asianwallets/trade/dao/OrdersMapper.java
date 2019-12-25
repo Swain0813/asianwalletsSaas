@@ -2,16 +2,25 @@ package com.asianwallets.trade.dao;
 
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
+import com.asianwallets.trade.vo.OfflineCheckOrdersVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 
 @Repository
 public interface OrdersMapper extends BaseMapper<Orders> {
 
+    /**
+     * 根据商户订单号查询订单
+     *
+     * @param merchantOrderId 商户订单号
+     * @return 订单
+     */
     Orders selectByMerchantOrderId(String merchantOrderId);
 
     /**
@@ -41,4 +50,20 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      */
     @Update("update orders set trade_status =#{status},channel_number=#{channelNumber},channel_callback_time=#{channelCallbackTime},update_time=NOW() where id = #{id} and trade_status=2")
     int updateOrderByAd3Query(@Param("id") String id, @Param("status") Byte status, @Param("channelNumber") String channelNumber, @Param("channelCallbackTime") Date channelCallbackTime);
+
+    /**
+     * 修改订单remark
+     *
+     * @param id     订单号
+     * @param remark 备注
+     */
+    void updateOrderRemark(@Param("id") String id, @Param("remark") String remark);
+
+    /**
+     * 线下查询订单列表
+     *
+     * @param offlineCheckOrdersDTO 查询订单输入实体
+     * @return 订单集合
+     */
+    List<OfflineCheckOrdersVO> offlineCheckOrders(OfflineCheckOrdersDTO offlineCheckOrdersDTO);
 }

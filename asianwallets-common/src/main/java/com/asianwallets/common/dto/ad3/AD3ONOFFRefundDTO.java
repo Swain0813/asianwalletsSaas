@@ -22,4 +22,7 @@ public class AD3ONOFFRefundDTO {
 
     @ApiModelProperty(value = "Ad3退款上报实体")
     private SendAdRefundDTO sendAdRefundDTO;
+
+    @ApiModelProperty(value = "Ad3查询实体")
+    private AD3QuerySingleOrderDTO ad3QuerySingleOrderDTO;
 }

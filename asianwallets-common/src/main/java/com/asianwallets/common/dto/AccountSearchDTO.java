@@ -14,6 +14,9 @@ public class AccountSearchDTO extends BasePageHelper {
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 
+    @ApiModelProperty(value = "商户类型")
+    private String merchantType;
+
     @ApiModelProperty(value = "账户Id")
     private String accountId;
 

@@ -6,6 +6,7 @@ import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.AD3LoginVO;
+import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
 
 public interface Ad3Service {
 
@@ -71,4 +72,12 @@ public interface Ad3Service {
      * @return ad3签名
      */
     String createAD3Signature(Object commonObj, Object businessObj, String token);
+
+    /**
+     * ad3线下回调
+     *
+     * @param ad3OfflineCallbackDTO ad3线下回调输入实体
+     * @return
+     */
+    String ad3ServerCallback(AD3OfflineCallbackDTO ad3OfflineCallbackDTO);
 }

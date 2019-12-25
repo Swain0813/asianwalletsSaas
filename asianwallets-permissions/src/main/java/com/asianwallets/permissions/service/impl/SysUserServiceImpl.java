@@ -6,6 +6,7 @@ import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResPermissions;
 import com.asianwallets.common.response.ResRole;
@@ -19,11 +20,13 @@ import com.asianwallets.permissions.dao.*;
 import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.dto.SysUserDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
+import com.asianwallets.permissions.feign.base.InstitutionFeign;
 import com.asianwallets.permissions.feign.message.MessageFeign;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.common.utils.BCryptUtils;
 import com.asianwallets.permissions.vo.SysUserDetailVO;
 import com.asianwallets.permissions.vo.SysUserSecVO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -52,6 +55,9 @@ public class SysUserServiceImpl implements SysUserService {
     private MessageFeign messageFeign;
 
     @Autowired
+    private InstitutionFeign institutionFeign;
+
+    @Autowired
     private SysUserRoleMapper sysUserRoleMapper;
 
     @Autowired
@@ -59,6 +65,31 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
     private AuditorProvider auditorProvider;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    /**
+     * 创建用户
+     *
+     * @param username       用户名
+     * @param sysUserRoleDto 用户角色输入实体
+     * @return 用户
+     */
+    private SysUser createSysUser(String username, SysUserRoleDto sysUserRoleDto) {
+        SysUser sysUser = new SysUser();
+        sysUser.setId(IDS.uuid2());
+        sysUser.setPassword(BCryptUtils.encode(sysUserRoleDto.getPassword()));
+        sysUser.setTradePassword(BCryptUtils.encode(sysUserRoleDto.getTradePassword()));
+        sysUser.setLanguage(auditorProvider.getLanguage());
+        sysUser.setUsername(sysUserRoleDto.getUsername());
+        sysUser.setPermissionType(sysUserRoleDto.getPermissionType());
+        sysUser.setName(sysUserRoleDto.getName());
+        sysUser.setEmail(sysUserRoleDto.getEmail());
+        sysUser.setCreator(username);
+        sysUser.setCreateTime(new Date());
+        return sysUser;
+    }
 
     /**
      * 分配用户角色,用户权限信息
@@ -112,18 +143,8 @@ public class SysUserServiceImpl implements SysUserService {
             log.info("=========【运营后台新增用户角色,用户权限信息】==========【用户名已存在!】");
             throw new BusinessException(EResultEnum.USER_EXIST.getCode());
         }
-        //新增角色
-        SysUser sysUser = new SysUser();
-        sysUser.setId(IDS.uuid2());
-        sysUser.setPassword(BCryptUtils.encode(sysUserRoleDto.getPassword()));
-        sysUser.setTradePassword(BCryptUtils.encode(sysUserRoleDto.getTradePassword()));
-        sysUser.setLanguage(auditorProvider.getLanguage());
-        sysUser.setUsername(sysUserRoleDto.getUsername());
-        sysUser.setPermissionType(sysUserRoleDto.getPermissionType());
-        sysUser.setName(sysUserRoleDto.getName());
-        sysUser.setEmail(sysUserRoleDto.getEmail());
-        sysUser.setCreator(username);
-        sysUser.setCreateTime(new Date());
+        //创建角色
+        SysUser sysUser = createSysUser(username, sysUserRoleDto);
         //分配用户角色,用户权限信息
         allotSysRoleAndSysMenu(username, sysUser, sysUserRoleDto);
         return sysUserMapper.insert(sysUser);
@@ -142,6 +163,76 @@ public class SysUserServiceImpl implements SysUserService {
         SysUser dbSysUser = sysUserMapper.getSysUserByUsername(sysUserRoleDto.getUsername());
         if (dbSysUser == null) {
             log.info("=========【运营后台修改用户角色,用户权限信息】==========【用户名不存在!】");
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        //修改角色
+        BeanUtils.copyProperties(sysUserRoleDto, dbSysUser);
+        dbSysUser.setId(sysUserRoleDto.getUserId());
+        dbSysUser.setUpdateTime(new Date());
+        dbSysUser.setModifier(username);
+        //删除用户角色表中的信息
+        sysUserRoleMapper.deleteByUserId(sysUserRoleDto.getUserId());
+        //删除用户权限表中的信息
+        sysUserMenuMapper.deleteByUserId(sysUserRoleDto.getUserId());
+        //分配用户角色,用户权限信息
+        allotSysRoleAndSysMenu(username, dbSysUser, sysUserRoleDto);
+        return sysUserMapper.updateByPrimaryKeySelective(dbSysUser);
+    }
+
+    /**
+     * 机构后台新增用户角色,用户权限信息
+     *
+     * @param username       用户名
+     * @param sysUserRoleDto 用户角色输入实体
+     * @return 修改条数
+     */
+    @Override
+    public int addSysUserByInstitution(String username, SysUserRoleDto sysUserRoleDto) {
+        //判断机构是否存在
+        BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(sysUserRoleDto.getSysId());
+        Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
+        if (institution == null) {
+            log.info("===========【机构后台新增用户角色,用户权限信息】==========【机构信息不存在!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
+        if (!institution.getEnabled()) {
+            log.info("===========【机构后台新增用户角色,用户权限信息】==========【机构已禁用!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+        }
+        SysUser dbSysUser = sysUserMapper.getSysUserByUsername(sysUserRoleDto.getUsername() + sysUserRoleDto.getSysId());
+        if (dbSysUser != null) {
+            log.info("=========【机构后台新增用户角色,用户权限信息】==========【用户名已存在!】");
+            throw new BusinessException(EResultEnum.USER_EXIST.getCode());
+        }
+        //创建角色
+        SysUser sysUser = createSysUser(username, sysUserRoleDto);
+        //分配用户角色,用户权限信息
+        allotSysRoleAndSysMenu(username, sysUser, sysUserRoleDto);
+        return sysUserMapper.insert(sysUser);
+    }
+
+    /**
+     * 机构后台修改用户角色,用户权限信息
+     *
+     * @param username       用户名
+     * @param sysUserRoleDto 用户角色输入实体
+     * @return 修改条数
+     */
+    @Override
+    public int updateSysUserByInstitution(String username, SysUserRoleDto sysUserRoleDto) {
+        BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(sysUserRoleDto.getSysId());
+        Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
+        if (institution == null) {
+            log.info("===========【机构后台修改用户角色,用户权限信息】==========【机构信息不存在!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
+        if (!institution.getEnabled()) {
+            log.info("===========【机构后台修改用户角色,用户权限信息】==========【机构已禁用!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+        }
+        SysUser dbSysUser = sysUserMapper.getSysUserByUsername(sysUserRoleDto.getUsername() + sysUserRoleDto.getSysId());
+        if (dbSysUser == null) {
+            log.info("=========【机构后台修改用户角色,用户权限信息】==========【用户名不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }
         //修改角色

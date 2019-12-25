@@ -3,6 +3,7 @@ package com.asianwallets.common.vo.clearing;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.OrderRefund;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.utils.DateToolUtils;
 import lombok.Data;
@@ -235,4 +236,46 @@ public class FundChangeDTO implements Serializable {
 
     }
 
+    /**
+     * 根据订单信息调用清结算的资金变动接口
+     * 收单用
+     *
+     * @param orders
+     * @param tradeType
+     */
+    public FundChangeDTO(Orders orders, String tradeType) {
+//        this.inputCharset = AD3Constant.CHARSET_UTF_8;//编码
+//        this.language = AD3Constant.LANGUAGE_CN;//语言
+        //商户号
+        this.merchantid = orders.getMerchantId();
+        //是否清算
+        this.isclear = TradeConstant.CLEARING;
+        //交易流水号
+        this.refcnceFlow = orders.getId();
+        //交易类型 NT：收单，RF：退款，RV：撤销，WD：提款，AA:调账，TA:转账
+        this.tradetype = tradeType;
+        this.merOrderNo = orders.getMerchantOrderId();//商户订单号
+        this.txncurrency = orders.getOrderCurrency();//订单币种
+        //订单金额,2位
+        this.txnamount = orders.getOrderAmount().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        this.sysorderid = orders.getId();//订单id
+        //手续费,2位
+        this.fee = orders.getFee().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        //通道成本 2位
+        this.channelCost = 0.00;
+        //资金类型,正常资金
+        this.balancetype = TradeConstant.NORMAL_FUND;
+        //商品描述
+        this.txndesc = orders.getProductDescription();
+        //汇率
+        this.txnexrate = orders.getExchangeRate().setScale(5, BigDecimal.ROUND_HALF_UP).doubleValue();
+        this.remark = orders.getRemark();//备注
+        this.sltcurrency = orders.getOrderCurrency();//结算币种
+        //结算金额
+        this.sltamount = orders.getOrderAmount().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        this.feecurrency = orders.getOrderCurrency();//手续费币种
+        this.channelCostcurrency = orders.getOrderCurrency();//通道成本币种
+        this.gatewayFee = 0.00;//网关手续费
+        this.shouldDealtime = orders.getProductSettleCycle();//应结算日期
+    }
 }
