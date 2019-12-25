@@ -76,7 +76,7 @@ public class OfflineCallbackController extends BaseController {
             return;
         }
         log.info("================【NextPos回调】================【回调参数记录】 parameterMap:{}", JSON.toJSONString(parameterMap));
-        Map<String, String> paramMap = new HashMap<>();
+        Map<String, Object> paramMap = new HashMap<>();
         Set<String> keySet = parameterMap.keySet();
         for (String key : keySet) {
             paramMap.put(key, parameterMap.get(key)[0]);

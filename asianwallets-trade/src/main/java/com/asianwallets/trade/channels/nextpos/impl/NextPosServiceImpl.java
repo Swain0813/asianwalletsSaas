@@ -1,5 +1,7 @@
 package com.asianwallets.trade.channels.nextpos.impl;
 
+import cn.hutool.http.Header;
+import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -31,9 +33,11 @@ import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
 import com.asianwallets.trade.vo.FundChangeVO;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -80,6 +84,9 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
     @Autowired
     private OrdersMapper ordersMapper;
 
+    @Value("${custom.nextPosUrl}")
+    private String nextPosUrl;
+
     /**
      * NextPos线下CSB
      *
@@ -110,13 +117,22 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
      * @param response 响应实体
      */
     @Override
-    public void nextPosCallback(Map<String, String> map, HttpServletResponse response) {
-        String einv = map.get("einv");
+    public void nextPosCallback(Map<String, Object> map, HttpServletResponse response) {
+        String einv = String.valueOf(map.get("einv"));
         if (einv.startsWith("CBO")) {
             log.info("================【NextPos回调】================【该笔回调订单属于AD3】 orderId:{}", einv);
-            //String body = commonService.nextPosCallbackAD3(paramMap);
+            log.info("================【NextPos回调】================【分发AD3URL】ad3URL: {}", nextPosUrl);
+            log.info("================【NextPos回调】================【分发AD3参数】map: {}", JSON.toJSONString(map));
+            //分发给AD3
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(nextPosUrl)
+                    .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
+                    .form(map)
+                    .timeout(20000)
+                    .execute();
+            String body = execute.body();
+            log.info("================【NextPos回调】================【AD3回调返回参数】 http状态码:{}, body:{}", execute.getStatus(), body);
             try {
-                response.getWriter().write("");
+                response.getWriter().write(body);
             } catch (IOException e) {
                 log.info("================【NextPos回调】================【接口异常】", e);
             }
@@ -139,11 +155,11 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
         }
         Channel channel = commonRedisDataService.getChannelByChannelCode(orders.getChannelCode());
         //订单状态
-        String status = map.get(channel.getPayCode());
-        String refCode = map.get("refCode");
-        String amt = map.get("amt");
-        String transactionID = map.get("transactionID");
-        String mark = map.get("mark");
+        String status = String.valueOf(map.get(channel.getPayCode()));
+        String refCode = String.valueOf(map.get("refCode"));
+        String amt = String.valueOf(map.get("amt"));
+        String transactionID = String.valueOf(map.get("transactionID"));
+        String mark = String.valueOf(map.get("mark"));
         NextPosCallbackDTO nextPosCallbackDTO = new NextPosCallbackDTO();
         nextPosCallbackDTO.setEinv(einv);//订单id
         nextPosCallbackDTO.setRefCode(refCode);//响应码

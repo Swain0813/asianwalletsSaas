@@ -53,5 +53,5 @@ public interface NextPosService {
      * @param map      回调参数
      * @param response 响应实体
      */
-    void nextPosCallback(Map<String, String> map, HttpServletResponse response);
+    void nextPosCallback(Map<String, Object> map, HttpServletResponse response);
 }
