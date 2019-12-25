@@ -1,11 +1,10 @@
 package com.asianwallets.trade.service;
 
 import com.asianwallets.common.entity.*;
-import com.asianwallets.common.enums.Status;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.trade.vo.BasicInfoVO;
 import com.asianwallets.trade.vo.CalcFeeVO;
-import org.aspectj.weaver.ast.Or;
 
 import java.math.BigDecimal;
 
@@ -81,9 +80,10 @@ public interface CommonBusinessService {
      *
      * @param orderCurrency 订单币种
      * @param orderAmount   订单金额
+     * @param currency      币种
      * @return 布尔值
      */
-    boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount);
+    boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount, Currency currency);
 
     /**
      * 校验商户产品与通道的限额【线上与线下下单】
@@ -93,6 +93,14 @@ public interface CommonBusinessService {
      * @param channel         通道
      */
     void checkQuota(Orders orders, MerchantProduct merchantProduct, Channel channel);
+
+    /**
+     * 截取币种默认值
+     *
+     * @param orders   订单
+     * @param currency 币种
+     */
+    void interceptDigit(Orders orders, Currency currency);
 
     /**
      * 截取Url

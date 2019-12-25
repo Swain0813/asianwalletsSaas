@@ -1,6 +1,6 @@
 package com.asianwallets.trade.service;
 
-import com.asianwallets.common.vo.OnlineTradeVO;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
 
 /**
@@ -14,7 +14,7 @@ public interface OnlineGatewayService {
      * @param onlineTradeDTO 线上收单输入实体
      * @return OnlineTradeVO 线上收单输出实体
      */
-    OnlineTradeVO gateway(OnlineTradeDTO onlineTradeDTO);
+    BaseResponse gateway(OnlineTradeDTO onlineTradeDTO);
 
     /* *//**
      * 收银台所需的信息

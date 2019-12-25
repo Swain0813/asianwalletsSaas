@@ -2,7 +2,6 @@ package com.asianwallets.trade.controller;
 
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
 import com.asianwallets.trade.service.OnlineGatewayService;
 import io.swagger.annotations.Api;
@@ -25,7 +24,7 @@ public class OnlineTradeController extends BaseController {
     @PostMapping("/gateway")
     @CrossOrigin
     public BaseResponse gateway(OnlineTradeDTO onlineTradeDTO) {
-        return ResultUtil.success(onlineGatewayService.gateway(onlineTradeDTO));
+        return onlineGatewayService.gateway(onlineTradeDTO);
     }
 
    /* @ApiOperation(value = "模拟商户请求收单")

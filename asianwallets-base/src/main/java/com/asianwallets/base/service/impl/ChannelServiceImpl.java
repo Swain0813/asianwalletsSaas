@@ -190,21 +190,6 @@ public class ChannelServiceImpl implements ChannelService {
             productChannelList.add(productChannel);
         }
         productChannelMapper.insertList(productChannelList);
-        //删除通道银行关联关系
-//        channelBankMapper.deleteByChannelId(channelDTO.getChannelId());
-//        List<ChannelBank> channelBankList = new ArrayList<>();
-//        for (String bankId : channelDTO.getBankIdList()) {
-//            ChannelBank channelBank = new ChannelBank();
-//            channelBank.setId(IDS.uuid2());
-//            channelBank.setBankId(bankId);
-//            channelBank.setChannelId(channelDTO.getChannelId());
-//            channelBank.setCreator(username);
-//            channelBank.setModifier(username);
-//            channelBank.setCreateTime(new Date());
-//            channelBank.setUpdateTime(new Date());
-//            channelBank.setEnabled(true);
-//            channelBankList.add(channelBank);
-//        }
         //原数据库银行关联数据
         List<ChannelBank> originalList = channelBankMapper.selectByChannelId(channelDTO.getChannelId());
         //需要添加数据

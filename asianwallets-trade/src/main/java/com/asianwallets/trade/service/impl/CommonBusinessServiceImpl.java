@@ -1,4 +1,5 @@
 package com.asianwallets.trade.service.impl;
+
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -7,8 +8,8 @@ import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
-import com.asianwallets.common.entity.*;
 import com.asianwallets.common.entity.Currency;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -154,6 +156,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public boolean checkUniversalSign(Object obj) {
+        log.info("===============【通用签名校验方法】===============【验签开始】");
         Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
         String sign = map.get("sign");
         String signType = map.get("signType");
@@ -178,6 +181,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             String decryptSign = MD5Util.getMD5String(str);
             return sign.equalsIgnoreCase(decryptSign);
         }
+        log.info("===============【通用签名校验方法】===============【验签结束】");
         return false;
     }
 
@@ -258,6 +262,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             orders.setOrderForTradeRate(BigDecimal.ONE);
             orders.setTradeForOrderRate(BigDecimal.ONE);
             orders.setExchangeRate(BigDecimal.ONE);
+            orders.setExchangeStatus(TradeConstant.SWAP_SUCCESS);
             orders.setExchangeTime(new Date());
             return;
         }
@@ -309,11 +314,11 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      *
      * @param orderCurrency 订单币种
      * @param orderAmount   订单金额
+     * @param currency      币种
      * @return 布尔值
      */
     @Override
-    public boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount) {
-        Currency currency = commonRedisDataService.getCurrencyByCode(orderCurrency);
+    public boolean checkOrderCurrency(String orderCurrency, BigDecimal orderAmount, Currency currency) {
         return new StringBuilder(currency.getDefaults()).reverse().indexOf(".") >= new StringBuilder(String.valueOf(orderAmount)).reverse().indexOf(".");
     }
 
@@ -387,6 +392,23 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                 }
             }
         }*/
+    }
+
+    /**
+     * 截取币种默认值
+     *
+     * @param orders   订单
+     * @param currency 币种
+     */
+    @Override
+    public void interceptDigit(Orders orders, Currency currency) {
+        int bitPos = currency.getDefaults().indexOf(".");
+        int numOfBits = 0;
+        if (bitPos != -1) {
+            numOfBits = currency.getDefaults().length() - bitPos - 1;
+        }
+        //交易金额
+        orders.setTradeAmount((orders.getTradeAmount().setScale(numOfBits, BigDecimal.ROUND_HALF_UP)));
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.asianwallets.common.vo;
+package com.asianwallets.trade.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(value = "线上收单接口输出实体", description = "线上收单接口输出实体")
-public class OnlineTradeVO {
+@ApiModel(value = "AD3线上收单接口输出实体", description = "AD3线上收单接口输出实体")
+public class AD3OnlineVO {
     @ApiModelProperty(value = "签名")//1中文 2英文
     @JsonIgnore
     private String sign;
@@ -24,4 +24,5 @@ public class OnlineTradeVO {
 
     @ApiModelProperty(value = "类型")//WECHAT(微信) ALIPAY(支付宝) NETBANK(网银) ITS
     private String type;
+
 }

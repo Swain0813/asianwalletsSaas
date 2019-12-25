@@ -8,7 +8,6 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.BCryptUtils;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
@@ -171,8 +170,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      * 校验输入参数的合法性
      *
      * @param offlineTradeDTO 线下交易输入实体
+     * @param currency        币种
      */
-    private void checkParamValidity(OfflineTradeDTO offlineTradeDTO) {
+    private void checkParamValidity(OfflineTradeDTO offlineTradeDTO, Currency currency) {
 //        //验签
 //        if (!commonBusinessService.checkSignByMd5(offlineTradeDTO)) {
 //            log.info("==================【线下CSB动态扫码】==================【签名不匹配】");
@@ -190,7 +190,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
         }
         //校验币种信息
-        if (!commonBusinessService.checkOrderCurrency(offlineTradeDTO.getOrderCurrency(), offlineTradeDTO.getOrderAmount())) {
+        if (!commonBusinessService.checkOrderCurrency(offlineTradeDTO.getOrderCurrency(), offlineTradeDTO.getOrderAmount(), currency)) {
             log.info("==================【线下CSB动态扫码】==================【订单金额不符合币种默认值】");
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
@@ -237,8 +237,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
         //校验机构必填请求输入参数
         checkRequestParameters(offlineTradeDTO, institutionRequestParameters);
+        Currency currency = commonRedisDataService.getCurrencyByCode(offlineTradeDTO.getOrderCurrency());
         //校验输入参数合法性
-        checkParamValidity(offlineTradeDTO);
+        checkParamValidity(offlineTradeDTO, currency);
         Product product = commonRedisDataService.getProductByCode(offlineTradeDTO.getProductCode());
         MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchant.getId(), product.getId());
         List<String> chaBankIdList = commonRedisDataService.getChaBankIdByMerProId(merchantProduct.getId());
@@ -280,6 +281,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         basicsInfoVO.setChannel(channel);
         basicsInfoVO.setMerchantProduct(merchantProduct);
         basicsInfoVO.setInstitution(institution);
+        basicsInfoVO.setCurrency(currency);
         return basicsInfoVO;
     }
 
@@ -377,6 +379,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         commonBusinessService.swapRateByPayment(basicInfoVO, orders);
         //校验商户产品与通道的限额
         commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //截取币种默认值
+        commonBusinessService.interceptDigit(orders, basicInfoVO.getCurrency());
         //计算手续费
         commonBusinessService.calculateCost(basicInfoVO, orders);
         orders.setReportChannelTime(new Date());
@@ -428,6 +432,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         commonBusinessService.swapRateByPayment(basicInfoVO, orders);
         //校验商户产品与通道的限额
         commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //截取币种默认值
+        commonBusinessService.interceptDigit(orders, basicInfoVO.getCurrency());
         //计算手续费
         commonBusinessService.calculateCost(basicInfoVO, orders);
         orders.setReportChannelTime(new Date());

@@ -24,6 +24,9 @@ public class BasicInfoVO {
     @ApiModelProperty("通道")
     private Channel channel;
 
+    @ApiModelProperty("币种")
+    private Currency currency;
+
     @ApiModelProperty("银行名称")
     private String bankName;
 }
