@@ -1,5 +1,4 @@
 package com.asianwallets.trade.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.*;
@@ -12,11 +11,10 @@ import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 /**
- * 通用获取数据接口
+ * 从redis里通用获取数据接口
  */
 @Service
 @Slf4j
@@ -57,9 +55,6 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
 
     @Autowired
     private ChannelBankMapper channelBankMapper;
-
-    @Autowired
-    private BankIssuerIdMapper bankIssuerIdMapper;
 
     @Autowired
     private AccountMapper accountMapper;

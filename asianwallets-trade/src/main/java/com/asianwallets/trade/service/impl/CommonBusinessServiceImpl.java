@@ -1,6 +1,4 @@
 package com.asianwallets.trade.service.impl;
-
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -35,7 +33,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;

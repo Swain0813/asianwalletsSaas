@@ -118,7 +118,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
             }
         }
-
         /*****************************************************  校验退款单参数 判断退款类型 *****************************************************/
         Merchant merchant = commonRedisDataService.getMerchantById(refundDTO.getMerchantId());
         //已退款金额
