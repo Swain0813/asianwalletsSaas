@@ -13,7 +13,6 @@ import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
-import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
@@ -22,6 +21,7 @@ import com.asianwallets.common.response.HttpResponse;
 import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.AD3BSCScanVO;
 import com.asianwallets.common.vo.AD3LoginVO;
+import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.common.vo.RefundAdResponseVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
@@ -36,7 +36,6 @@ import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
-import com.asianwallets.trade.vo.FundChangeVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +104,10 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     public BaseResponse onlinePay(Orders orders, Channel channel) {
         //封装参数
         AD3OnlineAcquireDTO ad3OnlineAcquireDTO = new AD3OnlineAcquireDTO(orders, channel);
+        String url = ad3OnlineAcquireDTO.getUrl();
+        ad3OnlineAcquireDTO.setUrl(null);
         ad3OnlineAcquireDTO.setSignMsg(signMsg(ad3OnlineAcquireDTO));
+        ad3OnlineAcquireDTO.setUrl(url);
         log.info("-------AD3线上收单参数-------AD3OnlineAcquireDTO:{}", JSON.toJSON(ad3OnlineAcquireDTO));
         //返回收款消息
         log.info("-----------------URL---------------- type:{}**issuerId:{}**url:{}", channel.getChannelEnName(), channel.getIssuerId(), channel.getPayUrl());
@@ -115,7 +117,27 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
-        return channelResponse;
+        String aD3ReturnParameter = (String) channelResponse.getData();
+        OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
+        if (aD3ReturnParameter.replaceAll("\\s*", "").matches(".*html.*")) {
+            //网银
+            onlineTradeVO.setRespCode("T000");
+            onlineTradeVO.setCode_url(aD3ReturnParameter);
+            onlineTradeVO.setType(TradeConstant.ONLINE_BANKING);
+            channelResponse.setData(onlineTradeVO);
+            return channelResponse;
+        } else {
+            //扫码
+            onlineTradeVO = JSON.parseObject(aD3ReturnParameter, OnlineTradeVO.class);
+            if (!onlineTradeVO.getRespCode().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
+                channelResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
+                return channelResponse;
+            }
+            onlineTradeVO.setType(channel.getIssuerId().toUpperCase());
+            log.info("------------AD3线上收单通道响应参数------------ad3OnlineVO:{}", JSON.toJSONString(onlineTradeVO));
+            channelResponse.setData(onlineTradeVO);
+            return channelResponse;
+        }
     }
 
     /**

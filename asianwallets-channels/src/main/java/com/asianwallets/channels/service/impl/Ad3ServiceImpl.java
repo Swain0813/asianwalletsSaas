@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.Ad3Service;
 import com.asianwallets.common.constant.AD3Constant;
-import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.ad3.*;
@@ -315,7 +314,11 @@ public class Ad3ServiceImpl implements Ad3Service {
     @Override
     public BaseResponse onlinePay(AD3OnlineAcquireDTO ad3OnlineAcquireDTO) {
         BaseResponse response = new BaseResponse();
-        cn.hutool.http.HttpResponse execute = HttpRequest.post(ad3OnlineAcquireDTO.getUrl())
+        String url = ad3OnlineAcquireDTO.getUrl();
+        ad3OnlineAcquireDTO.setUrl(null);
+        //AD3差错打印代码
+        //System.out.println(ad3OnlineAcquireDTO);
+        cn.hutool.http.HttpResponse execute = HttpRequest.post(url)
                 .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                 .form(BeanToMapUtil.beanToMap(ad3OnlineAcquireDTO))
                 .timeout(10000)
@@ -328,6 +331,7 @@ public class Ad3ServiceImpl implements Ad3Service {
             response.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
             return response;
         }
+        response.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
         response.setData(body);
         return response;
     }
@@ -368,3 +372,7 @@ public class Ad3ServiceImpl implements Ad3Service {
         return baseResponse;
     }
 }
+
+
+
+
