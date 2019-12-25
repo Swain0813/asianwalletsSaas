@@ -260,27 +260,27 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(type, orderRefund);
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
-                    orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);
                     orderRefund.setRemark("人工退款上报清结算成功");
-                    baseResponse.setCode(EResultEnum.REFUNDING.getCode());//人工退款失败
+                    orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);
+                    //退款中
+                    baseResponse.setCode(EResultEnum.REFUNDING.getCode());
                 } else {//请求失败
-                    orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
                     orderRefund.setRemark("人工退款上报清结算失败");
-                    baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());//人工退款失败
+                    orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
+                    //退款失败
+                    baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 }
-                //人工退款失败的场合更新退款单表的信息
-                orderRefundMapper.updaterefundOrder(orderRefund.getId(), orderRefund.getRefundStatus(), orderRefund.getRemark());
+                //人工退款上报清结算成功或者失败更新退款单表
+                orderRefundMapper.updaterefundOrder(orderRefund.getId(),orderRefund.getRefundStatus(),orderRefund.getRemark());
                 return baseResponse;
             }
-
             /********************************************************* 通道支持支持退款 *************************************************************/
             log.info("=========================【退款 refundOrder】========================= 【通道支持支持退款】");
-            orderRefund.setRefundMode(TradeConstant.REFUND_MODE_AUTO);//退款方式 1：系统退款 2：人工退款
+            orderRefund.setRefundMode(TradeConstant.REFUND_MODE_AUTO);
             orderRefundMapper.insert(orderRefund);
-
             //获取原订单的refCode字段(NextPos用)
             orderRefund.setSign(oldOrder.getSign());
-            baseResponse = this.doRefundOrder(orderRefund, channel);
+            baseResponse = this.doRefundOrder(orderRefund,channel);
         } else if (TradeConstant.PAYING.equals(type)) {
             /***************************************************************  订单是付款中的场合  *************************************************************/
             if (TradeConstant.TRADE_ONLINE.equals(refundDTO.getTradeDirection())) {
