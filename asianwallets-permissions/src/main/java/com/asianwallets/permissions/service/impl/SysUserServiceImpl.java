@@ -304,13 +304,21 @@ public class SysUserServiceImpl implements SysUserService {
             log.info("=========【修改登录密码】==========【用户不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }
-        if (BCryptUtils.matches(updatePasswordDto.getOldPassword(), sysUser.getPassword())) {
+        //原始密码为空,直接修改
+        if (StringUtils.isEmpty(updatePasswordDto.getOldPassword())) {
             sysUser.setPassword(BCryptUtils.encode(updatePasswordDto.getPassword()));
             sysUser.setModifier(username);
             sysUser.setUpdateTime(new Date());
         } else {
-            log.info("=========【修改登录密码】==========【原始密码错误!】");
-            throw new BusinessException(EResultEnum.ORIGINAL_PASSWORD_ERROR.getCode());
+            //原始密码不为空,校验原始密码
+            if (BCryptUtils.matches(updatePasswordDto.getOldPassword(), sysUser.getPassword())) {
+                sysUser.setPassword(BCryptUtils.encode(updatePasswordDto.getPassword()));
+                sysUser.setModifier(username);
+                sysUser.setUpdateTime(new Date());
+            } else {
+                log.info("=========【修改登录密码】==========【原始密码错误!】");
+                throw new BusinessException(EResultEnum.ORIGINAL_PASSWORD_ERROR.getCode());
+            }
         }
         return sysUserMapper.updateByPrimaryKeySelective(sysUser);
     }
