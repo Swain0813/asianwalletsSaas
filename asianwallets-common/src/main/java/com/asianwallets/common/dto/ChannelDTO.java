@@ -193,6 +193,9 @@ public class ChannelDTO extends BasePageHelper {
     @ApiModelProperty(value = "扩展字段10")
     private String extend10;
 
+    @ApiModelProperty(value = "通道服务名称标识")
+    private String serviceNameMark;
+
     @ApiModelProperty(value = "产品ID集合")
     private List<String> productIdList;
 
