@@ -56,9 +56,9 @@ public class TradeConstant {
     public static final Byte REFUND_NO_ORDER_FEE = 2; //不退还
     public static final Byte REFUND_TODAY_ORDER_FEE = 3; //仅限当日退还
 
-    //----------手续费付款方
-    public static final Byte FEE_PAYER_IN = 1; //内扣
-    public static final Byte FEE_PAYER_OUT = 2; //外扣
+    //----------手续费承担方 1:商家 2:用户
+    public static final Byte FEE_PAYER_IN = 1; //商家
+    public static final Byte FEE_PAYER_OUT = 2; //用户
 
     //-----------计费状态
     public static final Byte CHARGE_STATUS_SUCCESS = 1; //计费成功
