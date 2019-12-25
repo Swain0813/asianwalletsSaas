@@ -26,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -37,7 +36,6 @@ import java.util.Date;
  **/
 @Slf4j
 @Service
-@Transactional
 public class RefundTradeServiceImpl implements RefundTradeService {
 
     @Autowired
@@ -120,7 +118,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             }
         }
         /*****************************************************  校验退款相关参数 判断退款类型 *****************************************************/
-        Merchant merchant = commonRedisDataService.getMerchantById(refundDTO.getMerchantId());
+        commonRedisDataService.getMerchantById(refundDTO.getMerchantId());
         //已退款金额
         BigDecimal oldRefundAmount = orderRefundMapper.getTotalAmountByOrderId(oldOrder.getId());
         oldRefundAmount = oldRefundAmount == null ? BigDecimal.ZERO : oldRefundAmount;
@@ -134,14 +132,13 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         } else if (newRefundAmount.compareTo(oldOrder.getOrderAmount()) == 0) {
             orderRefund.setRemark2("全额");
         }
-        log.info("=========================【退款 refundOrder】========================= 创建订单 OrderRefund ：【{}】", JSON.toJSONString(orderRefund));
-
-
-        /***********************************************************  计算退还手续费  ******************************************************/
-
+        log.info("=========================【退款 refundOrder】========================= 创建订单OrderRefund{}", JSON.toJSONString(orderRefund));
+        /***********************************************************  计算退还收单手续费  ******************************************************/
+        //退还收单手续费 订单币种的收单手续费
         BigDecimal refundOrderFee = BigDecimal.ZERO;
+        //退还收单手续费 交易币种的收单手续费
         BigDecimal refundOrderFeeTrade = BigDecimal.ZERO;
-        if (channel.getTransType() != null && TradeConstant.REFUND_ORDER_FEE == channel.getRefundingIsReturnFee()) {
+        if (channel.getRefundingIsReturnFee()!=null && TradeConstant.REFUND_ORDER_FEE == channel.getRefundingIsReturnFee()) {
             if ("全额".equals(orderRefund.getRemark2())) {
                 //如果是全额退款的场合则退还收单手续费金额=收单的手续费
                 refundOrderFee = oldOrder.getFee();
@@ -151,7 +148,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 refundOrderFee = refundDTO.getRefundAmount().divide(oldOrder.getOrderAmount()).multiply(oldOrder.getFee());
                 refundOrderFeeTrade = refundDTO.getRefundAmount().divide(oldOrder.getOrderAmount()).multiply(oldOrder.getFeeTrade());
             }
-        } else if (channel.getTransType() != null && TradeConstant.REFUND_TODAY_ORDER_FEE == channel.getTransType()) {
+        } else if (channel.getRefundingIsReturnFee()!=null && TradeConstant.REFUND_TODAY_ORDER_FEE == channel.getRefundingIsReturnFee()) {
             //仅限当日退还的场合需要退还收单手续费
             if (channelCallbackTime.equals(today) && "全额".equals(orderRefund.getRemark2())) {
                 //如果是全额退款的场合则退还收单手续费金额=收单的手续费
@@ -166,11 +163,11 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         //五舍六入保留2位 只舍不入保留2位
         refundOrderFee = refundOrderFee.setScale(2, BigDecimal.ROUND_HALF_DOWN);
         refundOrderFeeTrade = refundOrderFeeTrade.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+        //退还收单手续费 订单币种的收单手续费
         orderRefund.setRefundOrderFee(refundOrderFee);
+        //退还收单手续费 交易币种的收单手续费
         orderRefund.setRefundOrderFeeTrade(refundOrderFeeTrade);
-        log.info("=========================【退款 refundOrder】========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{},退还收单手续费金额(订单):{},退款类型:{}******", channel.getRefundingIsReturnFee(), refundOrderFee, refundOrderFeeTrade, refundDTO.getRefundType());
-
-
+        log.info("=========================【退款 refundOrder】========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{},退还收单手续费金额(交易):{},退款类型:{}******", channel.getRefundingIsReturnFee(), refundOrderFee, refundOrderFeeTrade, refundDTO.getRefundType());
         /***************************************************************  计算退款手续费  *************************************************************/
         //退款手续费
         BigDecimal poundage = BigDecimal.ZERO;
