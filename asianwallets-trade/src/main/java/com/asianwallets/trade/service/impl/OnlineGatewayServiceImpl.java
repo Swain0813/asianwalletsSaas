@@ -427,37 +427,19 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
         //截取URL
         commonBusinessService.getUrl(onlineTradeDTO.getServerUrl(), orders);
-//        orders.setTradeType(product.getTransType());
-//        orders.setTradeDirection(product.getTradeDirection());
         orders.setMerchantOrderTime(DateToolUtils.getReqDateG((onlineTradeDTO.getOrderTime())));
         orders.setMerchantOrderId(onlineTradeDTO.getOrderNo());
         orders.setOrderAmount(onlineTradeDTO.getOrderAmount());
         orders.setOrderCurrency(onlineTradeDTO.getOrderCurrency());
-//        orders.setProductCode(product.getProductCode());
         orders.setProductName(onlineTradeDTO.getProductName());
         orders.setProductDescription(onlineTradeDTO.getProductDescription());
-//        orders.setChannelCode(channel.getChannelCode());
-//        orders.setChannelName(channel.getChannelCnName());
-//        orders.setTradeCurrency(channel.getCurrency());
         orders.setTradeStatus(TradeConstant.PAYMENT_START);
-//        orders.setPayMethod(merchantProduct.getPayType());
         orders.setPayerName(onlineTradeDTO.getPayerName());
         orders.setPayerAccount(onlineTradeDTO.getPayerAccount());
         orders.setPayerBank(onlineTradeDTO.getPayerBank());
         orders.setPayerEmail(onlineTradeDTO.getPayerEmail());
         orders.setPayerPhone(onlineTradeDTO.getPayerPhone());
         orders.setPayerAddress(onlineTradeDTO.getPayerAddress());
-//        //判断结算周期类型
-//        if (TradeConstant.DELIVERED.equals(merchantProduct.getSettleCycle())) {
-//            //妥投结算
-//            orders.setProductSettleCycle(TradeConstant.FUTURE_TIME);
-//        } else {
-//            //产品结算周期
-//            orders.setProductSettleCycle(SettleDateUtil.getSettleDate(merchantProduct.getSettleCycle()));
-//        }
-//        orders.setFloatRate(merchantProduct.getFloatRate());
-//        orders.setIssuerId(channel.getIssuerId());
-//        orders.setBankName(basicInfoVO.getBankName());
         orders.setBrowserUrl(onlineTradeDTO.getBrowserUrl());
         orders.setServerUrl(onlineTradeDTO.getServerUrl());
         orders.setLanguage(onlineTradeDTO.getLanguage());
