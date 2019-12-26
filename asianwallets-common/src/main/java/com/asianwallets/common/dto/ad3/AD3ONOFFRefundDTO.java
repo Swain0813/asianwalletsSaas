@@ -25,4 +25,7 @@ public class AD3ONOFFRefundDTO {
 
     @ApiModelProperty(value = "Ad3查询实体")
     private AD3QuerySingleOrderDTO ad3QuerySingleOrderDTO;
+
+    public AD3ONOFFRefundDTO() {
+    }
 }
