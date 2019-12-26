@@ -50,7 +50,8 @@ public class OnlineCallbackController extends BaseController {
         }
         AD3OnlineCallbackDTO ad3OnlineCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), AD3OnlineCallbackDTO.class);
         log.info("--------------------------------线上AD3服务器回调接口--------------------------------AD3OnlineCallbackDTO:{}", JSON.toJSON(ad3OnlineCallbackDTO));
-        return ad3Service.callback(ad3OnlineCallbackDTO);
+//        ad3Service.callback(ad3OnlineCallbackDTO)
+        return null;
     }
 
     @ApiOperation(value = "NextPos回调")
