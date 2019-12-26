@@ -1,9 +1,11 @@
 package com.asianwallets.trade.dao;
 
 import com.asianwallets.common.base.BaseMapper;
+import com.asianwallets.common.dto.PosQueryOrderListDTO;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.trade.vo.OfflineCheckOrdersVO;
+import com.asianwallets.trade.vo.PosQueryOrderListVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
@@ -66,4 +68,20 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @return 订单集合
      */
     List<OfflineCheckOrdersVO> offlineCheckOrders(OfflineCheckOrdersDTO offlineCheckOrdersDTO);
+
+    /**
+     * POS机查询订单列表信息
+     *
+     * @param posQueryOrderListDTO POS机查询订单接口输入实体
+     * @return 订单列表
+     */
+    List<PosQueryOrderListVO> posQueryOrderList(PosQueryOrderListDTO posQueryOrderListDTO);
+
+    /**
+     * POS机查询订单详情
+     *
+     * @param posQueryOrderListDTO POS机查询订单详情输入实体
+     * @return 订单
+     */
+    PosQueryOrderListVO posQueryOrderDetail(PosQueryOrderListDTO posQueryOrderListDTO);
 }
