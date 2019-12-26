@@ -62,7 +62,7 @@ public interface MerchantChannelMapper extends  BaseMapper<MerchantChannel> {
      * @Descripate 根据商户通道Id查询商户通道详情
      * @return
      **/
-    MerChannelVO getMerChannelInfoById(@Param("merChannelId") String merChannelId);
+    MerChannelVO getMerChannelInfoById(@Param("merChannelId") String merChannelId,@Param("language")String language);
 
     /**
      * @Author YangXu

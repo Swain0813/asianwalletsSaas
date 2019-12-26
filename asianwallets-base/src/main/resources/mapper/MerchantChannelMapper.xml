@@ -228,7 +228,7 @@
                  LEFT JOIN channel ch ON ch.id = cb.channel_id
                  LEFT JOIN bank b ON b.id = cb.bank_id
                  LEFT JOIN product p ON mp.product_id = p.id
-                 LEFT JOIN pay_type pt ON pt.extend1 = p.pay_type
+                 LEFT JOIN pay_type pt ON pt.extend1 = p.pay_type and pt.language = #{language}
         WHERE mc.id = #{merChannelId}
     </select>
 
