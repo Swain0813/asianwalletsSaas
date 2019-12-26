@@ -40,8 +40,8 @@ public class TradeConstant {
     public static final Byte TRADE_UPLINE = 2; //线下
 
     //------------产品交易方向
-    public static final Byte PRODUCT_ONLINE_PC = 1; //线上pc端
-    public static final Byte PRODUCT_ONLINE_MOVE = 2; //线上移动端
+    public static final Byte PRODUCT_ONLINE = 1; //线上
+    public static final Byte PRODUCT_OFFLINE = 2; //线下
     public static final Byte PRODUCT_UPLINE_MOVE = 3; //线下移动端
 
     //------------费率类型------------

@@ -7,6 +7,7 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.trade.dto.OfflineLoginDTO;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
+import com.asianwallets.trade.dto.PosGetMerProDTO;
 import com.asianwallets.trade.service.OfflineTradeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,6 +50,12 @@ public class OfflineTradeController extends BaseController {
     @PostMapping("checkOrder")
     public BaseResponse checkOrder(@RequestBody @ApiParam @Valid OfflineCheckOrdersDTO offlineCheckOrdersDTO) {
         return ResultUtil.success(offlineTradeService.checkOrder(offlineCheckOrdersDTO));
+    }
+
+    @ApiOperation(value = "POS机查询商户产品,币种信息")
+    @PostMapping("posGetMerPro")
+    public BaseResponse posGetMerPro(@RequestBody @ApiParam @Valid PosGetMerProDTO posGetMerProDTO) {
+        return ResultUtil.success(offlineTradeService.posGetMerPro(posGetMerProDTO));
     }
 }
 

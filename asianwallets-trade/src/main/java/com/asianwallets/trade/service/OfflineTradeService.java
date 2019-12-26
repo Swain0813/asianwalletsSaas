@@ -3,9 +3,11 @@ package com.asianwallets.trade.service;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OfflineLoginDTO;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
+import com.asianwallets.trade.dto.PosGetMerProDTO;
 import com.asianwallets.trade.vo.BscDynamicScanVO;
 import com.asianwallets.trade.vo.CsbDynamicScanVO;
 import com.asianwallets.trade.vo.OfflineCheckOrdersVO;
+import com.asianwallets.trade.vo.PosMerProCurVO;
 
 import java.util.List;
 
@@ -42,4 +44,12 @@ public interface OfflineTradeService {
      * @return 订单集合
      */
     List<OfflineCheckOrdersVO> checkOrder(OfflineCheckOrdersDTO offlineCheckOrdersDTO);
+
+    /**
+     * POS机查询商户产品,币种信息
+     *
+     * @param posGetMerProDTO POS机查询商户产品信息输入实体
+     * @return POS机查询商户产品,币种信息输出实体集合
+     */
+    PosMerProCurVO posGetMerPro(PosGetMerProDTO posGetMerProDTO);
 }
