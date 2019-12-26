@@ -1,5 +1,6 @@
 package com.asianwallets.trade.service;
 
+import com.asianwallets.common.dto.PosQueryOrderListDTO;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OfflineLoginDTO;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
@@ -49,7 +50,15 @@ public interface OfflineTradeService {
      * POS机查询商户产品,币种信息
      *
      * @param posGetMerProDTO POS机查询商户产品信息输入实体
-     * @return POS机查询商户产品,币种信息输出实体集合
+     * @return POS机查询商户产品, 币种信息输出实体集合
      */
     PosMerProCurVO posGetMerPro(PosGetMerProDTO posGetMerProDTO);
+
+    /**
+     * POS机查询订单列表信息
+     *
+     * @param posQueryOrderListDTO POS机查询订单接口输入实体
+     * @return POS机查询商户产品, 币种信息输出实体集合
+     */
+    Object posQueryOrderList(PosQueryOrderListDTO posQueryOrderListDTO);
 }
