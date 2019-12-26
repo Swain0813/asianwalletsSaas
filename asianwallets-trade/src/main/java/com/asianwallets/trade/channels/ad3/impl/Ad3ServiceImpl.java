@@ -449,7 +449,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                     baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                    RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
+                    RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(JSON.toJSONString(response.getData()), RefundAdResponseVO.class);
                     log.info("==================【AD3线上退款】================== 【退款成功】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     //退款成功
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
@@ -511,7 +511,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             BaseResponse response = channelsFeign.ad3OfflineRefund(ad3ONOFFRefundDTO);
             log.info("=================【AD3线下退款】=================【Channels服务响应】请求参数 response: {} ", JSON.toJSONString(response));
             if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
-                RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
+                RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(JSON.toJSONString(response.getData()), RefundAdResponseVO.class);
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                     //退款成功
                     baseResponse.setCode(EResultEnum.SUCCESS.getCode());
