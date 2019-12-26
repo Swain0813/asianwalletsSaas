@@ -258,11 +258,13 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         BankIssuerId bankIssuerId = null;
         for (ChannelBank channelBank : channelBankList) {
             channel = commonRedisDataService.getChannelById(channelBank.getChannelId());
-            bankIssuerId = bankIssuerIdMapper.selectByChannelCode(channel.getChannelCode());
-            if (bankIssuerId != null) {
-                log.info("==================【线下收单】==================【通道】  channel: {}", JSON.toJSONString(channel));
-                log.info("==================【线下收单】==================【银行机构映射】  bankIssuerId: {}", JSON.toJSONString(bankIssuerId));
-                break;
+            if (channel != null && channel.getEnabled()) {
+                bankIssuerId = bankIssuerIdMapper.selectByChannelCode(channel.getChannelCode());
+                if (bankIssuerId != null) {
+                    log.info("==================【线下收单】==================【通道】  channel: {}", JSON.toJSONString(channel));
+                    log.info("==================【线下收单】==================【银行机构映射】  bankIssuerId: {}", JSON.toJSONString(bankIssuerId));
+                    break;
+                }
             }
         }
         if (channel == null) {

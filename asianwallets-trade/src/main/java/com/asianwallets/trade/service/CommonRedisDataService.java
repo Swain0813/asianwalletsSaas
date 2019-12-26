@@ -76,7 +76,7 @@ public interface CommonRedisDataService {
     MerchantProduct getMerProByMerIdAndProId(String merchantId, String productId);
 
     /**
-     * 根据通道ID查询通道信息
+     * 根据通道ID查询通道信息【此方法未查询到会返回NULL】
      *
      * @param channelId 通道ID
      * @return 通道
