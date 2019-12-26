@@ -16,6 +16,9 @@ import java.util.Date;
 @ApiModel(value = "商户产品实体", description = "商户产品实体")
 public class MerchantProductDTO extends BasePageHelper {
 
+    @ApiModelProperty(value = "机构id")
+    private String institutionId;
+
     @ApiModelProperty(value = "商户产品id")
     private String merProId;
 

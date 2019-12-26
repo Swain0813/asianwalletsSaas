@@ -31,6 +31,8 @@ public class AD3RefundDTO {
     @ApiModelProperty(value = "签名")
     private String signMsg;
 
+    public AD3RefundDTO() {
+    }
 
     public AD3RefundDTO(String merchantCode) {
         this.inputCharset = AD3Constant.CHARSET_UTF_8;

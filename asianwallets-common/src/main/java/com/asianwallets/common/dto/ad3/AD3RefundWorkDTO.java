@@ -48,6 +48,9 @@ public class AD3RefundWorkDTO {
     @ApiModelProperty(value = "备注1")
     private String ext1;
 
+    public AD3RefundWorkDTO() {
+    }
+
     /**
      * 调AD3退款用
      * @param terminalId
