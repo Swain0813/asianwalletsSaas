@@ -1,4 +1,5 @@
 package com.asianwallets.base.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.base.dao.*;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -276,16 +278,16 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             merchantProductAudit.setRateType(merchantProductDTO.getRateType());
             merchantProductAudit.setRate(merchantProductDTO.getRate());
             //费率类型为单笔费率的场合才有费率最小值和费率最大值
-            merchantProductAudit.setMaxTate(StringUtils.isEmpty(merchantProductDTO.getMaxTate())?null:merchantProductDTO.getMaxTate());
-            merchantProductAudit.setMinTate(StringUtils.isEmpty(merchantProductDTO.getMinTate())?null:merchantProductDTO.getMinTate());
+            merchantProductAudit.setMaxTate(StringUtils.isEmpty(merchantProductDTO.getMaxTate()) ? null : merchantProductDTO.getMaxTate());
+            merchantProductAudit.setMinTate(StringUtils.isEmpty(merchantProductDTO.getMinTate()) ? null : merchantProductDTO.getMinTate());
             merchantProductAudit.setAddValue(merchantProductDTO.getAddValue());
             merchantProductAudit.setFloatRate(merchantProductDTO.getFloatRate());
             merchantProductAudit.setRefundDefault(merchantProductDTO.getRefundDefault());
             if (merchantProductDTO.getRefundDefault()) {
                 merchantProductAudit.setRefundRateType(merchantProductDTO.getRefundRateType());
                 merchantProductAudit.setRefundRate(merchantProductDTO.getRefundRate());
-                merchantProductAudit.setRefundMaxTate(StringUtils.isEmpty(merchantProductDTO.getRefundMaxTate())?null:merchantProductDTO.getRefundMaxTate());
-                merchantProductAudit.setRefundMinTate(StringUtils.isEmpty(merchantProductDTO.getRefundMinTate())?null:merchantProductDTO.getRefundMinTate());
+                merchantProductAudit.setRefundMaxTate(StringUtils.isEmpty(merchantProductDTO.getRefundMaxTate()) ? null : merchantProductDTO.getRefundMaxTate());
+                merchantProductAudit.setRefundMinTate(StringUtils.isEmpty(merchantProductDTO.getRefundMinTate()) ? null : merchantProductDTO.getRefundMinTate());
                 merchantProductAudit.setRefundAddValue(merchantProductDTO.getRefundAddValue());
             }
             merchantProductAudit.setDividedMode(merchantProductDTO.getDividedMode());
@@ -309,16 +311,16 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             merchantProductAudit.setRateType(merchantProductDTO.getRateType());
             merchantProductAudit.setRate(merchantProductDTO.getRate());
             //费率类型为单笔费率的场合才有费率最小值和费率最大值
-            merchantProductAudit.setMaxTate(StringUtils.isEmpty(merchantProductDTO.getMaxTate())?null:merchantProductDTO.getMaxTate());
-            merchantProductAudit.setMinTate(StringUtils.isEmpty(merchantProductDTO.getMinTate())?null:merchantProductDTO.getMinTate());
+            merchantProductAudit.setMaxTate(StringUtils.isEmpty(merchantProductDTO.getMaxTate()) ? null : merchantProductDTO.getMaxTate());
+            merchantProductAudit.setMinTate(StringUtils.isEmpty(merchantProductDTO.getMinTate()) ? null : merchantProductDTO.getMinTate());
             merchantProductAudit.setAddValue(merchantProductDTO.getAddValue());
             merchantProductAudit.setFloatRate(merchantProductDTO.getFloatRate());
             merchantProductAudit.setRefundDefault(merchantProductDTO.getRefundDefault());
             if (merchantProductDTO.getRefundDefault()) {
                 merchantProductAudit.setRefundRateType(merchantProductDTO.getRefundRateType());
                 merchantProductAudit.setRefundRate(merchantProductDTO.getRefundRate());
-                merchantProductAudit.setRefundMaxTate(StringUtils.isEmpty(merchantProductDTO.getRefundMaxTate())?null:merchantProductDTO.getRefundMaxTate());
-                merchantProductAudit.setRefundMinTate(StringUtils.isEmpty(merchantProductDTO.getRefundMinTate())?null:merchantProductDTO.getRefundMinTate());
+                merchantProductAudit.setRefundMaxTate(StringUtils.isEmpty(merchantProductDTO.getRefundMaxTate()) ? null : merchantProductDTO.getRefundMaxTate());
+                merchantProductAudit.setRefundMinTate(StringUtils.isEmpty(merchantProductDTO.getRefundMinTate()) ? null : merchantProductDTO.getRefundMinTate());
                 merchantProductAudit.setRefundAddValue(merchantProductDTO.getRefundAddValue());
             }
             merchantProductAudit.setDividedMode(merchantProductDTO.getDividedMode());
@@ -660,7 +662,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
      **/
     @Override
     public MerChannelVO getMerChannelInfoById(String merChannelId) {
-        return merchantChannelMapper.getMerChannelInfoById(merChannelId);
+        return merchantChannelMapper.getMerChannelInfoById(merChannelId, auditorProvider.getLanguage());
     }
 
     /**
