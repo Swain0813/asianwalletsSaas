@@ -99,7 +99,12 @@
 		left join channel_bank cb on cb.id = mc.cha_ban_id
 		left join channel ch on ch.id = cb.channel_id
 		left join bank b on b.id = cb.bank_id
+		left join merchant m on mp.merchant_id = m.id
+		left join institution i on m.institution_id = i.id
 		<where>
+			<if test="institutionId!=null and institutionId != ''">
+				and i.id=#{institutionId}
+			</if>
 			<if test="merchantId!=null and merchantId != ''">
 				and mp.merchant_id=#{merchantId}
 			</if>

@@ -2,7 +2,6 @@ package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
-import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
@@ -13,7 +12,6 @@ import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.BCryptUtils;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
-import com.asianwallets.common.vo.CurrencyVO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;

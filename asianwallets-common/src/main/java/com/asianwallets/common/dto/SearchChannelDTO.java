@@ -14,6 +14,9 @@ import lombok.Data;
 @ApiModel(value = "产品通道管理查询实体", description = "产品通道管理查询实体")
 public class SearchChannelDTO extends BasePageHelper {
 
+    @ApiModelProperty(value = "机构id")
+    private String institutionId;
+
     @ApiModelProperty(value = "商户id")
     private String merchantId;
 
