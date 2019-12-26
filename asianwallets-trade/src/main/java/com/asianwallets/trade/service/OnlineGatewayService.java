@@ -1,6 +1,8 @@
 package com.asianwallets.trade.service;
 
+import com.asianwallets.common.dto.CashierDTO;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.trade.dto.CalcRateDTO;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
 
 /**
@@ -16,52 +18,28 @@ public interface OnlineGatewayService {
      */
     BaseResponse gateway(OnlineTradeDTO onlineTradeDTO);
 
-    /* *//**
-     * 收银台所需的信息
+    /**
+     * 收银台基础信息
      *
-     * @param orderId
-     * @param language
-     * @return
-     *//*
+     * @param orderId  订单ID
+     * @param language 语言
+     * @return BaseResponse
+     */
     BaseResponse cashier(String orderId, String language);
 
-    *//**
-     * 线上通道订单状态查询
+    /**
+     * 收银台换汇金额计算
      *
-     * @param onlineOrderQueryDTO
-     * @return
-     *//*
-    BaseResponse onlineOrderQuery(OnlineOrderQueryDTO onlineOrderQueryDTO);
+     * @param calcRateDTO 订单输入实体
+     * @return 换汇计算输出实体
+     */
+    BaseResponse calcCashierExchangeRate(CalcRateDTO calcRateDTO);
 
-    *//**
+    /**
      * 收银台收单
      *
-     * @param cashierDTO
-     * @return
-     *//*
+     * @param cashierDTO 收银台收单实体
+     * @return BaseResponse
+     */
     BaseResponse cashierGateway(CashierDTO cashierDTO);
-
-  *//*  *//**//**
-     * 查询线上订单信息
-     *
-     * @param onlineqOrderInfoDTO
-     * @return
-     *//**//*
-    List<OnlineOrdersInfoVO> pageOnlineqOrderInfo(OnlineqOrderInfoDTO onlineqOrderInfoDTO);
-
-    *//**//**
-     * 线上通道订单状态查询 RSA
-     *
-     * @param onlineOrderQueryRSADTO
-     * @return
-     *//**//*
-    BaseResponse onlineqOrderQueryingUseRSA(OnlineOrderQueryRSADTO onlineOrderQueryRSADTO);*//*
-
-     *//**
-     * 模拟界面用
-     *
-     * @param placeOrdersDTO
-     * @return
-     *//*
-    BaseResponse imitateGateway(PlaceOrdersDTO placeOrdersDTO);*/
 }

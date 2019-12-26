@@ -258,8 +258,4 @@ public class TradeConstant {
     public static final String ALIPAY = "ALIPAY"; //ALIPAY线上扫码
     public static final String WECHAT = "WECHAT"; //WECHAT线上扫码
     public static final String CLOUD = "CLOUD"; //云闪付
-
-    //---------------线上订单的类型
-//    public static final Byte DIRECTCONNECTION = 1; //直连订单
-//    public static final Byte INDIRECTCONNECTION = 2; //间连订单
 }

@@ -2,6 +2,7 @@ package com.asianwallets.trade.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.dto.PosQueryOrderListDTO;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
@@ -56,6 +57,18 @@ public class OfflineTradeController extends BaseController {
     @PostMapping("posGetMerPro")
     public BaseResponse posGetMerPro(@RequestBody @ApiParam @Valid PosGetMerProDTO posGetMerProDTO) {
         return ResultUtil.success(offlineTradeService.posGetMerPro(posGetMerProDTO));
+    }
+
+    @ApiOperation(value = "POS机分页查询订单列表")
+    @PostMapping("posQueryOrderList")
+    public BaseResponse posQueryOrderList(@RequestBody @ApiParam @Valid PosQueryOrderListDTO posQueryOrderListDTO) {
+        return ResultUtil.success(offlineTradeService.posQueryOrderList(posQueryOrderListDTO));
+    }
+
+    @ApiOperation(value = "pos机查询订单详情")
+    @PostMapping("posQueryOrderDetail")
+    public BaseResponse posQueryOrderDetail(@RequestBody @ApiParam @Valid PosQueryOrderListDTO posQueryOrderListDTO) {
+        return ResultUtil.success(offlineTradeService.posQueryOrderDetail(posQueryOrderListDTO));
     }
 }
 
