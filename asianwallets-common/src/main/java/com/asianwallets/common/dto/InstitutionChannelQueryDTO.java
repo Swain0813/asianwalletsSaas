@@ -3,11 +3,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 
 @Data
 @ApiModel(value = "机构通道查询输入参数", description = "机构通道查询输入参数")
 public class InstitutionChannelQueryDTO {
 
+    @NotNull(message = "50002")
     @ApiModelProperty(value = "机构编号")
     private String institutionId;
 
