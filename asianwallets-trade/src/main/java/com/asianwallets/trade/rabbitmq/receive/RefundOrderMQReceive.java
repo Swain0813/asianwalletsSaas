@@ -242,7 +242,8 @@ public class RefundOrderMQReceive {
                     type = TradeConstant.RV;
                 }
                 orderRefund.setRemark4(type);
-
+                orderRefund.setSign(order.getSign());
+                orderRefundMapper.insert(orderRefund);
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
                 log.info("=========================【CX_GX_FAIL_DL】======================= 【上报清结算 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
