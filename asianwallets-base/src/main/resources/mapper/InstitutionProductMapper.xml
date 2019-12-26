@@ -155,6 +155,8 @@
         <result column="currency" property="currency" jdbcType="VARCHAR"/>
         <result column="supportRefundState" property="supportRefundState" jdbcType="BIT"/>
         <result column="refundingIsReturnFee" property="refundingIsReturnFee" jdbcType="TINYINT"/>
+        <result column="sort" property="sort" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
         <collection javaType="list" property="bankNames" resultMap="BankReleVantVOMap"/>
     </resultMap>
 
