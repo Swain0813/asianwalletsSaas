@@ -98,21 +98,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         return indirectConnection(onlineTradeDTO);
     }
 
-
-    /* TODO 收银台查询订单
-    //查询订单号是否重复
-        Orders orders = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getMerchantId());
-        if (orders!=null) {
-            if (orders.getTradeStatus().equals(TradeConstant.PAYMENT_SUCCESS)) {
-                log.info("-----------------【线上直连】下单信息记录--------------【订单已支付】");
-                throw new BusinessException(EResultEnum.ORDER_PAID_ERROR.getCode());
-            }
-            if (orders.getTradeStatus().equals(TradeConstant.PAYMENT_FAIL)) {
-                log.info("-----------------【线上直连】下单信息记录--------------【订单已支付失败】");
-                throw new BusinessException(EResultEnum.ORDER_PAYMENT_FAILED.getCode());
-            }
-        }*/
-
     /**
      * 直连
      *
