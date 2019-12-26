@@ -179,7 +179,7 @@ public class RefundOrderMQReceive {
             try {
                 channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
             } catch (Exception e) {
-                log.info("========================= 【TK_RF_FAIL_DL】 ChannelsAbstract ==================== Exception : 【{}】,rabbitMassage : 【{}】", e, JSON.toJSONString(rabbitMassage));
+                log.info("========================= 【TK_SB_FAIL_DL】 ChannelsAbstract ==================== Exception : 【{}】,rabbitMassage : 【{}】", e, JSON.toJSONString(rabbitMassage));
             }
             channelsAbstract.refund(channel, orderRefund, rabbitMassage);
         } else {
@@ -189,7 +189,7 @@ public class RefundOrderMQReceive {
             Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund,reconciliationRemark);
             reconciliationMapper.insert(reconciliation);
             RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-            log.info("=================【TK_RF_FAIL_DL】=================【调账 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+            log.info("=================【TK_SB_FAIL_DL】=================【调账 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
             rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
 
             //预警机制
