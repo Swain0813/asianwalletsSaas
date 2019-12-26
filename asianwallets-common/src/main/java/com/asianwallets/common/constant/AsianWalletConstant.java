@@ -153,4 +153,7 @@ public class AsianWalletConstant {
     public static final Byte COUNTRY = 0;
     //地区
     public static final Byte AREA = 1;
+
+    //密钥管理表的平台私钥缓存
+    public static final String ATTESTATION_CACHE_PLATFORM_KEY = "attestationCachePlatformKey";
 }

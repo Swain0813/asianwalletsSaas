@@ -16,8 +16,8 @@ import javax.validation.constraints.NotNull;
 public class CashierDTO {
 
     @NotNull(message = "50002")
-    @ApiModelProperty(value = "机构编号")
-    private String institutionCode;
+    @ApiModelProperty(value = "商户编号")
+    private String merchantId;
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "订单金额")
@@ -57,7 +57,7 @@ public class CashierDTO {
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "商户订单号")
-    private String institutionOrderId;
+    private String merchantOrderId;
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "银行机构代码")
