@@ -5,6 +5,7 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.utils.RSAUtils;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.AttestationMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.feign.ClearingFeign;
@@ -37,9 +38,9 @@ public class TradeApplicationTests {
 
     @Test
     public void test() {
-        channelsFeign.xenditPay(null);
-        clearingFeign.intoAndOutMerhtAccount(null);
-        messageFeign.sendSimple("", "");
+//        channelsFeign.xenditPay(null);
+        clearingFeign.intoAndOutMerhtAccount(new FundChangeDTO());
+//        messageFeign.sendSimple("", "");
     }
 
     @Test

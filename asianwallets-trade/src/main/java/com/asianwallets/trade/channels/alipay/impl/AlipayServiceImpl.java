@@ -42,16 +42,22 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
 
     @Autowired
     private ChannelsFeign channelsFeign;
+
     @Autowired
     private OrderRefundMapper orderRefundMapper;
+
     @Autowired
     private CommonBusinessService commonBusinessService;
+
     @Autowired
     private ReconciliationMapper reconciliationMapper;
+
     @Autowired
     private ClearingService clearingService;
+
     @Autowired
     private RabbitMQSender rabbitMQSender;
+
     @Autowired
     private OrdersMapper ordersMapper;
 
@@ -84,7 +90,8 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
                 log.info("=====================【AliPay退款】==================== 【退款失败】 : {} ", JSON.toJSON(orderRefund));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                String reconciliationRemark = type.equals(TradeConstant.AA)?TradeConstant.REFUND_FAIL_RECONCILIATION:TradeConstant.CANCEL_ORDER_REFUND_FAIL;
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund,reconciliationRemark);
                 reconciliationMapper.insert(reconciliation);
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
                 log.info("=========================【AliPay退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));

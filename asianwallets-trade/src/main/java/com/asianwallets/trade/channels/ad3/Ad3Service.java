@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.ad3;
-
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
@@ -35,6 +34,7 @@ public interface Ad3Service {
      * @Descripate 退款接口
      **/
     BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
+
     /**
      * @Author YangXu
      * @Date 2019/12/19
@@ -42,6 +42,7 @@ public interface Ad3Service {
      * @return
      **/
     BaseResponse cancel(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
+
     /**
      * @Author YangXu
      * @Date 2019/12/23
@@ -49,6 +50,7 @@ public interface Ad3Service {
      * @return
      **/
     BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
+
     /**
      * 对向ad3的请求进行签名
      *
@@ -56,12 +58,14 @@ public interface Ad3Service {
      * @return
      */
     String signMsg(Object object);
+
     /**
      * 获取终端编号和token
      *
      * @return
      */
     AD3LoginVO getTerminalIdAndToken(Channel channel);
+
 
     /**
      * 生成AD3认证签名

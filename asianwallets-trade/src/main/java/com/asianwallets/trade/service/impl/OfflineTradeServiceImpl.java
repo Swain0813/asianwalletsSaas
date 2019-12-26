@@ -2,33 +2,31 @@ package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.BCryptUtils;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.CurrencyVO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
-import com.asianwallets.trade.dao.BankIssuerIdMapper;
-import com.asianwallets.trade.dao.DeviceBindingMapper;
-import com.asianwallets.trade.dao.OrdersMapper;
-import com.asianwallets.trade.dao.SysUserMapper;
+import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OfflineLoginDTO;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
+import com.asianwallets.trade.dto.PosGetMerProDTO;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OfflineTradeService;
 import com.asianwallets.trade.utils.HandlerContext;
 import com.asianwallets.trade.utils.SettleDateUtil;
 import com.asianwallets.trade.utils.TokenUtils;
-import com.asianwallets.trade.vo.BasicInfoVO;
-import com.asianwallets.trade.vo.BscDynamicScanVO;
-import com.asianwallets.trade.vo.CsbDynamicScanVO;
-import com.asianwallets.trade.vo.OfflineCheckOrdersVO;
+import com.asianwallets.trade.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +35,7 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -66,6 +65,12 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     @Autowired
     private BankIssuerIdMapper bankIssuerIdMapper;
+
+    @Autowired
+    private CurrencyMapper currencyMapper;
+
+    @Autowired
+    private MerchantProductMapper merchantProductMapper;
 
     @Autowired
     private HandlerContext handlerContext;
@@ -480,5 +485,58 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         List<OfflineCheckOrdersVO> offlineCheckOrdersVOList = ordersMapper.offlineCheckOrders(offlineCheckOrdersDTO);
         log.info("==================【线下查询订单】==================【响应参数】 offlineOrdersVOS: {}", JSON.toJSONString(offlineCheckOrdersVOList));
         return offlineCheckOrdersVOList;
+    }
+
+    /**
+     * POS机查询商户产品,币种信息
+     *
+     * @param posGetMerProDTO POS机查询商户产品信息输入实体
+     * @return POS机查询商户产品, 币种信息输出实体集合
+     */
+    @Override
+    public PosMerProCurVO posGetMerPro(PosGetMerProDTO posGetMerProDTO) {
+        log.info("===================【POS机查询商户产品,币种信息】===================【参数记录】 posGetMerProDTO: {}", JSON.toJSONString(posGetMerProDTO));
+        //验签
+//        if (!commonBusinessService.checkSignByMd5(posGetMerProDTO)) {
+//            log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
+//            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+//        }
+        //校验设备信息
+        checkDevice(posGetMerProDTO.getMerchantId(), posGetMerProDTO.getImei(), posGetMerProDTO.getOperatorId());
+        //查询AW支持币种
+        List<PosCurrencyVO> currencies = currencyMapper.selectAllCodeAndDefaults();
+        if (ArrayUtil.isEmpty(currencies)) {
+            log.info("===================【POS机查询商户产品,币种信息】===================【币种信息不存在】");
+            throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
+        }
+        if (StringUtils.isEmpty(posGetMerProDTO.getLanguage())) {
+            posGetMerProDTO.setLanguage(TradeConstant.EN_US);
+        }
+        //查询机构产品信息
+        List<PosMerProVO> posMerProVOList = merchantProductMapper.selectMerPro(posGetMerProDTO.getMerchantId(), TradeConstant.PRODUCT_OFFLINE, posGetMerProDTO.getLanguage(), posGetMerProDTO.getTradeType());
+        if (ArrayUtil.isEmpty(posMerProVOList)) {
+            log.info("===================【POS机查询商户产品,币种信息】===================【商户产品不存在】");
+            throw new BusinessException(EResultEnum.INSTITUTIONAL_PRODUCTS_DO_NOT_EXIST.getCode());
+        }
+        //排序机构产品集合
+        LinkedList<PosMerProVO> sortProductList = new LinkedList<>();
+        for (PosMerProVO merProVO : posMerProVOList) {
+            //截取不包含带(-,CSB,BSC)的支付方式名称
+            if (merProVO.getPayTypeName().contains("-")) {
+                merProVO.setPayTypeName(merProVO.getPayTypeName().substring(0, merProVO.getPayTypeName().indexOf("-")));
+            } else if (merProVO.getPayTypeName().contains("CSB")) {
+                merProVO.setPayTypeName(merProVO.getPayTypeName().substring(0, merProVO.getPayTypeName().indexOf("C")));
+            } else if (merProVO.getPayTypeName().contains("BSC")) {
+                merProVO.setPayTypeName(merProVO.getPayTypeName().substring(0, merProVO.getPayTypeName().indexOf("B")));
+            }
+            //将BSC的产品放在集合前面
+            if ("BSC".equals(merProVO.getFlag())) {
+                sortProductList.addFirst(merProVO);
+            } else {
+                //将CSB的产品放在集合后面
+                sortProductList.addLast(merProVO);
+            }
+        }
+        return new PosMerProCurVO(currencies, sortProductList);
     }
 }

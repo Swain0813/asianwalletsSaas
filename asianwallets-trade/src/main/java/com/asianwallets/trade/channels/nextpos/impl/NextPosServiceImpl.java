@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.nextpos.impl;
-
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -15,7 +14,6 @@ import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
-import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -32,8 +30,6 @@ import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
-import com.asianwallets.trade.vo.FundChangeVO;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +38,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -81,6 +76,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
 
     @Autowired
     private RabbitMQSender rabbitMQSender;
+
     @Autowired
     private OrdersMapper ordersMapper;
 
@@ -332,7 +328,8 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 log.info("=================【NextPos退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                String reconciliationRemark = type.equals(TradeConstant.AA)?TradeConstant.REFUND_FAIL_RECONCILIATION:TradeConstant.CANCEL_ORDER_REFUND_FAIL;
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund,reconciliationRemark);
                 reconciliationMapper.insert(reconciliation);
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
                 log.info("=========================【NextPos退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
