@@ -5,10 +5,7 @@ import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OfflineLoginDTO;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
 import com.asianwallets.trade.dto.PosGetMerProDTO;
-import com.asianwallets.trade.vo.BscDynamicScanVO;
-import com.asianwallets.trade.vo.CsbDynamicScanVO;
-import com.asianwallets.trade.vo.OfflineCheckOrdersVO;
-import com.asianwallets.trade.vo.PosMerProCurVO;
+import com.asianwallets.trade.vo.*;
 
 import java.util.List;
 
@@ -58,7 +55,7 @@ public interface OfflineTradeService {
      * POS机查询订单列表信息
      *
      * @param posQueryOrderListDTO POS机查询订单接口输入实体
-     * @return POS机查询商户产品, 币种信息输出实体集合
+     * @return 订单列表
      */
-    Object posQueryOrderList(PosQueryOrderListDTO posQueryOrderListDTO);
+    List<PosQueryOrderListVO> posQueryOrderList(PosQueryOrderListDTO posQueryOrderListDTO);
 }

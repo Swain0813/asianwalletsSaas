@@ -1,4 +1,4 @@
-package com.asianwallets.common.vo;
+package com.asianwallets.trade.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@ApiModel(value = "pos查询订单信息输出实体", description = "pos查询订单信息输出实体")
+@ApiModel(value = "pos查询订单列表输出实体", description = "pos查询订单列表输出实体")
 public class PosQueryOrderListVO {
 
     @ApiModelProperty(value = "系统订单流水号")
@@ -43,7 +43,7 @@ public class PosQueryOrderListVO {
     private String operatorId;
 
     @ApiModelProperty(value = "产品名称")
-    private String payType;
+    private String productName;
 
     @ApiModelProperty(value = "订单币种")
     private String orderCurrency;
@@ -51,23 +51,23 @@ public class PosQueryOrderListVO {
     @ApiModelProperty(value = "交易类型")
     private String tradeType;
 
-    @ApiModelProperty(value = "交易状态")//(1-待支付 2-交易中 3-交易成功 4-交易失败 5-已过期)
-    private Byte txnstatus;
+    @ApiModelProperty(value = "交易状态 1-待支付 2-交易中 3-交易成功 4-交易失败 5-已过期")
+    private Byte txnStatus;
 
-    @ApiModelProperty(value = "退款状态")//退款状态(1-退款中 2-部分退款成功 3-退款成功 4-退款失败)
+    @ApiModelProperty(value = "退款状态 1-退款中 2-部分退款成功 3-退款成功 4-退款失败")
     private Byte refundStatus;
 
-    @ApiModelProperty(value = "撤销状态")//(1-撤销中 2-撤销成功 3-撤销失败)
+    @ApiModelProperty(value = "撤销状态 1-撤销中 2-撤销成功 3-撤销失败")
     private Byte reverseStatus;
-
-    @ApiModelProperty(value = "支付方式图片1 带字的(支付方式表)")//查询订单详情时 使用的是channel表里的channel_img
-    private String payTypeImgOne;
-
-    @ApiModelProperty(value = "支付方式图片2 圆的(字典表)")
-    private String payTypeImgTwo;
 
     @ApiModelProperty(value = "支付方式名称")
     private String payTypeName;
+
+    @ApiModelProperty(value = "支付方式图片2 圆的(字典表)")
+    private String dicon;
+
+    @ApiModelProperty(value = "支付方式名称")
+    private String picon;
 
     @ApiModelProperty(value = "币种默认值")
     private String defaultValue;
