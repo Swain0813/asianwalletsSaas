@@ -140,7 +140,7 @@ public class RefundOrderMQReceive {
                 orderRefundMapper.updateStatuts(reconciliation.getRefundOrderId(), TradeConstant.REFUND_FALID, null, reconciliation.getRemark());
                 reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
                 //改原订单状态
-                OrderRefund orderRefund = orderRefundMapper.selectByPrimaryKey(reconciliation.getId());
+                OrderRefund orderRefund = orderRefundMapper.selectByPrimaryKey(reconciliation.getRefundOrderId());
                 if (reconciliation.getAccountType() == 1) {
                     orderRefund.setRemark4(TradeConstant.RA);
                 } else if (reconciliation.getAccountType() == 2) {
