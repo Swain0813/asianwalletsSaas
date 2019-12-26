@@ -1,10 +1,12 @@
 package com.asianwallets.trade.channels.nextpos.impl;
-
+import cn.hutool.http.Header;
+import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
+import com.asianwallets.common.dto.megapay.NextPosCallbackDTO;
 import com.asianwallets.common.dto.megapay.NextPosQueryDTO;
 import com.asianwallets.common.dto.megapay.NextPosRefundDTO;
 import com.asianwallets.common.dto.megapay.NextPosRequestDTO;
@@ -15,6 +17,7 @@ import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.MD5;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.nextpos.NextPosService;
@@ -25,12 +28,20 @@ import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
+import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.entity.Example;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -55,6 +66,9 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
     private CommonBusinessService commonBusinessService;
 
     @Autowired
+    private CommonRedisDataService commonRedisDataService;
+
+    @Autowired
     private ReconciliationMapper reconciliationMapper;
 
     @Autowired
@@ -62,8 +76,12 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
 
     @Autowired
     private RabbitMQSender rabbitMQSender;
+
     @Autowired
     private OrdersMapper ordersMapper;
+
+    @Value("${custom.nextPosUrl}")
+    private String nextPosUrl;
 
     /**
      * NextPos线下CSB
@@ -86,6 +104,199 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setData(channelResponse.getData());
         return baseResponse;
+    }
+
+    /**
+     * NextPos回调
+     *
+     * @param map      响应参数
+     * @param response 响应实体
+     */
+    @Override
+    public void nextPosCallback(Map<String, Object> map, HttpServletResponse response) {
+        String einv = String.valueOf(map.get("einv"));
+        if (einv.startsWith("CBO")) {
+            log.info("================【NextPos回调】================【该笔回调订单属于AD3】 orderId:{}", einv);
+            log.info("================【NextPos回调】================【分发AD3URL】ad3URL: {}", nextPosUrl);
+            log.info("================【NextPos回调】================【分发AD3参数】map: {}", JSON.toJSONString(map));
+            //分发给AD3
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(nextPosUrl)
+                    .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
+                    .form(map)
+                    .timeout(20000)
+                    .execute();
+            String body = execute.body();
+            log.info("================【NextPos回调】================【AD3回调返回参数】 http状态码:{}, body:{}", execute.getStatus(), body);
+            try {
+                response.getWriter().write(body);
+            } catch (IOException e) {
+                log.info("================【NextPos回调】================【接口异常】", e);
+            }
+            return;
+        }
+        Orders orders = ordersMapper.selectByPrimaryKey(einv);
+        if (orders == null) {
+            log.info("================【NextPos回调】================【回调订单信息不存在】");
+            return;
+        }
+        //校验订单状态
+        if (!TradeConstant.ORDER_PAYING.equals(orders.getTradeStatus())) {
+            log.info("=================【NextPos回调】=================【订单状态不为支付中】");
+            try {
+                response.getWriter().write("00");
+            } catch (IOException e) {
+                log.info("================【NextPos回调】================【接口异常】", e);
+            }
+            return;
+        }
+        Channel channel = commonRedisDataService.getChannelByChannelCode(orders.getChannelCode());
+        //订单状态
+        String status = String.valueOf(map.get(channel.getPayCode()));
+        String refCode = String.valueOf(map.get("refCode"));
+        String amt = String.valueOf(map.get("amt"));
+        String transactionID = String.valueOf(map.get("transactionID"));
+        String mark = String.valueOf(map.get("mark"));
+        NextPosCallbackDTO nextPosCallbackDTO = new NextPosCallbackDTO();
+        nextPosCallbackDTO.setEinv(einv);//订单id
+        nextPosCallbackDTO.setRefCode(refCode);//响应码
+        nextPosCallbackDTO.setAmt(amt);//金额
+        nextPosCallbackDTO.setTransactionID(transactionID);//通道流水号
+        nextPosCallbackDTO.setMark(mark);//签名
+        nextPosCallbackDTO.setStatus(status);//订单状态
+        nextPosCallbackDTO.setMerRespID(channel.getPayCode());
+        nextPosCallbackDTO.setMerRespPassword(channel.getMd5KeyStr());
+        log.info("================【NextPos回调】================【回调参数记录】 nextPosCallbackDTO:{}", JSON.toJSONString(nextPosCallbackDTO));
+        //校验订单参数
+        if (!checkNextPosCallback(nextPosCallbackDTO)) {
+            return;
+        }
+        //金额转换,格式化设置"#,##0.00"
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+        Double amtDouble = new Double(nextPosCallbackDTO.getAmt());
+        String amtSign = decimalFormat.format(amtDouble);
+        String respCode = new String(new Base64().decode(nextPosCallbackDTO.getRefCode().getBytes()));
+        log.info("================【NextPos回调】================ respCode: {}", respCode);
+        //组装签名前的明文
+        String clearText = respCode + nextPosCallbackDTO.getEinv() + nextPosCallbackDTO.getMerRespPassword() + nextPosCallbackDTO.getMerRespID()
+                + nextPosCallbackDTO.getStatus() + amtSign;
+        log.info("================【NextPos回调】================【签名前的明文】  clearText: {}", clearText);
+        String sign = MD5.MD5Encode(clearText).toUpperCase();
+        log.info("================【NextPos回调】================【签名后的密文】 sign: {}", sign);
+        if (!sign.equals(nextPosCallbackDTO.getMark())) {
+            log.info("================【NextPos回调】================【签名不匹配】");
+            return;
+        }
+        if ("000000000000".equals(respCode)) {
+            log.info("================【NextPos回调】================【有问题的transaction,联系NextPos】");
+            return;
+        }
+        //校验订单信息
+        if (new BigDecimal(nextPosCallbackDTO.getAmt()).compareTo(orders.getTradeAmount()) != 0) {
+            log.info("================【NextPos回调】================【订单信息不匹配】");
+            return;
+        }
+        //通道回调时间
+        orders.setChannelCallbackTime(new Date());
+        //通道流水号
+        orders.setChannelNumber(nextPosCallbackDTO.getTransactionID());
+        //将respCode存入订单,退款时用
+        orders.setSign(respCode);
+        orders.setUpdateTime(new Date());
+        Example example = new Example(Orders.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("tradeStatus", "2");
+        criteria.andEqualTo("id", orders.getId());
+        if ("000".equals(nextPosCallbackDTO.getStatus())) {
+            log.info("================【NextPos回调】================【订单已支付成功】 orderId: {}", orders.getId());
+            //未发货
+            orders.setDeliveryStatus(TradeConstant.UNSHIPPED);
+            //未签收
+            orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_SUCCESS);
+            //更新订单信息
+            if (ordersMapper.updateByPrimaryKeySelective(orders) == 1) {
+                log.info("=================【NextPos回调】下单信息记录=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
+                //计算支付成功时的通道网关手续费
+                commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
+                //TODO 添加日交易限额与日交易笔数
+                //commonBusinessService.quota(orders.getMerchantId(), orders.getProductCode(), orders.getTradeAmount());
+                //支付成功后向用户发送邮件
+                commonBusinessService.sendEmail(orders);
+                try {
+                    //账户信息不存在的场合创建对应的账户信息
+                    if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
+                        log.info("=================【NextPos回调】=================【上报清结算前线下下单创建账户信息】");
+                        commonBusinessService.createAccount(orders);
+                    }
+                    //TODO 分润
+                    //if (!StringUtils.isEmpty(orders.getAgentCode())) {
+                    //rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    //}
+                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
+                    //上报清结算资金变动接口
+                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
+                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
+                        log.info("=================【NextPos回调】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                    }
+                } catch (Exception e) {
+                    log.error("=================【NextPos回调】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                    rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                }
+            } else {
+                log.info("=================【NextPos回调】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        } else if ("099".equals(nextPosCallbackDTO.getStatus())) {
+            log.info("==================【NextPos回调】==================【订单已支付失败】 orderId: {}", orders.getId());
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+            orders.setRemark5(nextPosCallbackDTO.getStatus());
+            //计算支付失败时通道网关手续费
+            commonBusinessService.calcCallBackGatewayFeeFailed(orders);
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                log.info("=================【NextPos回调】=================【订单支付失败后更新数据库成功】 orderId: {}", orders.getId());
+            } else {
+                log.info("=================【NextPos回调】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        } else {
+            log.info("================【NextPos回调】================【订单是其他状态】 orderId: {}", orders.getId());
+        }
+        try {
+            //商户服务器回调地址不为空,回调商户服务器
+            if (!StringUtils.isEmpty(orders.getServerUrl())) {
+                commonBusinessService.replyReturnUrl(orders);
+            }
+            response.getWriter().write("00");
+        } catch (Exception e) {
+            log.error("=================【NextPos回调】=================【回调商户异常】", e);
+        }
+    }
+
+    /**
+     * 校验nextPos服务回调参数
+     *
+     * @param nextPosCallbackDTO nextPos回调实体
+     * @return 布尔值
+     */
+    private boolean checkNextPosCallback(NextPosCallbackDTO nextPosCallbackDTO) {
+        if (StringUtils.isEmpty(nextPosCallbackDTO.getAmt())) {
+            log.info("================【NextPos回调】================【金额为空】");
+            return false;
+        }
+        if (StringUtils.isEmpty(nextPosCallbackDTO.getEinv())) {
+            log.info("================【NextPos回调】================【订单id为空】");
+            return false;
+        }
+        if (StringUtils.isEmpty(nextPosCallbackDTO.getMark())) {
+            log.info("================【NextPos回调】================【签名为空】");
+            return false;
+        }
+        if (StringUtils.isEmpty(nextPosCallbackDTO.getStatus())) {
+            log.info("================【NextPos回调】================【交易结果为空】");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -117,7 +328,8 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 log.info("=================【NextPos退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                String reconciliationRemark = type.equals(TradeConstant.AA)?TradeConstant.REFUND_FAIL_RECONCILIATION:TradeConstant.CANCEL_ORDER_REFUND_FAIL;
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund,reconciliationRemark);
                 reconciliationMapper.insert(reconciliation);
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
                 log.info("=========================【NextPos退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));

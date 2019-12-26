@@ -2,7 +2,9 @@ package com.asianwallets.base.controller;
 
 import com.asianwallets.base.service.InstitutionProductChannelService;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.dto.InstitutionChannelQueryDTO;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
+import com.asianwallets.common.dto.InstitutionProductDTO;
 import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
@@ -51,5 +53,17 @@ public class InstitutionProductChannelController extends BaseController {
     @PostMapping("/pageInstitutionRequests")
     public BaseResponse pageInstitutionRequests(@RequestBody @ApiParam InstitutionRequestDTO institutionRequestDTO) {
         return ResultUtil.success(institutionProductChannelService.pageInstitutionRequests(institutionRequestDTO));
+    }
+
+    @ApiOperation(value = "分页查询机构产品信息")
+    @PostMapping("/pageInstitutionPro")
+    public BaseResponse pageInstitutionPro(@RequestBody @ApiParam InstitutionProductDTO institutionProductDTO) {
+        return ResultUtil.success(institutionProductChannelService.pageInstitutionPro(institutionProductDTO));
+    }
+
+    @ApiOperation(value = "分页查询机构通道信息")
+    @PostMapping("/pageInstitutionCha")
+    public BaseResponse pageInstitutionCha(@RequestBody @ApiParam InstitutionChannelQueryDTO institutionChannelQueryDTO) {
+        return ResultUtil.success(institutionProductChannelService.pageInstitutionCha(institutionChannelQueryDTO));
     }
 }

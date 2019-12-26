@@ -16,9 +16,6 @@ public class TradeConstant {
     //撤销时退款用
     public static final String CANCEL_ORDER_REFUND_FAIL = "撤销时退款失败调账记录"; //撤销时退款失败调账记录
 
-    //调账失败后放队列里
-    public static final String RECONCILIATION_REFUND_FAIL = "调账失败时的调账记录"; //调账失败时的调账记录
-
     // 冻结失败后放队列里
     public static final String FREEZE_FAIL = "冻结失败时的冻结队列记录"; //冻结失败后放队列里
     public static final String UNFREEZE_FAIL = "解冻失败时的解冻队列记录"; //解冻失败后放队列里
@@ -40,8 +37,8 @@ public class TradeConstant {
     public static final Byte TRADE_UPLINE = 2; //线下
 
     //------------产品交易方向
-    public static final Byte PRODUCT_ONLINE_PC = 1; //线上pc端
-    public static final Byte PRODUCT_ONLINE_MOVE = 2; //线上移动端
+    public static final Byte PRODUCT_ONLINE = 1; //线上
+    public static final Byte PRODUCT_OFFLINE = 2; //线下
     public static final Byte PRODUCT_UPLINE_MOVE = 3; //线下移动端
 
     //------------费率类型------------

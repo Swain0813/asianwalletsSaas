@@ -435,7 +435,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         if (TradeConstant.TRADE_ONLINE.equals(orderRefund.getTradeDirection())) {
-
             /**************************************************** AD3线上退款 *******************************************************/
             SendAdRefundDTO sendAdRefundDTO = new SendAdRefundDTO(channel.getChannelMerchantId(), orderRefund);
             sendAdRefundDTO.setMerchantSignType(merchantSignType);
@@ -450,7 +449,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                     baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                    RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
+                    RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(JSON.toJSONString(response.getData()), RefundAdResponseVO.class);
                     log.info("==================【AD3线上退款】================== 【退款成功】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     //退款成功
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
@@ -460,7 +459,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     //退款失败
                     baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                     String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                    Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                    String reconciliationRemark = type.equals(TradeConstant.AA)?TradeConstant.REFUND_FAIL_RECONCILIATION:TradeConstant.CANCEL_ORDER_REFUND_FAIL;
+                    Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund,reconciliationRemark);
                     reconciliationMapper.insert(reconciliation);
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
                     log.info("=========================【AD3线上退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
@@ -491,7 +491,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
 
             }
         } else if (TradeConstant.TRADE_UPLINE.equals(orderRefund.getTradeDirection())) {
-
             /***************************************************** AD3线下退款 ************************************************/
             log.info("==================【AD3线下退款】================== OrderRefund: {}", JSON.toJSONString(orderRefund));
             //获取ad3的终端号和token
@@ -512,7 +511,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             BaseResponse response = channelsFeign.ad3OfflineRefund(ad3ONOFFRefundDTO);
             log.info("=================【AD3线下退款】=================【Channels服务响应】请求参数 response: {} ", JSON.toJSONString(response));
             if (response.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
-                RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
+                RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(JSON.toJSONString(response.getData()), RefundAdResponseVO.class);
                 if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                     //退款成功
                     baseResponse.setCode(EResultEnum.SUCCESS.getCode());
@@ -525,7 +524,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     log.info("==================【AD3线下退款】================== 【退款失败】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                     String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                    Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, TradeConstant.REFUND_FAIL_RECONCILIATION);
+                    String reconciliationRemark = type.equals(TradeConstant.AA)?TradeConstant.REFUND_FAIL_RECONCILIATION:TradeConstant.CANCEL_ORDER_REFUND_FAIL;
+                    Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund,reconciliationRemark);
                     reconciliationMapper.insert(reconciliation);
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
                     log.info("=========================【AD3线下退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
@@ -578,7 +578,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             response.setCode(EResultEnum.REFUND_FAIL.getCode());
             return response;
         }
-
         //AD3通道订单信息-查询订单接口公共参数实体
         AD3QuerySingleOrderDTO ad3QuerySingleOrderDTO = new AD3QuerySingleOrderDTO(channel.getChannelMerchantId());//商户号
         //查询订单接业务共参数实体
@@ -587,15 +586,12 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         String querySign = this.createAD3Signature(ad3QuerySingleOrderDTO, queryBizContent, ad3LoginVO.getToken());
         ad3QuerySingleOrderDTO.setBizContent(queryBizContent);
         ad3QuerySingleOrderDTO.setSignMsg(querySign);
-
         AD3ONOFFRefundDTO ad3ONOFFRefundDTO = new AD3ONOFFRefundDTO();
         ad3ONOFFRefundDTO.setChannel(channel);
         ad3ONOFFRefundDTO.setAd3QuerySingleOrderDTO(ad3QuerySingleOrderDTO);
-
         log.info("=================【AD3撤销】=================【请求Channels服务AD3查询】请求参数 ad3ONOFFRefundDTO: {} ", JSON.toJSONString(ad3ONOFFRefundDTO));
         BaseResponse baseResponse = channelsFeign.query(ad3ONOFFRefundDTO);
         log.info("=================【AD3撤销】=================【Channels服务响应】请求参数 baseResponse: {} ", JSON.toJSONString(baseResponse));
-
         if (baseResponse.getCode().equals("T000")) {
             //请求成功
             AD3OrdersVO ad3OrdersVO = JSON.parseObject(baseResponse.getData().toString(), AD3OrdersVO.class);

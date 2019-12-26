@@ -2,141 +2,146 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.asianwallets.base.dao.MerchantChannelMapper">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.MerchantChannel">
-	<result column="id" property="id" />
-		<result column="mer_pro_id" property="merProId" />
-		<result column="cha_ban_id" property="chaBanId" />
-		<result column="create_time" property="createTime" />
-		<result column="update_time" property="updateTime" />
-		<result column="creator" property="creator" />
-		<result column="modifier" property="modifier" />
-		<result column="remark" property="remark" />
-		<result column="enabled" property="enabled" />
-		<result column="sort" property="sort" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.MerchantChannel">
+        <result column="id" property="id"/>
+        <result column="mer_pro_id" property="merProId"/>
+        <result column="cha_ban_id" property="chaBanId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="remark" property="remark"/>
+        <result column="enabled" property="enabled"/>
+        <result column="sort" property="sort"/>
+    </resultMap>
 
-	<resultMap id="secondResultMap" type="com.asianwallets.common.vo.MerChannelVO">
-		<result column="merChannelId" property="merChannelId" />
-		<result column="institutionId" property="institutionId" />
-		<result column="institutionName" property="institutionName" />
-		<result column="merchantId" property="merchantId" />
-		<result column="merchantName" property="merchantName" />
-		<result column="productId" property="productId" />
-		<result column="productAbbrev" property="productAbbrev" />
-		<result column="channelId" property="channelId" />
-		<result column="channelName" property="channelName" />
-		<result column="channelCurrency" property="channelCurrency" />
-		<result column="bankName" property="bankName" />
-		<result column="create_time" property="createTime" />
-		<result column="update_time" property="updateTime" />
-		<result column="creator" property="creator" />
-		<result column="modifier" property="modifier" />
-		<result column="enabled" property="enabled" />
-		<result column="sort" property="sort" />
-	</resultMap>
+    <resultMap id="secondResultMap" type="com.asianwallets.common.vo.MerChannelVO">
+        <result column="merChannelId" property="merChannelId"/>
+        <result column="institutionId" property="institutionId"/>
+        <result column="institutionName" property="institutionName"/>
+        <result column="merchantId" property="merchantId"/>
+        <result column="merchantName" property="merchantName"/>
+        <result column="productId" property="productId"/>
+        <result column="productAbbrev" property="productAbbrev"/>
+        <result column="channelId" property="channelId"/>
+        <result column="channelName" property="channelName"/>
+        <result column="channelCurrency" property="channelCurrency"/>
+        <result column="bankName" property="bankName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="enabled" property="enabled"/>
+        <result column="sort" property="sort"/>
+    </resultMap>
 
-	<resultMap id="MerchantRelevantVOMap" type="com.asianwallets.common.vo.MerchantRelevantVO">
-		<result column="institutionId" property="institutionId" jdbcType="VARCHAR"/>
-		<result column="institutionName" property="institutionName" jdbcType="VARCHAR"/>
-		<result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
-		<result column="merchantName" property="merchantName" jdbcType="VARCHAR"/>
-		<collection javaType="list" property="productRelevantVOS" resultMap="ProductRelevantVOMap"/>
-	</resultMap>
-	<resultMap id="ProductRelevantVOMap" type="com.asianwallets.common.vo.ProductRelevantVO">
-		<id column="productId" property="productId" jdbcType="VARCHAR"/>
-		<id column="productAbbrev" property="productAbbrev" jdbcType="VARCHAR"/>
-		<result column="payType" property="payType" jdbcType="VARCHAR"/>
-		<result column="tradeDirection" property="tradeDirection" jdbcType="TINYINT"/>
-		<result column="productCurrency" property="productCurrency" jdbcType="VARCHAR"/>
-		<result column="productCode" property="productCode" jdbcType="VARCHAR"/>
-		<collection javaType="list" property="channelRelevantVOS" resultMap="ChannelRelevantVOMap"/>
-	</resultMap>
+    <resultMap id="MerchantRelevantVOMap" type="com.asianwallets.common.vo.MerchantRelevantVO">
+        <result column="institutionId" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institutionName" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchantName" property="merchantName" jdbcType="VARCHAR"/>
+        <collection javaType="list" property="productRelevantVOS" resultMap="ProductRelevantVOMap"/>
+    </resultMap>
+    <resultMap id="ProductRelevantVOMap" type="com.asianwallets.common.vo.ProductRelevantVO">
+        <id column="productId" property="productId" jdbcType="VARCHAR"/>
+        <id column="productAbbrev" property="productAbbrev" jdbcType="VARCHAR"/>
+        <result column="payType" property="payType" jdbcType="VARCHAR"/>
+        <result column="tradeDirection" property="tradeDirection" jdbcType="TINYINT"/>
+        <result column="productCurrency" property="productCurrency" jdbcType="VARCHAR"/>
+        <result column="productCode" property="productCode" jdbcType="VARCHAR"/>
+        <collection javaType="list" property="channelRelevantVOS" resultMap="ChannelRelevantVOMap"/>
+    </resultMap>
 
-	<resultMap id="ChannelRelevantVOMap" type="com.asianwallets.common.vo.ChannelRelevantVO">
-		<id column="channelId" property="channelId" jdbcType="VARCHAR"/>
-		<result column="channelName" property="channelName" jdbcType="VARCHAR"/>
-		<result column="channelCurrency" property="channelCurrency" jdbcType="VARCHAR"/>
-		<result column="sort" property="sort" jdbcType="VARCHAR"/>
-		<result column="channelEnabled" property="channelEnabled" jdbcType="BIT"/>
-		<result column="channelEnName" property="channelEnName" jdbcType="VARCHAR"/>
-		<result column="flag" property="flag" jdbcType="VARCHAR"/>
-		<collection javaType="list" property="bankReleVantVOList" resultMap="BankReleVantVOMap"/>
-	</resultMap>
+    <resultMap id="ChannelRelevantVOMap" type="com.asianwallets.common.vo.ChannelRelevantVO">
+        <id column="channelId" property="channelId" jdbcType="VARCHAR"/>
+        <result column="channelName" property="channelName" jdbcType="VARCHAR"/>
+        <result column="channelCurrency" property="channelCurrency" jdbcType="VARCHAR"/>
+        <result column="sort" property="sort" jdbcType="VARCHAR"/>
+        <result column="channelEnabled" property="channelEnabled" jdbcType="BIT"/>
+        <result column="channelEnName" property="channelEnName" jdbcType="VARCHAR"/>
+        <result column="flag" property="flag" jdbcType="VARCHAR"/>
+        <collection javaType="list" property="bankReleVantVOList" resultMap="BankReleVantVOMap"/>
+    </resultMap>
 
-	<resultMap id="BankReleVantVOMap" type="com.asianwallets.common.vo.BankReleVantVO">
-		<id column="bankId" property="bankId" jdbcType="VARCHAR"/>
-		<result column="bankName" property="bankName" jdbcType="VARCHAR"/>
-		<result column="bankCountry" property="bankCountry" jdbcType="VARCHAR"/>
-		<result column="bankCurrency" property="bankCurrency" jdbcType="VARCHAR"/>
-		<result column="flag" property="flag" jdbcType="VARCHAR"/>
-		<result column="bankIssuerId" property="bankIssuerId" jdbcType="VARCHAR"/>
-	</resultMap>
+    <resultMap id="BankReleVantVOMap" type="com.asianwallets.common.vo.BankReleVantVO">
+        <id column="bankId" property="bankId" jdbcType="VARCHAR"/>
+        <result column="bankName" property="bankName" jdbcType="VARCHAR"/>
+        <result column="bankCountry" property="bankCountry" jdbcType="VARCHAR"/>
+        <result column="bankCurrency" property="bankCurrency" jdbcType="VARCHAR"/>
+        <result column="flag" property="flag" jdbcType="VARCHAR"/>
+        <result column="bankIssuerId" property="bankIssuerId" jdbcType="VARCHAR"/>
+    </resultMap>
 
-	<sql id="Base_Column_List">
+    <sql id="Base_Column_List">
         id, mer_pro_id, cha_ban_id, create_time, update_time, creator, modifier, remark,enabled,sort
     </sql>
 
-	<select id="selectByMerProId" resultType="com.asianwallets.common.entity.MerchantChannel">
-			select <include refid="Base_Column_List"/>
-			from merchant_channel where mer_pro_id = #{merProId} and enabled = true order by sort
-	</select>
+    <select id="selectByMerProId" resultType="com.asianwallets.common.entity.MerchantChannel">
+        select
+        <include refid="Base_Column_List"/>
+        from merchant_channel where mer_pro_id = #{merProId} and enabled = true order by sort
+    </select>
     <select id="pageFindMerProChannel" resultMap="secondResultMap">
-		select mc.id as merChannelId, mp.merchant_id as merchantId,mp.merchant_name as merchantName,
-		mp.product_id as productId,
-		case
-		when mp.product_abbrev is null then concat(pt.name,"-",p.currency)
-		else mp.product_abbrev
-		end as productAbbrev,
-		ch.id as channelId, ch.channel_cn_name as channelName,
-		ch.currency as channelCurrency,b.bank_name as bankName,
-		mc.create_time,mc.update_time,mc.creator,mc.modifier,mc.enabled,
-		mc.sort
-		from merchant_channel mc
-		left join merchant_product mp on mp.id = mc.mer_pro_id
-		left join product p on p.id = mp.product_id
-		left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
-		left join channel_bank cb on cb.id = mc.cha_ban_id
-		left join channel ch on ch.id = cb.channel_id
-		left join bank b on b.id = cb.bank_id
-		<where>
-			<if test="merchantId!=null and merchantId != ''">
-				and mp.merchant_id=#{merchantId}
-			</if>
-			<if test="merchantName != null and merchantName != ''">
-				and mp.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
-			</if>
-			<if test="channelName != null and channelName != ''">
-				and ch.channel_cn_name=#{channelName}
-			</if>
-			<if test="productAbbrev != null and productAbbrev != ''">
-				and mp.product_abbrev=#{productAbbrev}
-			</if>
-			<if test="productId != null and productId != ''">
-				and mp.product_id=#{productId}
-			</if>
-			<if test="enabled != null">
-				and mc.enabled=#{enabled}
-			</if>
-			<if test="startTime != null and startTime != ''">
-				AND DATE_FORMAT(mc.create_time,'%Y-%m-%d') &gt;= #{startTime}
-			</if>
-			<if test="endTime != null and endTime != ''">
-				AND DATE_FORMAT(mc.create_time,'%Y-%m-%d') &lt;= #{endTime}
-			</if>
-		</where>
+        select mc.id as merChannelId, mp.merchant_id as merchantId,mp.merchant_name as merchantName,
+        mp.product_id as productId,
+        case
+        when mp.product_abbrev is null then concat(pt.name,"-",p.currency)
+        else mp.product_abbrev
+        end as productAbbrev,
+        ch.id as channelId, ch.channel_cn_name as channelName,
+        ch.currency as channelCurrency,b.bank_name as bankName,
+        mc.create_time,mc.update_time,mc.creator,mc.modifier,mc.enabled,
+        mc.sort
+        from merchant_channel mc
+        left join merchant_product mp on mp.id = mc.mer_pro_id
+        left join product p on p.id = mp.product_id
+        left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
+        left join channel_bank cb on cb.id = mc.cha_ban_id
+        left join channel ch on ch.id = cb.channel_id
+        left join bank b on b.id = cb.bank_id
+        left join merchant m on mp.merchant_id = m.id
+        left join institution i on m.institution_id = i.id
+        <where>
+            <if test="institutionId!=null and institutionId != ''">
+                and i.id=#{institutionId}
+            </if>
+            <if test="merchantId!=null and merchantId != ''">
+                and mp.merchant_id=#{merchantId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                and mp.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+            </if>
+            <if test="channelName != null and channelName != ''">
+                and ch.channel_cn_name=#{channelName}
+            </if>
+            <if test="productAbbrev != null and productAbbrev != ''">
+                and mp.product_abbrev=#{productAbbrev}
+            </if>
+            <if test="productId != null and productId != ''">
+                and mp.product_id=#{productId}
+            </if>
+            <if test="enabled != null">
+                and mc.enabled=#{enabled}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND DATE_FORMAT(mc.create_time,'%Y-%m-%d') &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(mc.create_time,'%Y-%m-%d') &lt;= #{endTime}
+            </if>
+        </where>
 
 
-
-	</select>
-	<select id="getRelevantByMerchantId" resultMap="MerchantRelevantVOMap">
-   select 		m.id               as merchantId,
+    </select>
+    <select id="getRelevantByMerchantId" resultMap="MerchantRelevantVOMap">
+        select m.id               as merchantId,
                m.cn_name          as merchantName,
-               	i.id        as institutionId,
-             	i.cn_name      as institutionName,
+               i.id               as institutionId,
+               i.cn_name          as institutionName,
                p.id               as productId,
-               pt.name             as payType,
-               mp.product_abbrev             as productAbbrev,
+               pt.name            as payType,
+               mp.product_abbrev  as productAbbrev,
                p.currency         as productCurrency,
                p.product_code     as productCode,
                p.trade_direction  as tradeDirection,
@@ -151,25 +156,24 @@
                b.bank_currency    as bankCurrency,
                b.issuer_id        as bankIssuerId
         from merchant m
-           left join institution i on  m.institution_id = i.id
-           left join merchant_product mp on  m.id = mp.merchant_id
-           left join product p on  mp.product_id = p.id
-           left join merchant_channel mc on mc.mer_pro_id = mp.id
-           left join channel_bank cb on cb.id = mc.cha_ban_id
-           left join channel ch on cb.channel_id = ch.id
-           left join bank b on b.id = cb.bank_id
-           left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
-        where
-         m.id = #{merchantId}
+                 left join institution i on m.institution_id = i.id
+                 left join merchant_product mp on m.id = mp.merchant_id
+                 left join product p on mp.product_id = p.id
+                 left join merchant_channel mc on mc.mer_pro_id = mp.id
+                 left join channel_bank cb on cb.id = mc.cha_ban_id
+                 left join channel ch on cb.channel_id = ch.id
+                 left join bank b on b.id = cb.bank_id
+                 left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
+        where m.id = #{merchantId}
     </select>
-	<select id="getNoRelevantByMerchantId"  resultMap="MerchantRelevantVOMap">
-  		  SELECT m.id               AS merchantId,
-             m.cn_name          as merchantName,
-             	i.id        as institutionId,
-             	i.cn_name      as institutionName,
+    <select id="getNoRelevantByMerchantId" resultMap="MerchantRelevantVOMap">
+        SELECT m.id               AS merchantId,
+               m.cn_name          as merchantName,
+               i.id               as institutionId,
+               i.cn_name          as institutionName,
                p.id               AS productId,
-               pt.name             as payType,
-                mp.product_abbrev             as productAbbrev,
+               pt.name            as payType,
+               mp.product_abbrev  as productAbbrev,
                p.product_code     AS productCode,
                p.currency         AS productCurrency,
                p.trade_direction  as tradeDirection,
@@ -185,7 +189,7 @@
                b.bank_currency    as bankCurrency,
                b.issuer_id        as bankIssuerId
         FROM merchant m
-                 left join institution i on  m.institution_id = i.id
+                 left join institution i on m.institution_id = i.id
                  LEFT JOIN merchant_product mp ON m.id = mp.merchant_id
                  left join institution_product ip on ip.product_id = mp.product_id
                  left join institution_channel ic on ic.ins_pro_id = ip.id
@@ -197,70 +201,87 @@
         WHERE m.enabled = 1
           AND m.id = #{merchantId}
 
-	</select>
-	<select id="getMerChannelInfoById" resultMap="secondResultMap">
-		select mc.id as merChannelId, i.id as institutionId, i.cn_name as institutionName,
-		mp.merchant_id as merchantId,mp.merchant_name as merchantName,
-		mp.product_id as productId,mp.product_abbrev as productAbbrev,
-		ch.id as channelId, ch.channel_cn_name as channelName,
-		ch.currency as channelCurrency,b.bank_name as bankName,
-		mc.create_time,mc.update_time,mc.creator,mc.modifier,mc.enabled,
-		mc.sort
-		from merchant_channel mc
-		left join merchant_product mp on mp.id = mc.mer_pro_id
-		left join merchant m on m.id = mp.merchant_id
-		left join institution i on i.id = m.institution_id
-		left join channel_bank cb on cb.id = mc.cha_ban_id
-		left join channel ch on ch.id = cb.channel_id
-		left join bank b on b.id = cb.bank_id
-		where mc.id=#{merChannelId}
-	</select>
+    </select>
+    <select id="getMerChannelInfoById" resultMap="secondResultMap">
+        SELECT mc.id                              AS merChannelId,
+               i.id                               AS institutionId,
+               i.cn_name                          AS institutionName,
+               mp.merchant_id                     AS merchantId,
+               mp.merchant_name                   AS merchantName,
+               mp.product_id                      AS productId,
+               CONCAT(pt.`name`, '-', p.currency) AS productAbbrev,
+               ch.id                              AS channelId,
+               ch.channel_cn_name                 AS channelName,
+               ch.currency                        AS channelCurrency,
+               b.bank_name                        AS bankName,
+               mc.create_time,
+               mc.update_time,
+               mc.creator,
+               mc.modifier,
+               mc.enabled,
+               mc.sort
+        FROM merchant_channel mc
+                 LEFT JOIN merchant_product mp ON mp.id = mc.mer_pro_id
+                 LEFT JOIN merchant m ON m.id = mp.merchant_id
+                 LEFT JOIN institution i ON i.id = m.institution_id
+                 LEFT JOIN channel_bank cb ON cb.id = mc.cha_ban_id
+                 LEFT JOIN channel ch ON ch.id = cb.channel_id
+                 LEFT JOIN bank b ON b.id = cb.bank_id
+                 LEFT JOIN product p ON mp.product_id = p.id
+                 LEFT JOIN pay_type pt ON pt.extend1 = p.pay_type and pt.language = #{language}
+        WHERE mc.id = #{merChannelId}
+    </select>
 
-	<select id="exportMerChannel" resultMap="secondResultMap">
-		select mc.id as merChannelId, mp.merchant_id as merchantId,mp.merchant_name as merchantName,
-		mp.product_id as productId,
-		case
-		when mp.product_abbrev is null then concat(pt.name,"-",p.currency)
-		else mp.product_abbrev
-		end as productAbbrev,
-		ch.id as channelId, ch.channel_cn_name as channelName,
-		ch.currency as channelCurrency,b.bank_name as bankName,
-		mc.create_time,mc.update_time,mc.creator,mc.modifier,mc.enabled,
-		mc.sort
-		from merchant_channel mc
-		left join merchant_product mp on mp.id = mc.mer_pro_id
-		left join product p on p.id = mp.product_id
-		left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
-		left join channel_bank cb on cb.id = mc.cha_ban_id
-		left join channel ch on ch.id = cb.channel_id
-		left join bank b on b.id = cb.bank_id
-		<where>
-			<if test="merchantId!=null and merchantId != ''">
-				and mp.merchant_id=#{merchantId}
-			</if>
-			<if test="merchantName != null and merchantName != ''">
-				and mp.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
-			</if>
-			<if test="channelName != null and channelName != ''">
-				and ch.channel_cn_name=#{channelName}
-			</if>
-			<if test="productAbbrev != null and productAbbrev != ''">
-				and mp.product_abbrev=#{productAbbrev}
-			</if>
-			<if test="productId != null and productId != ''">
-				and mp.product_id=#{productId}
-			</if>
-			<if test="enabled != null">
-				and mc.enabled=#{enabled}
-			</if>
-			<if test="startTime != null and startTime != ''">
-				AND DATE_FORMAT(mc.create_time,'%Y-%m-%d') &gt;= #{startTime}
-			</if>
-			<if test="endTime != null and endTime != ''">
-				AND DATE_FORMAT(mc.create_time,'%Y-%m-%d') &lt;= #{endTime}
-			</if>
-		</where>
-	</select>
+    <select id="exportMerChannel" resultMap="secondResultMap">
+        select mc.id as merChannelId, mp.merchant_id as merchantId,mp.merchant_name as merchantName,
+        mp.product_id as productId,
+        case
+        when mp.product_abbrev is null then concat(pt.name,"-",p.currency)
+        else mp.product_abbrev
+        end as productAbbrev,
+        ch.id as channelId, ch.channel_cn_name as channelName,
+        ch.currency as channelCurrency,b.bank_name as bankName,
+        mc.create_time,mc.update_time,mc.creator,mc.modifier,mc.enabled,
+        mc.sort
+        from merchant_channel mc
+        left join merchant_product mp on mp.id = mc.mer_pro_id
+        left join product p on p.id = mp.product_id
+        left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
+        left join channel_bank cb on cb.id = mc.cha_ban_id
+        left join channel ch on ch.id = cb.channel_id
+        left join bank b on b.id = cb.bank_id
+        left join merchant m on mp.merchant_id = m.id
+        left join institution i on m.institution_id = i.id
+        <where>
+            <if test="institutionId!=null and institutionId != ''">
+                and i.id=#{institutionId}
+            </if>
+            <if test="merchantId!=null and merchantId != ''">
+                and mp.merchant_id=#{merchantId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                and mp.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+            </if>
+            <if test="channelName != null and channelName != ''">
+                and ch.channel_cn_name=#{channelName}
+            </if>
+            <if test="productAbbrev != null and productAbbrev != ''">
+                and mp.product_abbrev=#{productAbbrev}
+            </if>
+            <if test="productId != null and productId != ''">
+                and mp.product_id=#{productId}
+            </if>
+            <if test="enabled != null">
+                and mc.enabled=#{enabled}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND DATE_FORMAT(mc.create_time,'%Y-%m-%d') &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND DATE_FORMAT(mc.create_time,'%Y-%m-%d') &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
 
     <delete id="deleteByMerProId">
         delete

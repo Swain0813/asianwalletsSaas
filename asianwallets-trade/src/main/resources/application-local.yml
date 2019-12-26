@@ -74,6 +74,7 @@ custom:
   jwt:
     secret: piHRSk3tgcMNZtZl
     token_expire_hour: 24
+  nextPosUrl: http://119.23.136.80/ITSBoss/nextPosNotifyAction/nextPosqrbackNotify.do
 
   #AD3提供的测试参数
   #线下的商户编号

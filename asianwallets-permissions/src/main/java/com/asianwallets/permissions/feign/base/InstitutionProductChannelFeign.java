@@ -1,6 +1,8 @@
 package com.asianwallets.permissions.feign.base;
 
+import com.asianwallets.common.dto.InstitutionChannelQueryDTO;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
+import com.asianwallets.common.dto.InstitutionProductDTO;
 import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.impl.InstitutionProductChannelFeignImpl;
@@ -37,5 +39,12 @@ public interface InstitutionProductChannelFeign {
     @PostMapping("/insProCha/pageInstitutionRequests")
     BaseResponse pageInstitutionRequests(@RequestBody @ApiParam InstitutionRequestDTO institutionRequestDTO);
 
+    @ApiOperation(value = "分页查询机构产品信息")
+    @PostMapping("/insProCha/pageInstitutionPro")
+    BaseResponse pageInstitutionPro(@RequestBody @ApiParam InstitutionProductDTO institutionProductDTO);
+
+    @ApiOperation(value = "分页查询机构通道信息")
+    @PostMapping("/insProCha/pageInstitutionCha")
+    BaseResponse pageInstitutionCha(@RequestBody @ApiParam InstitutionChannelQueryDTO institutionChannelQueryDTO);
 
 }

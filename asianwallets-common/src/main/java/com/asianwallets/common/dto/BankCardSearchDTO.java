@@ -14,6 +14,9 @@ import lombok.Data;
 @ApiModel(value = "银行卡查询实体", description = "银行卡查询实体")
 public class BankCardSearchDTO extends BasePageHelper {
 
+    @ApiModelProperty(value = "机构编号")
+    private String institutionId;
+
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 

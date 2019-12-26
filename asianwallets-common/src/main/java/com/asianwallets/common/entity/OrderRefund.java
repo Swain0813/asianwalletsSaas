@@ -37,8 +37,8 @@ public class OrderRefund extends BaseEntity {
     private Byte tradeDirection;
 
     @ApiModelProperty(value = "机构编号")
-    @Column(name = "institution_code")
-    private String institutionCode;
+    @Column(name = "institution_id")
+    private String institutionId;
 
     @ApiModelProperty(value = "机构名称")
     @Column(name = "institution_name")

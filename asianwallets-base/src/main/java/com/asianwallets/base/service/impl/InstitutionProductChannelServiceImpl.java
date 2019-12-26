@@ -1,13 +1,13 @@
 package com.asianwallets.base.service.impl;
-
 import java.util.*;
-
 import com.asianwallets.base.dao.InstitutionChannelMapper;
 import com.asianwallets.base.dao.InstitutionProductMapper;
 import com.asianwallets.base.dao.ProductChannelMapper;
 import com.asianwallets.base.service.InstitutionProductChannelService;
 import com.asianwallets.common.config.AuditorProvider;
+import com.asianwallets.common.dto.InstitutionChannelQueryDTO;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
+import com.asianwallets.common.dto.InstitutionProductDTO;
 import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.entity.InstitutionChannel;
 import com.asianwallets.common.entity.InstitutionProduct;
@@ -15,7 +15,9 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.InstitutionChannelQueryVO;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
+import com.asianwallets.common.vo.InstitutionProductVO;
 import com.asianwallets.common.vo.ProductChannelVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -176,4 +178,27 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
     public PageInfo<InstitutionProduct> pageInstitutionRequests(InstitutionRequestDTO institutionRequestDTO) {
         return new PageInfo(institutionProductMapper.pageInstitutionRequests(institutionRequestDTO));
     }
+
+    /**
+     * 分页查询机构产品信息
+     * @param institutionProductDTO
+     * @return
+     */
+    @Override
+    public PageInfo<InstitutionProductVO> pageInstitutionPro(InstitutionProductDTO institutionProductDTO){
+        //当前请求语言
+        institutionProductDTO.setLanguage(auditorProvider.getLanguage());
+        return new PageInfo(institutionProductMapper.pageInstitutionPro(institutionProductDTO));
+    }
+
+    /**
+     * 分页查询机构通道信息
+     * @param institutionChannelQueryDTO
+     * @return
+     */
+    @Override
+    public PageInfo<InstitutionChannelQueryVO> pageInstitutionCha(InstitutionChannelQueryDTO institutionChannelQueryDTO){
+        return new PageInfo(institutionProductMapper.pageInstitutionCha(institutionChannelQueryDTO));
+    }
+
 }
