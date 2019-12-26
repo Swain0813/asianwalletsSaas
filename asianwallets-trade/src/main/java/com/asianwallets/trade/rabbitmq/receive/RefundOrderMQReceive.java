@@ -185,13 +185,26 @@ public class RefundOrderMQReceive {
         } else {
             //三次上报清结算失败，则退款单就是退款失败更新退款单状态以及失败原因
             String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-            String reconciliationRemark = type.equals(TradeConstant.AA)?TradeConstant.REFUND_FAIL_RECONCILIATION:TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-            Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund,reconciliationRemark);
+            String reconciliationRemark = type.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
+            Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
             reconciliationMapper.insert(reconciliation);
+            //FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+            //log.info("=========================【TK_SB_FAIL_DL】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
+            //BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+            //if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+            //    log.info("==================【TK_SB_FAIL_DL】================== 【调账成功】 cFundChange: {}", JSON.toJSONString(cFundChange));
+            //    //调账成功
+            //    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
+            //    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
+            //    //改原订单状态
+            //    commonBusinessService.updateOrderRefundFail(orderRefund);
+            //} else {
+            //    //调账失败
+            //log.info("==================【TK_SB_FAIL_DL】================== 【调账失败】 cFundChange: {}", JSON.toJSONString(cFundChange));
             RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-            log.info("=================【TK_SB_FAIL_DL】=================【调账 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+            log.info("=================【TK_SB_FAIL_DL】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
             rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
-
+            //}
             //预警机制
             messageFeign.sendSimple(developerMobile, "退款上请求上游失败 TK_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
             messageFeign.sendSimpleMail(developerEmail, "退款上请求上游失败 TK_SB_FAIL_DL 预警", "TK_SB_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
