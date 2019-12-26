@@ -115,4 +115,105 @@
             </if>
         </where>
     </select>
+
+
+    <select id="pageInstitutionPro" resultType="com.asianwallets.common.vo.InstitutionProductVO">
+        SELECT ip.institution_id AS institutionId,
+        ip.institution_name AS institutionName,
+        ip.product_id AS productId,
+        ip.product_abbrev AS productAbbrev,
+        ip.create_time AS createTime,
+        ip.update_time AS updateTime,
+        ip.creator AS creator,
+        ip.modifier AS modifier,
+        ip.remark AS remark,
+        concat(pt.NAME, '-', p.currency) AS productName,
+        pt.NAME AS payType,
+        pt.extend1 AS payTypeId,
+        p.trade_direction AS transType
+        FROM institution_product ip
+        LEFT JOIN product p ON ip.product_id = p.id
+        LEFT JOIN pay_type pt ON p.pay_type = pt.extend1  AND pt.language = #{language}
+        <where>
+            <if test="institutionId!=null and institutionId!= ''">
+                AND ip.institution_id=#{institutionId}
+            </if>
+            <if test="transType!=null and transType!= ''">
+                AND p.trade_direction=#{transType}
+            </if>
+            <if test="payType!=null and payType!= ''">
+                AND pt.extend1=#{payType}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="InstitutionChannelMap" type="com.asianwallets.common.vo.InstitutionChannelQueryVO">
+        <id column="institutionId" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institutionName" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="channelCode" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="channelCnName" property="channelCnName" jdbcType="VARCHAR"/>
+        <result column="currency" property="currency" jdbcType="VARCHAR"/>
+        <result column="supportRefundState" property="supportRefundState" jdbcType="BIT"/>
+        <result column="refundingIsReturnFee" property="refundingIsReturnFee" jdbcType="TINYINT"/>
+        <collection javaType="list" property="bankNames" resultMap="BankReleVantVOMap"/>
+    </resultMap>
+
+    <resultMap id="BankReleVantVOMap" type="com.asianwallets.common.vo.BankVO">
+        <id column="bankID" property="bankID" jdbcType="VARCHAR"/>
+        <result column="bankCode" property="bankCode" jdbcType="VARCHAR"/>
+        <result column="bankName" property="bankName" jdbcType="VARCHAR"/>
+        <result column="bankCountry" property="bankCountry" jdbcType="VARCHAR"/>
+        <result column="bankCurrency" property="bankCurrency" jdbcType="VARCHAR"/>
+        <result column="bankIssuerId" property="bankIssuerId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="pageInstitutionCha" resultMap="InstitutionChannelMap">
+        SELECT
+               ip.institution_id                as  institutionId,
+               ip.institution_name              as  institutionName,
+               c.channel_code                   as channelCode,
+               c.channel_cn_name                as channelCnName,
+               c.currency                       as currency,
+               c.support_refund_state           as supportRefundState,
+               c.refunding_is_return_fee        as refundingIsReturnFee,
+               c.sort                           as sort,
+               c.enabled                        as enabled,
+               b.id                             as bankID,
+               b.bank_code                      as bankCode,
+               b.bank_name                      as bankName,
+               b.bank_country                   as bankCountry,
+               b.bank_currency                  as bankCurrency,
+               b.issuer_id                      as bankIssuerId
+        FROM institution_product ip
+        left join institution_channel ic on ic.ins_pro_id=ip.id
+        left join channel c on c.id=ic.channel_id
+        LEFT JOIN channel_bank cb on cb.channel_id = c.id
+        left join bank b on cb.bank_id = b.id
+        <where>
+            <if test="institutionId != null and institutionId != ''">
+                AND ip.institution_id = #{institutionId}
+            </if>
+            <if test="channelCode != null and channelCode != ''">
+                AND c.channel_code = #{channelCode}
+            </if>
+            <if test="channelCnName != null and channelCnName != ''">
+                AND c.channel_cn_name LIKE CONCAT(CONCAT('%', #{channelCnName}), '%')
+            </if>
+            <if test="currency != null and currency != ''">
+                AND c.currency = #{currency}
+            </if>
+            <if test="enabled != null">
+                and c.enabled=#{enabled}
+            </if>
+            <if test="supportRefundState != null and supportRefundState != ''">
+                AND c.support_refund_state = #{supportRefundState}
+            </if>
+            <if test="refundingIsReturnFee != null and refundingIsReturnFee != ''">
+                AND c.refunding_is_return_fee = #{refundingIsReturnFee}
+            </if>
+        </where>
+    </select>
+
+
+
 </mapper>
