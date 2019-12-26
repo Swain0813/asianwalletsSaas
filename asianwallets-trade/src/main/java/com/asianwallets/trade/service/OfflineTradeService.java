@@ -58,4 +58,12 @@ public interface OfflineTradeService {
      * @return 订单列表
      */
     List<PosQueryOrderListVO> posQueryOrderList(PosQueryOrderListDTO posQueryOrderListDTO);
+
+    /**
+     * POS机查询订单详情
+     *
+     * @param posQueryOrderListDTO POS机查询订单详情输入实体
+     * @return 订单
+     */
+    PosQueryOrderListVO posQueryOrderDetail(PosQueryOrderListDTO posQueryOrderListDTO);
 }

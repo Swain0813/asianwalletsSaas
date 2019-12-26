@@ -197,7 +197,7 @@
     </resultMap>
 
 
-    <select id="posQueryOrderList">
+    <select id="posQueryOrderList" resultType="com.asianwallets.trade.vo.PosQueryOrderListVO">
         SELECT
         o.id as referenceNo,
         o.merchant_id as merchantId,
@@ -210,24 +210,23 @@
         concat(pt.name,'-',o.trade_currency) as productName,
         o.order_currency as orderCurrency,
         o.trade_type as tradeType,
-        o.trade_status as tradeStatus,
+        o.trade_status as txnStatus,
         o.refund_status as refundStatus,
         o.cancel_status as reverseStatus,
         pt.name as payTypeName,
         pt.dicon as dicon,
         pt.picon as picon,
         c.defaults as defaultValue,
-        o.create_time as createTime,
+        o.create_time as createTime
         FROM orders o left join pay_type pt on o.pay_method = pt.extend1 and pt.language = #{language}
         left join currency c on o.order_currency = c.code
         <where>
             <if test="merchantId != null and merchantId != ''">
                 AND o.merchant_id = #{merchantId}
             </if>
-            <if test="terminalId != null and terminalId != ''">
-                AND o.imei = #{terminalId}
+            <if test="imei != null and imei != ''">
+                AND o.imei = #{imei}
             </if>
-
             <if test="operatorId != null and operatorId != ''">
                 AND o.operator_id =#{operatorId}
             </if>
@@ -237,8 +236,8 @@
             <if test="orderNo != null and orderNo != ''">
                 AND o.merchant_order_id = #{orderNo}
             </if>
-            <if test="txnstatus != null">
-                AND o.trade_status = #{txnstatus}
+            <if test="txnStatus != null">
+                AND o.trade_status = #{txnStatus}
             </if>
             <if test="refundStatus != null">
                 AND o.refund_status = #{refundStatus}
@@ -251,5 +250,44 @@
             </if>
         </where>
         order by o.create_time desc
+    </select>
+
+    <select id="posQueryOrderDetail" resultType="com.asianwallets.trade.vo.PosQueryOrderListVO">
+        SELECT
+        o.id as referenceNo,
+        o.merchant_id as merchantId,
+        o.merchant_name as merchantName,
+        o.merchant_order_id as orderNo,
+        o.merchant_order_time as orderTime,
+        o.order_amount as amount,
+        o.imei as imei,
+        o.operator_id as operatorId,
+        concat(pt.name,'-',o.trade_currency) as productName,
+        o.order_currency as orderCurrency,
+        o.trade_type as tradeType,
+        o.trade_status as txnStatus,
+        o.refund_status as refundStatus,
+        o.cancel_status as reverseStatus,
+        pt.name as payTypeName,
+        pt.dicon as dicon,
+        pt.picon as picon,
+        c.defaults as defaultValue,
+        o.create_time as createTime
+        FROM orders o left join pay_type pt on o.pay_method = pt.extend1 and pt.language = #{language}
+        left join currency c on o.order_currency = c.code
+        <where>
+            <if test="merchantId != null and merchantId != ''">
+                AND o.merchant_id = #{merchantId}
+            </if>
+            <if test="imei != null and imei != ''">
+                AND o.imei = #{imei}
+            </if>
+            <if test="operatorId != null and operatorId != ''">
+                AND o.operator_id =#{operatorId}
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                AND o.merchant_order_id = #{orderNo}
+            </if>
+        </where>
     </select>
 </mapper>

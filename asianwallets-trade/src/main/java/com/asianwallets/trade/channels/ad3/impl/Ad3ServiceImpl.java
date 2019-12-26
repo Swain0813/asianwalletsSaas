@@ -354,13 +354,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         AD3BSCScanVO ad3BSCScanVO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), AD3BSCScanVO.class);
-        //校验订单信息
-        BigDecimal ad3Amount = new BigDecimal(ad3BSCScanVO.getMerorderAmount());
-        BigDecimal tradeAmount = orders.getTradeAmount();
-        if (ad3Amount.compareTo(tradeAmount) != 0 || !ad3BSCScanVO.getMerorderCurrency().equals(orders.getTradeCurrency())) {
-            log.info("==================【线下BSC】下单信息记录==================【订单信息不匹配】");
-            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
-        }
         orders.setChannelNumber(ad3BSCScanVO.getTxnId());
         orders.setChannelCallbackTime(DateUtil.parse(ad3BSCScanVO.getPayFinishTime(), "yyyyMMddHHmmss"));//通道回调时间
         //修改时间
@@ -370,6 +363,13 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         criteria.andEqualTo("tradeStatus", "2");
         criteria.andEqualTo("id", orders.getId());
         if (AD3Constant.AD3_OFFLINE_SUCCESS.equals(ad3BSCScanVO.getRespCode())) {
+            //校验订单信息
+            BigDecimal ad3Amount = new BigDecimal(ad3BSCScanVO.getMerorderAmount());
+            BigDecimal tradeAmount = orders.getTradeAmount();
+            if (ad3Amount.compareTo(tradeAmount) != 0 || !ad3BSCScanVO.getMerorderCurrency().equals(orders.getTradeCurrency())) {
+                log.info("==================【线下BSC】下单信息记录==================【订单信息不匹配】");
+                throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+            }
             //未发货
             orders.setDeliveryStatus(TradeConstant.UNSHIPPED);
             //未签收

@@ -32,17 +32,17 @@ public class PosQueryOrderListDTO {
     @ApiModelProperty(value = "机构订单号")
     private String orderNo;
 
-    @ApiModelProperty(value = "交易开始时间")
-    private String startDate;
-
-    @ApiModelProperty(value = "交易结束时间")
-    private String endDate;
-
     @ApiModelProperty(value = "交易状态")
     private Byte txnStatus;
 
     @ApiModelProperty(value = "退款状态")
     private Byte refundStatus;
+
+    @ApiModelProperty(value = "交易开始时间")
+    private String startDate;
+
+    @ApiModelProperty(value = "交易结束时间")
+    private String endDate;
 
     @ApiModelProperty(value = "语言")
     private String language;
