@@ -1,9 +1,13 @@
 package com.asianwallets.base.service;
 
+import com.asianwallets.common.dto.InstitutionChannelQueryDTO;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
+import com.asianwallets.common.dto.InstitutionProductDTO;
 import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.entity.InstitutionProduct;
+import com.asianwallets.common.vo.InstitutionChannelQueryVO;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
+import com.asianwallets.common.vo.InstitutionProductVO;
 import com.asianwallets.common.vo.ProductChannelVO;
 import com.github.pagehelper.PageInfo;
 
@@ -53,4 +57,19 @@ public interface InstitutionProductChannelService {
      * @return
      */
     PageInfo<InstitutionProduct> pageInstitutionRequests(InstitutionRequestDTO institutionRequestDTO);
+
+    /**
+     * 分页查询机构产品信息
+     * @param institutionProductDTO
+     * @return
+     */
+    PageInfo<InstitutionProductVO> pageInstitutionPro(InstitutionProductDTO institutionProductDTO);
+
+    /**
+     * 分页查询机构通道信息
+     * @param institutionChannelQueryDTO
+     * @return
+     */
+    PageInfo<InstitutionChannelQueryVO> pageInstitutionCha(InstitutionChannelQueryDTO institutionChannelQueryDTO);
+
 }

@@ -22,4 +22,7 @@ public class BankVO {
 
     @ApiModelProperty(value = "币种")
     private String bankCurrency;
+
+    @ApiModelProperty(value = "银行机构代码")
+    private String bankIssuerId;
 }

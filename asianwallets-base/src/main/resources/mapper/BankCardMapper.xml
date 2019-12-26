@@ -54,7 +54,8 @@
         b.intermediary_bank_address,b.intermediary_bank_account_no,
         b.intermediary_bank_country,b.intermediary_other_code,b.iban as iban,
         b.default_flag as defaultFlag,b.receiver_address as receiverAddress
-        from bank_card b
+        from bank_card b left join merchant m on m.id = b.merchant_id
+        left join institution i on i.id = m.institution_id
         <where>
             <if test="merchantName!=null and merchantName != ''">
                 and b.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
@@ -64,6 +65,9 @@
             </if>
             <if test="merchantId!=null and merchantId != ''">
                 and b.merchant_id=#{merchantId}
+            </if>
+            <if test="institutionId!=null and institutionId != ''">
+                and i.id=#{institutionId}
             </if>
             <if test="bankCardId!=null and bankCardId != ''">
                 and b.id=#{bankCardId}
