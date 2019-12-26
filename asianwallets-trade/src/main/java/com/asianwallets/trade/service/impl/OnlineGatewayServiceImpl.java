@@ -1,38 +1,48 @@
 package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.CashierDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.utils.RSAUtils;
+import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.common.vo.OnlineTradeScanVO;
 import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.channels.help2pay.Help2PayService;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
+import com.asianwallets.trade.dao.MerchantMapper;
 import com.asianwallets.trade.dao.MerchantProductMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
+import com.asianwallets.trade.dto.CalcRateDTO;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OnlineGatewayService;
 import com.asianwallets.trade.utils.HandlerContext;
 import com.asianwallets.trade.utils.SettleDateUtil;
-import com.asianwallets.trade.vo.BasicInfoVO;
-import com.asianwallets.trade.vo.OnlineInfoDetailVO;
+import com.asianwallets.trade.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -60,6 +70,16 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     @Autowired
     private HandlerContext handlerContext;
 
+    @Autowired
+    private MerchantMapper merchantMapper;
+
+    @Autowired
+    private RedisService redisService;
+
+    //收银台地址
+    @Value("${custom.cashierDeskUrl}")
+    private String cashierDeskUrl;
+
     /**
      * 网关收单
      *
@@ -76,22 +96,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
         //间连
         return indirectConnection(onlineTradeDTO);
-
-        /*help2PayService.onlinePay(null,null);
-
-        try {
-            ChannelsAbstract channelsAbstract = (Help2PayServiceImpl)Class.forName("com.asianwallets.trade.channels.help2pay.impl.Help2PayServiceImpl").newInstance();
-
-            channelsAbstract.offlineBSC(null,null,null);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        if (StringUtils.isEmpty(onlineTradeDTO.getIssuerId())) {
-
-        }
-        return null;*/
     }
 
 
@@ -109,35 +113,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             }
         }*/
 
-
-    /**
-     * 间连
-     *
-     * @param onlineTradeDTO 线上收单输入实体
-     * @return BaseResponse 线上收单输出实体
-     */
-    private BaseResponse indirectConnection(OnlineTradeDTO onlineTradeDTO) {
-        //信息落地
-        log.info("---------------【线上间连收单输入实体】---------------OnlineTradeDTO:{}", JSON.toJSONString(onlineTradeDTO));
-        Currency currency = commonRedisDataService.getCurrencyByCode(onlineTradeDTO.getOrderCurrency());
-        //检查订单
-        checkOnlineOrders(onlineTradeDTO, currency);
-        //检查商户信息
-        Merchant merchant = checkMerchant(onlineTradeDTO);
-        //检查机构信息
-        Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
-        //可选参数校验
-        InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_ONLINE);
-        checkRequestParameters(onlineTradeDTO, institutionRequestParameters);
-        //校验订单金额
-        if (onlineTradeDTO.getOrderAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            log.info("-----------------【线上交易】下单信息记录--------------【订单金额不合法】");
-            throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
-        }
-
-        return null;
-    }
-
     /**
      * 直连
      *
@@ -146,7 +121,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
      */
     private BaseResponse directConnection(OnlineTradeDTO onlineTradeDTO) {
         //信息落地
-        log.info("---------------【线上直连收单输入实体】---------------OnlineTradeDTO:{}", JSON.toJSONString(onlineTradeDTO));
+        log.info("---------------【线上直连收单开始】---------------OnlineTradeDTO:{}", JSON.toJSONString(onlineTradeDTO));
         Currency currency = commonRedisDataService.getCurrencyByCode(onlineTradeDTO.getOrderCurrency());
         //检查订单
         checkOnlineOrders(onlineTradeDTO, currency);
@@ -178,29 +153,34 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         commonBusinessService.calculateCost(basicInfoVO, orders);
         orders.setReportChannelTime(new Date());
         orders.setTradeStatus(TradeConstant.ORDER_PAYING);
+        orders.setTradeStatus(TradeConstant.PAYMENT_WAIT);
         log.info("-----------------【线上直连】--------------【订单信息】 orders:{}", JSON.toJSONString(orders));
         ordersMapper.insert(orders);
+        log.info("---------------【线上直连落地结束】---------------");
+        log.info("---------------【线上直连收单上报通道开始】---------------");
         //上报通道
         OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
-        //TODO 这个移动到收银台？
         try {
             //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
             BaseResponse baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
-            baseResponse.setMsg("SUCCESS");
+            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
             onlineTradeVO = (OnlineTradeVO) baseResponse.getData();
             //间联
             if (!StringUtils.isEmpty(baseResponse.getData()) && TradeConstant.INDIRECTCONNECTION.equals(orders.getConnectMethod())) {
                 if (!StringUtils.isEmpty(onlineTradeVO.getRespCode())) {
-                    OnlineTradeScanVO ad3OnlineScanVO = new OnlineTradeScanVO();
-                    BeanUtils.copyProperties(onlineTradeVO, ad3OnlineScanVO);
-                    ad3OnlineScanVO.setTradeAmount(orders.getTradeAmount());
-                    ad3OnlineScanVO.setTradeCurrency(orders.getTradeCurrency());
-                    baseResponse.setData(ad3OnlineScanVO);
+                    OnlineTradeScanVO onlineTradeScanVO = new OnlineTradeScanVO();
+                    BeanUtils.copyProperties(onlineTradeVO, onlineTradeScanVO);
+                    onlineTradeScanVO.setTradeAmount(orders.getTradeAmount());
+                    onlineTradeScanVO.setTradeCurrency(orders.getTradeCurrency());
+                    baseResponse.setData(onlineTradeScanVO);
+                    log.info("---------------【线上直连收单结束】--------------- onlineTradeScanVO:{}", JSON.toJSONString(onlineTradeScanVO));
                     return baseResponse;
                 }
             }
             baseResponse.setData(onlineTradeVO);
+            log.info("---------------【线上直连收单结束】--------------- onlineTradeVO:{}", JSON.toJSONString(onlineTradeVO));
             return baseResponse;
         } catch (Exception e) {
             log.info("==================【线上直连】==================【上报通道异常】", e);
@@ -208,53 +188,151 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
     }
 
-
     /**
-     * 检查商户信息
+     * 间连
      *
-     * @param onlineTradeDTO 线上订单输入实体
-     * @return Merchant
+     * @param onlineTradeDTO 线上收单输入实体
+     * @return BaseResponse 线上收单输出实体
      */
-    private Merchant checkMerchant(OnlineTradeDTO onlineTradeDTO) {
-        //商户
-        Merchant merchant = commonRedisDataService.getMerchantById(onlineTradeDTO.getMerchantId());
-        if (merchant == null) {
-            log.info("-----------------【线上直连】下单信息记录--------------【商户不存在】");
-            throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
-        }
-        if (!merchant.getEnabled()) {
-            log.info("-----------------【线上直连】下单信息记录--------------【商户被禁用】");
-            throw new BusinessException(EResultEnum.MERCHANT_IS_DISABLED.getCode());
-        }
-        return merchant;
-    }
-
-    private void checkOnlineOrders(OnlineTradeDTO onlineTradeDTO, Currency currency) {
-        //重复请求
-        if (!commonBusinessService.repeatedRequests(onlineTradeDTO.getMerchantId(), onlineTradeDTO.getOrderNo())) {
-            log.info("-----------------【线上直连】下单信息记录--------------【重复请求】");
-            throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
-        }
-       /* //签名校验
-        if (!commonBusinessService.checkUniversalSign(onlineTradeDTO)) {
-            log.info("-----------------【线上直连】下单信息记录--------------【签名不匹配】");
-            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
-        }*/
-       /* //查询订单号是否重复
-        Orders oldOrder = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getOrderNo());
-        if (oldOrder != null) {
-            log.info("-----------------【线上直连】下单信息记录-----------------订单号已存在");
-            throw new BusinessException(EResultEnum.INSTITUTION_ORDER_ID_EXIST.getCode());
-        }*/
-        //检查币种默认值
-        if (!commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount(), currency)) {
-            log.info("-----------------【线上直连】下单信息记录--------------【订单金额不符合的当前币种默认值】");
+    private BaseResponse indirectConnection(OnlineTradeDTO onlineTradeDTO) {
+        //信息落地
+        log.info("---------------【线上间连收单开始】---------------OnlineTradeDTO:{}", JSON.toJSONString(onlineTradeDTO));
+        Currency currency = commonRedisDataService.getCurrencyByCode(onlineTradeDTO.getOrderCurrency());
+        //检查订单
+        checkOnlineOrders(onlineTradeDTO, currency);
+        //检查商户信息
+        Merchant merchant = checkMerchant(onlineTradeDTO);
+        //检查机构信息
+        Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
+        //可选参数校验
+        InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_ONLINE);
+        checkRequestParameters(onlineTradeDTO, institutionRequestParameters);
+        //校验订单金额
+        if (onlineTradeDTO.getOrderAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            log.info("-----------------【线上间连交易】下单信息记录--------------【订单金额不合法】");
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
+        OnlineMerchantVO onlineMerchantVO = merchantMapper.selectRelevantInfo(onlineTradeDTO.getMerchantId(), null, TradeConstant.TRADE_ONLINE, onlineTradeDTO.getLanguage());
+        //检查订单
+        if (onlineMerchantVO.getProductList() == null || onlineMerchantVO.getProductList().size() == 0) {
+            log.info("==================【间连下单校验订单信息】==================获取产品信息异常 商户订单号:{}", onlineTradeDTO.getOrderNo());
+            //获取产品信息异常
+            throw new BusinessException(EResultEnum.GET_PRODUCT_INFO_ERROR.getCode());
+        }
+        if (onlineMerchantVO.getProductList().get(0).getChannelList() == null || onlineMerchantVO.getProductList().get(0).getChannelList().size() == 0) {
+            log.info("==================【间连下单校验订单信息】==================获取通道信息失败 商户订单号:{}", onlineTradeDTO.getOrderNo());
+            //获取通道信息异常
+            throw new BusinessException(EResultEnum.GET_CHANNEL_INFO_ERROR.getCode());
+        }
+        //收银台
+        CheckoutCounterURLVO checkoutCounterURLVO = new CheckoutCounterURLVO();
+        Orders orders = new Orders();
+        //设置间连订单属性
+        setIndirectConnectionValue(onlineTradeDTO, merchant, institution, orders);
+        ordersMapper.insert(orders);//落地
+        //响应实体
+        checkoutCounterURLVO.setCheckoutCounterURL(cashierDeskUrl + "?id=" + orders.getId());
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setData(checkoutCounterURLVO);
+        baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+        baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+        log.info("---------------【线上间连收单结束】---------------checkoutCounterURLVO:{}", JSON.toJSONString(checkoutCounterURLVO));
+        return baseResponse;
     }
 
     /**
-     * 设置订单属性
+     * 收银台收单
+     *
+     * @param cashierDTO 收银台收单实体
+     * @return BaseResponse
+     */
+    @Override
+    public BaseResponse cashierGateway(CashierDTO cashierDTO) {
+        log.info("----------【线上收银台】下单开始----------【请求参数】 cashierDTO:{}", JSON.toJSONString(cashierDTO));
+        //解密线上参数
+        CashierDTO dto;
+        try {
+            dto = decryptCashierSignMsg(cashierDTO);
+        } catch (Exception e) {
+            log.info("----------【线上收银台】下单信息记录----------收银台【参数解密】错误");
+            throw new BusinessException(EResultEnum.CASH_COUNTER_PARAMETER_DECRYPTION_ERROR.getCode());
+        }
+        log.info("--------------【线上收银台】收银台解密后参数--------------dto:{}", JSON.toJSONString(dto));
+        if (StringUtils.isEmpty(dto.getExchangeTime()) || "false".equals(dto.getExchangeTime())) {
+            log.info("----------【线上收银台】下单信息记录----------收银台【换汇时间】不存在");
+            throw new BusinessException(EResultEnum.CASHIER_EXCHANGE_TIME_DOES_NOT_EXIST.getCode());
+        }
+        if (StringUtils.isEmpty(dto.getOriginalRate()) || "false".equals(dto.getOriginalRate())) {
+            log.info("----------【线上收银台】下单信息记录----------收银台【原始汇率】不存在");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        //重复请求
+        if (!commonBusinessService.repeatedRequests(dto.getMerchantId(), dto.getOrderId())) {
+            log.info("-----------------【线上收银台】下单信息记录--------------【重复请求】");
+            throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
+        }
+        //判断原始订单存不存在
+        Orders orders = ordersMapper.selectByMerchantOrderId(dto.getMerchantOrderId());
+        if (orders == null) {
+            log.info("----------【线上收银台】下单信息记录----------收银台原始订单不存在 merchantOrderId:{}", cashierDTO.getMerchantOrderId());
+            throw new BusinessException(EResultEnum.ORIGINAL_ORDER_DOES_NOT_EXIST.getCode());
+        }
+        if (!StringUtils.isEmpty(orders.getReportNumber())) {
+            log.info("-----------------【线上收银台】下单信息记录-----------------订单号已存在");
+            throw new BusinessException(EResultEnum.INSTITUTION_ORDER_ID_EXIST.getCode());
+        }
+        //获取商户信息
+        BasicInfoVO basicInfoVO = getOnlineInfo(dto.getMerchantId(), dto.getIssuerId());
+        //截取币种默认值
+        Currency currency = commonRedisDataService.getCurrencyByCode(dto.getOrderCurrency());
+        commonBusinessService.interceptDigit(orders, currency);
+        setCashierValue(basicInfoVO, orders);
+        //校验是否换汇
+        commonBusinessService.swapRateByPayment(basicInfoVO, orders);
+        //校验商户产品与通道的限额
+        commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //计算手续费
+        commonBusinessService.calculateCost(basicInfoVO, orders);
+        orders.setReportChannelTime(new Date());
+        orders.setTradeStatus(TradeConstant.ORDER_PAYING);
+        orders.setTradeStatus(TradeConstant.PAYMENT_WAIT);
+        //用作判断收银台的重复订单号
+        orders.setReportNumber("Q" + IDS.uniqueID().toString());
+        log.info("-----------------【线上收银台】--------------【订单信息】 orders:{}", JSON.toJSONString(orders));
+        ordersMapper.updateByPrimaryKey(orders);
+        log.info("---------------【线上收银台落地结束】---------------");
+        log.info("---------------【线上收银台收单上报通道开始】---------------");
+        OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
+        try {
+            //上报通道
+            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
+            BaseResponse baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
+            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+            onlineTradeVO = (OnlineTradeVO) baseResponse.getData();
+            //间联
+            if (!StringUtils.isEmpty(baseResponse.getData()) && TradeConstant.INDIRECTCONNECTION.equals(orders.getConnectMethod())) {
+                if (!StringUtils.isEmpty(onlineTradeVO.getRespCode())) {
+                    OnlineTradeScanVO onlineTradeScanVO = new OnlineTradeScanVO();
+                    BeanUtils.copyProperties(onlineTradeVO, onlineTradeScanVO);
+                    onlineTradeScanVO.setTradeAmount(orders.getTradeAmount());
+                    onlineTradeScanVO.setTradeCurrency(orders.getTradeCurrency());
+                    baseResponse.setData(onlineTradeScanVO);
+                    log.info("---------------【线上收银台收单结束】--------------- onlineTradeScanVO:{}", JSON.toJSONString(onlineTradeScanVO));
+                    return baseResponse;
+                }
+            }
+            baseResponse.setData(onlineTradeVO);
+            log.info("---------------【线上收银台收单结束】--------------- onlineTradeVO:{}", JSON.toJSONString(onlineTradeVO));
+            return baseResponse;
+        } catch (Exception e) {
+            log.info("==================【线上收银台】==================【上报通道异常】", e);
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+    }
+
+    /**
+     * 设置直连订单属性
      *
      * @param onlineTradeDTO 收单实体
      * @param basicInfoVO    基础信息实体
@@ -334,6 +412,257 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     }
 
     /**
+     * 间连订单设置属性
+     *
+     * @param onlineTradeDTO 订单实体
+     * @param merchant       商户
+     * @param institution    机构
+     */
+    private void setIndirectConnectionValue(OnlineTradeDTO onlineTradeDTO, Merchant merchant, Institution institution, Orders orders) {
+        orders.setId("O" + IDS.uniqueID().toString().substring(0, 15));
+        orders.setInstitutionId(institution.getId());
+        orders.setInstitutionName(institution.getCnName());
+        orders.setMerchantId(merchant.getId());
+        orders.setMerchantName(merchant.getCnName());
+        orders.setSecondMerchantName(merchant.getCnName());
+        orders.setSecondMerchantCode(merchant.getId());
+        orders.setAgentCode(merchant.getAgentId());
+        //INDIRECTCONNECTION 间连
+        orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.INDIRECTCONNECTION);
+        orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
+//        orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
+//        orders.setGroupMerchantName(merchant.getGroupMasterAccount());
+        //代理商
+        if (!StringUtils.isEmpty(merchant.getAgentId())) {
+            Merchant agentMerchant = commonRedisDataService.getMerchantById(merchant.getAgentId());
+            if (agentMerchant != null) {
+                orders.setAgentCode(agentMerchant.getId());
+                orders.setAgentName(agentMerchant.getCnName());
+            }
+        }
+        //截取URL
+        commonBusinessService.getUrl(onlineTradeDTO.getServerUrl(), orders);
+//        orders.setTradeType(product.getTransType());
+//        orders.setTradeDirection(product.getTradeDirection());
+        orders.setMerchantOrderTime(DateToolUtils.getReqDateG((onlineTradeDTO.getOrderTime())));
+        orders.setMerchantOrderId(onlineTradeDTO.getOrderNo());
+        orders.setOrderAmount(onlineTradeDTO.getOrderAmount());
+        orders.setOrderCurrency(onlineTradeDTO.getOrderCurrency());
+//        orders.setProductCode(product.getProductCode());
+        orders.setProductName(onlineTradeDTO.getProductName());
+        orders.setProductDescription(onlineTradeDTO.getProductDescription());
+//        orders.setChannelCode(channel.getChannelCode());
+//        orders.setChannelName(channel.getChannelCnName());
+//        orders.setTradeCurrency(channel.getCurrency());
+        orders.setTradeStatus(TradeConstant.PAYMENT_START);
+//        orders.setPayMethod(merchantProduct.getPayType());
+        orders.setPayerName(onlineTradeDTO.getPayerName());
+        orders.setPayerAccount(onlineTradeDTO.getPayerAccount());
+        orders.setPayerBank(onlineTradeDTO.getPayerBank());
+        orders.setPayerEmail(onlineTradeDTO.getPayerEmail());
+        orders.setPayerPhone(onlineTradeDTO.getPayerPhone());
+        orders.setPayerAddress(onlineTradeDTO.getPayerAddress());
+//        //判断结算周期类型
+//        if (TradeConstant.DELIVERED.equals(merchantProduct.getSettleCycle())) {
+//            //妥投结算
+//            orders.setProductSettleCycle(TradeConstant.FUTURE_TIME);
+//        } else {
+//            //产品结算周期
+//            orders.setProductSettleCycle(SettleDateUtil.getSettleDate(merchantProduct.getSettleCycle()));
+//        }
+//        orders.setFloatRate(merchantProduct.getFloatRate());
+//        orders.setIssuerId(channel.getIssuerId());
+//        orders.setBankName(basicInfoVO.getBankName());
+        orders.setBrowserUrl(onlineTradeDTO.getBrowserUrl());
+        orders.setServerUrl(onlineTradeDTO.getServerUrl());
+        orders.setLanguage(onlineTradeDTO.getLanguage());
+        orders.setSign(onlineTradeDTO.getSign());
+        orders.setCreateTime(new Date());
+        orders.setCreator(merchant.getCnName());
+        orders.setRemark1(onlineTradeDTO.getRemark1());
+        orders.setRemark2(onlineTradeDTO.getRemark2());
+        orders.setRemark3(onlineTradeDTO.getRemark3());
+    }
+
+    /**
+     * 收银台订单设置属性
+     *
+     * @param basicInfoVO 基础信息
+     * @param orders      订单实体
+     */
+    private void setCashierValue(BasicInfoVO basicInfoVO, Orders orders) {
+        Merchant merchant = basicInfoVO.getMerchant();
+        MerchantProduct merchantProduct = basicInfoVO.getMerchantProduct();
+        Product product = basicInfoVO.getProduct();
+        Channel channel = basicInfoVO.getChannel();
+        orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
+        orders.setGroupMerchantName(merchant.getGroupMasterAccount());
+        orders.setTradeType(product.getTransType());
+        orders.setTradeDirection(product.getTradeDirection());
+        orders.setProductCode(product.getProductCode());
+        orders.setChannelCode(channel.getChannelCode());
+        orders.setChannelName(channel.getChannelCnName());
+        orders.setTradeCurrency(channel.getCurrency());
+        orders.setPayMethod(merchantProduct.getPayType());
+        //判断结算周期类型
+        if (TradeConstant.DELIVERED.equals(merchantProduct.getSettleCycle())) {
+            //妥投结算
+            orders.setProductSettleCycle(TradeConstant.FUTURE_TIME);
+        } else {
+            //产品结算周期
+            orders.setProductSettleCycle(SettleDateUtil.getSettleDate(merchantProduct.getSettleCycle()));
+        }
+        orders.setFloatRate(merchantProduct.getFloatRate());
+        orders.setIssuerId(channel.getIssuerId());
+        orders.setBankName(basicInfoVO.getBankName());
+    }
+
+    /**
+     * 收银台基础信息
+     *
+     * @param orderId  订单ID
+     * @param language 语言
+     * @return BaseResponse
+     */
+    @Override
+    public BaseResponse cashier(String orderId, String language) {
+        log.info("---------------【收银台获取基础信息】---------------orderId:{}", JSON.toJSONString(orderId));
+        if (StringUtils.isEmpty(orderId)) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        Orders orders = ordersMapper.selectByMerchantOrderId(orderId);
+        if (orders == null) {
+            log.info("--------------收银台订单不存在-------------- 订单号:{}", orderId);
+            throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
+        }
+        OnlineMerchantVO onlineMerchantVO = merchantMapper.selectRelevantInfo(orders.getMerchantId(), null, TradeConstant.TRADE_ONLINE, language);
+        if (onlineMerchantVO == null) {
+            log.info("-----------收银台商户CODE对应的产品通道信息不存在-----------订单id:{},orders:{},商户code:{}", orderId, JSON.toJSON(orders), orders.getMerchantId());
+            throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_DOES_NOT_EXIST.getCode());//机构产品通道信息不存在
+        }
+        onlineMerchantVO.setOrderId(orders.getId());
+        onlineMerchantVO.setOrders(orders);
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setData(onlineMerchantVO);
+        return baseResponse;
+    }
+
+    /**
+     * 收银台换汇金额计算
+     *
+     * @param calcRateDTO 订单输入实体
+     * @return 换汇计算输出实体
+     */
+    @Override
+    public BaseResponse calcCashierExchangeRate(CalcRateDTO calcRateDTO) {
+        log.info("---------收银台换汇开始---------CalcRateDTO:{}", JSON.toJSON(calcRateDTO));
+        OnlineMerchantVO online = merchantMapper.selectRelevantInfo(calcRateDTO.getMerchantCode(), calcRateDTO.getPayType(), TradeConstant.TRADE_ONLINE, null);
+        if (online.getProductList().size() == 0) {
+            throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_STATUS_ABNORMAL.getCode());
+        }
+        OnlineProductVO product = online.getProductList().get(0);
+        BigDecimal ipFloatRate = product.getIpFloatRate();
+        CashierCalcRateVO calcRateVO = new CashierCalcRateVO();
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+        String defaultValue = commonRedisDataService.getCurrencyByCode(calcRateDTO.getTradeCurrency()).getDefaults();
+        if (StringUtils.isEmpty(defaultValue)) {
+            log.info("-----------换汇错误 结束换汇 交易币种不存在-----------CalcRateDTO:{}", JSON.toJSON(calcRateDTO));
+            throw new BusinessException(EResultEnum.PRODUCT_CURRENCY_NO_SUPPORT.getCode());
+        }
+        if (calcRateDTO.getOrderCurrency().equals(calcRateDTO.getTradeCurrency())) {
+            log.info("---------同币种---------");
+            calcRateVO.setExchangeTime(new Date());
+            int bitPos = defaultValue.indexOf(".");
+            int numOfBits = 0;
+            if (bitPos != -1) {
+                numOfBits = defaultValue.length() - bitPos - 1;
+            }
+            calcRateVO.setTradeAmount(String.valueOf(calcRateDTO.getAmount().setScale(numOfBits, BigDecimal.ROUND_HALF_UP)));
+            calcRateVO.setExchangeStatus(TradeConstant.SWAP_SUCCESS);
+            calcRateVO.setOriginalRate(BigDecimal.ONE);//原始汇率
+            //交易币种转订单币种汇率
+            calcRateVO.setReverseRate(BigDecimal.ONE);
+            baseResponse.setData(calcRateVO);
+            log.info("---------收银台换汇结束【同币种】---------CashierCalcRateVO:{}", JSON.toJSON(calcRateVO));
+            return baseResponse;
+        }
+        CalcExchangeRateVO crv = commonBusinessService.calcExchangeRate(calcRateDTO.getOrderCurrency(), calcRateDTO.getTradeCurrency(), ipFloatRate, calcRateDTO.getAmount());
+        BigDecimal tradeAmount = crv.getTradeAmount();
+        if (tradeAmount == null) {
+            log.info("-----------换汇错误 结束换汇-----------CalcRateDTO:{}", JSON.toJSON(calcRateDTO));
+            throw new BusinessException(EResultEnum.SYS_ERROR_CREATE_ORDER_FAIL.getCode());
+        }
+        calcRateVO.setExchangeRate(crv.getExchangeRate());
+        calcRateVO.setExchangeStatus(crv.getExchangeStatus());
+        calcRateVO.setExchangeTime(crv.getExchangeTime());
+        //订单币种转交易币种汇率
+        calcRateVO.setOriginalRate(crv.getOriginalRate());
+        //交易币种转订单币种汇率
+        calcRateVO.setReverseRate(crv.getReverseRate());
+        int bitPos = defaultValue.indexOf(".");
+        int numOfBits = 0;
+        if (bitPos != -1) {
+            numOfBits = defaultValue.length() - bitPos - 1;
+        }
+        calcRateVO.setTradeAmount(String.valueOf(crv.getTradeAmount().setScale(numOfBits, BigDecimal.ROUND_HALF_UP)));
+        baseResponse.setData(calcRateVO);
+        baseResponse.setMsg("SUCCESS");
+        log.info("---------收银台换汇结束---------CashierCalcRateVO:{}", JSON.toJSON(calcRateVO));
+        return baseResponse;
+    }
+
+    /**
+     * 检查商户信息
+     *
+     * @param onlineTradeDTO 线上订单输入实体
+     * @return Merchant
+     */
+    private Merchant checkMerchant(OnlineTradeDTO onlineTradeDTO) {
+        //商户
+        Merchant merchant = commonRedisDataService.getMerchantById(onlineTradeDTO.getMerchantId());
+        if (merchant == null) {
+            log.info("-----------------【线上直连】下单信息记录--------------【商户不存在】");
+            throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
+        }
+        if (!merchant.getEnabled()) {
+            log.info("-----------------【线上直连】下单信息记录--------------【商户被禁用】");
+            throw new BusinessException(EResultEnum.MERCHANT_IS_DISABLED.getCode());
+        }
+        return merchant;
+    }
+
+    /**
+     * 检查订单
+     *
+     * @param onlineTradeDTO 订单输入实体
+     * @param currency       币种
+     */
+    private void checkOnlineOrders(OnlineTradeDTO onlineTradeDTO, Currency currency) {
+        //重复请求
+        if (!commonBusinessService.repeatedRequests(onlineTradeDTO.getMerchantId(), onlineTradeDTO.getOrderNo())) {
+            log.info("-----------------【线上直连】下单信息记录--------------【重复请求】");
+            throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
+        }
+       /* //签名校验
+        if (!commonBusinessService.checkUniversalSign(onlineTradeDTO)) {
+            log.info("-----------------【线上下单】下单信息记录--------------【签名不匹配】");
+            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+        }*/
+       /* //查询订单号是否重复
+        Orders oldOrder = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getOrderNo());
+        if (oldOrder != null) {
+            log.info("-----------------【线上下单】下单信息记录-----------------订单号已存在");
+            throw new BusinessException(EResultEnum.INSTITUTION_ORDER_ID_EXIST.getCode());
+        }*/
+        //检查币种默认值
+        if (!commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount(), currency)) {
+            log.info("-----------------【线上下单】下单信息记录--------------【订单金额不符合的当前币种默认值】");
+            throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
+        }
+    }
+
+    /**
      * 获取线上基础信息
      *
      * @param merchantId 商户ID
@@ -372,7 +701,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
         return basicInfoVO;
     }
-
 
     /**
      * 校验请求参数
@@ -425,5 +753,29 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             log.info("==================【线上收单校验机构请求参数】==================【备注3为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
+    }
+
+    /**
+     * 收银台参数解密
+     *
+     * @param cd 未解密收银台DTO
+     * @return CashierDTO 解密后参数
+     * @throws Exception e
+     */
+    public CashierDTO decryptCashierSignMsg(CashierDTO cd) throws Exception {
+        HashMap<String, Object> originalMap = BeanToMapUtil.beanToMap(cd);
+        Attestation attestation = commonRedisDataService.getAttestationByMerchantId(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY);
+        HashMap<String, String> map = new HashMap<>();
+        Set<String> originalSet = originalMap.keySet();
+        for (String key : originalSet) {
+            String originalValue = String.valueOf(originalMap.get(key));
+            if (StringUtils.isEmpty(originalValue)) {
+                log.info("---------------收银台参数含空---------------key:{},CashierDTO:{}", key, JSON.toJSON(cd));
+                throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+            }
+            String value = RSAUtils.decryptByPriKey(originalValue, attestation.getPrikey());
+            map.put(key, value);
+        }
+        return JSON.parseObject(JSON.toJSONString(map), CashierDTO.class);
     }
 }
