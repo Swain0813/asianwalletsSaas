@@ -80,7 +80,7 @@
         mp.ext6, mp.ext7
         from merchant_product mp left join product p on p.id = mp.product_id
         left join merchant m on m.id = mp.merchant_id
-        left join institution on i.id = m.institution_id
+        left join institution i on i.id = m.institution_id
         left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
         left join dictionary d on mp.rate_type = d.code and d.language = #{language}
         left join dictionary d1 on mp.refund_rate_type = d1.code and d1.language = #{language}
@@ -134,7 +134,7 @@
         mp.ext6, mp.ext7
         from merchant_product mp left join product p on p.id = mp.product_id
         left join merchant m on m.id = mp.merchant_id
-        left join institution on i.id = m.institution_id
+        left join institution i on i.id = m.institution_id
         left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
         left join dictionary d on mp.rate_type = d.code and d.language = #{language}
         left join dictionary d1 on mp.refund_rate_type = d1.code and d1.language = #{language}
