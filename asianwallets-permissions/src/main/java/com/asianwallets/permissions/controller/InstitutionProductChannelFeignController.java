@@ -3,7 +3,9 @@ package com.asianwallets.permissions.controller;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.dto.InstitutionChannelQueryDTO;
 import com.asianwallets.common.dto.InstitutionProductChannelDTO;
+import com.asianwallets.common.dto.InstitutionProductDTO;
 import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.InstitutionProductChannelFeign;
@@ -65,5 +67,21 @@ public class InstitutionProductChannelFeignController extends BaseController {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionRequestDTO),
                 "分页查询机构参数设置"));
         return institutionProductChannelFeign.pageInstitutionRequests(institutionRequestDTO);
+    }
+
+    @ApiOperation(value = "分页查询机构产品信息")
+    @PostMapping("/pageInstitutionPro")
+    public BaseResponse pageInstitutionPro(@RequestBody @ApiParam InstitutionProductDTO institutionProductDTO) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionProductDTO),
+                "分页查询机构产品信息"));
+        return institutionProductChannelFeign.pageInstitutionPro(institutionProductDTO);
+    }
+
+    @ApiOperation(value = "分页查询机构通道信息")
+    @PostMapping("/pageInstitutionCha")
+    public BaseResponse pageInstitutionCha(@RequestBody @ApiParam InstitutionChannelQueryDTO institutionChannelQueryDTO) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionChannelQueryDTO),
+                "分页查询机构通道信息"));
+        return institutionProductChannelFeign.pageInstitutionCha(institutionChannelQueryDTO);
     }
 }

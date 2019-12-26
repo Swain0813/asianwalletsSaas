@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels;
-
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
@@ -23,6 +22,7 @@ public abstract class ChannelsAbstract {
      * @param channel      通道
      */
     public abstract BaseResponse offlineCSB(Orders orders, Channel channel);
+
     /**
      * 线下BSC处理方法
      *
@@ -50,6 +50,7 @@ public abstract class ChannelsAbstract {
      * @return 通用响应实体
      */
     public abstract BaseResponse refund( Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
+
     /**
      * 撤销方法
      *

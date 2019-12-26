@@ -1,9 +1,13 @@
 package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base.BaseMapper;
+import com.asianwallets.common.dto.InstitutionChannelQueryDTO;
+import com.asianwallets.common.dto.InstitutionProductDTO;
 import com.asianwallets.common.dto.InstitutionRequestDTO;
 import com.asianwallets.common.entity.InstitutionProduct;
+import com.asianwallets.common.vo.InstitutionChannelQueryVO;
 import com.asianwallets.common.vo.InstitutionProductChannelVO;
+import com.asianwallets.common.vo.InstitutionProductVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -61,4 +65,18 @@ public interface InstitutionProductMapper extends BaseMapper<InstitutionProduct>
      * @return
      */
     List<InstitutionProduct> pageInstitutionRequests(InstitutionRequestDTO institutionRequestDTO);
+
+    /**
+     * 查询机构产品信息
+     * @param institutionProductDTO
+     * @return
+     */
+    List<InstitutionProductVO> pageInstitutionPro(InstitutionProductDTO institutionProductDTO);
+
+    /**
+     * 分页查询机构通道信息
+     * @param institutionChannelQueryDTO
+     * @return
+     */
+    List<InstitutionChannelQueryVO> pageInstitutionCha(InstitutionChannelQueryDTO institutionChannelQueryDTO);
 }
