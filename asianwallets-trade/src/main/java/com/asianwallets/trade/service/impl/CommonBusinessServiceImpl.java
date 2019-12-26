@@ -658,7 +658,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         reconciliation.setMerchantName(orderRefund.getMerchantName());
         reconciliation.setMerchantId(orderRefund.getMerchantId());
         if (orderRefund.getFeePayer() == 1) {
-            reconciliation.setAmount(orderRefund.getOrderAmount().subtract(orderRefund.getRefundFee()).add(orderRefund.getRefundOrderFee()));
+            reconciliation.setAmount(orderRefund.getOrderAmount().add(orderRefund.getRefundFee()).subtract(orderRefund.getRefundOrderFee()));
         } else {
             reconciliation.setAmount(orderRefund.getOrderAmount());
         }

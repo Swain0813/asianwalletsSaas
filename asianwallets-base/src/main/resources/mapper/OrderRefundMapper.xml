@@ -8,7 +8,7 @@
         <result column="refund_status" property="refundStatus" jdbcType="TINYINT"/>
         <result column="trade_type" property="tradeType" jdbcType="TINYINT"/>
         <result column="trade_direction" property="tradeDirection" jdbcType="TINYINT"/>
-        <result column="institution_code" property="institutionCode" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
         <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
         <result column="agency_code" property="agencyCode" jdbcType="VARCHAR"/>
         <result column="agency_name" property="agencyName" jdbcType="VARCHAR"/>
@@ -87,7 +87,7 @@
     <resultMap id="pageFindOrdersRefundMap" type="com.asianwallets.common.vo.OrdersRefundVO">
         <id column="id" property="id" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-        <result column="institution_code" property="institutionCode" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionCode" jdbcType="VARCHAR"/>
         <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
         <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
         <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
@@ -104,7 +104,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, refund_type, refund_mode, refund_status, trade_type, trade_direction, institution_code,
+        id, refund_type, refund_mode, refund_status, trade_type, trade_direction, institution_id,
     institution_name, agency_code, agency_name, group_merchant_code, group_merchant_name,
     second_merchant_name, second_merchant_code, language,merchant_id,merchant_name, merchant_order_time, merchant_order_id,
     order_amount, order_currency, order_for_trade_rate, trade_for_order_rate, channel_name,
@@ -123,7 +123,7 @@
         select
         id,
         create_time,
-        institution_code,
+        institution_id,
         institution_name,
         merchant_id,
         merchant_name,
@@ -152,7 +152,7 @@
                 AND order_amount = #{refundAmount}
             </if>
             <if test="institutionCode !=null and institutionCode !=''">
-                AND institution_code LIKE CONCAT(CONCAT('%', #{institutionCode}), '%')
+                AND institution_id LIKE CONCAT(CONCAT('%', #{institutionCode}), '%')
             </if>
             <if test="institutionName !=null and institutionName !=''">
                 AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')

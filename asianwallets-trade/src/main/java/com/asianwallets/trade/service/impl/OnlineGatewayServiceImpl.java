@@ -114,9 +114,27 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
      * 间连
      *
      * @param onlineTradeDTO 线上收单输入实体
-     * @return OnlineTradeVO 线上收单输出实体
+     * @return BaseResponse 线上收单输出实体
      */
     private BaseResponse indirectConnection(OnlineTradeDTO onlineTradeDTO) {
+        //信息落地
+        log.info("---------------【线上间连收单输入实体】---------------OnlineTradeDTO:{}", JSON.toJSONString(onlineTradeDTO));
+        Currency currency = commonRedisDataService.getCurrencyByCode(onlineTradeDTO.getOrderCurrency());
+        //检查订单
+        checkOnlineOrders(onlineTradeDTO, currency);
+        //检查商户信息
+        Merchant merchant = checkMerchant(onlineTradeDTO);
+        //检查机构信息
+        Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
+        //可选参数校验
+        InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_ONLINE);
+        checkRequestParameters(onlineTradeDTO, institutionRequestParameters);
+        //校验订单金额
+        if (onlineTradeDTO.getOrderAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            log.info("-----------------【线上交易】下单信息记录--------------【订单金额不合法】");
+            throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
+        }
+
         return null;
     }
 
@@ -150,12 +168,12 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         basicInfoVO.setInstitution(institution);
         //设置订单属性
         Orders orders = setOnlineOrdersInfo(onlineTradeDTO, basicInfoVO);
+        //截取币种默认值
+        commonBusinessService.interceptDigit(orders, currency);
         //校验是否换汇
         commonBusinessService.swapRateByPayment(basicInfoVO, orders);
         //校验商户产品与通道的限额
         commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
-        //截取币种默认值
-        commonBusinessService.interceptDigit(orders, currency);
         //计算手续费
         commonBusinessService.calculateCost(basicInfoVO, orders);
         orders.setReportChannelTime(new Date());
@@ -164,6 +182,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         ordersMapper.insert(orders);
         //上报通道
         OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
+        //TODO 这个移动到收银台？
         try {
             //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
@@ -307,6 +326,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setLanguage(onlineTradeDTO.getLanguage());
         orders.setSign(onlineTradeDTO.getSign());
         orders.setCreateTime(new Date());
+        orders.setCreator(merchant.getCnName());
         orders.setRemark1(onlineTradeDTO.getRemark1());
         orders.setRemark2(onlineTradeDTO.getRemark2());
         orders.setRemark3(onlineTradeDTO.getRemark3());
