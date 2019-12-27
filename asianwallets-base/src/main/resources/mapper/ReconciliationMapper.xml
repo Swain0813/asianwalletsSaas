@@ -46,6 +46,9 @@
 			<if test="institutionId!=null and institutionId != ''">
 				and institution_id=#{institutionId}
 			</if>
+			<if test="merchantName != null and merchantName != ''">
+				and merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+			</if>
 			<if test="merchantId!=null and merchantId != ''">
 				and merchant_id=#{merchantId}
 			</if>
@@ -72,6 +75,9 @@
 			</if>
 			<if test="merchantId!=null and merchantId != ''">
 				and merchant_id=#{merchantId}
+			</if>
+			<if test="merchantName != null and merchantName != ''">
+				and merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
 			</if>
 			<if test="institutionId!=null and institutionId != ''">
 				and institution_id=#{institutionId}
