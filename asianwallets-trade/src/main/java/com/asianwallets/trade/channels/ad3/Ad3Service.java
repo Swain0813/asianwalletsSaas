@@ -6,6 +6,9 @@ import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.AD3LoginVO;
 import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
+import com.asianwallets.trade.dto.AD3OnlineCallbackDTO;
+
+import javax.servlet.http.HttpServletResponse;
 
 public interface Ad3Service {
 
@@ -84,4 +87,20 @@ public interface Ad3Service {
      * @return
      */
     String ad3OfflineCsbServerCallback(AD3OfflineCallbackDTO ad3OfflineCallbackDTO);
+
+    /**
+     * ad3线上回调
+     *
+     * @param ad3OnlineCallbackDTO ad3线下回调输入实体
+     * @return SUCCESS
+     */
+    String ad3OnlineServerCallback(AD3OnlineCallbackDTO ad3OnlineCallbackDTO);
+
+    /**
+     * AD3服务器回调
+     *
+     * @param aavo     参数
+     * @param response 响应
+     */
+    void ad3OnlineBrowserCallback(AD3OnlineCallbackDTO aavo, HttpServletResponse response);
 }

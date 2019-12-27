@@ -1,4 +1,5 @@
 package com.asianwallets.trade.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.response.BaseResponse;
@@ -13,6 +14,7 @@ import com.asianwallets.trade.service.ClearingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +57,7 @@ public class ClearingServiceImpl implements ClearingService {
                 baseResponse.setCode("T001");
             }
         } catch (Exception e) {
-            log.info("************资金变动接口发生异常**************",e.getMessage());
+            log.info("************资金变动接口发生异常************** e:{}", e.getMessage());
             baseResponse.setCode("T001");
         }
         log.info("------------  上报清结算 返回 fundChange ------------ BaseResponse : {}", JSON.toJSON(baseResponse));

@@ -1,11 +1,11 @@
 package com.asianwallets.trade.service;
 
 import com.asianwallets.common.entity.*;
-import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.trade.vo.BasicInfoVO;
 import com.asianwallets.trade.vo.CalcFeeVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 
 /**
@@ -193,6 +193,14 @@ public interface CommonBusinessService {
      * @param orders 订单
      */
     void replyReturnUrl(Orders orders);
+
+    /**
+     * 重定向用户jumpUrl
+     *
+     * @param orders
+     * @param response
+     */
+    void replyJumpUrl(Orders orders, HttpServletResponse response);
 
     /**
      * 支付成功发送邮件给付款人
