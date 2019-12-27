@@ -29,7 +29,6 @@
         <result column="settle_type" property="settleType" jdbcType="TINYINT"/>
         <result column="total_settle_amount" property="totalSettleAmount" jdbcType="DECIMAL"/>
         <result column="settle_channel" property="settleChannel" jdbcType="VARCHAR"/>
-        <result column="rate_type" property="rateType" jdbcType="VARCHAR"/>
         <result column="receiver_address" property="receiverAddress" jdbcType="VARCHAR"/>
         <result column="intermediary_bank_code" property="intermediaryBankCode" jdbcType="VARCHAR"/>
         <result column="intermediary_bank_name" property="intermediaryBankName" jdbcType="VARCHAR"/>
