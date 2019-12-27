@@ -1,4 +1,4 @@
-package com.asianwallets.common.dto.eghl;
+package com.asianwallets.trade.dto;
 
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.Channel;
@@ -77,14 +77,11 @@ public class EGHLRequestDTO {
     @ApiModelProperty(value = "md5_key_str")
     private String md5KeyStr;
 
-    @ApiModelProperty(value = "Channel")
-    private Channel channel;
-
 
     public EGHLRequestDTO() {
     }
 
-    public EGHLRequestDTO(Orders orders, Channel channel) {
+    public EGHLRequestDTO(Orders orders, Channel channel, String merchantReturnURL, String merchantCallBackURL) {
         this.TransactionType = "SALE";
         this.PymtMethod = "DD";
         this.ServiceID = channel.getChannelMerchantId();
@@ -92,13 +89,13 @@ public class EGHLRequestDTO {
         this.OrderNumber = orders.getId();
         this.PaymentDesc = "eGHL";
         this.MerchantName = "";
-        this.MerchantReturnURL = channel.getNotifyServerUrl();//服务回调
-        this.MerchantCallBackURL = channel.getNotifyBrowserUrl();//浏览器回调
-        this.Amount = String.valueOf(orders.getChannelAmount());
+        this.MerchantReturnURL = merchantReturnURL;//服务回调
+        this.MerchantCallBackURL = merchantCallBackURL;//浏览器回调
+        this.Amount = String.valueOf(orders.getTradeAmount());
         this.CurrencyCode = orders.getTradeCurrency();
         this.CustIP = orders.getReqIp();
-        this.CustName = orders.getPayerName();
-        this.CustEmail = orders.getPayerEmail();
+        this.CustName = orders.getDraweeName();
+        this.CustEmail = orders.getDraweeEmail();
         //this.CustPhone = orders.getDraweePhone();
         this.CustPhone = "18688889999";
         this.PageTimeOut = "780";
@@ -112,6 +109,5 @@ public class EGHLRequestDTO {
         String flag = channel.getMd5KeyStr() + this.getServiceID() + this.getPaymentID() + this.getMerchantReturnURL() + this.getMerchantCallBackURL() + this.getAmount()
                 + this.getCurrencyCode() + this.getCustIP() + this.getPageTimeOut();
         this.HashValue = Sha256Tools.encrypt(flag);
-        this.channel = channel;
     }
 }

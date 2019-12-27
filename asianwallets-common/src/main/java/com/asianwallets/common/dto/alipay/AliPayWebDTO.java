@@ -132,7 +132,7 @@ public class AliPayWebDTO {
         this.secondary_merchant_id = "20170828500054";
         this.secondary_merchant_name = "zhtest";
         DecimalFormat decimalFormat = new DecimalFormat("###0.00");//格式化设置
-        this.amt = decimalFormat.format(orders.getTradeAmount());
+        this.amt = decimalFormat.format(orders.getChannelAmount());
         this.channel = channel;
         this.institution_order_id = orders.getMerchantOrderId();
         this.reqIp = orders.getReqIp();

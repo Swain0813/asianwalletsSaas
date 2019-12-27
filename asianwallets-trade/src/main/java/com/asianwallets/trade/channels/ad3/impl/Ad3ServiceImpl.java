@@ -281,7 +281,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     }
 
     /**
-     * AD3服务器回调
+     * AD3浏览器回调
      *
      * @param ad3OnlineCallbackDTO 参数
      * @param response             响应

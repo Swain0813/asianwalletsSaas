@@ -32,4 +32,17 @@ public class AD3MQConstant {
 
     //撤销上报上游失败
     public final static String CX_SB_FAIL_DL = "CX_SB_FAIL_DL";
+    /* ===========================================      MegaPay-THB查询队列1       =============================================== */
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER = "MQ_MEGAPAY_THB_CHECK_ORDER";//MegaPay-THB查询队列1
+    public static final String E_MQ_MEGAPAY_THB_CHECK_ORDER = "E_MQ_MEGAPAY_THB_CHECK_ORDER";//MegaPay-THB查询死信队列1
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER_KEY = "MQ_MEGAPAY_THB_CHECK_ORDER_KEY";//MegaPay-THB查询死信队列1路由
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE = "MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE";//MegaPay-THB查询死信队列1交换机
+
+
+    /* ===========================================      MegaPay-THB查询队列2       =============================================== */
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER2 = "MQ_MEGAPAY_THB_CHECK_ORDER2";//MegaPay-THB查询队列2
+    public static final String E_MQ_MEGAPAY_THB_CHECK_ORDER2 = "E_MQ_MEGAPAY_THB_CHECK_ORDER2";//MegaPay-THB查询死信队列2
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER_KEY2 = "MQ_MEGAPAY_THB_CHECK_ORDER_KEY2";//MegaPay-THB查询死信队列2路由
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE2 = "MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE2";//MegaPay-THB查询死信队列2交换机
+
 }

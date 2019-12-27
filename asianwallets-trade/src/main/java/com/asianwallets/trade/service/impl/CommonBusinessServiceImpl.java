@@ -511,6 +511,13 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         orders.setRateType(merchantProduct.getRateType());
         orders.setAddValue(merchantProduct.getAddValue());
         orders.setFeePayer(merchantProduct.getFeePayer());
+        //手续费为用户承担时,手续费加到ChannelAmount
+        if (merchantProduct.getFeePayer().equals(TradeConstant.FEE_PAYER_OUT)) {
+            BigDecimal tradeAmount = orders.getTradeAmount().add(feeTrade);
+            orders.setChannelAmount(tradeAmount);
+        } else {
+            orders.setChannelAmount(orders.getTradeAmount());
+        }
         log.info("-----------------【计费信息记录】-----------------计算手续费结束 手续费:{}", orderFee);
 
         log.info("-----------------【计费信息记录】-----------------计算通道手续费开始");

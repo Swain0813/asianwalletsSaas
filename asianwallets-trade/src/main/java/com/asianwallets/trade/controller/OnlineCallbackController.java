@@ -4,11 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
+import com.asianwallets.trade.channels.eghl.EGHLService;
 import com.asianwallets.trade.channels.enets.EnetsService;
 import com.asianwallets.trade.channels.nextpos.NextPosService;
 import com.asianwallets.trade.dto.AD3OnlineCallbackDTO;
+import com.asianwallets.trade.dto.EghlBrowserCallbackDTO;
 import com.asianwallets.trade.dto.EnetsCallbackDTO;
 import com.asianwallets.trade.dto.EnetsOutCallbackDTO;
 import io.swagger.annotations.Api;
@@ -46,6 +47,9 @@ public class OnlineCallbackController extends BaseController {
 
     @Autowired
     private NextPosService nextPosService;
+
+    @Autowired
+    private EGHLService eghlService;
 
     @ApiOperation(value = "ad3线上服务器回调接口")
     @PostMapping("/ad3OnlineServerCallback")
@@ -206,20 +210,43 @@ public class OnlineCallbackController extends BaseController {
         enetsService.eNetsQrCodeBrowserCallback(enetsCallbackDTO, txnRes, response);
     }
 
-    @ApiOperation(value = "NextPos回调")
-    @PostMapping("/nextPosCallback")
-    public void nextPosCallback(HttpServletRequest request, HttpServletResponse response) {
+    @ApiOperation(value = "EGHL回调服务器")
+    @PostMapping("/eghlServerCallback")
+    public void eghlServerCallback(HttpServletRequest request, HttpServletResponse response) {
         Map<String, String[]> parameterMap = request.getParameterMap();
-        if (ArrayUtil.isEmpty(parameterMap)) {
-            log.info("=================【NextPos回调】=================【回调参数记录为空】");
+        if (parameterMap.size() == 0) {
+            log.info("------------------EGHL回调服务器参数为空----------------");
             return;
         }
-        log.info("================【NextPos回调】================【回调参数记录】 parameterMap:{}", JSON.toJSONString(parameterMap));
-        Map<String, Object> paramMap = new HashMap<>();
-        Set<String> keySet = parameterMap.keySet();
-        for (String key : keySet) {
-            paramMap.put(key, parameterMap.get(key)[0]);
+        log.info("--------------------------------EGHL回调服务器接口信息记录--------------------------------参数记录 parameterMap:{}", JSON.toJSON(parameterMap));
+        HashMap<String, String> dtoMap = new HashMap<>();
+        Set<String> set = parameterMap.keySet();
+        for (String key : set) {
+            dtoMap.put(key, parameterMap.get(key)[0]);
         }
-        nextPosService.nextPosCallback(paramMap, response);
+        EghlBrowserCallbackDTO eghlBrowserCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), EghlBrowserCallbackDTO.class);
+        log.info("--------------------------------EGHL回调服务器接口信息记录--------------------------------JSON解析后的参数记录 eghlBrowserCallbackDTO:{}", JSON.toJSON(eghlBrowserCallbackDTO));
+        eghlService.eghlServerCallback(eghlBrowserCallbackDTO, response);
     }
+
+    @ApiOperation(value = "EGHL回调浏览器")
+    @PostMapping("/eghlBrowserCallback")
+    public void eghlBrowserCallback(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        if (parameterMap.size() == 0) {
+            log.info("------------------EGHL回调浏览器接口信息记录----------------回调参数为空");
+            return;
+        }
+        log.info("--------------------------------EGHL回调浏览器接口信息记录--------------------------------参数记录 parameterMap:{}", JSON.toJSON(parameterMap));
+        HashMap<String, String> dtoMap = new HashMap<>();
+        Set<String> set = parameterMap.keySet();
+        for (String key : set) {
+            dtoMap.put(key, parameterMap.get(key)[0]);
+        }
+        EghlBrowserCallbackDTO eghlBrowserCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), EghlBrowserCallbackDTO.class);
+        log.info("--------------------------------EGHL回调浏览器接口信息记录--------------------------------EGHL回调浏览器回调参数记录 eghlBrowserCallbackDTO:{}", JSON.toJSON(eghlBrowserCallbackDTO));
+        eghlService.eghlBrowserCallback(eghlBrowserCallbackDTO, response);
+    }
+
+
 }

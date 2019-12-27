@@ -58,15 +58,15 @@ public class MegaPayIDRRequestDTO {
     public MegaPayIDRRequestDTO() {
     }
 
-    public MegaPayIDRRequestDTO(Orders orders, Channel channel, String e_respURL) {
+    public MegaPayIDRRequestDTO(Orders orders, Channel channel) {
         this.e_merID = channel.getChannelMerchantId();
         this.e_inv = orders.getId();
         //金额转换
-        double tempAmount = orders.getTradeAmount().setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue();
+        double tempAmount = orders.getChannelAmount().setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue();
         DecimalFormat decimalFormat0 = new DecimalFormat("###0");
         String amountStr = decimalFormat0.format(tempAmount);
         this.e_amt = amountStr;
-        this.e_respURL = e_respURL;
+        this.e_respURL = channel.getNotifyServerUrl();
         this.cusID = "thb@alldebit.com";
         this.cusName = "Alldebit";
         this.bMode = channel.getIssuerId();
