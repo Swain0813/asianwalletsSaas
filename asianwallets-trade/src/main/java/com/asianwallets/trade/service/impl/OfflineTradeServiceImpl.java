@@ -4,15 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
+import com.asianwallets.common.entity.Currency;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.ArrayUtil;
-import com.asianwallets.common.utils.BCryptUtils;
-import com.asianwallets.common.utils.DateToolUtils;
-import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.response.HttpResponse;
+import com.asianwallets.common.utils.*;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
@@ -32,10 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -113,6 +109,42 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         return token;
     }
 
+    public static void main(String[] args) {
+        String url = "http://localhost:5010/offline/csbDynamicScan";
+        String md5Key = "47ac097138814db98436dd293edb5b49";
+        String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwME0yMDE5MTIyMDMzNjAiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1NzcyNDA1MjgwMzQsImV4cCI6MTU3NzMyNjkyOH0.9G7twF4ptwZhEN20NMaQvPlCt5KwPI6Z-1M06gGBmvoRegH6FULi3_YoJfVh3CzRsm-TsyNUXYlgzjoHWTh-Og";
+        OfflineTradeDTO offlineTradeDTO = new OfflineTradeDTO();
+        offlineTradeDTO.setMerchantId("M201912203360");
+        offlineTradeDTO.setOrderNo(IDS.uuid2());
+        offlineTradeDTO.setOrderCurrency("SGD");
+        offlineTradeDTO.setOrderAmount(new BigDecimal("0.01").setScale(2, BigDecimal.ROUND_DOWN));
+        offlineTradeDTO.setOrderTime(DateToolUtils.formatDate(new Date()));
+        offlineTradeDTO.setProductCode(31);
+        offlineTradeDTO.setImei("线下CSB");
+        offlineTradeDTO.setOperatorId("00");
+        offlineTradeDTO.setToken(token);
+        offlineTradeDTO.setServerUrl("test");
+        offlineTradeDTO.setBrowserUrl("test");
+        offlineTradeDTO.setProductName("test");
+        offlineTradeDTO.setProductDescription("test");
+        offlineTradeDTO.setPayerName("test");
+        offlineTradeDTO.setPayerBank("test");
+        offlineTradeDTO.setPayerEmail("test");
+        offlineTradeDTO.setPayerPhone("test");
+        offlineTradeDTO.setLanguage("zh-cn");
+        offlineTradeDTO.setRemark1("test");
+        offlineTradeDTO.setRemark2("test");
+        offlineTradeDTO.setRemark3("test");
+        //获得对象属性名对应的属性值Map
+        Map<String, String> paramMap = ReflexClazzUtils.getFieldForStringValue(offlineTradeDTO);
+        String cleatText = SignTools.getSignStr(paramMap) + md5Key;
+        log.info("=======【AW线下测试】=======【签名前的明文】 cleatText: {}", cleatText);
+        String sign = MD5Util.getMD5String(cleatText);
+        log.info("=======【AW线下测试】=======【签名后的密文】 sign: {}", sign);
+        offlineTradeDTO.setSign(sign);
+        HttpResponse httpResponse = HttpClientUtils.reqPost(url, offlineTradeDTO, null);
+    }
+
     /**
      * 校验请求参数
      *
@@ -177,11 +209,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      * @param currency        币种
      */
     private void checkParamValidity(OfflineTradeDTO offlineTradeDTO, Currency currency) {
-//        //验签
-//        if (!commonBusinessService.checkSignByMd5(offlineTradeDTO)) {
-//            log.info("==================【线下CSB动态扫码】==================【签名不匹配】");
-//            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
-//        }
         //校验订单金额
         if (offlineTradeDTO.getOrderAmount().compareTo(BigDecimal.ZERO) <= 0) {
             log.info("==================【线下CSB动态扫码】==================【订单金额不合法】");
@@ -201,7 +228,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         //校验订单号
         if (ordersMapper.selectByMerchantOrderId(offlineTradeDTO.getOrderNo()) != null) {
             log.info("==================【线下CSB动态扫码】==================【商户订单号已存在】");
-            throw new BusinessException(EResultEnum.INSTITUTION_ORDER_ID_EXIST.getCode());
+            throw new BusinessException(EResultEnum.MERCHANT_ORDER_ID_EXIST.getCode());
         }
         //校验设备信息
         checkDevice(offlineTradeDTO.getMerchantId(), offlineTradeDTO.getImei(), offlineTradeDTO.getOperatorId());
@@ -377,6 +404,11 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             log.info("==================【线下CSB动态扫码】==================【重复请求】");
             throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
         }
+        //验签
+        if (!commonBusinessService.checkSignByMd5(offlineTradeDTO)) {
+            log.info("==================【线下CSB动态扫码】==================【签名不匹配】");
+            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+        }
         //获取收单基础信息并校验
         BasicInfoVO basicInfoVO = getBasicAndCheck(offlineTradeDTO);
         //设置订单属性
@@ -430,6 +462,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             log.info("==================【线下BSC动态扫码】==================【重复请求】");
             throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
         }
+        if (!commonBusinessService.checkSignByMd5(offlineTradeDTO)) {
+            log.info("==================【线下BSC动态扫码,币种信息】==================【签名不匹配】");
+            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+        }
         //获取收单基础信息并校验
         BasicInfoVO basicInfoVO = getBasicAndCheck(offlineTradeDTO);
         //设置订单属性
@@ -468,10 +504,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     public List<OfflineCheckOrdersVO> checkOrder(OfflineCheckOrdersDTO offlineCheckOrdersDTO) {
         log.info("==================【线下查询订单】==================【请求参数】 offlineCheckOrdersDTO: {}", JSON.toJSONString(offlineCheckOrdersDTO));
         //验签
-//        if (!commonBusinessService.checkSignByMd5(offlineCheckOrdersDTO)) {
-//            log.info("==================【线下查询订单】==================【签名不匹配】");
-//            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
-//        }
+        if (!commonBusinessService.checkSignByMd5(offlineCheckOrdersDTO)) {
+            log.info("==================【线下查询订单】==================【签名不匹配】");
+            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+        }
         //校验设备
         checkDevice(offlineCheckOrdersDTO.getMerchantId(), offlineCheckOrdersDTO.getImei(), offlineCheckOrdersDTO.getOperatorId());
         //页码默认为1
@@ -498,10 +534,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     public PosMerProCurVO posGetMerPro(PosGetMerProDTO posGetMerProDTO) {
         log.info("===================【POS机查询商户产品,币种信息】===================【参数记录】 posGetMerProDTO: {}", JSON.toJSONString(posGetMerProDTO));
         //验签
-//        if (!commonBusinessService.checkSignByMd5(posGetMerProDTO)) {
-//            log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
-//            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
-//        }
+        if (!commonBusinessService.checkSignByMd5(posGetMerProDTO)) {
+            log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
+            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+        }
         //校验设备信息
         checkDevice(posGetMerProDTO.getMerchantId(), posGetMerProDTO.getImei(), posGetMerProDTO.getOperatorId());
         //查询AW支持币种
@@ -551,10 +587,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     public List<PosQueryOrderListVO> posQueryOrderList(PosQueryOrderListDTO posQueryOrderListDTO) {
         log.info("===================【POS机查询订单列表信息】===================【参数记录】 posQueryOrderListDTO: {}", JSON.toJSONString(posQueryOrderListDTO));
         //验签
-//        if (!commonBusinessService.checkSignByMd5(posGetMerProDTO)) {
-//            log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
-//            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
-//        }
+        if (!commonBusinessService.checkSignByMd5(posQueryOrderListDTO)) {
+            log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
+            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+        }
         //校验设备
         checkDevice(posQueryOrderListDTO.getMerchantId(), posQueryOrderListDTO.getImei(), posQueryOrderListDTO.getOperatorId());
         //页码默认为1
@@ -610,10 +646,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         //验签
-//        if (!commonBusinessService.checkSignByMd5(posGetMerProDTO)) {
-//            log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
-//            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
-//        }
+        if (!commonBusinessService.checkSignByMd5(posQueryOrderListDTO)) {
+            log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
+            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+        }
         //校验设备
         checkDevice(posQueryOrderListDTO.getMerchantId(), posQueryOrderListDTO.getImei(), posQueryOrderListDTO.getOperatorId());
         if (StringUtils.isEmpty(posQueryOrderListDTO.getLanguage())) {
