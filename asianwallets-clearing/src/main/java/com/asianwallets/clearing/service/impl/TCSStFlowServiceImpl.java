@@ -457,7 +457,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 return message;
             }
             // 更新清算户资金变动（当前业务逻辑下为待结算并且还是正常资金的去掉调账AA,提款WD以外都是从清算表中过来的数据，所以需要回去再处理清算资金）
-            if ((st.getSltamount() > 0 && st.getNeedClear() == 2) || (st.getNeedClear() == 2 && st.getTxnamount() < 0 && st.getTradetype().equals(TradeConstant.RV))) {
+            if ((st.getTxnamount() > 0 && st.getNeedClear() == 2) || (st.getNeedClear() == 2 && st.getTxnamount() < 0 && st.getTradetype().equals(TradeConstant.RV))) {
                 //待结算表中的未结算正常资金都是从清算表中过来的，所以还得回去处理清算账户资金和流水
                 //RV撤销时 清算时已经减去了清算户的余额,生成一条ST记录，上面结算时结算账户减去了撤销金额，清算户要把清算金额再加回来
                 /**
