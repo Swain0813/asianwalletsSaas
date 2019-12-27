@@ -1,8 +1,13 @@
 package com.asianwallets.base.service;
 import com.asianwallets.common.base.BaseService;
 import com.asianwallets.common.dto.AccountSearchDTO;
+import com.asianwallets.common.dto.ClearSearchDTO;
+import com.asianwallets.common.dto.FrozenMarginInfoDTO;
 import com.asianwallets.common.entity.Account;
+import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.vo.AccountListVO;
+import com.asianwallets.common.vo.ClearAccountVO;
+import com.asianwallets.common.vo.FrozenMarginInfoVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -24,4 +29,47 @@ public interface AccountService extends BaseService<Account> {
      * @return
      */
     List<AccountListVO> exportAccountList(AccountSearchDTO accountSearchDTO);
+
+    /**
+     * 查询清算户余额流水详情
+     * @param clearSearchDTO
+     * @return
+     */
+    PageInfo<ClearAccountVO> pageClearLogs(ClearSearchDTO clearSearchDTO);
+
+    /**
+     * 导出清算户余额流水详情
+     * @param clearSearchDTO
+     * @return
+     */
+    List<ClearAccountVO> exportClearLogs(ClearSearchDTO clearSearchDTO);
+
+    /**
+     * 查询结算户余额流水详情
+     * @param accountSearchDTO
+     * @return
+     */
+    PageInfo<TmMerChTvAcctBalance> pageSettleLogs(AccountSearchDTO accountSearchDTO);
+
+    /**
+     * 导出结算户余额流水详情
+     * @param accountSearchDTO
+     * @return
+     */
+    List<TmMerChTvAcctBalance> exportSettleLogs(AccountSearchDTO accountSearchDTO);
+
+    /**
+     * 查询冻结余额流水详情
+     * @param frozenMarginInfoDTO
+     * @return
+     */
+    PageInfo<FrozenMarginInfoVO> pageFrozenLogs(FrozenMarginInfoDTO frozenMarginInfoDTO);
+
+    /**
+     * 导出冻结余额流水详情
+     * @param accountSearchDTO
+     * @return
+     */
+    List<FrozenMarginInfoVO> exportFrozenLogs(FrozenMarginInfoDTO accountSearchDTO);
+
 }
