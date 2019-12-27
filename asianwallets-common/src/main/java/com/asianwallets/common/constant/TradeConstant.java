@@ -218,7 +218,7 @@ public class TradeConstant {
     //------------入账类型
     public static final String ACCOUNT_FREEZE = "1";//冻结账户
     public static final String ACCOUNT_MARGIN = "2";//保证金账户
-    public static final Byte OTHER_ACCOUNT = 3;//其他账户
+    public static final Integer OTHER_ACCOUNT = 3;//其他账户
 
     //------------线下二维码解码类型
     public static final String NO_DECODE = "0";//不用解码

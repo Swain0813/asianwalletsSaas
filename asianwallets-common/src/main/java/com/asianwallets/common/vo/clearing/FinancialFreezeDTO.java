@@ -1,7 +1,9 @@
 package com.asianwallets.common.vo.clearing;
-import com.asianwallets.common.entity.OrderRefund;
+import com.asianwallets.common.entity.Account;
+import com.asianwallets.common.entity.Reconciliation;
 import lombok.Data;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 清结算系统资金冻结/解冻请求实体类
@@ -35,6 +37,12 @@ public class FinancialFreezeDTO implements Serializable{
     */
    private double txnamount;
 
+
+   /**
+    * 虚拟账户编号
+    */
+   private String mvaccountId;
+
    /**
     * 状态：1加冻结，2解冻结
     */
@@ -64,16 +72,20 @@ public class FinancialFreezeDTO implements Serializable{
    }
 
    /**
-    *退款用
-    * @param state
-    * @param orderRefund
+    * 加冻结和解冻结用
+    * @param reconciliation
+    * @param account
     */
-   public FinancialFreezeDTO(int state, OrderRefund orderRefund) {
-      this.merchantId = orderRefund.getMerchantId();
-      this.merOrderNo = orderRefund.getId();
-      this.txncurrency = orderRefund.getOrderCurrency();
-      this.txnamount = -1*orderRefund.getOrderAmount().add(orderRefund.getRefundFee()).subtract(orderRefund.getRefundOrderFee()).doubleValue();
-      this.state = state;
-      this.desc = "";
+   public FinancialFreezeDTO(Reconciliation reconciliation, Account account) {
+      this.id = reconciliation.getId();
+      this.merchantId = reconciliation.getMerchantId();
+      this.mvaccountId = account.getId();//账户 id
+      this.desc = reconciliation.getReconciliationType() == 3 ? "加冻结" : "解冻结";
+      this.merOrderNo = account.getId();//账户 id
+      this.txncurrency = reconciliation.getCurrency();
+      //订单金额,2位
+      this.txnamount =reconciliation.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+      //系统调账--3冻结 4 解冻 ||清结算--1:冻结2:解冻
+      this.state = reconciliation.getReconciliationType() == 3 ? 1 : 2;
    }
 }
