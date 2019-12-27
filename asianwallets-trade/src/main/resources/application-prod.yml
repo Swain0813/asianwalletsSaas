@@ -101,7 +101,3 @@ custom:
     0bPWL4jfacmREho/etFeVSu5rKFk5WQpsuLPv9B7vL7Towqg==
   #收银台url
   cashierDeskUrl: http://192.168.124.49:8082/checkstandweb/#/main
-  #清结算资金变动url
-  intoAndOutUrl: http://localhost:5008/IntoAccountAction/IntoAndOutMerhtAccount
-  #清结算冻结url
-  freezeUrl: http://localhost:5008/FrozenFundsAction/CSFrozenFunds
