@@ -19,6 +19,9 @@ public class ReconciliationDTO extends BasePageHelper {
     @ApiModelProperty(value = "商户编号")
     private String merchantId;
 
+    @ApiModelProperty(value = "机构编号")
+    private String institutionId;
+
     @ApiModelProperty(value = "币种")
     private String currency;
 

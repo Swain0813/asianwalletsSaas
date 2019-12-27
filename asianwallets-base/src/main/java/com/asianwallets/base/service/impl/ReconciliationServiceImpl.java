@@ -10,6 +10,7 @@ import com.asianwallets.common.dto.ReconOperDTO;
 import com.asianwallets.common.dto.ReconciliationDTO;
 import com.asianwallets.common.dto.SearchAvaBalDTO;
 import com.asianwallets.common.entity.Account;
+import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.exception.BusinessException;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -330,6 +330,10 @@ public class ReconciliationServiceImpl implements ReconciliationService {
         } else {
             reconciliation.setId(reconOperDTO.getId());
         }
+        //根据商户编号获取机构信息
+        Institution institution = commonService.getInstitutionInfo(merchant.getInstitutionId());
+        reconciliation.setInstitutionId(institution.getId());
+        reconciliation.setInstitutionName(institution.getCnName());
         reconciliation.setCreator(name);
         //当变动类型为冻结或者解冻时，将accountId放入到merchant_order_id
         reconciliation.setMerchantId(reconOperDTO.getChangeType() != TradeConstant.TRANSFER ? accountId : null);

@@ -9,6 +9,8 @@
 		<result column="refund_channel_number" property="refundChannelNumber" />
 		<result column="merchant_order_id" property="merchantOrderId" />
 		<result column="reconciliation_type" property="reconciliationType" />
+		<result column="institution_name" property="institutionName" />
+		<result column="institution_id" property="institutionId" />
 		<result column="merchant_name" property="merchantName" />
 		<result column="merchant_id" property="merchantId" />
 		<result column="amount" property="amount" />
@@ -30,7 +32,7 @@
 
 	<sql id="Base_Column_List">
      id,refund_order_id,channel_number,refund_channel_number,merchant_order_id,reconciliation_type,merchant_name,merchant_id,amount,currency,
-     status,change_type,freeze_type,account_type,sign,remark1,remark2,remark3,create_time,update_time,creator,modifier,remark
+     status,change_type,freeze_type,account_type,sign,remark1,remark2,remark3,create_time,update_time,creator,modifier,remark,institution_id,institution_name
     </sql>
 
 	<select id="pageReconciliation" resultMap="BaseResultMap">
@@ -40,6 +42,9 @@
 		<where>
 			<if test="currency!=null and currency != ''">
 				and currency=#{currency}
+			</if>
+			<if test="institutionId!=null and institutionId != ''">
+				and institution_id=#{institutionId}
 			</if>
 			<if test="merchantId!=null and merchantId != ''">
 				and merchant_id=#{merchantId}
@@ -67,6 +72,9 @@
 			</if>
 			<if test="merchantId!=null and merchantId != ''">
 				and merchant_id=#{merchantId}
+			</if>
+			<if test="institutionId!=null and institutionId != ''">
+				and institution_id=#{institutionId}
 			</if>
 			<if test="id!=null and id != ''">
 				and id=#{id}
