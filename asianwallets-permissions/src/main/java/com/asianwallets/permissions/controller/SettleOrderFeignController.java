@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
-import com.asianwallets.common.dto.SettleOrderDTO;
-import com.asianwallets.common.dto.SettleOrderExportDTO;
-import com.asianwallets.common.dto.SettleOrderInsEnExport;
-import com.asianwallets.common.dto.SettleOrderInsExport;
+import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -20,6 +17,7 @@ import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.permissions.feign.base.SettleOrderFeign;
 import com.asianwallets.permissions.service.OperationLogService;
 import com.asianwallets.permissions.service.SettleOrderFeignService;
+import com.asianwallets.permissions.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -50,6 +48,10 @@ public class SettleOrderFeignController extends BaseController {
 
     @Autowired
     private SettleOrderFeignService settleOrderFeignService;
+
+    @Autowired
+    private SysUserService sysUserService;
+
 
     @ApiOperation(value = "结算交易分页查询一览")
     @PostMapping("/pageSettleOrder")
@@ -142,5 +144,19 @@ public class SettleOrderFeignController extends BaseController {
             }
         }
         return ResultUtil.success();
+    }
+
+
+
+    @ApiOperation(value = "结算审核")
+    @PostMapping("/reviewSettlement")
+    public BaseResponse reviewSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(reviewSettleDTO),
+                "结算审核"));
+        //校验交易密码
+        if (!sysUserService.checkPassword(sysUserService.decryptPassword(reviewSettleDTO.getTradePwd()), this.getSysUserVO().getTradePassword())) {
+            throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
+        }
+        return settleOrderFeign.reviewSettlement(reviewSettleDTO);
     }
 }

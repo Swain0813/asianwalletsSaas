@@ -104,6 +104,3 @@ custom:
   #亚洲钱包的支付页面的url
   paySuccessUrl: http://192.168.124.49:8082/checkstandweb/#/Success
   #清结算资金变动url
-  intoAndOutUrl: http://localhost:5008/IntoAccountAction/IntoAndOutMerhtAccount
-  #清结算冻结url
-  freezeUrl: http://localhost:5008/FrozenFundsAction/CSFrozenFunds

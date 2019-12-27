@@ -1,11 +1,14 @@
 package com.asianwallets.channels.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.WechatService;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.wechat.*;
+import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.utils.SignTools;
 import com.asianwallets.common.utils.UUIDHelper;
@@ -23,6 +26,7 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.FileInputStream;
@@ -93,32 +97,31 @@ public class WechatServiceImpl implements WechatService {
      */
     @Override
     public BaseResponse wechatBSC(WechatBSCDTO wechatBSCDTO) {
-        log.info("----------------Wechat线下BSC收单接口信息记录-----------------请求参数记录 aliPayOfflineBSCDTO:{}", JSON.toJSONString(wechatBSCDTO));
-        int num = channelsOrderMapper.selectCountById(wechatBSCDTO.getOut_trade_no());
-        ChannelsOrder co;
-        if (num > 0) {
-            co = channelsOrderMapper.selectByPrimaryKey(wechatBSCDTO.getOut_trade_no());
-        } else {
-            co = new ChannelsOrder();
-        }
-        co.setMerchantOrderId(wechatBSCDTO.getInstitutionOrderId());
-        co.setTradeCurrency(wechatBSCDTO.getFee_type());
-        co.setTradeAmount(new BigDecimal(wechatBSCDTO.getTotal_fee()));
-        co.setReqIp(wechatBSCDTO.getReqIp());
-        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
-        co.setMd5KeyStr(wechatBSCDTO.getMd5KeyStr());
-        co.setId(wechatBSCDTO.getOut_trade_no());
-        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
-        if (num > 0) {
-            co.setUpdateTime(new Date());
-            channelsOrderMapper.updateByPrimaryKeySelective(co);
-        } else {
-            co.setCreateTime(new Date());
-            channelsOrderMapper.insert(co);
-        }
-
+        log.info("===============【Wechat线下BSC收单接口信息记录】===============【请求参数】 wechatBSCDTO:{}", JSON.toJSONString(wechatBSCDTO));
         BaseResponse baseResponse = new BaseResponse();
         try {
+            Orders orders = wechatBSCDTO.getOrders();
+            Channel channel = wechatBSCDTO.getChannel();
+            ChannelsOrder channelsOrder = new ChannelsOrder();
+            channelsOrder.setMerchantOrderId(orders.getMerchantOrderId());
+            channelsOrder.setTradeCurrency(wechatBSCDTO.getFee_type());
+            channelsOrder.setTradeAmount(new BigDecimal(wechatBSCDTO.getTotal_fee()));
+            channelsOrder.setReqIp(orders.getReqIp());
+            channelsOrder.setTradeStatus(TradeConstant.TRADE_WAIT);
+            channelsOrder.setMd5KeyStr(channel.getMd5KeyStr());
+            channelsOrder.setId(wechatBSCDTO.getOut_trade_no());
+            channelsOrder.setOrderType(AD3Constant.TRADE_ORDER);
+            channelsOrder.setPayerPhone(orders.getPayerPhone());
+            channelsOrder.setPayerName(orders.getPayerName());
+            channelsOrder.setPayerBank(orders.getPayerBank());
+            channelsOrder.setPayerEmail(orders.getPayerEmail());
+            channelsOrder.setBrowserUrl(channel.getNotifyBrowserUrl());
+            channelsOrder.setServerUrl(channel.getNotifyServerUrl());
+            channelsOrder.setIssuerId(orders.getIssuerId());
+            channelsOrder.setMd5KeyStr(channel.getMd5KeyStr());
+            channelsOrder.setCreateTime(new Date());
+            channelsOrder.setCreator(orders.getCreator());
+            channelsOrderMapper.insert(channelsOrder);
             Map<String, String> paramMap = new HashMap<>();//微信支付接口参数map
             paramMap.put("appid", wechatBSCDTO.getAppid());
             paramMap.put("nonce_str", wechatBSCDTO.getNonce_str());
@@ -133,7 +136,7 @@ public class WechatServiceImpl implements WechatService {
             paramMap.put("spbill_create_ip", wechatBSCDTO.getSpbill_create_ip());
             paramMap.put("detail", wechatBSCDTO.getDetail());
             paramMap.put("version", wechatBSCDTO.getVersion());
-            Map<String, String> resultMap = signAndPay(paramMap, wechatBSCDTO.getChannel().getPayUrl(), wechatBSCDTO.getMd5KeyStr());//微信支付接口结果map
+            Map<String, String> resultMap = signAndPay(paramMap, wechatBSCDTO.getChannel().getPayUrl(), channel.getMd5KeyStr());//微信支付接口结果map
             if (resultMap == null || resultMap.size() == 0) {
                 log.info("----------------Wechat线下BSC收单接口信息记录-----------------调用上游支付接口返回结果为空");
                 baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
@@ -145,7 +148,7 @@ public class WechatServiceImpl implements WechatService {
             resultMap.remove("sign");
             //对微信渠道返回的参数验签
             String temp = SignTools.getWXSignStr(resultMap);
-            String myPaySign = SignTools.getWXSign_MD5(temp, wechatBSCDTO.getMd5KeyStr());
+            String myPaySign = SignTools.getWXSign_MD5(temp, channel.getMd5KeyStr());
             //Map<String, String> receMap = new HashMap<>();//撤销接口参数map
             Map<String, String> queryMap = new HashMap<>();//查询接口参数map
             Map<String, String> queryResultMap = new HashMap<>();//查询接口结果map
@@ -171,7 +174,7 @@ public class WechatServiceImpl implements WechatService {
                                 queryMap.put("sign_type", wechatBSCDTO.getSign_type());
                                 String queryUrl = wechatBSCDTO.getChannel().getChannelSingleSelectUrl();//wechat查询订单url
                                 Thread.sleep(10000); //等待10秒
-                                queryResultMap = signAndPay(queryMap, queryUrl, wechatBSCDTO.getMd5KeyStr());
+                                queryResultMap = signAndPay(queryMap, queryUrl, channel.getMd5KeyStr());
                                 if (queryResultMap == null || queryResultMap.size() == 0) {
                                     log.info("----------------Wechat线下BSC收单接口信息记录-----------------调用上游查询接口返回结果为空");
                                     baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
@@ -188,7 +191,7 @@ public class WechatServiceImpl implements WechatService {
                                 queryResultMap.remove("sign");
                                 //对微信渠道返回的参数验签
                                 String queryTemp = SignTools.getWXSignStr(queryResultMap);
-                                String myWxQuerySign = SignTools.getWXSign_MD5(queryTemp, wechatBSCDTO.getMd5KeyStr());
+                                String myWxQuerySign = SignTools.getWXSign_MD5(queryTemp, channel.getMd5KeyStr());
                                 if (wxQuerySign.equals(myWxQuerySign)) {
                                     if (queryResultMap.get("return_code").equals("SUCCESS")) {
                                         if (queryResultMap.get("result_code").equals("SUCCESS") && queryResultMap.get("trade_state").equals("SUCCESS")) {
@@ -223,7 +226,7 @@ public class WechatServiceImpl implements WechatService {
                             queryMap.put("nonce_str", wechatBSCDTO.getNonce_str());
                             queryMap.put("sign_type", wechatBSCDTO.getSign_type());
                             String queryUrl = wechatBSCDTO.getChannel().getChannelSingleSelectUrl();//wechat查询订单url
-                            queryResultMap = signAndPay(queryMap, queryUrl, wechatBSCDTO.getMd5KeyStr());
+                            queryResultMap = signAndPay(queryMap, queryUrl, channel.getMd5KeyStr());
                             if (queryResultMap == null || queryResultMap.size() == 0) {
                                 log.info("------------------Wechat线下BSC收单接口信息记录------------------调用上游查询接口返回结果为空");
                                 baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
@@ -240,7 +243,7 @@ public class WechatServiceImpl implements WechatService {
                             queryResultMap.remove("sign");
                             //对微信渠道返回的参数验签
                             String queryTemp = SignTools.getWXSignStr(queryResultMap);
-                            String myWxQuerySign = SignTools.getWXSign_MD5(queryTemp, wechatBSCDTO.getMd5KeyStr());
+                            String myWxQuerySign = SignTools.getWXSign_MD5(queryTemp, channel.getMd5KeyStr());
                             //验签通过
                             if (wxQuerySign.equals(myWxQuerySign)) {
                                 if (queryResultMap != null && queryResultMap.get("return_code").equals("SUCCESS")) {
@@ -442,33 +445,32 @@ public class WechatServiceImpl implements WechatService {
      */
     @Override
     public BaseResponse wechatCSB(WechatCSBDTO wechatCSBDTO) {
-        log.info("----------------Wechat线下CSB收单接口信息记录-----------------请求参数记录 wechatOfflineCSBDTO:{}", JSON.toJSONString(wechatCSBDTO));
-        int num = channelsOrderMapper.selectCountById(wechatCSBDTO.getOut_trade_no());
-        ChannelsOrder co;
-        if (num > 0) {
-            co = channelsOrderMapper.selectByPrimaryKey(wechatCSBDTO.getOut_trade_no());
-        } else {
-            co = new ChannelsOrder();
-        }
-        co.setMerchantOrderId(wechatCSBDTO.getInstitutionOrderId());
-        co.setTradeCurrency(wechatCSBDTO.getFee_type());
-        co.setTradeAmount(new BigDecimal(wechatCSBDTO.getTotal_fee()));
-        co.setReqIp(wechatCSBDTO.getReqIp());
-        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
-        co.setId(wechatCSBDTO.getOut_trade_no());
-        co.setMd5KeyStr(wechatCSBDTO.getMd5KeyStr());
-        co.setServerUrl(wechatCSBDTO.getNotify_url());
-        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
-        if (num > 0) {
-            co.setUpdateTime(new Date());
-            channelsOrderMapper.updateByPrimaryKeySelective(co);
-        } else {
-            co.setCreateTime(new Date());
-            channelsOrderMapper.insert(co);
-        }
-
+        log.info("==================【Wechat线下CSB收单接】==================【请求参数】 wechatCSBDTO:{}", JSON.toJSONString(wechatCSBDTO));
         BaseResponse baseResponse = new BaseResponse();
         try {
+            Orders orders = wechatCSBDTO.getOrders();
+            Channel channel = wechatCSBDTO.getChannel();
+            ChannelsOrder channelsOrder = new ChannelsOrder();
+            channelsOrder.setMerchantOrderId(orders.getMerchantOrderId());
+            channelsOrder.setTradeCurrency(wechatCSBDTO.getFee_type());
+            channelsOrder.setTradeAmount(new BigDecimal(wechatCSBDTO.getTotal_fee()));
+            channelsOrder.setReqIp(orders.getReqIp());
+            channelsOrder.setTradeStatus(TradeConstant.TRADE_WAIT);
+            channelsOrder.setId(wechatCSBDTO.getOut_trade_no());
+            channelsOrder.setMd5KeyStr(channel.getMd5KeyStr());
+            channelsOrder.setServerUrl(wechatCSBDTO.getNotify_url());
+            channelsOrder.setPayerPhone(orders.getPayerPhone());
+            channelsOrder.setPayerName(orders.getPayerName());
+            channelsOrder.setPayerBank(orders.getPayerBank());
+            channelsOrder.setPayerEmail(orders.getPayerEmail());
+            channelsOrder.setOrderType(AD3Constant.TRADE_ORDER);
+            channelsOrder.setBrowserUrl(channel.getNotifyBrowserUrl());
+            channelsOrder.setServerUrl(channel.getNotifyServerUrl());
+            channelsOrder.setIssuerId(orders.getIssuerId());
+            channelsOrder.setMd5KeyStr(channel.getMd5KeyStr());
+            channelsOrder.setCreateTime(new Date());
+            channelsOrder.setCreator(orders.getCreator());
+            channelsOrderMapper.insert(channelsOrder);
             Map<String, String> paramMap = new HashMap<>();//微信支付接口参数map
             paramMap.put("appid", wechatCSBDTO.getAppid());
             paramMap.put("nonce_str", wechatCSBDTO.getNonce_str());
@@ -485,7 +487,7 @@ public class WechatServiceImpl implements WechatService {
             paramMap.put("trade_type", wechatCSBDTO.getTrade_type());
             paramMap.put("detail", wechatCSBDTO.getDetail());
             paramMap.put("version", wechatCSBDTO.getVersion());
-            Map<String, String> resultMap = signAndPay(paramMap, wechatCSBDTO.getChannel().getPayUrl(), wechatCSBDTO.getMd5KeyStr());
+            Map<String, String> resultMap = signAndPay(paramMap, wechatCSBDTO.getChannel().getPayUrl(), channel.getMd5KeyStr());
             if (resultMap == null || resultMap.size() == 0) {
                 log.info("----------------Wechat线下CSB收单接口信息记录-----------------调用上游支付接口返回结果为空");
                 baseResponse.setCode("302");
@@ -504,9 +506,9 @@ public class WechatServiceImpl implements WechatService {
             String temp = SignTools.getWXSignStr(paramMap);
             //对微信渠道返回的参数验签
             if (paramMap.get("sign_type").equals("HMAC-SHA256")) {
-                myPaySign = SignTools.getWXSign_HMACSHA256(temp, wechatCSBDTO.getMd5KeyStr());
+                myPaySign = SignTools.getWXSign_HMACSHA256(temp, channel.getMd5KeyStr());
             } else {
-                myPaySign = SignTools.getWXSign_MD5(temp, wechatCSBDTO.getMd5KeyStr());
+                myPaySign = SignTools.getWXSign_MD5(temp, channel.getMd5KeyStr());
             }
             if (wxPaySign.equals(myPaySign)) {
                 //验签通过

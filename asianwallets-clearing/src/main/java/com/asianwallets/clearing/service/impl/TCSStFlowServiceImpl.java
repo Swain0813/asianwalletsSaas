@@ -339,7 +339,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             int result4 = 0;
 
             //更新商户账户资金(结算户资金)
-            Account mva01 = accountMapper.selectByMerchantIdAndCurrency(st.getMerchantid(), st.getSltcurrency());
+            Account mva01 = accountMapper.selectByMerchantIdAndCurrency(st.getMerchantid(), st.getTxncurrency());
             log.info("---------getVersion----------:{}", mva01.getVersion());
             balance = mva01.getSettleBalance().doubleValue();//结算账户资金
             fr_balance = mva01.getFreezeBalance().doubleValue();//冻结账户资金
@@ -457,18 +457,16 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 return message;
             }
             // 更新清算户资金变动（当前业务逻辑下为待结算并且还是正常资金的去掉调账AA,提款WD以外都是从清算表中过来的数据，所以需要回去再处理清算资金）
-            if ((st.getSltamount() > 0 && st.getNeedClear() == 2) || (st.getNeedClear() == 2 && st.getTxnamount() < 0 && st.getTradetype().equals(TradeConstant.RV))) {
+            if ((st.getTxnamount() > 0 && st.getNeedClear() == 2) || (st.getNeedClear() == 2 && st.getTxnamount() < 0 && st.getTradetype().equals(TradeConstant.RV))) {
                 //待结算表中的未结算正常资金都是从清算表中过来的，所以还得回去处理清算账户资金和流水
                 //RV撤销时 清算时已经减去了清算户的余额,生成一条ST记录，上面结算时结算账户减去了撤销金额，清算户要把清算金额再加回来
                 /**
                  * 处理清算资金之前得看看这个订单是否有清算资金撤销的情况
                  */
                 TcsCtFlow ctflow = new TcsCtFlow();
-                ctflow.setOrganId(st.getOrganId());
                 ctflow.setMerchantid(st.getMerchantid());
                 ctflow.setRefcnceFlow(st.getRefcnceFlow());
-                ctflow.setSltcurrency(st.getSltcurrency());
-                ctflow.setSysorderid(st.getSysorderid());
+                ctflow.setTxncurrency(st.getTxncurrency());
                 Double leftmoney = tcsCtFlowMapper.getCLLeftMoney(ctflow);//获取清算表中金额
                 if (leftmoney == null) {
                     log.info("*************** SettlementBase3 结算基础方法 ************** 编号为：{}的结算流水 查询订单清算户剩余资金异常，或者查询处理过程中异常", record.getSTFlow());

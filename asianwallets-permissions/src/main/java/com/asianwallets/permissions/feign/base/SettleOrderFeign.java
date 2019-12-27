@@ -1,8 +1,10 @@
 package com.asianwallets.permissions.feign.base;
+import com.asianwallets.common.dto.ReviewSettleDTO;
 import com.asianwallets.common.dto.SettleOrderDTO;
 import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.impl.SettleOrderFeignImpl;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,5 +44,9 @@ public interface SettleOrderFeign {
      */
     @PostMapping("/settleorders/exportSettleOrder")
     List<SettleOrder> exportSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO);
+
+    @ApiOperation(value = "结算审核")
+    @PostMapping("/reviewSettlement")
+    BaseResponse reviewSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO);
 
 }

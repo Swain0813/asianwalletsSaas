@@ -1,10 +1,12 @@
 package com.asianwallets.common.vo.clearing;
+
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.utils.DateToolUtils;
 import lombok.Data;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -117,6 +119,7 @@ public class FundChangeDTO implements Serializable {
 
     /**
      * 退款用
+     *
      * @param tradetype
      * @param orderRefund
      */
@@ -195,6 +198,7 @@ public class FundChangeDTO implements Serializable {
 
     /**
      * 调账用
+     *
      * @param reconciliation
      */
     public FundChangeDTO(Reconciliation reconciliation) {
@@ -247,7 +251,7 @@ public class FundChangeDTO implements Serializable {
         this.refundOrderFeeCurrency = reconciliation.getCurrency();
         //通道成本 2位
         this.channelCost = 0.00;
-        this.channelCostcurrency =reconciliation.getCurrency();
+        this.channelCostcurrency = reconciliation.getCurrency();
         this.shouldDealtime = DateToolUtils.formatTimestamp.format(new Date());
 
 
@@ -255,6 +259,7 @@ public class FundChangeDTO implements Serializable {
 
     /**
      * 收单用
+     *
      * @param orders
      * @param tradeType
      */
@@ -290,5 +295,9 @@ public class FundChangeDTO implements Serializable {
         this.channelCostcurrency = orders.getOrderCurrency();//通道成本币种
         this.gatewayFee = 0.00;//网关手续费
         this.shouldDealtime = orders.getProductSettleCycle();//应结算日期
+        //退还手续费,2位
+        this.refundOrderFee = 0.00;
+        //退还手续费币种
+        this.refundOrderFeeCurrency = orders.getOrderCurrency();
     }
 }

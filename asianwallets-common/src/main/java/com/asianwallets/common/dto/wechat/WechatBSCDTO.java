@@ -59,14 +59,8 @@ public class WechatBSCDTO {
     private String detail;
 
     //以下不是上报通道的参数
-    @ApiModelProperty(value = "机构订单号")
-    private String institutionOrderId;
-
-    @ApiModelProperty(value = "md5Key")
-    private String md5KeyStr;
-
-    @ApiModelProperty(value = "ip")
-    private String reqIp;
+    @ApiModelProperty(value = "订单")
+    private Orders orders;
 
     @ApiModelProperty(value = "Channel")
     private Channel channel;
@@ -74,13 +68,14 @@ public class WechatBSCDTO {
     public WechatBSCDTO() {
     }
 
-    public WechatBSCDTO(Orders orders, Channel channel, String auth_code) {
+    public WechatBSCDTO(Orders orders, Channel channel, String authCode) {
         this.appid = "wx14e049b9320bccca";
         this.nonce_str = UUIDHelper.getRandomString(32);
         this.mch_id = channel.getChannelMerchantId();
         this.sub_mch_id = "66104046";
         this.sign_type = "MD5";
-        this.body = StringUtils.isEmpty(orders.getProductName()) ? "商品" : orders.getProductName();//产品名称
+        //产品名称
+        this.body = StringUtils.isEmpty(orders.getProductName()) ? "商品" : orders.getProductName();
         this.out_trade_no = orders.getId();
         this.fee_type = orders.getTradeCurrency();
         String amt = String.valueOf(orders.getTradeAmount());
@@ -91,13 +86,11 @@ public class WechatBSCDTO {
         }
         this.total_fee = Integer.toString(total_fee);
         this.spbill_create_ip = "8.8.8.8";
-        this.auth_code = auth_code;
+        this.auth_code = authCode;
         this.version = "1.0";
         String mccCode = "";
         this.detail = "{\"goods_detail\":[{\"wxpay_goods_id\":\"" + mccCode + "\"}]}";
-        this.institutionOrderId = orders.getMerchantOrderId();
-        this.md5KeyStr = channel.getMd5KeyStr();
-        this.reqIp = orders.getReqIp();
+        this.orders = orders;
         this.channel = channel;
     }
 }
