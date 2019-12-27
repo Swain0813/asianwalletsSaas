@@ -9,6 +9,7 @@ import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.enets.EnetsBankRequestDTO;
 import com.asianwallets.common.dto.enets.EnetsOffLineRequestDTO;
 import com.asianwallets.common.entity.ChannelsOrder;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.utils.HTTPUtil;
 import com.asianwallets.common.utils.SignatureUtil;
@@ -115,92 +116,93 @@ public class EnetsServiceImpl implements EnetsService {
      * @Descripate eNets线下收单接口
      **/
     @Override
-    public BaseResponse NPSQRCodePay(EnetsOffLineRequestDTO enetsOffLineRequestDTO) {
-
-        int num = channelsOrderMapper.selectCountById(enetsOffLineRequestDTO.getOrderId());
-        ChannelsOrder co;
-        if (num > 0) {
-            co = channelsOrderMapper.selectByPrimaryKey(enetsOffLineRequestDTO.getOrderId());
-        } else {
-            co = new ChannelsOrder();
-        }
-        co.setMerchantOrderId(enetsOffLineRequestDTO.getInstitutionOrderId());
-        co.setTradeCurrency(enetsOffLineRequestDTO.getRequestJsonDate().getNpxData().getSourceCurrency());
-        co.setTradeAmount(new BigDecimal(enetsOffLineRequestDTO.getRequestJsonDate().getTargetAmount()));
-        co.setReqIp(enetsOffLineRequestDTO.getReqIp());
-        co.setServerUrl(enetsOffLineRequestDTO.getRequestJsonDate().getCommunicationData().get(0).getCommunicationDestination());
-        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
-        co.setId(enetsOffLineRequestDTO.getOrderId());
-        co.setOrderType(Byte.valueOf(AD3Constant.TRADE_ORDER));
-        co.setRemark("eNets线下收单交易金额需要放大100倍上送给上游通道");
-
+    public BaseResponse eNetsPosCSBPay(EnetsOffLineRequestDTO enetsOffLineRequestDTO) {
+        log.info("=================【Enets线下CSB】=================【请求参数】 enetsOffLineRequestDTO: {}", JSON.toJSONString(enetsOffLineRequestDTO));
         BaseResponse baseResponse = new BaseResponse();
-        log.info("-----------------eNets线下收单接口-----------------enetsOffLineRequestDTO:{}", JSON.toJSON(enetsOffLineRequestDTO));
-        ObjectMapper objectMapper = new ObjectMapper();
-        String requestJsonDate = null;
         try {
-            requestJsonDate = objectMapper.writeValueAsString(enetsOffLineRequestDTO.getRequestJsonDate());
-        } catch (JsonProcessingException e) {
-            log.error("********************eNets线下收单发生异常**********************", e.getMessage());
-        }
-
-        String sign = SignatureUtil.calculateSignature(requestJsonDate + enetsOffLineRequestDTO.getApiSecret());
-
-        System.setProperty("https.protocols", "TLSv1.2");
-        HTTPUtil httpUtil = new HTTPUtil();
-        log.info("-----------------eNets线下收单 httpUtil 请求 -----------------requestJsonDate:{}，sign ：{}", requestJsonDate, sign);
-        String responseString = httpUtil.postRequest(enetsOffLineRequestDTO.getChannel().getPayUrl(), requestJsonDate, httpUtil.generateJsonHeaders(sign, enetsOffLineRequestDTO.getApiKeyId()));
-        log.info("-----------------eNets线下收单 httpUtil 返回-----------------responseString:{}", responseString);
-
-        net.sf.json.JSONObject rejson = net.sf.json.JSONObject.fromObject(responseString);
-        String return_mti = (String) rejson.get("mti");
-        String return_txn_identifier = (String) rejson.get("txn_identifier");
-        String return_process_code = (String) rejson.get("process_code");
-        String return_amount = (String) rejson.get("amount");
-        String return_stan = (String) rejson.get("stan");
-        String return_transaction_time = (String) rejson.get("transaction_time");
-        String return_transaction_date = (String) rejson.get("transaction_date");
-        String return_entry_mode = (String) rejson.get("entry_mode");
-        String return_condition_code = (String) rejson.get("condition_code");
-        String return_institution_code = (String) rejson.get("institution_code");
-        String return_response_code = (String) rejson.get("response_code");
-        String return_host_tid = (String) rejson.get("host_tid");
-        String return_qr_code = (String) rejson.get("qr_code");
-
-        //信息落地到中间表
-        co.setRemark1(enetsOffLineRequestDTO.getRequestJsonDate().getRetrievalRef());
-        co.setRemark2(return_stan);
-        co.setRemark3(return_txn_identifier);
-
-        if ("0210".equals(return_mti)
-                && "990000".equals(return_process_code)
-                && enetsOffLineRequestDTO.getRequestJsonDate().getStan().equals(return_stan)
-                && enetsOffLineRequestDTO.getRequestJsonDate().getTransactionTime().equals(return_transaction_time)
-                && enetsOffLineRequestDTO.getRequestJsonDate().getTransactionDate().equals(return_transaction_date)
-                && "000".equals(return_entry_mode)
-                && "85".equals(return_condition_code)
-                && enetsOffLineRequestDTO.getRequestJsonDate().getInstitutionCode().equals(return_institution_code)) {
-
-            if ("00".equals(return_response_code)) {//响应编码  00-一次成功的交易
-                baseResponse.setCode("200");
-                baseResponse.setMsg("success");
-                baseResponse.setData(return_qr_code);
-            } else {
-                baseResponse.setMsg("fail");
-                baseResponse.setCode("302");
+            Orders orders = enetsOffLineRequestDTO.getOrders();
+            ChannelsOrder channelsOrder = new ChannelsOrder();
+            channelsOrder.setId(orders.getId());
+            channelsOrder.setMerchantOrderId(orders.getMerchantOrderId());
+            channelsOrder.setTradeCurrency(enetsOffLineRequestDTO.getRequestJsonDate().getNpxData().getSourceCurrency());
+            channelsOrder.setTradeAmount(new BigDecimal(enetsOffLineRequestDTO.getRequestJsonDate().getTargetAmount()));
+            channelsOrder.setReqIp(orders.getReqIp());
+            channelsOrder.setServerUrl(enetsOffLineRequestDTO.getRequestJsonDate().getCommunicationData().get(0).getCommunicationDestination());
+            channelsOrder.setOrderType(AD3Constant.TRADE_ORDER);
+            channelsOrder.setTradeStatus(TradeConstant.TRADE_WAIT);
+            channelsOrder.setPayerPhone(orders.getPayerPhone());
+            channelsOrder.setPayerName(orders.getPayerName());
+            channelsOrder.setPayerBank(orders.getPayerBank());
+            channelsOrder.setPayerEmail(orders.getPayerEmail());
+            channelsOrder.setCreateTime(new Date());
+            channelsOrder.setCreator(orders.getCreator());
+            channelsOrder.setRemark("eNets线下收单交易金额需要放大100倍上送给上游通道");
+            ObjectMapper objectMapper = new ObjectMapper();
+            String requestJsonDate = null;
+            try {
+                requestJsonDate = objectMapper.writeValueAsString(enetsOffLineRequestDTO.getRequestJsonDate());
+            } catch (JsonProcessingException e) {
+                log.info("=================【Enets线下CSB】=================【json解析异常】");
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                return baseResponse;
             }
-        } else {
-            //验证返回信息不通过
-            log.info("-----------------eNets线下收单验证信息不通过-----------------enetsOffLineRequestDTO:{}", JSON.toJSON(enetsOffLineRequestDTO));
-            baseResponse.setMsg("fail");
-            baseResponse.setCode("302");
-        }
-        if (num > 0) {
-            co.setUpdateTime(new Date());
-            channelsOrderMapper.updateByPrimaryKeySelective(co);
-        } else {
-            co.setCreateTime(new Date());
-            channelsOrderMapper.insert(co);
+            //生成签名
+            String clearText = requestJsonDate + enetsOffLineRequestDTO.getApiSecret();
+            log.info("=================【Enets线下CSB】=================【签名前的明文】 clearText: {}", clearText);
+            String sign = SignatureUtil.calculateSignature(clearText);
+            log.info("=================【Enets线下CSB】=================【签名后的密文】 sign: {}", sign);
+            //System.setProperty("https.protocols", "TLSv1.2");
+            HTTPUtil httpUtil = new HTTPUtil();
+            log.info("=================【Enets线下CSB】=================【请求Enets-CSB请求参数】 requestJsonDate: {}", requestJsonDate);
+            String responseString = httpUtil.postRequest(enetsOffLineRequestDTO.getChannel().getPayUrl(), requestJsonDate, httpUtil.generateJsonHeaders(sign, enetsOffLineRequestDTO.getApiKeyId()));
+            log.info("=================【Enets线下CSB】=================【请求Enets-CSB响应参数】 responseString: {}", JSON.toJSONString(responseString));
+            JSONObject jsonObject = JSON.parseObject(responseString);
+            String return_mti = jsonObject.getString("mti");
+            String return_txn_identifier = jsonObject.getString("txn_identifier");
+            String return_process_code = jsonObject.getString("process_code");
+            String return_amount = jsonObject.getString("amount");
+            String return_stan = jsonObject.getString("stan");
+            String return_transaction_time = jsonObject.getString("transaction_time");
+            String return_transaction_date = jsonObject.getString("transaction_date");
+            String return_entry_mode = jsonObject.getString("entry_mode");
+            String return_condition_code = jsonObject.getString("condition_code");
+            String return_institution_code = jsonObject.getString("institution_code");
+            String return_response_code = jsonObject.getString("response_code");
+            String return_host_tid = jsonObject.getString("host_tid");
+            String return_qr_code = jsonObject.getString("qr_code");
+            try {
+                //信息落地到中间表
+                channelsOrder.setRemark1(enetsOffLineRequestDTO.getRequestJsonDate().getRetrievalRef());
+                channelsOrder.setRemark2(return_stan);
+                channelsOrder.setRemark3(return_txn_identifier);
+                channelsOrderMapper.updateByPrimaryKeySelective(channelsOrder);
+            } catch (Exception e) {
+                log.info("=================【Enets线下CSB】=================【更新通道订单表异常】", e);
+            }
+            if ("0210".equals(return_mti) && "990000".equals(return_process_code) && enetsOffLineRequestDTO.getRequestJsonDate().getStan().equals(return_stan)
+                    && enetsOffLineRequestDTO.getRequestJsonDate().getTransactionTime().equals(return_transaction_time)
+                    && enetsOffLineRequestDTO.getRequestJsonDate().getTransactionDate().equals(return_transaction_date)
+                    && "000".equals(return_entry_mode) && "85".equals(return_condition_code)
+                    && enetsOffLineRequestDTO.getRequestJsonDate().getInstitutionCode().equals(return_institution_code)) {
+                if ("00".equals(return_response_code)) {
+                    //响应成功
+                    baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+                    baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+                    baseResponse.setData(return_qr_code);
+                } else {
+                    baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                    baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                }
+            } else {
+                log.info("=================【Enets线下CSB】=================【eNets线下收单验证信息不通过】");
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+            }
+        } catch (Exception e) {
+            log.info("=================【Enets线下CSB】=================【接口异常】", e);
+            baseResponse.setCode(TradeConstant.HTTP_FAIL);
+            baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
         }
         return baseResponse;
     }

@@ -61,10 +61,10 @@ public class EnetsController extends BaseController {
     }
 
     @ApiOperation(value = "eNets线下收单接口")
-    @PostMapping("NPSQRCodePay")
+    @PostMapping("eNetsPosCSBPay")
     @ResponseBody
-    public BaseResponse NPSQRCodePay(@RequestBody @ApiParam @Valid EnetsOffLineRequestDTO enetsOffLineRequestDTO) {
-        return enetsService.NPSQRCodePay(enetsOffLineRequestDTO);
+    public BaseResponse eNetsPosCSBPay(@RequestBody @ApiParam @Valid EnetsOffLineRequestDTO enetsOffLineRequestDTO) {
+        return enetsService.eNetsPosCSBPay(enetsOffLineRequestDTO);
     }
 
 }
