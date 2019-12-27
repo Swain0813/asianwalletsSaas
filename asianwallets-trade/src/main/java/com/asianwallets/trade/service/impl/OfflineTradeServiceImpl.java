@@ -3,6 +3,7 @@ package com.asianwallets.trade.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.PosQueryOrderListDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
@@ -257,11 +258,13 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         BankIssuerId bankIssuerId = null;
         for (ChannelBank channelBank : channelBankList) {
             channel = commonRedisDataService.getChannelById(channelBank.getChannelId());
-            bankIssuerId = bankIssuerIdMapper.selectByChannelCode(channel.getChannelCode());
-            if (bankIssuerId != null) {
-                log.info("==================【线下收单】==================【通道】  channel: {}", JSON.toJSONString(channel));
-                log.info("==================【线下收单】==================【银行机构映射】  bankIssuerId: {}", JSON.toJSONString(bankIssuerId));
-                break;
+            if (channel != null && channel.getEnabled()) {
+                bankIssuerId = bankIssuerIdMapper.selectByChannelCode(channel.getChannelCode());
+                if (bankIssuerId != null) {
+                    log.info("==================【线下收单】==================【通道】  channel: {}", JSON.toJSONString(channel));
+                    log.info("==================【线下收单】==================【银行机构映射】  bankIssuerId: {}", JSON.toJSONString(bankIssuerId));
+                    break;
+                }
             }
         }
         if (channel == null) {
@@ -536,5 +539,109 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             }
         }
         return new PosMerProCurVO(currencies, sortProductList);
+    }
+
+    /**
+     * POS机查询订单列表信息
+     *
+     * @param posQueryOrderListDTO POS机查询订单接口输入实体
+     * @return 订单列表
+     */
+    @Override
+    public List<PosQueryOrderListVO> posQueryOrderList(PosQueryOrderListDTO posQueryOrderListDTO) {
+        log.info("===================【POS机查询订单列表信息】===================【参数记录】 posQueryOrderListDTO: {}", JSON.toJSONString(posQueryOrderListDTO));
+        //验签
+//        if (!commonBusinessService.checkSignByMd5(posGetMerProDTO)) {
+//            log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
+//            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+//        }
+        //校验设备
+        checkDevice(posQueryOrderListDTO.getMerchantId(), posQueryOrderListDTO.getImei(), posQueryOrderListDTO.getOperatorId());
+        //页码默认为1
+        if (posQueryOrderListDTO.getPageNum() == null) {
+            posQueryOrderListDTO.setPageNum(1);
+        }
+        //每页默认30
+        if (posQueryOrderListDTO.getPageSize() == null) {
+            posQueryOrderListDTO.setPageSize(30);
+        }
+        if (StringUtils.isEmpty(posQueryOrderListDTO.getLanguage())) {
+            posQueryOrderListDTO.setLanguage(TradeConstant.EN_US);
+        }
+        List<PosQueryOrderListVO> posQueryOrderListVOList = ordersMapper.posQueryOrderList(posQueryOrderListDTO);
+        for (PosQueryOrderListVO posQueryOrderListVO : posQueryOrderListVOList) {
+            //截取币种默认值
+            if (!StringUtils.isEmpty(posQueryOrderListVO.getDefaultValue())) {
+                String defaultValue = posQueryOrderListVO.getDefaultValue();
+                int bitPos = defaultValue.indexOf(".");
+                int numOfBits;
+                if (bitPos == -1) {
+                    numOfBits = 0;
+                } else {
+                    numOfBits = defaultValue.length() - bitPos - 1;
+                }
+                posQueryOrderListVO.setOrderAmount(String.valueOf(posQueryOrderListVO.getAmount().setScale(numOfBits, BigDecimal.ROUND_DOWN)));
+            }
+            //截取支付方式名称
+            if (!StringUtils.isEmpty(posQueryOrderListVO.getPayTypeName())) {
+                if (posQueryOrderListVO.getPayTypeName().contains("-")) {
+                    posQueryOrderListVO.setPayTypeName(posQueryOrderListVO.getPayTypeName().substring(0, posQueryOrderListVO.getPayTypeName().indexOf("-")));
+                } else if (posQueryOrderListVO.getPayTypeName().contains("CSB")) {
+                    posQueryOrderListVO.setPayTypeName(posQueryOrderListVO.getPayTypeName().substring(0, posQueryOrderListVO.getPayTypeName().indexOf("C")));
+                } else if (posQueryOrderListVO.getPayTypeName().contains("BSC")) {
+                    posQueryOrderListVO.setPayTypeName(posQueryOrderListVO.getPayTypeName().substring(0, posQueryOrderListVO.getPayTypeName().indexOf("B")));
+                }
+            }
+        }
+        return posQueryOrderListVOList;
+    }
+
+    /**
+     * POS机查询订单详情
+     *
+     * @param posQueryOrderListDTO POS机查询订单详情输入实体
+     * @return 订单
+     */
+    @Override
+    public PosQueryOrderListVO posQueryOrderDetail(PosQueryOrderListDTO posQueryOrderListDTO) {
+        log.info("===================【POS机查询订单详情】===================【参数记录】 posQueryOrderListDTO: {}", JSON.toJSONString(posQueryOrderListDTO));
+        if (StringUtils.isEmpty(posQueryOrderListDTO.getOrderNo())) {
+            log.info("===================【POS机查询订单详情】===================【商户订单号为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        //验签
+//        if (!commonBusinessService.checkSignByMd5(posGetMerProDTO)) {
+//            log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
+//            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+//        }
+        //校验设备
+        checkDevice(posQueryOrderListDTO.getMerchantId(), posQueryOrderListDTO.getImei(), posQueryOrderListDTO.getOperatorId());
+        if (StringUtils.isEmpty(posQueryOrderListDTO.getLanguage())) {
+            posQueryOrderListDTO.setLanguage(TradeConstant.EN_US);
+        }
+        PosQueryOrderListVO posQueryOrderListVO = ordersMapper.posQueryOrderDetail(posQueryOrderListDTO);
+        //截取币种默认值
+        if (!StringUtils.isEmpty(posQueryOrderListVO.getDefaultValue())) {
+            String defaultValue = posQueryOrderListVO.getDefaultValue();
+            int bitPos = defaultValue.indexOf(".");
+            int numOfBits;
+            if (bitPos == -1) {
+                numOfBits = 0;
+            } else {
+                numOfBits = defaultValue.length() - bitPos - 1;
+            }
+            posQueryOrderListVO.setOrderAmount(String.valueOf(posQueryOrderListVO.getAmount().setScale(numOfBits, BigDecimal.ROUND_DOWN)));
+        }
+        //截取支付方式名称
+        if (!StringUtils.isEmpty(posQueryOrderListVO.getPayTypeName())) {
+            if (posQueryOrderListVO.getPayTypeName().contains("-")) {
+                posQueryOrderListVO.setPayTypeName(posQueryOrderListVO.getPayTypeName().substring(0, posQueryOrderListVO.getPayTypeName().indexOf("-")));
+            } else if (posQueryOrderListVO.getPayTypeName().contains("CSB")) {
+                posQueryOrderListVO.setPayTypeName(posQueryOrderListVO.getPayTypeName().substring(0, posQueryOrderListVO.getPayTypeName().indexOf("C")));
+            } else if (posQueryOrderListVO.getPayTypeName().contains("BSC")) {
+                posQueryOrderListVO.setPayTypeName(posQueryOrderListVO.getPayTypeName().substring(0, posQueryOrderListVO.getPayTypeName().indexOf("B")));
+            }
+        }
+        return posQueryOrderListVO;
     }
 }

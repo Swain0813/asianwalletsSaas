@@ -21,7 +21,7 @@ public class HandlerProcessor implements BeanFactoryPostProcessor {
      */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        HashMap<String, Class> handlerMap = Maps.newHashMapWithExpectedSize(3);
+        HashMap<String, Class> handlerMap = Maps.newHashMap();
         ClassScaner.scan(HANDLER_PACKAGE, HandlerType.class).forEach(clazz -> {
             // 获取注解中的类型值
             String[] type = clazz.getAnnotation(HandlerType.class).value();

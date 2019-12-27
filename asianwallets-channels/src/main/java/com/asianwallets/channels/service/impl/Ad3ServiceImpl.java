@@ -44,10 +44,10 @@ public class Ad3ServiceImpl implements Ad3Service {
         commonMap.putAll(businessMap);
         String signature = SignTools.getSignStr(commonMap);
         String clearText = signature + "&" + token;
-        log.info("=================【AD3线下CSB】=================【签名前的明文】 clearText: {}", clearText);
+        log.info("=================【AD3线下接口】=================【签名前的明文】 clearText: {}", clearText);
         //与token进行拼接MD5加密
         String sign = MD5Util.getMD5String(clearText);
-        log.info("=================【AD3线下CSB】=================【签名后的密文】 sign: {}", sign);
+        log.info("=================【AD3线下接口】=================【签名后的密文】 sign: {}", sign);
         return sign;
     }
 

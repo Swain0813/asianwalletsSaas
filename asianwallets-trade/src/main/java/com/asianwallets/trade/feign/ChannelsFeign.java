@@ -106,7 +106,7 @@ public interface ChannelsFeign {
     BaseResponse eNetsBankPay(@RequestBody @ApiParam @Valid EnetsBankRequestDTO enetsBankRequestDTO);
 
     @ApiOperation(value = "enetsPos线下CSB")
-    @PostMapping("enets/NPSQRCodePay")
+    @PostMapping("enets/eNetsPosCSBPay")
     BaseResponse eNetsPosCSBPay(@RequestBody @ApiParam @Valid EnetsOffLineRequestDTO enetsOffLineRequestDTO);
 
     @ApiOperation(value = "help2Pay网银收单接口")

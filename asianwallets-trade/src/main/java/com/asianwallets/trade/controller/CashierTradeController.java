@@ -1,0 +1,46 @@
+package com.asianwallets.trade.controller;
+
+import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.dto.CashierDTO;
+import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.trade.dto.CalcRateDTO;
+import com.asianwallets.trade.service.OnlineGatewayService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+@RestController
+@Api(description = "线上收银台交易接口")
+@RequestMapping("/online")
+public class CashierTradeController extends BaseController {
+
+    @Autowired
+    private OnlineGatewayService onlineGatewayService;
+
+    @ApiOperation(value = "收银台收单接口")
+    @PostMapping("/cashierGateway")
+    @CrossOrigin
+    public BaseResponse cashierGateway(@RequestBody @ApiParam @Valid CashierDTO cashierDTO) {
+        return onlineGatewayService.cashierGateway(cashierDTO);
+    }
+
+    @ApiOperation(value = "收银台所需的基础信息")
+    @GetMapping("/cashier")
+    @CrossOrigin
+    public BaseResponse cashier(@RequestParam("orderId") @ApiParam String orderId) {
+        return ResultUtil.success(onlineGatewayService.cashier(orderId, this.getLanguage()));
+    }
+
+    @ApiOperation(value = "收银台换汇金额计算")
+    @PostMapping("calcExchangeRate")
+    @CrossOrigin
+    public BaseResponse calcCashierExchangeRate(@RequestBody @ApiParam @Valid CalcRateDTO calcRateDTO) {
+        return onlineGatewayService.calcCashierExchangeRate(calcRateDTO);
+    }
+}
+

@@ -1,4 +1,5 @@
 package com.asianwallets.trade.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.*;
@@ -11,6 +12,7 @@ import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 /**
@@ -61,6 +63,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
 
     /**
      * 根据币种编码获取币种信息
+     *
      * @param code
      * @return
      */
@@ -289,23 +292,20 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     }
 
     /**
-     * 根据通道ID查询通道信息
+     * 根据通道ID查询通道信息【此方法未查询到会返回NULL】
      *
      * @param channelId 通道ID
      */
     @Override
     public Channel getChannelById(String channelId) {
-        Channel channel = JSON.parseObject(redisService.get(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channelId)), Channel.class);
+        Channel channel = null;
         try {
+            channel = JSON.parseObject(redisService.get(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channelId)), Channel.class);
             if (channel == null) {
                 channel = channelMapper.selectByPrimaryKey(channelId);
                 if (channel == null) {
                     log.info("==================【根据通道ID查询通道信息】==================【通道对象不存在】 channelId: {}", channelId);
-                    throw new BusinessException(EResultEnum.CHANNEL_IS_NOT_EXISTS.getCode());
-                }
-                if (!channel.getEnabled()) {
-                    log.info("==================【根据通道ID查询通道信息】==================【通道信息已禁用】");
-                    throw new BusinessException(EResultEnum.GET_CHANNEL_INFO_ERROR.getCode());
+                    return null;
                 }
                 redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
                 redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channel.getChannelCode()), JSON.toJSONString(channel));
@@ -354,7 +354,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
      */
     @Override
     public List<String> getChaBankIdByMerProId(String merProId) {
-        List<String> chaBankIdList =JSON.parseArray(redisService.get(AsianWalletConstant.MERCHANTCHANNEL_CACHE_KEY.concat("_").concat(merProId)), String.class);
+        List<String> chaBankIdList = JSON.parseArray(redisService.get(AsianWalletConstant.MERCHANTCHANNEL_CACHE_KEY.concat("_").concat(merProId)), String.class);
         try {
             if (ArrayUtil.isEmpty(chaBankIdList)) {
                 chaBankIdList = merchantChannelMapper.selectByMerProId(merProId);

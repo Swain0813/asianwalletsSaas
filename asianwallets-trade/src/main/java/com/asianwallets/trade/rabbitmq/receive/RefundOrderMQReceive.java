@@ -10,6 +10,7 @@ import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.*;
@@ -140,7 +141,7 @@ public class RefundOrderMQReceive {
                 orderRefundMapper.updateStatuts(reconciliation.getRefundOrderId(), TradeConstant.REFUND_FALID, null, reconciliation.getRemark());
                 reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
                 //改原订单状态
-                OrderRefund orderRefund = orderRefundMapper.selectByPrimaryKey(reconciliation.getId());
+                OrderRefund orderRefund = orderRefundMapper.selectByPrimaryKey(reconciliation.getRefundOrderId());
                 if (reconciliation.getAccountType() == 1) {
                     orderRefund.setRemark4(TradeConstant.RA);
                 } else if (reconciliation.getAccountType() == 2) {
@@ -185,13 +186,13 @@ public class RefundOrderMQReceive {
         } else {
             //三次上报清结算失败，则退款单就是退款失败更新退款单状态以及失败原因
             String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-            String reconciliationRemark = type.equals(TradeConstant.AA)?TradeConstant.REFUND_FAIL_RECONCILIATION:TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-            Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund,reconciliationRemark);
+            String reconciliationRemark = type.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
+            Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
             reconciliationMapper.insert(reconciliation);
             RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-            log.info("=================【TK_SB_FAIL_DL】=================【调账 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+            log.info("=================【TK_SB_FAIL_DL】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
             rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
-
+            //}
             //预警机制
             messageFeign.sendSimple(developerMobile, "退款上请求上游失败 TK_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
             messageFeign.sendSimpleMail(developerEmail, "退款上请求上游失败 TK_SB_FAIL_DL 预警", "TK_SB_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
@@ -227,6 +228,7 @@ public class RefundOrderMQReceive {
 
             if (TradeConstant.ORDER_PAY_SUCCESS.equals(order.getTradeStatus())) {
                 log.info("========================= 【CX_GX_FAIL_DL】 ====================【支付成功】 orderId : 【{}】, status :【{}】 ", order.getId(), order.getTradeStatus());
+
                 //获取清算状态
                 Integer ctState = tcsCtFlowMapper.getCTstatus(order.getId());
                 //获取结算状态
@@ -240,6 +242,19 @@ public class RefundOrderMQReceive {
                     type = TradeConstant.RV;
                 }
                 orderRefund.setRemark4(type);
+                orderRefund.setSign(order.getSign());
+                orderRefundMapper.insert(orderRefund);
+                FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
+                log.info("=========================【CX_GX_FAIL_DL】======================= 【上报清结算 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
+                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+                log.info("=========================【CX_GX_FAIL_DL】======================= 【清结算 {} 返回】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+                if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                    log.info("=========================【CX_GX_FAIL_DL】======================= 【清结算 {} 上报失败】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+                    RabbitMassage rbMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                    log.info("=========================【CX_GX_FAIL_DL】=========================【上报队列 RV_RF_FAIL_DL】rbMsg : 【{}】", JSON.toJSON(rbMsg));
+                    rabbitMQSender.send(AD3MQConstant.RV_RF_FAIL_DL, JSON.toJSONString(rbMsg));
+                    return ;
+                }
                 channelsAbstract.refund(channel, orderRefund, rabbitMassage);
             } else if (TradeConstant.ORDER_PAYING.equals(order.getTradeStatus())) {//付款中的队列继续放进查询队列
                 log.info("========================= 【CX_GX_FAIL_DL】 ====================【付款中】 orderId : 【{}】, status :【{}】 ", order.getId(), order.getTradeStatus());

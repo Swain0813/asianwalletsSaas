@@ -58,7 +58,7 @@ public class SettleServiceImpl implements SettleService {
                     stflow.setSort(2);//2级优先低于1级
                 }
                 //要按照结算币种来结算
-                String key = stflow.getMerchantid() + "_" + stflow.getSltcurrency();
+                String key = stflow.getMerchantid() + "_" + stflow.getTxncurrency();
                 if ((!mermap.containsKey(key)) && mermap.get(key) == null) {
                     List<TcsStFlow> slist = new ArrayList<>();
                     slist.add(stflow);
