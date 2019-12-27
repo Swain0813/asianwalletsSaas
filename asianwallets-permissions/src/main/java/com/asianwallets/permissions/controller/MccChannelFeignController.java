@@ -42,7 +42,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/mccChannel")
-@Api("mcc映射")
+@Api(description = "mcc映射表接口")
 @Slf4j
 public class MccChannelFeignController extends BaseController {
 
