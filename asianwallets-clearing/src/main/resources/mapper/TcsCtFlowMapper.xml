@@ -41,8 +41,7 @@
 	   select sum(txnamount) from tcs_ctflow where
 	   merchantid=#{merchantid,jdbcType=VARCHAR}
 	   and refcnceFlow=#{refcnceFlow,jdbcType=VARCHAR}
-	   and sltcurrency=#{sltcurrency,jdbcType=VARCHAR}
-	   and sysorderid=#{sysorderid,jdbcType=VARCHAR}
+	   and txncurrency=#{txncurrency,jdbcType=VARCHAR}
     </select>
 
 </mapper>

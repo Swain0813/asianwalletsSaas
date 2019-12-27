@@ -464,11 +464,9 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                  * 处理清算资金之前得看看这个订单是否有清算资金撤销的情况
                  */
                 TcsCtFlow ctflow = new TcsCtFlow();
-                ctflow.setOrganId(st.getOrganId());
                 ctflow.setMerchantid(st.getMerchantid());
                 ctflow.setRefcnceFlow(st.getRefcnceFlow());
-                ctflow.setSltcurrency(st.getSltcurrency());
-                ctflow.setSysorderid(st.getSysorderid());
+                ctflow.setTxncurrency(st.getTxncurrency());
                 Double leftmoney = tcsCtFlowMapper.getCLLeftMoney(ctflow);//获取清算表中金额
                 if (leftmoney == null) {
                     log.info("*************** SettlementBase3 结算基础方法 ************** 编号为：{}的结算流水 查询订单清算户剩余资金异常，或者查询处理过程中异常", record.getSTFlow());
