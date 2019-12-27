@@ -101,4 +101,5 @@ custom:
     0bPWL4jfacmREho/etFeVSu5rKFk5WQpsuLPv9B7vL7Towqg==
   #收银台url
   cashierDeskUrl: http://192.168.124.49:8082/checkstandweb/#/main
-
+  #亚洲钱包的支付页面的url
+  paySuccessUrl: http://192.168.124.49:8082/checkstandweb/#/Success

@@ -52,7 +52,7 @@ public class TmMerChTvAcctBalance{
 
     @ApiModelProperty(value = "交易类型")
     @Column(name = "tradetype")
-    private String tradetype;// NT:收单，DT：分账，RF:退款，WD：提款，CL:清算，ST:结算, SP:分润
+    private String tradetype;// NT:收单，DT：分账，RF:退款，WD：提款，CL:清算，ST:结算, SP:分润 FZ：冻结 TW:解冻
 
     @ApiModelProperty(value = "交易金额")
     @Column(name = "txnamount")

@@ -98,21 +98,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         return indirectConnection(onlineTradeDTO);
     }
 
-
-    /* TODO 收银台查询订单
-    //查询订单号是否重复
-        Orders orders = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getMerchantId());
-        if (orders!=null) {
-            if (orders.getTradeStatus().equals(TradeConstant.PAYMENT_SUCCESS)) {
-                log.info("-----------------【线上直连】下单信息记录--------------【订单已支付】");
-                throw new BusinessException(EResultEnum.ORDER_PAID_ERROR.getCode());
-            }
-            if (orders.getTradeStatus().equals(TradeConstant.PAYMENT_FAIL)) {
-                log.info("-----------------【线上直连】下单信息记录--------------【订单已支付失败】");
-                throw new BusinessException(EResultEnum.ORDER_PAYMENT_FAILED.getCode());
-            }
-        }*/
-
     /**
      * 直连
      *
@@ -442,37 +427,19 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
         //截取URL
         commonBusinessService.getUrl(onlineTradeDTO.getServerUrl(), orders);
-//        orders.setTradeType(product.getTransType());
-//        orders.setTradeDirection(product.getTradeDirection());
         orders.setMerchantOrderTime(DateToolUtils.getReqDateG((onlineTradeDTO.getOrderTime())));
         orders.setMerchantOrderId(onlineTradeDTO.getOrderNo());
         orders.setOrderAmount(onlineTradeDTO.getOrderAmount());
         orders.setOrderCurrency(onlineTradeDTO.getOrderCurrency());
-//        orders.setProductCode(product.getProductCode());
         orders.setProductName(onlineTradeDTO.getProductName());
         orders.setProductDescription(onlineTradeDTO.getProductDescription());
-//        orders.setChannelCode(channel.getChannelCode());
-//        orders.setChannelName(channel.getChannelCnName());
-//        orders.setTradeCurrency(channel.getCurrency());
         orders.setTradeStatus(TradeConstant.PAYMENT_START);
-//        orders.setPayMethod(merchantProduct.getPayType());
         orders.setPayerName(onlineTradeDTO.getPayerName());
         orders.setPayerAccount(onlineTradeDTO.getPayerAccount());
         orders.setPayerBank(onlineTradeDTO.getPayerBank());
         orders.setPayerEmail(onlineTradeDTO.getPayerEmail());
         orders.setPayerPhone(onlineTradeDTO.getPayerPhone());
         orders.setPayerAddress(onlineTradeDTO.getPayerAddress());
-//        //判断结算周期类型
-//        if (TradeConstant.DELIVERED.equals(merchantProduct.getSettleCycle())) {
-//            //妥投结算
-//            orders.setProductSettleCycle(TradeConstant.FUTURE_TIME);
-//        } else {
-//            //产品结算周期
-//            orders.setProductSettleCycle(SettleDateUtil.getSettleDate(merchantProduct.getSettleCycle()));
-//        }
-//        orders.setFloatRate(merchantProduct.getFloatRate());
-//        orders.setIssuerId(channel.getIssuerId());
-//        orders.setBankName(basicInfoVO.getBankName());
         orders.setBrowserUrl(onlineTradeDTO.getBrowserUrl());
         orders.setServerUrl(onlineTradeDTO.getServerUrl());
         orders.setLanguage(onlineTradeDTO.getLanguage());

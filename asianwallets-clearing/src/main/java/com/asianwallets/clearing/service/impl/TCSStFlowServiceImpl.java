@@ -180,7 +180,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     mab.setIncome(-1 * (stf.getTxnamount() - stf.getFee() + stf.getRefundOrderFee()));
                     mab.setOutcome(Double.parseDouble("0"));
                     mab.setReferenceflow(stf.getRefcnceFlow());
-                    mab.setTradetype(stf.getTradetype());
+                    mab.setTradetype("FZ");//FZ:冻结
                     mab.setTxnamount(-1 * stf.getTxnamount());
                     mab.setType(3);//冻结户
                     //网关状态手续费
@@ -398,7 +398,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 mab_fr.setTxnamount(-1 * st.getTxnamount() + st.getFee() - st.getRefundOrderFee());
                 mab_fr.setSltamount(-1 * st.getTxnamount() + st.getFee() - st.getRefundOrderFee());
                 mab_fr.setReferenceflow(st.getRefcnceFlow());
-                mab_fr.setTradetype(st.getTradetype());
+                mab_fr.setTradetype("TW");//TW:解冻
                 mab_fr.setType(3);// type 3 冻结账户
                 mab_fr.setRemark("解冻资金" + "/" + st.getRemark());
                 mab_fr.setRefundOrderFee(Double.parseDouble("0"));
@@ -457,18 +457,16 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 return message;
             }
             // 更新清算户资金变动（当前业务逻辑下为待结算并且还是正常资金的去掉调账AA,提款WD以外都是从清算表中过来的数据，所以需要回去再处理清算资金）
-            if ((st.getSltamount() > 0 && st.getNeedClear() == 2) || (st.getNeedClear() == 2 && st.getTxnamount() < 0 && st.getTradetype().equals(TradeConstant.RV))) {
+            if ((st.getTxnamount() > 0 && st.getNeedClear() == 2) || (st.getNeedClear() == 2 && st.getTxnamount() < 0 && st.getTradetype().equals(TradeConstant.RV))) {
                 //待结算表中的未结算正常资金都是从清算表中过来的，所以还得回去处理清算账户资金和流水
                 //RV撤销时 清算时已经减去了清算户的余额,生成一条ST记录，上面结算时结算账户减去了撤销金额，清算户要把清算金额再加回来
                 /**
                  * 处理清算资金之前得看看这个订单是否有清算资金撤销的情况
                  */
                 TcsCtFlow ctflow = new TcsCtFlow();
-                ctflow.setOrganId(st.getOrganId());
                 ctflow.setMerchantid(st.getMerchantid());
                 ctflow.setRefcnceFlow(st.getRefcnceFlow());
-                ctflow.setSltcurrency(st.getSltcurrency());
-                ctflow.setSysorderid(st.getSysorderid());
+                ctflow.setTxncurrency(st.getTxncurrency());
                 Double leftmoney = tcsCtFlowMapper.getCLLeftMoney(ctflow);//获取清算表中金额
                 if (leftmoney == null) {
                     log.info("*************** SettlementBase3 结算基础方法 ************** 编号为：{}的结算流水 查询订单清算户剩余资金异常，或者查询处理过程中异常", record.getSTFlow());
