@@ -32,8 +32,10 @@ public class ResultUtil {
         BaseResponse response = new BaseResponse();
         response.setCode(code);
         response.setMsg(msg);
+        if (code.equals("200")) {response.setMsg("SUCCESS"); } ;
         return response;
     }
+
     /**
      * @methodDesc: 功能描述: 操作成功不返回消息
      * @author Wu, Hua-Zheng
@@ -58,6 +60,7 @@ public class ResultUtil {
         response.setMsg(msg);
         return response;
     }
+
     public static BaseResponse error(String code, String msg, Object object) {
         BaseResponse response = new BaseResponse();
         response.setCode(code);
@@ -73,12 +76,12 @@ public class ResultUtil {
      * @createTime 2018年7月2日 下午4:15:01
      * @version v1.0.0
      */
-//    public static BaseResponse error(EResultEnum resultEnum) {
-//        BaseResponse response = new BaseResponse();
-//        response.setCode(resultEnum.getCode());
-//        response.setMsg(resultEnum.getMsg());
-//        return response;
-//    }
+    //    public static BaseResponse error(EResultEnum resultEnum) {
+    //        BaseResponse response = new BaseResponse();
+    //        response.setCode(resultEnum.getCode());
+    //        response.setMsg(resultEnum.getMsg());
+    //        return response;
+    //    }
 
     /**
      * @param response
@@ -88,30 +91,30 @@ public class ResultUtil {
      * @createTime 2018年7月8日 下午5:47:11
      * @version v1.0.0
      */
-//    public static void unauthorizedResponse(ServletResponse response) {
-//        PrintWriter writer = null;
-//        OutputStreamWriter osw = null;
-//        try {
-//            osw = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
-//            writer = new PrintWriter(osw, true);
-//            String jsonStr = JSON.toJSONString(ResultUtil.error(EResultEnum.UNAUTHORIZED));
-//            writer.write(jsonStr);
-//            writer.flush();
-//            writer.close();
-//            osw.close();
-//        } catch (IOException e) {
-////            log.error("过滤器返回信息失败:" + e.getMessage(), e);
-//        } finally {
-//            if (null != writer) {
-//                writer.close();
-//            }
-//            if (null != osw) {
-//                try {
-//                    osw.close();
-//                } catch (IOException e) {
-////                    log.error("过滤器返回信息失败:" + e.getMessage(), e);
-//                }
-//            }
-//        }
-//    }
+    //    public static void unauthorizedResponse(ServletResponse response) {
+    //        PrintWriter writer = null;
+    //        OutputStreamWriter osw = null;
+    //        try {
+    //            osw = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
+    //            writer = new PrintWriter(osw, true);
+    //            String jsonStr = JSON.toJSONString(ResultUtil.error(EResultEnum.UNAUTHORIZED));
+    //            writer.write(jsonStr);
+    //            writer.flush();
+    //            writer.close();
+    //            osw.close();
+    //        } catch (IOException e) {
+    ////            log.error("过滤器返回信息失败:" + e.getMessage(), e);
+    //        } finally {
+    //            if (null != writer) {
+    //                writer.close();
+    //            }
+    //            if (null != osw) {
+    //                try {
+    //                    osw.close();
+    //                } catch (IOException e) {
+    ////                    log.error("过滤器返回信息失败:" + e.getMessage(), e);
+    //                }
+    //            }
+    //        }
+    //    }
 }

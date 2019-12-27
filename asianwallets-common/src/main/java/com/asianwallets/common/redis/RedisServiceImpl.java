@@ -18,7 +18,7 @@ public class RedisServiceImpl implements RedisService {
     private static final String SET_WITH_EXPIRE_TIME = "PX";
     private static final Long RELEASE_SUCCESS = 1L;
     private static final String REQUESTID = "1";
-    public static final int RETRY_TIMES = Integer.MAX_VALUE;
+    public static final int RETRY_TIMES = 70*1000;
 
     public static final long SLEEP_MILLIS = 25;//单位毫秒
 
