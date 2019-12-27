@@ -1,81 +1,21 @@
 package com.asianwallets.permissions.service.impl;
-
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.vo.*;
 import com.asianwallets.permissions.service.ExportService;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * @description:
- * @author: YangXu
- * @create: 2019-11-28 13:49
- **/
+ * 导出excel的实现类
+ */
 @Service
 public class ExportServiceImpl implements ExportService {
-
-    /**
-     * @return
-     * @Author YangXu
-     * @Date 2019/11/28
-     * @Descripate 导出机构
-     **/
-    @Override
-    public ExcelWriter getInstitutionExcel(List<InstitutionExportVO> institutionExportVOS, Class clazz) {
-
-        ExcelWriter writer = ExcelUtil.getBigWriter();
-        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
-        //注释信息
-        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
-        //属性名信息
-        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
-        ArrayList<Object> oList1 = new ArrayList<>();
-        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
-        for (InstitutionExportVO institutionExportVO : institutionExportVOS) {
-            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(institutionExportVO);
-            ArrayList<Object> oList2 = new ArrayList<>();
-            Set<String> keySet = oMap.keySet();
-            for (int p = 0; p < property.length; p++) {
-                for (String s : keySet) {
-                    if (s.equals(property[p])) {
-                        oSet1.add(comment[p]);
-                        if (s.equals("auditStatus")) {
-                            if ((String.valueOf((oMap.get(s))).equals("1"))) {
-                                oList2.add("待审核");
-                            } else if ((String.valueOf((oMap.get(s))).equals("2"))) {
-                                oList2.add("审核通过");
-                            } else if ((String.valueOf((oMap.get(s))).equals("3"))) {
-                                oList2.add("审核不通过");
-                            } else {
-                                oList2.add("");
-                            }
-                        } else if (s.equals("enabled")) {
-                            if ((String.valueOf((oMap.get(s)))).equals("true")) {
-                                oList2.add("启用");
-                            } else if ((String.valueOf((oMap.get(s)))).equals("false")) {
-                                oList2.add("禁用");
-                            }
-                        } else {
-                            oList2.add(oMap.get(s));
-                        }
-
-                    }
-                }
-            }
-            oList1.add(oList2);
-        }
-        oList1.add(0, oSet1);
-        writer.write(oList1);
-        return writer;
-
-
-    }
 
     /**
      * @return
@@ -363,6 +303,179 @@ public class ExportServiceImpl implements ExportService {
         }
         oList1.add(0, statistics);
         oList1.add(1, oSet1);
+        writer.write(oList1);
+        return writer;
+    }
+
+    /**
+     * 导出清算户余额流水详情
+     * @param clearAccountVOS
+     * @param clazz
+     * @return
+     */
+    @Override
+    public ExcelWriter getClearBalanceWriter(List<ClearAccountVO> clearAccountVOS, Class clazz) {
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (ClearAccountVO clearAccountVO : clearAccountVOS) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(clearAccountVO);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int i = 0; i < property.length; i++) {
+                for (String s : keySet) {
+                    if (s.equals(property[i])) {
+                        oSet1.add(comment[i]);
+                        if (s.equals("tradetype")) {
+                            if ((String.valueOf((oMap.get(s))).equals("AA"))) {
+                                oList2.add("调账");
+                            } else if ((String.valueOf((oMap.get(s))).equals("ST"))) {
+                                oList2.add("收单");
+                            } else if ((String.valueOf((oMap.get(s))).equals("RV"))) {
+                                oList2.add("撤销");
+                            } else if ((String.valueOf((oMap.get(s))).equals("RF"))) {
+                                oList2.add("退款");
+                            } else if ((String.valueOf((oMap.get(s))).equals("WD"))) {
+                                oList2.add("提款");
+                            } else if ((String.valueOf((oMap.get(s))).equals("FZ"))) {
+                                oList2.add("冻结");
+                            } else if ((String.valueOf((oMap.get(s))).equals("TW"))) {
+                                oList2.add("解冻");
+                            } else if ((String.valueOf((oMap.get(s))).equals("PM"))) {
+                                oList2.add("付款");
+                            } else if ((String.valueOf((oMap.get(s))).equals("TA"))) {
+                                oList2.add("转账");
+                            } else if ((String.valueOf((oMap.get(s))).equals("CL"))) {
+                                oList2.add("清算");
+                            } else if ((String.valueOf((oMap.get(s))).equals("ST"))) {
+                                oList2.add("结算");
+                            } else if ((String.valueOf((oMap.get(s))).equals("RA"))) {
+                                //清算时调账
+                                oList2.add("调账");
+                            }else {
+                                oList2.add("");
+                            }
+                        } else {
+                            oList2.add(oMap.get(s));
+                        }
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.write(oList1);
+        return writer;
+    }
+
+    /**
+     * 导出结算户余额流水详情
+     * @param list
+     * @param clazz
+     * @return
+     */
+    @Override
+    public ExcelWriter getTmMerChTvAcctBalanceWriter(List<TmMerChTvAcctBalance> list, Class clazz) {
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (TmMerChTvAcctBalance tmMerChTvAcctBalance : list) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(tmMerChTvAcctBalance);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int i = 0; i < property.length; i++) {
+                for (String s : keySet) {
+                    if (s.equals(property[i])) {
+                        oSet1.add(comment[i]);
+                        if (s.equals("tradetype")) {
+                            if ((String.valueOf((oMap.get(s))).equals("AA"))) {
+                                oList2.add("调账");
+                            } else if ((String.valueOf((oMap.get(s))).equals("ST"))) {
+                                oList2.add("收单");
+                            } else if ((String.valueOf((oMap.get(s))).equals("RV"))) {
+                                oList2.add("撤销");
+                            } else if ((String.valueOf((oMap.get(s))).equals("RF"))) {
+                                oList2.add("退款");
+                            } else if ((String.valueOf((oMap.get(s))).equals("WD"))) {
+                                oList2.add("提款");
+                            } else if ((String.valueOf((oMap.get(s))).equals("TA"))) {
+                                oList2.add("转账");
+                            } else if ((String.valueOf((oMap.get(s))).equals("FZ"))) {
+                                oList2.add("冻结");
+                            } else if ((String.valueOf((oMap.get(s))).equals("TW"))) {
+                                oList2.add("解冻");
+                            } else if ((String.valueOf((oMap.get(s))).equals("PM"))) {
+                                oList2.add("付款");
+                            }  else if ((String.valueOf((oMap.get(s))).equals("RA"))) {
+                                oList2.add("调账");
+                            }else {
+                                oList2.add("");
+                            }
+                        } else {
+                            oList2.add(oMap.get(s));
+                        }
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.write(oList1);
+        return writer;
+    }
+
+
+    /**
+     * 导出冻结余额流水详情
+     * @param list
+     * @param clazz
+     * @return
+     */
+    @Override
+    public ExcelWriter getFrozenLogsWriter(List<FrozenMarginInfoVO> list, Class clazz) {
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (FrozenMarginInfoVO tcsFrozenFundsLogs : list) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(tcsFrozenFundsLogs);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int i = 0; i < property.length; i++) {
+                for (String s : keySet) {
+                    if (s.equals(property[i])) {
+                        oSet1.add(comment[i]);
+                        if (s.equals("status")) {
+                            if ((String.valueOf((oMap.get(s))).equals("5"))) {
+                                oList2.add("冻结成功");
+                            } else if ((String.valueOf((oMap.get(s))).equals("8"))) {
+                                oList2.add("解冻成功");
+                            } else {
+                                oList2.add("");
+                            }
+                        } else {
+                            oList2.add(oMap.get(s));
+                        }
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
         writer.write(oList1);
         return writer;
     }
