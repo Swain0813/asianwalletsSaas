@@ -339,7 +339,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             int result4 = 0;
 
             //更新商户账户资金(结算户资金)
-            Account mva01 = accountMapper.selectByMerchantIdAndCurrency(st.getMerchantid(), st.getSltcurrency());
+            Account mva01 = accountMapper.selectByMerchantIdAndCurrency(st.getMerchantid(), st.getTxncurrency());
             log.info("---------getVersion----------:{}", mva01.getVersion());
             balance = mva01.getSettleBalance().doubleValue();//结算账户资金
             fr_balance = mva01.getFreezeBalance().doubleValue();//冻结账户资金
