@@ -279,7 +279,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
         if (!StringUtils.isEmpty(orders.getReportNumber())) {
             log.info("-----------------【线上收银台】下单信息记录-----------------订单号已存在");
-            throw new BusinessException(EResultEnum.INSTITUTION_ORDER_ID_EXIST.getCode());
+            throw new BusinessException(EResultEnum.MERCHANT_ORDER_ID_EXIST.getCode());
         }
         //获取商户信息
         BasicInfoVO basicInfoVO = getOnlineInfo(dto.getMerchantId(), dto.getIssuerId());

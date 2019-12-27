@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.base.dao.ReconciliationMapper">
+	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Reconciliation">
+	<result column="id" property="id" />
+		<result column="order_id" property="orderId" />
+		<result column="refund_order_id" property="refundOrderId" />
+		<result column="channel_number" property="channelNumber" />
+		<result column="refund_channel_number" property="refundChannelNumber" />
+		<result column="merchant_order_id" property="merchantOrderId" />
+		<result column="reconciliation_type" property="reconciliationType" />
+		<result column="merchant_name" property="merchantName" />
+		<result column="merchant_id" property="merchantId" />
+		<result column="amount" property="amount" />
+		<result column="currency" property="currency" />
+		<result column="status" property="status" />
+		<result column="change_type" property="changeType" />
+		<result column="freeze_type" property="freezeType" />
+		<result column="account_type" property="accountType" />
+		<result column="sign" property="sign" />
+		<result column="remark1" property="remark1" />
+		<result column="remark2" property="remark2" />
+		<result column="remark3" property="remark3" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator" property="creator" />
+		<result column="modifier" property="modifier" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+     id,refund_order_id,channel_number,refund_channel_number,merchant_order_id,reconciliation_type,merchant_name,merchant_id,amount,currency,
+     status,change_type,freeze_type,account_type,sign,remark1,remark2,remark3,create_time,update_time,creator,modifier,remark
+    </sql>
+
+	<select id="pageReconciliation" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from reconciliation
+		<where>
+			<if test="currency!=null and currency != ''">
+				and currency=#{currency}
+			</if>
+			<if test="merchantId!=null and merchantId != ''">
+				and merchant_id=#{merchantId}
+			</if>
+			<if test="id!=null and id != ''">
+				and id=#{id}
+			</if>
+			<if test="status!=null and status != ''">
+				and status=#{status}
+			</if>
+			<if test="changeType!=null">
+				and change_type=#{changeType}
+			</if>
+		</where>
+	</select>
+
+
+	<select id="pageReviewReconciliation" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from reconciliation
+		<where>
+			<if test="currency!=null and currency != ''">
+				and order_currency=#{currency}
+			</if>
+			<if test="merchantId!=null and merchantId != ''">
+				and merchant_id=#{merchantId}
+			</if>
+			<if test="id!=null and id != ''">
+				and id=#{id}
+			</if>
+			<if test="changeType!=null">
+				and change_type=#{changeType}
+			</if>
+			and status in (1,4,7)
+		</where>
+	</select>
+
+	<select id="selectAvailableBalance" resultType="java.math.BigDecimal">
+        select settle_balance - freeze_balance
+        from account
+        where merchant_id = #{merchantId}
+          and currency = #{currency}
+          and enabled = 1;
+    </select>
+
+	<select id="selectFreezeBalance" resultType="java.math.BigDecimal">
+        select sum(amount)
+        FROM reconciliation
+        WHERE merchant_id = #{merchantId}
+          and order_currency = #{currency}
+          and `status` in (5, 8)
+        GROUP BY order_currency, account_type
+        HAVING account_type = #{accountType};
+    </select>
+
+</mapper>

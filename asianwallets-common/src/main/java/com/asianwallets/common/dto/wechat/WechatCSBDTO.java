@@ -67,14 +67,8 @@ public class WechatCSBDTO {
     private String detail;
 
     //以下不是上报通道的参数
-    @ApiModelProperty(value = "机构订单号")
-    private String institutionOrderId;
-
-    @ApiModelProperty(value = "md5Key")
-    private String md5KeyStr;
-
-    @ApiModelProperty(value = "ip")
-    private String reqIp;
+    @ApiModelProperty(value = "订单")
+    private Orders orders;
 
     @ApiModelProperty(value = "Channel")
     private Channel channel;
@@ -83,7 +77,7 @@ public class WechatCSBDTO {
     public WechatCSBDTO() {
     }
 
-    public WechatCSBDTO(Orders orders, Channel channel, String notify_url) {
+    public WechatCSBDTO(Orders orders, Channel channel) {
         this.appid = "wx14e049b9320bccca";
         this.nonce_str = UUIDHelper.getRandomString(32);
         this.mch_id = channel.getChannelMerchantId();
@@ -102,15 +96,13 @@ public class WechatCSBDTO {
         //获取5分钟后的日期
         Date expireTime = DateToolUtils.getBeforeOrAfterDateByMinNumber(new Date(), 5);
         this.time_expire = DateToolUtils.formatDate(expireTime, "yyyyMMddHHmmss");
-        this.notify_url = notify_url;
+        this.notify_url = channel.getNotifyServerUrl();
         this.trade_type = "NATIVE";
         this.spbill_create_ip = "8.8.8.8";
         this.version = "1.0";
         String mccCode = "";
         this.detail = "{\"goods_detail\":[{\"wxpay_goods_id\":\"" + mccCode + "\"}]}";
-        this.institutionOrderId = orders.getMerchantOrderId();
-        this.md5KeyStr = channel.getMd5KeyStr();
-        this.reqIp = orders.getReqIp();
+        this.orders = orders;
         this.channel = channel;
     }
 }

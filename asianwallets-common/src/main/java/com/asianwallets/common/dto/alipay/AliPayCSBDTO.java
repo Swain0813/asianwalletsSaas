@@ -105,24 +105,22 @@ public class AliPayCSBDTO {
     @ApiModelProperty(value = "")
     private String sys_service_provider_id;
 
-    @ApiModelProperty(value = "机构订单号")
-    private String institution_order_id;
 
-    @ApiModelProperty(value = "请求IP")
-    private String reqIp;
+    @ApiModelProperty(value = "订单")
+    private Orders orders;
 
-    @ApiModelProperty(value = "Channel")
+    @ApiModelProperty(value = "通道")
     private Channel channel;
 
     public AliPayCSBDTO() {
     }
 
-    public AliPayCSBDTO(Orders orders, Channel channel, String notifyUrl) {
+    public AliPayCSBDTO(Orders orders, Channel channel) {
         this.service = "alipay.acquire.precreate";
         this.partner = channel.getChannelMerchantId();
         this.md5KeyStr = channel.getMd5KeyStr();
         this._input_charset = "UTF-8";
-        this.notify_url = notifyUrl;
+        this.notify_url = channel.getNotifyServerUrl();
         this.timestamp = DateToolUtils.getReqDateG(new Date());
         this.terminal_timestamp = DateToolUtils.getReqDateG(new Date());
         this.out_trade_no = orders.getId();
@@ -147,8 +145,7 @@ public class AliPayCSBDTO {
         this.store_name = "zhstore";
         this.terminal_id = null;
         this.sys_service_provider_id = null;
-        this.institution_order_id = orders.getMerchantOrderId();
-        this.reqIp = orders.getReqIp();
+        this.orders = orders;
         this.channel = channel;
     }
 }

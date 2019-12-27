@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.feign.base.impl;
 
+import com.asianwallets.common.dto.ReviewSettleDTO;
 import com.asianwallets.common.dto.SettleOrderDTO;
 import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.exception.BusinessException;
@@ -52,5 +53,13 @@ public class SettleOrderFeignImpl implements SettleOrderFeign {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
-
+    /**
+     * 结算审核
+     * @param reviewSettleDTO
+     * @return
+     */
+    @Override
+    public BaseResponse reviewSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

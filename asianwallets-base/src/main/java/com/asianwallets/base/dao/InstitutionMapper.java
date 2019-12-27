@@ -62,4 +62,11 @@ public interface InstitutionMapper extends  BaseMapper<Institution> {
      * @Descripate 导出机构
      **/
     List<InstitutionExportVO> exportInstitution(InstitutionDTO institutionDTO);
+
+    /**
+     * 根据机构编号获取机构信息
+     * @param code
+     * @return
+     */
+    Institution selectByCode(@Param("code") String code);
 }
