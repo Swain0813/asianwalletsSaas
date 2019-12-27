@@ -106,5 +106,18 @@ public interface SysUserService {
      */
     void openAccountEmail(InstitutionDTO institutionDTO);
 
+    /**
+     * 校验密码
+     * @param oldPassword
+     * @param password
+     * @return
+     */
+    Boolean checkPassword(String oldPassword, String password);
 
+    /**
+     *解密密码
+     * @param password
+     * @return
+     */
+    String decryptPassword(String password);
 }

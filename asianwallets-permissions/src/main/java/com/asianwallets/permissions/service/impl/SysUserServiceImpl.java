@@ -1,18 +1,18 @@
 package com.asianwallets.permissions.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.InstitutionDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResPermissions;
 import com.asianwallets.common.response.ResRole;
-import com.asianwallets.common.utils.ArrayUtil;
-import com.asianwallets.common.utils.DateToolUtils;
-import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.SysMenuVO;
 import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
@@ -23,7 +23,6 @@ import com.asianwallets.permissions.dto.SysUserRoleDto;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
 import com.asianwallets.permissions.feign.message.MessageFeign;
 import com.asianwallets.permissions.service.SysUserService;
-import com.asianwallets.common.utils.BCryptUtils;
 import com.asianwallets.permissions.vo.SysUserDetailVO;
 import com.asianwallets.permissions.vo.SysUserSecVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,6 +67,12 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private RedisService redisService;
+
+    @Autowired
+    private AttestationMapper attestationMapper;
 
     /**
      * 创建用户
@@ -446,4 +451,39 @@ public class SysUserServiceImpl implements SysUserService {
         }
         log.info("=========【开户发送邮件】==========【END】");
     }
+
+    /**
+     * 校验密码
+     * @param oldPassword
+     * @param password
+     * @return
+     */
+    @Override
+    public Boolean checkPassword(String oldPassword, String password) {
+        return BCryptUtils.matches(oldPassword, password);
+    }
+
+    /**
+     * 解密密码
+     * @param password
+     * @return
+     */
+    @Override
+    public String decryptPassword(String password) {
+        Attestation attestation = JSON.parseObject(redisService.get(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY), Attestation.class);
+        if (attestation == null) {
+            attestation = attestationMapper.selectPlatformPub(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY);
+            redisService.set(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY, JSON.toJSONString(attestation));
+        }
+        String pw;
+        try {
+            pw = RSAUtils.decryptByPriKey(password, attestation.getPrikey());
+        } catch (Exception e) {
+            pw = password;
+            log.info("---------------【密码解密错误】---------------");
+        }
+        return pw;
+    }
+
+
 }
