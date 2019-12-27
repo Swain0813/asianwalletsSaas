@@ -36,4 +36,13 @@ public interface AccountMapper extends  BaseMapper<Account> {
      **/
     @Select("select count(1) from account where merchant_id = #{merchantId} and currency = #{currency}")
     int getCountByinstitutionIdAndCurry(@Param("merchantId") String merchantId, @Param("currency") String currency);
+
+    /**
+     * 获取账户信息
+     * @param merchantId
+     * @param currency
+     * @return
+     */
+    @Select("select id,account_code as accountCode,merchant_id as merchantId,settle_balance as settleBalance,freeze_balance as freezeBalance,enabled as enabled from account where merchant_id = #{merchantId} and currency = #{currency}")
+    Account getAccount(@Param("merchantId") String merchantId, @Param("currency") String currency);
 }

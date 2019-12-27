@@ -51,6 +51,14 @@
         <result column="enabled" property="enabled"/>
     </resultMap>
 
+    <sql id="Base_Column_List">
+      id,institution_logo,cn_name,en_name,country_type,country,company_regist_number,company_validity,legal_passport_code,legal_passport_validity,
+    country_code,institution_adress,legal_passport_img,institution_contract,company_articles,develop_sales,business_certificate,business_certificate,
+    legal_name,business_category,business_license,industry_category,institution_postal_code,institution_email,institution_web_url,contact_address,contact_people,
+    contact_phone,audit_status,support_refund_state,refund_method,dcc,asyn_notice,create_time,update_time,creator,modifier,remark,enabled,ext1,ext2,ext3,ext4,
+    ext5,ext6,ext7
+    </sql>
+
     <select id="pageFindInstitution" resultMap="BaseResultMap">
         select
         i.id,i.cn_name,i.en_name,i.country_type,co.country_name as
@@ -233,6 +241,13 @@
             </if>
         </where>
         order by i.create_time desc
+    </select>
+
+    <select id="selectByCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from institution
+        WHERE id=#{code}
     </select>
 
 </mapper>
