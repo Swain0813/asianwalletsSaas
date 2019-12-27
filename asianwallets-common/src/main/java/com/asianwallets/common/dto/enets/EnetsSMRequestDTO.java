@@ -143,30 +143,43 @@ public class EnetsSMRequestDTO {
     public EnetsSMRequestDTO() {
     }
 
-    public EnetsSMRequestDTO(Orders orders, Channel channel, String callBackUrl) {
+    public EnetsSMRequestDTO(Orders orders, Channel channel) {
+        this.tid = "37066801";
+        this.mid = channel.getChannelMerchantId();
         this.retrievalRef = UUIDHelper.getRandomString(12);
         this.mti = "0200";
-        //this.searchId = searchId;
         this.processCode = "990000";
-
         long transactionAmountCents = orders.getTradeAmount().multiply(new BigDecimal(100)).longValue();
         this.targetAmount = String.format("%012d", transactionAmountCents);
-
         this.stan = IDS.randomNumber(6);
-
         this.transactionTime = DateUtil.format(orders.getMerchantOrderTime(), "HHmmss"); //转换为字符串格式
         this.transactionDate = DateUtil.format(orders.getMerchantOrderTime(), "MMdd"); //转换为字符串格式
         this.entryMode = "000";
         this.conditionCode = "85";
         this.institutionCode = "20000000001";
+        JsonNpxData npxData = new JsonNpxData();
+        npxData.setPosId(tid);//tid
+        npxData.setSourceAmount(String.format("%08d", transactionAmountCents));
+        npxData.setSourceCurrency(orders.getTradeCurrency());
+        this.npxData = npxData;
+        ArrayList<JsonCommunicationData> communicationDatas = new ArrayList<>();
+        JsonCommunicationData communicationData = new JsonCommunicationData();
+        communicationData.setCommunicationCategory("URL");
+        communicationData.setCommunicationDestination(channel.getNotifyServerUrl());
+        communicationData.setCommunicationType("https_proxy");
+        Map<String, String> addon = new HashMap<>();
+        //external_API_keyID
+        addon.put("external_API_keyID", "8bc63cde-2647-4a78-ac75-d5f534b56047");
+        communicationDatas.add(communicationData);
+        this.communicationData = communicationDatas;
+        this.getQRCode = "Y";
+        //this.searchId = searchId;
         //this.cardSequenceNumber = cardSequenceNumber;
         //this.track2Data = track2Data;
         //this.iccData = iccData;
         //this.pin = pin;
         //this.responseCode = responseCode;
         //this.approvalCode = approvalCode;
-        this.tid = "37066801";
-        this.mid = channel.getChannelMerchantId();
         //this.payDetails = payDetails;
         //this.sofUri = sofUri;
         //this.userData = userData;
@@ -178,29 +191,10 @@ public class EnetsSMRequestDTO {
         //this.acceptorName = acceptorName;
         //this.loyaltyData = loyaltyData;
         //this.invoiceRef = invoiceRef;
-
-        JsonNpxData npxData = new JsonNpxData();
-        npxData.setPosId(tid);//tid
-        npxData.setSourceAmount(String.format("%08d", transactionAmountCents));
-        npxData.setSourceCurrency(orders.getTradeCurrency());
-        this.npxData = npxData;
-
         //this.callbackUrl = callbackUrl;
         //this.cvv = cvv;
         //this.searchCount = searchCount;
-
-        ArrayList<JsonCommunicationData> communicationDatas = new ArrayList<>();
-        JsonCommunicationData communicationData = new JsonCommunicationData();
-        communicationData.setCommunicationCategory("URL");
-        communicationData.setCommunicationDestination(callBackUrl);
-        communicationData.setCommunicationType("https_proxy");
-        Map<String, String> addon = new HashMap<>();
-        addon.put("external_API_keyID", "8bc63cde-2647-4a78-ac75-d5f534b56047");//external_API_keyID
-        communicationDatas.add(communicationData);
-        this.communicationData = communicationDatas;
-
         //this.transactions = transactions;
-        this.getQRCode = "Y";
         //this.qRCode = qRCode;
     }
 
@@ -213,25 +207,18 @@ public class EnetsSMRequestDTO {
         this.mti = "0200";
         this.processCode = "201000";
         this.tid = "37066801";
-
         long transactionAmountCents = orderRefund.getTradeAmount().multiply(new BigDecimal(100)).longValue();
         this.targetAmount = String.format("%012d", transactionAmountCents);
-
         this.stan = channelsOrder.getRemark2();
-
         this.transactionTime = DateUtil.format(new Date(), "HHmmss");
         this.transactionDate = DateUtil.format(new Date(), "MMdd");
         this.entryMode = "012";
         this.conditionCode = "85";
         this.institutionCode = "20000000001";
-
         this.retrievalRef = channelsOrder.getRemark1();
-
         this.mid = channel.getChannelMerchantId();
         this.tid = "37066801";
-
         this.searchId = channelsOrder.getRemark3();
-
         JsonNpxData npxData = new JsonNpxData();
         npxData.setPosId(tid);
         npxData.setTxn(channelsOrder.getRemark3());

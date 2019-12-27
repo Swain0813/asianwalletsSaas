@@ -20,6 +20,6 @@ public interface EnetsService {
      * @Date 2019/5/28
      * @Descripate eNets线下收单接口
      **/
-    BaseResponse NPSQRCodePay(EnetsOffLineRequestDTO enetsOffLineRequestDTO);
+    BaseResponse eNetsPosCSBPay(EnetsOffLineRequestDTO enetsOffLineRequestDTO);
 
 }

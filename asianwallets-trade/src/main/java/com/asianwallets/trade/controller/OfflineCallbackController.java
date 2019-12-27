@@ -2,19 +2,14 @@ package com.asianwallets.trade.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
-import com.asianwallets.common.constant.TradeConstant;
-import com.asianwallets.common.dto.megapay.NextPosCallbackDTO;
-import com.asianwallets.common.entity.Channel;
-import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.exception.BusinessException;
-import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
+import com.asianwallets.trade.channels.enets.EnetsService;
 import com.asianwallets.trade.channels.nextpos.NextPosService;
 import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
-import com.asianwallets.trade.service.CommonService;
+import com.asianwallets.trade.dto.EnetsPosCallbackDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +17,6 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,11 +39,14 @@ public class OfflineCallbackController extends BaseController {
     private Ad3Service ad3Service;
 
     @Autowired
+    private EnetsService enetsService;
+
+    @Autowired
     private NextPosService nextPosService;
 
     @ApiOperation(value = "ad3线下服务器回调接口")
-    @PostMapping("/ad3ServerCallback")
-    public String ad3ServerCallback(HttpServletRequest request) {
+    @PostMapping("/ad3CsbServerCallback")
+    public String ad3OfflineCsbServerCallback(HttpServletRequest request) {
         Map<String, String[]> parameterMap = request.getParameterMap();
         if (ArrayUtil.isEmpty(parameterMap)) {
             log.info("=================【AD3线下回调接口信息记录】=================【回调参数记录为空】");
@@ -64,7 +60,7 @@ public class OfflineCallbackController extends BaseController {
         }
         AD3OfflineCallbackDTO ad3OfflineCallbackDTO = JSON.parseObject(JSON.toJSONString(paramMap), AD3OfflineCallbackDTO.class);
         log.info("=================【AD3线下回调接口信息记录】=================【JSON解析后的回调参数记录】 ad3OfflineCallbackDTO:{}", JSON.toJSONString(ad3OfflineCallbackDTO));
-        return ad3Service.ad3ServerCallback(ad3OfflineCallbackDTO);
+        return ad3Service.ad3OfflineCsbServerCallback(ad3OfflineCallbackDTO);
     }
 
     @ApiOperation(value = "NextPos回调")
@@ -82,5 +78,34 @@ public class OfflineCallbackController extends BaseController {
             paramMap.put(key, parameterMap.get(key)[0]);
         }
         nextPosService.nextPosCallback(paramMap, response);
+    }
+
+    @ApiOperation(value = "eNetsCSB服务器回调")
+    @PostMapping("/eNetsCsbCallback")
+    public ResponseEntity<Void> eNetsCsbCallback(HttpServletRequest request, HttpServletResponse response) {
+        //用流的方式接收数据
+        StringBuilder jsonResMsg = new StringBuilder();
+        String line = null;
+        BufferedReader reader = null;
+        try {
+            reader = request.getReader();
+            while ((line = reader.readLine()) != null) {
+                jsonResMsg.append(line);
+            }
+        } catch (IOException e) {
+            log.info("================【eNets线下Csb回调】================【读取回调参数异常】", e);
+            return null;
+        }
+        String strResMsg = String.valueOf(jsonResMsg);
+        log.info("================【eNets线下Csb回调】================【回调参数记录】 strResMsg: {}", JSON.toJSONString(strResMsg));
+        JSONObject apiResMsgObj = JSONObject.fromObject(strResMsg);
+        String stan = apiResMsgObj.getString("stan");
+        String retrieval_ref = apiResMsgObj.getString("retrieval_ref");
+        //结算币种
+        String txn_identifier = apiResMsgObj.getString("txn_identifier");
+        String response_code = apiResMsgObj.getString("response_code");
+        EnetsPosCallbackDTO enetsPosCallbackDTO = new EnetsPosCallbackDTO(stan, retrieval_ref, txn_identifier, response_code);
+        log.info("================【eNets线下Csb回调】================【JSON解析后的参数记录】 enetsPosCallbackDTO: {}", JSON.toJSONString(enetsPosCallbackDTO));
+        return enetsService.eNetsCsbCallback(enetsPosCallbackDTO, response);
     }
 }

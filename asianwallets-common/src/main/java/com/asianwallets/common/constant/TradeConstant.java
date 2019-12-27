@@ -201,6 +201,7 @@ public class TradeConstant {
     public static final String MEGAPAY = "MEGAPAY";
     public static final String HELP2PAY = "HELP2PAY";
     public static final String NEXTPOS = "NEXTPOS";
+    public static final String ENETS = "ENETS";
 
 
     //--------------发货状态

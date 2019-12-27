@@ -86,9 +86,9 @@ public class SettleOrder extends BaseEntity {
     @Column(name = "fee")
     private BigDecimal fee;
 
-    @ApiModelProperty(value = "结算手续费费率类型")
-    @Column(name = "rate_type")
-    private BigDecimal rateType;
+//    @ApiModelProperty(value = "结算手续费费率类型")
+//    @Column(name = "rate_type")
+//    private BigDecimal rateType;
 
     @ApiModelProperty(value = "结算手续费费率")
     @Column(name = "fee_rate")
