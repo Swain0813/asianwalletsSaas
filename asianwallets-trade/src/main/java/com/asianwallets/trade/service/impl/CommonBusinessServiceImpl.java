@@ -652,6 +652,8 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         //调账订单id
         String reconciliationId = "T" + IDS.uniqueID();
         Reconciliation reconciliation = new Reconciliation();
+        reconciliation.setInstitutionName(orderRefund.getInstitutionName());
+        reconciliation.setInstitutionId(orderRefund.getInstitutionId());
         reconciliation.setOrderId(orderRefund.getOrderId());
         reconciliation.setRefundOrderId(orderRefund.getId());
         reconciliation.setChannelNumber(orderRefund.getChannelNumber());
