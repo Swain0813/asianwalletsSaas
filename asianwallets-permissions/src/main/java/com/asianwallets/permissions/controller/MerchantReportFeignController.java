@@ -39,7 +39,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/merchantReport")
-@Api("商户报备")
+@Api(description = "商户报备接口")
 @Slf4j
 public class MerchantReportFeignController extends BaseController {
 

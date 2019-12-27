@@ -43,7 +43,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/mcc")
-@Api(description = "MCC")
+@Api(description = "MCC管理接口")
 @Slf4j
 public class MccFeignController extends BaseController {
 

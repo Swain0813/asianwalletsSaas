@@ -26,7 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/merchantReport")
-@Api("MerchantReport")
+@Api(description = "商户报备接口")
 public class MerchantReportController extends BaseController {
 
     @Autowired
