@@ -82,12 +82,6 @@ public class SettleServiceImpl implements SettleService {
                 List<TcsStFlow> slist = mermap.get(key);
                 log.info("**************** SettlementForBatch 批次结算 ************** #商户号为:【{}】 的待结算数据 【{}】 条", merchantid, slist.size());
                 if (slist != null && slist.size() > 0) { ////需要将slist中的结算排序一下，入账的资金类型优先结算
-                    //Collections.sort(slist, new Comparator<TcsStFlow>() {
-                    //    @Override
-                    //    public int compare(TcsStFlow o1, TcsStFlow o2) {
-                    //        return o1.getSort().compareTo(o2.getSort());
-                    //    }
-                    //});) > 0) {
 
                     log.info("**************** SettlementForBatch 批次结算 ************** 开始执行商户号为:【{}】，币种为：【{}】的待结算数据", merchantid, sltncurrency);
                     //以商户+交易币种为组进行结算，以组提交事物
