@@ -53,7 +53,7 @@
     bank_name, swift_code, iban, bank_code, bank_currency, bankcode_currency,trade_status, trade_fee, fee_currency,
     rate, settle_amount,total_settle_amount, settle_channel,intermediary_bank_code,intermediary_bank_name,intermediary_bank_address,receiver_address,
     intermediary_bank_account_no,intermediary_bank_country,intermediary_other_code,create_time, update_time, creator, modifier, remark,
-    merchant_id,merchant_name,reverse_rate,rate_type,fee_rate,extend1,extend2,extend3,extend4,fee,settle_type,institution_adress,institution_postal_code
+    merchant_id,merchant_name,reverse_rate,fee_rate,extend1,extend2,extend3,extend4,fee,settle_type,institution_adress,institution_postal_code
     </sql>
 
     <select id="pageSettleOrder" resultMap="BaseResultMap">
