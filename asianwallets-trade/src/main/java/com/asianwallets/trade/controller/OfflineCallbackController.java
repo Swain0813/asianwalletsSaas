@@ -6,8 +6,10 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
+import com.asianwallets.trade.channels.alipay.AlipayService;
 import com.asianwallets.trade.channels.enets.EnetsService;
 import com.asianwallets.trade.channels.nextpos.NextPosService;
+import com.asianwallets.trade.channels.wechat.WechantService;
 import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
 import com.asianwallets.trade.dto.EnetsPosCallbackDTO;
 import io.swagger.annotations.Api;
@@ -43,6 +45,12 @@ public class OfflineCallbackController extends BaseController {
 
     @Autowired
     private NextPosService nextPosService;
+
+    @Autowired
+    private AlipayService alipayService;
+
+    @Autowired
+    private WechantService wechantService;
 
     @ApiOperation(value = "ad3线下服务器回调接口")
     @PostMapping("/ad3CsbServerCallback")
@@ -107,5 +115,17 @@ public class OfflineCallbackController extends BaseController {
         EnetsPosCallbackDTO enetsPosCallbackDTO = new EnetsPosCallbackDTO(stan, retrieval_ref, txn_identifier, response_code);
         log.info("================【eNets线下Csb回调】================【JSON解析后的参数记录】 enetsPosCallbackDTO: {}", JSON.toJSONString(enetsPosCallbackDTO));
         return enetsService.eNetsCsbCallback(enetsPosCallbackDTO, response);
+    }
+
+    @ApiOperation(value = "aliPayCSB扫码服务器回调")
+    @PostMapping("/aliPayCsbServerCallback")
+    public void aliPayCsbServerCallback(HttpServletRequest request, HttpServletResponse response) {
+        alipayService.aliPayCsbServerCallback(request, response);
+    }
+
+    @ApiOperation(value = "wechat扫码服务器回调")
+    @PostMapping("/wechatCsbServerCallback")
+    public void wechatCsbServerCallback(HttpServletRequest request, HttpServletResponse response) {
+        wechantService.wechatCsbServerCallback(request, response);
     }
 }

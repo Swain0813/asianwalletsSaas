@@ -9,7 +9,10 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.ad3.*;
-import com.asianwallets.common.entity.*;
+import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.OrderRefund;
+import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
@@ -39,6 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
@@ -51,6 +55,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
+@Transactional
 @HandlerType(TradeConstant.AD3)
 public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Service {
 
@@ -373,11 +378,12 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         criteria.andEqualTo("tradeStatus", "2");
         criteria.andEqualTo("id", orders.getId());
         if (AD3Constant.AD3_OFFLINE_SUCCESS.equals(ad3BSCScanVO.getRespCode())) {
+            log.info("=================【线下BSC动态扫码】=================【订单已支付成功】 orderId: {}", orders.getId());
             //校验订单信息
             BigDecimal ad3Amount = new BigDecimal(ad3BSCScanVO.getMerorderAmount());
             BigDecimal tradeAmount = orders.getTradeAmount();
             if (ad3Amount.compareTo(tradeAmount) != 0 || !ad3BSCScanVO.getMerorderCurrency().equals(orders.getTradeCurrency())) {
-                log.info("==================【线下BSC】下单信息记录==================【订单信息不匹配】");
+                log.info("==================【线下BSC动态扫码】==================【订单信息不匹配】");
                 throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
             }
             //未发货
@@ -385,9 +391,14 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             //未签收
             orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
             orders.setTradeStatus(TradeConstant.ORDER_PAY_SUCCESS);
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_SUCCESS);
+            } catch (Exception e) {
+                log.error("=================【线下BSC动态扫码】=================【更新通道订单异常】", e);
+            }
             //更新订单信息
             if (ordersMapper.updateByPrimaryKeySelective(orders) == 1) {
-                log.info("=================【线下BSC】下单信息记录=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
+                log.info("=================【线下BSC动态扫码】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
                 //计算支付成功时的通道网关手续费
                 commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
                 //TODO 添加日交易限额与日交易笔数
@@ -397,7 +408,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 try {
                     //账户信息不存在的场合创建对应的账户信息
                     if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
-                        log.info("=================【线下BSC】=================【上报清结算前线下下单创建账户信息】");
+                        log.info("=================【线下BSC动态扫码】=================【上报清结算前线下下单创建账户信息】");
                         commonBusinessService.createAccount(orders);
                     }
                     //TODO 分润
@@ -408,29 +419,35 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     //上报清结算资金变动接口
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
                     if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                        log.info("=================【线下BSC】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                        log.info("=================【线下BSC动态扫码】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
                         RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                         rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                     }
                 } catch (Exception e) {
-                    log.error("=================【线下BSC】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
+                    log.error("=================【线下BSC动态扫码】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                     rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                 }
             } else {
-                log.info("=================【线下BSC】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
+                log.info("=================【线下BSC动态扫码】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
             }
         } else {
-            log.info("==================【线下BSC】下单信息记录==================调用【AD3-BSC接口】接口业务码异常 ad3BSCScanVO:{}", JSON.toJSONString(ad3BSCScanVO));
+            log.info("=================【线下BSC动态扫码】=================【订单已支付失败】 orderId: {}", orders.getId());
             orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
             orders.setRemark5(ad3BSCScanVO.getRespCode());
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_FALID);
+            } catch (Exception e) {
+                log.error("=================【线下BSC动态扫码】=================【更新通道订单异常】", e);
+            }
             //计算支付失败时通道网关手续费
             commonBusinessService.calcCallBackGatewayFeeFailed(orders);
             if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
-                log.info("=================【线下BSC】=================【订单支付失败后更新数据库成功】 orderId: {}", orders.getId());
+                log.info("=================【线下BSC动态扫码】=================【订单支付失败后更新数据库成功】 orderId: {}", orders.getId());
             } else {
-                log.info("=================【线下BSC】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
+                log.info("=================【线下BSC动态扫码】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
             }
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         return null;
     }

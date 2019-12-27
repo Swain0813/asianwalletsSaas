@@ -54,16 +54,10 @@ public class AliPayOfflineBSCDTO {
     private String extend_info;
 
     //以下不是上报通道的参数
-    @ApiModelProperty(value = "机构订单号")
-    private String institutionOrderId;
+    @ApiModelProperty(value = "订单")
+    private Orders orders;
 
-    @ApiModelProperty(value = "md5Key")
-    private String md5KeyStr;
-
-    @ApiModelProperty(value = "请求IP")
-    private String reqIp;
-
-    @ApiModelProperty(value = "channel")
+    @ApiModelProperty(value = "通道")
     private Channel channel;
 
 
@@ -89,9 +83,7 @@ public class AliPayOfflineBSCDTO {
         this.buyer_identity_code = buyer_identity_code;//支付宝条码
         this.identity_code_type = "barcode";
         this.biz_product = "OVERSEAS_MBARCODE_PAY";
-        this.institutionOrderId = orders.getMerchantOrderId();
-        this.md5KeyStr = channel.getMd5KeyStr();
-        this.reqIp = orders.getReqIp();
+        this.orders = orders;
         this.channel = channel;
     }
 }
