@@ -180,7 +180,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     mab.setIncome(-1 * (stf.getTxnamount() - stf.getFee() + stf.getRefundOrderFee()));
                     mab.setOutcome(Double.parseDouble("0"));
                     mab.setReferenceflow(stf.getRefcnceFlow());
-                    mab.setTradetype(stf.getTradetype());
+                    mab.setTradetype("FZ");//FZ:冻结
                     mab.setTxnamount(-1 * stf.getTxnamount());
                     mab.setType(3);//冻结户
                     //网关状态手续费
@@ -398,7 +398,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 mab_fr.setTxnamount(-1 * st.getTxnamount() + st.getFee() - st.getRefundOrderFee());
                 mab_fr.setSltamount(-1 * st.getTxnamount() + st.getFee() - st.getRefundOrderFee());
                 mab_fr.setReferenceflow(st.getRefcnceFlow());
-                mab_fr.setTradetype(st.getTradetype());
+                mab_fr.setTradetype("TW");//TW:解冻
                 mab_fr.setType(3);// type 3 冻结账户
                 mab_fr.setRemark("解冻资金" + "/" + st.getRemark());
                 mab_fr.setRefundOrderFee(Double.parseDouble("0"));
