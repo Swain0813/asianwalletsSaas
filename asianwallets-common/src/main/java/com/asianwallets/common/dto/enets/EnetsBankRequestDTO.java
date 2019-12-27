@@ -42,11 +42,11 @@ public class EnetsBankRequestDTO {
     public EnetsBankRequestDTO() {
     }
 
-    public EnetsBankRequestDTO(String txnReq, String md5KeyStr, String institutionOrderId, String sign, Channel channel) {
+    public EnetsBankRequestDTO(String txnReq, String institutionOrderId, String sign, Channel channel) {
         this.keyId = "524b1a17-3dfd-431b-b4cf-c20d86e07366";
         this.hmac = sign;
         this.txnReq = txnReq;
-        this.md5KeyStr = md5KeyStr;
+        this.md5KeyStr = channel.getMd5KeyStr();
         this.institutionOrderId = institutionOrderId;
         this.channel = channel;
     }

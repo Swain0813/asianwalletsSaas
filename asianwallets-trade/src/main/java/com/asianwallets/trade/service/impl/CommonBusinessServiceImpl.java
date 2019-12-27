@@ -35,9 +35,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 /**
@@ -901,6 +904,58 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             rabbitMQSender.send(AD3MQConstant.E_MQ_AW_CALLBACK_URL_FAIL, JSON.toJSONString(rabbitMassage));
         }
     }
+
+    /**
+     * 请求用户的浏览器返回地址
+     *
+     * @param orders
+     * @param response
+     */
+    @Override
+    public void replyJumpUrl(Orders orders, HttpServletResponse response) {
+        log.info("----------【跳转jumpUrl地址】开始跳转---------- BrowserUrl:{}", orders.getBrowserUrl());
+        if (StringUtils.isEmpty(orders.getBrowserUrl())) {
+            log.info("---------【跳转jumpUrl地址】商户的jumpUrl为空----------- 订单Id:{}", JSON.toJSON(orders.getId()));
+            throw new BusinessException(EResultEnum.CALLBACK_ADDRESS_IS_NULL.getCode());
+        }
+        OnlineCallbackVO onlineCallbackVO = new OnlineCallbackVO(orders);
+        HashMap<String, Object> map = BeanToMapUtil.beanToMap(onlineCallbackVO);
+        StringBuilder sb = new StringBuilder();
+        if (checkUrl(orders.getBrowserUrl())) {
+            sb.append("http://");
+        }
+        sb.append(orders.getBrowserUrl().concat("?"));
+        Set<String> key = map.keySet();
+        int i = 1;
+        for (String value : key) {
+            i++;
+            sb.append(value).append("=").append(map.get(value));
+            if (key.size() >= i) {
+                sb.append("&");
+            }
+        }
+        String url = sb.toString();
+        try {
+            response.sendRedirect(url);
+            log.info("----------【跳转jumpUrl地址】完成跳转---------- ");
+        } catch (IOException e) {
+            log.info("--------------【跳转jumpUrl失败】--------------");
+        }
+    }
+
+    /**
+     * 检查URL
+     *
+     * @param str
+     * @return boolean
+     */
+    private boolean checkUrl(String str) {
+        String regex = "^((https|http)?:\\/\\/)[^\\s]+";
+        if (!StringUtils.isEmpty(str) && !Pattern.matches(regex, str)) {
+            return true;
+        } else return !StringUtils.isEmpty(str) && !Pattern.matches(regex, str);
+    }
+
 
     /**
      * 支付成功发送邮件给付款人

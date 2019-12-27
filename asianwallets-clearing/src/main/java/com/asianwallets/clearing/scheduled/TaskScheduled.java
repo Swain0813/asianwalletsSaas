@@ -3,9 +3,7 @@ package com.asianwallets.clearing.scheduled;
 import com.asianwallets.clearing.constant.Const;
 import com.asianwallets.clearing.service.ClearService;
 import com.asianwallets.clearing.service.SettleService;
-import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
-import com.asianwallets.common.response.EResultEnum;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +72,7 @@ public class TaskScheduled {
      * @Descripate 批次结算定时任务入口
      **/
     //@Scheduled(cron = "0 0/2 * * * ?")//测试用
-    @Scheduled(cron = "0 0/11 * * * ?")//生产环境配置
+    @Scheduled(cron = "0 0/10 * * * ?")//生产环境配置
     public void SettlementForBatch() {
         String key = "SettlementForBatch_CLEARING_KEY";
         log.info("************ CLEARING_KEY *************** key:{}", key);
