@@ -54,6 +54,7 @@
         <result column="remark" property="remark"/>
         <result column="enabled" property="enabled"/>
     </resultMap>
+
     <select id="pageFindMerchant" resultMap="BaseResultMap">
 
         select
@@ -213,4 +214,10 @@
         order by m.create_time desc
     </select>
 
+    <select id="getMerchant" resultMap="BaseResultMap">
+        select
+        id,cn_name,enabled
+        from merchant
+        WHERE id=#{code}
+    </select>
 </mapper>

@@ -210,7 +210,7 @@ public class FundChangeDTO implements Serializable {
         } else if (reconciliation.getAccountType() == 2) {
             this.tradetype = TradeConstant.AA;
         }
-        //机构订单号
+        //商户订单号
         this.merOrderNo = reconciliation.getMerchantOrderId();
         //订单币种
         this.txncurrency = reconciliation.getCurrency();

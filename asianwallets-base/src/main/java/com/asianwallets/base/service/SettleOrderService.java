@@ -1,4 +1,5 @@
 package com.asianwallets.base.service;
+import com.asianwallets.common.dto.ReviewSettleDTO;
 import com.asianwallets.common.dto.SettleOrderDTO;
 import com.asianwallets.common.entity.SettleOrder;
 import com.github.pagehelper.PageInfo;
@@ -32,5 +33,12 @@ public interface SettleOrderService {
      * @return
      */
     List<SettleOrder> exportSettleOrder(SettleOrderDTO settleOrderDTO);
+
+    /**
+     * 结算审核
+     * @param reviewSettleDTO
+     * @return
+     */
+    int reviewSettlement(ReviewSettleDTO reviewSettleDTO);
 
 }
