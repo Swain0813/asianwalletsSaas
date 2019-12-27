@@ -4,10 +4,12 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.dto.ClearSearchDTO;
 import com.asianwallets.common.dto.FrozenMarginInfoDTO;
+import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.AccountListVO;
 import com.asianwallets.common.vo.ClearAccountVO;
+import com.asianwallets.common.vo.FrozenMarginInfoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -62,8 +64,8 @@ public class AccountController extends BaseController {
 
     @ApiOperation(value = "导出结算户余额流水详情")
     @PostMapping("/exportSettleLogs")
-    public BaseResponse exportleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO) {
-        return ResultUtil.success(accountService.exportSettleLogs(accountSearchDTO));
+    public List<TmMerChTvAcctBalance> exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO) {
+        return accountService.exportSettleLogs(accountSearchDTO);
     }
 
     @ApiOperation(value = "查询冻结余额流水详情")
@@ -74,7 +76,7 @@ public class AccountController extends BaseController {
 
     @ApiOperation(value = "导出冻结余额流水详情")
     @PostMapping("/exportFrozenLogs")
-    public BaseResponse exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO accountSearchDTO) {
-        return ResultUtil.success(accountService.exportFrozenLogs(accountSearchDTO));
+    public List<FrozenMarginInfoVO> exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO accountSearchDTO) {
+        return accountService.exportFrozenLogs(accountSearchDTO);
     }
 }

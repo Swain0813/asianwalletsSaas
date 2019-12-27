@@ -1,10 +1,15 @@
 package com.asianwallets.permissions.feign.base.impl;
 
 import com.asianwallets.common.dto.AccountSearchDTO;
+import com.asianwallets.common.dto.ClearSearchDTO;
+import com.asianwallets.common.dto.FrozenMarginInfoDTO;
+import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.AccountListVO;
+import com.asianwallets.common.vo.ClearAccountVO;
+import com.asianwallets.common.vo.FrozenMarginInfoVO;
 import com.asianwallets.permissions.feign.base.AccountFeign;
 import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Component;
@@ -38,4 +43,65 @@ public class AccountFeignImpl implements AccountFeign {
     public List<AccountListVO> exportAccountList(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO){
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    /**
+     * 查询清算户余额流水详情
+     * @param clearSearchDTO
+     * @return
+     */
+    @Override
+    public  BaseResponse pageClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO){
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
+     * 导出清算户余额流水详情
+     * @param clearSearchDTO
+     * @return
+     */
+    @Override
+    public List<ClearAccountVO> exportClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO){
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
+     * 查询结算户余额流水详情
+     * @param accountSearchDTO
+     * @return
+     */
+    @Override
+    public BaseResponse pageSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO){
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
+     * 导出结算户余额流水详情
+     * @param accountSearchDTO
+     * @return
+     */
+    @Override
+    public List<TmMerChTvAcctBalance> exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO){
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
+     * 查询冻结余额流水详情
+     * @param frozenMarginInfoDTO
+     * @return
+     */
+    @Override
+    public BaseResponse pageFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO frozenMarginInfoDTO){
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
+     * 导出冻结余额流水详情
+     * @param accountSearchDTO
+     * @return
+     */
+    @Override
+    public List<FrozenMarginInfoVO> exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO accountSearchDTO){
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
 }
