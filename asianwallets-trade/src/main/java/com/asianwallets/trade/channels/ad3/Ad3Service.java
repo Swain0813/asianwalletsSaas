@@ -78,10 +78,10 @@ public interface Ad3Service {
     String createAD3Signature(Object commonObj, Object businessObj, String token);
 
     /**
-     * ad3线下回调
+     * ad3线下CSB回调
      *
      * @param ad3OfflineCallbackDTO ad3线下回调输入实体
      * @return
      */
-    String ad3ServerCallback(AD3OfflineCallbackDTO ad3OfflineCallbackDTO);
+    String ad3OfflineCsbServerCallback(AD3OfflineCallbackDTO ad3OfflineCallbackDTO);
 }

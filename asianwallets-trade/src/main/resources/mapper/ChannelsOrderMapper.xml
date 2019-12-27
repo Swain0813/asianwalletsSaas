@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.trade.dao.ChannelsOrderMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.ChannelsOrder">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="order_type" property="orderType" jdbcType="TINYINT"/>
+        <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR"/>
+        <result column="channel_number" property="channelNumber" jdbcType="VARCHAR"/>
+        <result column="trade_currency" property="tradeCurrency" jdbcType="VARCHAR"/>
+        <result column="trade_amount" property="tradeAmount" jdbcType="DECIMAL"/>
+        <result column="req_ip" property="reqIp" jdbcType="VARCHAR"/>
+        <result column="payer_name" property="payerName" jdbcType="VARCHAR"/>
+        <result column="payer_account" property="payerAccount" jdbcType="VARCHAR"/>
+        <result column="payer_bank" property="payerBank" jdbcType="VARCHAR"/>
+        <result column="payer_email" property="payerEmail" jdbcType="VARCHAR"/>
+        <result column="browser_url" property="browserUrl" jdbcType="VARCHAR"/>
+        <result column="server_url" property="serverUrl" jdbcType="VARCHAR"/>
+        <result column="payer_phone" property="payerPhone" jdbcType="VARCHAR"/>
+        <result column="trade_status" property="tradeStatus" jdbcType="TINYINT"/>
+        <result column="issuer_id" property="issuerId" jdbcType="VARCHAR"/>
+        <result column="md5_key_str" property="md5KeyStr" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="remark1" property="remark1" jdbcType="VARCHAR"/>
+        <result column="remark2" property="remark2" jdbcType="VARCHAR"/>
+        <result column="remark3" property="remark3" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, merchant_order_id, channel_number, trade_currency, trade_amount, req_ip, payer_name, order_type,
+    payer_account, payer_bank, payer_email, browser_url, server_url, payer_phone, issuer_id,md5_key_str,
+    trade_status, create_time, update_time, creator, modifier, remark, remark1, remark2, 
+    remark3
+    </sql>
+
+    <select id="selectByRemarks" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"></include> FROM channels_order WHERE remark1 = #{remark1} AND remark2 =
+        #{remark2} AND remark3 = #{remark3}
+    </select>
+
+</mapper>
