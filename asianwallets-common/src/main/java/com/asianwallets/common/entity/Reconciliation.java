@@ -40,6 +40,14 @@ public class Reconciliation extends BaseEntity {
 	@Column(name ="reconciliation_type")
 	private Integer reconciliationType;
 
+	@ApiModelProperty(value = "机构编号")
+	@Column(name ="institution_id")
+	private String institutionId;
+
+	@ApiModelProperty(value = "机构名称")
+	@Column(name ="institution_name")
+	private String institutionName;
+
 	@ApiModelProperty(value = "商户编号")
 	@Column(name ="merchant_id")
 	private String merchantId;

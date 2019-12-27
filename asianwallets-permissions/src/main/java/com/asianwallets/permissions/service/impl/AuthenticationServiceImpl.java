@@ -1,5 +1,7 @@
 package com.asianwallets.permissions.service.impl;
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.entity.Attestation;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.exception.BusinessException;
@@ -8,6 +10,7 @@ import com.asianwallets.common.response.*;
 import com.asianwallets.common.vo.SysMenuVO;
 import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
+import com.asianwallets.permissions.dao.AttestationMapper;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
 import com.asianwallets.permissions.feign.base.MerchantFeign;
 import com.asianwallets.permissions.service.AuthenticationService;
@@ -56,6 +59,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private AttestationMapper attestationMapper;
 
     @Value("${security.jwt.token_expire_hour}")
     private int time;
@@ -107,10 +113,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("===========【机构系统登录】==========【机构信息不存在!】");
             throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
         }
-//        if (!institution.getEnabled()) {
-//            log.info("===========【机构系统登录】==========【机构已禁用!】");
-//            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
-//        }
+        //公钥
+        Attestation attestation = JSON.parseObject(redisService.get(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY), Attestation.class);
+        if (attestation == null) {
+            attestation = attestationMapper.selectPlatformPub(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY);
+            redisService.set(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY, JSON.toJSONString(attestation));
+        }
         //拼接用户名
         String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
@@ -126,6 +134,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
         //机构logo
         response.setInstitutionLogo(org.springframework.util.StringUtils.isEmpty(institution.getInstitutionLogo())?null:institution.getInstitutionLogo());
+        //公钥
+        response.setPublicKey(attestation.getPubkey());
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
             redisService.set(response.getToken(), JSON.toJSONString(sysUserVO), time * 60 * 60);
