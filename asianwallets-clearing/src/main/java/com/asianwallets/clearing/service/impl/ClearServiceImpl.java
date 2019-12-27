@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @description: 定时清算服务
@@ -38,7 +39,7 @@ public class ClearServiceImpl implements ClearService {
         try {
             TcsCtFlow st = new TcsCtFlow();
             st.setCTstate(1);
-            List<TcsCtFlow> list = tcsCtFlowMapper.select(st);
+            List<TcsCtFlow> list = tcsCtFlowMapper.select(st).stream().sorted((s1, s2) -> s1.getAddDatetime().compareTo(s2.getAddDatetime())).collect(Collectors.toList());
             if (list == null || list.size() == 0) {
                 log.info("**************** ClearForGroupBatch 批次清算 ************** #没有查询到符合可以清算的数据");
                 return;

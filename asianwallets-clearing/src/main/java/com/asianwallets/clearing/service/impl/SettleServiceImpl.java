@@ -51,12 +51,6 @@ public class SettleServiceImpl implements SettleService {
             // 第二步按照商户id来封装
             TreeMap<String, List<TcsStFlow>> mermap = new TreeMap<String, List<TcsStFlow>>();
             for (TcsStFlow stflow : list) {
-                //先设置结算数据排序sort从小到大优先顺序是从大到小
-                if (stflow != null && stflow.getSltamount() > 0) {
-                    stflow.setSort(1);//1级优先
-                } else if (stflow != null && stflow.getSltamount() <= 0) {
-                    stflow.setSort(2);//2级优先低于1级
-                }
                 //要按照结算币种来结算
                 String key = stflow.getMerchantid() + "_" + stflow.getTxncurrency();
                 if ((!mermap.containsKey(key)) && mermap.get(key) == null) {
@@ -87,14 +81,14 @@ public class SettleServiceImpl implements SettleService {
                 }
                 List<TcsStFlow> slist = mermap.get(key);
                 log.info("**************** SettlementForBatch 批次结算 ************** #商户号为:【{}】 的待结算数据 【{}】 条", merchantid, slist.size());
-                if (slist != null && slist.size() > 0) {
-                    //需要将slist中的结算排序一下，入账的资金类型优先结算
-                    Collections.sort(slist, new Comparator<TcsStFlow>() {
-                        @Override
-                        public int compare(TcsStFlow o1, TcsStFlow o2) {
-                            return o1.getSort().compareTo(o2.getSort());
-                        }
-                    });
+                if (slist != null && slist.size() > 0) { ////需要将slist中的结算排序一下，入账的资金类型优先结算
+                    //Collections.sort(slist, new Comparator<TcsStFlow>() {
+                    //    @Override
+                    //    public int compare(TcsStFlow o1, TcsStFlow o2) {
+                    //        return o1.getSort().compareTo(o2.getSort());
+                    //    }
+                    //});) > 0) {
+
                     log.info("**************** SettlementForBatch 批次结算 ************** 开始执行商户号为:【{}】，币种为：【{}】的待结算数据", merchantid, sltncurrency);
                     //以商户+交易币种为组进行结算，以组提交事物
                     tcsStFlowService.SettlementForMerchantGroup2(merchantid, sltncurrency, slist);
