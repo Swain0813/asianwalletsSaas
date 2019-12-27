@@ -3,12 +3,9 @@ package com.asianwallets.trade.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.response.HttpResponse;
-import com.asianwallets.common.utils.HttpClientUtils;
 import com.asianwallets.common.utils.MD5Util;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.utils.SignTools;
-import com.asianwallets.common.vo.AD3RefundOrderVO;
 import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.TcsSysConstMapper;
@@ -16,7 +13,6 @@ import com.asianwallets.trade.feign.ClearingFeign;
 import com.asianwallets.trade.service.ClearingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -37,12 +33,6 @@ public class ClearingServiceImpl implements ClearingService {
 
     @Autowired
     private TcsSysConstMapper tcsSysConstMapper;
-
-    @Value("${custom.intoAndOutUrl}")
-    private String intoAndOutUrl;
-
-    @Value("${custom.freezeUrl}")
-    private String freezeUrl;
 
     /**
      * 资金变动接口
