@@ -168,6 +168,12 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setRefundOrderFee(refundOrderFee);
         //退还收单手续费 交易币种的收单手续费
         orderRefund.setRefundOrderFeeTrade(refundOrderFeeTrade);
+        if(orderRefund.getFeePayer()==1){
+            orderRefund.setChannelAmount(orderRefund.getTradeAmount());
+        }else{
+            orderRefund.setChannelAmount(orderRefund.getTradeAmount().add(orderRefund.getRefundOrderFeeTrade()));
+        }
+
         log.info("=========================【退款 refundOrder】========================= 是否退还收单手续费:{},退还收单手续费金额(订单):{}," +
                         "退还收单手续费金额(交易):{},退款类型:{}******", channel.getRefundingIsReturnFee(),
                 refundOrderFee, refundOrderFeeTrade, refundDTO.getRefundType());
