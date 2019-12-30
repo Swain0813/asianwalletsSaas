@@ -86,7 +86,7 @@ public class WechatCSBDTO {
         this.body = StringUtils.isEmpty(orders.getProductName()) ? "商品" : orders.getProductName();//产品名称
         this.out_trade_no = orders.getId();
         this.fee_type = orders.getTradeCurrency();
-        String amt = String.valueOf(orders.getTradeAmount());
+        String amt = String.valueOf(orders.getChannelAmount());
         int total_fee = 0;
         if (!StringUtils.isEmpty(amt)) {
             Double amt_d = new Double(amt);

@@ -1,14 +1,17 @@
 package com.asianwallets.trade.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.AD3Constant;
+import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.CashierDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
-import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.response.HttpResponse;
 import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
@@ -16,14 +19,16 @@ import com.asianwallets.common.utils.RSAUtils;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.common.vo.OnlineTradeScanVO;
 import com.asianwallets.common.vo.OnlineTradeVO;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
-import com.asianwallets.trade.channels.help2pay.Help2PayService;
+import com.asianwallets.trade.channels.ad3.Ad3Service;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.MerchantMapper;
 import com.asianwallets.trade.dao.MerchantProductMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
-import com.asianwallets.trade.dto.CalcRateDTO;
-import com.asianwallets.trade.dto.OnlineTradeDTO;
+import com.asianwallets.trade.dto.*;
+import com.asianwallets.trade.rabbitmq.RabbitMQSender;
+import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OnlineGatewayService;
@@ -37,6 +42,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -53,13 +59,16 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     private BankIssuerIdMapper bankIssuerIdMapper;
 
     @Autowired
-    private Help2PayService help2PayService;
+    private RabbitMQSender rabbitMQSender;
 
     @Autowired
     private CommonBusinessService commonBusinessService;
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
+
+    @Autowired
+    private ClearingService clearingService;
 
     @Autowired
     private OrdersMapper ordersMapper;
@@ -74,11 +83,15 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     private MerchantMapper merchantMapper;
 
     @Autowired
-    private RedisService redisService;
+    private Ad3Service ad3Service;
 
     //收银台地址
     @Value("${custom.cashierDeskUrl}")
     private String cashierDeskUrl;
+
+    //收银台地址
+    @Value("${custom.merchantCode}")
+    private String merchantCode;
 
     /**
      * 网关收单
@@ -744,5 +757,155 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             map.put(key, value);
         }
         return JSON.parseObject(JSON.toJSONString(map), CashierDTO.class);
+    }
+
+    /**
+     * 查询订单
+     *
+     * @param onlineCheckOrdersDTO 订单查询实体
+     * @return OnlineCheckOrdersVO
+     */
+    @Override
+    public List<OnlineCheckOrdersVO> checkOrder(OnlineCheckOrdersDTO onlineCheckOrdersDTO) {
+        log.info("==================【线上查询订单】==================【请求参数】 onlineCheckOrdersDTO: {}", JSON.toJSONString(onlineCheckOrdersDTO));
+        //验签
+        if (!commonBusinessService.checkUniversalSign(onlineCheckOrdersDTO)) {
+            log.info("==================【线上查询订单】==================【签名不匹配】");
+            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+        }
+
+        //页码默认为1
+        if (onlineCheckOrdersDTO.getPageNum() == null) {
+            onlineCheckOrdersDTO.setPageNum(1);
+        }
+        //每页默认30
+        if (onlineCheckOrdersDTO.getPageSize() == null) {
+            onlineCheckOrdersDTO.setPageSize(30);
+        }
+        //分页查询订单
+        List<OnlineCheckOrdersVO> onlineCheckOrdersVOList = ordersMapper.onlineCheckOrders(onlineCheckOrdersDTO);
+        log.info("==================【线上查询订单】==================【响应参数】 onlineCheckOrdersVOList: {}", JSON.toJSONString(onlineCheckOrdersVOList));
+        return onlineCheckOrdersVOList;
+    }
+
+    /**
+     * 收银台查询订单状态
+     *
+     * @param onlineOrderQueryDTO
+     * @return
+     */
+    @Override
+    public BaseResponse onlineOrderQuery(OnlineOrderQueryDTO onlineOrderQueryDTO) {
+        log.info("-----------线上通道订单状态查询开始-----------onlineOrderQueryDTO:{}", JSON.toJSON(onlineOrderQueryDTO));
+        Orders orders = ordersMapper.selectByMerchantOrderId(onlineOrderQueryDTO.getOrderNo());
+        BaseResponse response = new BaseResponse();
+        //订单不存在
+        if (orders == null) {
+            log.info("-------------订单不存在------------ad3OnlineOrderQueryVO:{}", JSON.toJSON(onlineOrderQueryDTO));
+            response.setCode(EResultEnum.ORDER_NOT_EXIST.getCode());
+            return response;
+        }
+        //返回结果
+        OnlineQueryOrderVO onlineQueryOrderVO = new OnlineQueryOrderVO();
+        //查询通道
+        Channel channel = commonRedisDataService.getChannelByChannelCode(orders.getChannelCode());
+        if (!orders.getTradeStatus().equals(TradeConstant.ORDER_PAYING)) {
+            onlineQueryOrderVO.setOrderNo(orders.getMerchantOrderId());
+            onlineQueryOrderVO.setTxnstatus(orders.getTradeStatus());
+            response.setData(onlineQueryOrderVO);
+            return response;
+        }
+        //判断通道
+        if (channel.getChannelEnName().equals(TradeConstant.AD3)) {
+            AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO = new AD3OnlineOrderQueryDTO(orders, merchantCode);
+            ad3OnlineOrderQueryDTO.setMerorderDatetime(DateUtil.format(orders.getReportChannelTime(), "yyyyMMddHHmmss"));
+            HttpResponse httpResponse = ad3Service.ad3OnlineOrderQuery(ad3OnlineOrderQueryDTO, null, channel.getChannelSingleSelectUrl());
+            if (!httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
+                log.info("------------------向上游查询订单状态异常------------------OnlineOrderQueryDTO:{},ad3OnlineOrderQueryDTO:{}", JSON.toJSON(onlineOrderQueryDTO), JSON.toJSON(ad3OnlineOrderQueryDTO));
+                throw new BusinessException(EResultEnum.QUERY_ORDER_ERROR.getCode());
+            }
+            AD3OnlineOrderQueryVO ad3OnlineOrderQueryVO = JSON.parseObject(httpResponse.getJsonObject().toJSONString(), AD3OnlineOrderQueryVO.class);
+            if (ad3OnlineOrderQueryVO == null || StringUtils.isEmpty(ad3OnlineOrderQueryVO.getState())) {
+                log.info("---------------上游返回的查询信息为空---------------");
+                response.setCode(EResultEnum.QUERY_ORDER_ERROR.getCode());
+                return response;
+            }
+            orders.setChannelNumber(ad3OnlineOrderQueryVO.getTxnId());//通道流水号
+            //更新时间
+            orders.setUpdateTime(new Date());
+            //通道回调时间
+            orders.setChannelCallbackTime(DateUtil.parse(ad3OnlineOrderQueryVO.getTxnDate(), "yyyyMMddHHmmss"));
+            String status = ad3OnlineOrderQueryVO.getState();
+            Example example = new Example(Orders.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("tradeStatus", "2");
+            criteria.andEqualTo("id", orders.getId());
+            if (AD3Constant.ORDER_SUCCESS.equals(status)) {
+                orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
+                int i = ordersMapper.updateByExampleSelective(orders, example);
+                if (i > 0) {
+                    log.info("=================【线上通道订单状态查询】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
+                    //计算支付成功时的通道网关手续费
+                    commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
+                    //TODO 添加日交易限额与日交易笔数
+                    //commonBusinessService.quota(orders.getMerchantId(), orders.getProductCode(), orders.getTradeAmount());
+                    //支付成功后向用户发送邮件
+                    commonBusinessService.sendEmail(orders);
+                    try {
+                        //账户信息不存在的场合创建对应的账户信息
+                        if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
+                            log.info("=================【线上通道订单状态查询】=================【上报清结算前线下下单创建账户信息】");
+                            commonBusinessService.createAccount(orders);
+                        }
+                        //分润
+                       /* if (!StringUtils.isEmpty(orders.getAgencyCode())) {
+                            rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                        }*/
+                        //更新成功,上报清结算
+                        FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
+                        //上报清结算资金变动接口
+                        BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
+                        if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
+                            //请求成功
+                            FundChangeVO fundChangeVO = (FundChangeVO) fundChangeResponse.getData();
+                            if (!fundChangeVO.getRespCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                                //业务处理失败
+                                log.info("=================【线上通道订单状态查询】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                                RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                                rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                            }
+                        } else {
+                            log.info("=================【线上通道订单状态查询】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                        }
+                    } catch (Exception e) {
+                        log.error("=================【线上通道订单状态查询】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                    }
+                } else {
+                    log.info("=================【线上通道订单状态查询】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
+                }
+            } else if (AD3Constant.ORDER_FAILED.equals(status)) {
+                log.info("=================【线上通道订单状态查询】=================【订单已支付失败】 orderId: {}", orders.getId());
+                orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+                orders.setRemark4(status);
+                //计算支付失败时通道网关手续费
+                commonBusinessService.calcCallBackGatewayFeeFailed(orders);
+                if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                    log.info("=================【线上通道订单状态查询】=================【订单支付失败后更新数据库成功】 orderId: {}", orders.getId());
+                } else {
+                    log.info("=================【线上通道订单状态查询】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
+                }
+            } else {
+                log.info("=================【线上通道订单状态查询】=================【订单为支付中】");
+            }
+        }
+        onlineQueryOrderVO.setOrderNo(orders.getMerchantOrderId());
+        onlineQueryOrderVO.setTxnstatus(orders.getTradeStatus());
+        log.info("--------------返回给收银台参数--------------onlineQueryOrderVO:{}", JSON.toJSONString(onlineQueryOrderVO));
+        response.setData(onlineQueryOrderVO);
+        return response;
     }
 }

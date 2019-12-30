@@ -112,7 +112,7 @@ public class AD3OnlineAcquireDTO {
         this.merOrderNo = orders.getId();
         this.merorderDatetime = DateUtil.format(new Date(), "yyyyMMddHHmmss");
         this.merorderCurrency = orders.getTradeCurrency();
-        this.merorderAmount = String.valueOf(orders.getTradeAmount());
+        this.merorderAmount = String.valueOf(orders.getChannelAmount());
         this.payType = channel.getPayCode();
         this.issuerId = channel.getIssuerId();
         this.receiveUrl = channel.getNotifyServerUrl();

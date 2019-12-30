@@ -1,7 +1,6 @@
 package com.asianwallets.trade.channels.nextpos;
 
 import com.asianwallets.common.dto.RabbitMassage;
-import com.asianwallets.common.dto.megapay.NextPosCallbackDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
@@ -21,6 +20,15 @@ public interface NextPosService {
      */
     BaseResponse offlineCSB(Orders orders, Channel channel);
 
+
+    /**
+     * NextPos线下CSB
+     *
+     * @param orders  订单
+     * @param channel 通道
+     * @return BaseResponse
+     */
+    BaseResponse onlinePay(Orders orders, Channel channel);
 
     /**
      * @return

@@ -5,6 +5,7 @@ import com.asianwallets.common.dto.CashierDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.trade.dto.CalcRateDTO;
+import com.asianwallets.trade.dto.OnlineOrderQueryDTO;
 import com.asianwallets.trade.service.OnlineGatewayService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,6 +42,13 @@ public class CashierTradeController extends BaseController {
     @CrossOrigin
     public BaseResponse calcCashierExchangeRate(@RequestBody @ApiParam @Valid CalcRateDTO calcRateDTO) {
         return onlineGatewayService.calcCashierExchangeRate(calcRateDTO);
+    }
+
+    @ApiOperation(value = "收银台查询订单状态--AD3")
+    @PostMapping("/onlineOrderQuerying")
+    @CrossOrigin
+    public BaseResponse onlineOrderQuerying(@RequestBody @ApiParam @Valid OnlineOrderQueryDTO OnlineOrderQueryDTO) {
+        return onlineGatewayService.onlineOrderQuery(OnlineOrderQueryDTO);
     }
 }
 

@@ -16,6 +16,7 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ComTools;
 import com.asianwallets.common.utils.DateToolUtils;
+import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.enets.EnetsService;
@@ -158,9 +159,22 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
         //请求实体
         EnetsBankRequestDTO enetsBankRequestDTO = new EnetsBankRequestDTO(txnReq, orders.getMerchantOrderId(), sign, channel);
         log.info("----------------- enets网银收单方法 ----------------- enetsBankRequestDTO: {}", JSON.toJSONString(enetsBankRequestDTO));
-        BaseResponse response = channelsFeign.eNetsBankPay(enetsBankRequestDTO);
-        log.info("----------------- enets网银收单方法 返回----------------- baseResponse: {}", JSON.toJSONString(response));
-        return response;
+        BaseResponse channelResponse = channelsFeign.eNetsBankPay(enetsBankRequestDTO);
+        log.info("----------------- enets网银收单方法 返回----------------- baseResponse: {}", JSON.toJSONString(channelResponse));
+        if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+        String responseData = (String) channelResponse.getData();
+        OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
+        if (!StringUtils.isEmpty(responseData)) {
+            //网银
+            onlineTradeVO.setRespCode("T000");
+            onlineTradeVO.setCode_url(responseData);
+            onlineTradeVO.setType(TradeConstant.ONLINE_BANKING);
+            channelResponse.setData(onlineTradeVO);
+            return channelResponse;
+        }
+        return channelResponse;
     }
 
     /**
@@ -232,9 +246,19 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
         EnetsBankRequestDTO enetsBankRequestDTO = new EnetsBankRequestDTO(txnReq, orders.getMerchantOrderId(), sign, channel);
         enetsBankRequestDTO.setKeyId(channel.getMd5KeyStr());
         log.info("----------------- enets线上扫码收单方法 ----------------- enetsBankRequestDTO: {}", JSON.toJSONString(enetsBankRequestDTO));
-        BaseResponse response = channelsFeign.eNetsBankPay(enetsBankRequestDTO);
-        log.info("----------------- enets线上扫码收单方法 返回----------------- baseResponse: {}", JSON.toJSONString(response));
-        return response;
+        BaseResponse channelResponse = channelsFeign.eNetsBankPay(enetsBankRequestDTO);
+        log.info("----------------- enets线上扫码收单方法 返回----------------- baseResponse: {}", JSON.toJSONString(channelResponse));
+        OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
+        String responseData = (String) channelResponse.getData();
+        if (!StringUtils.isEmpty(responseData)) {
+            //网银
+            onlineTradeVO.setRespCode("T000");
+            onlineTradeVO.setCode_url(responseData);
+            onlineTradeVO.setType(TradeConstant.ONLINE_BANKING);
+            channelResponse.setData(onlineTradeVO);
+            return channelResponse;
+        }
+        return channelResponse;
     }
 
     /**
@@ -466,6 +490,11 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
         if ("0".equals(enetsCallbackDTO.getNetsTxnStatus())) {
             log.info("=================【eNets网银服务器回调接口信息记录】=================【订单已支付成功】 orderId:{}", enetsCallbackDTO.getMerchantTxnRef());
             orders.setTradeStatus(TradeConstant.ORDER_PAY_SUCCESS);
+            //未发货
+            orders.setDeliveryStatus(TradeConstant.UNSHIPPED);
+            //未签收
+            orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
+            orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
             //更改channelsOrders状态
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), enetsCallbackDTO.getNetsTxnRef(), TradeConstant.TRADE_SUCCESS);

@@ -78,8 +78,8 @@ public class BSCScanBizContentDTO {
         this.merOrderNo = orders.getId();//订单id
         this.merorderDatetime = DateToolUtils.toString(new Date(), "yyyyMMddHHmmss");//订单时间
         this.merorderCurrency = orders.getTradeCurrency();//交易币种
-        this.merorderAmount = String.valueOf(orders.getTradeAmount());//交易金额
-        this.payAmount = String.valueOf(orders.getTradeAmount());//交易金额
+        this.merorderAmount = String.valueOf(orders.getChannelAmount());//交易金额
+        this.payAmount = String.valueOf(orders.getChannelAmount());//交易金额
         this.payerName = StringUtils.isEmpty(orders.getPayerName()) ? "" : orders.getPayerName();//付款人姓名
         this.businessType = AD3Constant.BUSINESS_OUT;//业务类型,境外
         this.payType = channel.getPayCode();//支付编码

@@ -55,7 +55,7 @@ public class XenditPayRequestDTO {
         this.external_id = orders.getId();
         this.payer_email = orders.getPayerEmail();
         this.description = StringUtils.isEmpty(orders.getProductName()) ? "商品描述" : orders.getProductName();
-        this.amount = orders.getTradeAmount();
+        this.amount = orders.getChannelAmount();
         this.callback_virtual_account_id = channel.getChannelMerchantId();
         this.should_send_email = false;
         this.invoice_duration = null;

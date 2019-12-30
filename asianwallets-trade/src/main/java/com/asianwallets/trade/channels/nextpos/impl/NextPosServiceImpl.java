@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.nextpos.impl;
+
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -99,6 +101,22 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【NextPos-CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
         if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             log.info("==================【线下CSB动态扫码】==================【Channels服务响应结果不正确】");
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setData(channelResponse.getData());
+        return baseResponse;
+    }
+
+    @Override
+    public BaseResponse onlinePay(Orders orders, Channel channel) {
+        //NextPos-CSB接口请求实体
+        NextPosRequestDTO nextPosRequestDTO = new NextPosRequestDTO(orders, channel, channel.getNotifyServerUrl());
+        log.info("==================【线上动态扫码】==================【调用Channels服务】【NextPos-CSB接口请求参数】 nextPosRequestDTO: {}", JSON.toJSONString(nextPosRequestDTO));
+        BaseResponse channelResponse = channelsFeign.nextPosCsb(nextPosRequestDTO);
+        log.info("==================【线上动态扫码】==================【调用Channels服务】【NextPos-CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
+        if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            log.info("==================【线上动态扫码】==================【Channels服务响应结果不正确】");
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         BaseResponse baseResponse = new BaseResponse();

@@ -202,6 +202,7 @@ public class TradeConstant {
     public static final String HELP2PAY = "HELP2PAY";
     public static final String NEXTPOS = "NEXTPOS";
     public static final String ENETS = "ENETS";
+    public static final String NGANLUONG = "NGANLUONG";
 
 
     //--------------发货状态
@@ -250,7 +251,7 @@ public class TradeConstant {
     public static final String END = "\" method=\"POST\"></form></body>" +
             "</html>";
 
-    //--------------AD3收单类型
+    //--------------收单类型
     public static final String SCAN_CODE = "1"; //扫码
     public static final String ONLINE_BANKING = "NETBANK"; //网银
     public static final String CHANNELS = "CHANNELS"; //通道网银系统
@@ -259,4 +260,5 @@ public class TradeConstant {
     public static final String ALIPAY = "ALIPAY"; //ALIPAY线上扫码
     public static final String WECHAT = "WECHAT"; //WECHAT线上扫码
     public static final String CLOUD = "CLOUD"; //云闪付
+    public static final String EGHL = "EGHL"; //云闪付
 }
