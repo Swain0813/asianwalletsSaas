@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/paytype")
-@Api("支付方式")
+@Api(description = "支付方式接口")
 public class PayTypeController extends BaseController {
 
     @Autowired

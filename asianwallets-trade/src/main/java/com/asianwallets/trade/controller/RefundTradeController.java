@@ -1,9 +1,9 @@
 package com.asianwallets.trade.controller;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RefundDTO;
+import com.asianwallets.common.dto.UndoDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
@@ -15,18 +15,15 @@ import com.asianwallets.trade.service.RefundTradeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * @description: 退款
- * @author: YangXu
- * @create: 2019-12-18 11:27
- **/
 @RestController
-@Api(description = "退款接口")
-@RequestMapping("/refund")
+@Api(description = "退款和撤销接口")
+@RequestMapping("/trade")
+@Slf4j
 public class RefundTradeController extends BaseController {
 
     @Autowired
@@ -38,8 +35,9 @@ public class RefundTradeController extends BaseController {
     @Autowired
     private CommonService commonService;
 
+
     @ApiOperation(value = "退款接口")
-    @PostMapping("/refundOrder")
+    @PostMapping("/refund")
     @CrossOrigin
     public BaseResponse refundOrder(RefundDTO refundDTO) {
         //线下判断交易密码
@@ -56,6 +54,15 @@ public class RefundTradeController extends BaseController {
             }
         }
         BaseResponse baseResponse = refundTradeService.refundOrder(refundDTO, this.getReqIp());
+        return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
+    }
+
+
+    @ApiOperation(value = "撤销接口")
+    @PostMapping("/reverse")
+    @CrossOrigin
+    public BaseResponse reverse(UndoDTO undoDTO) {
+        BaseResponse baseResponse = refundTradeService.undo(undoDTO, this.getReqIp());
         return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
     }
 

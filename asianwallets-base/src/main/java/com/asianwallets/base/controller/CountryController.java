@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@Api(description = "国家接口")
 @RequestMapping("/country")
-@Api("国家地区")
 public class CountryController extends BaseController {
 
     @Autowired

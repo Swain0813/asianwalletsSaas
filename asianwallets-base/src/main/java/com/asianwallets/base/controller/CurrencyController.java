@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/currency")
-@Api("币种管理")
+@Api(description = "币种接口")
 public class CurrencyController extends BaseController {
 
     @Autowired

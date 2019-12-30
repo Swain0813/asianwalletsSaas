@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/mcc")
-@Api("mcc管理")
+@Api(description = "mcc管理接口")
 public class MccController extends BaseController {
 
     @Autowired
