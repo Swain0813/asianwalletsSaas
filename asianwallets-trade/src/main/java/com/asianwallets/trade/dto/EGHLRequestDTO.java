@@ -94,8 +94,8 @@ public class EGHLRequestDTO {
         this.Amount = String.valueOf(orders.getTradeAmount());
         this.CurrencyCode = orders.getTradeCurrency();
         this.CustIP = orders.getReqIp();
-        this.CustName = orders.getDraweeName();
-        this.CustEmail = orders.getDraweeEmail();
+        this.CustName = orders.getPayerName();
+        this.CustEmail = orders.getPayerEmail();
         //this.CustPhone = orders.getDraweePhone();
         this.CustPhone = "18688889999";
         this.PageTimeOut = "780";

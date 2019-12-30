@@ -4,7 +4,9 @@ import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
+import com.asianwallets.trade.dto.OnlineCheckOrdersDTO;
 import com.asianwallets.trade.vo.OfflineCheckOrdersVO;
+import com.asianwallets.trade.vo.OnlineCheckOrdersVO;
 import com.asianwallets.trade.vo.PosQueryOrderListVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
@@ -84,4 +86,12 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @return 订单
      */
     PosQueryOrderListVO posQueryOrderDetail(PosQueryOrderListDTO posQueryOrderListDTO);
+
+    /**
+     * 线上查询订单
+     *
+     * @param onlineCheckOrdersDTO 订单查询实体
+     * @return List<OnlineCheckOrdersVO>
+     */
+    List<OnlineCheckOrdersVO> onlineCheckOrders(OnlineCheckOrdersDTO onlineCheckOrdersDTO);
 }

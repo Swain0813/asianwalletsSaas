@@ -1,7 +1,5 @@
 package com.asianwallets.trade.rabbitmq.receive;
 
-import cn.hutool.http.Header;
-import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -11,7 +9,6 @@ import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.megapay.MegaPayQueryDTO;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
@@ -21,7 +18,6 @@ import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.vo.FundChangeVO;
-import com.asianwallets.trade.vo.OnlineCallbackVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +26,6 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
-import java.util.Map;
 
 /**
  * @description: MegaPay-THB通道查询队列1
@@ -195,7 +190,7 @@ public class MegaPayQueryMQReceive {
                     commonBusinessService.replyReturnUrl(orders);
                 }
                 if (!StringUtils.isEmpty(orders.getBrowserUrl())) {
-                    replyBrowserUrl(orders);
+                    commonBusinessService.replyBrowserUrl(orders);
                 }
             } catch (Exception e) {
                 log.info("==============【MegaPay-THB查询队列1】==============【回调商户异常】", e);
@@ -208,28 +203,5 @@ public class MegaPayQueryMQReceive {
         }
     }
 
-    /**
-     * 调用商户浏览器回调接口
-     *
-     * @param orders 订单
-     */
-    public void replyBrowserUrl(Orders orders) {
-        log.info("==============【回调商户浏览器】============== orders:{}", JSON.toJSONString(orders));
-        try {
-            OnlineCallbackVO onlineCallbackVO = new OnlineCallbackVO(orders);
-            Map<String, Object> requestMap = BeanToMapUtil.beanToMap(onlineCallbackVO);
-            log.info("==============【回调商户浏览器】==============【回调参数】 url: {} | requestMap: {}", orders.getBrowserUrl(), JSON.toJSONString(requestMap));
-            cn.hutool.http.HttpResponse execute = HttpRequest.get(orders.getBrowserUrl())
-                    .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
-                    .form(requestMap)
-                    .timeout(20000)
-                    .execute();
-            int status = execute.getStatus();
-            String body = execute.body();
-            log.info("==============【回调商户浏览器】==============【回调结果】 status: {} | body: {}", status, body);
-        } catch (Exception e) {
-            log.info("==============【回调商户浏览器】==============【回调异常】", e);
-        }
-        log.info("==============【回调商户浏览器】==============【回调结束】");
-    }
+
 }

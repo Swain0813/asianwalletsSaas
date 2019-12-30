@@ -45,4 +45,15 @@ public class AD3MQConstant {
     public static final String MQ_MEGAPAY_THB_CHECK_ORDER_KEY2 = "MQ_MEGAPAY_THB_CHECK_ORDER_KEY2";//MegaPay-THB查询死信队列2路由
     public static final String MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE2 = "MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE2";//MegaPay-THB查询死信队列2交换机
 
+    /* ===========================================      NganLuong查询队列1       =============================================== */
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL = "MQ_NGANLUONG_CHECK_ORDER_DL";// NganLuong查询订单状态队列
+    public static final String E_MQ_NGANLUONG_CHECK_ORDER_DL = "E_MQ_NGANLUONG_CHECK_ORDER_DL";//NganLuong查询订单状态队列死信队列
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL_KEY = "MQ_NGANLUONG_CHECK_ORDER_DL_KEY";//NganLuong查询订单状态队列
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE = "MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE";//NganLuong查询订单状态队列
+
+    /* ===========================================      NganLuong查询队列2       =============================================== */
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL2 = "MQ_NGANLUONG_CHECK_ORDER_DL2";// NganLuong查询订单状态队列
+    public static final String E_MQ_NGANLUONG_CHECK_ORDER_DL2 = "E_MQ_NGANLUONG_CHECK_ORDER_DL2";//NganLuong查询订单状态队列死信队列2
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL_KEY2 = "MQ_NGANLUONG_CHECK_ORDER_DL_KEY2";//NganLuong查询订单状态队列2
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE2 = "MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE2";//NganLuong查询订单状态队列2
 }

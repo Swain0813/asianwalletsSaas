@@ -194,6 +194,8 @@ public interface CommonBusinessService {
      */
     void replyReturnUrl(Orders orders);
 
+    public void replyBrowserUrl(Orders orders);
+
     /**
      * 重定向用户jumpUrl
      *

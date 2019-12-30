@@ -98,8 +98,24 @@
         <result column="remark8" property="remark8" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <resultMap id="OnlineCheckOrdersVOMap" type="com.asianwallets.trade.vo.OnlineCheckOrdersVO">
+        <id column="referenceNo" property="referenceNo" jdbcType="VARCHAR"/>
+        <result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchantName" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="orderNo" property="orderNo" jdbcType="VARCHAR"/>
+        <result column="orderTime" property="orderTime" jdbcType="TIMESTAMP"/>
+        <result column="orderAmount" property="orderAmount" jdbcType="DECIMAL"/>
+        <result column="orderCurrency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <result column="tradeType" property="tradeType" jdbcType="TINYINT"/>
+        <result column="txnStatus" property="txnStatus" jdbcType="TINYINT"/>
+        <result column="refundStatus" property="refundStatus" jdbcType="TINYINT"/>
+        <result column="reverseStatus" property="reverseStatus" jdbcType="TINYINT"/>
+        <result column="txnTime" property="txnTime" jdbcType="TIMESTAMP"/>
+        <result column="fee" property="fee" jdbcType="DECIMAL"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
-    id, institution_id, institution_name, merchant_id, merchant_name, second_merchant_name, 
+        id, institution_id, institution_name, merchant_id, merchant_name, second_merchant_name,
     second_merchant_code, agent_code, agent_name, group_merchant_code, group_merchant_name, 
     trade_type, trade_direction, merchant_order_time, merchant_order_id, order_amount, 
     order_currency, imei, operator_id, order_for_trade_rate, trade_for_order_rate, exchange_rate, 
@@ -289,5 +305,47 @@
                 AND o.merchant_order_id = #{orderNo}
             </if>
         </where>
+    </select>
+
+    <select id="onlineCheckOrders" resultType="com.asianwallets.trade.vo.OnlineCheckOrdersVO">
+        SELECT
+        id as referenceNo,
+        merchant_id as merchantId,
+        merchant_name as merchantName,
+        merchant_order_id as orderNo,
+        merchant_order_time as orderTime,
+        order_amount as orderAmount,
+        order_currency as orderCurrency,
+        trade_type as tradeType,
+        trade_status as txnstatus,
+        refund_status as refundStatus,
+        cancel_status as reverseStatus,
+        channel_callback_time as txnTime,
+        fee as fee
+        FROM orders
+        <where>
+            <if test="referenceNo != null and referenceNo != ''">
+                AND id = #{referenceNo}
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                AND merchant_order_Id = #{orderNo}
+            </if>
+            <if test="merchantId != null and merchantId != ''">
+                AND merchant_Id = #{merchantId}
+            </if>
+            <if test="txnStatus != null">
+                AND trade_status = #{txnStatus}
+            </if>
+            <if test="refundStatus != null">
+                AND refund_status = #{refundStatus}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null  and endDate != ''">
+                AND create_time &lt;= #{endDate}
+            </if>
+        </where>
+        order by create_time desc
     </select>
 </mapper>

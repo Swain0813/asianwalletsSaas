@@ -32,6 +32,7 @@ import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.ReconciliationMapper;
 import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
 import com.asianwallets.trade.dto.AD3OnlineCallbackDTO;
+import com.asianwallets.trade.dto.AD3OnlineOrderQueryDTO;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
@@ -107,6 +108,19 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
 
+
+    /**
+     * 查询
+     *
+     * @param ad3OnlineOrderQueryDTO
+     * @param headerMap
+     * @return
+     */
+    @Override
+    public HttpResponse ad3OnlineOrderQuery(AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO, Map<String, Object> headerMap, String url) {
+        ad3OnlineOrderQueryDTO.setSignMsg(signMsg(ad3OnlineOrderQueryDTO));
+        return HttpClientUtils.reqPost(url, ad3OnlineOrderQueryDTO, headerMap);
+    }
 
     /**
      * AD3线上

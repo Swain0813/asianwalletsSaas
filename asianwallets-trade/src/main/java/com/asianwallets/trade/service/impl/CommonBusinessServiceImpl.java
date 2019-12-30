@@ -913,6 +913,31 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     }
 
     /**
+     * 调用商户浏览器回调接口
+     *
+     * @param orders 订单
+     */
+    public void replyBrowserUrl(Orders orders) {
+        log.info("==============【回调商户浏览器】============== orders:{}", JSON.toJSONString(orders));
+        try {
+            OnlineCallbackVO onlineCallbackVO = new OnlineCallbackVO(orders);
+            Map<String, Object> requestMap = BeanToMapUtil.beanToMap(onlineCallbackVO);
+            log.info("==============【回调商户浏览器】==============【回调参数】 url: {} | requestMap: {}", orders.getBrowserUrl(), JSON.toJSONString(requestMap));
+            cn.hutool.http.HttpResponse execute = HttpRequest.get(orders.getBrowserUrl())
+                    .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
+                    .form(requestMap)
+                    .timeout(20000)
+                    .execute();
+            int status = execute.getStatus();
+            String body = execute.body();
+            log.info("==============【回调商户浏览器】==============【回调结果】 status: {} | body: {}", status, body);
+        } catch (Exception e) {
+            log.info("==============【回调商户浏览器】==============【回调异常】", e);
+        }
+        log.info("==============【回调商户浏览器】==============【回调结束】");
+    }
+
+    /**
      * 请求用户的浏览器返回地址
      *
      * @param orders

@@ -1,14 +1,12 @@
 package com.asianwallets.trade.channels.alipay.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
-import com.asianwallets.common.dto.alipay.AliPayCSBDTO;
-import com.asianwallets.common.dto.alipay.AliPayOfflineBSCDTO;
-import com.asianwallets.common.dto.alipay.AliPayQueryDTO;
-import com.asianwallets.common.dto.alipay.AliPayRefundDTO;
+import com.asianwallets.common.dto.alipay.*;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -37,6 +35,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
@@ -79,6 +78,111 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
 
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
+
+    @Override
+    public BaseResponse onlinePay(Orders orders, Channel channel) {
+        BaseResponse baseResponse = new BaseResponse();
+        AliPayWebDTO aliPayWebDTO = new AliPayWebDTO(orders, channel);
+        log.info("-----------------aliPayWebsite aliPayw网站支付实体-----------------请求实体 aliPayCSBDTO:{}", JSON.toJSONString(aliPayWebDTO));
+        int num = channelsOrderMapper.selectCountById(aliPayWebDTO.getOut_trade_no());
+        ChannelsOrder co;
+        if (num > 0) {
+            co = channelsOrderMapper.selectByPrimaryKey(aliPayWebDTO.getOut_trade_no());
+        } else {
+            co = new ChannelsOrder();
+        }
+        co.setMerchantOrderId(aliPayWebDTO.getInstitution_order_id());
+        co.setTradeCurrency(aliPayWebDTO.getTrans_currency());
+        co.setTradeAmount(new BigDecimal(aliPayWebDTO.getAmt()));
+        co.setReqIp(aliPayWebDTO.getReqIp());
+        //co.setDraweeName(eghlRequestDTO.getCustName());
+        //co.setDraweeEmail(eghlRequestDTO.getCustEmail());
+        co.setBrowserUrl(null);
+        co.setServerUrl(aliPayWebDTO.getNotify_url());
+        //co.setDraweePhone(eghlRequestDTO.getCustPhone());
+        co.setTradeStatus(TradeConstant.TRADE_WAIT);
+        //co.setIssuerId(enetsBankRequestDTO.getTxnReq().getMsg().getIssuingBank());
+        co.setMd5KeyStr(aliPayWebDTO.getMd5KeyStr());
+        co.setId(aliPayWebDTO.getOut_trade_no());
+        co.setOrderType(AD3Constant.TRADE_ORDER);
+        if (num > 0) {
+            co.setUpdateTime(new Date());
+            channelsOrderMapper.updateByPrimaryKeySelective(co);
+        } else {
+            co.setCreateTime(new Date());
+            channelsOrderMapper.insert(co);
+        }
+
+        String total_fee = null;
+        String rmb_fee = null;
+        if (aliPayWebDTO.getCurrency().equals("CNY")) {
+            total_fee = "";
+            rmb_fee = aliPayWebDTO.getAmt();
+        } else {
+            rmb_fee = "";
+            total_fee = aliPayWebDTO.getAmt();
+        }
+
+        Map<String, String> sParaTemp = new HashMap<String, String>();
+        sParaTemp.put("service", aliPayWebDTO.getService());//网站支付接口
+        sParaTemp.put("partner", aliPayWebDTO.getPartner());//境外商户在支付宝的用户ID. 2088开头的16位数字
+        sParaTemp.put("_input_charset", aliPayWebDTO.get_input_charset());//请求数据的编码集
+        sParaTemp.put("notify_url", aliPayWebDTO.getNotify_url());//通知接收URL
+        sParaTemp.put("return_url", aliPayWebDTO.getReturn_url());//交易付款成功之后，返回到商家网站的URL
+        sParaTemp.put("out_trade_no", aliPayWebDTO.getOut_trade_no()); //境外商户交易号（确保在境外商户系统中唯一）
+        sParaTemp.put("subject", aliPayWebDTO.getSubject());//商品标题
+        if (aliPayWebDTO.getCurrency().equals("CNY")) {
+            sParaTemp.put("rmb_fee", aliPayWebDTO.getAmt());
+            sParaTemp.put("total_fee", "");
+        } else {
+            sParaTemp.put("rmb_fee", "");
+            sParaTemp.put("total_fee", aliPayWebDTO.getAmt());
+        }
+        sParaTemp.put("body", aliPayWebDTO.getBody());//商品描述
+        sParaTemp.put("currency", aliPayWebDTO.getCurrency()); //结算币种
+        sParaTemp.put("timeout_rule", aliPayWebDTO.getTimeout_rule()); //有效时间
+        //sParaTemp.put("product_code", product_code); //使用新接口需要加这个支付宝产品code
+        sParaTemp.put("secondary_merchant_id", aliPayWebDTO.getSecondary_merchant_id()); //
+        sParaTemp.put("secondary_merchant_name", aliPayWebDTO.getSecondary_merchant_name()); //
+        sParaTemp.put("secondary_merchant_industry", aliPayWebDTO.getSecondary_merchant_industry()); //有效时间
+        //sParaTemp.put("refer_url", refer_url); //二级商户网址
+        log.info("-----------------aliPayWebsite 调用alipay的参数-----------------" + sParaTemp);
+        Map<String, String> sPara = AlipayCore.buildRequestPara(sParaTemp, aliPayWebDTO.getMd5KeyStr());
+
+
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("<!DOCTYPE html>\n");
+        stringBuffer.append("<html>\n");
+        stringBuffer.append("<head>\n");
+        stringBuffer.append("<title>ASIAN WALLET</title>\n");
+        stringBuffer.append("</head>\n");
+        stringBuffer.append("<body>\n");
+        stringBuffer.append("<form method=\"post\" name=\"SendForm\" action=\"" + channel.getPayUrl() + "\">\n");
+        stringBuffer.append("<input type='hidden' name='service' value='" + aliPayWebDTO.getService() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='partner' value='" + aliPayWebDTO.getPartner() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='_input_charset' value='" + aliPayWebDTO.get_input_charset() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='notify_url' value='" + aliPayWebDTO.getNotify_url() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='return_url' value='" + aliPayWebDTO.getReturn_url() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='out_trade_no' value='" + aliPayWebDTO.getOut_trade_no() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='subject' value='" + aliPayWebDTO.getSubject() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='total_fee' value='" + total_fee + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='rmb_fee' value='" + rmb_fee + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='body' value='" + aliPayWebDTO.getBody() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='currency' value='" + aliPayWebDTO.getCurrency() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='timeout_rule' value='" + aliPayWebDTO.getTimeout_rule() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='secondary_merchant_id' value='" + aliPayWebDTO.getSecondary_merchant_id() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='secondary_merchant_name' value='" + aliPayWebDTO.getSecondary_merchant_name() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='secondary_merchant_industry' value='" + aliPayWebDTO.getSecondary_merchant_industry() + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='sign' value='" + sPara.get("sign") + "'/>\n");
+        stringBuffer.append("<input type='hidden' name='sign_type' value='" + sPara.get("sign_type") + "'/>\n");
+        stringBuffer.append("</form>\n");
+        stringBuffer.append("</body>\n");
+        stringBuffer.append("</html>");
+
+        baseResponse.setData(stringBuffer.toString());
+        log.info("-----------------eNets网银收单接口信息记录-----------------enetsBankRequestDTO:{}", stringBuffer.toString());
+        return baseResponse;
+    }
 
     /**
      * @return

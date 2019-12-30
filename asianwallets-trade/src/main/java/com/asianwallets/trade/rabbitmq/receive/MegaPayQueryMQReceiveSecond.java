@@ -9,7 +9,6 @@ import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.megapay.MegaPayQueryDTO;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.vo.FundChangeVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
@@ -19,7 +18,7 @@ import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
-import com.asianwallets.trade.service.CommonService;
+import com.asianwallets.trade.vo.FundChangeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +42,6 @@ public class MegaPayQueryMQReceiveSecond {
 
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
-
-    @Autowired
-    private CommonService commonService;
 
     @Autowired
     private ClearingService clearingService;
@@ -145,7 +141,7 @@ public class MegaPayQueryMQReceiveSecond {
                         //更新成功,上报清结算
                         FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                         //上报清结算资金变动接口
-                        BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO, null);
+                        BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
                         if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
                             //请求成功
                             FundChangeVO fundChangeVO = (FundChangeVO) fundChangeResponse.getData();
@@ -179,7 +175,7 @@ public class MegaPayQueryMQReceiveSecond {
                     log.info("==============【MegaPay-THB查询队列2】============== 【更新通道订单异常】", e);
                 }
                 //计算支付失败时通道网关手续费
-                commonService.calcCallBackGatewayFeeFailed(orders);
+                commonBusinessService.calcCallBackGatewayFeeFailed(orders);
                 if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
                     log.info("=================【NL查询队列】=================【订单支付失败后更新数据库成功】 orderId: {}", orders.getId());
                 } else {
@@ -193,21 +189,17 @@ public class MegaPayQueryMQReceiveSecond {
             }
             //回调商户
             try {
-                if (!StringUtils.isEmpty(orders.getReturnUrl())) {
-                    commonService.replyReturnUrl(orders);
+                if (!StringUtils.isEmpty(orders.getServerUrl())) {
+                    commonBusinessService.replyReturnUrl(orders);
                 }
-                if (!StringUtils.isEmpty(orders.getJumpUrl())) {
-                    commonService.replyBrowserUrl(orders);
+                if (!StringUtils.isEmpty(orders.getBrowserUrl())) {
+                    commonBusinessService.replyBrowserUrl(orders);
                 }
             } catch (Exception e) {
                 log.info("==============【MegaPay-THB查询队列2】==============【回调商户异常】", e);
             }
         } else {
             log.info("==============【MegaPay-THB查询队列2】============== 【二次查询,订单为交易中】 rabbitMassage : {}", JSON.toJSONString(rabbitMassage));
-            //短信通知
-            messageFeign.sendSimple(developerMobile, "MegaPay-THB查询队列查询预警 E_MQ_MEGAPAY_THB_CHECK_ORDER2: { " + orderId + " }");
-            //邮件通知
-            messageFeign.sendSimpleMail(developerEmail, "MegaPay-THB查询队列查询预警 E_MQ_MEGAPAY_THB_CHECK_ORDER2", "E_MQ_MEGAPAY_THB_CHECK_ORDER2预警: { " + orderId + " }");
         }
     }
 }
