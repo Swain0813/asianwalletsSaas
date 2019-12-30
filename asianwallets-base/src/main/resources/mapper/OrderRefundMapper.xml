@@ -91,6 +91,7 @@
         <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
         <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
         <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="merchant_type" property="merchantType" jdbcType="VARCHAR"/>
         <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR"/>
         <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
         <result column="order_amount" property="orderAmount" jdbcType="DECIMAL"/>
@@ -132,6 +133,7 @@
         merchant_id,
         merchant_name,
         merchant_order_id,
+        merchant_type,
         order_id,
         order_amount,
         order_currency,

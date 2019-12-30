@@ -29,6 +29,9 @@ public class OrdersRefundVO {
     @ApiModelProperty(value = "商户名")
     private String merchantName;
 
+    @ApiModelProperty(value = "商户类型")
+    private String merchantType;
+
     @ApiModelProperty(value = "退款订单号")
     private String id;
 
