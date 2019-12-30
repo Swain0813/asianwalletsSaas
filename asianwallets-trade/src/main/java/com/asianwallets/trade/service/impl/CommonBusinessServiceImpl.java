@@ -674,9 +674,9 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         } else {
             reconciliation.setAmount(orderRefund.getOrderAmount());
         }
-        if (type.equals(TradeConstant.RA)) {
+        if (type.equals(TradeConstant.RA) || type.equals(TradeConstant.RV)) {
             reconciliation.setAccountType(1);
-        } else if (type.equals(TradeConstant.AA)) {
+        } else if (type.equals(TradeConstant.AA) || type.equals(TradeConstant.RA)) {
             reconciliation.setAccountType(2);
         }
         reconciliation.setCurrency(orderRefund.getOrderCurrency());
