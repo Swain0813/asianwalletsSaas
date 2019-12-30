@@ -347,6 +347,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setInstitutionId(institution.getId());
         orders.setInstitutionName(institution.getCnName());
         orders.setMerchantId(merchant.getId());
+        orders.setMerchantType(merchant.getMerchantType());
         orders.setMerchantName(merchant.getCnName());
         orders.setSecondMerchantName(merchant.getCnName());
         orders.setSecondMerchantCode(merchant.getId());
@@ -442,6 +443,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         commonBusinessService.getUrl(onlineTradeDTO.getServerUrl(), orders);
         orders.setMerchantOrderTime(DateToolUtils.getReqDateG((onlineTradeDTO.getOrderTime())));
         orders.setMerchantOrderId(onlineTradeDTO.getOrderNo());
+        orders.setMerchantType(merchant.getMerchantType());
         orders.setOrderAmount(onlineTradeDTO.getOrderAmount());
         orders.setOrderCurrency(onlineTradeDTO.getOrderCurrency());
         orders.setProductName(onlineTradeDTO.getProductName());
