@@ -323,6 +323,9 @@
             <if test="merchantName != null and merchantName != ''">
                 AND o.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
             </if>
+            <if test="merchantType != null and merchantType != ''">
+                AND o.merchant_type = #{merchantType}
+            </if>
             <if test="institutionId != null and institutionId != ''">
                 AND o.institution_id = #{institutionId}
             </if>

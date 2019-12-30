@@ -35,6 +35,9 @@ public class OrdersDTO extends BasePageHelper {
     @ApiModelProperty(value = "商户订单号")
     private String merchantOrderId;
 
+    @ApiModelProperty(value = "商户类型 3-普通商户 4-代理商户 5-集团商户")
+    private String merchantType;
+
     @ApiModelProperty(value = "语言")
     private String language;
 
