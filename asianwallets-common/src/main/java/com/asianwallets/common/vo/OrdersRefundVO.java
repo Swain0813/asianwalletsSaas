@@ -64,6 +64,9 @@ public class OrdersRefundVO {
     @ApiModelProperty(value = "退款类型 - 1：全额退款 2：部分退款")
     private Byte refundType;
 
+    @ApiModelProperty(value = "退款方式 - 1：系统退款 2：人工退款")
+    private Byte refundMode;
+
     @ApiModelProperty(value = "退款状态 导出用")
     private String refundStatusStr;
 
