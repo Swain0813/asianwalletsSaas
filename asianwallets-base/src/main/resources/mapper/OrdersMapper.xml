@@ -17,6 +17,7 @@
         <result column="trade_direction" property="tradeDirection" jdbcType="TINYINT"/>
         <result column="merchant_order_time" property="merchantOrderTime" jdbcType="TIMESTAMP"/>
         <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR"/>
+        <result column="merchant_type" property="merchantType" jdbcType="VARCHAR"/>
         <result column="order_amount" property="orderAmount" jdbcType="DECIMAL"/>
         <result column="order_currency" property="orderCurrency" jdbcType="VARCHAR"/>
         <result column="imei" property="imei" jdbcType="VARCHAR"/>
@@ -103,7 +104,7 @@
     second_merchant_code, agent_code, agent_name, group_merchant_code, group_merchant_name, 
     trade_type, trade_direction, merchant_order_time, merchant_order_id, order_amount, 
     order_currency, imei, operator_id, order_for_trade_rate, trade_for_order_rate, exchange_rate, 
-    exchange_time, exchange_status, product_code, product_name, channel_code, channel_name, 
+    exchange_time, exchange_status, product_code, product_name, channel_code, channel_name, merchant_type,
     trade_currency, trade_amount, trade_status, cancel_status, refund_status, connect_method, 
     settle_status, channel_number, charge_status, charge_time, pay_method, req_ip, channel_amount, 
     report_number, report_channel_time, channel_callback_time, up_channel_fee, float_rate, 
