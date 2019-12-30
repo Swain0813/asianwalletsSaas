@@ -351,6 +351,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setTradeDirection(TradeConstant.TRADE_UPLINE);
         orders.setMerchantOrderTime(DateToolUtils.getReqDateG(offlineTradeDTO.getOrderTime()));
         orders.setMerchantOrderId(offlineTradeDTO.getOrderNo());
+        orders.setMerchantType(merchant.getMerchantType());
         orders.setOrderAmount(offlineTradeDTO.getOrderAmount());
         orders.setOrderCurrency(offlineTradeDTO.getOrderCurrency());
         orders.setTradeCurrency(channel.getCurrency());
@@ -528,7 +529,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      * POS机查询商户产品,币种信息
      *
      * @param posGetMerProDTO POS机查询商户产品信息输入实体
-     * @return POS机查询商户产品,币种信息输出实体集合
+     * @return POS机查询商户产品, 币种信息输出实体集合
      */
     @Override
     public PosMerProCurVO posGetMerPro(PosGetMerProDTO posGetMerProDTO) {
