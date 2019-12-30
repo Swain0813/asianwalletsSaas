@@ -99,6 +99,7 @@
         <result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
         <result column="refund_type" property="refundType" jdbcType="TINYINT"/>
         <result column="refund_mode" property="refundMode" jdbcType="TINYINT"/>
+        <result column="trade_direction" property="tradeDirection" jdbcType="TINYINT"/>
         <result column="trade_currency" property="tradeCurrency" jdbcType="VARCHAR"/>
         <result column="trade_amount" property="tradeAmount" jdbcType="DECIMAL"/>
         <result column="update_time" property="completeTime" jdbcType="TIMESTAMP"/>
@@ -142,6 +143,7 @@
         trade_amount,
         refund_status,
         refund_mode,
+        trade_direction,
         refund_type,
         update_time,
         remark
