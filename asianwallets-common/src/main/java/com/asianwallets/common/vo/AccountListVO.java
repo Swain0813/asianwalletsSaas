@@ -13,6 +13,12 @@ public class AccountListVO{
     //@ApiModelProperty(value = "账户id")
     private String id;
 
+    @ApiModelProperty(value = "机构编号")
+    private String institutionId;
+
+    @ApiModelProperty(value = "机构名称")
+    private String institutionName;
+
     @ApiModelProperty(value = "商户编号")
     private String merchantId;
 

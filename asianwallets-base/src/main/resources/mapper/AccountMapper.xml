@@ -3,7 +3,9 @@
 <mapper namespace="com.asianwallets.base.dao.AccountMapper">
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Account">
-	<result column="id" property="id" />
+		<result column="id" property="id" />
+		<result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+		<result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
 		<result column="merchant_id" property="merchantId" />
 		<result column="merchant_name" property="merchantName" />
 		<result column="merchant_type" property="merchantType" />
@@ -22,12 +24,14 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-        id, merchant_id, merchant_name,account_code, merchant_type,currency, settle_balance, clear_balance,
+        id, institution_id,institution_name,merchant_id, merchant_name,account_code, merchant_type,currency, settle_balance, clear_balance,
     freeze_balance, version,create_time, update_time, creator, modifier, remark, enabled
     </sql>
 
 	<resultMap id="SecondResultMap" type="com.asianwallets.common.vo.AccountListVO">
 		<id column="id" property="id" jdbcType="VARCHAR"/>
+		<result column="institutionId" property="institutionId" jdbcType="VARCHAR"/>
+		<result column="institutionName" property="institutionName" jdbcType="VARCHAR"/>
 		<result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
 		<result column="merchantName" property="merchantName" jdbcType="VARCHAR"/>
 		<result column="merchantType" property="merchantType" jdbcType="VARCHAR"/>
@@ -48,7 +52,7 @@
 
 	<select id="pageFindAccount" resultMap="SecondResultMap">
 		select
-		a.id as id ,a.merchant_name as merchantName,a.merchant_type as merchantType,
+		a.id as id ,a.institution_id as institutionId,a.institution_name as institutionName,a.merchant_name as merchantName,a.merchant_type as merchantType,
 		a.merchant_id as merchantId,a.account_code as accountCode,a.currency as currency,
 		a.settle_balance as settleBalance,a.clear_balance +
 		a.settle_balance -a.freeze_balance as balance,a.freeze_balance as freezeBalance,
@@ -57,6 +61,9 @@
 		s.settle_switch as settle_switch
 		from account a left join settle_control s on a.id = s.account_id
 		<where>
+			<if test="institutionId!=null and institutionId != ''">
+				and a.institution_id=#{institutionId}
+			</if>
 			<if test="merchantId!=null and merchantId != ''">
 				and a.merchant_id=#{merchantId}
 			</if>
