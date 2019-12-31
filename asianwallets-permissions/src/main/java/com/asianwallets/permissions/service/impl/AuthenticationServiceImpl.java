@@ -2,6 +2,7 @@ package com.asianwallets.permissions.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.Attestation;
+import com.asianwallets.common.entity.DeviceBinding;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.exception.BusinessException;
@@ -11,6 +12,7 @@ import com.asianwallets.common.vo.SysMenuVO;
 import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.dao.AttestationMapper;
+import com.asianwallets.permissions.dao.DeviceBindingMapper;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
 import com.asianwallets.permissions.feign.base.MerchantFeign;
 import com.asianwallets.permissions.service.AuthenticationService;
@@ -65,6 +67,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Value("${security.jwt.token_expire_hour}")
     private int time;
+
+    @Autowired
+    private DeviceBindingMapper deviceBindingMapper;
 
     /**
      * 运营系统登录
@@ -250,7 +255,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("===========【Pos机系统登录】==========【机构已禁用!】");
             throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
         }
-        //校验设备信息 TODO
+        //校验商户绑定设备
+        DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(request.getSysId(),request.getImei());
+        if (deviceBinding == null) {
+            log.info("**************Pos机系统登录 设备编号不合法******************merchantId:{},imei:{}",request.getSysId(),request.getImei());
+            //设备编号不合法
+            throw new BusinessException(EResultEnum.DEVICE_CODE_INVALID.getCode());
+        }
         //拼接用户名
         String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);

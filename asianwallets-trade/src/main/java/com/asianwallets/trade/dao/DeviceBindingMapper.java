@@ -12,5 +12,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DeviceBindingMapper extends BaseMapper<DeviceBinding> {
 
+    /**
+     * 根据商户号和设备编号查询设备绑定信息
+     * @param merchantId
+     * @param imei
+     * @return
+     */
     DeviceBinding selectByMerchantIdAndImei(@Param("merchantId") String merchantId, @Param("imei") String imei);
 }
