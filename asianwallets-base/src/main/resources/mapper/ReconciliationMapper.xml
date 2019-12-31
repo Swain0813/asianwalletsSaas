@@ -112,7 +112,7 @@
 
 	<resultMap id="secondResultMap" type="com.asianwallets.common.vo.FrozenMarginInfoVO">
 		<id column="id" property="id" jdbcType="VARCHAR"/>
-		<result column="trade_currency" property="currency" jdbcType="VARCHAR"/>
+		<result column="currency" property="currency" jdbcType="VARCHAR"/>
 		<result column="status" property="status" jdbcType="INTEGER"/>
 		<result column="update_time" property="time" jdbcType="TIMESTAMP"/>
 		<result column="amount" property="amount" jdbcType="DECIMAL"/>
@@ -121,7 +121,7 @@
 
 	<select id="pageFrozenLogs" resultMap="secondResultMap">
         SELECT id,
-               trade_currency,
+			   currency,
                amount,
                status,
                update_time,
