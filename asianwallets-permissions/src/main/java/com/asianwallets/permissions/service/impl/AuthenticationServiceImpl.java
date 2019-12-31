@@ -245,20 +245,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         //校验机构信息
-        BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(request.getSysId());
-        Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
-        if (institution == null) {
-            log.info("===========【Pos机系统登录】==========【机构信息不存在!】");
-            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        BaseResponse baseResponse = merchantFeign.getMerchantInfo(request.getSysId());
+        Merchant merchant = objectMapper.convertValue(baseResponse.getData(), Merchant.class);
+        if (merchant == null) {
+            log.info("===========【Pos机系统登录】==========【商户信息不存在!】");
+            throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
         }
-        if (!institution.getEnabled()) {
-            log.info("===========【Pos机系统登录】==========【机构已禁用!】");
-            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+        if (!merchant.getEnabled()) {
+            log.info("===========【Pos机系统登录】==========【商户已禁用!】");
+            throw new BusinessException(EResultEnum.MERCHANT_IS_DISABLED.getCode());
         }
         //校验商户绑定设备
         DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(request.getSysId(),request.getImei());
         if (deviceBinding == null) {
-            log.info("**************Pos机系统登录 设备编号不合法******************merchantId:{},imei:{}",request.getSysId(),request.getImei());
+            log.info("===========【Pos机系统登录】==========【设备编号不合法!】");
             //设备编号不合法
             throw new BusinessException(EResultEnum.DEVICE_CODE_INVALID.getCode());
         }
