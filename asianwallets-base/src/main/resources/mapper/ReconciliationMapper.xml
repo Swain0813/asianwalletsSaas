@@ -127,9 +127,9 @@
                update_time,
                remark
         from reconciliation
-        where institution_order_id = #{accountId}
+        where merchant_order_id = #{accountId}
           and status in (5, 8)
-          and trade_currency = #{currency}
+          and currency = #{currency}
           and account_type = #{accountType}
         order by create_time desc
     </select>
