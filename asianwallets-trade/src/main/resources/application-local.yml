@@ -83,6 +83,7 @@ custom:
   operatorId: '00'  #操作员ID，字符串
   password: a123456
   tradePwd: a123456
+  ad3ItsUrl: http://119.23.136.80/ITSBoss/v1/
 
   #线上 指定密钥的提供方 1为使用平台提供的密钥 2为使用自己生成的密钥
   merchantSignType: 2
@@ -107,3 +108,5 @@ custom:
   cashierDeskUrl: http://192.168.124.49:8082/checkstandweb/#/main
   #亚洲钱包的支付页面的url
   paySuccessUrl: http://192.168.124.49:8082/checkstandweb/#/Success
+  nganLuong:
+    check_url: https://www.nganluong.vn/checkout.api.nganluong.post.php

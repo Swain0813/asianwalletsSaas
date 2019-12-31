@@ -30,6 +30,9 @@ public class AuthenticationResponse {
     @ApiModelProperty("机构logo")
     private String institutionLogo;
 
+    @ApiModelProperty(value = "是否开通DCC")
+    private Boolean dcc;
+
     @ApiModelProperty("角色集合")
     private List<ResRole> role;
 

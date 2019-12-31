@@ -126,7 +126,7 @@ public class AliPayCSBDTO {
         this.out_trade_no = orders.getId();
         this.subject = orders.getProductName() == null ? "商品" : orders.getProductName();
         this.product_code = "OVERSEAS_MBARCODE_PAY";
-        this.total_fee = orders.getTradeAmount().toString();
+        this.total_fee = orders.getChannelAmount().toString();
         this.seller_id = null;
         this.seller_email = null;
         this.body = null;

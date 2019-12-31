@@ -13,6 +13,13 @@ public interface AlipayService {
 
 
     /**
+     * 支付宝CBAlipayWebsite接口
+     * <p>
+     * 支付宝CBAlipayWebsite接口
+     */
+    BaseResponse onlinePay(Orders orders, Channel channel);
+
+    /**
      * @return
      * @Author YangXu
      * @Date 2019/12/19

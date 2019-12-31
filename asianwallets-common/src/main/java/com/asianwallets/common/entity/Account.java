@@ -14,6 +14,14 @@ import javax.persistence.Table;
 @ApiModel(value = "账户信息表", description = "账户信息表")
 public class Account extends BaseEntity {
 
+	@ApiModelProperty(value = "机构编号")
+	@Column(name = "institution_id")
+	private String institutionId;
+
+	@ApiModelProperty(value = "机构名称")
+	@Column(name = "institution_name")
+	private String institutionName;
+
 	@ApiModelProperty(value = "商户编号")
 	@Column(name ="merchant_id")
 	private String merchantId;

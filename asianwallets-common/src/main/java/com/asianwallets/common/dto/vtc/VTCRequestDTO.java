@@ -58,7 +58,7 @@ public class VTCRequestDTO {
 
     public VTCRequestDTO(Orders orders, Channel channel, String retURL) {
         this.website_id = "876";//网站id
-        this.amount = String.valueOf(orders.getTradeAmount());//订单金额
+        this.amount = String.valueOf(orders.getChannelAmount());//订单金额
         this.receiver_account = channel.getChannelMerchantId();
         this.reference_number = orders.getId();//订单号
         this.currency = orders.getTradeCurrency();//币种

@@ -74,8 +74,8 @@ public class DOKURequestDTO {
     public DOKURequestDTO(Orders orders, Channel channel) {
         this.MALLID = channel.getChannelMerchantId();
         this.CHAINMERCHANT = "NA";
-        this.AMOUNT = String.valueOf(orders.getTradeAmount());
-        this.PURCHASEAMOUNT = String.valueOf(orders.getTradeAmount());
+        this.AMOUNT = String.valueOf(orders.getChannelAmount());
+        this.PURCHASEAMOUNT = String.valueOf(orders.getChannelAmount());
         this.TRANSIDMERCHANT = orders.getId();
         this.PAYMENTTYPE = "SALE";
         this.REQUESTDATETIME = DateToolUtils.getReqDateyyyyMMddHHmmss(new Date());

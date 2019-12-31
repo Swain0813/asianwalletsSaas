@@ -3,6 +3,7 @@ package com.asianwallets.trade.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.ChannelsOrder;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
@@ -37,4 +38,13 @@ public interface ChannelsOrderMapper extends BaseMapper<ChannelsOrder> {
      */
     @Update("update channels_order set remark = #{remark} update_time= NOW() where id = #{orderId} and trade_status = 1")
     int updateRemarkById(@Param("remark") String remark, @Param("status") Byte status);
+
+    /**
+     * 根据orderID查找订单
+     *
+     * @param orderId
+     * @return
+     */
+    @Select("select count(1) from channels_order where id = #{orderId}")
+    int selectCountById(@Param("orderId") String orderId);
 }

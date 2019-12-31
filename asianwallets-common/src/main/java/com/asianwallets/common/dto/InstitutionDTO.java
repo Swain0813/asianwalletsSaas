@@ -5,8 +5,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-
 /**
  * @description:
  * @author: YangXu
@@ -62,7 +60,6 @@ public class InstitutionDTO extends BasePageHelper {
      * 法人证件编号
      */
     @ApiModelProperty(value = "公司证件有效期")
-    @Column(name = "legal_passport_code")
     private String legalPassportCode;
 
     /**
@@ -90,7 +87,6 @@ public class InstitutionDTO extends BasePageHelper {
      * 法人证件照片
      */
     @ApiModelProperty(value = "法人证件照片")
-    @Column(name = "legal_passport_img")
     private String legalPassportImg;
     /**
      * 机构协议

@@ -3,12 +3,25 @@ package com.asianwallets.trade.service;
 import com.asianwallets.common.dto.CashierDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.trade.dto.CalcRateDTO;
+import com.asianwallets.trade.dto.OnlineCheckOrdersDTO;
+import com.asianwallets.trade.dto.OnlineOrderQueryDTO;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
+import com.asianwallets.trade.vo.OnlineCheckOrdersVO;
+
+import java.util.List;
 
 /**
  * 亚洲钱包业务
  */
 public interface OnlineGatewayService {
+
+    /**
+     * 查询订单
+     *
+     * @param onlineCheckOrdersDTO 订单查询实体
+     * @return OnlineCheckOrdersVO
+     */
+    List<OnlineCheckOrdersVO> checkOrder(OnlineCheckOrdersDTO onlineCheckOrdersDTO);
 
     /**
      * 网关收单
@@ -42,4 +55,12 @@ public interface OnlineGatewayService {
      * @return BaseResponse
      */
     BaseResponse cashierGateway(CashierDTO cashierDTO);
+
+    /**
+     * 收银台查询订单状态
+     *
+     * @param onlineOrderQueryDTO
+     * @return
+     */
+    BaseResponse onlineOrderQuery(OnlineOrderQueryDTO onlineOrderQueryDTO);
 }

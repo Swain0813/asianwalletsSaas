@@ -1,16 +1,30 @@
 package com.asianwallets.trade.channels.ad3;
+
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.HttpResponse;
 import com.asianwallets.common.vo.AD3LoginVO;
 import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
 import com.asianwallets.trade.dto.AD3OnlineCallbackDTO;
+import com.asianwallets.trade.dto.AD3OnlineOrderQueryDTO;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 public interface Ad3Service {
+
+    /**
+     * 查询
+     *
+     * @param ad3OnlineOrderQueryDTO
+     * @param headerMap
+     * @param url
+     * @return
+     */
+    HttpResponse ad3OnlineOrderQuery(AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO, Map<String, Object> headerMap, String url);
 
     /**
      * AD3线上
@@ -39,18 +53,18 @@ public interface Ad3Service {
     BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/19
      * @Descripate 撤销接口
-     * @return
      **/
-    BaseResponse cancel(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
+    BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/23
      * @Descripate 退款不上报清结算
-     * @return
      **/
     BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
 

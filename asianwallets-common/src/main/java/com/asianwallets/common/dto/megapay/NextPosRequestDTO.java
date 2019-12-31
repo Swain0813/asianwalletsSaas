@@ -41,7 +41,7 @@ public class NextPosRequestDTO {
         //订单号
         this.einv = orders.getId();
         //标价金额,外币交易的支付金额精确到币种的最小单位,参数值不能带小数点。
-        this.amt = String.valueOf(orders.getTradeAmount());//订单金额
+        this.amt = String.valueOf(orders.getChannelAmount());//订单金额
         this.return_url = retURL;
         this.product = orders.getProductName();
         this.orders = orders;

@@ -29,6 +29,9 @@ public class OrdersRefundVO {
     @ApiModelProperty(value = "商户名")
     private String merchantName;
 
+    @ApiModelProperty(value = "商户类型")
+    private String merchantType;
+
     @ApiModelProperty(value = "退款订单号")
     private String id;
 
@@ -60,6 +63,15 @@ public class OrdersRefundVO {
 
     @ApiModelProperty(value = "退款状态 1:退款中 2:退款成功 3:退款失败 4:系统创建失败")
     private Byte refundStatus;
+
+    @ApiModelProperty(value = "退款类型 - 1：全额退款 2：部分退款")
+    private Byte refundType;
+
+    @ApiModelProperty(value = "退款方式 - 1：系统退款 2：人工退款")
+    private Byte refundMode;
+
+    @ApiModelProperty(value = "交易类型:1-线上 2-线下")
+    private Byte tradeDirection;
 
     @ApiModelProperty(value = "退款状态 导出用")
     private String refundStatusStr;

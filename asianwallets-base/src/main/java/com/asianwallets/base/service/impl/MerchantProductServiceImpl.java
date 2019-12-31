@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.base.dao.*;
 import com.asianwallets.base.job.ProductInfoJob;
+import com.asianwallets.base.service.CommonService;
 import com.asianwallets.base.service.MerchantProductService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.config.AuditorProvider;
@@ -83,6 +84,9 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 
     @Autowired
     private AuditorProvider auditorProvider;
+
+    @Autowired
+    private CommonService commonService;
 
 
     /**
@@ -465,6 +469,8 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     if (accountMapper.getCountByinstitutionIdAndCurry(oldMerchantProduct.getMerchantId(), currency) == 0) {
                         Account account = new Account();
                         account.setAccountCode(IDS.uniqueID().toString());
+                        account.setInstitutionId(commonService.getMerchant(oldMerchantProduct.getMerchantId()).getInstitutionId());
+                        account.setInstitutionName(commonService.getInstitutionInfo(account.getInstitutionId()).getCnName());
                         account.setMerchantId(oldMerchantProduct.getMerchantId());
                         account.setMerchantName(oldMerchantProduct.getMerchantName());
                         account.setMerchantType(merchant.getMerchantType());

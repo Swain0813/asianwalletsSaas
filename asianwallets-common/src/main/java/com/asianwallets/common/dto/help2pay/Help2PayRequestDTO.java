@@ -85,7 +85,7 @@ public class Help2PayRequestDTO {
         this.Reference = orders.getId();
         //金额必须格式化
         DecimalFormat decimalFormat = new DecimalFormat("###0.00");//格式化设置
-        BigDecimal amt = orders.getTradeAmount();//交易金额
+        BigDecimal amt = orders.getChannelAmount();//交易金额
         Amount = decimalFormat.format(amt);
         Note = orders.getRemark();
         this.FrontURI = FrontURI;

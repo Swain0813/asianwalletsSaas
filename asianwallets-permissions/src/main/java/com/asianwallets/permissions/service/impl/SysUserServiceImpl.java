@@ -16,11 +16,15 @@ import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.SysMenuVO;
 import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
-import com.asianwallets.permissions.dao.*;
-import com.asianwallets.permissions.dto.*;
+import com.asianwallets.permissions.dao.AttestationMapper;
+import com.asianwallets.permissions.dao.SysUserMapper;
+import com.asianwallets.permissions.dao.SysUserMenuMapper;
+import com.asianwallets.permissions.dao.SysUserRoleMapper;
 import com.asianwallets.permissions.dto.SysUserDto;
 import com.asianwallets.permissions.dto.SysUserRoleDto;
+import com.asianwallets.permissions.dto.UpdatePasswordDto;
 import com.asianwallets.permissions.feign.base.InstitutionFeign;
+import com.asianwallets.permissions.feign.base.MerchantFeign;
 import com.asianwallets.permissions.feign.message.MessageFeign;
 import com.asianwallets.permissions.service.SysUserService;
 import com.asianwallets.permissions.vo.SysUserDetailVO;
@@ -55,6 +59,9 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
     private InstitutionFeign institutionFeign;
+
+    @Autowired
+    private MerchantFeign merchantFeign;
 
     @Autowired
     private SysUserRoleMapper sysUserRoleMapper;
@@ -194,16 +201,29 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     @Transactional
     public int addSysUserByInstitution(String username, SysUserRoleDto sysUserRoleDto) {
-        //判断机构是否存在
-        BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(sysUserRoleDto.getSysId());
-        Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
-        if (institution == null) {
-            log.info("===========【机构后台新增用户角色,用户权限信息】==========【机构信息不存在!】");
-            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
-        }
-        if (!institution.getEnabled()) {
-            log.info("===========【机构后台新增用户角色,用户权限信息】==========【机构已禁用!】");
-            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+        if (AsianWalletConstant.INSTITUTION.equals(sysUserRoleDto.getPermissionType())) {
+            //判断机构是否存在
+            BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(sysUserRoleDto.getSysId());
+            Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
+            if (institution == null) {
+                log.info("===========【机构后台新增用户角色,用户权限信息】==========【机构信息不存在!】");
+                throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+            }
+            if (!institution.getEnabled()) {
+                log.info("===========【机构后台新增用户角色,用户权限信息】==========【机构已禁用!】");
+                throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+            }
+        } else if (AsianWalletConstant.MERCHANT.equals(sysUserRoleDto.getPermissionType())) {
+            BaseResponse baseResponse = merchantFeign.getMerchantInfo(sysUserRoleDto.getSysId());
+            Merchant merchant = objectMapper.convertValue(baseResponse.getData(), Merchant.class);
+            if (merchant == null) {
+                log.info("===========【商户后台新增用户角色,用户权限信息】==========【商户信息不存在!】");
+                throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+            }
+            if (!merchant.getEnabled()) {
+                log.info("===========【商户后台新增用户角色,用户权限信息】==========【商户已禁用!】");
+                throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+            }
         }
         SysUser dbSysUser = sysUserMapper.getSysUserByUsername(sysUserRoleDto.getUsername() + sysUserRoleDto.getSysId());
         if (dbSysUser != null) {
@@ -229,15 +249,28 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     @Transactional
     public int updateSysUserByInstitution(String username, SysUserRoleDto sysUserRoleDto) {
-        BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(sysUserRoleDto.getSysId());
-        Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
-        if (institution == null) {
-            log.info("===========【机构后台修改用户角色,用户权限信息】==========【机构信息不存在!】");
-            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
-        }
-        if (!institution.getEnabled()) {
-            log.info("===========【机构后台修改用户角色,用户权限信息】==========【机构已禁用!】");
-            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+        if (AsianWalletConstant.INSTITUTION.equals(sysUserRoleDto.getPermissionType())) {
+            BaseResponse baseResponse = institutionFeign.getInstitutionInfoById(sysUserRoleDto.getSysId());
+            Institution institution = objectMapper.convertValue(baseResponse.getData(), Institution.class);
+            if (institution == null) {
+                log.info("===========【机构后台修改用户角色,用户权限信息】==========【机构信息不存在!】");
+                throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+            }
+            if (!institution.getEnabled()) {
+                log.info("===========【机构后台修改用户角色,用户权限信息】==========【机构已禁用!】");
+                throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+            }
+        } else if (AsianWalletConstant.MERCHANT.equals(sysUserRoleDto.getPermissionType())) {
+            BaseResponse baseResponse = merchantFeign.getMerchantInfo(sysUserRoleDto.getSysId());
+            Merchant merchant = objectMapper.convertValue(baseResponse.getData(), Merchant.class);
+            if (merchant == null) {
+                log.info("===========【商户后台修改用户角色,用户权限信息】==========【商户信息不存在!】");
+                throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+            }
+            if (!merchant.getEnabled()) {
+                log.info("===========【商户后台修改用户角色,用户权限信息】==========【商户已禁用!】");
+                throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
+            }
         }
         SysUser dbSysUser = sysUserMapper.getSysUserByUsername(sysUserRoleDto.getUsername() + sysUserRoleDto.getSysId());
         if (dbSysUser == null) {
@@ -454,6 +487,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * 校验密码
+     *
      * @param oldPassword
      * @param password
      * @return
@@ -465,6 +499,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * 解密密码
+     *
      * @param password
      * @return
      */

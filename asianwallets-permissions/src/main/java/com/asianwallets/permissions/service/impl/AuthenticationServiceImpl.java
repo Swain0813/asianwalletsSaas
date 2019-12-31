@@ -136,6 +136,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setInstitutionLogo(org.springframework.util.StringUtils.isEmpty(institution.getInstitutionLogo())?null:institution.getInstitutionLogo());
         //公钥
         response.setPublicKey(attestation.getPubkey());
+        //是否开通dcc
+        response.setDcc(institution.getDcc());
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
             redisService.set(response.getToken(), JSON.toJSONString(sysUserVO), time * 60 * 60);

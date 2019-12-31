@@ -74,6 +74,10 @@ public class Orders extends BaseEntity {
     @Column(name = "merchant_order_id")
     private String merchantOrderId;
 
+    @ApiModelProperty(value = "商户类型 3-普通商户 4-代理商户 5-集团商户")
+    @Column(name = "merchant_type")
+    private String merchantType;
+
     @ApiModelProperty(value = "订单金额")
     @Column(name = "order_amount")
     private BigDecimal orderAmount = BigDecimal.ZERO;

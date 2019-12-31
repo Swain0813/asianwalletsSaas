@@ -2,15 +2,17 @@ package com.asianwallets.trade.controller;
 
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.trade.dto.OnlineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
 import com.asianwallets.trade.service.OnlineGatewayService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @Api(description = "线上交易接口")
@@ -25,6 +27,12 @@ public class OnlineTradeController extends BaseController {
     @CrossOrigin
     public BaseResponse gateway(OnlineTradeDTO onlineTradeDTO) {
         return onlineGatewayService.gateway(onlineTradeDTO);
+    }
+
+    @ApiOperation(value = "线下查询订单列表【对外API】")
+    @PostMapping("checkOrder")
+    public BaseResponse checkOrder(@RequestBody @ApiParam @Valid OnlineCheckOrdersDTO onlineCheckOrdersDTO) {
+        return ResultUtil.success(onlineGatewayService.checkOrder(onlineCheckOrdersDTO));
     }
 }
 
