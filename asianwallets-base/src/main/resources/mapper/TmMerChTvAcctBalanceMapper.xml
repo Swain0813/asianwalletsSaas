@@ -55,7 +55,7 @@
                balance_timestamp,
                remark
         from tm_merchtvacctbalance
-        where merchantid = #{merchantId} and currency = #{currency}
+        where vaccounId = #{accountId}
           and type = 1
     </select>
 
@@ -69,7 +69,7 @@
                balance_timestamp,
                remark
         from tm_merchtvacctbalance
-        where merchantid = #{merchantId} and currency = #{currency}
+        where vaccounId = #{accountId}
           and type = 1  ORDER BY balance_timestamp DESC
     </select>
 
