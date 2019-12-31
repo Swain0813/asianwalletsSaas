@@ -555,7 +555,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setTradeDirection(refundDTO.getTradeDirection());
         //商户请求退款时间(商户所在地)
         orderRefund.setMerchantOrderTime(DateToolUtils.parseDate(refundDTO.getRefundTime(), DateToolUtils.DATE_FORMAT_DATETIME));
-        orderRefund.setOrderAmount(refundDTO.getRefundAmount());//商户请求退款金额
+        orderRefund.setOrderAmount(refundDTO.getRefundAmount().setScale(2, BigDecimal.ROUND_DOWN));//商户请求退款金额
         orderRefund.setOrderCurrency(refundDTO.getRefundCurrency());//客户请求收单币种
         orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);//退款中
         orderRefund.setPayerName(refundDTO.getPayerName());//付款人姓名
