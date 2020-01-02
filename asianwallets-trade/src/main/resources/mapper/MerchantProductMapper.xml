@@ -85,29 +85,25 @@
 
 
     <select id="selectMerPro" resultMap="PosMerProMap">
-        select
-        p.product_code as productCode,
-        p.trans_type as transType,
-        pt.name as payTypeName,
-        p.product_details_logo as productDetailsLogo,
-        p.product_print_logo as productPrintLogo,
-        substring(pt.name, -3) as flag
+        select p.product_code         as productCode,
+               p.trans_type           as transType,
+               pt.name                as payTypeName,
+               p.product_details_logo as productDetailsLogo,
+               p.product_print_logo   as productPrintLogo,
+               substring(pt.name, -3) as flag
         from merchant m,
-        product p,
-        merchant_product mp,
-        pay_type pt
-        where
-        m.id = mp.merchant_id
-        and p.id = mp.product_id
-        and p.pay_type = pt.extend1
-        and m.id = #{merchantId}
-        and p.trade_direction = #{tradeDirection}
-        and pt.language = #{language}
-        and m.enabled= 1
-        and mp.enabled= 1
-        <if test="tradeType !=null">
-            and p.trans_type = #{tradeType}
-        </if>
+             product p,
+             merchant_product mp,
+             pay_type pt
+        where m.id = mp.merchant_id
+          and p.id = mp.product_id
+          and p.pay_type = pt.extend1
+          and m.id = #{merchantId}
+          and p.trade_direction = #{tradeDirection}
+          and pt.language = #{language}
+          and m.enabled = 1
+          and mp.enabled = 1
+          and p.trans_type = 1
     </select>
 
     <resultMap id="PosMerProMap" type="com.asianwallets.trade.vo.PosMerProVO">
