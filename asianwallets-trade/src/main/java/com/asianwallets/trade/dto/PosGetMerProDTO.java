@@ -23,6 +23,10 @@ public class PosGetMerProDTO {
     private String operatorId;
 
     @NotNull(message = "50002")
+    @ApiModelProperty(value = "签名方式 1为RSA 2为MD5")
+    private String signType;
+
+    @NotNull(message = "50002")
     @ApiModelProperty(value = "签名")
     private String sign;
 
