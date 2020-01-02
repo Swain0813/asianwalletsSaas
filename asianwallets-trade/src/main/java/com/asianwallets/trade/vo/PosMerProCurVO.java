@@ -1,6 +1,5 @@
 package com.asianwallets.trade.vo;
 
-import com.asianwallets.common.vo.CurrencyVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,12 +14,12 @@ public class PosMerProCurVO {
     private List<PosCurrencyVO> currencies;
 
     @ApiModelProperty(value = "商户产品信息")
-    private List<PosMerProVO> merProList;
+    private List<PosMerProResultVO> merProList;
 
     public PosMerProCurVO() {
     }
 
-    public PosMerProCurVO(List<PosCurrencyVO> currencies, List<PosMerProVO> merProList) {
+    public PosMerProCurVO(List<PosCurrencyVO> currencies, List<PosMerProResultVO> merProList) {
         this.currencies = currencies;
         this.merProList = merProList;
     }

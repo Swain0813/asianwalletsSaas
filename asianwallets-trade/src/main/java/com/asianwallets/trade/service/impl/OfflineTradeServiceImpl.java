@@ -557,24 +557,64 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             log.info("===================【POS机查询商户产品,币种信息】===================【商户产品不存在】");
             throw new BusinessException(EResultEnum.INSTITUTIONAL_PRODUCTS_DO_NOT_EXIST.getCode());
         }
+        for (PosMerProVO posMerProVO : posMerProVOList) {
+            //截取支付方式名称
+            if (!StringUtils.isEmpty(posMerProVO.getPayTypeName())) {
+                if (posMerProVO.getPayTypeName().contains("-")) {
+                    posMerProVO.setPayTypeName(posMerProVO.getPayTypeName().substring(0, posMerProVO.getPayTypeName().indexOf("-")));
+                } else if (posMerProVO.getPayTypeName().contains("CSB")) {
+                    posMerProVO.setPayTypeName(posMerProVO.getPayTypeName().substring(0, posMerProVO.getPayTypeName().indexOf("C")));
+                } else if (posMerProVO.getPayTypeName().contains("BSC")) {
+                    posMerProVO.setPayTypeName(posMerProVO.getPayTypeName().substring(0, posMerProVO.getPayTypeName().indexOf("B")));
+                }
+            }
+
+        }
+        List<String> flagList = new ArrayList<>();
         //排序机构产品集合
-        LinkedList<PosMerProVO> sortProductList = new LinkedList<>();
-        for (PosMerProVO merProVO : posMerProVOList) {
-            //截取不包含带(-,CSB,BSC)的支付方式名称
-            if (merProVO.getPayTypeName().contains("-")) {
-                merProVO.setPayTypeName(merProVO.getPayTypeName().substring(0, merProVO.getPayTypeName().indexOf("-")));
-            } else if (merProVO.getPayTypeName().contains("CSB")) {
-                merProVO.setPayTypeName(merProVO.getPayTypeName().substring(0, merProVO.getPayTypeName().indexOf("C")));
-            } else if (merProVO.getPayTypeName().contains("BSC")) {
-                merProVO.setPayTypeName(merProVO.getPayTypeName().substring(0, merProVO.getPayTypeName().indexOf("B")));
+        List<PosMerProResultVO> sortProductList = new ArrayList<>();
+        for (int i = 0; i < posMerProVOList.size(); i++) {
+            boolean flagOne = false;
+            for (String flagName : flagList) {
+                if (posMerProVOList.get(i).getPayTypeName().equalsIgnoreCase(flagName)) {
+                    flagOne = true;
+                    break;
+                }
             }
-            //将BSC的产品放在集合前面
-            if ("BSC".equals(merProVO.getFlag())) {
-                sortProductList.addFirst(merProVO);
-            } else {
-                //将CSB的产品放在集合后面
-                sortProductList.addLast(merProVO);
+            if (flagOne) {
+                continue;
             }
+            boolean flagTwo = true;
+            PosMerProResultVO posMerProResultVO = new PosMerProResultVO();
+            posMerProResultVO.setProductDetailsLogo(posMerProVOList.get(i).getProductDetailsLogo());
+            posMerProResultVO.setProductPrintLogo(posMerProVOList.get(i).getProductPrintLogo());
+            posMerProResultVO.setPayTypeName(posMerProVOList.get(i).getPayTypeName());
+            for (int j = i + 1; j < posMerProVOList.size(); j++) {
+                if (posMerProVOList.get(i).getPayTypeName().equalsIgnoreCase(posMerProVOList.get(j).getPayTypeName())) {
+                    if ("BSC".equalsIgnoreCase(posMerProVOList.get(i).getFlag())) {
+                        posMerProResultVO.setBSCProductCode(posMerProVOList.get(i).getProductCode());
+                        posMerProResultVO.setCSBProductCode(posMerProVOList.get(j).getProductCode());
+                    } else {
+                        posMerProResultVO.setBSCProductCode(posMerProVOList.get(j).getProductCode());
+                        posMerProResultVO.setCSBProductCode(posMerProVOList.get(i).getProductCode());
+                    }
+                    posMerProResultVO.setBSC("1");
+                    posMerProResultVO.setCSB("1");
+                    flagList.add(posMerProVOList.get(i).getPayTypeName());
+                    flagTwo = false;
+                    break;
+                }
+            }
+            if (flagTwo) {
+                if ("BSC".equalsIgnoreCase(posMerProVOList.get(i).getFlag())) {
+                    posMerProResultVO.setBSCProductCode(posMerProVOList.get(i).getProductCode());
+                    posMerProResultVO.setBSC("1");
+                } else {
+                    posMerProResultVO.setCSBProductCode(posMerProVOList.get(i).getProductCode());
+                    posMerProResultVO.setCSB("1");
+                }
+            }
+            sortProductList.add(posMerProResultVO);
         }
         return new PosMerProCurVO(currencies, sortProductList);
     }

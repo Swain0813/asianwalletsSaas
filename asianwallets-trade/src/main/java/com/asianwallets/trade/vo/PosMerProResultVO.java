@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Data
 @ApiModel(value = "线下查询产品输出实体", description = "线下查询产品输出实体")
-public class PosMerProVO {
+public class PosMerProResultVO {
 
     @ApiModelProperty(value = "产品编号")
-    private Integer productCode;
+    private Integer CSBProductCode;
 
-    @ApiModelProperty(value = "交易类型")
-    private Byte transType;
+    @ApiModelProperty(value = "产品编号")
+    private Integer BSCProductCode;
 
     @ApiModelProperty(value = "支付方式名称")
     private String payTypeName;
@@ -24,5 +24,8 @@ public class PosMerProVO {
     private String productPrintLogo;
 
     @ApiModelProperty(value = "支付方式标记")
-    private String flag;
+    private String BSC;
+
+    @ApiModelProperty(value = "支付方式标记")
+    private String CSB;
 }
