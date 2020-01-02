@@ -168,10 +168,10 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             throw new BusinessException(EResultEnum.SIGNATURE_CANNOT_BE_EMPTY.getCode());
         }
         Attestation attestation = commonRedisDataService.getAttestationByMerchantId((map.get("merchantId")));
+        map.put("sign", null);
         if (signType.equals(TradeConstant.RSA)) {
             Base64.Decoder decoder = Base64.getDecoder();
             byte[] signMsg = decoder.decode(sign);
-            map.put("sign", null);
             byte[] data = SignTools.getSignStr(map).getBytes();
             try {
                 return RSAUtils.verify(data, signMsg, attestation.getMerPubkey());
