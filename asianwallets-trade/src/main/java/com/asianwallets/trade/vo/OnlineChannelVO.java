@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @ApiModel(value = "通道输出实体", description = "通道输出实体")
 public class OnlineChannelVO {
@@ -40,4 +42,7 @@ public class OnlineChannelVO {
 
     @ApiModelProperty(value = "不同币种的默认值")
     private String defaultValue;
+
+    @ApiModelProperty(value = "银行")
+    private List<BankReleVantVO> bankReleVantVOList;
 }

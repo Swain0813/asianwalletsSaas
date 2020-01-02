@@ -168,7 +168,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         String encrypt = aes.encryptBase64("md5key");
         System.out.println("encrypt = " + encrypt);
 //        return encrypt;
-        String s1 = aes.decryptStrFromBase64(encrypt);
+        String s1 = aes.decryptStrFromBase64("/s117v7ASbaOvn4r6iq7iccYhGAOOnb/bwhZ1EVibsqIvhn2RKmmQi8W2TnzMQX8");
         System.out.println("s1 = " + s1);
     }
 
