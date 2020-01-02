@@ -335,15 +335,15 @@ public class ReconciliationServiceImpl implements ReconciliationService {
         reconciliation.setInstitutionId(institution.getId());
         reconciliation.setInstitutionName(institution.getCnName());
         reconciliation.setCreator(name);
-        //当变动类型为冻结或者解冻时，将accountId放入到merchant_order_id
-        reconciliation.setMerchantId(reconOperDTO.getChangeType() != TradeConstant.TRANSFER ? accountId : null);
+        //当变动类型为冻结或者解冻时
+        reconciliation.setAccountId(reconOperDTO.getChangeType() != TradeConstant.TRANSFER ? accountId : null);
         reconciliation.setCreateTime(new Date());
         reconciliation.setAmount(reconOperDTO.getChangeType() == TradeConstant.THAWING_FUNDS ? reconOperDTO.getAmount().negate() : reconOperDTO.getAmount());
         //资金变动类型 1-调账 2-资金冻结 3-资金解冻
         reconciliation.setChangeType(reconOperDTO.getChangeType());
         //冻结类型 1-冻结 2-预约冻结
         reconciliation.setFreezeType(reconOperDTO.getFreezeType());
-        //入账类型 1-冻结户 2-保证金户
+        //入账类型 1-清算户 2-结算户 3-冻结户
         reconciliation.setAccountType(reconOperDTO.getAccountType());
         reconciliation.setAmount(reconOperDTO.getChangeType() == TradeConstant.THAWING_FUNDS ? reconOperDTO.getAmount().negate() : reconOperDTO.getAmount());
         reconciliation.setCurrency(reconOperDTO.getCurrency());

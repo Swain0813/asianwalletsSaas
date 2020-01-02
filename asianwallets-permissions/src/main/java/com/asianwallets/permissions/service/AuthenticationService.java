@@ -42,11 +42,4 @@ public interface AuthenticationService {
      * @param request 登陆输入实体
      */
     AuthenticationResponse posLogin(AuthenticationRequest request);
-
-    /**
-     * 对外API线下交易登录
-     *
-     * @param request 登陆输入实体
-     */
-    String terminalLogin(AuthenticationRequest request);
 }

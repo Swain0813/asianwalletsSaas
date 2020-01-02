@@ -7,6 +7,7 @@ import com.asianwallets.trade.dto.OnlineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OnlineOrderQueryDTO;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
 import com.asianwallets.trade.vo.OnlineCheckOrdersVO;
+import com.asianwallets.trade.vo.OnlineMerchantVO;
 
 import java.util.List;
 
@@ -63,4 +64,13 @@ public interface OnlineGatewayService {
      * @return
      */
     BaseResponse onlineOrderQuery(OnlineOrderQueryDTO onlineOrderQueryDTO);
+
+    /**
+     * 模拟界面所需信息
+     *
+     * @param merchantId 商户ID
+     * @param language   语言
+     * @return OnlineMerchantVO
+     */
+    OnlineMerchantVO simulation(String merchantId, String language);
 }

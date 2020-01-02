@@ -2,11 +2,11 @@ package com.asianwallets.permissions.feign.base;
 import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.dto.ClearSearchDTO;
 import com.asianwallets.common.dto.FrozenMarginInfoDTO;
-import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.AccountListVO;
 import com.asianwallets.common.vo.ClearAccountVO;
 import com.asianwallets.common.vo.FrozenMarginInfoVO;
+import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
 import com.asianwallets.permissions.feign.base.impl.AccountFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -35,22 +35,22 @@ public interface AccountFeign {
     BaseResponse pageClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO);
 
     @ApiOperation(value = "导出清算户余额流水详情")
-    @PostMapping("/exportClearLogs")
+    @PostMapping("/account/exportClearLogs")
     List<ClearAccountVO> exportClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO);
 
     @ApiOperation(value = "查询结算户余额流水详情")
-    @PostMapping("/pageSettleLogs")
+    @PostMapping("/account/pageSettleLogs")
     BaseResponse pageSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO);
 
     @ApiOperation(value = "导出结算户余额流水详情")
-    @PostMapping("/exportSettleLogs")
-    List<TmMerChTvAcctBalance> exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO);
+    @PostMapping("/account/exportSettleLogs")
+    List<TmMerChTvAcctBalanceVO> exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO);
 
     @ApiOperation(value = "查询冻结余额流水详情")
-    @PostMapping("/pageFrozenLogs")
+    @PostMapping("/account/pageFrozenLogs")
     BaseResponse pageFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO frozenMarginInfoDTO);
 
     @ApiOperation(value = "导出冻结余额流水详情")
-    @PostMapping("/exportFrozenLogs")
+    @PostMapping("/account/exportFrozenLogs")
     List<FrozenMarginInfoVO> exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO accountSearchDTO);
 }

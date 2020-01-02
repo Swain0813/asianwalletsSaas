@@ -348,8 +348,8 @@ public class ExportServiceImpl implements ExportService {
                                 oList2.add("解冻");
                             } else if ((String.valueOf((oMap.get(s))).equals("PM"))) {
                                 oList2.add("付款");
-                            } else if ((String.valueOf((oMap.get(s))).equals("TA"))) {
-                                oList2.add("转账");
+                            } else if ((String.valueOf((oMap.get(s))).equals("NT"))) {
+                                oList2.add("收单");
                             } else if ((String.valueOf((oMap.get(s))).equals("CL"))) {
                                 oList2.add("清算");
                             } else if ((String.valueOf((oMap.get(s))).equals("ST"))) {
@@ -380,7 +380,7 @@ public class ExportServiceImpl implements ExportService {
      * @return
      */
     @Override
-    public ExcelWriter getTmMerChTvAcctBalanceWriter(List<TmMerChTvAcctBalance> list, Class clazz) {
+    public ExcelWriter getTmMerChTvAcctBalanceWriter(List<TmMerChTvAcctBalanceVO> list, Class clazz) {
         ExcelWriter writer = ExcelUtil.getBigWriter();
         Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
         //注释信息
@@ -389,7 +389,7 @@ public class ExportServiceImpl implements ExportService {
         String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
         ArrayList<Object> oList1 = new ArrayList<>();
         LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
-        for (TmMerChTvAcctBalance tmMerChTvAcctBalance : list) {
+        for (TmMerChTvAcctBalanceVO tmMerChTvAcctBalance : list) {
             HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(tmMerChTvAcctBalance);
             ArrayList<Object> oList2 = new ArrayList<>();
             Set<String> keySet = oMap.keySet();
@@ -408,8 +408,8 @@ public class ExportServiceImpl implements ExportService {
                                 oList2.add("退款");
                             } else if ((String.valueOf((oMap.get(s))).equals("WD"))) {
                                 oList2.add("提款");
-                            } else if ((String.valueOf((oMap.get(s))).equals("TA"))) {
-                                oList2.add("转账");
+                            } else if ((String.valueOf((oMap.get(s))).equals("NT"))) {
+                                oList2.add("收单");
                             } else if ((String.valueOf((oMap.get(s))).equals("FZ"))) {
                                 oList2.add("冻结");
                             } else if ((String.valueOf((oMap.get(s))).equals("TW"))) {

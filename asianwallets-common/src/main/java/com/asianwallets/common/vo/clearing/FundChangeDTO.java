@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * @author RyanCai
+ * 资金变动输入参数
  */
 @Data
 public class FundChangeDTO implements Serializable {

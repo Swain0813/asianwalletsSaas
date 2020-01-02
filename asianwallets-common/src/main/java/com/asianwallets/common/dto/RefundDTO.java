@@ -88,5 +88,12 @@ public class RefundDTO {
     @ApiModelProperty(value = "更新者")
     private String modifier;
 
+    /**
+     * 由于撤销功能依赖退款的方法，为了签名的验签在各自自己的方法做
+     * 所以特意加个标志
+     */
+    @ApiModelProperty(value ="区分退款和撤销功能的标志")
+    private String functionType;
+
 
 }

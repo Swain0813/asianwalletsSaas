@@ -8,7 +8,6 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.dto.ClearSearchDTO;
 import com.asianwallets.common.dto.FrozenMarginInfoDTO;
-import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -19,6 +18,7 @@ import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.vo.AccountListVO;
 import com.asianwallets.common.vo.ClearAccountVO;
 import com.asianwallets.common.vo.FrozenMarginInfoVO;
+import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
 import com.asianwallets.permissions.feign.base.AccountFeign;
 import com.asianwallets.permissions.service.ExportService;
 import com.asianwallets.permissions.service.OperationLogService;
@@ -143,7 +143,7 @@ public class AccountFeignController extends BaseController {
                 "导出结算户余额流水详情"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
-            List<TmMerChTvAcctBalance> dataList = accountFeign.exportSettleLogs(accountSearchDTO);
+            List<TmMerChTvAcctBalanceVO> dataList = accountFeign.exportSettleLogs(accountSearchDTO);
             ServletOutputStream out = response.getOutputStream();
             if (ArrayUtil.isEmpty(dataList)) {
                 //数据不存在的场合
@@ -152,7 +152,7 @@ public class AccountFeignController extends BaseController {
                 writer.flush(out);
                 return ResultUtil.success();
             }
-            writer = exportService.getTmMerChTvAcctBalanceWriter(dataList, TmMerChTvAcctBalance.class);
+            writer = exportService.getTmMerChTvAcctBalanceWriter(dataList, TmMerChTvAcctBalanceVO.class);
             writer.flush(out);
         }catch (Exception e){
             log.info("==========【导出结算户余额流水详情】==========【导出结算户余额流水详情异常】", e);

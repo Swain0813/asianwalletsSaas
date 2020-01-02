@@ -65,6 +65,7 @@
         <id column="product_id" property="productId" jdbcType="VARCHAR"/>
         <result column="product_code" property="productCode" jdbcType="INTEGER"/>
         <result column="pay_type" property="payType" jdbcType="TINYINT"/>
+        <result column="product_pay_type_name" property="productPayTypeName" jdbcType="VARCHAR"/>
         <result column="product_currency" property="productCurrency" jdbcType="VARCHAR"/>
         <result column="rate" property="rate" jdbcType="DECIMAL"/>
         <result column="ip_rate_type" property="rateType" jdbcType="VARCHAR"/>
@@ -89,7 +90,7 @@
         <result column="channel_img" property="channelImg" jdbcType="VARCHAR"/>
         <result column="channel_cn_name" property="channelCnName" jdbcType="VARCHAR"/>
         <result column="channel_currency_icon" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
-        <result column="default_value" property="defaultValue" jdbcType="VARCHAR"/>
+        <result column="defaults" property="defaultValue" jdbcType="VARCHAR"/>
         <result column="channel_currency_icon" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
     </resultMap>
 
@@ -109,8 +110,10 @@
         mp.daily_trading_count,
         p.currency as product_currency,
         p.pay_type,
+        ppp.name as product_pay_type_name,
         p.product_img,
         p.product_code,
+        ch.id as channel_id,
         ch.currency as channel_currency,
         ch.channel_code,
         ch.channel_cn_name,
@@ -122,17 +125,19 @@
         pp.name as channel_pay_type_name,
         c.defaults
         from merchant m ,merchant_product mp,product p,channel ch ,merchant_channel mc,
-        channel_bank cb,bank b,currency c,pay_type pp
+        channel_bank cb,bank b,currency c,pay_type pp,pay_type ppp
         where m.id = mp.merchant_id and mp.product_id = p.id and mp.id = mc.mer_pro_id and mc.cha_ban_id = cb.id
         and cb.channel_id = ch.id
         and cb.bank_id = b.id
         and ch.pay_type= pp.extend1
+        and p.pay_type = ppp.extend1
         and ch.currency = c.code
         and p.enabled = 1
         and ch.enabled = 1
         and mc.enabled = 1
         and c.enabled =1
         and pp.enabled = 1
+        and ppp.enabled = 1
         <if test="merchantId !=null and merchantId != ''">
             and m.id = #{merchantId}
         </if>
@@ -144,6 +149,9 @@
         </if>
         <if test="language !=null and language != ''">
             and pp.language = #{language}
+        </if>
+        <if test="language !=null and language != ''">
+            and ppp.language = #{language}
         </if>
     </select>
 

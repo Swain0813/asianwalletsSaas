@@ -21,4 +21,12 @@ public interface DeviceBindingMapper extends BaseMapper<DeviceBinding> {
      */
     @Select("select count(1) from device_binding where institution_code = #{institutionCode} and imei = #{imei} and enabled = 1")
     int selectCountByCodeAndImei(@Param("institutionCode") String institutionCode, @Param("imei") String imei);
+
+    /**
+     * 根据商户号和设备编号查询设备绑定信息
+     * @param merchantId
+     * @param imei
+     * @return
+     */
+    DeviceBinding selectByMerchantIdAndImei(@Param("merchantId") String merchantId, @Param("imei") String imei);
 }
