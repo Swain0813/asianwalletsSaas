@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -51,6 +50,10 @@ public class OfflineTradeDTO {
     @NotNull(message = "52008")
     @ApiModelProperty(value = "签名")
     private String sign;
+
+    @NotNull(message = "50002")
+    @ApiModelProperty(value = "签名方式 1为RSA 2为MD5")
+    private String signType;
 
     @ApiModelProperty(value = "线下BSC付款码")
     private String authCode;

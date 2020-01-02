@@ -89,8 +89,8 @@
         p.product_code as productCode,
         p.trans_type as transType,
         pt.name as payTypeName,
-        pt.picon as picon,
-        pt.dicon as dicon,
+        p.product_details_logo as productDetailsLogo,
+        p.product_print_logo as productPrintLogo,
         substring(pt.name, -3) as flag
         from merchant m,
         product p,
@@ -114,8 +114,8 @@
         <result column="productCode" property="productCode" jdbcType="INTEGER"/>
         <result column="transType" property="transType" jdbcType="VARCHAR"/>
         <result column="payTypeName" property="payTypeName" jdbcType="VARCHAR"/>
-        <result column="picon" property="picon" jdbcType="VARCHAR"/>
-        <result column="dicon" property="dicon" jdbcType="VARCHAR"/>
+        <result column="productDetailsLogo" property="productDetailsLogo" jdbcType="VARCHAR"/>
+        <result column="productPrintLogo" property="productPrintLogo" jdbcType="VARCHAR"/>
         <result column="flag" property="flag" jdbcType="VARCHAR"/>
     </resultMap>
 </mapper>
