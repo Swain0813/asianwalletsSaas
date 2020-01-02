@@ -9,7 +9,10 @@ import lombok.Data;
 public class PosMerProVO {
 
     @ApiModelProperty(value = "产品编号")
-    private Integer productCode;
+    private Integer CSBProductCode;
+
+    @ApiModelProperty(value = "产品编号")
+    private Integer BSCProductCode;
 
     @ApiModelProperty(value = "交易类型")
     private Byte transType;
@@ -24,5 +27,8 @@ public class PosMerProVO {
     private String dicon;
 
     @ApiModelProperty(value = "支付方式标记")
-    private String flag;
+    private String BSC;
+
+    @ApiModelProperty(value = "支付方式标记")
+    private String CSB;
 }
