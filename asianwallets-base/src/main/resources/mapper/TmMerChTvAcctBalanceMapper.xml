@@ -77,7 +77,6 @@
         select
         <include refid="Base_Column_List"/>
         from tm_merchtvacctbalance where vaccounId = #{accountId} and type = 2
-
     </select>
 
     <select id="exportAccountBalanceLogs" resultMap="BaseResultMap">

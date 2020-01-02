@@ -348,8 +348,8 @@ public class ExportServiceImpl implements ExportService {
                                 oList2.add("解冻");
                             } else if ((String.valueOf((oMap.get(s))).equals("PM"))) {
                                 oList2.add("付款");
-                            } else if ((String.valueOf((oMap.get(s))).equals("TA"))) {
-                                oList2.add("转账");
+                            } else if ((String.valueOf((oMap.get(s))).equals("NT"))) {
+                                oList2.add("收单");
                             } else if ((String.valueOf((oMap.get(s))).equals("CL"))) {
                                 oList2.add("清算");
                             } else if ((String.valueOf((oMap.get(s))).equals("ST"))) {
@@ -408,8 +408,8 @@ public class ExportServiceImpl implements ExportService {
                                 oList2.add("退款");
                             } else if ((String.valueOf((oMap.get(s))).equals("WD"))) {
                                 oList2.add("提款");
-                            } else if ((String.valueOf((oMap.get(s))).equals("TA"))) {
-                                oList2.add("转账");
+                            } else if ((String.valueOf((oMap.get(s))).equals("NT"))) {
+                                oList2.add("收单");
                             } else if ((String.valueOf((oMap.get(s))).equals("FZ"))) {
                                 oList2.add("冻结");
                             } else if ((String.valueOf((oMap.get(s))).equals("TW"))) {
