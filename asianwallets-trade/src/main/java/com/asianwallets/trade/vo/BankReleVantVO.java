@@ -14,6 +14,9 @@ import lombok.Data;
 @ApiModel(value = "通道关联信息输出实体", description = "通道关联信息输出实体")
 public class BankReleVantVO {
 
+    @ApiModelProperty(value = "id")
+    private String bankId;
+
     @ApiModelProperty(value = "银行名称")
     private String bankName;
 
