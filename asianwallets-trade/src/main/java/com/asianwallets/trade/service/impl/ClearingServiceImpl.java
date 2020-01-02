@@ -48,9 +48,6 @@ public class ClearingServiceImpl implements ClearingService {
             //调用资金变动接口的签名
             fundChangeDTO.setSignMsg(createSignature(fundChangeDTO));
             FundChangeDTO fundChangeVO = clearingFeign.intoAndOutMerhtAccount(fundChangeDTO);
-            //HttpResponse httpResponse = HttpClientUtils.reqPost(intoAndOutUrl, fundChangeDTO, null);
-            //if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
-            //    FundChangeDTO fundChangeVO = JSON.parseObject(httpResponse.getJsonObject().toJSONString(), FundChangeDTO.class);
             log.info("------------ 上报清结算 资金变动接口 返回 ------------ fundChangeVO : {} ", JSON.toJSON(fundChangeVO));
             if (fundChangeVO != null && "T000".equals(fundChangeVO.getRespCode())) {
                 baseResponse.setData(fundChangeVO);
@@ -59,9 +56,6 @@ public class ClearingServiceImpl implements ClearingService {
             } else {
                 baseResponse.setCode("T001");
             }
-            //} else {
-            //    baseResponse.setCode("T001");
-            //}
         } catch (Exception e) {
             log.info("************资金变动接口发生异常************** e:{}", e.getMessage());
             baseResponse.setCode("T001");
@@ -83,9 +77,6 @@ public class ClearingServiceImpl implements ClearingService {
             //调用资金冻结接口生成签名
             financialFreezeDTO.setSignMsg(createSignature(financialFreezeDTO));
             FinancialFreezeDTO financialFreezeVO = clearingFeign.CSFrozenFunds(financialFreezeDTO);
-            //HttpResponse httpResponse = HttpClientUtils.reqPost(freezeUrl, financialFreezeDTO, null);
-            //if (httpResponse.getHttpStatus() == AsianWalletConstant.HTTP_SUCCESS_STATUS) {
-            //    FinancialFreezeDTO financialFreezeVO = JSON.parseObject(httpResponse.getJsonObject().toJSONString(), FinancialFreezeDTO.class);
             log.info("------------ 上报清结算 资金冻结接口 返回 ------------ financialFreezeVO : {} ", JSON.toJSON(financialFreezeVO));
             if (financialFreezeVO != null && "T000".equals(financialFreezeVO.getRespCode())) {
                 baseResponse.setData(financialFreezeVO);
@@ -94,9 +85,6 @@ public class ClearingServiceImpl implements ClearingService {
             } else {
                 baseResponse.setCode("T001");
             }
-            //} else {
-            //    baseResponse.setCode("T001");
-            //}
         } catch (Exception e) {
             log.info("*************资金冻结接口发生异常**************", e.getMessage());
             baseResponse.setCode("T001");
