@@ -57,7 +57,7 @@ public interface ExportService {
      * @param clazz
      * @return
      */
-    ExcelWriter getTmMerChTvAcctBalanceWriter(List<TmMerChTvAcctBalance> institutions, Class clazz);
+    ExcelWriter getTmMerChTvAcctBalanceWriter(List<TmMerChTvAcctBalanceVO> institutions, Class clazz);
 
     /**
      * 导出冻结余额流水详情

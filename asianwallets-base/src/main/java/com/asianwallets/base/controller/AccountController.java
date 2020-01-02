@@ -10,6 +10,7 @@ import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.AccountListVO;
 import com.asianwallets.common.vo.ClearAccountVO;
 import com.asianwallets.common.vo.FrozenMarginInfoVO;
+import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -64,7 +65,7 @@ public class AccountController extends BaseController {
 
     @ApiOperation(value = "导出结算户余额流水详情")
     @PostMapping("/exportSettleLogs")
-    public List<TmMerChTvAcctBalance> exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO) {
+    public List<TmMerChTvAcctBalanceVO> exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO) {
         return accountService.exportSettleLogs(accountSearchDTO);
     }
 
