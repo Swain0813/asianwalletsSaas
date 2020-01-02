@@ -37,6 +37,13 @@ public class CashierTradeController extends BaseController {
         return ResultUtil.success(onlineGatewayService.cashier(orderId, this.getLanguage()));
     }
 
+    @ApiOperation(value = "模拟界面所需的基础信息")
+    @GetMapping("/simulation")
+    @CrossOrigin
+    public BaseResponse simulation(@RequestParam("merchantId") @ApiParam String merchantId) {
+        return ResultUtil.success(onlineGatewayService.simulation(merchantId, this.getLanguage()));
+    }
+
     @ApiOperation(value = "收银台换汇金额计算")
     @PostMapping("calcExchangeRate")
     @CrossOrigin

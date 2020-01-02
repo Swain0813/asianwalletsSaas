@@ -791,6 +791,18 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     }
 
     /**
+     * 模拟界面所需信息
+     *
+     * @param merchantId 商户ID
+     * @param language   语言
+     * @return OnlineMerchantVO
+     */
+    @Override
+    public OnlineMerchantVO simulation(String merchantId, String language) {
+        return merchantMapper.selectRelevantInfo(merchantId, null, TradeConstant.TRADE_ONLINE, language);
+    }
+
+    /**
      * 收银台查询订单状态
      *
      * @param onlineOrderQueryDTO

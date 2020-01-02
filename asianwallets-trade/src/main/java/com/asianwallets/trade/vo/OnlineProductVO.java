@@ -29,6 +29,9 @@ public class OnlineProductVO {
     @ApiModelProperty(value = "费率类型")
     private String rateType;
 
+    @ApiModelProperty(value = "产品支付方式名称")
+    private String productPayTypeName;
+
     @ApiModelProperty(value = "单笔限额")
     private BigDecimal limitAmount;
 
