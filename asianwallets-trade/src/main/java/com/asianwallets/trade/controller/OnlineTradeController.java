@@ -25,7 +25,7 @@ public class OnlineTradeController extends BaseController {
     @ApiOperation(value = "商户请求收单")
     @PostMapping("/gateway")
     @CrossOrigin
-    public BaseResponse gateway(OnlineTradeDTO onlineTradeDTO) {
+    public BaseResponse gateway(@RequestBody @Valid OnlineTradeDTO onlineTradeDTO) {
         return onlineGatewayService.gateway(onlineTradeDTO);
     }
 
