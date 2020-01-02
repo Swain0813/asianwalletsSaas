@@ -48,11 +48,4 @@ public class AuthenticationController {
     public BaseResponse posLogin(@RequestBody @ApiParam @Valid AuthenticationRequest request) {
         return ResultUtil.success(authenticationService.posLogin(request));
     }
-
-    @ApiOperation(value = "对外API线下交易登录")
-    @PostMapping("/terminalLogin")
-    public BaseResponse terminalLogin(@RequestBody @ApiParam @Valid AuthenticationRequest request) {
-        String token = authenticationService.terminalLogin(request);
-        return ResultUtil.success(new JSONObject().put("token", token));
-    }
 }

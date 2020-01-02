@@ -8,6 +8,9 @@ import lombok.Data;
 @ApiModel(value = "账户查询输入参数", description = "账户查询输入参数")
 public class AccountSearchDTO extends BasePageHelper {
 
+    @ApiModelProperty(value = "机构编号")
+    private String institutionId;
+
     @ApiModelProperty(value = "商户编号")
     private String merchantId;
 

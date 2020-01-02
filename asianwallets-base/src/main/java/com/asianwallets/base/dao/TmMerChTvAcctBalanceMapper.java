@@ -5,6 +5,7 @@ import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.dto.ClearSearchDTO;
 import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.vo.ClearAccountVO;
+import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -38,6 +39,6 @@ public interface TmMerChTvAcctBalanceMapper extends BaseMapper<TmMerChTvAcctBala
      * @param accountSearchDTO
      * @return
      */
-    List<TmMerChTvAcctBalance> exportAccountBalanceLogs(AccountSearchDTO accountSearchDTO);
+    List<TmMerChTvAcctBalanceVO> exportAccountBalanceLogs(AccountSearchDTO accountSearchDTO);
 
 }

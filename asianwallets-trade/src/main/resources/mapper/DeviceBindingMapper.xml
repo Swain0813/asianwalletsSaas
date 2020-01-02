@@ -50,7 +50,7 @@
     </sql>
 
     <select id="selectByMerchantIdAndImei" resultMap="BaseResultMap">
-        select *
+        select <include refid="Base_Column_List"/>
         from device_binding
         where merchant_id = #{merchantId}
           and imei = #{imei}

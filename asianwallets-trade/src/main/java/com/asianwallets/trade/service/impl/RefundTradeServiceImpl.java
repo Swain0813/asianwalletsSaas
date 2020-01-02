@@ -91,11 +91,14 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     public BaseResponse refundOrder(RefundDTO refundDTO, String reqIp) {
         //返回结果
         BaseResponse baseResponse = new BaseResponse();
-        //签名校验
-        //if (!commonBusinessService.checkUniversalSign(refundDTO)) {
-        //    log.info("=========================【退款 refundOrder】=========================【签名错误】");
-        //    throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
-        //}
+        //退款功能验签，撤销功能的验签在自己的方法里面
+        if(refundDTO.getFunctionType()==null){
+            //签名校验
+            if (!commonBusinessService.checkUniversalSign(refundDTO)) {
+                log.info("=========================【退款 refundOrder】=========================【签名错误】");
+                throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
+            }
+        }
         /**************************************************** 查询原订单 *************************************************/
         Orders oldOrder = ordersMapper.selectByMerchantOrderId(refundDTO.getOrderNo());
         if (oldOrder == null) {
@@ -353,6 +356,11 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      */
     @Override
     public BaseResponse undo(UndoDTO undoDTO, String reqIp){
+        //签名校验
+        if (!commonBusinessService.checkUniversalSign(undoDTO)) {
+            log.info("=========================【撤销接口】=========================【签名错误】");
+            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
+        }
         //检查商户编号
         commonRedisDataService.getMerchantById(undoDTO.getMerchantId());
         //校验商户绑定设备
@@ -411,10 +419,12 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         refundDTO.setImei(undoDTO.getImei());
         //设备操作员
         refundDTO.setOperatorId(undoDTO.getOperatorId());
-        //签名类型 线下是MD5
-        refundDTO.setSignType(TradeConstant.MD5);
+        //签名类型
+        refundDTO.setSignType(undoDTO.getSignType());
         //签名
         refundDTO.setSign(undoDTO.getSign());
+        //撤销功能的标志,为了在退款功能里面不要再验签
+        refundDTO.setFunctionType(TradeConstant.RV);
         return refundDTO;
     }
 
@@ -555,7 +565,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setTradeDirection(refundDTO.getTradeDirection());
         //商户请求退款时间(商户所在地)
         orderRefund.setMerchantOrderTime(DateToolUtils.parseDate(refundDTO.getRefundTime(), DateToolUtils.DATE_FORMAT_DATETIME));
-        orderRefund.setOrderAmount(refundDTO.getRefundAmount());//商户请求退款金额
+        orderRefund.setOrderAmount(refundDTO.getRefundAmount().setScale(2, BigDecimal.ROUND_DOWN));//商户请求退款金额
         orderRefund.setOrderCurrency(refundDTO.getRefundCurrency());//客户请求收单币种
         orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);//退款中
         orderRefund.setPayerName(refundDTO.getPayerName());//付款人姓名

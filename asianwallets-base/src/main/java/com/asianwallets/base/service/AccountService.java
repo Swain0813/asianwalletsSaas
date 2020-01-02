@@ -8,6 +8,7 @@ import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.vo.AccountListVO;
 import com.asianwallets.common.vo.ClearAccountVO;
 import com.asianwallets.common.vo.FrozenMarginInfoVO;
+import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public interface AccountService extends BaseService<Account> {
      * @param accountSearchDTO
      * @return
      */
-    List<TmMerChTvAcctBalance> exportSettleLogs(AccountSearchDTO accountSearchDTO);
+    List<TmMerChTvAcctBalanceVO> exportSettleLogs(AccountSearchDTO accountSearchDTO);
 
     /**
      * 查询冻结余额流水详情

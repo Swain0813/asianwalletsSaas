@@ -43,5 +43,36 @@
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <sql id="Base_Column_List">
+        id,
+        info_id,
+        institution_code,
+        institution_name,
+        merchant_id,
+        merchant_name,
+        agent_id,
+        vendor_name,
+        model_name,
+        info_name,
+        imei,
+        sn,
+        operator,
+        use_type,
+        enabled,
+        binding_time,
+        create_time,
+        update_time,
+        creator,
+        modifier,
+        remark
+    </sql>
+
+    <select id="selectByMerchantIdAndImei" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from device_binding
+        where merchant_id = #{merchantId}
+        and imei = #{imei}
+        and enabled = 1
+    </select>
 
 </mapper>

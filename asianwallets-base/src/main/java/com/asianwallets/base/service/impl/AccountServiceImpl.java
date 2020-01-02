@@ -13,6 +13,7 @@ import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.vo.AccountListVO;
 import com.asianwallets.common.vo.ClearAccountVO;
 import com.asianwallets.common.vo.FrozenMarginInfoVO;
+import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,9 +99,9 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
      * @return
      */
     @Override
-    public List<TmMerChTvAcctBalance> exportSettleLogs(AccountSearchDTO accountSearchDTO) {
+    public List<TmMerChTvAcctBalanceVO> exportSettleLogs(AccountSearchDTO accountSearchDTO) {
         //查询结算户余额流水详情
-        List<TmMerChTvAcctBalance> oldAccountBalanceLogs= tmMerChTvAcctBalanceMapper.exportAccountBalanceLogs(accountSearchDTO);
+        List<TmMerChTvAcctBalanceVO> oldAccountBalanceLogs= tmMerChTvAcctBalanceMapper.exportAccountBalanceLogs(accountSearchDTO);
         return oldAccountBalanceLogs;
     }
 
