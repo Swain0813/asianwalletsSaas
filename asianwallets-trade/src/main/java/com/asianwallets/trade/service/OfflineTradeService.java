@@ -66,4 +66,12 @@ public interface OfflineTradeService {
      * @return 订单
      */
     PosQueryOrderListVO posQueryOrderDetail(PosQueryOrderListDTO posQueryOrderListDTO);
+
+    /**
+     * Pos 获取md5key
+     *
+     * @param merchantId 商户号
+     * @return 加密后的MD5key
+     */
+    String getPosMd5Key(String merchantId);
 }
