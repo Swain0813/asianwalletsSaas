@@ -352,7 +352,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setSecondMerchantName(merchant.getCnName());
         orders.setSecondMerchantCode(merchant.getId());
         orders.setAgentCode(merchant.getAgentId());
-        orders.setSign(null);
         //INDIRECTCONNECTION 间连
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.INDIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
@@ -402,7 +401,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setBrowserUrl(onlineTradeDTO.getBrowserUrl());
         orders.setServerUrl(onlineTradeDTO.getServerUrl());
         orders.setLanguage(onlineTradeDTO.getLanguage());
-        orders.setSign(onlineTradeDTO.getSign());
+        orders.setSign(null);
         orders.setCreateTime(new Date());
         orders.setCreator(merchant.getCnName());
         orders.setRemark1(onlineTradeDTO.getRemark1());
@@ -427,7 +426,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setSecondMerchantName(merchant.getCnName());
         orders.setSecondMerchantCode(merchant.getId());
         orders.setAgentCode(merchant.getAgentId());
-        orders.setSign(null);
         //INDIRECTCONNECTION 间连
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.INDIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
@@ -460,7 +458,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setBrowserUrl(onlineTradeDTO.getBrowserUrl());
         orders.setServerUrl(onlineTradeDTO.getServerUrl());
         orders.setLanguage(onlineTradeDTO.getLanguage());
-        orders.setSign(onlineTradeDTO.getSign());
+        orders.setSign(null);
         orders.setCreateTime(new Date());
         orders.setCreator(merchant.getCnName());
         orders.setRemark1(onlineTradeDTO.getRemark1());
