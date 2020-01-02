@@ -406,7 +406,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
         }
         //验签
-        if (!commonBusinessService.checkSignByMd5(offlineTradeDTO)) {
+        if (!commonBusinessService.checkUniversalSign(offlineTradeDTO)) {
             log.info("==================【线下CSB动态扫码】==================【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }
@@ -463,7 +463,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             log.info("==================【线下BSC动态扫码】==================【重复请求】");
             throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
         }
-        if (!commonBusinessService.checkSignByMd5(offlineTradeDTO)) {
+        //验签
+        if (!commonBusinessService.checkUniversalSign(offlineTradeDTO)) {
             log.info("==================【线下BSC动态扫码,币种信息】==================【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }
@@ -505,7 +506,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     public List<OfflineCheckOrdersVO> checkOrder(OfflineCheckOrdersDTO offlineCheckOrdersDTO) {
         log.info("==================【线下查询订单】==================【请求参数】 offlineCheckOrdersDTO: {}", JSON.toJSONString(offlineCheckOrdersDTO));
         //验签
-        if (!commonBusinessService.checkSignByMd5(offlineCheckOrdersDTO)) {
+        if (!commonBusinessService.checkUniversalSign(offlineCheckOrdersDTO)) {
             log.info("==================【线下查询订单】==================【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }
@@ -535,7 +536,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     public PosMerProCurVO posGetMerPro(PosGetMerProDTO posGetMerProDTO) {
         log.info("===================【POS机查询商户产品,币种信息】===================【参数记录】 posGetMerProDTO: {}", JSON.toJSONString(posGetMerProDTO));
         //验签
-        if (!commonBusinessService.checkSignByMd5(posGetMerProDTO)) {
+        if (!commonBusinessService.checkUniversalSign(posGetMerProDTO)) {
             log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }
@@ -588,7 +589,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     public List<PosQueryOrderListVO> posQueryOrderList(PosQueryOrderListDTO posQueryOrderListDTO) {
         log.info("===================【POS机查询订单列表信息】===================【参数记录】 posQueryOrderListDTO: {}", JSON.toJSONString(posQueryOrderListDTO));
         //验签
-        if (!commonBusinessService.checkSignByMd5(posQueryOrderListDTO)) {
+        if (!commonBusinessService.checkUniversalSign(posQueryOrderListDTO)) {
             log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }
@@ -647,7 +648,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         //验签
-        if (!commonBusinessService.checkSignByMd5(posQueryOrderListDTO)) {
+        if (!commonBusinessService.checkUniversalSign(posQueryOrderListDTO)) {
             log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }

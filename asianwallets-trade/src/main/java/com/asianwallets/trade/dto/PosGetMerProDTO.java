@@ -26,7 +26,7 @@ public class PosGetMerProDTO {
     @ApiModelProperty(value = "签名")
     private String sign;
 
-    @ApiModelProperty(value = "交易类型(收付款)")
+    @ApiModelProperty(value = "交易类型(收付款 1-收 2-付)")
     private Byte tradeType;
 
     @ApiModelProperty(value = "语言")
