@@ -100,7 +100,7 @@
 				and enabled=#{enabled}
 			</if>
 			<if test="auditStatus != null and auditStatus != ''">
-				and audit_status=#{auditStatus}
+				and mp.audit_status=#{auditStatus}
 			</if>
 			<if test="startTime != null and startTime != ''">
 				AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
