@@ -1,17 +1,20 @@
 package com.asianwallets.trade.service.impl;
 
+import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
-import com.asianwallets.common.entity.Currency;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.response.HttpResponse;
-import com.asianwallets.common.utils.*;
+import com.asianwallets.common.utils.ArrayUtil;
+import com.asianwallets.common.utils.BCryptUtils;
+import com.asianwallets.common.utils.DateToolUtils;
+import com.asianwallets.common.utils.IDS;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
@@ -25,13 +28,19 @@ import com.asianwallets.trade.utils.HandlerContext;
 import com.asianwallets.trade.utils.SettleDateUtil;
 import com.asianwallets.trade.utils.TokenUtils;
 import com.asianwallets.trade.vo.*;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -69,6 +78,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     @Autowired
     private HandlerContext handlerContext;
+
+    @ApiModelProperty("pos机获取md5key的加密值")
+    @Value("${custom.PosAESKey}")
+    private String posAESKey;
 
     /**
      * 线下登录
@@ -110,7 +123,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     }
 
     public static void main(String[] args) {
-        String url = "http://localhost:5010/offline/csbDynamicScan";
+        /*String url = "http://localhost:5010/offline/csbDynamicScan";
         String md5Key = "47ac097138814db98436dd293edb5b49";
         String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwME0yMDE5MTIyMDMzNjAiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1NzcyNDA1MjgwMzQsImV4cCI6MTU3NzMyNjkyOH0.9G7twF4ptwZhEN20NMaQvPlCt5KwPI6Z-1M06gGBmvoRegH6FULi3_YoJfVh3CzRsm-TsyNUXYlgzjoHWTh-Og";
         OfflineTradeDTO offlineTradeDTO = new OfflineTradeDTO();
@@ -142,7 +155,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         String sign = MD5Util.getMD5String(cleatText);
         log.info("=======【AW线下测试】=======【签名后的密文】 sign: {}", sign);
         offlineTradeDTO.setSign(sign);
-        HttpResponse httpResponse = HttpClientUtils.reqPost(url, offlineTradeDTO, null);
+        HttpClientUtils.reqPost(url, offlineTradeDTO, null);*/
     }
 
     /**
@@ -722,4 +735,23 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         }
         return posQueryOrderListVO;
     }
+
+    /**
+     * Pos 获取md5key
+     *
+     * @param merchantId 商户号
+     * @return 加密后的MD5key
+     */
+    @Override
+    public String getPosMd5Key(String merchantId) {
+        log.info("===================【POS机获取md5key】加密开始===================【参数记录】 merchantId: {}", JSON.toJSONString(merchantId));
+        String md5key = commonRedisDataService.getAttestationByMerchantId(merchantId).getMd5key();
+        //构建
+        SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, posAESKey.getBytes(Charset.defaultCharset()));
+        //加密
+        String encrypt = aes.encryptBase64(md5key);
+        log.info("===================【POS机获取md5key】加密结束===================【参数记录】 encrypt: {}", JSON.toJSONString(encrypt));
+        return encrypt;
+    }
+
 }

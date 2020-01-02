@@ -3,9 +3,9 @@ package com.asianwallets.trade.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
-import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OfflineLoginDTO;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
 import com.asianwallets.trade.dto.PosGetMerProDTO;
@@ -70,5 +70,12 @@ public class OfflineTradeController extends BaseController {
     public BaseResponse posQueryOrderDetail(@RequestBody @ApiParam @Valid PosQueryOrderListDTO posQueryOrderListDTO) {
         return ResultUtil.success(offlineTradeService.posQueryOrderDetail(posQueryOrderListDTO));
     }
+
+    @ApiOperation(value = "POS机获取MD5key")
+    @GetMapping("getPosMd5Key")
+    public BaseResponse getPosMd5Key(@RequestParam("merchantId") @ApiParam String merchantId) {
+        return ResultUtil.success(offlineTradeService.getPosMd5Key(merchantId));
+    }
+
 }
 
