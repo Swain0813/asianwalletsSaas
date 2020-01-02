@@ -352,6 +352,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setSecondMerchantName(merchant.getCnName());
         orders.setSecondMerchantCode(merchant.getId());
         orders.setAgentCode(merchant.getAgentId());
+        orders.setSign(null);
         //INDIRECTCONNECTION 间连
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.INDIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
@@ -426,6 +427,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setSecondMerchantName(merchant.getCnName());
         orders.setSecondMerchantCode(merchant.getId());
         orders.setAgentCode(merchant.getAgentId());
+        orders.setSign(null);
         //INDIRECTCONNECTION 间连
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.INDIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
