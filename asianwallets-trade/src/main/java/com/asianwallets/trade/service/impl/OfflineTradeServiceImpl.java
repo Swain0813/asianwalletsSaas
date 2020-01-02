@@ -1,6 +1,5 @@
 package com.asianwallets.trade.service.impl;
 
-import cn.hutool.core.codec.Base64;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.JSON;
@@ -157,19 +156,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         log.info("=======【AW线下测试】=======【签名后的密文】 sign: {}", sign);
         offlineTradeDTO.setSign(sign);
         HttpClientUtils.reqPost(url, offlineTradeDTO, null);*/
-        //随机生成密钥
-        byte[] key = "IZ3TBUtgjfNIhPcGBzEp1w==".getBytes(Charset.defaultCharset());
-        System.out.println("Base64.encode(key) = " + Base64.encode(key));
-        String s = new String(key);
-        System.out.println(s);
-        //构建
-        SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, key);
-        //加密
-        String encrypt = aes.encryptBase64("md5key");
-        System.out.println("encrypt = " + encrypt);
-//        return encrypt;
-        String s1 = aes.decryptStrFromBase64("/s117v7ASbaOvn4r6iq7iccYhGAOOnb/bwhZ1EVibsqIvhn2RKmmQi8W2TnzMQX8");
-        System.out.println("s1 = " + s1);
     }
 
     /**
