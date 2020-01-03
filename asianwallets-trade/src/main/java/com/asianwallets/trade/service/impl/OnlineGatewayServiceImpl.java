@@ -921,6 +921,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         onlineQueryOrderVO.setTxnstatus(orders.getTradeStatus());
         log.info("--------------返回给收银台参数--------------onlineQueryOrderVO:{}", JSON.toJSONString(onlineQueryOrderVO));
         response.setData(onlineQueryOrderVO);
+        response.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+        response.setCode(TradeConstant.HTTP_SUCCESS);
         return response;
     }
 }
