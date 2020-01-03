@@ -221,7 +221,7 @@
         WHERE id=#{code}
     </select>
     <select id="getAllAgent" resultMap="BaseResultMap">
-        select id as id ,en_name as enName,cn_name as cnName from merchant
+        select id as id ,en_name as enName,cn_name as cnName,agent_type as agentType from merchant
         <where>
             <if test="merchantType != null and merchantType != ''">
                 and merchant_type=#{merchantType}
