@@ -376,7 +376,7 @@ public class Orders extends BaseEntity {
     @Column(name = "remark7")
     private String remark7;
 
-    @ApiModelProperty(value = "remark8")
+    @ApiModelProperty(value = "remark8(通道代理商ID)")
     @Column(name = "remark8")
     private String remark8;
 }

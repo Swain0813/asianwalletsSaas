@@ -231,12 +231,13 @@
         o.refund_status as refundStatus,
         o.cancel_status as reverseStatus,
         pt.name as payTypeName,
-        pt.dicon as dicon,
-        pt.picon as picon,
+        p.product_details_logo as productDetailsLogo,
+        p.product_print_logo as productPrintLogo,
         c.defaults as defaultValue,
         o.create_time as createTime
         FROM orders o left join pay_type pt on o.pay_method = pt.extend1 and pt.language = #{language}
         left join currency c on o.order_currency = c.code
+        left join product p on o.product_code = p.product_code
         <where>
             <if test="merchantId != null and merchantId != ''">
                 AND o.merchant_id = #{merchantId}
