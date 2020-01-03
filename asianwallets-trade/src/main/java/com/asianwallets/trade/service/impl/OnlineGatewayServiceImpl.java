@@ -472,7 +472,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
      * @param orders      订单实体
      */
     private void setCashierValue(BasicInfoVO basicInfoVO, Orders orders) {
-        Merchant merchant = basicInfoVO.getMerchant();
         MerchantProduct merchantProduct = basicInfoVO.getMerchantProduct();
         Product product = basicInfoVO.getProduct();
         Channel channel = basicInfoVO.getChannel();
