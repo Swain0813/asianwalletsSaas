@@ -52,7 +52,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
-@Transactional(rollbackFor = Exception.class, noRollbackFor = BusinessException.class)
+//@Transactional(rollbackFor = Exception.class, noRollbackFor = BusinessException.class)
 public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 
     @Autowired
