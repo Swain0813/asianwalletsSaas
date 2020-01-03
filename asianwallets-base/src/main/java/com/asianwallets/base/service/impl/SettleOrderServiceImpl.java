@@ -227,7 +227,7 @@ public class SettleOrderServiceImpl implements SettleOrderService {
                 throw new BusinessException(EResultEnum.INSUFFICIENT_WITHDRAWAL_AMOUNT.getCode());
             }
             //获取银行卡信息
-            BankCard bankCard = bankCardMapper.getBankCard(withdrawalBankDTO.getMerchantId(),withdrawalBankDTO.getBankCodeCurrency());
+            BankCard bankCard = bankCardMapper.getBankCardInfo(withdrawalBankDTO.getMerchantId(),withdrawalBankDTO.getBankCodeCurrency());
             if (bankCard != null && bankCard.getBankAccountCode() != null && bankCard.getBankCurrency() != null) {
                 //机构结算表的数据的设置
                 SettleOrder settleOrder = new SettleOrder();

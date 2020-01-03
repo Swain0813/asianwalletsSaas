@@ -71,8 +71,8 @@ public class MerchantController extends BaseController {
 
     @ApiOperation(value = "代理商下拉框")
     @GetMapping("/getAllAgent")
-    public BaseResponse getAllAgent(@RequestParam @ApiParam String merchantType) {
-        return ResultUtil.success(merchantService.getAllAgent(merchantType));
+    public BaseResponse getAllAgent(@RequestParam @ApiParam String merchantType,@RequestParam(required = false) @ApiParam String agentType) {
+        return ResultUtil.success(merchantService.getAllAgent(merchantType,agentType));
     }
 
     @ApiOperation(value = "禁用启用商户")

@@ -83,7 +83,7 @@ public interface MerchantService extends BaseService<Merchant> {
      * @Descripate 代理商下拉框
      * @return
      **/
-    List<Merchant> getAllAgent(String merchantType);
+    List<Merchant> getAllAgent(String merchantType, String agentType);
 
     /**
      * @Author YangXu
