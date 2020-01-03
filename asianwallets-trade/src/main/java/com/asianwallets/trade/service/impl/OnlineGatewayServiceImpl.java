@@ -279,7 +279,10 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             throw new BusinessException(EResultEnum.MERCHANT_ORDER_ID_EXIST.getCode());
         }
         //获取商户信息
+        Merchant merchant = commonRedisDataService.getMerchantById(dto.getMerchantId());
         BasicInfoVO basicInfoVO = getOnlineInfo(dto.getMerchantId(), dto.getIssuerId());
+        basicInfoVO.setInstitution(commonRedisDataService.getInstitutionById(merchant.getInstitutionId()));
+        basicInfoVO.setMerchant(merchant);
         //截取币种默认值
         Currency currency = commonRedisDataService.getCurrencyByCode(dto.getOrderCurrency());
         commonBusinessService.interceptDigit(orders, currency);
