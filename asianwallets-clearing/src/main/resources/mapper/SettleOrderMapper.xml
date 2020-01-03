@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.clearing.dao.SettleOrderMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.SettleOrder">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="batch_no" property="batchNo" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="txncurrency" property="txncurrency" jdbcType="VARCHAR"/>
+        <result column="txnamount" property="txnamount" jdbcType="DECIMAL"/>
+        <result column="account_code" property="accountCode" jdbcType="VARCHAR"/>
+        <result column="account_name" property="accountName" jdbcType="VARCHAR"/>
+        <result column="bank_name" property="bankName" jdbcType="VARCHAR"/>
+        <result column="swift_code" property="swiftCode" jdbcType="VARCHAR"/>
+        <result column="iban" property="iban" jdbcType="VARCHAR"/>
+        <result column="bank_code" property="bankCode" jdbcType="VARCHAR"/>
+        <result column="bank_currency" property="bankCurrency" jdbcType="VARCHAR"/>
+        <result column="bankcode_currency" property="bankCodeCurrency" jdbcType="VARCHAR"/>
+        <result column="trade_status" property="tradeStatus" jdbcType="TINYINT"/>
+        <result column="trade_fee" property="tradeFee" jdbcType="DECIMAL"/>
+        <result column="fee" property="fee" jdbcType="DECIMAL"/>
+        <result column="fee_currency" property="feeCurrency" jdbcType="VARCHAR"/>
+        <result column="rate" property="rate" jdbcType="DECIMAL"/>
+        <result column="fee_rate" property="feeRate" jdbcType="DECIMAL"/>
+        <result column="reverse_rate" property="reverseRate" jdbcType="DECIMAL"/>
+        <result column="settle_amount" property="settleAmount" jdbcType="DECIMAL"/>
+        <result column="settle_type" property="settleType" jdbcType="TINYINT"/>
+        <result column="total_settle_amount" property="totalSettleAmount" jdbcType="DECIMAL"/>
+        <result column="settle_channel" property="settleChannel" jdbcType="VARCHAR"/>
+        <result column="receiver_address" property="receiverAddress" jdbcType="VARCHAR"/>
+        <result column="intermediary_bank_code" property="intermediaryBankCode" jdbcType="VARCHAR"/>
+        <result column="intermediary_bank_name" property="intermediaryBankName" jdbcType="VARCHAR"/>
+        <result column="intermediary_bank_address" property="intermediaryBankAddress" jdbcType="VARCHAR"/>
+        <result column="intermediary_bank_account_no" property="intermediaryBankAccountNo" jdbcType="VARCHAR"/>
+        <result column="intermediary_bank_country" property="intermediaryBankCountry" jdbcType="VARCHAR"/>
+        <result column="intermediary_other_code" property="intermediaryOtherCode" jdbcType="VARCHAR"/>
+        <result column="institution_adress" property="institutionAdress" jdbcType="VARCHAR"/>
+        <result column="institution_postal_code" property="institutionPostalCode" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="extend1" property="extend1" jdbcType="VARCHAR"/>
+        <result column="extend2" property="extend2" jdbcType="VARCHAR"/>
+        <result column="extend3" property="extend3" jdbcType="VARCHAR"/>
+        <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,batch_no, institution_id, institution_name, txncurrency, txnamount, account_code, account_name,
+    bank_name, swift_code, iban, bank_code, bank_currency, bankcode_currency,trade_status, trade_fee, fee_currency,
+    rate, settle_amount,total_settle_amount, settle_channel,intermediary_bank_code,intermediary_bank_name,intermediary_bank_address,receiver_address,
+    intermediary_bank_account_no,intermediary_bank_country,intermediary_other_code,create_time, update_time, creator, modifier, remark,
+    merchant_id,merchant_name,reverse_rate,fee_rate,extend1,extend2,extend3,extend4,fee,settle_type,institution_adress,institution_postal_code
+    </sql>
+
+    <select id="getBatchNo" resultType="java.lang.String">
+        select
+        batch_no
+        from settle_order
+        where merchant_id = #{merchantId} and bank_code=#{bankCode}
+        and settle_type=1 and trade_status=1 and date(create_time)=curdate() LIMIT 1
+    </select>
+
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.clearing.dao.BankCardMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.BankCard">
+        <result column="id" property="id"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="merchant_name" property="merchantName"/>
+        <result column="merchant_type" property="merchantType"/>
+        <result column="account_code" property="accountCode"/>
+        <result column="bank_account_code" property="bankAccountCode"/>
+        <result column="account_name" property="accountName"/>
+        <result column="settle_currency" property="settleCurrency"/>
+        <result column="bank_currency" property="bankCurrency"/>
+        <result column="iban" property="iban"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="bank_address" property="bankAddress"/>
+        <result column="bank_card_billing_address" property="bankCardBillingAddress"/>
+        <result column="nature" property="nature"/>
+        <result column="receiver_country" property="receiverCountry"/>
+        <result column="receiver_address" property="receiverAddress"/>
+        <result column="receiver" property="receiver"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="swift_code" property="swiftCode"/>
+        <result column="intermediary_bank_default" property="intermediaryBankDefault"/>
+        <result column="intermediary_bank_code" property="intermediaryBankCode"/>
+        <result column="intermediary_bank_name" property="intermediaryBankName"/>
+        <result column="intermediary_bank_address" property="intermediaryBankAddress"/>
+        <result column="intermediary_bank_account_no" property="intermediaryBankAccountNo"/>
+        <result column="intermediary_bank_country" property="intermediaryBankCountry"/>
+        <result column="intermediary_other_code" property="intermediaryOtherCode"/>
+        <result column="default_flag" property="defaultFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="remark" property="remark"/>
+        <result column="enabled" property="enabled"/>
+    </resultMap>
+    <sql id="commonSql">
+    id,merchant_id,merchant_name,merchant_type,account_code,bank_account_code,account_name,settle_currency,bank_currency,iban,bank_code,
+    bank_address,bank_card_billing_address,nature,receiver_country,receiver_address,receiver,bank_name,swift_code,intermediary_bank_default,
+    intermediary_bank_code,default_flag,create_time,update_time,creator,modifier,remark,enabled
+    </sql>
+    <select id="getBankCard" resultMap="BaseResultMap">
+        select
+        <include refid="commonSql"></include>
+        from bank_card
+        where
+        merchant_id = #{merchantId} and bank_currency=#{currency} and default_flag=1
+        and enabled=1
+    </select>
+</mapper>
