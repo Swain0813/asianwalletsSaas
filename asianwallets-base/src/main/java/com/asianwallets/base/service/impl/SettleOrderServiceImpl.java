@@ -1,17 +1,26 @@
 package com.asianwallets.base.service.impl;
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.base.dao.AccountMapper;
+import com.asianwallets.base.dao.BankCardMapper;
 import com.asianwallets.base.dao.SettleOrderMapper;
+import com.asianwallets.base.service.ClearingService;
 import com.asianwallets.base.service.ReconciliationService;
 import com.asianwallets.base.service.SettleOrderService;
+import com.asianwallets.common.constant.AD3MQConstant;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
-import com.asianwallets.common.dto.ReconOperDTO;
-import com.asianwallets.common.dto.ReviewSettleDTO;
-import com.asianwallets.common.dto.ReviewSettleInfoDTO;
-import com.asianwallets.common.dto.SettleOrderDTO;
+import com.asianwallets.common.dto.*;
+import com.asianwallets.common.entity.BankCard;
+import com.asianwallets.common.entity.Institution;
+import com.asianwallets.common.entity.RabbitMassage;
 import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.WithdrawalVO;
+import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +28,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -36,6 +47,16 @@ public class SettleOrderServiceImpl implements SettleOrderService {
 
     @Autowired
     private ReconciliationService reconciliationService;
+
+    @Autowired
+    private AccountMapper accountMapper;
+
+
+    @Autowired
+    private BankCardMapper bankCardMapper;
+
+    @Autowired
+    private ClearingService clearingService;
 
     /**
      * 结算交易一览查询
@@ -172,6 +193,101 @@ public class SettleOrderServiceImpl implements SettleOrderService {
             throw new BusinessException(EResultEnum.ERROR.getCode());
         }
         return tag;
+    }
+
+    /**
+     * 手动提款
+     * @param withdrawalDTO
+     * @param userName
+     */
+    @Override
+    public String withdrawal(WithdrawalDTO withdrawalDTO, String userName) {
+        List<WithdrawalBankDTO> withdrawalBankDTOS = withdrawalDTO.getWithdrawalBankDTOS();
+        HashMap<String, String> map = new HashMap<>();
+        withdrawalBankDTOS.forEach(v -> {
+            if (!map.containsKey(v.getBankCodeCurrency())) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");//根据年月日时分秒毫秒生成批次号
+                map.put(v.getBankCodeCurrency(), "P" + sdf.format(new Date().getTime() + (int) (Math.random() * 100)));
+            }
+        });
+        for (WithdrawalBankDTO withdrawalBankDTO : withdrawalBankDTOS) {
+            //获取账户表中(结算账户余额-冻结账户余额)大于最小起结金额的数据
+            WithdrawalVO withdrawalVO = accountMapper.getAccountByWithdrawal(withdrawalBankDTO.getMerchantId(), withdrawalBankDTO.getCurrency());
+            if (StringUtils.isEmpty(withdrawalVO)) {
+                log.info("-------------手动提款时对应accountId的账户为空,结算账户金额-冻结金额小于最小起结金额 账户ID:{}--------------", withdrawalBankDTO);
+                throw new BusinessException(EResultEnum.INSUFFICIENT_MINIMUM_AMOUNT.getCode());
+            }
+            //最小起结金额大于提款金额
+            if (withdrawalVO.getMinSettleAmount().compareTo(withdrawalBankDTO.getAmount()) > 0) {
+                log.info("-------------提现小于最小起结金额 账户ID:{}--------------", withdrawalBankDTO);
+                throw new BusinessException(EResultEnum.INSUFFICIENT_MINIMUM_AMOUNT.getCode());
+            }
+            if (withdrawalVO.getAvailableBalance().compareTo(withdrawalBankDTO.getAmount()) < 0) {
+                log.info("-------------手动提款时对应accountId的账户为空,结算账户金额-冻结金额小于提款金额 账户ID:{}--------------", withdrawalBankDTO);
+                throw new BusinessException(EResultEnum.INSUFFICIENT_WITHDRAWAL_AMOUNT.getCode());
+            }
+            //获取银行卡信息
+            BankCard bankCard = bankCardMapper.getBankCard(withdrawalBankDTO.getMerchantId(),withdrawalBankDTO.getBankCodeCurrency());
+            if (bankCard != null && bankCard.getBankAccountCode() != null && bankCard.getBankCurrency() != null) {
+                //机构结算表的数据的设置
+                SettleOrder settleOrder = new SettleOrder();
+                //结算交易的流水号
+                settleOrder.setId("J" + IDS.uniqueID());
+                //批次号
+                settleOrder.setBatchNo(map.get(withdrawalBankDTO.getBankCodeCurrency()));
+                //机构编号
+                settleOrder.setInstitutionId(withdrawalVO.getInstitutionId());
+                //机构名称
+                settleOrder.setInstitutionName(withdrawalVO.getInstitutionName());
+                settleOrder.setMerchantId(withdrawalVO.getMerchantId());
+                settleOrder.setMerchantName(withdrawalVO.getMerchantName());
+                //交易币种
+                settleOrder.setTxncurrency(withdrawalVO.getCurrency());
+                //结算金额 交易金额即结算金额-冻结金额
+                settleOrder.setTxnamount(withdrawalBankDTO.getAmount());
+                //结算账户即银行卡账号
+                settleOrder.setAccountCode(bankCard.getBankAccountCode());
+                //账户名即开户名称
+                settleOrder.setAccountName(bankCard.getAccountName());
+                //银行名称即开户行名称
+                settleOrder.setBankName(bankCard.getBankName());
+                settleOrder.setSwiftCode(bankCard.getSwiftCode());//Swift Code
+                settleOrder.setIban(bankCard.getIban());//Iban
+                //收款人地址
+                settleOrder.setReceiverAddress(bankCard.getReceiverAddress());
+                settleOrder.setBankCode(bankCard.getBankCode());//bank code
+                settleOrder.setBankCurrency(bankCard.getBankCurrency());//结算币种
+                settleOrder.setBankCodeCurrency(bankCard.getBankCurrency());//银行卡币种
+                //中间行相关字段
+                settleOrder.setIntermediaryBankCode(bankCard.getIntermediaryBankCode());//中间行银行编码
+                settleOrder.setIntermediaryBankName(bankCard.getIntermediaryBankName());//中间行银行名称
+                settleOrder.setIntermediaryBankAddress(bankCard.getIntermediaryBankAddress());//中间行银行地址
+                settleOrder.setIntermediaryBankAccountNo(bankCard.getIntermediaryBankAccountNo());//中间行银行账户
+                settleOrder.setIntermediaryBankCountry(bankCard.getIntermediaryBankCountry());//中间行银行城市
+                settleOrder.setIntermediaryOtherCode(bankCard.getIntermediaryOtherCode());//中间行银行其他code
+                settleOrder.setTradeStatus(AsianWalletConstant.SETTLING);//结算中
+                settleOrder.setSettleType(AsianWalletConstant.SETTLE_ACCORD);//手动结算
+                settleOrder.setCreateTime(new Date());//创建时间
+                settleOrder.setCreator(userName);//创建人
+                //将机构结算金额通过调账调出去上报清结算
+                FundChangeDTO fundChangeDTO = new FundChangeDTO(settleOrder);
+                //应结算日期
+                fundChangeDTO.setShouldDealtime(DateToolUtils.formatTimestamp.format(new Date()));
+                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                    //上报清结算成功的场合,插入数据到机构结算表
+                    settleOrderMapper.insert(settleOrder);
+                    return "提款成功";
+                }else {
+                    log.info("************上报清结算失败**************************");
+                    return "提款失败";
+                }
+            } else {
+                log.info("手动提款结算交易对应的银行卡信息不存在：merchantId={},accountCode={},currency={}", withdrawalVO.getMerchantId(), withdrawalVO.getAccountCode(), withdrawalVO.getCurrency());
+                throw new BusinessException(EResultEnum.BILLING_CORRESPONDING_BANK_CARD_DOES_NOT_EXIST.getCode());
+            }
+        }
+        return "提款成功";
     }
 
 }
