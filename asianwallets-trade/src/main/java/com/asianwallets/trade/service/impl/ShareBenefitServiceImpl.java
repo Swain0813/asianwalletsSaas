@@ -1,5 +1,6 @@
 package com.asianwallets.trade.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.trade.dao.OrdersMapper;
@@ -110,7 +111,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
                 //查询分润流水是否存在当前订单信息
                 int count = shareBenefitLogsMapper.selectCountByOrderId(orderId,"2");
                 if (count > 0) {
-                    log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 【商户代理记录已存在】orderId: 【{}】", orderId);
+                    log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 【商户分润记录已存在】orderId: 【{}】", orderId);
                     return;
                 }
                 BasicInfoVO basicInfoVO = this.getBasicInfo(merchantAgency, productCode);
@@ -120,7 +121,14 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             }
             /********************************************* 通道代理分润 ****************************************/
             if(StringUtils.isEmpty(channelAgencyCode)){
-
+                Merchant channelAgency = commonRedisDataService.getMerchantById(channelAgencyCode);
+                //查询分润流水是否存在当前订单信息
+                int count = shareBenefitLogsMapper.selectCountByOrderId(orderId,"1");
+                if (count > 0) {
+                    log.error("================== 【insertShareBenefitLogs 通道代理分润】=================== 【通道分润记录已存在】orderId: 【{}】", orderId);
+                    return;
+                }
+                BasicInfoVO basicInfoVO = this.getBasicInfo(channelAgency, productCode);
 
             }
 
@@ -140,17 +148,19 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
     /**
      * @Author YangXu
      * @Date 2020/1/3
-     * @Descripate 查询代理商产品信息
+     * @Descripate 查询基础信息
      * @return
      **/
-    private BasicInfoVO getBasicInfo(Merchant merchantAgency, Integer productCode) {
+    private BasicInfoVO getBasicInfo(Merchant agency, Integer productCode) {
+        log.error("================== 【getBasicInfo 查询基础信息】=================== agency:【{}】，productCode: 【{}】", JSON.toJSONString(agency), productCode);
         BasicInfoVO basicInfoVO = new BasicInfoVO();
-        basicInfoVO.setMerchant(merchantAgency);
+        basicInfoVO.setMerchant(agency);
         //根据productCode，机构id以及订单收付类型查询产品信息
         Product product = commonRedisDataService.getProductByCode(productCode);
         basicInfoVO.setProduct(product);
-        MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchantAgency.getId(),product.getId());
+        MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(agency.getId(),product.getId());
         basicInfoVO.setMerchantProduct(merchantProduct);
+        log.error("================== 【getBasicInfo 查询基础信息】=================== basicInfoVO:【{}】", JSON.toJSONString(basicInfoVO));
         return basicInfoVO;
     }
 
