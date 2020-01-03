@@ -66,4 +66,12 @@ public interface ExportService {
      * @return
      */
     ExcelWriter getFrozenLogsWriter(List<FrozenMarginInfoVO> institutions, Class clazz);
+
+    /**
+     * 机构后台分润导出
+     * @param queryAgencyShareBenefitVOS
+     * @param clazz
+     * @return
+     */
+    ExcelWriter exportAgencyShareBenefit(List<QueryAgencyShareBenefitVO> queryAgencyShareBenefitVOS, Class clazz);
 }

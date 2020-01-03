@@ -36,7 +36,7 @@ public class ShareBenefitController {
     }
 
     @ApiOperation(value = "机构后台分润导出")
-    @PostMapping("exportAgencyShareBenefit")
+    @PostMapping("/exportAgencyShareBenefit")
     public List<QueryAgencyShareBenefitVO> exportAgencyShareBenefit(@RequestBody @ApiParam @Valid ExportAgencyShareBenefitDTO exportAgencyShareBenefitDTO) {
         return shareBenefitService.exportAgencyShareBenefit(exportAgencyShareBenefitDTO);
     }
