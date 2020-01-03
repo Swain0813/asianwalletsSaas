@@ -3,6 +3,7 @@ package com.asianwallets.trade.service.impl;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
@@ -118,7 +119,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             log.info("===========【线下登录】==========【Token生成失败】");
             throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
         }
-        redisService.set(token, sysUser.getUsername());
+        redisService.set(token, JSON.toJSONString(sysUser));
         return token;
     }
 
@@ -228,8 +229,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
         //校验Token信息
-        String redisUserName = redisService.get(offlineTradeDTO.getToken());
-        if (StringUtils.isEmpty(redisUserName) || !(offlineTradeDTO.getOperatorId().concat(offlineTradeDTO.getMerchantId()).equals(redisUserName))) {
+        String sysUser = redisService.get(offlineTradeDTO.getToken());
+        JSONObject jsonObject = JSONObject.parseObject(sysUser);
+        if (jsonObject == null || !(offlineTradeDTO.getOperatorId().concat(offlineTradeDTO.getMerchantId()).equals(jsonObject.getString("username")))) {
             log.info("==================【线下CSB动态扫码】==================【Token不合法】");
             throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
         }
