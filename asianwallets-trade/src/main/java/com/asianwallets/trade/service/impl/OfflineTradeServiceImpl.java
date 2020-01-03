@@ -40,7 +40,6 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -401,6 +400,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setRemark1(offlineTradeDTO.getRemark1());
         orders.setRemark2(offlineTradeDTO.getRemark2());
         orders.setRemark3(offlineTradeDTO.getRemark3());
+        orders.setRemark8(channel.getChannelAgentId());
         orders.setCreateTime(new Date());
         orders.setCreator(merchant.getCnName());
         return orders;
