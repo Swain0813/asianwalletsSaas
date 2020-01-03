@@ -564,6 +564,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      * @param orders  订单
      * @param channel 通道
      */
+    @Override
     public void CalcGatewayFee(Orders orders, Channel channel) {
         log.info("-----------------【计费信息记录】-----------------计算通道网关手续费开始");
         BigDecimal channelGatewayFee = BigDecimal.ZERO;
@@ -919,6 +920,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      *
      * @param orders 订单
      */
+    @Override
     public void replyBrowserUrl(Orders orders) {
         log.info("==============【回调商户浏览器】============== orders:{}", JSON.toJSONString(orders));
         try {
