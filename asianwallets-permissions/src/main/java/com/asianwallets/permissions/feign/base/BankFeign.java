@@ -1,11 +1,9 @@
 package com.asianwallets.permissions.feign.base;
-
 import com.asianwallets.common.dto.BankDTO;
 import com.asianwallets.common.entity.Bank;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.ExportBankVO;
 import com.asianwallets.permissions.feign.base.impl.BankFeignImpl;
-import com.asianwallets.permissions.feign.base.impl.ChannelFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
