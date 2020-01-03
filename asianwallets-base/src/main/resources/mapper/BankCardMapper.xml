@@ -117,7 +117,7 @@
         bank_account_code = #{bankAccountCode}
     </select>
 
-    <select id="getBankCard" resultMap="BaseResultMap">
+    <select id="getBankCardInfo" resultMap="BaseResultMap">
         select
         <include refid="commonSql"></include>
         from bank_card

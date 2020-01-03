@@ -479,4 +479,57 @@ public class ExportServiceImpl implements ExportService {
         writer.write(oList1);
         return writer;
     }
+
+    /**
+     * 机构后台分润导出
+     * @param queryAgencyShareBenefitVOS
+     * @param clazz
+     * @return
+     */
+    @Override
+    public ExcelWriter exportAgencyShareBenefit(List<QueryAgencyShareBenefitVO> queryAgencyShareBenefitVOS, Class clazz) {
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (QueryAgencyShareBenefitVO dto : queryAgencyShareBenefitVOS) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(dto);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int i = 0; i < property.length; i++) {
+                for (String s : keySet) {
+                    if (s.equals(property[i])) {
+                        oSet1.add(comment[i]);
+                        if ("isShare".equals(s)) {
+                            if ("1".equals(String.valueOf((oMap.get(s))))) {
+                                oList2.add("Stay Share Benefit");
+                            } else if ("2".equals(String.valueOf((oMap.get(s))))) {
+                                oList2.add("Has Share Benefit");
+                            } else {
+                                oList2.add("");
+                            }
+                        } else if ("agent_type".equals(s)) {
+                            if ("1".equals(String.valueOf((oMap.get(s))))) {
+                                oList2.add("Channel Agent");
+                            } else if ("2".equals(String.valueOf((oMap.get(s))))) {
+                                oList2.add("Merchants Agent");
+                            } else {
+                                oList2.add("");
+                            }
+                        }  else {
+                            oList2.add(oMap.get(s));
+                        }
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.write(oList1);
+        return writer;
+    }
 }
