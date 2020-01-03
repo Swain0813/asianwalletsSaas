@@ -2,6 +2,7 @@ package com.asianwallets.trade.dao;
 
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.Product;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -14,4 +15,13 @@ public interface ProductMapper extends BaseMapper<Product> {
      * @return 产品
      */
     Product selectByProductCode(Integer productCode);
+
+
+    /**
+     * @Author YangXu
+     * @Date 2019/8/23
+     * @Descripate
+     * @return 根据机构ID和订单币种和产品类型查询产品
+     **/
+    Product selectByCodeAndType(@Param("productCode") Integer productCode, @Param("merchantId") String merchantId, @Param("type") Byte type);
 }

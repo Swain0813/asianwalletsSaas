@@ -35,4 +35,16 @@
         from product
         where product_code = #{productCode}
     </select>
+    <select id="selectByCodeAndType" resultMap="BaseResultMap">
+          select
+       p.id, p.product_code, p.trans_type, p.pay_type, p.currency, p.create_time, p.update_time, p.creator, p.product_img,
+    p.modifier, p.remark, p.enabled, p.trade_direction,p.limit_amount,p.daily_trading_count,p.daily_total_amount
+        from merchant m
+        left join merchant_product mp on m.id = mp.merchant_id
+        left join product p on mp.product_id = p.id
+        where m.id = #{merchantId}
+        and p.trans_type = #{type}
+        and p.product_code = #{productCode}
+        and p.enabled = true
+    </select>
 </mapper>
