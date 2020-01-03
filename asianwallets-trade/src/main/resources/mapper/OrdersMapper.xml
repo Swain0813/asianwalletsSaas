@@ -359,7 +359,7 @@
         o.order_currency as orderCurrency,
         o.trade_status as tradeStatus,
         o.refund_status as refundStatus,
-        o.create_time as create_time,
+        o.create_time as createTime,
         o.channel_callback_time as channelCallbackTime
         FROM orders o
         <where>
