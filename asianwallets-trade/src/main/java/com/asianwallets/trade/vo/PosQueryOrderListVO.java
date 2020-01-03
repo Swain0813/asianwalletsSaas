@@ -63,11 +63,11 @@ public class PosQueryOrderListVO {
     @ApiModelProperty(value = "支付方式名称")
     private String payTypeName;
 
-    @ApiModelProperty(value = "支付方式图片2 圆的(字典表)")
-    private String dicon;
+    @ApiModelProperty(value = "产品详情LOGO")
+    private String productDetailsLogo;
 
-    @ApiModelProperty(value = "支付方式名称")
-    private String picon;
+    @ApiModelProperty(value = "产品打印LOGO")
+    private String productPrintLogo;
 
     @ApiModelProperty(value = "币种默认值")
     private String defaultValue;
