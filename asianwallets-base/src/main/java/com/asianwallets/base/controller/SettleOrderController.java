@@ -3,6 +3,7 @@ import com.asianwallets.base.service.SettleOrderService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.ReviewSettleDTO;
 import com.asianwallets.common.dto.SettleOrderDTO;
+import com.asianwallets.common.dto.WithdrawalDTO;
 import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
@@ -54,5 +55,9 @@ public class SettleOrderController extends BaseController {
         return ResultUtil.success(settleOrderService.reviewSettlement(reviewSettleDTO));
     }
 
-
+    @ApiOperation(value = "手动提款")
+    @PostMapping("/withdrawal")
+    public BaseResponse withdrawal(@RequestBody @ApiParam WithdrawalDTO withdrawalDTO) {
+        return ResultUtil.success(settleOrderService.withdrawal(withdrawalDTO,this.getSysUserVO().getUsername()));
+    }
 }

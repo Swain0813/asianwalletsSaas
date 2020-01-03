@@ -4,6 +4,7 @@ import com.asianwallets.common.base. BaseMapper;
 import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.entity.Account;
 import com.asianwallets.common.vo.AccountListVO;
+import com.asianwallets.common.vo.WithdrawalVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
@@ -45,4 +46,14 @@ public interface AccountMapper extends  BaseMapper<Account> {
      */
     @Select("select id,account_code as accountCode,merchant_id as merchantId,settle_balance as settleBalance,freeze_balance as freezeBalance,enabled as enabled from account where merchant_id = #{merchantId} and currency = #{currency}")
     Account getAccount(@Param("merchantId") String merchantId, @Param("currency") String currency);
+
+
+    /**
+     * 查询账户表中结算账户余额减去冻结金额大于最小起结金额的账户信息
+     *
+     * @return
+     * @param merchantId
+     * @param currency
+     */
+    WithdrawalVO getAccountByWithdrawal(@Param("merchantId") String merchantId, @Param("currency") String currency);
 }

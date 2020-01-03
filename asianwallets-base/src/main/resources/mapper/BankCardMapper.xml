@@ -116,4 +116,13 @@
         where
         bank_account_code = #{bankAccountCode}
     </select>
+
+    <select id="getBankCard" resultMap="BaseResultMap">
+        select
+        <include refid="commonSql"></include>
+        from bank_card
+        where
+        merchant_id = #{merchantId} and bank_currency=#{currency} and default_flag=1
+        and enabled=1
+    </select>
 </mapper>

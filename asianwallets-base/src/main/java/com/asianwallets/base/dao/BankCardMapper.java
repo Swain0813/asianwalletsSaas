@@ -69,4 +69,14 @@ public interface BankCardMapper extends  BaseMapper<BankCard> {
      * @return
      */
     List<BankCard> selectBankCards(@Param("bankAccountCode") String bankAccountCode);
+
+
+    /**
+     * 根据商户编号以及币种查询该商户启用并且默认的银行卡信息
+     * @param merchantId
+     * @param currency
+     * @return
+     */
+    BankCard getBankCard(@Param("merchantId") String merchantId,@Param("currency") String currency);
+
 }

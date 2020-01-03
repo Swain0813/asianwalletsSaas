@@ -1,9 +1,9 @@
-package com.asianwallets.common.vo.clearing;
-
+package com.asianwallets.common.vo.clearing;;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
+import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.utils.DateToolUtils;
 import lombok.Data;
 
@@ -233,8 +233,6 @@ public class FundChangeDTO implements Serializable {
             this.isclear = TradeConstant.SETTLE;
         }
         this.txndesc = "";
-        //汇率,2位
-        this.txnexrate = 0.00;
         this.remark = "";
         //结算币种
         this.sltcurrency = reconciliation.getCurrency();
@@ -299,5 +297,31 @@ public class FundChangeDTO implements Serializable {
         this.refundOrderFee = 0.00;
         //退还手续费币种
         this.refundOrderFeeCurrency = orders.getOrderCurrency();
+    }
+
+    /**
+     * 提款用
+     * @param settleOrder
+     */
+    public FundChangeDTO(SettleOrder settleOrder) {
+        this.merchantid = settleOrder.getMerchantId();//商户号
+        this.refcnceFlow = settleOrder.getId();//业务流水号
+        this.tradetype = TradeConstant.WD;//交易类型 WD：提款
+        this.merOrderNo = settleOrder.getId();//结算交易的流水号
+        this.txncurrency = settleOrder.getTxncurrency();//交易币种
+        this.txnamount = -1 * settleOrder.getTxnamount().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        this.sltamount = -1 * settleOrder.getTxnamount().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        this.sysorderid =settleOrder.getId();//结算交易的流水号
+        this.balancetype = TradeConstant.FROZEN_FUND;//冻结资金
+        this.isclear = TradeConstant.SETTLE;//是否清算
+        this.txndesc = "提款";//交易描述
+        this.txnexrate = 1;//没有汇率的场合
+        this.remark = settleOrder.getRemark();//备注
+        this.sltcurrency = settleOrder.getTxncurrency();//结算币种
+        this.channelCostcurrency = settleOrder.getTxncurrency();//通道成本币种
+        this.gatewayFee = 0.00;//网关手续费
+        this.fee = 0.00;//手续费,2位
+        this.feecurrency = settleOrder.getTxncurrency();//手续费币种
+        this.channelCost = 0.00;//通道成本 2位
     }
 }

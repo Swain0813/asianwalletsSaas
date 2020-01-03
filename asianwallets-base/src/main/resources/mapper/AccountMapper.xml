@@ -82,4 +82,48 @@
 		</where>
 		order by a.create_time desc
 	</select>
+
+
+	<resultMap id="TecondResultMap" type="com.asianwallets.common.vo.WithdrawalVO">
+		<id column="id" property="id" jdbcType="VARCHAR"/>
+		<result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+		<result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+		<result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+		<result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+		<result column="account_code" property="accountCode" jdbcType="VARCHAR"/>
+		<result column="currency" property="currency" jdbcType="VARCHAR"/>
+		<result column="settle_balance" property="settleBalance" jdbcType="DECIMAL"/>
+		<result column="clear_balance" property="clearBalance" jdbcType="DECIMAL"/>
+		<result column="freeze_balance" property="freezeBalance" jdbcType="DECIMAL"/>
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+		<result column="creator" property="creator" jdbcType="VARCHAR"/>
+		<result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>
+		<result column="enabled" property="enabled" jdbcType="BIT"/>
+		<result column="min_settle_amount" property="minSettleAmount" jdbcType="DECIMAL"/>
+		<result column="settle_switch" property="settleSwitch" jdbcType="BIT"/>
+		<result column="available_balance" property="availableBalance" jdbcType="DECIMAL"/>
+	</resultMap>
+
+	<select id="getAccountByWithdrawal" resultMap="TecondResultMap">
+        SELECT a.id,
+               a.institution_id,
+               a.institution_name,
+               a.merchant_id,
+               a.merchant_name
+               a.account_code,
+               a.currency,
+               a.settle_balance,
+               a.freeze_balance,
+               a.settle_balance - a.freeze_balance as available_balance,
+               s.settle_switch,
+               s.min_settle_amount
+        FROM account a
+                 left join settle_control s on a.id = s.account_id
+        WHERE a.settle_balance - a.freeze_balance >= s.min_settle_amount
+          and a.merchant_id = #{merchantId}
+          and a.currency = #{currency}
+          and a.enabled = 1;
+    </select>
 </mapper>
