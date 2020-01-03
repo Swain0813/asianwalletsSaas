@@ -525,6 +525,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         onlineMerchantVO.setOrderId(orders.getId());
         onlineMerchantVO.setOrders(orders);
         BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+        baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
         baseResponse.setData(onlineMerchantVO);
         return baseResponse;
     }
