@@ -1,7 +1,6 @@
 package com.asianwallets.clearing.service.impl;
 import com.asianwallets.clearing.constant.Const;
 import com.asianwallets.clearing.dao.*;
-import com.asianwallets.clearing.service.CommonService;
 import com.asianwallets.clearing.service.SettleOrdersService;
 import com.asianwallets.clearing.utils.ComDoubleUtil;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -39,9 +38,6 @@ public class SettleOrdersServiceImpl implements SettleOrdersService {
 
     @Autowired
     private SettleOrderMapper settleOrderMapper;
-
-    @Autowired
-    private CommonService commonService;
 
     @Autowired
     private TmMerChTvAcctBalanceMapper tmMerChTvAcctBalanceMapper;
