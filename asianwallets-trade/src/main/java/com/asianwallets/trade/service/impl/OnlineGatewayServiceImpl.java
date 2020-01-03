@@ -812,7 +812,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     @Override
     public BaseResponse onlineOrderQuery(OnlineOrderQueryDTO onlineOrderQueryDTO) {
         log.info("-----------线上通道订单状态查询开始-----------onlineOrderQueryDTO:{}", JSON.toJSON(onlineOrderQueryDTO));
-        Orders orders = ordersMapper.selectByMerchantOrderId(onlineOrderQueryDTO.getOrderNo());
+        Orders orders = ordersMapper.selectByPrimaryKey(onlineOrderQueryDTO.getOrderNo());
         BaseResponse response = new BaseResponse();
         //订单不存在
         if (orders == null) {
