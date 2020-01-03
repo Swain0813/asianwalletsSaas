@@ -29,7 +29,7 @@ public class OnlineTradeController extends BaseController {
         return onlineGatewayService.gateway(onlineTradeDTO);
     }
 
-    @ApiOperation(value = "线下查询订单列表【对外API】")
+    @ApiOperation(value = "线上查询订单列表【对外API】")
     @PostMapping("checkOrder")
     public BaseResponse checkOrder(@RequestBody @ApiParam @Valid OnlineCheckOrdersDTO onlineCheckOrdersDTO) {
         return ResultUtil.success(onlineGatewayService.checkOrder(onlineCheckOrdersDTO));
