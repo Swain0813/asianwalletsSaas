@@ -512,7 +512,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         if (StringUtils.isEmpty(orderId)) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        Orders orders = ordersMapper.selectByMerchantOrderId(orderId);
+        Orders orders = ordersMapper.selectByPrimaryKey(orderId);
         if (orders == null) {
             log.info("--------------收银台订单不存在-------------- 订单号:{}", orderId);
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
