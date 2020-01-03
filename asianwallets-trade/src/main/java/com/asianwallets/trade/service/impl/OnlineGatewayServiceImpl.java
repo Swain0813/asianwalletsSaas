@@ -381,6 +381,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setProductName(onlineTradeDTO.getProductName());
         orders.setProductDescription(onlineTradeDTO.getProductDescription());
         orders.setChannelCode(channel.getChannelCode());
+        orders.setRemark8(channel.getChannelAgentId());
         orders.setChannelName(channel.getChannelCnName());
         orders.setTradeCurrency(channel.getCurrency());
         orders.setTradeStatus(TradeConstant.PAYMENT_START);
@@ -485,6 +486,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setProductCode(product.getProductCode());
         orders.setChannelCode(channel.getChannelCode());
         orders.setChannelName(channel.getChannelCnName());
+        orders.setRemark8(channel.getChannelAgentId());
         orders.setTradeCurrency(channel.getCurrency());
         orders.setPayMethod(merchantProduct.getPayType());
         //判断结算周期类型
