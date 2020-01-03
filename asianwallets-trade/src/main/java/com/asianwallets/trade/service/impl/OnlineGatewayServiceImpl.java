@@ -40,7 +40,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
@@ -477,8 +476,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         MerchantProduct merchantProduct = basicInfoVO.getMerchantProduct();
         Product product = basicInfoVO.getProduct();
         Channel channel = basicInfoVO.getChannel();
-        orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
-        orders.setGroupMerchantName(merchant.getGroupMasterAccount());
         orders.setTradeType(product.getTransType());
         orders.setTradeDirection(product.getTradeDirection());
         orders.setProductCode(product.getProductCode());
