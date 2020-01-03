@@ -1,10 +1,12 @@
 package com.asianwallets.trade.dao;
 
 import com.asianwallets.common.base.BaseMapper;
+import com.asianwallets.common.dto.MockOrdersDTO;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OnlineCheckOrdersDTO;
+import com.asianwallets.trade.vo.MockOrdersVO;
 import com.asianwallets.trade.vo.OfflineCheckOrdersVO;
 import com.asianwallets.trade.vo.OnlineCheckOrdersVO;
 import com.asianwallets.trade.vo.PosQueryOrderListVO;
@@ -94,4 +96,12 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @return List<OnlineCheckOrdersVO>
      */
     List<OnlineCheckOrdersVO> onlineCheckOrders(OnlineCheckOrdersDTO onlineCheckOrdersDTO);
+
+    /**
+     * 模拟界面查询数据
+     *
+     * @param ordersDTO ordersDTO
+     * @return List<MockOrdersVO>
+     */
+    List<MockOrdersVO> getByMultipleConditions(MockOrdersDTO ordersDTO);
 }

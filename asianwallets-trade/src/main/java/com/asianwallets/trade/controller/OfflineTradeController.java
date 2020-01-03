@@ -73,7 +73,7 @@ public class OfflineTradeController extends BaseController {
 
     @ApiOperation(value = "POS机获取MD5key")
     @GetMapping("getPosMd5Key")
-    public BaseResponse getPosMd5Key(@RequestParam("merchantId") @ApiParam String merchantId) {
+    public BaseResponse getPosMd5Key(@RequestBody @ApiParam String merchantId) {
         return ResultUtil.success(offlineTradeService.getPosMd5Key(merchantId));
     }
 
