@@ -142,8 +142,8 @@ public class MerchantFeignController extends BaseController {
 
     @ApiOperation(value = "代理商下拉框")
     @GetMapping("/getAllAgent")
-    public BaseResponse getAllAgent(@RequestParam("merchantType") @ApiParam String merchantType) {
-        return merchantFeign.getAllAgent(merchantType);
+    public BaseResponse getAllAgent(@RequestParam @ApiParam String merchantType,@RequestParam(required = false) @ApiParam String agentType){
+        return merchantFeign.getAllAgent(merchantType,agentType);
     }
 
     @ApiOperation(value = "禁用启用商户")

@@ -442,8 +442,8 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
      * @Descripate 代理商下拉框
      **/
     @Override
-    public List<Merchant> getAllAgent(String merchantType) {
-        return merchantMapper.getAllAgent(merchantType);
+    public List<Merchant> getAllAgent(String merchantType, String agentType) {
+        return merchantMapper.getAllAgent(merchantType,agentType);
     }
 
     /**

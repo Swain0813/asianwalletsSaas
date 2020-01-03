@@ -77,6 +77,6 @@ public interface BankCardMapper extends  BaseMapper<BankCard> {
      * @param currency
      * @return
      */
-    BankCard getBankCard(@Param("merchantId") String merchantId,@Param("currency") String currency);
+    BankCard getBankCardInfo(@Param("merchantId") String merchantId,@Param("currency") String currency);
 
 }
