@@ -131,7 +131,7 @@
     channel_gateway_status, channel_gateway_fee_type, channel_gateway_rate, channel_gateway_fee, 
     language, create_time, update_time, creator, modifier, remark, remark1, remark2, 
     remark3, remark4, remark5, remark6, remark7, remark8
-  </sql>
+    </sql>
 
     <select id="selectByMerchantOrderId" resultMap="BaseResultMap">
         select
@@ -140,7 +140,7 @@
     </select>
 
     <update id="updateOrderRemark">
-           update orders
+        update orders
         set remark = #{remark}
         where id = #{id};
     </update>
@@ -348,5 +348,32 @@
             </if>
         </where>
         order by create_time desc
+    </select>
+
+    <select id="getByMultipleConditions" resultType="com.asianwallets.trade.vo.MockOrdersVO">
+        SELECT
+        o.merchant_id as merchantId,
+        o.merchant_order_id as merchantOrderId,
+        o.order_amount as amount,
+        o.order_currency as orderCurrency,
+        o.trade_status as tradeStatus,
+        o.refund_status as refundStatus,
+        o.create_time as createTime,
+        o.channel_callback_time as channelCallbackTime
+        FROM orders o
+        <where>
+            <if test="merchantOrderId != null and merchantOrderId != ''">
+                AND o.merchant_order_id = #{merchantOrderId}
+            </if>
+            <if test="merchantId != null and merchantId != ''">
+                AND o.merchant_id = #{merchantId}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND DATE_FORMAT(o.create_time,'%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE_FORMAT(o.create_time,'%Y-%m-%d') &lt;= #{endDate}
+            </if>
+        </where>
     </select>
 </mapper>

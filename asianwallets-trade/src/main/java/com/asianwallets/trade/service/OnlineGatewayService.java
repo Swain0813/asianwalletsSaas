@@ -1,13 +1,16 @@
 package com.asianwallets.trade.service;
 
 import com.asianwallets.common.dto.CashierDTO;
+import com.asianwallets.common.dto.MockOrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.trade.dto.CalcRateDTO;
 import com.asianwallets.trade.dto.OnlineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OnlineOrderQueryDTO;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
+import com.asianwallets.trade.vo.MockOrdersVO;
 import com.asianwallets.trade.vo.OnlineCheckOrdersVO;
 import com.asianwallets.trade.vo.OnlineMerchantVO;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -73,4 +76,12 @@ public interface OnlineGatewayService {
      * @return OnlineMerchantVO
      */
     OnlineMerchantVO simulation(String merchantId, String language);
+
+    /**
+     * 模拟界面查询订单信息
+     *
+     * @param ordersDTO OrdersDTOaa
+     * @return List<OrdersVOaa>
+     */
+    PageInfo<MockOrdersVO> getByMultipleConditions(MockOrdersDTO ordersDTO);
 }

@@ -7,6 +7,7 @@ import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.CashierDTO;
+import com.asianwallets.common.dto.MockOrdersDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -35,6 +36,7 @@ import com.asianwallets.trade.service.OnlineGatewayService;
 import com.asianwallets.trade.utils.HandlerContext;
 import com.asianwallets.trade.utils.SettleDateUtil;
 import com.asianwallets.trade.vo.*;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -801,6 +803,20 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     @Override
     public OnlineMerchantVO simulation(String merchantId, String language) {
         return merchantMapper.selectRelevantInfo(merchantId, null, TradeConstant.TRADE_ONLINE, language);
+    }
+
+    /**
+     * 模拟界面查询订单信息
+     *
+     * @param ordersDTO OrdersDTOaa
+     * @return List<OrdersVOaa>
+     */
+    @Override
+    public PageInfo<MockOrdersVO> getByMultipleConditions(MockOrdersDTO ordersDTO) {
+        if (StringUtils.isEmpty(ordersDTO.getMerchantId())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        return new PageInfo<>(ordersMapper.getByMultipleConditions(ordersDTO));
     }
 
     /**

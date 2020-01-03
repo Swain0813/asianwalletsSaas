@@ -2,6 +2,7 @@ package com.asianwallets.trade.controller;
 
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.CashierDTO;
+import com.asianwallets.common.dto.MockOrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.trade.dto.CalcRateDTO;
@@ -42,6 +43,13 @@ public class CashierTradeController extends BaseController {
     @CrossOrigin
     public BaseResponse simulation(@RequestParam("merchantId") @ApiParam String merchantId) {
         return ResultUtil.success(onlineGatewayService.simulation(merchantId, this.getLanguage()));
+    }
+
+    @ApiOperation(value = "模拟界面查询订单信息")
+    @PostMapping("getByMultipleConditions")
+    @CrossOrigin
+    public BaseResponse getByMultipleConditions(@RequestBody @ApiParam MockOrdersDTO ordersDTO) {
+        return ResultUtil.success(onlineGatewayService.getByMultipleConditions(ordersDTO));
     }
 
     @ApiOperation(value = "收银台换汇金额计算")
