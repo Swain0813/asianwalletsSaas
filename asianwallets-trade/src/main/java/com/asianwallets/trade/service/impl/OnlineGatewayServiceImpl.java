@@ -401,7 +401,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setBrowserUrl(onlineTradeDTO.getBrowserUrl());
         orders.setServerUrl(onlineTradeDTO.getServerUrl());
         orders.setLanguage(onlineTradeDTO.getLanguage());
-        orders.setSign(onlineTradeDTO.getSign());
+        orders.setSign(null);
         orders.setCreateTime(new Date());
         orders.setCreator(merchant.getCnName());
         orders.setRemark1(onlineTradeDTO.getRemark1());
@@ -458,7 +458,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setBrowserUrl(onlineTradeDTO.getBrowserUrl());
         orders.setServerUrl(onlineTradeDTO.getServerUrl());
         orders.setLanguage(onlineTradeDTO.getLanguage());
-        orders.setSign(onlineTradeDTO.getSign());
+        orders.setSign(null);
         orders.setCreateTime(new Date());
         orders.setCreator(merchant.getCnName());
         orders.setRemark1(onlineTradeDTO.getRemark1());
