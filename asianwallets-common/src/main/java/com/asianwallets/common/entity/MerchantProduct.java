@@ -86,7 +86,7 @@ public class MerchantProduct extends BaseEntity {
 
 	@ApiModelProperty(value = "分润模式 1-分成 2-费用差")
 	@Column(name = "divided_mode")
-	private Integer dividedMode;
+	private Byte dividedMode;
 
 	@ApiModelProperty(value = "手续费承担方")//1-商家 2-用户
 	@Column(name = "fee_payer")

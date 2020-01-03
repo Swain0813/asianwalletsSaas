@@ -1,8 +1,12 @@
 package com.asianwallets.trade.service.impl;
 
+import java.util.Date;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
+import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
+import com.asianwallets.common.utils.IDS;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.ProductMapper;
 import com.asianwallets.trade.dao.ShareBenefitLogsMapper;
@@ -51,7 +55,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
     public void insertShareBenefitLogs(String orderId) {
         log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== orderId: 【{}】", orderId);
         try {
-            Byte type;
+            Integer type;
             if (orderId.startsWith("O")) {
                 //订单号以O开头是收款单
                 type = 1;
@@ -62,78 +66,53 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             String merchantAgencyCode = null;
             //通道代理商户号
             String channelAgencyCode = null;
-            //机构号
-            String institutionCode = null;
-            //机构名称
-            String institutionName = null;
-            //商户号
-            String merchantCode = null;
-            //商户名称
-            String merchantName = null;
             //产品code
             Integer productCode = null;
-            //订单币种
-            String orderCurrency = null;
-            //汇款币种
-            String payoutCurrency = null;
-            //订单金额
-            BigDecimal orderAmount = null;
-            //交易金额
-            BigDecimal tradeAmount = null;
-            //汇款金额
-            BigDecimal payoutAmount = null;
-            //订单手续费
-            BigDecimal orderFee = null;
             Orders orders = null;
             //OrderPayment orderPayment = null;
 
             if (type == 1) {
                 /***************************************** 收款单的场合 ****************************************/
                 orders = ordersMapper.selectByPrimaryKey(orderId);
-                merchantAgencyCode= orders.getAgentCode();
+                merchantAgencyCode = orders.getAgentCode();
                 channelAgencyCode = orders.getRemark8();
-                institutionCode = orders.getInstitutionId();
-                institutionName = orders.getInstitutionName();
-                merchantCode = orders.getMerchantId();
-                merchantName = orders.getMerchantName();
                 productCode = orders.getProductCode();
-                orderCurrency = orders.getOrderCurrency();
-                orderAmount = orders.getOrderAmount();
-                tradeAmount = orders.getTradeAmount();
-                orderFee = orders.getFee();
-            }else{
+
+            } else {
                 /***************************************** 付款单的场合 ****************************************/
+
+                //TODO
+
             }
 
             /********************************************* 商户代理分润 ****************************************/
-            if(StringUtils.isEmpty(merchantAgencyCode)){
+            if (StringUtils.isEmpty(merchantAgencyCode)) {
                 Merchant merchantAgency = commonRedisDataService.getMerchantById(merchantAgencyCode);
                 //查询分润流水是否存在当前订单信息
-                int count = shareBenefitLogsMapper.selectCountByOrderId(orderId,"2");
+                int count = shareBenefitLogsMapper.selectCountByOrderId(orderId, "2");
                 if (count > 0) {
                     log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 【商户分润记录已存在】orderId: 【{}】", orderId);
                     return;
                 }
                 BasicInfoVO basicInfoVO = this.getBasicInfo(merchantAgency, productCode);
-
+                //创建流水对象
+                ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "2", orders, null, basicInfoVO);
 
 
             }
             /********************************************* 通道代理分润 ****************************************/
-            if(StringUtils.isEmpty(channelAgencyCode)){
+            if (StringUtils.isEmpty(channelAgencyCode)) {
                 Merchant channelAgency = commonRedisDataService.getMerchantById(channelAgencyCode);
                 //查询分润流水是否存在当前订单信息
-                int count = shareBenefitLogsMapper.selectCountByOrderId(orderId,"1");
+                int count = shareBenefitLogsMapper.selectCountByOrderId(orderId, "1");
                 if (count > 0) {
                     log.error("================== 【insertShareBenefitLogs 通道代理分润】=================== 【通道分润记录已存在】orderId: 【{}】", orderId);
                     return;
                 }
                 BasicInfoVO basicInfoVO = this.getBasicInfo(channelAgency, productCode);
-
+                //创建流水对象
+                ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "1", orders, null, basicInfoVO);
             }
-
-
-
 
 
 
@@ -146,10 +125,57 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
     }
 
     /**
+     * @return
+     * @Author YangXu
+     * @Date 2020/1/3
+     * @Descripate 创建流水对象
+     **/
+    private ShareBenefitLogs createShareBenefitLogs(Integer type, String agentType, Orders orders, Object object, BasicInfoVO basicInfoVO) {
+        ShareBenefitLogs shareBenefitLogs = new ShareBenefitLogs();
+        shareBenefitLogs.setId("SL" + IDS.uniqueID());
+        if (type.equals("1")) {
+            shareBenefitLogs.setOrderId(orders.getId());
+            shareBenefitLogs.setInstitutionId(orders.getInstitutionId());
+            shareBenefitLogs.setInstitutionName(orders.getInstitutionName());
+            shareBenefitLogs.setMerchantName(orders.getMerchantName());
+            shareBenefitLogs.setMerchantId(orders.getMerchantId());
+            shareBenefitLogs.setChannelCode(basicInfoVO.getChannel().getChannelCode());
+            shareBenefitLogs.setChannelName(basicInfoVO.getChannel().getChannelCnName());
+            shareBenefitLogs.setTradeCurrency(orders.getTradeCurrency());
+            shareBenefitLogs.setTradeAmount(orders.getTradeAmount());
+        } else {
+            //TODO
+            shareBenefitLogs.setOrderId("");
+            shareBenefitLogs.setInstitutionId("");
+            shareBenefitLogs.setInstitutionName("");
+            shareBenefitLogs.setMerchantName("");
+            shareBenefitLogs.setMerchantId("");
+            shareBenefitLogs.setChannelCode("");
+            shareBenefitLogs.setChannelName("");
+            shareBenefitLogs.setTradeCurrency("");
+            shareBenefitLogs.setTradeAmount(BigDecimal.ZERO);
+
+        }
+        shareBenefitLogs.setAgentId(basicInfoVO.getMerchant().getId());
+        shareBenefitLogs.setAgentName(basicInfoVO.getMerchant().getCnName());
+        shareBenefitLogs.setAgentType(agentType);
+        shareBenefitLogs.setOrderType(type);
+
+        //shareBenefitLogs.setFee(new BigDecimal("0"));
+        //shareBenefitLogs.setShareBenefit(new BigDecimal("0"));
+
+        shareBenefitLogs.setIsShare(TradeConstant.SHARE_BENEFIT_WAIT);
+        shareBenefitLogs.setDividedMode(basicInfoVO.getMerchantProduct().getDividedMode());
+        shareBenefitLogs.setDividedRatio(basicInfoVO.getMerchantProduct().getDividedRatio());
+        shareBenefitLogs.setCreateTime(new Date());
+        return shareBenefitLogs;
+    }
+
+    /**
+     * @return
      * @Author YangXu
      * @Date 2020/1/3
      * @Descripate 查询基础信息
-     * @return
      **/
     private BasicInfoVO getBasicInfo(Merchant agency, Integer productCode) {
         log.error("================== 【getBasicInfo 查询基础信息】=================== agency:【{}】，productCode: 【{}】", JSON.toJSONString(agency), productCode);
@@ -158,7 +184,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
         //根据productCode，机构id以及订单收付类型查询产品信息
         Product product = commonRedisDataService.getProductByCode(productCode);
         basicInfoVO.setProduct(product);
-        MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(agency.getId(),product.getId());
+        MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(agency.getId(), product.getId());
         basicInfoVO.setMerchantProduct(merchantProduct);
         log.error("================== 【getBasicInfo 查询基础信息】=================== basicInfoVO:【{}】", JSON.toJSONString(basicInfoVO));
         return basicInfoVO;
