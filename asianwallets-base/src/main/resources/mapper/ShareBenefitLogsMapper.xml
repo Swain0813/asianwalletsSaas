@@ -68,7 +68,7 @@
 		agent_type as agentType,
 		remark as remark
 		FROM share_benefit_logs
-		where institution_code = #{institutionCode}
+		where institution_id = #{institutionCode}
 		<if test="agentId != null and agentId != ''">
 			AND agent_id = #{agentId}
 		</if>
@@ -110,7 +110,7 @@
 		agent_type as agentType,
 		remark as remark
 		FROM share_benefit_logs
-		where institution_code = #{institutionCode}
+		where institution_id = #{institutionCode}
 		<if test="agentId != null and agentId != ''">
 			AND agent_id = #{agentId}
 		</if>
