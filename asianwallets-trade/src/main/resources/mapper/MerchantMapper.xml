@@ -86,6 +86,7 @@
         <result column="channel_pay_type_name" property="channelPayTypeName" jdbcType="VARCHAR"/>
         <result column="channel_currency_icon" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
         <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="channel_issuerId" property="issuerId" jdbcType="VARCHAR"/>
         <result column="channel_cn_name" property="channelCnName" jdbcType="VARCHAR"/>
         <result column="channel_currency_icon" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
         <result column="defaults" property="defaultValue" jdbcType="VARCHAR"/>
@@ -134,6 +135,7 @@
         b.bank_currency as bank_currency,
         ch.country as ch_country,
         ch.pay_type as channel_pay_type,
+        b.issuer_id as channel_issuerId,
         pp.name as channel_pay_type_name,
         c.defaults
         from merchant m ,merchant_product mp,product p,channel ch ,merchant_channel mc,
