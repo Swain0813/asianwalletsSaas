@@ -3,8 +3,10 @@ package com.asianwallets.base.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.dto.ClearSearchDTO;
+import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.vo.ClearAccountVO;
+import com.asianwallets.common.vo.MerchantBalanceVO;
 import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
 import org.springframework.stereotype.Repository;
 
@@ -41,4 +43,11 @@ public interface TmMerChTvAcctBalanceMapper extends BaseMapper<TmMerChTvAcctBala
      */
     List<TmMerChTvAcctBalanceVO> exportAccountBalanceLogs(AccountSearchDTO accountSearchDTO);
 
+    /**
+     * 商户余额查询
+     *
+     * @param ordersDTO 订单输入DTO
+     * @return
+     */
+    List<MerchantBalanceVO> pageFindMerchantBalance(OrdersDTO ordersDTO);
 }

@@ -3,12 +3,10 @@ import com.asianwallets.common.base.BaseService;
 import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.dto.ClearSearchDTO;
 import com.asianwallets.common.dto.FrozenMarginInfoDTO;
+import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.Account;
 import com.asianwallets.common.entity.TmMerChTvAcctBalance;
-import com.asianwallets.common.vo.AccountListVO;
-import com.asianwallets.common.vo.ClearAccountVO;
-import com.asianwallets.common.vo.FrozenMarginInfoVO;
-import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
+import com.asianwallets.common.vo.*;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -73,4 +71,10 @@ public interface AccountService extends BaseService<Account> {
      */
     List<FrozenMarginInfoVO> exportFrozenLogs(FrozenMarginInfoDTO accountSearchDTO);
 
+    /**
+     * 商户余额查询
+     * @param ordersDTO 订单输入DTO
+     * @return
+     */
+    PageInfo<MerchantBalanceVO> pageFindMerchantBalance(OrdersDTO ordersDTO);
 }
