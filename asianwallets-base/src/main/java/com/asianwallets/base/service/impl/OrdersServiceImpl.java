@@ -1,4 +1,5 @@
 package com.asianwallets.base.service.impl;
+
 import com.asianwallets.base.dao.OrdersMapper;
 import com.asianwallets.base.service.OrdersService;
 import com.asianwallets.common.config.AuditorProvider;
@@ -7,14 +8,18 @@ import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.vo.DccReportVO;
 import com.asianwallets.common.vo.ExportOrdersVO;
+import com.asianwallets.common.vo.OrdersDetailRefundVO;
 import com.asianwallets.common.vo.OrdersDetailVO;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -46,7 +51,11 @@ public class OrdersServiceImpl implements OrdersService {
      */
     @Override
     public OrdersDetailVO getOrdersDetail(String id) {
-        return ordersMapper.selectOrdersDetailById(id, auditorProvider.getLanguage());
+        OrdersDetailVO ordersDetailVO = ordersMapper.selectOrdersDetailById(id, auditorProvider.getLanguage());
+        List<OrdersDetailRefundVO> ordersDetailRefundVOS = ordersDetailVO.getOrdersDetailRefundVOS();
+        List<OrdersDetailRefundVO> collect = ordersDetailRefundVOS.stream().sorted(Comparator.comparing(OrdersDetailRefundVO::getRefundFinishTime).reversed()).collect(Collectors.toList());
+        ordersDetailVO.setOrdersDetailRefundVOS(collect);
+        return ordersDetailVO;
     }
 
     /**
