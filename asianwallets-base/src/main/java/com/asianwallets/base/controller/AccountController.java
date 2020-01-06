@@ -1,10 +1,11 @@
 package com.asianwallets.base.controller;
+
 import com.asianwallets.base.service.AccountService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.dto.ClearSearchDTO;
 import com.asianwallets.common.dto.FrozenMarginInfoDTO;
-import com.asianwallets.common.entity.TmMerChTvAcctBalance;
+import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.AccountListVO;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
 /**
@@ -79,5 +81,11 @@ public class AccountController extends BaseController {
     @PostMapping("/exportFrozenLogs")
     public List<FrozenMarginInfoVO> exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO accountSearchDTO) {
         return accountService.exportFrozenLogs(accountSearchDTO);
+    }
+
+    @ApiOperation(value = "分页查询商户余额")
+    @PostMapping("/pageFindMerchantBalance")
+    public BaseResponse pageMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO) {
+        return ResultUtil.success(accountService.pageFindMerchantBalance(ordersDTO));
     }
 }
