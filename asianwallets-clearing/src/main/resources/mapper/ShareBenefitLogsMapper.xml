@@ -2,44 +2,53 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.asianwallets.clearing.dao.ShareBenefitLogsMapper">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.ShareBenefitLogs">
-	<result column="id" property="id" />
-		<result column="order_id" property="orderId" />
-		<result column="institution_id" property="institutionId" />
-		<result column="institution_name" property="institutionName" />
-		<result column="merchant_name" property="merchantName" />
-		<result column="merchant_id" property="merchantId" />
-		<result column="channel_code" property="channelCode" />
-		<result column="channel_name" property="channelName" />
-		<result column="agent_id" property="agentId" />
-		<result column="agent_name" property="agentName" />
-		<result column="agent_type" property="agentType" />
-		<result column="order_type" property="orderType" />
-		<result column="trade_currency" property="tradeCurrency" />
-		<result column="trade_amount" property="tradeAmount" />
-		<result column="fee" property="fee" />
-		<result column="share_benefit" property="shareBenefit" />
-		<result column="is_share" property="isShare" />
-		<result column="divided_mode" property="dividedMode" />
-		<result column="divided_ratio" property="dividedRatio" />
-		<result column="create_time" property="createTime" />
-		<result column="update_time" property="updateTime" />
-		<result column="creator" property="creator" />
-		<result column="modifier" property="modifier" />
-		<result column="remark" property="remark" />
-		<result column="extend1" property="extend1" />
-		<result column="extend2" property="extend2" />
-		<result column="extend3" property="extend3" />
-		<result column="extend4" property="extend4" />
-		<result column="extend5" property="extend5" />
-		<result column="extend6" property="extend6" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.ShareBenefitLogs">
+        <result column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="institution_id" property="institutionId"/>
+        <result column="institution_name" property="institutionName"/>
+        <result column="merchant_name" property="merchantName"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="channel_code" property="channelCode"/>
+        <result column="channel_name" property="channelName"/>
+        <result column="agent_id" property="agentId"/>
+        <result column="agent_name" property="agentName"/>
+        <result column="agent_type" property="agentType"/>
+        <result column="order_type" property="orderType"/>
+        <result column="trade_currency" property="tradeCurrency"/>
+        <result column="trade_amount" property="tradeAmount"/>
+        <result column="fee" property="fee"/>
+        <result column="share_benefit" property="shareBenefit"/>
+        <result column="is_share" property="isShare"/>
+        <result column="divided_mode" property="dividedMode"/>
+        <result column="divided_ratio" property="dividedRatio"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="remark" property="remark"/>
+        <result column="extend1" property="extend1"/>
+        <result column="extend2" property="extend2"/>
+        <result column="extend3" property="extend3"/>
+        <result column="extend4" property="extend4"/>
+        <result column="extend5" property="extend5"/>
+        <result column="extend6" property="extend6"/>
+    </resultMap>
 
-	<sql id="BaseSql">
+    <sql id="BaseSql">
         id,order_id, institution_id,institution_name,merchant_name,merchant_id,channel_code,channel_name,agent_id,agent_name,agent_type,order_type,
         trade_currency,trade_amount,fee,share_benefit,is_share,divided_mode,divided_ratio,create_time,update_time,creator,modifier,remark,extend1,
         extend2,extend3,extend4,extend5,extend6
     </sql>
 
+    <select id="selectbyStStatusAndIsShare" resultMap="BaseResultMap">
+        select   sl.id,sl.order_id, sl.institution_id,sl.institution_name,sl.merchant_name,sl.merchant_id,sl.channel_code,
+        sl.channel_name,sl.agent_id,sl.agent_name,sl.agent_type,sl.order_type,
+        sl.trade_currency,sl.trade_amount,sl.fee,sl.share_benefit,sl.is_share,sl.divided_mode,sl.divided_ratio,sl.create_time,sl.update_time,
+        sl.creator,sl.modifier,sl.remark,sl.extend1,
+        sl.extend2,sl.extend3,sl.extend4,sl.extend5,sl.extend6
+        from share_benefit_logs sl left join tcs_stflow ts on sl.order_id = ts.refcnceFlow
+        where sl.is_share = 1 and ts.STstate = 2
+    </select>
 </mapper>
