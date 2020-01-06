@@ -194,55 +194,30 @@ public class IntoAccountServiceImpl implements IntoAccountService {
      **/
     public Map<String, String> doStrSingMap(FundChangeDTO ioma, FundChangeDTO repqo) {
         //拼装签名参数
-        DecimalFormat decimalFormat = new DecimalFormat("###0.00");
-        DecimalFormat decimalFormat5 = new DecimalFormat("###0.00000");
-        //m1.put("merchantid", ioma.getMerchantid());
         repqo.setMerchantid(ioma.getMerchantid());
-        //m1.put("isclear", ioma.getIsclear() + "");
         repqo.setIsclear(ioma.getIsclear());
-        //m1.put("refcnceFlow", ioma.getRefcnceFlow());
         repqo.setRefcnceFlow(ioma.getRefcnceFlow());
-        //m1.put("tradetype", ioma.getTradetype());
         repqo.setTradetype(ioma.getTradetype());
-        //m1.put("merOrderNo", ioma.getMerOrderNo());
         repqo.setMerOrderNo(ioma.getMerOrderNo());
-        //m1.put("txncurrency", ioma.getTxncurrency());
         repqo.setTxncurrency(ioma.getTxncurrency());
-        //m1.put("txnamount", decimalFormat.format(ioma.getTxnamount()));
         repqo.setTxnamount(ioma.getTxnamount());
-        //m1.put("shouldDealtime", ioma.getShouldDealtime());
         repqo.setShouldDealtime(ioma.getShouldDealtime());
-        //m1.put("sysorderid", ioma.getSysorderid());
         repqo.setSysorderid(ioma.getSysorderid());
-        //m1.put("fee", decimalFormat.format(ioma.getFee()));
         repqo.setFee(ioma.getFee());
-        //m1.put("channelCost", decimalFormat.format(ioma.getChannelCost()));
         repqo.setChannelCost(ioma.getChannelCost());
-        //m1.put("balancetype", ioma.getBalancetype() + "");
         repqo.setBalancetype(ioma.getBalancetype());
-        //m1.put("txndesc", ioma.getTxndesc());
         repqo.setTxndesc(ioma.getTxndesc());
-        //m1.put("txnexrate", decimalFormat5.format(ioma.getTxnexrate()));
         repqo.setTxnexrate(ioma.getTxnexrate());
-        //m1.put("remark", ioma.getRemark());
         repqo.setRemark(ioma.getRemark());
-        //m1.put("sltamount", decimalFormat.format(ioma.getSltamount()));
         repqo.setSltamount(ioma.getSltamount());
-        //m1.put("sltcurrency", ioma.getSltcurrency());
         repqo.setSltcurrency(ioma.getSltcurrency());
-        //m1.put("feecurrency", ioma.getFeecurrency());
         repqo.setFeecurrency(ioma.getFeecurrency());
-        //m1.put("channelCostcurrency", ioma.getChannelCostcurrency());
         repqo.setChannelCostcurrency(ioma.getChannelCostcurrency());
-        //m1.put("gatewayFee", decimalFormat.format(ioma.getGatewayFee()));//交易状态手续费
         repqo.setGatewayFee(ioma.getGatewayFee());
         //退还收单手续费的币种
-        //m1.put("refundOrderFeeCurrency",ioma.getRefundOrderFeeCurrency());
         repqo.setRefundOrderFeeCurrency(ioma.getRefundOrderFeeCurrency());
         //退还收单手续费
-        //m1.put("refundOrderFee",decimalFormat.format(ioma.getRefundOrderFee()));
         repqo.setRefundOrderFee(ioma.getRefundOrderFee());
-
         Map<String, Object> paramMap = ReflexClazzUtils.getFieldNames(ioma);
         HashMap<String, String> m1 = new HashMap<>();
         for (String str : paramMap.keySet()) {

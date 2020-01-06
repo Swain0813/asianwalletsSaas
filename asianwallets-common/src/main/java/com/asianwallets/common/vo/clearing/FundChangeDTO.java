@@ -192,7 +192,6 @@ public class FundChangeDTO implements Serializable {
         this.refundOrderFeeCurrency = orderRefund.getOrderCurrency();
         //通道成本 2位
         this.channelCost = orderRefund.getChannelFee().doubleValue();
-        this.channelCostcurrency = orderRefund.getTradeCurrency();
         this.shouldDealtime = orderRefund.getProductSettleCycle();
     }
 
