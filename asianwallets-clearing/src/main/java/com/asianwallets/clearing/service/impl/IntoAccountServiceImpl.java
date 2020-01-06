@@ -90,14 +90,14 @@ public class IntoAccountServiceImpl implements IntoAccountService {
                 log.info("*********************************清算资金中不能加冻结****************************");
                 return repqo;
             }
-            //手续费币种，通道成本币种和结算币种必须一致
-            if (!ioma.getSltcurrency().equals(ioma.getFeecurrency()) || !ioma.getSltcurrency().equals(ioma.getChannelCostcurrency())) {
-                //手续费币种，通道成本必须和结算币种一致
-                repqo.setRespCode(Const.CSCode.CODE_CS00014);
-                repqo.setRespMsg(Const.CSCode.MSG_CS00014);
-                log.info("*********************************手续费币种，通道成本必须和结算币种一致****************************");
-                return repqo;
-            }
+            ////手续费币种，通道成本币种和结算币种必须一致
+            //if (!ioma.getSltcurrency().equals(ioma.getFeecurrency()) || !ioma.getSltcurrency().equals(ioma.getChannelCostcurrency())) {
+            //    //手续费币种，通道成本必须和结算币种一致
+            //    repqo.setRespCode(Const.CSCode.CODE_CS00014);
+            //    repqo.setRespMsg(Const.CSCode.MSG_CS00014);
+            //    log.info("*********************************手续费币种，通道成本必须和结算币种一致****************************");
+            //    return repqo;
+            //}
             //判断交易金额和结算金额的是否正负号相同，只能同为负或者同为正
             if ((ioma.getTxnamount() >= 0 & ioma.getSltamount() < 0) || (ioma.getTxnamount() < 0 & ioma.getSltamount() >= 0)) {
                 //交易金额和结算金额正负号必须一致
