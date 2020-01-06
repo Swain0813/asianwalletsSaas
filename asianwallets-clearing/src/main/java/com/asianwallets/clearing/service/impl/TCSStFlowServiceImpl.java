@@ -167,6 +167,10 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     mab.setFlow("MV" + IDS.uniqueID());
                     mab.setAfterbalance(afterbalance);
                     mab.setMerchantid(stf.getMerchantid());
+                    mab.setMerchantName(mvafrz.getMerchantName());
+                    mab.setInstitutionId(mvafrz.getInstitutionId());
+                    mab.setInstitutionName(mvafrz.getInstitutionName());
+                    mab.setMerchantOrderId(stf.getMerOrderNo());
                     mab.setOrganId(stf.getOrganId());//所属机构号
                     mab.setMbuaccountId(mbuaccountId);
                     mab.setVaccounId(vaccounId);
@@ -380,6 +384,10 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 mab_fr.setAfterbalance(fr_afterbalance);
                 mab_fr.setOrganId(st.getOrganId());//所属机构编号
                 mab_fr.setMerchantid(st.getMerchantid());
+                mab_fr.setMerchantName(mva1.getMerchantName());
+                mab_fr.setInstitutionId(mva1.getInstitutionId());
+                mab_fr.setInstitutionName(mva1.getInstitutionName());
+                mab_fr.setMerchantOrderId(st.getMerOrderNo());
                 mab_fr.setMbuaccountId(null);
                 mab_fr.setVaccounId(vaccounId);
                 mab_fr.setBalance(fr_balance);
@@ -417,6 +425,10 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             mab.setAfterbalance(afterbalance);
             mab.setOrganId(st.getOrganId());//所属机构编号
             mab.setMerchantid(st.getMerchantid());
+            mab.setMerchantName(mva1.getMerchantName());
+            mab.setInstitutionId(mva1.getInstitutionId());
+            mab.setInstitutionName(mva1.getInstitutionName());
+            mab.setMerchantOrderId(st.getMerOrderNo());
             mab.setMbuaccountId(null);
             mab.setVaccounId(vaccounId);
             mab.setBalance(balance);
@@ -500,6 +512,10 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 mab1.setAfterbalance(balance3);
                 mab1.setOrganId(st.getOrganId());
                 mab1.setMerchantid(st.getMerchantid());
+                mab1.setMerchantName(mvacl02.getMerchantName());
+                mab1.setInstitutionId(mvacl02.getInstitutionId());
+                mab1.setInstitutionName(mvacl02.getInstitutionName());
+                mab1.setMerchantOrderId(st.getMerOrderNo());
                 mab1.setVaccounId(mvacl01.getId());
                 mab1.setBalance(balance2);
                 mab1.setBalanceTimestamp(new Date());

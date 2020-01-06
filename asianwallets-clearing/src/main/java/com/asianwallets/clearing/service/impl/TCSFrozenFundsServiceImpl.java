@@ -104,6 +104,10 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
                 mab.setFlow("MV" + IDS.uniqueID());
                 mab.setAfterbalance(afterBalance);
                 mab.setMerchantid(ffl.getMerchantId());
+                mab.setMerchantName(mva.getMerchantName());
+                mab.setInstitutionId(mva.getInstitutionId());
+                mab.setInstitutionName(mva.getInstitutionName());
+                mab.setMerchantOrderId(ffl.getMerOrderNo());
                 mab.setOrganId(ffl.getOrganId());
                 mab.setMbuaccountId(null);
                 mab.setVaccounId(mva.getAccountCode());
