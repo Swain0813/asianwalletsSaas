@@ -128,7 +128,7 @@ public class FundChangeDTO implements Serializable {
         this.refcnceFlow = orderRefund.getId();
         //交易类型 NT：收单，RF：退款，RV：撤销，WD：提款，AA:调账，TA:转账
         this.tradetype = tradetype;
-        //机构订单号
+        //商户订单号
         this.merOrderNo = orderRefund.getMerchantOrderId();
         //订单币种
         this.txncurrency = orderRefund.getOrderCurrency();
