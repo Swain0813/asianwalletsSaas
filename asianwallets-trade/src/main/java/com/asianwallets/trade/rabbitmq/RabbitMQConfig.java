@@ -19,7 +19,14 @@ import java.util.Map;
 @Configuration
 public class RabbitMQConfig {
 
+    /********************************************************* 分润队列 **********************************************************************/
+    //RF or RV请求失败
+    public final static String MQ_FR_DL = AD3MQConstant.MQ_FR_DL;
 
+    @Bean
+    public Queue MQ_FR_DL() {
+        return new Queue(RabbitMQConfig.MQ_FR_DL);
+    }
     /********************************************************  退款接口相关队列 **********************************************************************/
     //RF or RV请求失败
     public final static String RV_RF_FAIL_DL = AD3MQConstant.RV_RF_FAIL_DL;

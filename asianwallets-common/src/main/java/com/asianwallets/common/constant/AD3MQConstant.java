@@ -7,6 +7,8 @@ package com.asianwallets.common.constant;
  **/
 public class AD3MQConstant {
 
+    /*******************************************************  分润队列  ******************************************************************/
+    public final static String MQ_FR_DL = "MQ_FR_DL";
     /********************************************************  退款接口相关队列 **********************************************************************/
     //RF or RV请求失败
     public final static String RV_RF_FAIL_DL = "RV_RF_FAIL_DL";

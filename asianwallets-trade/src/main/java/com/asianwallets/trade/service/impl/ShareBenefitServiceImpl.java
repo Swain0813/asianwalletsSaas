@@ -10,24 +10,19 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.trade.dao.OrdersMapper;
-import com.asianwallets.trade.dao.ProductMapper;
 import com.asianwallets.trade.dao.ShareBenefitLogsMapper;
 import com.asianwallets.trade.feign.MessageFeign;
+import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.ShareBenefitService;
 import com.asianwallets.trade.vo.BasicInfoVO;
 import com.asianwallets.trade.vo.CalcFeeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.xwpf.usermodel.Borders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import sun.management.resources.agent;
 
 import java.math.BigDecimal;
 
@@ -48,14 +43,15 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
     private ShareBenefitLogsMapper shareBenefitLogsMapper;
     @Autowired
     private CommonRedisDataService commonRedisDataService;
-    @Autowired
-    private ProductMapper productMapper;
 
     @Value("${custom.developer.email}")
     private String developerEmail;
 
     @Autowired
     private MessageFeign messageFeign;
+
+    @Autowired
+    private RabbitMQSender rabbitMQSender;
 
 
     /**
@@ -140,9 +136,9 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
 
         } catch (Exception e) {
             log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 【异常】 orderId: 【{}】,Exception :【{}】", orderId, e);
-            //rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orderId);
+            rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orderId);
             //回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new BusinessException(EResultEnum.ERROR.getCode());
         }
     }
 
