@@ -96,42 +96,40 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
 
             /********************************************* 商户代理分润 ****************************************/
             int count = shareBenefitLogsMapper.selectCountByOrderId(orderId, "2");
-            if (count == 0) {
-                if (StringUtils.isEmpty(merchantAgencyCode)) {
-                    Merchant merchantAgency = commonRedisDataService.getMerchantById(merchantAgencyCode);
-                    BasicInfoVO basicInfoVO = this.getBasicInfo(merchantAgency, productCode);
-                    //创建流水对象
-                    ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "2", orders, null, basicInfoVO);
-                    //计算分润
-                    CalcFeeVO calcFeeVO = this.calculateShareBenefit(type, orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
-                    if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
-                        messageFeign.sendSimpleMail(developerEmail, "代理商产品算费失败 预警", "代理商商户号 ：{ " + merchantAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
-                        throw new BusinessException(EResultEnum.ERROR.getCode());
-                    }
-                    //分润金额
-                    shareBenefitLogs.setShareBenefit(calcFeeVO.getFee());
-                    shareBenefitLogsMapper.insert(shareBenefitLogs);
+            log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 商户代理分润 count: 【{}】", count);
+            if (count == 0 && StringUtils.isNotEmpty(merchantAgencyCode)) {
+                Merchant merchantAgency = commonRedisDataService.getMerchantById(merchantAgencyCode);
+                BasicInfoVO basicInfoVO = this.getBasicInfo(merchantAgency, productCode);
+                //创建流水对象
+                ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "2", orders, null, basicInfoVO);
+                //计算分润
+                CalcFeeVO calcFeeVO = this.calculateShareBenefit(type, orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
+                if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
+                    messageFeign.sendSimpleMail(developerEmail, "代理商产品算费失败 预警", "代理商商户号 ：{ " + merchantAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
+                    throw new BusinessException(EResultEnum.ERROR.getCode());
                 }
+                //分润金额
+                shareBenefitLogs.setShareBenefit(calcFeeVO.getFee());
+                shareBenefitLogsMapper.insert(shareBenefitLogs);
             }
             /********************************************* 通道代理分润 ****************************************/
             int count1 = shareBenefitLogsMapper.selectCountByOrderId(orderId, "1");
-            if (count1 == 0) {
-                if (StringUtils.isEmpty(channelAgencyCode)) {
-                    Merchant channelAgency = commonRedisDataService.getMerchantById(channelAgencyCode);
-                    //查询分润流水是否存在当前订单信息
-                    BasicInfoVO basicInfoVO = this.getBasicInfo(channelAgency, productCode);
-                    //创建流水对象
-                    ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "1", orders, null, basicInfoVO);
-                    //计算分润
-                    CalcFeeVO calcFeeVO = this.calculateShareBenefit(type, orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
-                    if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
-                        messageFeign.sendSimpleMail(developerEmail, "代理商产品算费失败 预警", "代理商商户号 ：{ " + channelAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
-                        throw new BusinessException(EResultEnum.ERROR.getCode());
-                    }
-                    //分润金额
-                    shareBenefitLogs.setShareBenefit(calcFeeVO.getFee());
-                    shareBenefitLogsMapper.insert(shareBenefitLogs);
+            log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 通道代理分润 count1: 【{}】", count1);
+            if (count1 == 0 && StringUtils.isNotEmpty(channelAgencyCode)) {
+                Merchant channelAgency = commonRedisDataService.getMerchantById(channelAgencyCode);
+                //查询分润流水是否存在当前订单信息
+                BasicInfoVO basicInfoVO = this.getBasicInfo(channelAgency, productCode);
+                //创建流水对象
+                ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "1", orders, null, basicInfoVO);
+                //计算分润
+                CalcFeeVO calcFeeVO = this.calculateShareBenefit(type, orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
+                if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
+                    messageFeign.sendSimpleMail(developerEmail, "代理商产品算费失败 预警", "代理商商户号 ：{ " + channelAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
+                    throw new BusinessException(EResultEnum.ERROR.getCode());
                 }
+                //分润金额
+                shareBenefitLogs.setShareBenefit(calcFeeVO.getFee());
+                shareBenefitLogsMapper.insert(shareBenefitLogs);
             }
 
         } catch (Exception e) {
