@@ -99,6 +99,13 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                     log.info("*************** calculateSharebenefit 单调分润 **************,准备执行编号为：{} 分润 ：{} 的待流水记录，期初余额：{}", sl.getId(), sl.getShareBenefit(), beforeBalance);
                     afterBalance = ComDoubleUtil.addBySize(beforeBalance,sl.getShareBenefit().doubleValue(),2);
                     log.info("*************** calculateSharebenefit 单调分润 **************,准备执行编号为：{} 分润 ：{} 的待流水记录，期末余额：{}", sl.getId(), sl.getShareBenefit(), afterBalance);
+
+                    if(afterBalance<0.0D){
+                        log.info("*************** calculateSharebenefit 单调分润 **************,准备执行编号为：{} 分润 ：{} 的待流水记录，结算户期末余额为负：{}", sl.getId(), sl.getShareBenefit(), afterBalance);
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        return;
+                    }
+
                     //插入结算户流水 --- 已结算记录
                     TcsStFlow tcsStFlow = new TcsStFlow();
                     tcsStFlow.setSTFlow("SF"+ IDS.uniqueID());
@@ -128,7 +135,7 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                     tcsStFlow.setTxnexrate(0.0D);
                     tcsStFlow.setGatewayFee(0.0D);
                     tcsStFlow.setNeedClear(1);
-                    if (sl.getTradeAmount().doubleValue() < 0.0D) {
+                    if (sl.getShareBenefit().doubleValue() < 0.0D) {
                         tcsStFlow.setRemark("挂账");
                     }
                     list3.add(tcsStFlow);
@@ -160,7 +167,7 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                     tma.setBalanceTimestamp(new Date());
                     tma.setSltexrate(0.0D);
                     tma.setGatewayFee(0.0D);
-                    if (sl.getTradeAmount().doubleValue() < 0.0D) {
+                    if (sl.getShareBenefit().doubleValue() < 0.0D) {
                         tma.setRemark("挂账");
                     }
                     list1.add(tma);
