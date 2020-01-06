@@ -4,29 +4,29 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @ApiModel(value = "POS机查询订单接口输入实体", description = "POS机查询订单接口输入实体")
 public class PosQueryOrderListDTO {
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "商户编号")
     private String merchantId;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "设备编号")
     private String imei;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "操作员ID")
     private String operatorId;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "签名方式 1为RSA 2为MD5")
     private String signType;
 
-    @NotNull(message = "52008")
+    @NotBlank(message = "52008")
     @ApiModelProperty(value = "签名")
     private String sign;
 

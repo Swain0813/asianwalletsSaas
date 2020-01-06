@@ -4,54 +4,54 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 @Data
 @ApiModel(value = "线下交易输入实体", description = "线下交易输入实体")
 public class OfflineTradeDTO {
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "商户编号")
     private String merchantId;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "订单号")
     private String orderNo;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "订单币种")
     private String orderCurrency;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "订单金额")
     private BigDecimal orderAmount;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "订单时间")
     private String orderTime;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "产品编号")
     private Integer productCode;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "设备编号")
     private String imei;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "设备操作员")
     private String operatorId;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "Token")
     private String token;
 
-    @NotNull(message = "52008")
+    @NotBlank(message = "52008")
     @ApiModelProperty(value = "签名")
     private String sign;
 
-    @NotNull(message = "50002")
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "签名方式 1为RSA 2为MD5")
     private String signType;
 
