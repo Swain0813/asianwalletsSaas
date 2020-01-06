@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
+import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.ProductMapper;
@@ -97,55 +99,44 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             }
 
             /********************************************* 商户代理分润 ****************************************/
-            if (StringUtils.isEmpty(merchantAgencyCode)) {
-                Merchant merchantAgency = commonRedisDataService.getMerchantById(merchantAgencyCode);
-                int count = shareBenefitLogsMapper.selectCountByOrderId(orderId, "2");
-                //查询分润流水是否存在当前订单信息
-                if (count > 0) {
-                    log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 【商户分润记录已存在】orderId: 【{}】", orderId);
-                    return;
+            int count = shareBenefitLogsMapper.selectCountByOrderId(orderId, "2");
+            if (count == 0) {
+                if (StringUtils.isEmpty(merchantAgencyCode)) {
+                    Merchant merchantAgency = commonRedisDataService.getMerchantById(merchantAgencyCode);
+                    BasicInfoVO basicInfoVO = this.getBasicInfo(merchantAgency, productCode);
+                    //创建流水对象
+                    ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "2", orders, null, basicInfoVO);
+                    //计算分润
+                    CalcFeeVO calcFeeVO = this.calculateShareBenefit(type, orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
+                    if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
+                        messageFeign.sendSimpleMail(developerEmail, "代理商产品算费失败 预警", "代理商商户号 ：{ " + merchantAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
+                        throw new BusinessException(EResultEnum.ERROR.getCode());
+                    }
+                    //分润金额
+                    shareBenefitLogs.setShareBenefit(calcFeeVO.getFee());
+                    shareBenefitLogsMapper.insert(shareBenefitLogs);
                 }
-                BasicInfoVO basicInfoVO = this.getBasicInfo(merchantAgency, productCode);
-                //创建流水对象
-                ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "2", orders, null, basicInfoVO);
-                //计算分润
-                CalcFeeVO calcFeeVO = this.calculateShareBenefit(type,orders,null,basicInfoVO.getMerchantProduct(),shareBenefitLogs);
-                if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
-                    //rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orderId);
-                    messageFeign.sendSimpleMail(developerEmail, "代理商产品算费失败 预警", "代理商商户号 ：{ " + merchantAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
-                    return;
-                }
-                //分润金额
-                shareBenefitLogs.setShareBenefit(calcFeeVO.getFee());
-                shareBenefitLogsMapper.insert(shareBenefitLogs);
-
             }
             /********************************************* 通道代理分润 ****************************************/
-            if (StringUtils.isEmpty(channelAgencyCode)) {
-                Merchant channelAgency = commonRedisDataService.getMerchantById(channelAgencyCode);
-                //查询分润流水是否存在当前订单信息
-                int count = shareBenefitLogsMapper.selectCountByOrderId(orderId, "1");
-                if (count > 0) {
-                    log.error("================== 【insertShareBenefitLogs 通道代理分润】=================== 【通道分润记录已存在】orderId: 【{}】", orderId);
-                    return;
+            int count1 = shareBenefitLogsMapper.selectCountByOrderId(orderId, "1");
+            if (count1 == 0) {
+                if (StringUtils.isEmpty(channelAgencyCode)) {
+                    Merchant channelAgency = commonRedisDataService.getMerchantById(channelAgencyCode);
+                    //查询分润流水是否存在当前订单信息
+                    BasicInfoVO basicInfoVO = this.getBasicInfo(channelAgency, productCode);
+                    //创建流水对象
+                    ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "1", orders, null, basicInfoVO);
+                    //计算分润
+                    CalcFeeVO calcFeeVO = this.calculateShareBenefit(type, orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
+                    if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
+                        messageFeign.sendSimpleMail(developerEmail, "代理商产品算费失败 预警", "代理商商户号 ：{ " + channelAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
+                        throw new BusinessException(EResultEnum.ERROR.getCode());
+                    }
+                    //分润金额
+                    shareBenefitLogs.setShareBenefit(calcFeeVO.getFee());
+                    shareBenefitLogsMapper.insert(shareBenefitLogs);
                 }
-                BasicInfoVO basicInfoVO = this.getBasicInfo(channelAgency, productCode);
-                //创建流水对象
-                ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "1", orders, null, basicInfoVO);
-                //计算分润
-                CalcFeeVO calcFeeVO = this.calculateShareBenefit(type,orders,null,basicInfoVO.getMerchantProduct(),shareBenefitLogs);
-
-                if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
-                    //rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orderId);
-                    messageFeign.sendSimpleMail(developerEmail, "代理商产品算费失败 预警", "代理商商户号 ：{ " + channelAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
-                    return;
-                }
-                //分润金额
-                shareBenefitLogs.setShareBenefit(calcFeeVO.getFee());
-                shareBenefitLogsMapper.insert(shareBenefitLogs);
             }
-
-
 
         } catch (Exception e) {
             log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 【异常】 orderId: 【{}】,Exception :【{}】", orderId, e);
@@ -156,12 +147,12 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/1/6
      * @Descripate 计算分润
-     * @return
      **/
-    private CalcFeeVO calculateShareBenefit(Integer type,Orders orders,Object object, MerchantProduct merchantProduct, ShareBenefitLogs shareBenefitLogs) {
+    private CalcFeeVO calculateShareBenefit(Integer type, Orders orders, Object object, MerchantProduct merchantProduct, ShareBenefitLogs shareBenefitLogs) {
         log.error("================== 【calculateShareBenefit 计算分润】====================");
         CalcFeeVO calcFeeVO = new CalcFeeVO();
         calcFeeVO.setChargeStatus(TradeConstant.CHARGE_STATUS_FALID);
@@ -173,7 +164,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             amount = orders.getTradeAmount();
             orderFee = orders.getFee();
         } else if (type == 2) {
-        //    TODO
+            //    TODO
         }
         if (merchantProduct.getRateType().equals(TradeConstant.FEE_TYPE_RATE)) {
             //手续费=订单金额*单笔费率+附加值
@@ -193,7 +184,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             return calcFeeVO;
         }
         if (type == 1 && !orders.getOrderCurrency().equals(orders.getTradeCurrency())) {
-            if(org.springframework.util.StringUtils.isEmpty(orders.getTradeForOrderRate())){
+            if (org.springframework.util.StringUtils.isEmpty(orders.getTradeForOrderRate())) {
                 log.info("==================【calculateShareBenefit 计算分润】===================【换汇异常】 orders.getTradeForOrderRate()为null");
                 return calcFeeVO;
             }
@@ -201,11 +192,11 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
         }
         //若是汇款单需要把代理商手续费换汇
         if (type == 2) {
-        //   TODO
+            //   TODO
         }
         //手续费
         poundage = poundage.setScale(2, BigDecimal.ROUND_HALF_UP);
-        log.info("==================【calculateShareBenefit 计算分润】==================== poundage",poundage);
+        log.info("==================【calculateShareBenefit 计算分润】==================== poundage", poundage);
         shareBenefitLogs.setFee(poundage);
         //计算分润
         BigDecimal benefit = BigDecimal.ZERO;
