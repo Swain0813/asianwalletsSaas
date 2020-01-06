@@ -18,9 +18,27 @@ public class TmMerChTvAcctBalance{
     @Column(name = "flow")
     private String flow;
 
+    @ApiModelProperty(value = "机构编号")
+    @Column(name = "institution_id")
+    private String institutionId;
+
+    @ApiModelProperty(value = "机构名称")
+    @Column(name = "institution_name")
+    private String institutionName;
+
+
     @ApiModelProperty(value = "商户编号")
     @Column(name = "merchantid")
     private String merchantid;
+
+    @ApiModelProperty(value = "商户名称")
+    @Column(name = "merchant_name")
+    private String merchantName;
+
+    @ApiModelProperty(value = "商户订单号")
+    @Column(name = "merchant_order_id")
+    private String merchantOrderId;
+
 
     @ApiModelProperty(value = "所属商户的业务账户编号")
     @Column(name = "mbuaccountId")
