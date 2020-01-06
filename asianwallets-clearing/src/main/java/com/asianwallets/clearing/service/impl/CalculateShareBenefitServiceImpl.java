@@ -85,6 +85,17 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                 List<TcsStFlow> list3 = new ArrayList<>();
                 int num = 0;
                 for (ShareBenefitLogs sl : list) {
+                    afterBalance = ComDoubleUtil.addBySize(beforeBalance,sl.getShareBenefit().doubleValue(),2);
+                    if(afterBalance<0.0D){
+                        log.info("*************** calculateSharebenefit 单调分润 ************** 结算户余额为负 流水号 ：{} ,afterBalance", sl.getId(),afterBalance);
+                        return;
+                    }
+                    beforeBalance = afterBalance;
+                }
+
+                beforeBalance = account.getSettleBalance().doubleValue();
+                afterBalance = 0.0D;
+                for (ShareBenefitLogs sl : list) {
                     if (sl == null || StringUtils.isEmpty(sl.getAgentId()) || StringUtils.isEmpty(sl.getTradeCurrency())
                             || StringUtils.isEmpty(sl.getShareBenefit())) {
                         log.info("*************** calculateSharebenefit 单调分润 ************** 接收处理数据，分润流水信息不全 流水号 ：{}", sl.getId());
@@ -100,11 +111,6 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                     afterBalance = ComDoubleUtil.addBySize(beforeBalance,sl.getShareBenefit().doubleValue(),2);
                     log.info("*************** calculateSharebenefit 单调分润 **************,准备执行编号为：{} 分润 ：{} 的待流水记录，期末余额：{}", sl.getId(), sl.getShareBenefit(), afterBalance);
 
-                    if(afterBalance<0.0D){
-                        log.info("*************** calculateSharebenefit 单调分润 **************,准备执行编号为：{} 分润 ：{} 的待流水记录，结算户期末余额为负：{}", sl.getId(), sl.getShareBenefit(), afterBalance);
-                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                        return;
-                    }
 
                     //插入结算户流水 --- 已结算记录
                     TcsStFlow tcsStFlow = new TcsStFlow();
