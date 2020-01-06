@@ -44,7 +44,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
     @Autowired
     private CommonRedisDataService commonRedisDataService;
 
-    @Value("${custom.developer.email}")
+    @Value("${custom.warning.email}")
     private String developerEmail;
 
     @Autowired
