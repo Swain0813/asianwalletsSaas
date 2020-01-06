@@ -1,12 +1,11 @@
 package com.asianwallets.permissions.feign.base;
+
 import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.dto.ClearSearchDTO;
 import com.asianwallets.common.dto.FrozenMarginInfoDTO;
+import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.vo.AccountListVO;
-import com.asianwallets.common.vo.ClearAccountVO;
-import com.asianwallets.common.vo.FrozenMarginInfoVO;
-import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
+import com.asianwallets.common.vo.*;
 import com.asianwallets.permissions.feign.base.impl.AccountFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -53,4 +52,8 @@ public interface AccountFeign {
     @ApiOperation(value = "导出冻结余额流水详情")
     @PostMapping("/account/exportFrozenLogs")
     List<FrozenMarginInfoVO> exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO accountSearchDTO);
+
+    @ApiOperation(value = "导出商户余额")
+    @PostMapping("/account/exportMerchantBalance")
+    List<MerchantBalanceVO> exportMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO);
 }

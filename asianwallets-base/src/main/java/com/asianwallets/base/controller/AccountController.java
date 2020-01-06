@@ -8,10 +8,7 @@ import com.asianwallets.common.dto.FrozenMarginInfoDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
-import com.asianwallets.common.vo.AccountListVO;
-import com.asianwallets.common.vo.ClearAccountVO;
-import com.asianwallets.common.vo.FrozenMarginInfoVO;
-import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
+import com.asianwallets.common.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -87,5 +84,11 @@ public class AccountController extends BaseController {
     @PostMapping("/pageFindMerchantBalance")
     public BaseResponse pageMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO) {
         return ResultUtil.success(accountService.pageFindMerchantBalance(ordersDTO));
+    }
+
+    @ApiOperation(value = "导出商户余额")
+    @PostMapping("/exportMerchantBalance")
+    public List<MerchantBalanceVO> exportMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO) {
+        return accountService.exportMerchantBalance(ordersDTO);
     }
 }

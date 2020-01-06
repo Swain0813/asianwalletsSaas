@@ -50,4 +50,11 @@ public interface TmMerChTvAcctBalanceMapper extends BaseMapper<TmMerChTvAcctBala
      * @return
      */
     List<MerchantBalanceVO> pageFindMerchantBalance(OrdersDTO ordersDTO);
+
+    /**
+     * 导出商户余额
+     * @param ordersDTO 订单输入DTO
+     * @return
+     */
+    List<MerchantBalanceVO> exportMerchantBalance(OrdersDTO ordersDTO);
 }

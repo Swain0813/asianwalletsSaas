@@ -156,4 +156,31 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
         ordersDTO.setSort("balance_timestamp");
         return new PageInfo<>(tmMerChTvAcctBalanceMapper.pageFindMerchantBalance(ordersDTO));
     }
+
+    /**
+     * 导出商户余额
+     *
+     * @param ordersDTO 订单输入DTO
+     * @return
+     */
+    @Override
+    public List<MerchantBalanceVO> exportMerchantBalance(OrdersDTO ordersDTO) {
+        List<MerchantBalanceVO> merchantBalanceVOList = tmMerChTvAcctBalanceMapper.exportMerchantBalance(ordersDTO);
+        for (MerchantBalanceVO merchantBalanceVO : merchantBalanceVOList) {
+            if ("NT".equals(merchantBalanceVO.getTradeType()) || ("ST".equals(merchantBalanceVO.getTradeType()))) {
+                merchantBalanceVO.setTradeType("收单");
+            } else if ("RF".equals(merchantBalanceVO.getTradeType())) {
+                merchantBalanceVO.setTradeType("退款");
+            } else if ("RV".equals(merchantBalanceVO.getTradeType())) {
+                merchantBalanceVO.setTradeType("撤销");
+            } else if ("WD".equals(merchantBalanceVO.getTradeType())) {
+                merchantBalanceVO.setTradeType("提款");
+            } else if ("AA".equals(merchantBalanceVO.getTradeType()) || "RA".equals(merchantBalanceVO.getTradeType())) {
+                merchantBalanceVO.setTradeType("调账");
+            } else if ("SP".equals(merchantBalanceVO.getTradeType())) {
+                merchantBalanceVO.setTradeType("分润");
+            }
+        }
+        return merchantBalanceVOList;
+    }
 }

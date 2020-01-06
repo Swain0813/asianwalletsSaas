@@ -1,4 +1,5 @@
 package com.asianwallets.permissions.controller;
+
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
@@ -8,6 +9,7 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.dto.ClearSearchDTO;
 import com.asianwallets.common.dto.FrozenMarginInfoDTO;
+import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -15,10 +17,7 @@ import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
-import com.asianwallets.common.vo.AccountListVO;
-import com.asianwallets.common.vo.ClearAccountVO;
-import com.asianwallets.common.vo.FrozenMarginInfoVO;
-import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
+import com.asianwallets.common.vo.*;
 import com.asianwallets.permissions.feign.base.AccountFeign;
 import com.asianwallets.permissions.service.ExportService;
 import com.asianwallets.permissions.service.OperationLogService;
@@ -31,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -56,7 +56,6 @@ public class AccountFeignController extends BaseController {
     private ExportService exportService;
 
 
-
     @ApiOperation(value = "分页查询账户信息")
     @PostMapping("/pageFindAccount")
     public BaseResponse pageFindAccount(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO) {
@@ -71,7 +70,7 @@ public class AccountFeignController extends BaseController {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(accountSearchDTO),
                 "导出账户信息"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
-        try{
+        try {
             List<AccountListVO> dataList = accountFeign.exportAccountList(accountSearchDTO);
             ServletOutputStream out = response.getOutputStream();
             if (ArrayUtil.isEmpty(dataList)) {
@@ -84,7 +83,7 @@ public class AccountFeignController extends BaseController {
             ExcelUtils excelUtils = new ExcelUtils();
             excelUtils.exportExcel(dataList, AccountListVO.class, writer);
             writer.flush(out);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.info("==========【导出账户信息】==========【导出账户信息导出异常】", e);
             throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
         } finally {
@@ -119,7 +118,7 @@ public class AccountFeignController extends BaseController {
             }
             writer = exportService.getClearBalanceWriter(dataList, ClearAccountVO.class);
             writer.flush(out);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info("==========【导出清算户余额流水详情】==========【导出清算户余额流水详情异常】", e);
             throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
         } finally {
@@ -138,7 +137,7 @@ public class AccountFeignController extends BaseController {
 
     @ApiOperation(value = "导出结算户余额流水详情")
     @PostMapping("/exportSettleLogs")
-    public BaseResponse exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO,HttpServletResponse response) {
+    public BaseResponse exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO, HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(accountSearchDTO),
                 "导出结算户余额流水详情"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
@@ -154,7 +153,7 @@ public class AccountFeignController extends BaseController {
             }
             writer = exportService.getTmMerChTvAcctBalanceWriter(dataList, TmMerChTvAcctBalanceVO.class);
             writer.flush(out);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info("==========【导出结算户余额流水详情】==========【导出结算户余额流水详情异常】", e);
             throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
         } finally {
@@ -173,7 +172,7 @@ public class AccountFeignController extends BaseController {
 
     @ApiOperation(value = "导出冻结余额流水详情")
     @PostMapping("/exportFrozenLogs")
-    public BaseResponse exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO frozenMarginInfoDTO,HttpServletResponse response) {
+    public BaseResponse exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO frozenMarginInfoDTO, HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(frozenMarginInfoDTO),
                 "导出冻结余额流水详情"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
@@ -189,7 +188,7 @@ public class AccountFeignController extends BaseController {
             }
             writer = exportService.getFrozenLogsWriter(dataList, FrozenMarginInfoVO.class);
             writer.flush(out);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info("==========【导出冻结余额流水详情】==========【导出冻结余额流水详情异常】", e);
             throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
         } finally {
@@ -198,4 +197,31 @@ public class AccountFeignController extends BaseController {
         return ResultUtil.success();
     }
 
+    @ApiOperation(value = "导出商户余额")
+    @PostMapping("/exportMerchantBalance")
+    public BaseResponse exportMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO, HttpServletResponse response) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
+                "导出商户余额"));
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        try {
+            final List<MerchantBalanceVO> merchantBalanceVOList = accountFeign.exportMerchantBalance(ordersDTO);
+            ServletOutputStream out = response.getOutputStream();
+            if (ArrayUtil.isEmpty(merchantBalanceVOList)) {
+                //数据不存在的场合
+                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(getLanguage());
+                writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
+                writer.flush(out);
+                return ResultUtil.success();
+            }
+            ExcelUtils excelUtils = new ExcelUtils();
+            excelUtils.exportExcel(merchantBalanceVOList, MerchantBalanceVO.class, writer);
+            writer.flush(out);
+        } catch (Exception e) {
+            log.info("==========【导出商户余额】==========【导出商户余额异常】", e);
+            throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
+        } finally {
+            writer.close();
+        }
+        return ResultUtil.success();
+    }
 }

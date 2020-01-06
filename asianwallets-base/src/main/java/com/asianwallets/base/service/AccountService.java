@@ -77,4 +77,11 @@ public interface AccountService extends BaseService<Account> {
      * @return
      */
     PageInfo<MerchantBalanceVO> pageFindMerchantBalance(OrdersDTO ordersDTO);
+
+    /**
+     * 导出商户余额
+     * @param ordersDTO 订单输入DTO
+     * @return
+     */
+    List<MerchantBalanceVO> exportMerchantBalance(OrdersDTO ordersDTO);
 }
