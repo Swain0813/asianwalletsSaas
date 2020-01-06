@@ -334,7 +334,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             log.info("=========================【退款 doRefundOrder】=========================【上报队列 RV_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
             rabbitMQSender.send(AD3MQConstant.RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
-            baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
             return baseResponse;
         }
         ChannelsAbstract channelsAbstract = null;

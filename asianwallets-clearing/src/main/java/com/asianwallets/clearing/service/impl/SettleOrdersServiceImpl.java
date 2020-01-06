@@ -183,6 +183,10 @@ public class SettleOrdersServiceImpl implements SettleOrdersService {
                         TmMerChTvAcctBalance tma = new TmMerChTvAcctBalance();
                         tma.setFlow("MV" + IDS.uniqueID());
                         tma.setMerchantid(settleOrder.getMerchantId());
+                        tma.setMerchantName(settleOrder.getMerchantName());
+                        tma.setInstitutionId(settleOrder.getInstitutionId());
+                        tma.setInstitutionName(settleOrder.getInstitutionName());
+                        tma.setMerchantOrderId(settleOrder.getId());
                         tma.setVaccounId(account.getId());
                         //结算户
                         tma.setType(2);

@@ -128,7 +128,7 @@ public class FundChangeDTO implements Serializable {
         this.refcnceFlow = orderRefund.getId();
         //交易类型 NT：收单，RF：退款，RV：撤销，WD：提款，AA:调账，TA:转账
         this.tradetype = tradetype;
-        //机构订单号
+        //商户订单号
         this.merOrderNo = orderRefund.getMerchantOrderId();
         //订单币种
         this.txncurrency = orderRefund.getOrderCurrency();
@@ -170,8 +170,6 @@ public class FundChangeDTO implements Serializable {
         //结算币种
         this.sltcurrency = orderRefund.getOrderCurrency();
         this.sltamount = -1 * orderRefund.getOrderAmount().doubleValue();
-        //通道成本币种
-        this.channelCostcurrency = orderRefund.getOrderCurrency();
         //网关手续费
         this.gatewayFee = 0.00;
         //手续费,2位
@@ -290,7 +288,7 @@ public class FundChangeDTO implements Serializable {
         //结算金额
         this.sltamount = orders.getOrderAmount().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         this.feecurrency = orders.getOrderCurrency();//手续费币种
-        this.channelCostcurrency = orders.getOrderCurrency();//通道成本币种
+        this.channelCostcurrency = orders.getTradeCurrency();//通道成本币种
         this.gatewayFee = 0.00;//网关手续费
         this.shouldDealtime = orders.getProductSettleCycle();//应结算日期
         //退还手续费,2位

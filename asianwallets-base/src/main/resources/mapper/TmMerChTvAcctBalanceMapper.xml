@@ -46,7 +46,7 @@
   </sql>
 
     <select id="pageClearBalanceLogs" resultMap="ClearAccountVOMap">
-           SELECT referenceflow,
+        SELECT referenceflow,
                currency,
                tradetype,
                txnamount,
@@ -60,7 +60,7 @@
     </select>
 
     <select id="exportClearBalanceLogs" resultMap="ClearAccountVOMap">
-         SELECT referenceflow,
+        SELECT referenceflow,
                currency,
                tradetype,
                txnamount,
@@ -70,7 +70,8 @@
                remark
         from tm_merchtvacctbalance
         where vaccounId = #{accountId}
-          and type = 1  ORDER BY balance_timestamp DESC
+          and type = 1
+        ORDER BY balance_timestamp DESC
     </select>
 
     <select id="pageAccountBalanceLogs" resultMap="BaseResultMap">
@@ -86,4 +87,96 @@
         ORDER BY balance_timestamp DESC
     </select>
 
+    <select id="pageFindMerchantBalance" resultType="com.asianwallets.common.vo.MerchantBalanceVO">
+        select
+        sysAddDate,
+        institution_id as institutionId,
+        institution_name as institutionName,
+        merchantid as merchantId,
+        merchant_name as merchantName,
+        merchant_order_id as merchantOrderId,
+        referenceflow as referenceFlow,
+        currency,
+        txnamount as txnAmount,
+        fee,
+        tradetype as tradeType,
+        income,
+        outcome,
+        balance,
+        afterbalance as afterBalance,
+        remark
+        from tm_merchtvacctbalance
+        where type = 2
+        <if test="id != null and id != ''">
+            AND id = #{id}
+        </if>
+        <if test="merchantOrderId != null and merchantOrderId != ''">
+            AND merchant_order_id = #{merchantOrderId}
+        </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND merchant_id = #{merchantId}
+        </if>
+        <if test="merchantName != null and merchantName != ''">
+            AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+        </if>
+        <if test="institutionId != null and institutionId != ''">
+            AND institution_id = #{institutionId}
+        </if>
+        <if test="institutionName != null and institutionName != ''">
+            AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+        </if>
+        <if test="startDate != null and startDate !=''">
+            AND sysAddDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate !=''">
+            AND sysAddDate &lt;= #{endDate}
+        </if>
+    </select>
+
+    <select id="exportMerchantBalance" resultType="com.asianwallets.common.vo.MerchantBalanceVO">
+        select
+        sysAddDate,
+        institution_id as institutionId,
+        institution_name as institutionName,
+        merchantid as merchantId,
+        merchant_name as merchantName,
+        merchant_order_id as merchantOrderId,
+        referenceflow as referenceFlow,
+        currency,
+        txnamount as txnAmount,
+        fee,
+        tradetype as tradeType,
+        income,
+        outcome,
+        balance,
+        afterbalance as afterBalance,
+        remark
+        from tm_merchtvacctbalance
+        where type = 2
+        <if test="id != null and id != ''">
+            AND id = #{id}
+        </if>
+        <if test="merchantOrderId != null and merchantOrderId != ''">
+            AND merchant_order_id = #{merchantOrderId}
+        </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND merchant_id = #{merchantId}
+        </if>
+        <if test="merchantName != null and merchantName != ''">
+            AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+        </if>
+        <if test="institutionId != null and institutionId != ''">
+            AND institution_id = #{institutionId}
+        </if>
+        <if test="institutionName != null and institutionName != ''">
+            AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+        </if>
+        <if test="startDate != null and startDate !=''">
+            AND sysAddDate &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate !=''">
+            AND sysAddDate &lt;= #{endDate}
+        </if>
+        order by balance_timestamp desc
+    </select>
 </mapper>

@@ -32,7 +32,7 @@ public class ResultUtil {
         BaseResponse response = new BaseResponse();
         response.setCode(code);
         response.setMsg(msg);
-        if (code.equals("200")) {response.setMsg("SUCCESS"); } ;
+        if ("200".equals(code)) {response.setMsg("SUCCESS"); } ;
         return response;
     }
 

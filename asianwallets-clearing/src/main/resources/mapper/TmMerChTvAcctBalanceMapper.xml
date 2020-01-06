@@ -4,6 +4,10 @@
   <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.TmMerChTvAcctBalance" >
     <id column="flow" property="flow" jdbcType="VARCHAR" />
     <result column="merchantid" property="merchantid" jdbcType="VARCHAR" />
+    <result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
+    <result column="institution_id" property="institutionId" jdbcType="VARCHAR" />
+    <result column="institution_name" property="institutionName" jdbcType="VARCHAR" />
+    <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR" />
     <result column="mbuaccountId" property="mbuaccountId" jdbcType="VARCHAR" />
     <result column="vaccounId" property="vaccounId" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
@@ -29,8 +33,8 @@
     <result column="organId" property="organId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    flow, merchantid, mbuaccountId, vaccounId, type, bussinesstype, balancetype, currency,
-    referenceflow, tradetype, txnamount, sltamount, sltcurrency, sltexrate, income, outcome,
+    flow, merchantid, mbuaccountId, vaccounId, type, bussinesstype, balancetype, currency,merchant_name,institution_id
+    referenceflow, tradetype, txnamount, sltamount, sltcurrency, sltexrate, income, outcome,institution_name,merchant_order_id,
     fee, refundOrderFee, balance, afterbalance, sysAddDate, balance_timestamp, remark, gatewayFee, organId
   </sql>
 

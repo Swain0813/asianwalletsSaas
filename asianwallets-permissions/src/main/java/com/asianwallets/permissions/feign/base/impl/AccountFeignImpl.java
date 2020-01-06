@@ -2,13 +2,11 @@ package com.asianwallets.permissions.feign.base.impl;
 import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.dto.ClearSearchDTO;
 import com.asianwallets.common.dto.FrozenMarginInfoDTO;
+import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.vo.AccountListVO;
-import com.asianwallets.common.vo.ClearAccountVO;
-import com.asianwallets.common.vo.FrozenMarginInfoVO;
-import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
+import com.asianwallets.common.vo.*;
 import com.asianwallets.permissions.feign.base.AccountFeign;
 import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Component;
@@ -103,4 +101,8 @@ public class AccountFeignImpl implements AccountFeign {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
+    @Override
+    public List<MerchantBalanceVO> exportMerchantBalance(OrdersDTO ordersDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

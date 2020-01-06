@@ -217,7 +217,11 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                     mab.setFlow("MV" + IDS.uniqueID());
                     mab.setAfterbalance(afterbalance);
                     mab.setOrganId(ct.getOrganId());
+                    mab.setInstitutionId(ma2clafter.getInstitutionId());
+                    mab.setInstitutionName(ma2clafter.getInstitutionName());
                     mab.setMerchantid(ct.getMerchantid());
+                    mab.setMerchantName(ma2clafter.getMerchantName());
+                    mab.setMerchantOrderId(ct.getMerOrderNo());
                     mab.setMbuaccountId(null);
                     mab.setSysAddDate(new Date());
                     mab.setVaccounId(ma2cl.getId());//清算户编号

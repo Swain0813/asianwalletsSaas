@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @Api(description = "退款和撤销接口")
 @RequestMapping("/trade")
@@ -39,7 +41,7 @@ public class RefundTradeController extends BaseController {
     @ApiOperation(value = "退款接口")
     @PostMapping("/refund")
     @CrossOrigin
-    public BaseResponse refundOrder(RefundDTO refundDTO) {
+    public BaseResponse refundOrder(@RequestBody @ApiParam @Valid RefundDTO refundDTO) {
         //线下判断交易密码
         if (TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection())) {
             if (StringUtils.isEmpty(refundDTO.getToken())) {
@@ -61,7 +63,7 @@ public class RefundTradeController extends BaseController {
     @ApiOperation(value = "撤销接口")
     @PostMapping("/reverse")
     @CrossOrigin
-    public BaseResponse reverse(UndoDTO undoDTO) {
+    public BaseResponse reverse(@RequestBody @ApiParam @Valid UndoDTO undoDTO) {
         BaseResponse baseResponse = refundTradeService.undo(undoDTO, this.getReqIp());
         return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
     }

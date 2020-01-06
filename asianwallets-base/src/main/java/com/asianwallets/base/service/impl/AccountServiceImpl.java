@@ -1,4 +1,5 @@
 package com.asianwallets.base.service.impl;
+
 import com.asianwallets.base.dao.AccountMapper;
 import com.asianwallets.base.dao.ReconciliationMapper;
 import com.asianwallets.base.dao.TmMerChTvAcctBalanceMapper;
@@ -8,16 +9,15 @@ import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.AccountSearchDTO;
 import com.asianwallets.common.dto.ClearSearchDTO;
 import com.asianwallets.common.dto.FrozenMarginInfoDTO;
+import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.Account;
 import com.asianwallets.common.entity.TmMerChTvAcctBalance;
-import com.asianwallets.common.vo.AccountListVO;
-import com.asianwallets.common.vo.ClearAccountVO;
-import com.asianwallets.common.vo.FrozenMarginInfoVO;
-import com.asianwallets.common.vo.TmMerChTvAcctBalanceVO;
+import com.asianwallets.common.vo.*;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 /**
@@ -39,6 +39,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
 
     /**
      * 分页查询账户信息
+     *
      * @param accountSearchDTO
      * @return
      */
@@ -51,6 +52,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
 
     /**
      * 导出账户信息
+     *
      * @param accountSearchDTO
      * @return
      */
@@ -61,6 +63,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
 
     /**
      * 查询清算户余额流水详情
+     *
      * @param clearSearchDTO
      * @return
      */
@@ -72,6 +75,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
 
     /**
      * 导出清算户余额流水详情
+     *
      * @param clearSearchDTO
      * @return
      */
@@ -82,6 +86,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
 
     /**
      * 查询结算户余额流水详情
+     *
      * @param accountSearchDTO
      * @return
      */
@@ -95,18 +100,20 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
 
     /**
      * 导出结算户余额流水详情
+     *
      * @param accountSearchDTO
      * @return
      */
     @Override
     public List<TmMerChTvAcctBalanceVO> exportSettleLogs(AccountSearchDTO accountSearchDTO) {
         //查询结算户余额流水详情
-        List<TmMerChTvAcctBalanceVO> oldAccountBalanceLogs= tmMerChTvAcctBalanceMapper.exportAccountBalanceLogs(accountSearchDTO);
+        List<TmMerChTvAcctBalanceVO> oldAccountBalanceLogs = tmMerChTvAcctBalanceMapper.exportAccountBalanceLogs(accountSearchDTO);
         return oldAccountBalanceLogs;
     }
 
     /**
      * 查询冻结余额流水详情
+     *
      * @param frozenMarginInfoDTO
      * @return
      */
@@ -123,6 +130,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
 
     /**
      * 导出冻结余额流水详情
+     *
      * @param frozenMarginInfoDTO
      * @return
      */
@@ -137,4 +145,42 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
         return frozenMarginInfoVOS;
     }
 
+    /**
+     * 商户余额查询
+     *
+     * @param ordersDTO 订单输入DTO
+     * @return
+     */
+    @Override
+    public PageInfo<MerchantBalanceVO> pageFindMerchantBalance(OrdersDTO ordersDTO) {
+        ordersDTO.setSort("balance_timestamp");
+        return new PageInfo<>(tmMerChTvAcctBalanceMapper.pageFindMerchantBalance(ordersDTO));
+    }
+
+    /**
+     * 导出商户余额
+     *
+     * @param ordersDTO 订单输入DTO
+     * @return
+     */
+    @Override
+    public List<MerchantBalanceVO> exportMerchantBalance(OrdersDTO ordersDTO) {
+        List<MerchantBalanceVO> merchantBalanceVOList = tmMerChTvAcctBalanceMapper.exportMerchantBalance(ordersDTO);
+        for (MerchantBalanceVO merchantBalanceVO : merchantBalanceVOList) {
+            if ("NT".equals(merchantBalanceVO.getTradeType()) || ("ST".equals(merchantBalanceVO.getTradeType()))) {
+                merchantBalanceVO.setTradeType("收单");
+            } else if ("RF".equals(merchantBalanceVO.getTradeType())) {
+                merchantBalanceVO.setTradeType("退款");
+            } else if ("RV".equals(merchantBalanceVO.getTradeType())) {
+                merchantBalanceVO.setTradeType("撤销");
+            } else if ("WD".equals(merchantBalanceVO.getTradeType())) {
+                merchantBalanceVO.setTradeType("提款");
+            } else if ("AA".equals(merchantBalanceVO.getTradeType()) || "RA".equals(merchantBalanceVO.getTradeType())) {
+                merchantBalanceVO.setTradeType("调账");
+            } else if ("SP".equals(merchantBalanceVO.getTradeType())) {
+                merchantBalanceVO.setTradeType("分润");
+            }
+        }
+        return merchantBalanceVOList;
+    }
 }
