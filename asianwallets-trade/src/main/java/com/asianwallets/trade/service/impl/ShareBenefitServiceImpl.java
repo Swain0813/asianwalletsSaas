@@ -33,7 +33,7 @@ import java.math.BigDecimal;
  **/
 @Slf4j
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class ShareBenefitServiceImpl implements ShareBenefitService {
 
     @Autowired
