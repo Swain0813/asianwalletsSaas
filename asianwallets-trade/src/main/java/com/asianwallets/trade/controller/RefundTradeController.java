@@ -39,7 +39,7 @@ public class RefundTradeController extends BaseController {
     @ApiOperation(value = "退款接口")
     @PostMapping("/refund")
     @CrossOrigin
-    public BaseResponse refundOrder(RefundDTO refundDTO) {
+    public BaseResponse refundOrder(@RequestBody @ApiParam RefundDTO refundDTO) {
         //线下判断交易密码
         if (TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection())) {
             if (StringUtils.isEmpty(refundDTO.getToken())) {
@@ -61,7 +61,7 @@ public class RefundTradeController extends BaseController {
     @ApiOperation(value = "撤销接口")
     @PostMapping("/reverse")
     @CrossOrigin
-    public BaseResponse reverse(UndoDTO undoDTO) {
+    public BaseResponse reverse(@RequestBody @ApiParam UndoDTO undoDTO) {
         BaseResponse baseResponse = refundTradeService.undo(undoDTO, this.getReqIp());
         return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
     }
