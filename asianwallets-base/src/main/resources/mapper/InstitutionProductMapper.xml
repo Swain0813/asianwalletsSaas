@@ -97,7 +97,7 @@
 
 
     <select id="pageInstitutionRequests" resultMap="BaseResultMap">
-        select
+        select DISTINCT
         institution_id,institution_name,create_time,creator,update_time,modifier
         from institution_product
         <where>
