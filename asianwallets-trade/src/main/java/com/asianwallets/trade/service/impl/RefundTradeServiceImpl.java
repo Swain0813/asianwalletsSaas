@@ -588,7 +588,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 }
                 orderRefund.setChannelFee(fl);
             } else {
-                orderRefund.setChannelFee(channel.getChannelRefundMaxRate());
+                orderRefund.setChannelFee(channel.getChannelRefundFeeRate());
             }
         } else {
             orderRefund.setChannelRate(null);//通道费率
