@@ -1,9 +1,11 @@
 package com.asianwallets.permissions.feign.base.impl;
 import com.asianwallets.common.dto.DccReportDTO;
+import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.DccReportVO;
+import com.asianwallets.common.vo.InsDailyTradeVO;
 import com.asianwallets.permissions.feign.base.ReportFeign;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -31,6 +33,16 @@ public class ReportFeignImpl implements ReportFeign {
      */
     @Override
     public List<DccReportVO> exportDccReport(DccReportDTO dccReportDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse pageFindInsDailyTrade(OrdersDTO ordersDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public List<InsDailyTradeVO> exportInsDailyTrade(OrdersDTO ordersDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

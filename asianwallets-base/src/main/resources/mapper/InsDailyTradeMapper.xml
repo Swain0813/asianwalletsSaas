@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.InsDailyTradeMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.InsDailyTrade">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
+        <result column="order_currency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <result column="total_count" property="totalCount" jdbcType="INTEGER"/>
+        <result column="total_amount" property="totalAmount" jdbcType="DECIMAL"/>
+        <result column="total_fee" property="totalFee" jdbcType="DECIMAL"/>
+        <result column="trade_time" property="tradeTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="extend1" property="extend1" jdbcType="VARCHAR"/>
+        <result column="extend2" property="extend2" jdbcType="VARCHAR"/>
+        <result column="extend3" property="extend3" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, institution_id, institution_name, channel_code, channel_name, order_currency, 
+    total_count, total_amount, total_fee, trade_time, create_time, update_time, creator, 
+    modifier, remark, extend1, extend2, extend3
+  </sql>
+
+    <select id="pageFindInsDailyTrade" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ins_daily_trade
+        <where>
+            <if test="institutionId != null and institutionId != ''">
+                AND institution_id = #{institutionId}
+            </if>
+            <if test="institutionName != null and institutionName != ''">
+                AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND create_time &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="exportInsDailyTrade" resultType="com.asianwallets.common.vo.InsDailyTradeVO">
+        select
+        create_time as createTime,
+        trade_time as tradeTime,
+        institution_id as institutionId,
+        institution_name as institutionName,
+        channel_code as channelCode,
+        channel_name as channelName,
+        order_currency as orderCurrency,
+        total_count as totalCount,
+        total_amount as totalAmount,
+        total_fee as totalFee,
+        remark
+        from ins_daily_trade
+        <where>
+            <if test="institutionId != null and institutionId != ''">
+                AND institution_id = #{institutionId}
+            </if>
+            <if test="institutionName != null and institutionName != ''">
+                AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND create_time &lt;= #{endDate}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+</mapper>

@@ -1,10 +1,12 @@
 package com.asianwallets.base.service.impl;
 
+import com.asianwallets.base.dao.InsDailyTradeMapper;
 import com.asianwallets.base.dao.OrdersMapper;
 import com.asianwallets.base.service.OrdersService;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.dto.DccReportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
+import com.asianwallets.common.entity.InsDailyTrade;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.vo.*;
 import com.github.pagehelper.PageInfo;
@@ -24,6 +26,9 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Autowired
     private OrdersMapper ordersMapper;
+
+    @Autowired
+    private InsDailyTradeMapper insDailyTradeMapper;
 
     @Autowired
     private AuditorProvider auditorProvider;
@@ -106,4 +111,25 @@ public class OrdersServiceImpl implements OrdersService {
         return dccReportList;
     }
 
+    /**
+     * 分页查询机构日交易汇总表
+     *
+     * @param ordersDTO 订单实体
+     * @return 订单集合
+     */
+    @Override
+    public PageInfo<InsDailyTrade> pageFindInsDailyTrade(OrdersDTO ordersDTO) {
+        return new PageInfo<>(insDailyTradeMapper.pageFindInsDailyTrade(ordersDTO));
+    }
+
+    /**
+     * 导出机构日交易汇总表
+     *
+     * @param ordersDTO 订单实体
+     * @return 订单集合
+     */
+    @Override
+    public List<InsDailyTradeVO> exportInsDailyTrade(OrdersDTO ordersDTO) {
+        return insDailyTradeMapper.exportInsDailyTrade(ordersDTO);
+    }
 }
