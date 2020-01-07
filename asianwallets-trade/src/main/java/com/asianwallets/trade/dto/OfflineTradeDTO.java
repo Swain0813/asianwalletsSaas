@@ -24,7 +24,7 @@ public class OfflineTradeDTO {
     @ApiModelProperty(value = "订单币种")
     private String orderCurrency;
 
-    @NotBlank(message = "50002")
+    @NotNull(message = "50002")
     @ApiModelProperty(value = "订单金额")
     private BigDecimal orderAmount;
 
