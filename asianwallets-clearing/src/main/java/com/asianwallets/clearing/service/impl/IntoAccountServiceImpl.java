@@ -146,9 +146,11 @@ public class IntoAccountServiceImpl implements IntoAccountService {
                 return repqo;
             }
             BaseResponse baseResponse = null;
-            if (ioma.getIsclear() == 1) {//表示是清算资金
+            if (ioma.getIsclear() == 1) {
+                /******************************************************  清算资金  **********************************************************/
                 baseResponse = tcsCtFlowService.IntoAndOutMerhtSTAccount2(ioma);
-            } else if (ioma.getIsclear() == 2) {//表示是结算资金
+            } else if (ioma.getIsclear() == 2) {
+                /******************************************************  结算资金  **********************************************************/
                 baseResponse = tcsStFlowService.IntoAndOutMerhtSTAccount2(ioma);
             } else {
                 repqo.setRespCode(Const.CSCode.CODE_CS0006);
