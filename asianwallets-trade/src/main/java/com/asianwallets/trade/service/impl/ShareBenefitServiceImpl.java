@@ -96,7 +96,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
 
             /********************************************* 商户代理分润 ****************************************/
             int count = shareBenefitLogsMapper.selectCountByOrderId(orderId, "2");
-            log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 商户代理分润 count: 【{}】,merchantAgencyCode:【{}】", count,merchantAgencyCode);
+            log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 商户代理分润 count: 【{}】,merchantAgencyCode:【{}】", count, merchantAgencyCode);
             if (count == 0 && StringUtils.isNotEmpty(merchantAgencyCode)) {
                 Merchant merchantAgency = commonRedisDataService.getMerchantById(merchantAgencyCode);
                 BasicInfoVO basicInfoVO = this.getBasicInfo(merchantAgency, productCode);
@@ -114,7 +114,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             }
             /********************************************* 通道代理分润 ****************************************/
             int count1 = shareBenefitLogsMapper.selectCountByOrderId(orderId, "1");
-            log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 通道代理分润 count1: 【{}】,channelAgencyCode:【{}】", count1,channelAgencyCode);
+            log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 通道代理分润 count1: 【{}】,channelAgencyCode:【{}】", count1, channelAgencyCode);
             if (count1 == 0 && StringUtils.isNotEmpty(channelAgencyCode)) {
                 Merchant channelAgency = commonRedisDataService.getMerchantById(channelAgencyCode);
                 //查询分润流水是否存在当前订单信息
@@ -194,7 +194,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
         shareBenefitLogs.setFee(poundage);
         //计算分润
         BigDecimal benefit = BigDecimal.ZERO;
-        if (!org.springframework.util.StringUtils.isEmpty(merchantProduct.getDividedRatio())) {
+        if (merchantProduct.getDividedRatio() != null) {
             benefit = orderFee.subtract(poundage).multiply(merchantProduct.getDividedRatio());
         } else {
             log.info("==================【calculateShareBenefit 计算分润】=================== 【分润模式异常】 calcFeeVO: {} ", JSON.toJSONString(calcFeeVO));
@@ -219,7 +219,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
     private ShareBenefitLogs createShareBenefitLogs(Integer type, String agentType, Orders orders, Object object, BasicInfoVO basicInfoVO) {
         ShareBenefitLogs shareBenefitLogs = new ShareBenefitLogs();
         shareBenefitLogs.setId("SL" + IDS.uniqueID());
-        if (type==1) {
+        if (type == 1) {
             shareBenefitLogs.setOrderId(orders.getId());
             shareBenefitLogs.setInstitutionId(orders.getInstitutionId());
             shareBenefitLogs.setInstitutionName(orders.getInstitutionName());
