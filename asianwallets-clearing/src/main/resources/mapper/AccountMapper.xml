@@ -3,8 +3,11 @@
 <mapper namespace="com.asianwallets.clearing.dao.AccountMapper">
     <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Account">
         <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
         <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
         <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="merchant_type" property="merchantType" />
         <result column="account_code" property="accountCode" jdbcType="VARCHAR"/>
         <result column="currency" property="currency" jdbcType="VARCHAR"/>
         <result column="settle_balance" property="settleBalance" jdbcType="DECIMAL"/>
@@ -19,7 +22,7 @@
         <result column="enabled" property="enabled" jdbcType="BIT"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, merchant_id, merchant_name, account_code, currency, settle_balance, clear_balance,
+    id, institution_id,institution_name,merchant_id, merchant_name, merchant_type,account_code, currency, settle_balance, clear_balance,
     freeze_balance, version, create_time, update_time,
     creator, modifier, remark, enabled
   </sql>
@@ -80,7 +83,7 @@
 
     <select id="getAccounts" resultMap="BaseResultMap">
         select
-        a.id,a.merchant_id,a.merchant_name,a.account_code,a.currency,a.settle_balance,
+        a.id,a.institution_id,a.institution_name,a.merchant_id,a.merchant_name,a.merchant_type,a.account_code,a.currency,a.settle_balance,
         a.freeze_balance
         from account a left join settle_control b on a.id=b.account_id
         where a.settle_balance-a.freeze_balance>0 and a.settle_balance-a.freeze_balance>=b.min_settle_amount

@@ -224,8 +224,8 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             shareBenefitLogs.setInstitutionName(orders.getInstitutionName());
             shareBenefitLogs.setMerchantName(orders.getMerchantName());
             shareBenefitLogs.setMerchantId(orders.getMerchantId());
-            shareBenefitLogs.setChannelCode(basicInfoVO.getChannel().getChannelCode());
-            shareBenefitLogs.setChannelName(basicInfoVO.getChannel().getChannelCnName());
+            shareBenefitLogs.setChannelCode(orders.getChannelCode());
+            shareBenefitLogs.setChannelName(orders.getChannelName());
             shareBenefitLogs.setTradeCurrency(orders.getTradeCurrency());
             shareBenefitLogs.setTradeAmount(orders.getTradeAmount());
         } else {
