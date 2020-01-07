@@ -41,6 +41,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
 
     @Autowired
     private ShareBenefitLogsMapper shareBenefitLogsMapper;
+
     @Autowired
     private CommonRedisDataService commonRedisDataService;
 
