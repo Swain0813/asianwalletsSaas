@@ -246,10 +246,10 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                         log.info("=================【NextPos回调】=================【上报清结算前线下下单创建账户信息】");
                         commonBusinessService.createAccount(orders);
                     }
-                    //TODO 分润
-                    //if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                    //rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
-                    //}
+                    //分润
+                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
+                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    }
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     //上报清结算资金变动接口
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
@@ -346,8 +346,8 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                 log.info("=================【NextPos退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                String reconciliationRemark = type.equals(TradeConstant.AA)?TradeConstant.REFUND_FAIL_RECONCILIATION:TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund,reconciliationRemark);
+                String reconciliationRemark = type.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
                 reconciliationMapper.insert(reconciliation);
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
                 log.info("=========================【NextPos退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));

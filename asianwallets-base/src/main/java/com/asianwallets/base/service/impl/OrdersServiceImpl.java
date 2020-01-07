@@ -6,6 +6,7 @@ import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.dto.DccReportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.DccReportVO;
 import com.asianwallets.common.vo.ExportOrdersVO;
 import com.asianwallets.common.vo.OrdersDetailRefundVO;
@@ -71,6 +72,7 @@ public class OrdersServiceImpl implements OrdersService {
 
     /**
      * DCC报表查询
+     *
      * @param dccReportDTO
      * @return
      */
@@ -89,7 +91,8 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     /**
-     *DCC报表导出
+     * DCC报表导出
+     *
      * @param dccReportExportDTO
      * @return
      */
@@ -107,4 +110,15 @@ public class OrdersServiceImpl implements OrdersService {
         return dccReportList;
     }
 
+    /**
+     * 机构日交易汇总表
+     *
+     * @param ordersDTO 订单输入DTO
+     * @return
+     */
+    @Override
+    public BaseResponse insDailyTradeReport(OrdersDTO ordersDTO) {
+        ordersMapper.insDailyTradeReport(ordersDTO);
+        return null;
+    }
 }

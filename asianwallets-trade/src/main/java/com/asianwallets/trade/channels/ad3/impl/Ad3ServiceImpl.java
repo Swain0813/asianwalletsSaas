@@ -493,10 +493,10 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                         log.info("=================【AD3线下回调接口信息记录】=================【上报清结算前线下下单创建账户信息】");
                         commonBusinessService.createAccount(orders);
                     }
-                    //TODO 分润
-//                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
-//                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
-//                    }
+                    //分润
+                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
+                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    }
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     //上报清结算资金变动接口
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);

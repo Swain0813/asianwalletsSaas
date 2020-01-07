@@ -470,4 +470,8 @@
             AND create_time &lt;= #{endDate}
         </if>
     </select>
+
+    <select id="insDailyTradeReport">
+
+    </select>
 </mapper>
