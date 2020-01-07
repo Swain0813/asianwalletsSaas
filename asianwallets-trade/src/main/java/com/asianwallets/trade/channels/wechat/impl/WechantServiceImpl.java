@@ -308,10 +308,10 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
                         log.info("=================【线下BSC动态扫码】=================【上报清结算前线下下单创建账户信息】");
                         commonBusinessService.createAccount(orders);
                     }
-                    //TODO 分润
-                    //if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                    //rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
-                    //}
+                    //分润
+                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
+                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    }
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     //上报清结算资金变动接口
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
@@ -432,10 +432,10 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
                                     log.info("=================【微信CSB服务器回调】=================【上报清结算前线下下单创建账户信息】");
                                     commonBusinessService.createAccount(orders);
                                 }
-                                //TODO 分润
-                                //if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                                //rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
-                                //}
+                                //分润
+                                if (!StringUtils.isEmpty(orders.getAgentCode())) {
+                                    rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                                }
                                 FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                                 //上报清结算资金变动接口
                                 BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);

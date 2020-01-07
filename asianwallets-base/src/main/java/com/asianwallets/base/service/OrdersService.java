@@ -1,11 +1,14 @@
 package com.asianwallets.base.service;
+
 import com.asianwallets.common.dto.DccReportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.DccReportVO;
 import com.asianwallets.common.vo.ExportOrdersVO;
 import com.asianwallets.common.vo.OrdersDetailVO;
 import com.github.pagehelper.PageInfo;
+
 import java.util.List;
 
 public interface OrdersService {
@@ -35,7 +38,8 @@ public interface OrdersService {
     List<ExportOrdersVO> exportOrders(OrdersDTO ordersDTO);
 
     /**
-     *DCC报表查询
+     * DCC报表查询
+     *
      * @param dccReportDTO
      * @return
      */
@@ -43,9 +47,18 @@ public interface OrdersService {
 
 
     /**
-     *DCC报表导出
+     * DCC报表导出
+     *
      * @param dccReportDTO
      * @return
      */
     List<DccReportVO> exportDccReport(DccReportDTO dccReportDTO);
+
+    /**
+     * 机构日交易汇总表
+     *
+     * @param ordersDTO 订单输入DTO
+     * @return
+     */
+    BaseResponse insDailyTradeReport(OrdersDTO ordersDTO);
 }

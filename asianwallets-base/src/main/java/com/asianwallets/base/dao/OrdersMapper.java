@@ -54,4 +54,11 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      */
     List<DccReportVO> pageDccReport(DccReportDTO dccReportDTO);
 
+    /**
+     * 机构日交易汇总表
+     *
+     * @param ordersDTO 订单输入DTO
+     * @return
+     */
+    void insDailyTradeReport(OrdersDTO ordersDTO);
 }

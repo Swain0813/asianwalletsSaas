@@ -31,6 +31,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
@@ -425,10 +426,10 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
                         log.info("=================【线下BSC动态扫码】=================【上报清结算前线下下单创建账户信息】");
                         commonBusinessService.createAccount(orders);
                     }
-                    //TODO 分润
-                    //if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                    //rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
-                    //}
+                    //分润
+                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
+                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    }
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     //上报清结算资金变动接口
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
@@ -545,10 +546,10 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
                                         log.info("=================【aliPay支付CSB扫码服务器回调】=================【上报清结算前线下下单创建账户信息】");
                                         commonBusinessService.createAccount(orders);
                                     }
-                                    //TODO 分润
-                                    //if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                                    //rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
-                                    //}
+                                    //分润
+                                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
+                                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                                    }
                                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                                     //上报清结算资金变动接口
                                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
