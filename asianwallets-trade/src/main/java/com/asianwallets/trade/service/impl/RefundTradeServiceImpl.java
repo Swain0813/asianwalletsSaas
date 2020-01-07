@@ -607,15 +607,20 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setRemark2(null);
         //备注3
         orderRefund.setRemark3(null);
-        orderRefund.setChannelGatewayRate(null);//通道网关费率
+        //通道网关费率
+        orderRefund.setChannelGatewayRate(null);
         orderRefund.setChannelGatewayCharge(null);
         orderRefund.setChannelGatewayFee(null);
         orderRefund.setChannelGatewayFeeType(null);
         orderRefund.setChannelGatewayStatus(null);
-        orderRefund.setCreateTime(new Date());//创建时间
-        orderRefund.setCreator((refundDTO.getModifier() == null || refundDTO.getModifier().equals("")) ? refundDTO.getOperatorId() : refundDTO.getModifier());//创建人
-        orderRefund.setUpdateTime(null);//修改时间
-        orderRefund.setModifier(null);//修改人
+        //创建时间
+        orderRefund.setCreateTime(new Date());
+        //创建人
+        orderRefund.setCreator(StringUtils.isBlank(refundDTO.getModifier())?refundDTO.getOperatorId():refundDTO.getModifier());
+        //修改时间
+        orderRefund.setUpdateTime(null);
+        //修改人
+        orderRefund.setModifier(null);
         return orderRefund;
     }
 
