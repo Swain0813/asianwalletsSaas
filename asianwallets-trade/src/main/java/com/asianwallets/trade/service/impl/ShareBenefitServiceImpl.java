@@ -190,7 +190,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
         }
         //手续费
         poundage = poundage.setScale(2, BigDecimal.ROUND_HALF_UP);
-        log.info("==================【calculateShareBenefit 计算分润】==================== poundage", poundage);
+        log.info("==================【calculateShareBenefit 计算分润】==================== poundage:{}", poundage);
         shareBenefitLogs.setFee(poundage);
         //计算分润
         BigDecimal benefit = BigDecimal.ZERO;
