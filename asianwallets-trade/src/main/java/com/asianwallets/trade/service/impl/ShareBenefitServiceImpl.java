@@ -202,6 +202,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
         }
 
         //算费成功
+        log.info("==================【calculateShareBenefit 计算分润】==================== benefit:{}", benefit);
         calcFeeVO.setChargeStatus(TradeConstant.CHARGE_STATUS_SUCCESS);
         calcFeeVO.setFee(benefit.setScale(2, BigDecimal.ROUND_HALF_UP));
         calcFeeVO.setChargeTime(new Date());
