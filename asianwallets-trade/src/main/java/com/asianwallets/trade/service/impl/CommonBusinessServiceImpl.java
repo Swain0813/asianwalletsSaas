@@ -706,6 +706,9 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             account.setAccountCode(IDS.uniqueID().toString());
             account.setMerchantId(orders.getMerchantId());
             account.setMerchantName(orders.getMerchantName());
+            account.setInstitutionId(orders.getInstitutionId());
+            account.setInstitutionName(orders.getInstitutionName());
+            account.setMerchantType(orders.getMerchantType());
             account.setCurrency(orders.getOrderCurrency());
             //默认结算金额为0
             account.setSettleBalance(BigDecimal.ZERO);
