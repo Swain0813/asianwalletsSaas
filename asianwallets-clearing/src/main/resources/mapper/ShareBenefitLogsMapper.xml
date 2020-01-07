@@ -7,6 +7,7 @@
         <result column="id" property="id"/>
         <result column="order_id" property="orderId"/>
         <result column="institution_id" property="institutionId"/>
+        <result column="merchant_order_id" property="merchantOrderId" />
         <result column="institution_name" property="institutionName"/>
         <result column="merchant_name" property="merchantName"/>
         <result column="merchant_id" property="merchantId"/>
@@ -37,13 +38,13 @@
     </resultMap>
 
     <sql id="BaseSql">
-        id,order_id, institution_id,institution_name,merchant_name,merchant_id,channel_code,channel_name,agent_id,agent_name,agent_type,order_type,
+        id,order_id, institution_id,institution_name,merchant_name,merchant_id,channel_code,channel_name,agent_id,agent_name,agent_type,order_type,merchant_order_id,
         trade_currency,trade_amount,fee,share_benefit,is_share,divided_mode,divided_ratio,create_time,update_time,creator,modifier,remark,extend1,
         extend2,extend3,extend4,extend5,extend6
     </sql>
 
     <select id="selectbyStStatusAndIsShare" resultMap="BaseResultMap">
-        select   sl.id,sl.order_id, sl.institution_id,sl.institution_name,sl.merchant_name,sl.merchant_id,sl.channel_code,
+        select   sl.id,sl.order_id, sl.institution_id,sl.institution_name,sl.merchant_name,sl.merchant_id,sl.channel_code,s1.merchant_order_id,
         sl.channel_name,sl.agent_id,sl.agent_name,sl.agent_type,sl.order_type, sl.trade_currency,sl.trade_amount,sl.fee,
         sl.share_benefit,sl.is_share,sl.divided_mode,sl.divided_ratio,sl.create_time,sl.update_time,sl.creator,sl.modifier,
         sl.remark,sl.extend1,sl.extend2,sl.extend3,sl.extend4,sl.extend5,sl.extend6

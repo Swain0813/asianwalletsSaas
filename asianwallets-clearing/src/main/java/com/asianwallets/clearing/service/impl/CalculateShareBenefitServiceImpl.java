@@ -148,6 +148,7 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
 
                     //插入商户账户流水表（结算户）--分润流水
                     TmMerChTvAcctBalance tma = new TmMerChTvAcctBalance();
+                    tma.setMerchantOrderId(sl.getMerchantOrderId());
                     tma.setInstitutionId(account.getInstitutionId());
                     tma.setInstitutionName(account.getInstitutionName());
                     tma.setMerchantName(account.getMerchantName());
