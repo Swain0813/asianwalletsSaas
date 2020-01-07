@@ -2,9 +2,11 @@ package com.asianwallets.base.controller;
 
 import com.asianwallets.base.service.OrdersService;
 import com.asianwallets.common.dto.DccReportDTO;
+import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.DccReportVO;
+import com.asianwallets.common.vo.InsDailyTradeVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,9 +43,15 @@ public class ReportController {
         return ordersService.exportDccReport(dccReportDTO);
     }
 
-//    @ApiOperation(value = "分页查询机构日交易汇总表")
-//    @PostMapping("/pageFindInsDailyTrade")
-//    public BaseResponse pageFindInsDailyTrade(@RequestBody @ApiParam OrdersDTO ordersDTO) {
-//        return ordersService.pageFindInsDailyTrade(ordersDTO);
-//    }
+    @ApiOperation(value = "分页查询机构日交易汇总表")
+    @PostMapping("/pageFindInsDailyTrade")
+    public BaseResponse pageFindInsDailyTrade(@RequestBody @ApiParam OrdersDTO ordersDTO) {
+        return ResultUtil.success(ordersService.pageFindInsDailyTrade(ordersDTO));
+    }
+
+    @ApiOperation(value = "导出机构日交易汇总表")
+    @PostMapping("/exportInsDailyTrade")
+    public List<InsDailyTradeVO> exportInsDailyTrade(@RequestBody @ApiParam OrdersDTO ordersDTO) {
+        return ordersService.exportInsDailyTrade(ordersDTO);
+    }
 }

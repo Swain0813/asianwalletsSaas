@@ -2,9 +2,11 @@ package com.asianwallets.base.service;
 
 import com.asianwallets.common.dto.DccReportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
+import com.asianwallets.common.entity.InsDailyTrade;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.vo.DccReportVO;
 import com.asianwallets.common.vo.ExportOrdersVO;
+import com.asianwallets.common.vo.InsDailyTradeVO;
 import com.asianwallets.common.vo.OrdersDetailVO;
 import com.github.pagehelper.PageInfo;
 
@@ -53,4 +55,19 @@ public interface OrdersService {
      */
     List<DccReportVO> exportDccReport(DccReportDTO dccReportDTO);
 
+    /**
+     * 分页查询机构日交易汇总表
+     *
+     * @param ordersDTO 订单实体
+     * @return 订单集合
+     */
+    PageInfo<InsDailyTrade> pageFindInsDailyTrade(OrdersDTO ordersDTO);
+
+    /**
+     * 导出机构日交易汇总表
+     *
+     * @param ordersDTO 订单实体
+     * @return 订单集合
+     */
+    List<InsDailyTradeVO> exportInsDailyTrade(OrdersDTO ordersDTO);
 }
