@@ -1,6 +1,8 @@
 package com.asianwallets.base.controller;
+
 import com.asianwallets.base.service.OrdersService;
 import com.asianwallets.common.dto.DccReportDTO;
+import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.DccReportVO;
@@ -13,10 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
 /**
- *报表相关接口
+ * 报表相关接口
  */
 @RestController
 @Api(description = "报表接口")
@@ -37,5 +40,11 @@ public class ReportController {
     @PostMapping("/exportDccReport")
     public List<DccReportVO> exportDccReport(@RequestBody @ApiParam DccReportDTO dccReportDTO) {
         return ordersService.exportDccReport(dccReportDTO);
+    }
+
+    @ApiOperation(value = "机构日交易汇总表")
+    @PostMapping("/insDailyTradeReport")
+    public BaseResponse insDailyTradeReport(@RequestBody @ApiParam OrdersDTO ordersDTO) {
+        return ordersService.insDailyTradeReport(ordersDTO);
     }
 }
