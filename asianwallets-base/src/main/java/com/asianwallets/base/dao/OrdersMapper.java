@@ -48,17 +48,11 @@ public interface OrdersMapper extends BaseMapper<Orders> {
     List<ExportOrdersVO> exportOrders(OrdersDTO ordersDTO);
 
     /**
-     *DCC报表查询
+     * DCC报表查询
+     *
      * @param dccReportDTO
      * @return
      */
     List<DccReportVO> pageDccReport(DccReportDTO dccReportDTO);
 
-    /**
-     * 机构日交易汇总表
-     *
-     * @param ordersDTO 订单输入DTO
-     * @return
-     */
-    void insDailyTradeReport(OrdersDTO ordersDTO);
 }
