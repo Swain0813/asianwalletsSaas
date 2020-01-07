@@ -165,6 +165,10 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                     //冻结资金流水记录
                     TmMerChTvAcctBalance mab = new TmMerChTvAcctBalance();
                     mab.setFlow("MV" + IDS.uniqueID());
+                    mab.setInstitutionId(mvafrz.getInstitutionId());
+                    mab.setInstitutionName(mvafrz.getInstitutionName());
+                    mab.setMerchantName(mvafrz.getMerchantName());
+                    mab.setMerchantOrderId(ioma.getMerOrderNo());
                     mab.setAfterbalance(afterbalance);
                     mab.setMerchantid(stf.getMerchantid());
                     mab.setMerchantName(mvafrz.getMerchantName());

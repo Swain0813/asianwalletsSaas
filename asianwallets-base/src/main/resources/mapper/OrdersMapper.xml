@@ -267,16 +267,16 @@
                 AND o.order_currency = #{orderCurrency}
             </if>
             <if test="startDate != null and startDate !=''">
-                AND o.create_time &gt;= #{startDate}
+                AND DATE_FORMAT(o.create_time,'%Y-%m-%d') &gt;= #{startDate}
             </if>
             <if test="endDate != null and endDate !=''">
-                AND o.create_time &lt;= #{endDate}
+                AND DATE_FORMAT(o.create_time,'%Y-%m-%d') &lt;= #{endDate}
             </if>
             <if test="startPayFinishTime != null">
-                AND o.channel_callback_time &gt;= #{startPayFinishTime}
+                AND DATE_FORMAT(o.channel_callback_time,'%Y-%m-%d') &gt;= #{startPayFinishTime}
             </if>
             <if test="endPayFinishTime != null">
-                AND o.channel_callback_time &lt;= #{endPayFinishTime}
+                AND DATE_FORMAT(o.channel_callback_time,'%Y-%m-%d') &lt;= #{endPayFinishTime}
             </if>
             <if test="tradeType != null">
                 AND o.trade_type = #{tradeType}
@@ -352,16 +352,16 @@
                 AND o.order_currency = #{orderCurrency}
             </if>
             <if test="startDate != null and startDate !=''">
-                AND o.create_time &gt;= #{startDate}
+                AND DATE_FORMAT(o.create_time,'%Y-%m-%d') &gt;= #{startDate}
             </if>
             <if test="endDate != null and endDate !=''">
-                AND o.create_time &lt;= #{endDate}
+                AND DATE_FORMAT(o.create_time,'%Y-%m-%d')&lt;= #{endDate}
             </if>
             <if test="startPayFinishTime != null and startPayFinishTime !=''">
-                AND o.channel_callback_time &gt;= #{startPayFinishTime}
+                AND DATE_FORMAT(o.channel_callback_time,'%Y-%m-%d') &gt;= #{startPayFinishTime}
             </if>
             <if test="endPayFinishTime != null and endPayFinishTime !=''">
-                AND o.channel_callback_time &lt;= #{endPayFinishTime}
+                AND DATE_FORMAT(o.channel_callback_time,'%Y-%m-%d') &lt;= #{endPayFinishTime}
             </if>
             <if test="tradeType != null">
                 AND o.trade_type = #{tradeType}
