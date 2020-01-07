@@ -4,6 +4,7 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
+import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.entity.Attestation;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
@@ -14,6 +15,7 @@ import com.asianwallets.trade.dao.AttestationMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.feign.ClearingFeign;
 import com.asianwallets.trade.feign.MessageFeign;
+import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,8 @@ import java.util.Date;
 import java.util.Map;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = TradeApplication.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 public class TradeApplicationTests {
 
     @Autowired
@@ -40,11 +42,15 @@ public class TradeApplicationTests {
     @Autowired
     private AttestationMapper attestationMapper;
 
+    @Autowired
+    private RabbitMQSender rabbitMQSender;
+
     @Test
     public void test() {
 //        channelsFeign.xenditPay(null);
-        clearingFeign.intoAndOutMerhtAccount(new FundChangeDTO());
+//        clearingFeign.intoAndOutMerhtAccount(new FundChangeDTO());
 //        messageFeign.sendSimple("", "");
+        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, "O981638001472561");
     }
 
     @Test

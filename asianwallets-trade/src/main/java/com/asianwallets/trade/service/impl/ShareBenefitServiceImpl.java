@@ -96,7 +96,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
 
             /********************************************* 商户代理分润 ****************************************/
             int count = shareBenefitLogsMapper.selectCountByOrderId(orderId, "2");
-            log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 商户代理分润 count: 【{}】", count);
+            log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 商户代理分润 count: 【{}】,merchantAgencyCode:【{}】", count,merchantAgencyCode);
             if (count == 0 && StringUtils.isNotEmpty(merchantAgencyCode)) {
                 Merchant merchantAgency = commonRedisDataService.getMerchantById(merchantAgencyCode);
                 BasicInfoVO basicInfoVO = this.getBasicInfo(merchantAgency, productCode);
@@ -114,7 +114,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             }
             /********************************************* 通道代理分润 ****************************************/
             int count1 = shareBenefitLogsMapper.selectCountByOrderId(orderId, "1");
-            log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 通道代理分润 count1: 【{}】", count1);
+            log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 通道代理分润 count1: 【{}】,channelAgencyCode:【{}】", count1,channelAgencyCode);
             if (count1 == 0 && StringUtils.isNotEmpty(channelAgencyCode)) {
                 Merchant channelAgency = commonRedisDataService.getMerchantById(channelAgencyCode);
                 //查询分润流水是否存在当前订单信息
