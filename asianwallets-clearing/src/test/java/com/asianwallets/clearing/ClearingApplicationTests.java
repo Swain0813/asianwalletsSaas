@@ -1,8 +1,5 @@
 package com.asianwallets.clearing;
-import com.asianwallets.clearing.service.ClearService;
-import com.asianwallets.clearing.service.FrozenFundsService;
-import com.asianwallets.clearing.service.IntoAccountService;
-import com.asianwallets.clearing.service.SettleService;
+import com.asianwallets.clearing.service.*;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
@@ -30,6 +27,8 @@ public class ClearingApplicationTests {
     @Autowired
     private SettleService settleService;
 
+    @Autowired
+    private ShareBenefitService shareBenefitService;
 
     @Autowired
     private FrozenFundsService frozenFundsService;
@@ -37,8 +36,9 @@ public class ClearingApplicationTests {
 
     @Test
     public void test1(){
-        clearService.ClearForGroupBatch();
-        settleService.SettlementForBatch();
+        //clearService.ClearForGroupBatch();
+        //settleService.SettlementForBatch();
+        shareBenefitService.ShareBenefitForBatch();
         //new RedisLockThread().start();
         //new RedisLockThread3().start();    //RF RV
         //new RedisLockThread1().start();  //加冻结
