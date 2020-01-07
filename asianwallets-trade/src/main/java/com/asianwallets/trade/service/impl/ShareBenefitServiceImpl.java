@@ -218,7 +218,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
     private ShareBenefitLogs createShareBenefitLogs(Integer type, String agentType, Orders orders, Object object, BasicInfoVO basicInfoVO) {
         ShareBenefitLogs shareBenefitLogs = new ShareBenefitLogs();
         shareBenefitLogs.setId("SL" + IDS.uniqueID());
-        if (type.equals("1")) {
+        if (type==1) {
             shareBenefitLogs.setOrderId(orders.getId());
             shareBenefitLogs.setInstitutionId(orders.getInstitutionId());
             shareBenefitLogs.setInstitutionName(orders.getInstitutionName());
