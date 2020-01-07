@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
@@ -31,7 +32,7 @@ public class OfflineTradeDTO {
     @ApiModelProperty(value = "订单时间")
     private String orderTime;
 
-    @NotBlank(message = "50002")
+    @NotNull(message = "50002")
     @ApiModelProperty(value = "产品编号")
     private Integer productCode;
 
