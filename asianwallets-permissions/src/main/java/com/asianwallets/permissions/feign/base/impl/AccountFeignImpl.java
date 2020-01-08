@@ -56,7 +56,7 @@ public class AccountFeignImpl implements AccountFeign {
      * @return
      */
     @Override
-    public List<ClearAccountVO> exportClearLogs(@RequestBody @ApiParam AccountSearchExportDTO clearSearchDTO){
+    public List<TmMerChTvAcctBalanceVO> exportClearLogs(@RequestBody @ApiParam AccountSearchExportDTO clearSearchDTO){
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -96,7 +96,7 @@ public class AccountFeignImpl implements AccountFeign {
      * @return
      */
     @Override
-    public List<FrozenMarginInfoVO> exportFrozenLogs(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO){
+    public List<TmMerChTvAcctBalanceVO> exportFrozenLogs(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO){
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
