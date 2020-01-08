@@ -2,30 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.asianwallets.base.dao.TmMerChTvAcctBalanceMapper">
     <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.TmMerChTvAcctBalance">
-        <id column="flow" property="flow" jdbcType="VARCHAR"/>
-        <result column="merchantid" property="merchantid" jdbcType="VARCHAR"/>
-        <result column="mbuaccountId" property="mbuaccountId" jdbcType="VARCHAR"/>
-        <result column="vaccounId" property="vaccounId" jdbcType="VARCHAR"/>
-        <result column="type" property="type" jdbcType="INTEGER"/>
-        <result column="bussinesstype" property="bussinesstype" jdbcType="INTEGER"/>
-        <result column="balancetype" property="balancetype" jdbcType="INTEGER"/>
-        <result column="currency" property="currency" jdbcType="VARCHAR"/>
-        <result column="referenceflow" property="referenceflow" jdbcType="VARCHAR"/>
-        <result column="tradetype" property="tradetype" jdbcType="VARCHAR"/>
-        <result column="txnamount" property="txnamount" jdbcType="DOUBLE"/>
-        <result column="sltamount" property="sltamount" jdbcType="DOUBLE"/>
-        <result column="sltcurrency" property="sltcurrency" jdbcType="VARCHAR"/>
-        <result column="sltexrate" property="sltexrate" jdbcType="DOUBLE"/>
-        <result column="income" property="income" jdbcType="DOUBLE"/>
-        <result column="outcome" property="outcome" jdbcType="DOUBLE"/>
-        <result column="fee" property="fee" jdbcType="DOUBLE"/>
-        <result column="balance" property="balance" jdbcType="DOUBLE"/>
-        <result column="afterbalance" property="afterbalance" jdbcType="DOUBLE"/>
-        <result column="sysAddDate" property="sysAddDate" jdbcType="TIMESTAMP"/>
-        <result column="balance_timestamp" property="balanceTimestamp" jdbcType="TIMESTAMP"/>
-        <result column="remark" property="remark" jdbcType="VARCHAR"/>
-        <result column="gatewayFee" property="gatewayFee" jdbcType="DOUBLE"/>
-        <result column="organId" property="organId" jdbcType="VARCHAR"/>
+        <id column="flow" property="flow" jdbcType="VARCHAR" />
+        <result column="merchantid" property="merchantid" jdbcType="VARCHAR" />
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR" />
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR" />
+        <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR" />
+        <result column="mbuaccountId" property="mbuaccountId" jdbcType="VARCHAR" />
+        <result column="vaccounId" property="vaccounId" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="bussinesstype" property="bussinesstype" jdbcType="INTEGER" />
+        <result column="balancetype" property="balancetype" jdbcType="INTEGER" />
+        <result column="currency" property="currency" jdbcType="VARCHAR" />
+        <result column="referenceflow" property="referenceflow" jdbcType="VARCHAR" />
+        <result column="tradetype" property="tradetype" jdbcType="VARCHAR" />
+        <result column="txnamount" property="txnamount" jdbcType="DOUBLE" />
+        <result column="sltamount" property="sltamount" jdbcType="DOUBLE" />
+        <result column="sltcurrency" property="sltcurrency" jdbcType="VARCHAR" />
+        <result column="sltexrate" property="sltexrate" jdbcType="DOUBLE" />
+        <result column="income" property="income" jdbcType="DOUBLE" />
+        <result column="outcome" property="outcome" jdbcType="DOUBLE" />
+        <result column="fee" property="fee" jdbcType="DOUBLE" />
+        <result column="refundOrderFee" property="refundOrderFee" jdbcType="DOUBLE" />
+        <result column="balance" property="balance" jdbcType="DOUBLE" />
+        <result column="afterbalance" property="afterbalance" jdbcType="DOUBLE" />
+        <result column="sysAddDate" property="sysAddDate" jdbcType="TIMESTAMP" />
+        <result column="balance_timestamp" property="balanceTimestamp" jdbcType="TIMESTAMP" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="gatewayFee" property="gatewayFee" jdbcType="DOUBLE" />
+        <result column="organId" property="organId" jdbcType="VARCHAR" />
     </resultMap>
 
     <resultMap id="ClearAccountVOMap" type="com.asianwallets.common.vo.ClearAccountVO">
@@ -40,34 +45,22 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-    flow, merchantid, mbuaccountId, vaccounId, type, bussinesstype, balancetype, currency, 
-    referenceflow, tradetype, txnamount, sltamount, sltcurrency, sltexrate, income, outcome, 
-    fee, balance, afterbalance, sysAddDate, balance_timestamp, remark, gatewayFee, organId
+    flow, merchantid, mbuaccountId, vaccounId, type, bussinesstype, balancetype, currency,merchant_name,institution_id
+    referenceflow, tradetype, txnamount, sltamount, sltcurrency, sltexrate, income, outcome,institution_name,merchant_order_id,
+    fee, refundOrderFee, balance, afterbalance, sysAddDate, balance_timestamp, remark, gatewayFee, organId
   </sql>
 
-    <select id="pageClearBalanceLogs" resultMap="ClearAccountVOMap">
-        SELECT referenceflow,
-               currency,
-               tradetype,
-               txnamount,
-               fee,
-               sltcurrency,
-               balance_timestamp,
-               remark
+    <select id="pageClearBalanceLogs" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
         from tm_merchtvacctbalance
         where vaccounId = #{accountId}
           and type = 1
     </select>
 
-    <select id="exportClearBalanceLogs" resultMap="ClearAccountVOMap">
-        SELECT referenceflow,
-               currency,
-               tradetype,
-               txnamount,
-               fee,
-               sltcurrency,
-               balance_timestamp,
-               remark
+    <select id="exportClearBalanceLogs" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
         from tm_merchtvacctbalance
         where vaccounId = #{accountId}
           and type = 1
@@ -84,6 +77,19 @@
         select
         <include refid="Base_Column_List"/>
         from tm_merchtvacctbalance where vaccounId = #{accountId} and type = 2
+        ORDER BY balance_timestamp DESC
+    </select>
+
+    <select id="pageFrozenLogs" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tm_merchtvacctbalance where vaccounId = #{accountId} and type = 3
+    </select>
+
+    <select id="exportFrozenLogs" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tm_merchtvacctbalance where vaccounId = #{accountId} and type = 3
         ORDER BY balance_timestamp DESC
     </select>
 

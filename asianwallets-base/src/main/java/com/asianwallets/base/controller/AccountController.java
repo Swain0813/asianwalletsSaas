@@ -2,10 +2,7 @@ package com.asianwallets.base.controller;
 
 import com.asianwallets.base.service.AccountService;
 import com.asianwallets.common.base.BaseController;
-import com.asianwallets.common.dto.AccountSearchDTO;
-import com.asianwallets.common.dto.ClearSearchDTO;
-import com.asianwallets.common.dto.FrozenMarginInfoDTO;
-import com.asianwallets.common.dto.OrdersDTO;
+import com.asianwallets.common.dto.*;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.*;
@@ -40,19 +37,19 @@ public class AccountController extends BaseController {
 
     @ApiOperation(value = "导出账户信息")
     @PostMapping("/exportAccountList")
-    public List<AccountListVO> exportAccountList(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO) {
+    public List<AccountListVO> exportAccountList(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO) {
         return accountService.exportAccountList(accountSearchDTO);
     }
 
     @ApiOperation(value = "查询清算户余额流水详情")
     @PostMapping("/pageClearLogs")
-    public BaseResponse pageClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO) {
+    public BaseResponse pageClearLogs(@RequestBody @ApiParam AccountSearchDTO clearSearchDTO) {
         return ResultUtil.success(accountService.pageClearLogs(clearSearchDTO));
     }
 
     @ApiOperation(value = "导出清算户余额流水详情")
     @PostMapping("/exportClearLogs")
-    public List<ClearAccountVO> exportClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO) {
+    public List<TmMerChTvAcctBalanceVO> exportClearLogs(@RequestBody @ApiParam AccountSearchExportDTO clearSearchDTO) {
         return accountService.exportClearLogs(clearSearchDTO);
     }
 
@@ -64,19 +61,19 @@ public class AccountController extends BaseController {
 
     @ApiOperation(value = "导出结算户余额流水详情")
     @PostMapping("/exportSettleLogs")
-    public List<TmMerChTvAcctBalanceVO> exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO) {
+    public List<TmMerChTvAcctBalanceVO> exportSettleLogs(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO) {
         return accountService.exportSettleLogs(accountSearchDTO);
     }
 
     @ApiOperation(value = "查询冻结余额流水详情")
     @PostMapping("/pageFrozenLogs")
-    public BaseResponse pageFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO frozenMarginInfoDTO) {
+    public BaseResponse pageFrozenLogs(@RequestBody @ApiParam AccountSearchDTO frozenMarginInfoDTO) {
         return ResultUtil.success(accountService.pageFrozenLogs(frozenMarginInfoDTO));
     }
 
     @ApiOperation(value = "导出冻结余额流水详情")
     @PostMapping("/exportFrozenLogs")
-    public List<FrozenMarginInfoVO> exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO accountSearchDTO) {
+    public List<TmMerChTvAcctBalanceVO> exportFrozenLogs(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO) {
         return accountService.exportFrozenLogs(accountSearchDTO);
     }
 

@@ -1,7 +1,6 @@
 package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base.BaseMapper;
-import com.asianwallets.common.dto.FrozenMarginInfoDTO;
 import com.asianwallets.common.dto.ReconciliationDTO;
 import com.asianwallets.common.dto.SearchAvaBalDTO;
 import com.asianwallets.common.entity.Reconciliation;

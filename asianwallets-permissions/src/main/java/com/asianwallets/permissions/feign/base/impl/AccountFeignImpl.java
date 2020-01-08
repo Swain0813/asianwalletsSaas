@@ -1,7 +1,6 @@
 package com.asianwallets.permissions.feign.base.impl;
 import com.asianwallets.common.dto.AccountSearchDTO;
-import com.asianwallets.common.dto.ClearSearchDTO;
-import com.asianwallets.common.dto.FrozenMarginInfoDTO;
+import com.asianwallets.common.dto.AccountSearchExportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -37,7 +36,7 @@ public class AccountFeignImpl implements AccountFeign {
      * @return
      */
     @Override
-    public List<AccountListVO> exportAccountList(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO){
+    public List<AccountListVO> exportAccountList(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO){
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -47,7 +46,7 @@ public class AccountFeignImpl implements AccountFeign {
      * @return
      */
     @Override
-    public  BaseResponse pageClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO){
+    public  BaseResponse pageClearLogs(@RequestBody @ApiParam AccountSearchDTO clearSearchDTO){
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -57,7 +56,7 @@ public class AccountFeignImpl implements AccountFeign {
      * @return
      */
     @Override
-    public List<ClearAccountVO> exportClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO){
+    public List<ClearAccountVO> exportClearLogs(@RequestBody @ApiParam AccountSearchExportDTO clearSearchDTO){
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -77,7 +76,7 @@ public class AccountFeignImpl implements AccountFeign {
      * @return
      */
     @Override
-    public List<TmMerChTvAcctBalanceVO> exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO){
+    public List<TmMerChTvAcctBalanceVO> exportSettleLogs(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO){
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -87,7 +86,7 @@ public class AccountFeignImpl implements AccountFeign {
      * @return
      */
     @Override
-    public BaseResponse pageFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO frozenMarginInfoDTO){
+    public BaseResponse pageFrozenLogs(@RequestBody @ApiParam AccountSearchDTO frozenMarginInfoDTO){
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -97,7 +96,7 @@ public class AccountFeignImpl implements AccountFeign {
      * @return
      */
     @Override
-    public List<FrozenMarginInfoVO> exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO accountSearchDTO){
+    public List<FrozenMarginInfoVO> exportFrozenLogs(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO){
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
