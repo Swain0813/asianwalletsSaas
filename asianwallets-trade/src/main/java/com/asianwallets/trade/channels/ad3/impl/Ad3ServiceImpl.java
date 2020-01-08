@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.ad3.impl;
-
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -75,36 +74,33 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     @Value("${custom.paySuccessUrl}")
     private String paySuccessUrl;//签名方式
 
-    //@ApiModelProperty("AD3系统操作员id")
-    //@Value("${custom.operatorId}")
-    //private String operatorId;
-    //
-    //@ApiModelProperty("AD3系统imei编号")
-    //@Value("${custom.imei}")
-    //private String imei;
-    //
-    //@ApiModelProperty("AD3系统登录密码")
-    //@Value("${custom.password}")
-    //private String password;
-
     @Autowired
     private ChannelsFeign channelsFeign;
+
     @Autowired
     private OrderRefundMapper orderRefundMapper;
+
     @Autowired
     private CommonBusinessService commonBusinessService;
+
     @Autowired
     private CommonRedisDataService commonRedisDataService;
+
     @Autowired
     private ReconciliationMapper reconciliationMapper;
+
     @Autowired
     private ClearingService clearingService;
+
     @Autowired
     private RabbitMQSender rabbitMQSender;
+
     @Autowired
     private RedisService redisService;
+
     @Autowired
     private OrdersMapper ordersMapper;
+
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
 
@@ -178,14 +174,14 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     public String ad3OnlineServerCallback(AD3OnlineCallbackDTO ad3OnlineCallbackDTO) {
         //校验输入参数
         checkOnlineParam(ad3OnlineCallbackDTO);
-      /*  //生成签名
+        //生成签名
         String mySign = createSign(ad3OnlineCallbackDTO, redisService.get(AD3Constant.AD3_LOGIN_TOKEN));
         log.info("=================【AD3线上回调接口信息记录】=================【回调签名】 mySign: {} ad3Sign: {}", mySign, ad3OnlineCallbackDTO.getSignMsg());
         //验签
         if (!ad3OnlineCallbackDTO.getSignMsg().equals(mySign)) {
             log.info("=================【AD3线上回调接口信息记录】=================【签名不匹配】");
             throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
-        }*/
+        }
         //查询订单信息
         Orders orders = ordersMapper.selectByPrimaryKey(ad3OnlineCallbackDTO.getMerOrderNo());
         //校验业务信息
