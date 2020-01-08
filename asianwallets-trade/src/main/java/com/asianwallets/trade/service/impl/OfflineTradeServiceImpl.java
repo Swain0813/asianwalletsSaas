@@ -12,10 +12,7 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.ArrayUtil;
-import com.asianwallets.common.utils.BCryptUtils;
-import com.asianwallets.common.utils.DateToolUtils;
-import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.utils.*;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
@@ -41,6 +38,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -122,41 +120,42 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         return token;
     }
 
-//    public static void main(String[] args) {
-//        /*String url = "http://localhost:5010/offline/csbDynamicScan";
-//        String md5Key = "47ac097138814db98436dd293edb5b49";
-//        String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwME0yMDE5MTIyMDMzNjAiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1NzcyNDA1MjgwMzQsImV4cCI6MTU3NzMyNjkyOH0.9G7twF4ptwZhEN20NMaQvPlCt5KwPI6Z-1M06gGBmvoRegH6FULi3_YoJfVh3CzRsm-TsyNUXYlgzjoHWTh-Og";
-//        OfflineTradeDTO offlineTradeDTO = new OfflineTradeDTO();
-//        offlineTradeDTO.setMerchantId("M201912203360");
-//        offlineTradeDTO.setOrderNo(IDS.uuid2());
-//        offlineTradeDTO.setOrderCurrency("SGD");
-//        offlineTradeDTO.setOrderAmount(new BigDecimal("0.01").setScale(2, BigDecimal.ROUND_DOWN));
-//        offlineTradeDTO.setOrderTime(DateToolUtils.formatDate(new Date()));
-//        offlineTradeDTO.setProductCode(31);
-//        offlineTradeDTO.setImei("线下CSB");
-//        offlineTradeDTO.setOperatorId("00");
-//        offlineTradeDTO.setToken(token);
-//        offlineTradeDTO.setServerUrl("test");
-//        offlineTradeDTO.setBrowserUrl("test");
-//        offlineTradeDTO.setProductName("test");
-//        offlineTradeDTO.setProductDescription("test");
-//        offlineTradeDTO.setPayerName("test");
-//        offlineTradeDTO.setPayerBank("test");
-//        offlineTradeDTO.setPayerEmail("test");
-//        offlineTradeDTO.setPayerPhone("test");
-//        offlineTradeDTO.setLanguage("zh-cn");
-//        offlineTradeDTO.setRemark1("test");
-//        offlineTradeDTO.setRemark2("test");
-//        offlineTradeDTO.setRemark3("test");
-//        //获得对象属性名对应的属性值Map
-//        Map<String, String> paramMap = ReflexClazzUtils.getFieldForStringValue(offlineTradeDTO);
-//        String cleatText = SignTools.getSignStr(paramMap) + md5Key;
-//        log.info("=======【AW线下测试】=======【签名前的明文】 cleatText: {}", cleatText);
-//        String sign = MD5Util.getMD5String(cleatText);
-//        log.info("=======【AW线下测试】=======【签名后的密文】 sign: {}", sign);
-//        offlineTradeDTO.setSign(sign);
-//        HttpClientUtils.reqPost(url, offlineTradeDTO, null);*/
-//    }
+    public static void main(String[] args) {
+        String url = "http://localhost:5010/offline/csbDynamicScan";
+        String md5Key = "47ac097138814db98436dd293edb5b49";
+        String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwME0yMDE5MTIyMDMzNjAiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1NzgwMTkwMDQ1ODAsImV4cCI6MTU3ODEwNTQwNH0.Ge7utpNSZRVvirr-WkRiPBeCkkgU90gv_bChyOZOcsmzm5rpBKoJTk4dnXjXyur5R42MX6DSm05htuDkLy5RZw";
+        OfflineTradeDTO offlineTradeDTO = new OfflineTradeDTO();
+        offlineTradeDTO.setMerchantId("M201912203360");
+        offlineTradeDTO.setOrderNo(IDS.uuid2());
+        offlineTradeDTO.setOrderCurrency("SGD");
+        offlineTradeDTO.setOrderAmount(new BigDecimal("10").setScale(2, BigDecimal.ROUND_DOWN));
+        offlineTradeDTO.setOrderTime(DateToolUtils.formatDate(new Date()));
+        offlineTradeDTO.setProductCode(31);
+        offlineTradeDTO.setImei("线下CSB");
+        offlineTradeDTO.setOperatorId("00");
+        offlineTradeDTO.setToken(token);
+        offlineTradeDTO.setServerUrl("test");
+        offlineTradeDTO.setBrowserUrl("test");
+        offlineTradeDTO.setProductName("test");
+        offlineTradeDTO.setProductDescription("test");
+        offlineTradeDTO.setPayerName("test");
+        offlineTradeDTO.setPayerBank("test");
+        offlineTradeDTO.setPayerEmail("test");
+        offlineTradeDTO.setPayerPhone("test");
+        offlineTradeDTO.setLanguage("zh-cn");
+        offlineTradeDTO.setRemark1("test");
+        offlineTradeDTO.setRemark2("test");
+        offlineTradeDTO.setRemark3("test");
+        offlineTradeDTO.setSignType("2");
+        //获得对象属性名对应的属性值Map
+        Map<String, String> paramMap = ReflexClazzUtils.getFieldForStringValue(offlineTradeDTO);
+        String cleatText = SignTools.getSignStr(paramMap) + md5Key;
+        log.info("=======【AW线下测试】=======【签名前的明文】 cleatText: {}", cleatText);
+        String sign = MD5Util.getMD5String(cleatText);
+        log.info("=======【AW线下测试】=======【签名后的密文】 sign: {}", sign);
+        offlineTradeDTO.setSign(sign);
+        HttpClientUtils.reqPost(url, offlineTradeDTO, null);
+    }
 
     /**
      * 校验请求参数
@@ -229,6 +228,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         }
         //校验Token信息
         String sysUser = redisService.get(offlineTradeDTO.getToken());
+        if (StringUtils.isEmpty(sysUser)) {
+            log.info("==================【线下CSB动态扫码】==================【Token不合法】");
+            throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
+        }
         JSONObject jsonObject = JSONObject.parseObject(sysUser);
         if (jsonObject == null || !(offlineTradeDTO.getOperatorId().concat(offlineTradeDTO.getMerchantId()).equals(jsonObject.getString("username")))) {
             log.info("==================【线下CSB动态扫码】==================【Token不合法】");
