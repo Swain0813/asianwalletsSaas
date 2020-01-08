@@ -49,6 +49,12 @@ public class ShareBenefitLogs extends BaseEntity {
 	@Column(name ="merchant_name")
 	private String merchantName;
     /**
+     * 商户名称
+     */
+	@ApiModelProperty(value = "商户订单号")
+	@Column(name ="merchant_order_id")
+	private String merchantOrderId;
+    /**
      * 商户编号
      */
 	@ApiModelProperty(value = "商户编号")

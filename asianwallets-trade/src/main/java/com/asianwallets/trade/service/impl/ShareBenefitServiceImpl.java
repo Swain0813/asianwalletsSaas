@@ -41,6 +41,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
 
     @Autowired
     private ShareBenefitLogsMapper shareBenefitLogsMapper;
+
     @Autowired
     private CommonRedisDataService commonRedisDataService;
 
@@ -229,6 +230,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             shareBenefitLogs.setChannelName(orders.getChannelName());
             shareBenefitLogs.setTradeCurrency(orders.getTradeCurrency());
             shareBenefitLogs.setTradeAmount(orders.getTradeAmount());
+            shareBenefitLogs.setMerchantOrderId(orders.getMerchantOrderId());
         } else {
             //TODO
             shareBenefitLogs.setOrderId("");
@@ -240,7 +242,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             shareBenefitLogs.setChannelName("");
             shareBenefitLogs.setTradeCurrency("");
             shareBenefitLogs.setTradeAmount(BigDecimal.ZERO);
-
+            shareBenefitLogs.setMerchantOrderId("");
         }
         shareBenefitLogs.setAgentId(basicInfoVO.getMerchant().getId());
         shareBenefitLogs.setAgentName(basicInfoVO.getMerchant().getCnName());
