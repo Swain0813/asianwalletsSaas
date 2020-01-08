@@ -1,7 +1,7 @@
 package com.asianwallets.trade.service;
 
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.trade.dto.ArtificialDTO;
+import com.asianwallets.common.dto.ArtificialDTO;
 
 /**
  * 共通模块

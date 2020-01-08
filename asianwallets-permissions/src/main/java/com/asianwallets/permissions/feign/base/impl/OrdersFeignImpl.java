@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.feign.base.impl;
 
+import com.asianwallets.common.dto.ArtificialDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.dto.OrdersRefundDTO;
 import com.asianwallets.common.exception.BusinessException;
@@ -42,6 +43,11 @@ public class OrdersFeignImpl implements OrdersFeign {
 
     @Override
     public List<ExportOrdersVO> exportOrders(OrdersDTO ordersDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse updateOrderStatus(ArtificialDTO artificialDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

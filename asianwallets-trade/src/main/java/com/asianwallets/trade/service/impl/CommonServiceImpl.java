@@ -12,7 +12,7 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
-import com.asianwallets.trade.dto.ArtificialDTO;
+import com.asianwallets.common.dto.ArtificialDTO;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
@@ -92,8 +92,8 @@ public class CommonServiceImpl implements CommonService {
         orders.setChannelNumber(artificialDTO.getChannelNumber());
         //通道回调时间
         orders.setChannelCallbackTime(new Date());
-//        //修改人
-//        orders.setModifier(artificialDTO.getUserName());
+        //修改人
+        orders.setModifier(artificialDTO.getUserName());
         //修改时间
         orders.setUpdateTime(new Date());
         Example example = new Example(Orders.class);
@@ -137,12 +137,12 @@ public class CommonServiceImpl implements CommonService {
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
                     if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
                         log.info("=================【人工回调】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        com.asianwallets.common.dto.RabbitMassage rabbitMassage = new com.asianwallets.common.dto.RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                         rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                     }
                 } catch (Exception e) {
                     log.error("=================【人工回调】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
-                    com.asianwallets.common.dto.RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                     rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                 }
             } else {
