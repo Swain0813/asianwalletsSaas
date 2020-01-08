@@ -7,6 +7,7 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
 import com.asianwallets.trade.channels.eghl.EGHLService;
 import com.asianwallets.trade.channels.enets.EnetsService;
+import com.asianwallets.trade.channels.help2pay.Help2PayService;
 import com.asianwallets.trade.channels.megaPay.MegaPayService;
 import com.asianwallets.trade.dto.*;
 import io.swagger.annotations.Api;
@@ -47,6 +48,9 @@ public class OnlineCallbackController extends BaseController {
 
     @Autowired
     private MegaPayService megaPayService;
+
+    @Autowired
+    private Help2PayService help2PayService;
 
     @ApiOperation(value = "ad3线上服务器回调接口")
     @PostMapping("/ad3OnlineServerCallback")
@@ -173,6 +177,44 @@ public class OnlineCallbackController extends BaseController {
             }
         }
         return enetsService.eNetsQrCodeServerCallback(enetsCallbackDTO, strResMsg, response);
+    }
+
+    @ApiOperation(value = "help2Pay浏览器回调")
+    @PostMapping("/help2PayBrowserCallback")
+    public void help2PayBrowserCallback(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        log.info("--------------------------------help2Pay浏览器回调接口信息记录-------------------------------回调参数记录 parameterMap:{}", JSON.toJSON(parameterMap));
+        if (parameterMap.size() == 0) {
+            log.info("------------------help2Pay浏览器回调接口信息记录----------------回调参数为空");
+            return;
+        }
+        HashMap<String, String> dtoMap = new HashMap<>();
+        Set<String> set = parameterMap.keySet();
+        for (String key : set) {
+            dtoMap.put(key, parameterMap.get(key)[0]);
+        }
+        Help2PayCallbackDTO help2PayCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), Help2PayCallbackDTO.class);
+        log.info("--------------------------------help2Pay浏览器回调接口信息记录-------------------------------JSON解析后的参数记录 help2PayCallbackDTO:{}", JSON.toJSON(help2PayCallbackDTO));
+        help2PayService.help2PayBrowserCallback(help2PayCallbackDTO, response);
+    }
+
+    @ApiOperation(value = "help2Pay服务器回调")
+    @PostMapping("/help2PayServerCallback")
+    public void help2PayServerCallback(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        log.info("--------------------------------help2Pay服务器回调接口信息记录-------------------------------回调参数记录 parameterMap:{}", JSON.toJSON(parameterMap));
+        if (parameterMap.size() == 0) {
+            log.info("------------------help2Pay服务器回调接口信息记录----------------回调参数为空");
+            return;
+        }
+        HashMap<String, String> dtoMap = new HashMap<>();
+        Set<String> set = parameterMap.keySet();
+        for (String key : set) {
+            dtoMap.put(key, parameterMap.get(key)[0]);
+        }
+        Help2PayCallbackDTO help2PayCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), Help2PayCallbackDTO.class);
+        log.info("--------------------------------help2Pay服务器回调接口信息记录-------------------------------JSON解析后的回调参数记录 help2PayCallbackDTO:{}", JSON.toJSON(help2PayCallbackDTO));
+        help2PayService.help2PayServerCallback(help2PayCallbackDTO, response);
     }
 
 
