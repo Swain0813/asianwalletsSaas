@@ -45,6 +45,11 @@ public class MD5Util {
         return prestr;
     }
 
+    /**
+     * md5的生成
+     * @param str
+     * @return
+     */
     public static String getMD5String(String str) {
         try {
             if (str == null || str.trim().length() == 0) {
