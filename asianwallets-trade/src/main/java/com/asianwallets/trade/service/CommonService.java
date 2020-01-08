@@ -1,5 +1,8 @@
 package com.asianwallets.trade.service;
 
+import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.trade.dto.ArtificialDTO;
+
 /**
  * 共通模块
  */
@@ -12,4 +15,13 @@ public interface CommonService {
      * @return
      */
     Boolean checkPassword(String oldPassword, String password);
+
+
+    /**
+     * 人工回调
+     *
+     * @param artificialDTO artificialDTO
+     * @return
+     */
+    BaseResponse artificialCallback(ArtificialDTO artificialDTO);
 }

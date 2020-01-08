@@ -3,7 +3,9 @@ package com.asianwallets.trade.controller;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
 import com.asianwallets.trade.channels.alipay.AlipayService;
@@ -11,14 +13,18 @@ import com.asianwallets.trade.channels.enets.EnetsService;
 import com.asianwallets.trade.channels.nextpos.NextPosService;
 import com.asianwallets.trade.channels.wechat.WechantService;
 import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
+import com.asianwallets.trade.dto.ArtificialDTO;
 import com.asianwallets.trade.dto.EnetsPosCallbackDTO;
+import com.asianwallets.trade.service.CommonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,6 +57,9 @@ public class OfflineCallbackController extends BaseController {
 
     @Autowired
     private WechantService wechantService;
+
+    @Autowired
+    private CommonService commonService;
 
     @ApiOperation(value = "ad3线下服务器回调接口")
     @PostMapping("/ad3CsbServerCallback")
@@ -127,5 +136,13 @@ public class OfflineCallbackController extends BaseController {
     @PostMapping("/wechatCsbServerCallback")
     public void wechatCsbServerCallback(HttpServletRequest request, HttpServletResponse response) {
         wechantService.wechatCsbServerCallback(request, response);
+    }
+
+    @ApiOperation(value = "人工回调")
+    @PostMapping("/artificialCallback")
+    public BaseResponse artificialCallback(@RequestBody @ApiParam ArtificialDTO artificialDTO) {
+        log.info("================【人工回调】================【输入参数记录】 artificialDTO: {}", JSON.toJSONString(artificialDTO));
+        //artificialDTO.setUserName(this.getSysUserVO().getUsername());
+        return ResultUtil.success(commonService.artificialCallback(artificialDTO));
     }
 }
