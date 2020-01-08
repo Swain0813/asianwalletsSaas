@@ -50,7 +50,7 @@ public class TradeApplicationTests {
 //        channelsFeign.xenditPay(null);
 //        clearingFeign.intoAndOutMerhtAccount(new FundChangeDTO());
 //        messageFeign.sendSimple("", "");
-        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, "O981694484956463");
+        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, "O981723498401972");
     }
 
     @Test

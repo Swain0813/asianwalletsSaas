@@ -44,7 +44,7 @@
     </sql>
 
     <select id="selectbyStStatusAndIsShare" resultMap="BaseResultMap">
-        select   sl.id,sl.order_id, sl.institution_id,sl.institution_name,sl.merchant_name,sl.merchant_id,sl.channel_code,s1.merchant_order_id,
+        select   sl.id,sl.order_id, sl.institution_id,sl.institution_name,sl.merchant_name,sl.merchant_id,sl.channel_code,sl.merchant_order_id,
         sl.channel_name,sl.agent_id,sl.agent_name,sl.agent_type,sl.order_type, sl.trade_currency,sl.trade_amount,sl.fee,
         sl.share_benefit,sl.is_share,sl.divided_mode,sl.divided_ratio,sl.create_time,sl.update_time,sl.creator,sl.modifier,
         sl.remark,sl.extend1,sl.extend2,sl.extend3,sl.extend4,sl.extend5,sl.extend6
