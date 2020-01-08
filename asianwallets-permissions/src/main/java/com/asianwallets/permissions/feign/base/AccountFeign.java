@@ -56,4 +56,8 @@ public interface AccountFeign {
     @ApiOperation(value = "导出商户余额")
     @PostMapping("/account/exportMerchantBalance")
     List<MerchantBalanceVO> exportMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO);
+
+    @ApiOperation(value = "分页查询商户余额")
+    @PostMapping("/account/pageFindMerchantBalance")
+    BaseResponse pageFindMerchantBalance(OrdersDTO ordersDTO);
 }

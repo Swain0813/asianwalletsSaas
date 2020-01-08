@@ -197,6 +197,14 @@ public class AccountFeignController extends BaseController {
         return ResultUtil.success();
     }
 
+    @ApiOperation(value = "分页查询商户余额")
+    @PostMapping("/pageFindMerchantBalance")
+    public BaseResponse pageMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
+                "分页查询商户余额"));
+        return accountFeign.pageFindMerchantBalance(ordersDTO);
+    }
+
     @ApiOperation(value = "导出商户余额")
     @PostMapping("/exportMerchantBalance")
     public BaseResponse exportMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO, HttpServletResponse response) {
