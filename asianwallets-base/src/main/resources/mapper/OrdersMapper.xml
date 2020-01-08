@@ -272,10 +272,10 @@
             <if test="endDate != null and endDate !=''">
                 AND DATE_FORMAT(o.create_time,'%Y-%m-%d') &lt;= #{endDate}
             </if>
-            <if test="startPayFinishTime != null">
+            <if test="startPayFinishTime != null and startPayFinishTime !=''">
                 AND DATE_FORMAT(o.channel_callback_time,'%Y-%m-%d') &gt;= #{startPayFinishTime}
             </if>
-            <if test="endPayFinishTime != null">
+            <if test="endPayFinishTime != null and endPayFinishTime !=''">
                 AND DATE_FORMAT(o.channel_callback_time,'%Y-%m-%d') &lt;= #{endPayFinishTime}
             </if>
             <if test="tradeType != null">
