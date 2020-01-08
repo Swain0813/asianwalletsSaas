@@ -41,11 +41,11 @@ public class OnlineCallbackVO {
     @ApiModelProperty(value = "手续费")
     private BigDecimal fee;
 
-    @ApiModelProperty(value = "签名")
-    private String sign;
-
     @ApiModelProperty(value = "订单状态")
     private Byte txnStatus;
+
+    @ApiModelProperty(value = "签名")
+    private String sign;
 
     public OnlineCallbackVO() {
     }
