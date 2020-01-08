@@ -105,4 +105,9 @@ public class AccountFeignImpl implements AccountFeign {
     public List<MerchantBalanceVO> exportMerchantBalance(OrdersDTO ordersDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BaseResponse pageFindMerchantBalance(OrdersDTO ordersDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

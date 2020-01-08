@@ -73,6 +73,7 @@ public class InsDailyTradeTask {
                 insDailyTrade.setTradeTime(DateToolUtils.getDateByStr(yesterday));
                 insDailyTrade.setCreateTime(new Date());
                 insDailyTrade.setCreator("定时任务");
+                dailyTradeList.add(insDailyTrade);
             }
             int insertNum = insDailyTradeMapper.insertList(dailyTradeList);
             log.info("=============【机构日交易汇总表定时任务】=============【结束执行】 insertNum: {}", insertNum);
