@@ -51,7 +51,7 @@ public class InsDailyTrade extends BaseEntity {
     private BigDecimal totalFee;
 
     @ApiModelProperty(value = "交易时间")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @Column(name = "trade_time")
     private Date tradeTime;
 
