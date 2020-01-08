@@ -29,7 +29,7 @@ public class OfflineTradeDTO {
     private BigDecimal orderAmount;
 
     @NotBlank(message = "50002")
-    @ApiModelProperty(value = "订单时间")
+    @ApiModelProperty(value = "商户订单时间")
     private String orderTime;
 
     @NotNull(message = "50002")
