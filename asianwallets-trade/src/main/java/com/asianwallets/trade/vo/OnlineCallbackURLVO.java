@@ -24,7 +24,7 @@ public class OnlineCallbackURLVO {
     public OnlineCallbackURLVO(Orders orders) {
         OnlineCallbackVO ocv = new OnlineCallbackVO();
         ocv.setReferenceNo(orders.getId());
-        ocv.setInstitutionId(orders.getMerchantId());
+        ocv.setMerchantId(orders.getMerchantId());
         ocv.setOrderNo(orders.getMerchantOrderId());
         ocv.setOrderTime(DateUtil.format(orders.getMerchantOrderTime(), "yyyyMMddHHmmss"));
         ocv.setTxnTime(DateUtil.format(orders.getChannelCallbackTime(), "yyyyMMddHHmmss"));

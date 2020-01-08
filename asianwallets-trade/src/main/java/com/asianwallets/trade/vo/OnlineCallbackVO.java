@@ -21,7 +21,7 @@ public class OnlineCallbackVO {
     private String referenceNo;
 
     @ApiModelProperty(value = "商户编号")
-    private String institutionId;
+    private String merchantId;
 
     @ApiModelProperty(value = "商户上送的商户订单号")
     private String orderNo;
@@ -52,7 +52,7 @@ public class OnlineCallbackVO {
 
     public OnlineCallbackVO(Orders orders) {
         this.referenceNo = orders.getId();
-        this.institutionId = orders.getMerchantId();//商户编号
+        this.merchantId = orders.getMerchantId();//商户编号
         this.orderNo = orders.getMerchantOrderId();//商户订单号
         this.orderTime = DateUtil.format(orders.getMerchantOrderTime(), "yyyyMMddHHmmss");
         this.txnTime = DateUtil.format(orders.getChannelCallbackTime(), "yyyyMMddHHmmss");
