@@ -610,7 +610,6 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
         if (params.get("sign") != null) {
             sign = params.get("sign");
         }
-        //boolean isSign = getSignVeryfy(params, sign, pc);
         Map<String, String> sParaNew = AlipayCore.paraFilter(params);
         //获取待签名字符串
         String clearText = AlipayCore.createLinkString(sParaNew);

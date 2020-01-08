@@ -357,7 +357,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setSecondMerchantCode(merchant.getId());
         orders.setAgentCode(merchant.getAgentId());
         //INDIRECTCONNECTION 间连
-        orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.INDIRECTCONNECTION);
+        orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.DIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
 //        orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
 //        orders.setGroupMerchantName(merchant.getGroupMasterAccount());
@@ -432,7 +432,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setSecondMerchantCode(merchant.getId());
         orders.setAgentCode(merchant.getAgentId());
         //INDIRECTCONNECTION 间连
-        orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.INDIRECTCONNECTION);
+        orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.DIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
 //        orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
 //        orders.setGroupMerchantName(merchant.getGroupMasterAccount());

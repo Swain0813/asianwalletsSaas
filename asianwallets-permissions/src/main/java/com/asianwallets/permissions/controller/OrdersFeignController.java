@@ -3,9 +3,11 @@ package com.asianwallets.permissions.controller;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.dto.ArtificialDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.dto.OrdersRefundDTO;
 import com.asianwallets.common.exception.BusinessException;
@@ -135,5 +137,13 @@ public class OrdersFeignController extends BaseController {
             writer.close();
         }
         return ResultUtil.success();
+    }
+
+    @ApiOperation(value = "运营后台修改订单状态")
+    @PostMapping(value = "/updateOrderStatus")
+    public BaseResponse updateOrderStatus(@RequestBody @ApiParam ArtificialDTO artificialDTO) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(artificialDTO),
+                "运营后台修改订单状态"));
+        return ordersFeign.updateOrderStatus(artificialDTO);
     }
 }

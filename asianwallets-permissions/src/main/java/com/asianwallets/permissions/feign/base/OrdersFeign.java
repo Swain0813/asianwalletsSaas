@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.feign.base;
 
+import com.asianwallets.common.dto.ArtificialDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.dto.OrdersRefundDTO;
 import com.asianwallets.common.response.BaseResponse;
@@ -42,4 +43,8 @@ public interface OrdersFeign {
     @ApiOperation(value = "订单导出")
     @PostMapping("/orders/exportOrders")
     List<ExportOrdersVO> exportOrders(OrdersDTO ordersDTO);
+
+    @ApiOperation(value = "运营后台修改订单状态")
+    @PostMapping("/offlineCallback/artificialCallback")
+    BaseResponse updateOrderStatus(ArtificialDTO artificialDTO);
 }

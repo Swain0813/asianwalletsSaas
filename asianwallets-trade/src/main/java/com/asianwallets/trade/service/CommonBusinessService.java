@@ -194,7 +194,11 @@ public interface CommonBusinessService {
      */
     void replyReturnUrl(Orders orders);
 
-    public void replyBrowserUrl(Orders orders);
+    /**
+     * 调用商户浏览器回调接口
+     * @param orders
+     */
+    void replyBrowserUrl(Orders orders);
 
     /**
      * 重定向用户jumpUrl

@@ -134,10 +134,10 @@ public class MegaPayQueryMQReceiveSecond {
                             log.info("==============【MegaPay-THB查询队列2】============== 【上报清结算前线下下单创建账户信息】");
                             commonBusinessService.createAccount(orders);
                         }
-                        /*//分润
-                        if (!StringUtils.isEmpty(orders.getAgencyCode())) {
+                        //分润
+                        if (!StringUtils.isEmpty(orders.getAgentCode())) {
                             rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
-                        }*/
+                        }
                         //更新成功,上报清结算
                         FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                         //上报清结算资金变动接口

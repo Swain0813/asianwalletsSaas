@@ -81,7 +81,7 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
 
     @ApiModelProperty("支付页面")
     @Value("${custom.paySuccessUrl}")
-    private String paySuccessUrl;//签名方式
+    private String paySuccessUrl;
 
     /**
      * Enets线下CSB方法
@@ -342,10 +342,10 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
                         log.info("=================【eNets线下Csb回调】=================【上报清结算前线下下单创建账户信息】");
                         commonBusinessService.createAccount(orders);
                     }
-                    //TODO 分润
-                    //if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                    //rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
-                    //}
+                    //分润
+                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
+                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    }
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     //上报清结算资金变动接口
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
@@ -517,22 +517,20 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
                         log.info("=================【eNets网银服务器回调接口信息记录】=================【上报清结算前线下下单创建账户信息】");
                         commonBusinessService.createAccount(orders);
                     }
-                   /* //分润
-                    if(!StringUtils.isEmpty(orders.getAgencyCode())){
+                    //分润
+                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
                         rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
-                    }*/
+                    }
                     //更新成功,上报清结算
                     //上报清结算资金变动接口
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
-                        //请求成功
-                        if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                            //业务处理失败
-                            log.info("=================【eNets网银服务器回调接口信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                        }
+                    //请求成功
+                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
+                        //业务处理失败
+                        log.info("=================【eNets网银服务器回调接口信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                     } else {
                         log.info("=================【eNets网银服务器回调接口信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
                         RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
@@ -697,10 +695,10 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
                         log.info("=================【eNets线上扫码服务器回调】=================【上报清结算前线下下单创建账户信息】");
                         commonBusinessService.createAccount(orders);
                     }
-//                    //分润
-//                    if(!StringUtils.isEmpty(orders.getAgencyCode())){
-//                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
-//                    }
+                    //分润
+                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
+                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    }
                     //更新成功,上报清结算
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     //上报清结算资金变动接口
