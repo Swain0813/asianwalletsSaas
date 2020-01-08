@@ -68,6 +68,7 @@ public class OrdersServiceImpl implements OrdersService {
      */
     @Override
     public List<ExportOrdersVO> exportOrders(OrdersDTO ordersDTO) {
+        ordersDTO.setLanguage(auditorProvider.getLanguage());
         return ordersMapper.exportOrders(ordersDTO);
     }
 

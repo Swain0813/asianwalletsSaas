@@ -1,5 +1,4 @@
 package com.asianwallets.trade.service.impl;
-
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -34,7 +33,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -1021,7 +1019,6 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                 messageFeign.sendTemplateMail(orders.getPayerEmail(), orders.getLanguage(), Status._1, map);
             }
         } catch (Exception e) {
-            messageFeign.sendSimple("18800330943", "支付成功发送支付通知邮件失败:" + orders.getPayerEmail());
             log.error("支付成功发送支付通知邮件失败: {}==={}", orders.getPayerEmail(), e.getMessage());
         }
         log.info("*********************支付成功发送支付通知邮件 End*************************************");
