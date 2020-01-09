@@ -128,7 +128,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         offlineTradeDTO.setMerchantId("M201912203360");
         offlineTradeDTO.setOrderNo(IDS.uuid2());
         offlineTradeDTO.setOrderCurrency("SGD");
-        offlineTradeDTO.setOrderAmount(new BigDecimal("155").setScale(2, BigDecimal.ROUND_DOWN));
+        offlineTradeDTO.setOrderAmount(new BigDecimal("192").setScale(2, BigDecimal.ROUND_DOWN));
         offlineTradeDTO.setOrderTime(DateToolUtils.formatDate(new Date()));
         offlineTradeDTO.setProductCode(31);
         offlineTradeDTO.setImei("线下CSB");
