@@ -1,20 +1,21 @@
 package com.asianwallets.clearing.service.impl;
+
 import com.asianwallets.clearing.constant.Const;
 import com.asianwallets.clearing.dao.*;
 import com.asianwallets.clearing.service.CommonService;
 import com.asianwallets.clearing.service.FrozenFundsService;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.entity.TcsFrozenFundsLogs;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.IDS;
-import com.asianwallets.common.utils.MD5;
-import com.asianwallets.common.utils.SignTools;
+import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -78,7 +79,7 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
             }
             TcsFrozenFundsLogs ffl = (TcsFrozenFundsLogs) obj[0];
             Merchant merchant = (Merchant) obj[1];
-            if ( ffl == null || merchant == null) {
+            if (ffl == null || merchant == null) {
                 //输入校验通过,但是返回商户虚拟户或者冻结记录为空
                 repqo.setRespCode(dm.getCode());
                 repqo.setRespMsg(dm.getMsg());
@@ -217,13 +218,25 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
             return message;
         }
         //检查签名
-        signmap.put("merchantId", ffr.getMerchantId());
-        signmap.put("state", ffr.getState() + "");
-        signmap.put("desc", ffr.getDesc());
-        signmap.put("merOrderNo", ffr.getMerOrderNo());
-        signmap.put("txncurrency", ffr.getTxncurrency());
-        signmap.put("txnamount", decimalFormat.format(ffr.getTxnamount()));
-        String singstr = SignTools.getSignStr(signmap);
+
+        Map<String, Object> commonMap = ReflexClazzUtils.getFieldNames(ffr);
+        HashMap<String, String> paramMap = new HashMap<>();
+        for (String str : commonMap.keySet()) {
+            if (!str.equals("signMsg")) {
+                paramMap.put(str, String.valueOf(commonMap.get(str)));
+            }
+        }
+        //密文字符串拼装处理
+        String singstr = SignTools.getSignStr(paramMap);
+        //String signature = MD5Util.getMD5String(md5Key + str).toLowerCase();
+        //
+        //signmap.put("merchantId", ffr.getMerchantId());
+        //signmap.put("state", ffr.getState() + "");
+        //signmap.put("desc", ffr.getDesc());
+        //signmap.put("merOrderNo", ffr.getMerOrderNo());
+        //signmap.put("txncurrency", ffr.getTxncurrency());
+        //signmap.put("txnamount", decimalFormat.format(ffr.getTxnamount()));
+        //String singstr = SignTools.getSignStr(signmap);
         if (singstr == null || singstr.equals("")) {
             //签名字符串为空
             log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #拼装签名字符串为空，验证不通过,时间：{}", new Date());
