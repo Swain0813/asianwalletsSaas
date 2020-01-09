@@ -302,6 +302,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             orderRefund.setSign(oldOrder.getSign());
             baseResponse = this.doRefundOrder(orderRefund,channel);
         } else if (TradeConstant.PAYING.equals(type)) {
+            ordersMapper.updateOrderCancelStatus(refundDTO.getOrderNo(), TradeConstant.ORDER_CANNELING);
             /***************************************************************  订单是付款中的场合  *************************************************************/
             if (TradeConstant.TRADE_ONLINE.equals(refundDTO.getTradeDirection())) {
                 log.info("=========================【退款 refundOrder】=========================【线上通道不支持撤销】");
