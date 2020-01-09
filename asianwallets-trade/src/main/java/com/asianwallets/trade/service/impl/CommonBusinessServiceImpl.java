@@ -180,6 +180,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             String str = SignTools.getSignStr(map) + attestation.getMd5key();
             log.info("----------【通用签名校验】 MD5加密前明文----------str:{}", str);
             String decryptSign = MD5Util.getMD5String(str);
+            log.info("----------【通用签名校验】 MD5加密前明文----------decryptSign:{}", decryptSign);
             return sign.equalsIgnoreCase(decryptSign);
         }
         log.info("===============【通用签名校验方法】===============【验签结束】");
