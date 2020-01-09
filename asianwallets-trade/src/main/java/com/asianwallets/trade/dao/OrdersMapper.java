@@ -38,15 +38,6 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      */
     @Update("update orders set refund_status = #{refundStatus},update_time= NOW() where merchant_order_id = #{merchantOrderId} and trade_status = 3")
     int updateOrderRefundStatus(@Param("merchantOrderId") String merchantOrderId, @Param("refundStatus") Byte refundStatus);
-    /**
-     * 根据订单号修改撤销状态
-     *
-     * @param merchantOrderId
-     * @param refundStatus
-     * @return
-     */
-    @Update("update orders set cancel_status = #{refundStatus},update_time= NOW() where merchant_order_id = #{merchantOrderId}")
-    int updateOrderCancelStatus(@Param("merchantOrderId") String merchantOrderId, @Param("refundStatus") Byte refundStatus);
 
     /**
      * 根据商户订单号更新订单信息表中的撤销状态以及更新人
