@@ -2,7 +2,6 @@ package com.asianwallets.permissions.service.impl;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.asianwallets.common.constant.AsianWalletConstant;
-import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.vo.*;
@@ -308,73 +307,9 @@ public class ExportServiceImpl implements ExportService {
     }
 
     /**
-     * 导出清算户余额流水详情
-     * @param clearAccountVOS
-     * @param clazz
-     * @return
-     */
-    @Override
-    public ExcelWriter getClearBalanceWriter(List<ClearAccountVO> clearAccountVOS, Class clazz) {
-        ExcelWriter writer = ExcelUtil.getBigWriter();
-        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
-        //注释信息
-        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
-        //属性名信息
-        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
-        ArrayList<Object> oList1 = new ArrayList<>();
-        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
-        for (ClearAccountVO clearAccountVO : clearAccountVOS) {
-            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(clearAccountVO);
-            ArrayList<Object> oList2 = new ArrayList<>();
-            Set<String> keySet = oMap.keySet();
-            for (int i = 0; i < property.length; i++) {
-                for (String s : keySet) {
-                    if (s.equals(property[i])) {
-                        oSet1.add(comment[i]);
-                        if (s.equals("tradetype")) {
-                            if ((String.valueOf((oMap.get(s))).equals("AA"))) {
-                                oList2.add("调账");
-                            } else if ((String.valueOf((oMap.get(s))).equals("ST"))) {
-                                oList2.add("收单");
-                            } else if ((String.valueOf((oMap.get(s))).equals("RV"))) {
-                                oList2.add("撤销");
-                            } else if ((String.valueOf((oMap.get(s))).equals("RF"))) {
-                                oList2.add("退款");
-                            } else if ((String.valueOf((oMap.get(s))).equals("WD"))) {
-                                oList2.add("提款");
-                            } else if ((String.valueOf((oMap.get(s))).equals("FZ"))) {
-                                oList2.add("冻结");
-                            } else if ((String.valueOf((oMap.get(s))).equals("TW"))) {
-                                oList2.add("解冻");
-                            } else if ((String.valueOf((oMap.get(s))).equals("PM"))) {
-                                oList2.add("付款");
-                            } else if ((String.valueOf((oMap.get(s))).equals("NT"))) {
-                                oList2.add("收单");
-                            } else if ((String.valueOf((oMap.get(s))).equals("CL"))) {
-                                oList2.add("清算");
-                            } else if ((String.valueOf((oMap.get(s))).equals("ST"))) {
-                                oList2.add("结算");
-                            } else if ((String.valueOf((oMap.get(s))).equals("RA"))) {
-                                //清算时调账
-                                oList2.add("调账");
-                            }else {
-                                oList2.add("");
-                            }
-                        } else {
-                            oList2.add(oMap.get(s));
-                        }
-                    }
-                }
-            }
-            oList1.add(oList2);
-        }
-        oList1.add(0, oSet1);
-        writer.write(oList1);
-        return writer;
-    }
-
-    /**
      * 导出结算户余额流水详情
+     * 导出清算金额详情
+     * 导出冻结金额详情
      * @param list
      * @param clazz
      * @return
@@ -418,53 +353,9 @@ public class ExportServiceImpl implements ExportService {
                                 oList2.add("付款");
                             }  else if ((String.valueOf((oMap.get(s))).equals("RA"))) {
                                 oList2.add("调账");
+                            } else if ((String.valueOf((oMap.get(s))).equals("SP"))) {
+                                oList2.add("分润");
                             }else {
-                                oList2.add("");
-                            }
-                        } else {
-                            oList2.add(oMap.get(s));
-                        }
-                    }
-                }
-            }
-            oList1.add(oList2);
-        }
-        oList1.add(0, oSet1);
-        writer.write(oList1);
-        return writer;
-    }
-
-
-    /**
-     * 导出冻结余额流水详情
-     * @param list
-     * @param clazz
-     * @return
-     */
-    @Override
-    public ExcelWriter getFrozenLogsWriter(List<FrozenMarginInfoVO> list, Class clazz) {
-        ExcelWriter writer = ExcelUtil.getBigWriter();
-        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
-        //注释信息
-        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
-        //属性名信息
-        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
-        ArrayList<Object> oList1 = new ArrayList<>();
-        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
-        for (FrozenMarginInfoVO tcsFrozenFundsLogs : list) {
-            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(tcsFrozenFundsLogs);
-            ArrayList<Object> oList2 = new ArrayList<>();
-            Set<String> keySet = oMap.keySet();
-            for (int i = 0; i < property.length; i++) {
-                for (String s : keySet) {
-                    if (s.equals(property[i])) {
-                        oSet1.add(comment[i]);
-                        if (s.equals("status")) {
-                            if ((String.valueOf((oMap.get(s))).equals("5"))) {
-                                oList2.add("冻结成功");
-                            } else if ((String.valueOf((oMap.get(s))).equals("8"))) {
-                                oList2.add("解冻成功");
-                            } else {
                                 oList2.add("");
                             }
                         } else {

@@ -1,9 +1,6 @@
 package com.asianwallets.permissions.service;
-
 import cn.hutool.poi.excel.ExcelWriter;
-import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.vo.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,28 +41,12 @@ public interface ExportService {
     ExcelWriter exportOrders(List<ExportOrdersVO> exportOrdersVOList, Class<ExportOrdersVO> exportOrdersVOClass, ExcelWriter writer);
 
     /**
-     *导出清算户余额流水详情
-     * @param clearAccountVOS
-     * @param clazz
-     * @return
-     */
-    ExcelWriter getClearBalanceWriter(List<ClearAccountVO> clearAccountVOS, Class clazz);
-
-    /**
      * 导出结算户余额流水详情
      * @param institutions
      * @param clazz
      * @return
      */
     ExcelWriter getTmMerChTvAcctBalanceWriter(List<TmMerChTvAcctBalanceVO> institutions, Class clazz);
-
-    /**
-     * 导出冻结余额流水详情
-     * @param institutions
-     * @param clazz
-     * @return
-     */
-    ExcelWriter getFrozenLogsWriter(List<FrozenMarginInfoVO> institutions, Class clazz);
 
     /**
      * 机构后台分润导出
