@@ -102,13 +102,11 @@
     </select>
 
 	<select id="selectFreezeBalance" resultType="java.math.BigDecimal">
-        select sum(amount)
-        FROM reconciliation
-        WHERE merchant_id = #{merchantId}
-          and order_currency = #{currency}
-          and `status` in (5, 8)
-        GROUP BY order_currency, account_type
-        HAVING account_type = #{accountType};
+       select freeze_balance
+        from account
+        where merchant_id = #{merchantId}
+          and currency = #{currency}
+          and enabled = 1;
     </select>
 
 	<resultMap id="secondResultMap" type="com.asianwallets.common.vo.FrozenMarginInfoVO">

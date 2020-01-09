@@ -23,9 +23,9 @@ public class SearchAvaBalDTO {
     private String currency;
 
     @NotNull(message = "50002")
-    @ApiModelProperty(value = "变动类型")
+    @ApiModelProperty(value = "变动类型")//2-冻结资金
     private String type;
 
-    @ApiModelProperty(value = "账户类型")
+    @ApiModelProperty(value = "账户类型")//1-清算户 2-结算户 3-冻结户
     private String accountType;
 }
