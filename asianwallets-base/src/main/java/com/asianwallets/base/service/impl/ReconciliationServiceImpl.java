@@ -148,6 +148,7 @@ public class ReconciliationServiceImpl implements ReconciliationService {
                 //更新调账记录表
                 reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.FREEZE_SUCCESS, name, remark);
             } else {//请求失败
+                reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.FREEZE_FALID, name, remark);
                 return "冻结失败";
             }
             return null;
@@ -166,6 +167,7 @@ public class ReconciliationServiceImpl implements ReconciliationService {
                 //更新调账记录表
                 reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.UNFREEZE_SUCCESS, name, remark);
             } else {//请求失败
+                reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.UNFREEZE_FALID, name, remark);
                 return "解冻失败";
             }
             return null;

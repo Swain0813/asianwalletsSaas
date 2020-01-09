@@ -34,4 +34,7 @@ public class UndoDTO {
     @NotNull(message = "50002")
     @ApiModelProperty(value = "签名")
     private String sign;
+
+    @ApiModelProperty(value = "语言")
+    private String language;
 }
