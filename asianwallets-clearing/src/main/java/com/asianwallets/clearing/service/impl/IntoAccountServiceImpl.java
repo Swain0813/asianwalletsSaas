@@ -55,9 +55,9 @@ public class IntoAccountServiceImpl implements IntoAccountService {
         try {
             if (!(ioma != null && ioma.getMerchantid() != null && !ioma.getMerchantid().equals("") && ioma.getIsclear() > 0
                     && ioma.getMerOrderNo() != null && !ioma.getMerOrderNo().equals("") && ioma.getTxncurrency() != null
-                    && !ioma.getTxncurrency().equals("") && ioma.getTxnamount() != 0 && ioma.getShouldDealtime() != null && !ioma.getShouldDealtime().equals("")
+                    && !ioma.getTxncurrency().equals("") && ioma.getShouldDealtime() != null && !ioma.getShouldDealtime().equals("")
                     && ioma.getBalancetype() > 0 && ioma.getSignMsg() != null && !ioma.getSignMsg().equals("") && ioma.getFeecurrency() != null
-                    && !ioma.getFeecurrency().equals("") && ioma.getSltcurrency() != null && !ioma.getSltcurrency().equals("") && ioma.getSltamount() != 0
+                    && !ioma.getFeecurrency().equals("") && ioma.getSltcurrency() != null && !ioma.getSltcurrency().equals("")
                     && ioma.getChannelCostcurrency() != null && !ioma.getChannelCostcurrency().equals("") && ioma.getTradetype() != null
                     && !ioma.getTradetype().equals("") && ioma.getTxnexrate() > 0)) {
                 //提交的报文为空
