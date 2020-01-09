@@ -7,8 +7,7 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.AccountSearchDTO;
-import com.asianwallets.common.dto.ClearSearchDTO;
-import com.asianwallets.common.dto.FrozenMarginInfoDTO;
+import com.asianwallets.common.dto.AccountSearchExportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -66,7 +65,7 @@ public class AccountFeignController extends BaseController {
 
     @ApiOperation(value = "导出账户信息")
     @PostMapping("/exportAccountList")
-    public BaseResponse exportAccountList(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO, HttpServletResponse response) {
+    public BaseResponse exportAccountList(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO, HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(accountSearchDTO),
                 "导出账户信息"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
@@ -94,7 +93,7 @@ public class AccountFeignController extends BaseController {
 
     @ApiOperation(value = "查询清算户余额流水详情")
     @PostMapping("/pageClearLogs")
-    public BaseResponse pageClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO) {
+    public BaseResponse pageClearLogs(@RequestBody @ApiParam AccountSearchDTO clearSearchDTO) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(clearSearchDTO),
                 "查询清算户余额流水详情"));
         return accountFeign.pageClearLogs(clearSearchDTO);
@@ -102,12 +101,12 @@ public class AccountFeignController extends BaseController {
 
     @ApiOperation(value = "导出清算户余额流水详情")
     @PostMapping("/exportClearLogs")
-    public BaseResponse exportClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO, HttpServletResponse response) {
+    public BaseResponse exportClearLogs(@RequestBody @ApiParam AccountSearchExportDTO clearSearchDTO, HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(clearSearchDTO),
                 "导出清算户余额流水详情"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
-            List<ClearAccountVO> dataList = accountFeign.exportClearLogs(clearSearchDTO);
+            List<TmMerChTvAcctBalanceVO> dataList = accountFeign.exportClearLogs(clearSearchDTO);
             ServletOutputStream out = response.getOutputStream();
             if (ArrayUtil.isEmpty(dataList)) {
                 //数据不存在的场合
@@ -116,7 +115,7 @@ public class AccountFeignController extends BaseController {
                 writer.flush(out);
                 return ResultUtil.success();
             }
-            writer = exportService.getClearBalanceWriter(dataList, ClearAccountVO.class);
+            writer = exportService.getTmMerChTvAcctBalanceWriter(dataList, ClearAccountVO.class);
             writer.flush(out);
         } catch (Exception e) {
             log.info("==========【导出清算户余额流水详情】==========【导出清算户余额流水详情异常】", e);
@@ -137,7 +136,7 @@ public class AccountFeignController extends BaseController {
 
     @ApiOperation(value = "导出结算户余额流水详情")
     @PostMapping("/exportSettleLogs")
-    public BaseResponse exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO, HttpServletResponse response) {
+    public BaseResponse exportSettleLogs(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO, HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(accountSearchDTO),
                 "导出结算户余额流水详情"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
@@ -164,7 +163,7 @@ public class AccountFeignController extends BaseController {
 
     @ApiOperation(value = "查询冻结余额流水详情")
     @PostMapping("/pageFrozenLogs")
-    public BaseResponse pageFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO accountSearchDTO) {
+    public BaseResponse pageFrozenLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(accountSearchDTO),
                 "查询冻结余额流水详情"));
         return accountFeign.pageFrozenLogs(accountSearchDTO);
@@ -172,12 +171,12 @@ public class AccountFeignController extends BaseController {
 
     @ApiOperation(value = "导出冻结余额流水详情")
     @PostMapping("/exportFrozenLogs")
-    public BaseResponse exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO frozenMarginInfoDTO, HttpServletResponse response) {
+    public BaseResponse exportFrozenLogs(@RequestBody @ApiParam AccountSearchExportDTO frozenMarginInfoDTO, HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(frozenMarginInfoDTO),
                 "导出冻结余额流水详情"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
-            List<FrozenMarginInfoVO> dataList = accountFeign.exportFrozenLogs(frozenMarginInfoDTO);
+            List<TmMerChTvAcctBalanceVO> dataList = accountFeign.exportFrozenLogs(frozenMarginInfoDTO);
             ServletOutputStream out = response.getOutputStream();
             if (ArrayUtil.isEmpty(dataList)) {
                 //数据不存在的场合
@@ -186,7 +185,7 @@ public class AccountFeignController extends BaseController {
                 writer.flush(out);
                 return ResultUtil.success();
             }
-            writer = exportService.getFrozenLogsWriter(dataList, FrozenMarginInfoVO.class);
+            writer = exportService.getTmMerChTvAcctBalanceWriter(dataList, FrozenMarginInfoVO.class);
             writer.flush(out);
         } catch (Exception e) {
             log.info("==========【导出冻结余额流水详情】==========【导出冻结余额流水详情异常】", e);

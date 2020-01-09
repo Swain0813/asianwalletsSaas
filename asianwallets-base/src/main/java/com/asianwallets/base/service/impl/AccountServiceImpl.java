@@ -6,10 +6,7 @@ import com.asianwallets.base.dao.TmMerChTvAcctBalanceMapper;
 import com.asianwallets.base.service.AccountService;
 import com.asianwallets.common.base.BaseServiceImpl;
 import com.asianwallets.common.constant.TradeConstant;
-import com.asianwallets.common.dto.AccountSearchDTO;
-import com.asianwallets.common.dto.ClearSearchDTO;
-import com.asianwallets.common.dto.FrozenMarginInfoDTO;
-import com.asianwallets.common.dto.OrdersDTO;
+import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.Account;
 import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.vo.*;
@@ -34,8 +31,6 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
     @Autowired
     private TmMerChTvAcctBalanceMapper tmMerChTvAcctBalanceMapper;
 
-    @Autowired
-    private ReconciliationMapper reconciliationMapper;
 
     /**
      * 分页查询账户信息
@@ -57,8 +52,8 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
      * @return
      */
     @Override
-    public List<AccountListVO> exportAccountList(AccountSearchDTO accountSearchDTO) {
-        return accountMapper.pageFindAccount(accountSearchDTO);
+    public List<AccountListVO> exportAccountList(AccountSearchExportDTO accountSearchDTO) {
+        return accountMapper.exportAccountList(accountSearchDTO);
     }
 
     /**
@@ -68,7 +63,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
      * @return
      */
     @Override
-    public PageInfo<ClearAccountVO> pageClearLogs(ClearSearchDTO clearSearchDTO) {
+    public PageInfo<TmMerChTvAcctBalance> pageClearLogs(AccountSearchDTO clearSearchDTO) {
         clearSearchDTO.setSort("balance_timestamp");//变动时间降序
         return new PageInfo(tmMerChTvAcctBalanceMapper.pageClearBalanceLogs(clearSearchDTO));
     }
@@ -80,8 +75,9 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
      * @return
      */
     @Override
-    public List<ClearAccountVO> exportClearLogs(ClearSearchDTO clearSearchDTO) {
-        return tmMerChTvAcctBalanceMapper.exportClearBalanceLogs(clearSearchDTO);
+    public List<TmMerChTvAcctBalanceVO> exportClearLogs(AccountSearchExportDTO clearSearchDTO) {
+        List<TmMerChTvAcctBalanceVO> chTvAcctBalanceVOLists = tmMerChTvAcctBalanceMapper.exportClearBalanceLogs(clearSearchDTO);
+        return chTvAcctBalanceVOLists;
     }
 
     /**
@@ -105,7 +101,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
      * @return
      */
     @Override
-    public List<TmMerChTvAcctBalanceVO> exportSettleLogs(AccountSearchDTO accountSearchDTO) {
+    public List<TmMerChTvAcctBalanceVO> exportSettleLogs(AccountSearchExportDTO accountSearchDTO) {
         //查询结算户余额流水详情
         List<TmMerChTvAcctBalanceVO> oldAccountBalanceLogs = tmMerChTvAcctBalanceMapper.exportAccountBalanceLogs(accountSearchDTO);
         return oldAccountBalanceLogs;
@@ -114,18 +110,14 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
     /**
      * 查询冻结余额流水详情
      *
-     * @param frozenMarginInfoDTO
+     * @param accountSearchDTO
      * @return
      */
     @Override
-    public PageInfo<FrozenMarginInfoVO> pageFrozenLogs(FrozenMarginInfoDTO frozenMarginInfoDTO) {
-        List<FrozenMarginInfoVO> frozenMarginInfoVOS = reconciliationMapper.pageFrozenLogs(frozenMarginInfoDTO);
-        for (FrozenMarginInfoVO vo : frozenMarginInfoVOS) {
-            if (vo.getStatus() == TradeConstant.UNFREEZE_SUCCESS) {
-                vo.setAmount(vo.getAmount().negate());
-            }
-        }
-        return new PageInfo<FrozenMarginInfoVO>(frozenMarginInfoVOS);
+    public PageInfo<TmMerChTvAcctBalance> pageFrozenLogs(AccountSearchDTO accountSearchDTO) {
+        accountSearchDTO.setSort("balance_timestamp");//变动时间降序
+        List<TmMerChTvAcctBalance> pageAccountBalanceLogLists = tmMerChTvAcctBalanceMapper.pageFrozenLogs(accountSearchDTO);
+        return new PageInfo(pageAccountBalanceLogLists);
     }
 
     /**
@@ -135,14 +127,10 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
      * @return
      */
     @Override
-    public List<FrozenMarginInfoVO> exportFrozenLogs(FrozenMarginInfoDTO frozenMarginInfoDTO) {
-        List<FrozenMarginInfoVO> frozenMarginInfoVOS = reconciliationMapper.pageFrozenLogs(frozenMarginInfoDTO);
-        for (FrozenMarginInfoVO vo : frozenMarginInfoVOS) {
-            if (vo.getStatus() == TradeConstant.UNFREEZE_SUCCESS) {
-                vo.setAmount(vo.getAmount().negate());
-            }
-        }
-        return frozenMarginInfoVOS;
+    public List<TmMerChTvAcctBalanceVO> exportFrozenLogs(AccountSearchExportDTO frozenMarginInfoDTO) {
+        //查询结算户余额流水详情
+        List<TmMerChTvAcctBalanceVO> oldAccountBalanceLogs = tmMerChTvAcctBalanceMapper.exportFrozenLogs(frozenMarginInfoDTO);
+        return oldAccountBalanceLogs;
     }
 
     /**

@@ -31,7 +31,7 @@ public class ReconOperDTO {
     @ApiModelProperty(value = "调账原因")
     private String remark;
 
-    @ApiModelProperty(value = "入账类型 1-冻结户 2-保证金户 ")
+    @ApiModelProperty(value = "入账类型")// 1-清算户 2-结算户 3-冻结户
     private Integer accountType;
 
     @ApiModelProperty(value = "冻结类型 1-冻结 2-预约冻结")

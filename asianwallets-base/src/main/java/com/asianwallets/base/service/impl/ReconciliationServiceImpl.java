@@ -344,7 +344,7 @@ public class ReconciliationServiceImpl implements ReconciliationService {
         reconciliation.setChangeType(reconOperDTO.getChangeType());
         //冻结类型 1-冻结 2-预约冻结
         reconciliation.setFreezeType(reconOperDTO.getFreezeType());
-        //入账类型 1-清算户 2-结算户 3-冻结户
+        //入账类型 1-清算户 2-结算户 3-冻结户 这里只用到结算户和冻结户
         reconciliation.setAccountType(reconOperDTO.getAccountType());
         reconciliation.setAmount(reconOperDTO.getChangeType() == TradeConstant.THAWING_FUNDS ? reconOperDTO.getAmount().negate() : reconOperDTO.getAmount());
         reconciliation.setCurrency(reconOperDTO.getCurrency());
