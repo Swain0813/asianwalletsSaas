@@ -1,8 +1,7 @@
 package com.asianwallets.permissions.feign.base;
 
 import com.asianwallets.common.dto.AccountSearchDTO;
-import com.asianwallets.common.dto.ClearSearchDTO;
-import com.asianwallets.common.dto.FrozenMarginInfoDTO;
+import com.asianwallets.common.dto.AccountSearchExportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.*;
@@ -27,15 +26,15 @@ public interface AccountFeign {
 
     @ApiOperation(value = "导出账户信息")
     @PostMapping("/account/exportAccountList")
-    List<AccountListVO> exportAccountList(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO);
+    List<AccountListVO> exportAccountList(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO);
 
     @ApiOperation(value = "查询清算户余额流水详情")
     @PostMapping("/account/pageClearLogs")
-    BaseResponse pageClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO);
+    BaseResponse pageClearLogs(@RequestBody @ApiParam AccountSearchDTO clearSearchDTO);
 
     @ApiOperation(value = "导出清算户余额流水详情")
     @PostMapping("/account/exportClearLogs")
-    List<ClearAccountVO> exportClearLogs(@RequestBody @ApiParam ClearSearchDTO clearSearchDTO);
+    List<TmMerChTvAcctBalanceVO> exportClearLogs(@RequestBody @ApiParam AccountSearchExportDTO clearSearchDTO);
 
     @ApiOperation(value = "查询结算户余额流水详情")
     @PostMapping("/account/pageSettleLogs")
@@ -43,15 +42,15 @@ public interface AccountFeign {
 
     @ApiOperation(value = "导出结算户余额流水详情")
     @PostMapping("/account/exportSettleLogs")
-    List<TmMerChTvAcctBalanceVO> exportSettleLogs(@RequestBody @ApiParam AccountSearchDTO accountSearchDTO);
+    List<TmMerChTvAcctBalanceVO> exportSettleLogs(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO);
 
     @ApiOperation(value = "查询冻结余额流水详情")
     @PostMapping("/account/pageFrozenLogs")
-    BaseResponse pageFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO frozenMarginInfoDTO);
+    BaseResponse pageFrozenLogs(@RequestBody @ApiParam AccountSearchDTO frozenMarginInfoDTO);
 
     @ApiOperation(value = "导出冻结余额流水详情")
     @PostMapping("/account/exportFrozenLogs")
-    List<FrozenMarginInfoVO> exportFrozenLogs(@RequestBody @ApiParam FrozenMarginInfoDTO accountSearchDTO);
+    List<TmMerChTvAcctBalanceVO> exportFrozenLogs(@RequestBody @ApiParam AccountSearchExportDTO accountSearchDTO);
 
     @ApiOperation(value = "导出商户余额")
     @PostMapping("/account/exportMerchantBalance")

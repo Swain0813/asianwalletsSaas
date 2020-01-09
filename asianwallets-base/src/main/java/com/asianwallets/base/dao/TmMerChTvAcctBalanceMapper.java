@@ -2,7 +2,7 @@ package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.AccountSearchDTO;
-import com.asianwallets.common.dto.ClearSearchDTO;
+import com.asianwallets.common.dto.AccountSearchExportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.vo.ClearAccountVO;
@@ -20,17 +20,17 @@ public interface TmMerChTvAcctBalanceMapper extends BaseMapper<TmMerChTvAcctBala
      * @param clearSearchDTO
      * @return
      */
-    List<ClearAccountVO> pageClearBalanceLogs(ClearSearchDTO clearSearchDTO);
+    List<TmMerChTvAcctBalance> pageClearBalanceLogs(AccountSearchDTO clearSearchDTO);
 
     /**
      * 导出清算户余额流水详情
      * @param clearSearchDTO
      * @return
      */
-    List<ClearAccountVO> exportClearBalanceLogs(ClearSearchDTO clearSearchDTO);
+    List<TmMerChTvAcctBalanceVO> exportClearBalanceLogs(AccountSearchExportDTO clearSearchDTO);
 
     /**
-     * 查询账户余额流水详情
+     * 查询结算户余额流水详情
      * @param accountSearchDTO
      * @return
      */
@@ -41,7 +41,22 @@ public interface TmMerChTvAcctBalanceMapper extends BaseMapper<TmMerChTvAcctBala
      * @param accountSearchDTO
      * @return
      */
-    List<TmMerChTvAcctBalanceVO> exportAccountBalanceLogs(AccountSearchDTO accountSearchDTO);
+    List<TmMerChTvAcctBalanceVO> exportAccountBalanceLogs(AccountSearchExportDTO accountSearchDTO);
+
+
+    /**
+     * 查询冻结流水详情
+     * @param accountSearchDTO
+     * @return
+     */
+    List<TmMerChTvAcctBalance> pageFrozenLogs(AccountSearchDTO accountSearchDTO);
+
+    /**
+     * 导出冻结余额流水详情
+     * @param accountSearchDTO
+     * @return
+     */
+    List<TmMerChTvAcctBalanceVO> exportFrozenLogs(AccountSearchExportDTO accountSearchDTO);
 
     /**
      * 商户余额查询

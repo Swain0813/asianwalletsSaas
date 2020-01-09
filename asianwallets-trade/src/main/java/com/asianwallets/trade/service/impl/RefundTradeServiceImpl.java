@@ -262,7 +262,11 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             throw new BusinessException(EResultEnum.INSUFFICIENT_ACCOUNT_BALANCE.getCode());
         }
         if (TradeConstant.RV.equals(type) || TradeConstant.RF.equals(type)) {
-            orderRefund.setRemark4(type);
+            if(refundDTO.getFunctionType()==null){
+                orderRefund.setRemark4(TradeConstant.RF);
+            }else{
+                orderRefund.setRemark4(TradeConstant.RV);
+            }
             /*************************************************************** 订单是付款成功的场合 将订单表中的退款状态修改成退款中*******************************************/
             //把原订单状态改为退款中
             ordersMapper.updateOrderRefundStatus(refundDTO.getOrderNo(), TradeConstant.ORDER_REFUND_WAIT);

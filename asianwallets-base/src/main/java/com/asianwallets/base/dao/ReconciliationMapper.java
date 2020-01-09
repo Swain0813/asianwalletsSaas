@@ -1,7 +1,6 @@
 package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base.BaseMapper;
-import com.asianwallets.common.dto.FrozenMarginInfoDTO;
 import com.asianwallets.common.dto.ReconciliationDTO;
 import com.asianwallets.common.dto.SearchAvaBalDTO;
 import com.asianwallets.common.entity.Reconciliation;
@@ -61,11 +60,4 @@ public interface ReconciliationMapper extends BaseMapper<Reconciliation> {
      * @return
      */
     BigDecimal selectAvailableBalance(SearchAvaBalDTO searchAvaBalDTO);
-
-    /**
-     *查询冻结成功和解冻成功的调账记录
-     * @param frozenMarginInfoDTO
-     * @return
-     */
-    List<FrozenMarginInfoVO> pageFrozenLogs(FrozenMarginInfoDTO frozenMarginInfoDTO);
 }

@@ -120,19 +120,4 @@
 		<result column="remark" property="remark" jdbcType="VARCHAR"/>
 	</resultMap>
 
-	<select id="pageFrozenLogs" resultMap="secondResultMap">
-        SELECT id,
-			   currency,
-               amount,
-               status,
-               update_time,
-               remark
-        from reconciliation
-        where account_id = #{accountId}
-          and status in (5, 8)
-          and currency = #{currency}
-          and account_type = #{accountType}
-        order by create_time desc
-    </select>
-
 </mapper>

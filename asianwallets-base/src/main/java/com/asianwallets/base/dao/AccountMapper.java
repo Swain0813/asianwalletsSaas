@@ -2,6 +2,7 @@ package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base. BaseMapper;
 import com.asianwallets.common.dto.AccountSearchDTO;
+import com.asianwallets.common.dto.AccountSearchExportDTO;
 import com.asianwallets.common.entity.Account;
 import com.asianwallets.common.vo.AccountListVO;
 import com.asianwallets.common.vo.WithdrawalVO;
@@ -28,6 +29,13 @@ public interface AccountMapper extends  BaseMapper<Account> {
      * @return
      */
     List<AccountListVO> pageFindAccount(AccountSearchDTO accountSearchDTO);
+
+    /**
+     * 导出账户信息
+     * @param accountSearchDTO
+     * @return
+     */
+    List<AccountListVO> exportAccountList(AccountSearchExportDTO accountSearchDTO);
 
     /**
      * @Author YangXu
