@@ -376,7 +376,8 @@ public class ReconciliationServiceImpl implements ReconciliationService {
     @Override
     public String getAvailableBalance(SearchAvaBalDTO searchAvaBalDTO) {
         BigDecimal avaBal = null;
-        if (searchAvaBalDTO.getType().equals("2")) { //冻结金查询
+        if (searchAvaBalDTO.getType().equals("2")) {
+            //解冻资金看冻结户资金其他看结算户
             avaBal = reconciliationMapper.selectFreezeBalance(searchAvaBalDTO);
         } else {
             avaBal = reconciliationMapper.selectAvailableBalance(searchAvaBalDTO);//可用余额查询
