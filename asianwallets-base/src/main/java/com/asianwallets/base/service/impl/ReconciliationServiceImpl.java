@@ -335,6 +335,7 @@ public class ReconciliationServiceImpl implements ReconciliationService {
         reconciliation.setInstitutionId(institution.getId());
         reconciliation.setInstitutionName(institution.getCnName());
         reconciliation.setCreator(name);
+        reconciliation.setMerchantOrderId(reconciliation.getId());
         //当变动类型为冻结或者解冻时
         reconciliation.setAccountId(reconOperDTO.getChangeType() != TradeConstant.TRANSFER ? accountId : null);
         reconciliation.setCreateTime(new Date());
