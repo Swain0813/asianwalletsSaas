@@ -55,7 +55,7 @@ public class OrdersServiceImpl implements OrdersService {
     public OrdersDetailVO getOrdersDetail(String id) {
         OrdersDetailVO ordersDetailVO = ordersMapper.selectOrdersDetailById(id, auditorProvider.getLanguage());
         List<OrdersDetailRefundVO> ordersDetailRefundVOS = ordersDetailVO.getOrdersDetailRefundVOS();
-        List<OrdersDetailRefundVO> collect = ordersDetailRefundVOS.stream().sorted(Comparator.comparing(OrdersDetailRefundVO::getRefundFinishTime).reversed()).collect(Collectors.toList());
+        List<OrdersDetailRefundVO> collect = ordersDetailRefundVOS.stream().sorted(Comparator.comparing(OrdersDetailRefundVO::getOrderRefundCreateTime).reversed()).collect(Collectors.toList());
         ordersDetailVO.setOrdersDetailRefundVOS(collect);
         return ordersDetailVO;
     }
