@@ -1,6 +1,7 @@
 package com.asianwallets.base.service.impl;
 import com.asianwallets.base.dao.AccountMapper;
 import com.asianwallets.base.dao.ReconciliationMapper;
+import com.asianwallets.base.dao.TcsFrozenFundsLogsMapper;
 import com.asianwallets.base.service.ClearingService;
 import com.asianwallets.base.service.CommonService;
 import com.asianwallets.base.service.ReconciliationService;
@@ -9,10 +10,7 @@ import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.ReconOperDTO;
 import com.asianwallets.common.dto.ReconciliationDTO;
 import com.asianwallets.common.dto.SearchAvaBalDTO;
-import com.asianwallets.common.entity.Account;
-import com.asianwallets.common.entity.Institution;
-import com.asianwallets.common.entity.Merchant;
-import com.asianwallets.common.entity.Reconciliation;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -49,6 +47,9 @@ public class ReconciliationServiceImpl implements ReconciliationService {
 
     @Autowired
     private ClearingService clearingService;
+
+    @Autowired
+    private TcsFrozenFundsLogsMapper tcsFrozenFundsLogsMapper;
 
     /**
      * 分页查询调账单
@@ -133,18 +134,30 @@ public class ReconciliationServiceImpl implements ReconciliationService {
         }
         //冻结
         if (reconciliation.getReconciliationType() == AsianWalletConstant.FREEZE) {
-            //判断为冻结时
             if (!reconciliation.getFreezeType().equals(TradeConstant.RESERVATION_FREEZE)) {
-                //不为预约时
-                //判断余额
+                //不为预约时,判断余额
                 if (reconciliation.getAmount().compareTo(account.getSettleBalance().subtract(account.getFreezeBalance())) == 1) {
                     throw new BusinessException(EResultEnum.BANLANCE_NOT_FOOL.getCode());
+                }
+            }else {
+                //预约冻结的场合,如果结算户钱不够的场合，将预约记录放进系统冻结资金记录
+                if(reconciliation.getAmount().compareTo(account.getSettleBalance().subtract(account.getFreezeBalance())) == 1){
+                    //创建预约冻结记录
+                    int result =this.createTcsFrozenFundsLogs(reconciliation);
+                    if(result>0){
+                        //冻结成功
+                        //更新调账记录表
+                        reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.FREEZE_SUCCESS, name, remark);
+                    }else {
+                        log.info("******************创建预约冻结记录失败***************************");
+                        reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.FREEZE_FALID, name, remark);
+                        return "冻结失败";
+                    }
                 }
             }
             FinancialFreezeDTO ffd = new FinancialFreezeDTO(reconciliation, account);
             BaseResponse response = clearingService.freezingFunds(ffd);
             if (response.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                //冻结成功
                 //更新调账记录表
                 reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.FREEZE_SUCCESS, name, remark);
             } else {//请求失败
@@ -390,5 +403,30 @@ public class ReconciliationServiceImpl implements ReconciliationService {
             throw new BusinessException(EResultEnum.ACCOUNT_IS_NOT_EXIST.getCode());//账户异常
         }
         return avaBal.toString();
+    }
+
+
+    /**
+     * 创建预约冻结记录并插入系统冻结资金记录
+     * @return
+     */
+    private int createTcsFrozenFundsLogs(Reconciliation reconciliation){
+        TcsFrozenFundsLogs  tcsFrozenFundsLogs = new TcsFrozenFundsLogs();
+        tcsFrozenFundsLogs.setId("FT" + IDS.uniqueID());
+        //机构编号
+        tcsFrozenFundsLogs.setOrganId(reconciliation.getInstitutionId());
+        //商户编号
+        tcsFrozenFundsLogs.setMerchantId(reconciliation.getMerchantId());
+        tcsFrozenFundsLogs.setMerOrderNo(reconciliation.getId());
+        tcsFrozenFundsLogs.setTxncurrency(reconciliation.getCurrency());
+        tcsFrozenFundsLogs.setTxnamount(reconciliation.getAmount().doubleValue());
+        tcsFrozenFundsLogs.setMvaccountId(reconciliation.getAccountId());
+        tcsFrozenFundsLogs.setBusinessType(1);
+        //待冻结
+        tcsFrozenFundsLogs.setState(0);
+        tcsFrozenFundsLogs.setFrozenDesc("预约冻结");
+        //冻结时间
+        tcsFrozenFundsLogs.setFrozenDatetime(new Date());
+        return tcsFrozenFundsLogsMapper.insert(tcsFrozenFundsLogs);
     }
 }

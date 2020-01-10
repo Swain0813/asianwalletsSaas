@@ -1,6 +1,7 @@
 package com.asianwallets.common.vo.clearing;
 import com.asianwallets.common.entity.Account;
 import com.asianwallets.common.entity.Reconciliation;
+import com.asianwallets.common.entity.TcsFrozenFundsLogs;
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -81,11 +82,29 @@ public class FinancialFreezeDTO implements Serializable{
       this.merchantId = reconciliation.getMerchantId();
       this.mvaccountId = account.getId();//账户 id
       this.desc = reconciliation.getReconciliationType() == 3 ? "加冻结" : "解冻结";
-      this.merOrderNo = account.getId();//账户 id
+      this.merOrderNo = reconciliation.getId();
       this.txncurrency = reconciliation.getCurrency();
       //订单金额,2位
       this.txnamount =reconciliation.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
       //资金变动--3冻结 4 解冻 ||清结算--1:冻结2:解冻
       this.state = reconciliation.getReconciliationType() == 3 ? 1 : 2;
    }
+
+   /**
+    * 预约冻结用
+    * @param tcsFrozenFundsLogs
+    */
+   public FinancialFreezeDTO(TcsFrozenFundsLogs tcsFrozenFundsLogs){
+      this.id =tcsFrozenFundsLogs.getId();
+      this.merchantId=tcsFrozenFundsLogs.getMerchantId();
+      this.mvaccountId=tcsFrozenFundsLogs.getMvaccountId();
+      this.desc = "预约冻结";
+      this.merOrderNo =tcsFrozenFundsLogs.getMerOrderNo();
+      this.txncurrency=tcsFrozenFundsLogs.getTxncurrency();
+      this.txnamount=tcsFrozenFundsLogs.getTxnamount();
+      //加冻结
+      this.state=1;
+   }
+
+
 }

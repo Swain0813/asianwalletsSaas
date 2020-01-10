@@ -5,13 +5,13 @@ import com.asianwallets.clearing.dao.AccountMapper;
 import com.asianwallets.clearing.dao.TmMerChTvAcctBalanceMapper;
 import com.asianwallets.clearing.service.TCSFrozenFundsService;
 import com.asianwallets.common.entity.Account;
-import com.asianwallets.common.entity.TcsFrozenFundsLogs;
 import com.asianwallets.common.entity.TmMerChTvAcctBalance;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
      **/
     @Override
     @Transactional
-    public BaseResponse frozenFundsLogs(TcsFrozenFundsLogs ffl) {
+    public BaseResponse frozenFundsLogs(FinancialFreezeDTO ffl) {
         log.info("********************* frozenFundsLogs *********************** #开始时间：{}", new Date());
         BaseResponse message = new BaseResponse();
         message.setCode(Const.Code.FAILED);// 默认失败
@@ -108,7 +108,7 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
                 mab.setInstitutionId(mva.getInstitutionId());
                 mab.setInstitutionName(mva.getInstitutionName());
                 mab.setMerchantOrderId(ffl.getMerOrderNo());
-                mab.setOrganId(ffl.getOrganId());
+                mab.setOrganId(ffl.getId());
                 mab.setMbuaccountId(null);
                 mab.setVaccounId(mva.getAccountCode());
                 mab.setBalance(balance);
@@ -124,6 +124,7 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
                 mab.setGatewayFee(Double.parseDouble("0"));
                 mab.setSltcurrency(ffl.getTxncurrency());
                 mab.setSltexrate(Double.parseDouble("1"));
+                mab.setRemark(ffl.getDesc());
                 int rows2 = 0;
                 if (ffl.getState() == 1) {
                     log.info("*******************进入加冻结，插入结算记录的虚拟账户编号*********************:" + ffl.getMvaccountId());

@@ -376,7 +376,8 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
             afterbalance = mva1.getSettleBalance().doubleValue();//结算账户资金
             fr_afterbalance = mva1.getFreezeBalance().doubleValue();//冻结账户资金
             log.info("*************** SettlementBase3 结算基础方法 ************** 变动后结算户:{},结算资金：{}，冻结资金：{}", mva01.getId(), afterbalance, fr_balance);
-            if (st.getBalancetype() == 2) {////冻结资金
+            if (st.getBalancetype() == 2) {
+                //冻结资金
                 //如果是冻结资金需要在插入正常资金前将冻结资金解冻
                 //插入商户账户流水表（结算户）--冻结资金解冻流水
                 TmMerChTvAcctBalance mab_fr = new TmMerChTvAcctBalance();
@@ -408,7 +409,7 @@ public class TCSStFlowServiceImpl implements TCSStFlowService {
                 mab_fr.setReferenceflow(st.getRefcnceFlow());
                 mab_fr.setTradetype("TW");//TW:解冻
                 mab_fr.setType(3);// type 3 冻结账户
-                mab_fr.setRemark("解冻资金" + "/" + st.getRemark());
+                mab_fr.setRemark("解冻资金");
                 mab_fr.setRefundOrderFee(Double.parseDouble("0"));
                 //插入账户流水记录
                 result1_fr = tmMerChTvAcctBalanceMapper.insertSelective(mab_fr);
