@@ -10,6 +10,7 @@
         <result column="role_id" property="roleId" jdbcType="VARCHAR"/>
         <result column="creator" property="creator" jdbcType="VARCHAR"/>
         <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
     </resultMap>
 
     <delete id="deleteByRoleId">
@@ -32,4 +33,8 @@
             #{item}
         </foreach>
     </delete>
+
+    <update id="updateEnabledByRoleIdAndMenuId">
+        update sys_role_menu set enabled =#{enabled} where role_id = #{roleId} and menu_id = #{offId}
+    </update>
 </mapper>

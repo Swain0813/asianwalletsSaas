@@ -114,7 +114,7 @@
         from tm_merchtvacctbalance
         where type = 2
         <if test="id != null and id != ''">
-            AND id = #{id}
+            AND referenceflow = #{id}
         </if>
         <if test="merchantOrderId != null and merchantOrderId != ''">
             AND merchant_order_id = #{merchantOrderId}
@@ -160,7 +160,7 @@
         from tm_merchtvacctbalance
         where type = 2
         <if test="id != null and id != ''">
-            AND id = #{id}
+            AND referenceflow = #{id}
         </if>
         <if test="merchantOrderId != null and merchantOrderId != ''">
             AND merchant_order_id = #{merchantOrderId}

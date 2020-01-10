@@ -35,4 +35,12 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @return 用户集合
      */
     List<SysUserSecVO> pageGetSysUserByOperation(SysUserDto sysUserDto);
+
+    /**
+     * 根据系统ID查询用户ID
+     *
+     * @param sysId 系统ID
+     * @return 用户ID集合
+     */
+    List<String> selectUserIdBySysId(String sysId);
 }

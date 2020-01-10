@@ -1,18 +1,14 @@
 package com.asianwallets.permissions.service.impl;
 
-import java.util.Date;
-
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.SysMenu;
+import com.asianwallets.common.entity.SysUser;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.permissions.dao.*;
-import com.asianwallets.permissions.dto.FirstMenuDto;
-import com.asianwallets.permissions.dto.SecondMenuDto;
-import com.asianwallets.permissions.dto.SysMenuDto;
-import com.asianwallets.permissions.dto.ThreeMenuDto;
+import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.service.SysMenuService;
 import com.asianwallets.permissions.vo.FirstMenuVO;
 import com.asianwallets.permissions.vo.SecondMenuVO;
@@ -24,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +28,12 @@ import java.util.Set;
 @Slf4j
 @Transactional
 public class SysMenuServiceImpl implements SysMenuService {
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
 
     @Autowired
     private SysMenuMapper sysMenuMapper;
@@ -335,5 +338,43 @@ public class SysMenuServiceImpl implements SysMenuService {
             }
         }
         return menuList;
+    }
+
+    /**
+     * 运营后台修改机构权限
+     *
+     * @param updateInsPermissionDto 运营后台修改机构权限dto
+     * @return 修改条数
+     */
+    @Override
+    @Transactional
+    public int updateInsPermission(UpdateInsPermissionDto updateInsPermissionDto) {
+        //机构对应所有用户
+        List<String> userIdList = sysUserMapper.selectUserIdBySysId(updateInsPermissionDto.getInstitutionId());
+        //机构对应所有角色
+        List<String> roleIdList = sysRoleMapper.selectRoleIdBySysId(updateInsPermissionDto.getInstitutionId());
+        //禁用的权限集合
+        List<String> offIdList = updateInsPermissionDto.getOffIdList();
+        //禁用所有用户权限
+        for (String userId : userIdList) {
+            for (String offId : offIdList) {
+                sysUserMenuMapper.updateEnabledByUserIdAndMenuId(userId, offId, false);
+            }
+        }
+        //禁用所有角色权限
+        for (String roleId : roleIdList) {
+            for (String offId : offIdList) {
+                sysRoleMenuMapper.updateEnabledByRoleIdAndMenuId(roleId, offId, false);
+            }
+        }
+        //启用的权限集合
+        List<String> openIdList = updateInsPermissionDto.getOpenIdList();
+        //查询机构管理员
+        SysUser sysUser = sysUserMapper.getSysUserByUsername("admin" + updateInsPermissionDto.getInstitutionId());
+        //启用机构管理员权限
+        for (String openId : openIdList) {
+            sysUserMenuMapper.updateEnabledByUserIdAndMenuId(sysUser.getId(), openId, true);
+        }
+        return 1;
     }
 }
