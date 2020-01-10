@@ -44,6 +44,7 @@ public class InsDailyTradeTask {
 
     /**
      * 机构日交易汇总表定时任务
+     * 每天早上1点执行一次
      */
     @Scheduled(cron = "0 0 1 ? * *")
     //@Scheduled(cron = "0/10 * * * * ? ")

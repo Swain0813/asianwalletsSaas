@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.task.dao.TcsFrozenFundsLogsMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.TcsFrozenFundsLogs">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="organId" property="organId" jdbcType="VARCHAR"/>
+        <result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merOrderNo" property="merOrderNo" jdbcType="VARCHAR"/>
+        <result column="txncurrency" property="txncurrency" jdbcType="VARCHAR"/>
+        <result column="txnamount" property="txnamount" jdbcType="DOUBLE"/>
+        <result column="mvaccountId" property="mvaccountId" jdbcType="VARCHAR"/>
+        <result column="businessType" property="businessType" jdbcType="INTEGER"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="frozenDatetime" property="frozenDatetime" jdbcType="TIMESTAMP"/>
+        <result column="updateDatetime" property="updateDatetime" jdbcType="TIMESTAMP"/>
+        <result column="unfreezeDatetime" property="unfreezeDatetime" jdbcType="TIMESTAMP"/>
+        <result column="frozenDesc" property="frozenDesc" jdbcType="VARCHAR"/>
+        <result column="unfrozenDesc" property="unfrozenDesc" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, organId, merchantId, merOrderNo, txncurrency, txnamount, mvaccountId, businessType,
+    state, frozenDatetime, updateDatetime, unfreezeDatetime, frozenDesc, unfrozenDesc
+    </sql>
+
+    <select id="getTcsFrozenFundsLogs" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from tcs_frozenfundslogs
+        where state=1
+    </select>
+
+</mapper>

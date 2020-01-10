@@ -53,4 +53,10 @@
             </choose>
         </where>
     </select>
+
+    <select id="selectRoleIdBySysId" resultType="java.lang.String">
+        select id
+        from sys_role
+        where sys_id = #{sysId}
+    </select>
 </mapper>

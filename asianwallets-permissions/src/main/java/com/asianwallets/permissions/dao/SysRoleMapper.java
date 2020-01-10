@@ -19,7 +19,7 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      * @param sysId    系统ID
      * @return 用户实体
      */
-    SysRole getSysRoleByNameAndSysId(@Param("roleName") String roleName, @Param("sysId")String sysId);
+    SysRole getSysRoleByNameAndSysId(@Param("roleName") String roleName, @Param("sysId") String sysId);
 
     /**
      * 查询角色信息
@@ -28,4 +28,12 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      * @return 角色集合
      */
     List<SysRole> pageGetSysRole(SysRoleDto sysRoleSecDto);
+
+    /**
+     * 根据系统ID查询角色ID
+     *
+     * @param sysId 系统ID
+     * @return 角色ID集合
+     */
+    List<String> selectRoleIdBySysId(String sysId);
 }

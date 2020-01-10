@@ -74,7 +74,7 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
                 log.info("*************** 冻结/解冻 CSFrozenFunds **************** 输入校验通过,但是返回参数集合为空，时间：{}", new Date());
                 return repqo;
             }
-            TcsFrozenFundsLogs ffl = (TcsFrozenFundsLogs) obj[0];
+            FinancialFreezeDTO ffl = (FinancialFreezeDTO) obj[0];
             Merchant merchant = (Merchant) obj[1];
             if (ffl == null || merchant == null) {
                 //输入校验通过,但是返回商户虚拟户或者冻结记录为空

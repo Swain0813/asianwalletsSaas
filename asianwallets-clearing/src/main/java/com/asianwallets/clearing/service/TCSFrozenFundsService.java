@@ -1,7 +1,6 @@
 package com.asianwallets.clearing.service;
-
-import com.asianwallets.common.entity.TcsFrozenFundsLogs;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 
 public interface TCSFrozenFundsService {
 
@@ -10,5 +9,5 @@ public interface TCSFrozenFundsService {
      * @param ffl
      * @return
      */
-    BaseResponse frozenFundsLogs(TcsFrozenFundsLogs ffl);
+    BaseResponse frozenFundsLogs(FinancialFreezeDTO ffl);
 }

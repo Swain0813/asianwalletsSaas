@@ -6,10 +6,7 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
-import com.asianwallets.permissions.dto.FirstMenuDto;
-import com.asianwallets.permissions.dto.SecondMenuDto;
-import com.asianwallets.permissions.dto.SysMenuDto;
-import com.asianwallets.permissions.dto.ThreeMenuDto;
+import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.service.OperationLogService;
 import com.asianwallets.permissions.service.SysMenuService;
 import io.swagger.annotations.Api;
@@ -80,7 +77,7 @@ public class SysMenuController extends BaseController {
         return ResultUtil.success(sysMenuService.updateMenu(getSysUserVO().getUsername(), sysMenuDto));
     }
 
-    @ApiOperation(value = "查询用户所有权限信息（userId可不传）")
+    @ApiOperation(value = "查询用户所有权限信息(userId可不传)")
     @GetMapping("/getAllMenuByUserId")
     public BaseResponse getAllMenuByUserId(@RequestParam(value = "userId", required = false) @ApiParam String userId,
                                            @RequestParam("permissionType") @ApiParam Integer permissionType) {
@@ -89,7 +86,7 @@ public class SysMenuController extends BaseController {
         return ResultUtil.success(sysMenuService.getAllMenuByUserId(userId, permissionType));
     }
 
-    @ApiOperation(value = "查询角色所有权限信息（roleId可不传）")
+    @ApiOperation(value = "查询角色所有权限信息(roleId可不传)")
     @GetMapping("/getAllMenuByRoleId")
     public BaseResponse getAllMenuByRoleId(@RequestParam(value = "roleId", required = false) @ApiParam String roleId,
                                            @RequestParam("permissionType") @ApiParam Integer permissionType) {
@@ -98,10 +95,16 @@ public class SysMenuController extends BaseController {
         return ResultUtil.success(sysMenuService.getAllMenuByRoleId(roleId, permissionType));
     }
 
-    @ApiOperation(value = "查询用户所有权限信息（前端用）")
+    @ApiOperation(value = "查询用户所有权限信息(前端用)")
     @GetMapping("/getAllMenu")
     public BaseResponse getAllMenu(@RequestParam(value = "userId", required = false) @ApiParam String userId,
                                    @RequestParam("permissionType") @ApiParam Integer permissionType) {
         return ResultUtil.success(sysMenuService.getAllMenuByUserId(userId, permissionType));
+    }
+
+    @ApiOperation(value = "运营后台修改机构权限")
+    @PostMapping("/updateInsPermission")
+    public BaseResponse updateInsPermission(@RequestBody @ApiParam UpdateInsPermissionDto updateInsPermissionDto) {
+        return ResultUtil.success(sysMenuService.updateInsPermission(updateInsPermissionDto));
     }
 }

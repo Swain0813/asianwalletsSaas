@@ -2,6 +2,7 @@ package com.asianwallets.permissions.dao;
 
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.SysRoleMenu;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,4 +34,13 @@ public interface SysRoleMenuMapper extends BaseMapper<SysRoleMenu> {
      * @return 修改条数
      */
     int deleteByMenuIdList(List<String> menuIdList);
+
+    /**
+     * 根据角色ID与权限ID启用禁用权限
+     *
+     * @param roleId 角色ID
+     * @param offId  权限ID
+     * @return
+     */
+    int updateEnabledByRoleIdAndMenuId(@Param("roleId") String roleId, @Param("offId") String offId, @Param("enabled") Boolean enabled);
 }
