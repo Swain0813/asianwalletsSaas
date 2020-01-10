@@ -1,10 +1,8 @@
 package com.asianwallets.clearing.service.impl;
-
 import com.asianwallets.clearing.constant.Const;
 import com.asianwallets.clearing.dao.*;
 import com.asianwallets.clearing.service.CommonService;
 import com.asianwallets.clearing.service.FrozenFundsService;
-import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.entity.TcsFrozenFundsLogs;
 import com.asianwallets.common.exception.BusinessException;
@@ -15,8 +13,6 @@ import com.asianwallets.common.vo.clearing.FinancialFreezeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -136,8 +132,6 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
         log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** 开始时间：{}" + new Date());
         BaseResponse message = new BaseResponse();
         message.setCode(Const.Code.FAILED);// 默认失败
-        Map<String, String> signmap = new HashMap<String, String>();//签名map
-        DecimalFormat decimalFormat = new DecimalFormat("###0.00");//格式化设置
         if (ffr == null) {
             //请求参数为空
             message.setCode(Const.Code.CODE_NoParameter);
@@ -228,15 +222,6 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
         }
         //密文字符串拼装处理
         String singstr = SignTools.getSignStr(paramMap);
-        //String signature = MD5Util.getMD5String(md5Key + str).toLowerCase();
-        //
-        //signmap.put("merchantId", ffr.getMerchantId());
-        //signmap.put("state", ffr.getState() + "");
-        //signmap.put("desc", ffr.getDesc());
-        //signmap.put("merOrderNo", ffr.getMerOrderNo());
-        //signmap.put("txncurrency", ffr.getTxncurrency());
-        //signmap.put("txnamount", decimalFormat.format(ffr.getTxnamount()));
-        //String singstr = SignTools.getSignStr(signmap);
         if (singstr == null || singstr.equals("")) {
             //签名字符串为空
             log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** #拼装签名字符串为空，验证不通过,时间：{}", new Date());
