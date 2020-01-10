@@ -166,7 +166,7 @@ public class ReconciliationServiceImpl implements ReconciliationService {
                 //解冻成功
                 //更新调账记录表
                 reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.UNFREEZE_SUCCESS, name, remark);
-            } else {//请求失败
+            } else {
                 reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.UNFREEZE_FALID, name, remark);
                 return "解冻失败";
             }
