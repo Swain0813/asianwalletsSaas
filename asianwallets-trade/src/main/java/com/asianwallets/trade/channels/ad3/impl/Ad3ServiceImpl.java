@@ -842,7 +842,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         log.info("=================【AD3撤销】=================【Channels服务响应】请求参数 baseResponse: {} ", JSON.toJSONString(baseResponse));
         if (baseResponse.getCode().equals("T000")) {
             //请求成功
-            AD3OrdersVO ad3OrdersVO = JSON.parseObject(baseResponse.getData().toString(), AD3OrdersVO.class);
+            AD3OrdersVO ad3OrdersVO = (AD3OrdersVO) baseResponse.getData();
             if (ad3OrdersVO.getState().equals(AD3Constant.ORDER_SUCCESS)) {
                 //交易成功
                 log.info("=================【AD3撤销】=================【交易成功】orderId : {}", orderRefund.getOrderId());
