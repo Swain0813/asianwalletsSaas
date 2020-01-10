@@ -3,6 +3,7 @@ import com.asianwallets.clearing.constant.Const;
 import com.asianwallets.clearing.dao.*;
 import com.asianwallets.clearing.service.CommonService;
 import com.asianwallets.clearing.service.FrozenFundsService;
+import com.asianwallets.clearing.service.TCSFrozenFundsService;
 import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.entity.TcsFrozenFundsLogs;
 import com.asianwallets.common.exception.BusinessException;
@@ -31,7 +32,7 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
     private TcsSysConstMapper tcsSysConstMapper;
 
     @Autowired
-    private TCSFrozenFundsServiceImpl tcsFrozenFundsService;
+    private TCSFrozenFundsService tcsFrozenFundsService;
 
     @Autowired
     private CommonService commonService;

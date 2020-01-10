@@ -6,13 +6,10 @@ import com.asianwallets.base.dao.SettleOrderMapper;
 import com.asianwallets.base.service.ClearingService;
 import com.asianwallets.base.service.ReconciliationService;
 import com.asianwallets.base.service.SettleOrderService;
-import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.BankCard;
-import com.asianwallets.common.entity.Institution;
-import com.asianwallets.common.entity.RabbitMassage;
 import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -176,7 +173,7 @@ public class SettleOrderServiceImpl implements SettleOrderService {
             reconOperDTO.setMerchantId(settleOrder.getMerchantId());
             reconOperDTO.setCurrency(settleOrder.getTxncurrency());
             reconOperDTO.setType(1);//调入
-            reconOperDTO.setAccountType(TradeConstant.OTHER_ACCOUNT);//其他账户
+            reconOperDTO.setAccountType(2);//结算户
             reconOperDTO.setChangeType(TradeConstant.TRANSFER);//资金变动类型
             reconOperDTO.setRemark("结算审核失败，系统自动调账");
             log.info("------------审核失败 调账开始------------reconOperDTO:{}", JSON.toJSON(reconOperDTO));
@@ -287,7 +284,7 @@ public class SettleOrderServiceImpl implements SettleOrderService {
                 throw new BusinessException(EResultEnum.BILLING_CORRESPONDING_BANK_CARD_DOES_NOT_EXIST.getCode());
             }
         }
-        return "提款成功";
+        return null;
     }
 
 }
