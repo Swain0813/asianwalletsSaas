@@ -357,17 +357,13 @@ public class Ad3ServiceImpl implements Ad3Service {
         //反序列化Json数据
         AD3OrdersVO ad3OrdersVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3OrdersVO.class);
         if (ad3OrdersVO == null || !ad3OrdersVO.getRespCode().equals(AD3Constant.AD3_OFFLINE_SUCCESS)) {
-            baseResponse.setCode("T001");
-            return baseResponse;
-        }
-        if (ad3OrdersVO == null || !ad3OrdersVO.getRespCode().equals(AD3Constant.AD3_OFFLINE_SUCCESS)) {
             //业务失败
             baseResponse.setCode("T001");
             return baseResponse;
         } else {
             //查询成功
             baseResponse.setCode("T000");
-            baseResponse.setData(ad3OrdersVO);
+            baseResponse.setData(String.valueOf(baseResponse.getData()));
         }
         return baseResponse;
     }
