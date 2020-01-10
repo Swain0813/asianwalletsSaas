@@ -238,7 +238,7 @@ public class EGHLServiceImpl extends ChannelsAbstractAdapter implements EGHLServ
                     }
                     //分润
                     if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                    rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     //上报清结算资金变动接口

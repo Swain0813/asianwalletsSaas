@@ -1,7 +1,5 @@
 package com.asianwallets.trade.service.impl;
 
-import java.util.Date;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.TradeConstant;
@@ -25,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @description:
@@ -135,7 +134,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
 
         } catch (Exception e) {
             log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 【异常】 orderId: 【{}】,Exception :【{}】", orderId, e);
-            rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orderId);
+            rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orderId);
             //回滚
             throw new BusinessException(EResultEnum.ERROR.getCode());
         }

@@ -309,8 +309,8 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
                         commonBusinessService.createAccount(orders);
                     }
                     //分润
-                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    if (!org.springframework.util.StringUtils.isEmpty(orders.getAgentCode()) || !org.springframework.util.StringUtils.isEmpty(orders.getRemark8())) {
+                        rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     //上报清结算资金变动接口
@@ -433,8 +433,8 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
                                     commonBusinessService.createAccount(orders);
                                 }
                                 //分润
-                                if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                                    rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                                if (!org.springframework.util.StringUtils.isEmpty(orders.getAgentCode()) || !org.springframework.util.StringUtils.isEmpty(orders.getRemark8())) {
+                                    rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                                 }
                                 FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                                 //上报清结算资金变动接口

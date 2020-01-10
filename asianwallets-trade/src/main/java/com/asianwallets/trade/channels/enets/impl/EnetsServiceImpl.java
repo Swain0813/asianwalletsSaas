@@ -343,8 +343,8 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
                         commonBusinessService.createAccount(orders);
                     }
                     //分润
-                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
+                        rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     //上报清结算资金变动接口
@@ -518,8 +518,8 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
                         commonBusinessService.createAccount(orders);
                     }
                     //分润
-                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
+                        rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
                     //更新成功,上报清结算
                     //上报清结算资金变动接口
@@ -696,8 +696,8 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
                         commonBusinessService.createAccount(orders);
                     }
                     //分润
-                    if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                        rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
+                    if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
+                        rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
                     //更新成功,上报清结算
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
