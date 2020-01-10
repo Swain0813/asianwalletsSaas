@@ -906,12 +906,12 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             if (baseResponse.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                 response.setCode(EResultEnum.SUCCESS.getCode());
                 //撤销成功
-                log.info("=================【NextPos退款 cancelPaying】=================【撤销成功】orderId : {}", orderRefund.getOrderId());
+                log.info("=================【AD3撤销 cancelPaying】=================【撤销成功】orderId : {}", orderRefund.getOrderId());
                 ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
             } else {
                 response.setCode(EResultEnum.REFUND_FAIL.getCode());
                 //撤销失败
-                log.info("=================【NextPos退款 cancelPaying】=================【撤销失败】orderId : {}", orderRefund.getOrderId());
+                log.info("=================【AD3撤销 cancelPaying】=================【撤销失败】orderId : {}", orderRefund.getOrderId());
                 ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
             }
         } else {
