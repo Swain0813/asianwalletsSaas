@@ -44,7 +44,7 @@ public class FinancialFreezeDTO implements Serializable{
    private String mvaccountId;
 
    /**
-    * 状态：1加冻结，2解冻结
+    * 状态：1加冻结，2解冻结 
     */
    private int state;
 
@@ -85,7 +85,7 @@ public class FinancialFreezeDTO implements Serializable{
       this.txncurrency = reconciliation.getCurrency();
       //订单金额,2位
       this.txnamount =reconciliation.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-      //系统调账--3冻结 4 解冻 ||清结算--1:冻结2:解冻
+      //资金变动--3冻结 4 解冻 ||清结算--1:冻结2:解冻
       this.state = reconciliation.getReconciliationType() == 3 ? 1 : 2;
    }
 }
