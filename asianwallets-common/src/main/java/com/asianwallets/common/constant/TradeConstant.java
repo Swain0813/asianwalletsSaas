@@ -16,10 +16,6 @@ public class TradeConstant {
     //撤销时退款用
     public static final String CANCEL_ORDER_REFUND_FAIL = "撤销时退款失败调账记录"; //撤销时退款失败调账记录
 
-    // 冻结失败后放队列里
-    public static final String FREEZE_FAIL = "冻结失败时的冻结队列记录"; //冻结失败后放队列里
-    public static final String UNFREEZE_FAIL = "解冻失败时的解冻队列记录"; //解冻失败后放队列里
-
     //--------------签名类型
     public static final String RSA = "1"; //RSA签名方式
     public static final String MD5 = "2"; //MD5签名方式
@@ -214,12 +210,10 @@ public class TradeConstant {
     public static final Byte RECEIVED = 2; //已签收
 
     //------------冻结类型
-    public static final Byte FREEZING_FUND = 1;//资金冻结
-    public static final Byte RESERVATION_FREEZE = 2;//预约冻结
+    public static final Integer FREEZING_FUND = 1;//资金冻结
+    public static final Integer RESERVATION_FREEZE = 2;//预约冻结
 
     //------------入账类型
-    public static final String ACCOUNT_FREEZE = "1";//冻结账户
-    public static final String ACCOUNT_MARGIN = "2";//保证金账户
     public static final Integer OTHER_ACCOUNT = 3;//其他账户
 
     //------------线下二维码解码类型
