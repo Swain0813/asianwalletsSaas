@@ -97,6 +97,7 @@
         select settle_balance - freeze_balance
         from account
         where merchant_id = #{merchantId}
+          and institution_id=#{institutionId}
           and currency = #{currency}
           and enabled = 1;
     </select>
@@ -105,6 +106,7 @@
        select freeze_balance
         from account
         where merchant_id = #{merchantId}
+          and institution_id=#{institutionId}
           and currency = #{currency}
           and enabled = 1;
     </select>
