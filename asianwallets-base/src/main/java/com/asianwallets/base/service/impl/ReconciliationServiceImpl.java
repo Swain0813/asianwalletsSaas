@@ -203,7 +203,7 @@ public class ReconciliationServiceImpl implements ReconciliationService {
     @Override
     public String doReconciliation(String name, ReconOperDTO reconOperDTO) {
         //金额不合法的判断
-        if(reconOperDTO.getAmount().compareTo(BigDecimal.ZERO)==-1){
+        if(reconOperDTO.getAmount().compareTo(BigDecimal.ZERO)!=1){
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
         //获取商户信息
