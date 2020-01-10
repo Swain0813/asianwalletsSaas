@@ -166,7 +166,7 @@ public class ReconciliationServiceImpl implements ReconciliationService {
                 //解冻成功
                 //更新调账记录表
                 reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.UNFREEZE_SUCCESS, name, remark);
-            } else {//请求失败
+            } else {
                 reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.UNFREEZE_FALID, name, remark);
                 return "解冻失败";
             }
@@ -202,6 +202,10 @@ public class ReconciliationServiceImpl implements ReconciliationService {
      */
     @Override
     public String doReconciliation(String name, ReconOperDTO reconOperDTO) {
+        //金额不合法的判断
+        if(reconOperDTO.getAmount().compareTo(BigDecimal.ZERO)!=1){
+            throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
+        }
         //获取商户信息
         Merchant merchant = commonService.getMerchant(reconOperDTO.getMerchantId());
         Account account = accountMapper.getAccount(merchant.getId(), reconOperDTO.getCurrency());

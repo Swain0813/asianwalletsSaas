@@ -40,7 +40,7 @@ public class Reconciliation extends BaseEntity {
 	@Column(name ="account_id")
 	private String accountId;
 
-	@ApiModelProperty(value = "调账类型")//1-调入,2-调出
+	@ApiModelProperty(value = "调账类型")//1,调入，2,调出 3,冻结 4,解冻
 	@Column(name ="reconciliation_type")
 	private Integer reconciliationType;
 

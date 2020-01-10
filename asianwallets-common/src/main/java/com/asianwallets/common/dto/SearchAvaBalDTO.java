@@ -19,6 +19,10 @@ public class SearchAvaBalDTO {
     private String merchantId;
 
     @NotNull(message = "50002")
+    @ApiModelProperty(value = "机构编号")
+    private String institutionId;
+
+    @NotNull(message = "50002")
     @ApiModelProperty(value = "币种")
     private String currency;
 

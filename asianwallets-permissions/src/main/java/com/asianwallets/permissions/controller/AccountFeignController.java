@@ -1,5 +1,4 @@
 package com.asianwallets.permissions.controller;
-
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -115,7 +113,7 @@ public class AccountFeignController extends BaseController {
                 writer.flush(out);
                 return ResultUtil.success();
             }
-            writer = exportService.getTmMerChTvAcctBalanceWriter(dataList, ClearAccountVO.class);
+            writer = exportService.getTmMerChTvAcctBalanceWriter(dataList, TmMerChTvAcctBalanceVO.class);
             writer.flush(out);
         } catch (Exception e) {
             log.info("==========【导出清算户余额流水详情】==========【导出清算户余额流水详情异常】", e);
@@ -185,7 +183,7 @@ public class AccountFeignController extends BaseController {
                 writer.flush(out);
                 return ResultUtil.success();
             }
-            writer = exportService.getTmMerChTvAcctBalanceWriter(dataList, FrozenMarginInfoVO.class);
+            writer = exportService.getTmMerChTvAcctBalanceWriter(dataList, TmMerChTvAcctBalanceVO.class);
             writer.flush(out);
         } catch (Exception e) {
             log.info("==========【导出冻结余额流水详情】==========【导出冻结余额流水详情异常】", e);
