@@ -416,7 +416,7 @@
                ore.channel_amount                    as refundChannelAmount,
                ore.trade_currency                    as refundTradeCurrency,
                ore.refund_status                     as refundStatus,
-               ore.update_time                       as refundFinishTime,
+               ore.create_time                       as refundFinishTime,
                ore.refund_fee                        as refundFee,
                ore.remark                            as refundRemark,
 
