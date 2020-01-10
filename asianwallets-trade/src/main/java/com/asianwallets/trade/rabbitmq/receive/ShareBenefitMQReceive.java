@@ -24,7 +24,7 @@ public class ShareBenefitMQReceive {
         try {
             shareBenefitService.insertShareBenefitLogs(value);
         } catch (Exception e) {
-            log.error("================== MQ_FR_DL ================ Exception :{}",e);
+            log.error("================== SAAS_FR_DL ================ Exception :{}",e);
         }
     }
 
