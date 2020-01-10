@@ -176,7 +176,7 @@ public class SettleOrderServiceImpl implements SettleOrderService {
             reconOperDTO.setMerchantId(settleOrder.getMerchantId());
             reconOperDTO.setCurrency(settleOrder.getTxncurrency());
             reconOperDTO.setType(1);//调入
-            reconOperDTO.setAccountType(TradeConstant.OTHER_ACCOUNT);//其他账户
+            reconOperDTO.setAccountType(2);//结算户
             reconOperDTO.setChangeType(TradeConstant.TRANSFER);//资金变动类型
             reconOperDTO.setRemark("结算审核失败，系统自动调账");
             log.info("------------审核失败 调账开始------------reconOperDTO:{}", JSON.toJSON(reconOperDTO));
@@ -287,7 +287,7 @@ public class SettleOrderServiceImpl implements SettleOrderService {
                 throw new BusinessException(EResultEnum.BILLING_CORRESPONDING_BANK_CARD_DOES_NOT_EXIST.getCode());
             }
         }
-        return "提款成功";
+        return null;
     }
 
 }
