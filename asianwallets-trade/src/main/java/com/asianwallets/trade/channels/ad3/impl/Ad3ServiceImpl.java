@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.ad3.impl;
-
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -902,7 +901,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         BaseResponse baseResponse = channelsFeign.ad3OfflineRefund(ad3ONOFFRefundDTO);
         log.info("=================【AD3撤销 cancelPaying】=================【Channels服务响应】请求参数 baseResponse: {} ", JSON.toJSONString(baseResponse));
         if (baseResponse.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
-            RefundAdResponseVO refundAdResponseVO = JSON.parseObject(String.valueOf(baseResponse.getData()), RefundAdResponseVO.class);
             if (baseResponse.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                 response.setCode(EResultEnum.SUCCESS.getCode());
                 //撤销成功
