@@ -72,6 +72,7 @@ public class RefundOrderMQReceive {
     @Autowired
     private TcsStFlowMapper tcsStFlowMapper;
 
+
     /**
      * @return
      * @Author YangXu
@@ -126,9 +127,9 @@ public class RefundOrderMQReceive {
     public void processRAORRFSB(String value) {
         RabbitMassage rabbitMassage = JSON.parseObject(value, RabbitMassage.class);
         log.info("========================= 【RA_AA_FAIL_DL】 ==================== 【消费】 rabbitMassage : 【{}】 ", value);
+        Reconciliation reconciliation = JSON.parseObject(rabbitMassage.getValue(), Reconciliation.class);
         if (rabbitMassage.getCount() > 0) {
             rabbitMassage.setCount(rabbitMassage.getCount() - 1);
-            Reconciliation reconciliation = JSON.parseObject(rabbitMassage.getValue(), Reconciliation.class);
             FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
             log.info("========================= 【RA_AA_FAIL_DL】 ==================== 【上报清结算】 AccountType:【{}】，【fundChangeDTO】: {} ", reconciliation.getAccountType(), JSON.toJSONString(fundChangeDTO));
             BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
@@ -154,6 +155,7 @@ public class RefundOrderMQReceive {
             }
         } else {
             //预警机制
+            reconciliationMapper.updateStatusById(reconciliation.getId(),TradeConstant.RECONCILIATION_FALID);
             messageFeign.sendSimple(developerMobile, "上报清结算调账失败队列 RA_AA_FAIL_DL 预警 ：{ " + value + " }");//短信通知
             messageFeign.sendSimpleMail(developerEmail, "上报清结算调账失败队列 RA_AA_FAIL_DL 预警", "RA_AA_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
         }
