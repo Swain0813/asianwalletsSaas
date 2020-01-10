@@ -44,7 +44,7 @@ public class FinancialFreezeDTO implements Serializable{
    private String mvaccountId;
 
    /**
-    * 状态：1加冻结，2解冻结 
+    * 状态：1加冻结，2解冻结
     */
    private int state;
 
