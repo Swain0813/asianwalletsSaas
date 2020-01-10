@@ -263,10 +263,11 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         if (TradeConstant.RV.equals(type) || TradeConstant.RF.equals(type)) {
             if(refundDTO.getFunctionType()==null){
-                orderRefund.setRemark4(TradeConstant.RF);
+                orderRefund.setRemark3(TradeConstant.RF);
             }else{
-                orderRefund.setRemark4(TradeConstant.RV);
+                orderRefund.setRemark3(TradeConstant.RV);
             }
+            orderRefund.setRemark4(type);
             /*************************************************************** 订单是付款成功的场合 将订单表中的退款状态修改成退款中*******************************************/
             //把原订单状态改为退款中
             ordersMapper.updateOrderRefundStatus(refundDTO.getOrderNo(), TradeConstant.ORDER_REFUND_WAIT);
@@ -302,6 +303,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             orderRefund.setSign(oldOrder.getSign());
             baseResponse = this.doRefundOrder(orderRefund,channel);
         } else if (TradeConstant.PAYING.equals(type)) {
+            orderRefund.setRemark3(TradeConstant.RV);
             ordersMapper.updateOrderCancelStatus(refundDTO.getOrderNo(),refundDTO.getOperatorId(), TradeConstant.ORDER_CANNELING);
             /***************************************************************  订单是付款中的场合  *************************************************************/
             if (TradeConstant.TRADE_ONLINE.equals(refundDTO.getTradeDirection())) {

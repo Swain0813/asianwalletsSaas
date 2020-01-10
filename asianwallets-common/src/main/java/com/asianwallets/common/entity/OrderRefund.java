@@ -284,11 +284,11 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "remark2")
     private String remark2;
 
-    @ApiModelProperty(value = "备注3")
+    @ApiModelProperty(value = "从接口判断RV 或者 RF")
     @Column(name = "remark3")
     private String remark3;
 
-    @ApiModelProperty(value = "标注RV 或者 RF")
+    @ApiModelProperty(value = "从业务判断RV 或者 RF")
     @Column(name = "remark4")
     private String remark4;
 

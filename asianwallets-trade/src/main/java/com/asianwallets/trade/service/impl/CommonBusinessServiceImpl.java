@@ -607,7 +607,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public void updateOrderRefundSuccess(OrderRefund orderRefund) {
-        if (orderRefund.getRemark4() != null && TradeConstant.RV.equals(orderRefund.getRemark4())) {
+        if (orderRefund.getRemark3() != null && TradeConstant.RV.equals(orderRefund.getRemark3())) {
             //撤销成功-更新订单的撤销状态
             ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), null, TradeConstant.ORDER_CANNEL_SUCCESS);
         } else {
@@ -631,7 +631,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      */
     @Override
     public void updateOrderRefundFail(OrderRefund orderRefund) {
-        if (orderRefund.getRemark4() != null && TradeConstant.RV.equals(orderRefund.getRemark4())) {
+        if (orderRefund.getRemark3() != null && TradeConstant.RV.equals(orderRefund.getRemark3())) {
             //撤销失败
             ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), null, TradeConstant.ORDER_CANNEL_FALID);
         } else {
