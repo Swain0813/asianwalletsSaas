@@ -258,11 +258,11 @@ public class Ad3ServiceImpl implements Ad3Service {
             if (ad3RefundOrderVO.getRespCode() != null && AD3Constant.AD3_OFFLINE_SUCCESS.equals(ad3RefundOrderVO.getRespCode())) {
                 baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
                 baseResponse.setMsg(AD3Constant.AD3_ONLINE_SUCCESS);
-                baseResponse.setData(ad3RefundOrderVO);
+                baseResponse.setData(String.valueOf(httpResponse.getJsonObject()));
             } else {
                 baseResponse.setCode(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS));
                 baseResponse.setMsg("T001");
-                baseResponse.setData(ad3RefundOrderVO);
+                baseResponse.setData(String.valueOf(httpResponse.getJsonObject()));
             }
         } else {
             baseResponse.setCode(String.valueOf(302));

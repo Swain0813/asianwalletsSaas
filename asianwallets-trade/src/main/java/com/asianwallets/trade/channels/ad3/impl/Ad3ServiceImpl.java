@@ -842,7 +842,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         log.info("=================【AD3撤销】=================【Channels服务响应】请求参数 baseResponse: {} ", JSON.toJSONString(baseResponse));
         if (baseResponse.getCode().equals("T000")) {
             //请求成功
-
             AD3OrdersVO ad3OrdersVO = JSON.parseObject(String.valueOf(baseResponse.getData()), AD3OrdersVO.class);
             if (ad3OrdersVO.getState().equals(AD3Constant.ORDER_SUCCESS)) {
                 //交易成功
@@ -903,8 +902,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         BaseResponse baseResponse = channelsFeign.ad3OfflineRefund(ad3ONOFFRefundDTO);
         log.info("=================【AD3撤销 cancelPaying】=================【Channels服务响应】请求参数 baseResponse: {} ", JSON.toJSONString(baseResponse));
         if (baseResponse.getCode().equals(String.valueOf(AsianWalletConstant.HTTP_SUCCESS_STATUS))) {
-            RefundAdResponseVO refundAdResponseVO = JSONObject.parseObject(response.getData().toString(), RefundAdResponseVO.class);
-            if (response.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
+            RefundAdResponseVO refundAdResponseVO = JSON.parseObject(String.valueOf(baseResponse.getData()), RefundAdResponseVO.class);
+            if (baseResponse.getMsg().equals(AD3Constant.AD3_ONLINE_SUCCESS)) {
                 response.setCode(EResultEnum.SUCCESS.getCode());
                 //撤销成功
                 log.info("=================【NextPos退款 cancelPaying】=================【撤销成功】orderId : {}", orderRefund.getOrderId());
