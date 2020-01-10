@@ -1,9 +1,6 @@
 package com.asianwallets.permissions.service;
 
-import com.asianwallets.permissions.dto.FirstMenuDto;
-import com.asianwallets.permissions.dto.SecondMenuDto;
-import com.asianwallets.permissions.dto.SysMenuDto;
-import com.asianwallets.permissions.dto.ThreeMenuDto;
+import com.asianwallets.permissions.dto.*;
 import com.asianwallets.permissions.vo.FirstMenuVO;
 
 import java.util.List;
@@ -83,4 +80,11 @@ public interface SysMenuService {
      */
     List<FirstMenuVO> getAllMenuByRoleId(String roleId, Integer permissionType);
 
+    /**
+     * 运营后台修改机构权限
+     *
+     * @param updateInsPermissionDto 运营后台修改机构权限dto
+     * @return 修改条数
+     */
+    int updateInsPermission(UpdateInsPermissionDto updateInsPermissionDto);
 }

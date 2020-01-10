@@ -10,6 +10,7 @@
         <result column="menu_id" property="menuId" jdbcType="VARCHAR"/>
         <result column="creator" property="creator" jdbcType="VARCHAR"/>
         <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
     </resultMap>
 
     <delete id="deleteByUserId">
@@ -32,4 +33,8 @@
             #{item}
         </foreach>
     </delete>
+
+    <update id="updateEnabledByUserIdAndMenuId">
+        update sys_user_menu set enabled =#{enabled} where user_id = #{userId} and menu_id = #{offId}
+    </update>
 </mapper>

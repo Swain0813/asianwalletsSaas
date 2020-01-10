@@ -23,4 +23,7 @@ public class SysRoleMenu extends BaseEntity {
     @Column(name = "menu_id")
     private String menuId;
 
+    @ApiModelProperty(value = "启用禁用")
+    @Column(name = "enabled")
+    private Boolean enabled;
 }
