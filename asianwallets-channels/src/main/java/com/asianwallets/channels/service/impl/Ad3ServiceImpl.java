@@ -363,7 +363,7 @@ public class Ad3ServiceImpl implements Ad3Service {
         } else {
             //查询成功
             baseResponse.setCode("T000");
-            baseResponse.setData(String.valueOf(baseResponse.getData()));
+            baseResponse.setData(String.valueOf(httpResponse.getJsonObject()));
         }
         return baseResponse;
     }
