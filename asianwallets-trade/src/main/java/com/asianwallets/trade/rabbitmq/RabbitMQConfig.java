@@ -21,11 +21,11 @@ public class RabbitMQConfig {
 
     /********************************************************* 分润队列 **********************************************************************/
     //RF or RV请求失败
-    public final static String MQ_FR_DL = AD3MQConstant.MQ_FR_DL;
+    public final static String SAAS_FR_DL = AD3MQConstant.SAAS_FR_DL;
 
     @Bean
-    public Queue MQ_FR_DL() {
-        return new Queue(RabbitMQConfig.MQ_FR_DL);
+    public Queue SAAS_FR_DL() {
+        return new Queue(RabbitMQConfig.SAAS_FR_DL);
     }
     /********************************************************  退款接口相关队列 **********************************************************************/
     //RF or RV请求失败

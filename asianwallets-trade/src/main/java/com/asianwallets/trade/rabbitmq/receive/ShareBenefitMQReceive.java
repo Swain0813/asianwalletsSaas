@@ -19,7 +19,7 @@ public class ShareBenefitMQReceive {
     @Autowired
     private ShareBenefitService shareBenefitService;
 
-    @RabbitListener(queues = "MQ_FR_DL")
+    @RabbitListener(queues = "SAAS_FR_DL")
     public void processFR(String value) {
         try {
             shareBenefitService.insertShareBenefitLogs(value);
