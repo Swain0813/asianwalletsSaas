@@ -413,20 +413,22 @@ public class SysMenuServiceImpl implements SysMenuService {
         }
         //禁用的权限集合: 机构权限集合 - 启用权限集合
         offIdList.removeAll(openIdList);
-        //机构对应所有用户
-        List<String> userIdList = sysUserMapper.selectUserIdBySysId(updateInsPermissionDto.getInstitutionId());
-        //机构对应所有角色
-        List<String> roleIdList = sysRoleMapper.selectRoleIdBySysId(updateInsPermissionDto.getInstitutionId());
-        //禁用所有用户权限
-        for (String insUserId : userIdList) {
-            for (String offId : offIdList) {
-                sysUserMenuMapper.updateEnabledByUserIdAndMenuId(insUserId, offId, false);
+        if (!ArrayUtil.isEmpty(offIdList)) {
+            //机构对应所有用户
+            List<String> userIdList = sysUserMapper.selectUserIdBySysId(updateInsPermissionDto.getInstitutionId());
+            //机构对应所有角色
+            List<String> roleIdList = sysRoleMapper.selectRoleIdBySysId(updateInsPermissionDto.getInstitutionId());
+            //禁用所有用户权限
+            for (String insUserId : userIdList) {
+                for (String offId : offIdList) {
+                    sysUserMenuMapper.updateEnabledByUserIdAndMenuId(insUserId, offId, false);
+                }
             }
-        }
-        //禁用所有角色权限
-        for (String insRoleId : roleIdList) {
-            for (String offId : offIdList) {
-                sysRoleMenuMapper.updateEnabledByRoleIdAndMenuId(insRoleId, offId, false);
+            //禁用所有角色权限
+            for (String insRoleId : roleIdList) {
+                for (String offId : offIdList) {
+                    sysRoleMenuMapper.updateEnabledByRoleIdAndMenuId(insRoleId, offId, false);
+                }
             }
         }
         return 1;
