@@ -60,10 +60,17 @@
         where sys_id = #{sysId}
     </select>
 
-    <select id="selectRoleIdBySysIdAndRoleCode" resultType="java.lang.String">
-        select id
+    <select id="getInstitutionRoleId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role where role_name like '机构管理员%' and enabled = 1
+    </select>
+
+    <select id="selectBySysIdAndRoleCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
         from sys_role
         where sys_id = #{sysId}
-          and role_code = 'INSTITUTION_ADMIN'
+        and role_code = 'INSTITUTION_ADMIN'
     </select>
 </mapper>
