@@ -276,7 +276,7 @@ public class ReconciliationServiceImpl implements ReconciliationService {
      * @return
      */
     private String doReconciliationIn(String name, Merchant merchant, ReconOperDTO reconOperDTO,String accountId) {
-        Reconciliation reconciliation = createrOrder(AsianWalletConstant.RECONCILIATION_IN, name, merchant, reconOperDTO, null);
+        Reconciliation reconciliation = createrOrder(AsianWalletConstant.RECONCILIATION_IN, name, merchant, reconOperDTO, accountId);
         if (reconciliationMapper.insert(reconciliation) > 0) {
             return "success";
         } else {
@@ -293,7 +293,7 @@ public class ReconciliationServiceImpl implements ReconciliationService {
      * @return
      */
     private String doReconciliationOut(String name, Merchant merchant, ReconOperDTO reconOperDTO,String accountId) {
-        Reconciliation reconciliation = createrOrder(AsianWalletConstant.RECONCILIATION_OUT, name, merchant, reconOperDTO, null);
+        Reconciliation reconciliation = createrOrder(AsianWalletConstant.RECONCILIATION_OUT, name, merchant, reconOperDTO, accountId);
         if (reconciliationMapper.insert(reconciliation) > 0) {
             return "success";
         } else {
