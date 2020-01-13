@@ -213,8 +213,9 @@ public class TradeConstant {
     public static final Integer FREEZING_FUND = 1;//资金冻结
     public static final Integer RESERVATION_FREEZE = 2;//预约冻结
 
-    //------------入账类型
-    public static final Integer OTHER_ACCOUNT = 3;//其他账户
+    //------------冻结资金记录的状态
+    public static final Integer HAVE_FROZEN = 1;//已冻结
+    public static final Integer FROZEN_FALID = 3;//冻结失败
 
     //------------线下二维码解码类型
     public static final String NO_DECODE = "0";//不用解码
