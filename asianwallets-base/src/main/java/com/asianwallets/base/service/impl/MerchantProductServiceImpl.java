@@ -455,11 +455,11 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 
                     MerchantProduct merchantProduct = merchantProductMapper.selectByPrimaryKey(merProId);
                     BeanUtils.copyProperties(merchantProductAudit,merchantProduct);
-                    merchantProduct.setId(merProId);
-                    merchantProduct.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
-                    merchantProduct.setModifier(username);
-                    merchantProduct.setAuditRemark(auaditProductDTO.getRemark());
-                    merchantProduct.setEnabled(true);
+                    //merchantProduct.setId(merProId);
+                    //merchantProduct.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
+                    //merchantProduct.setModifier(username);
+                    //merchantProduct.setAuditRemark(auaditProductDTO.getRemark());
+                    //merchantProduct.setEnabled(true);
                     merchantProduct.setUpdateTime(new Date());
                     merchantProduct.setCreateTime(merchantProductAudit.getUpdateTime());
 
