@@ -83,8 +83,17 @@ public interface SysMenuService {
     /**
      * 运营后台修改机构权限
      *
+     * @param username               用户名
      * @param updateInsPermissionDto 运营后台修改机构权限dto
      * @return 修改条数
      */
-    int updateInsPermission(UpdateInsPermissionDto updateInsPermissionDto);
+    int updateInsPermission(String username, UpdateInsPermissionDto updateInsPermissionDto);
+
+    /**
+     * 运营后台查询机构权限
+     *
+     * @param updateInsPermissionDto 运营后台机构权限dto
+     * @return
+     */
+    List<FirstMenuVO> getInsPermission(UpdateInsPermissionDto updateInsPermissionDto);
 }

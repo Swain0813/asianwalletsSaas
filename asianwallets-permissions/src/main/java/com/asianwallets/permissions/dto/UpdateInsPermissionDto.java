@@ -14,6 +14,9 @@ public class UpdateInsPermissionDto {
     @ApiModelProperty(value = "机构ID")
     private String institutionId;
 
+    @ApiModelProperty(value = "权限类型")
+    private Integer permissionType;
+
     @ApiModelProperty(value = "启用权限id集合")
     private List<String> openIdList;
 
