@@ -377,21 +377,23 @@ public class SysMenuServiceImpl implements SysMenuService {
             sysRoleMapper.insert(sysRole);
             //修改机构管理员对应角色
             sysUserRoleMapper.updateRoleIdByUserId(sysUser.getId(), roleId);
-            //启用的权限集合
-            List<String> openIdList = updateInsPermissionDto.getOpenIdList();
-            //分配角色对应权限
-            List<SysRoleMenu> sysRoleMenuList = new ArrayList<>();
-            for (String openId : openIdList) {
-                SysRoleMenu sysRoleMenu = new SysRoleMenu();
-                sysRoleMenu.setId(IDS.uuid2());
-                sysRoleMenu.setRoleId(sysRole.getId());
-                sysRoleMenu.setMenuId(openId);
-                sysRoleMenu.setEnabled(true);
-                sysRoleMenu.setCreateTime(new Date());
-                sysRoleMenu.setCreator(username);
-            }
-            sysRoleMenuMapper.insertList(sysRoleMenuList);
         }
+        //删除角色对应权限
+        sysRoleMenuMapper.deleteByRoleId(sysRole.getId());
+        //启用的权限集合
+        List<String> openIdList = updateInsPermissionDto.getOpenIdList();
+        //分配角色对应权限
+        List<SysRoleMenu> sysRoleMenuList = new ArrayList<>();
+        for (String openId : openIdList) {
+            SysRoleMenu sysRoleMenu = new SysRoleMenu();
+            sysRoleMenu.setId(IDS.uuid2());
+            sysRoleMenu.setRoleId(sysRole.getId());
+            sysRoleMenu.setMenuId(openId);
+            sysRoleMenu.setEnabled(true);
+            sysRoleMenu.setCreateTime(new Date());
+            sysRoleMenu.setCreator(username);
+        }
+        sysRoleMenuMapper.insertList(sysRoleMenuList);
         //禁用的权限集合
         List<String> offIdList = updateInsPermissionDto.getOffIdList();
         //机构对应所有用户
