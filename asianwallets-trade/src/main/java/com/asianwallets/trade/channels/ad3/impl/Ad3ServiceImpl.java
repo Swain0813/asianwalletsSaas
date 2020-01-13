@@ -58,7 +58,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class, noRollbackFor = BusinessException.class)
 @HandlerType(TradeConstant.AD3)
 public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Service {
 
