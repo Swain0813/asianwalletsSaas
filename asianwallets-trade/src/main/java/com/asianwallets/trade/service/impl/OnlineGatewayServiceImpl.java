@@ -42,6 +42,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
@@ -53,7 +54,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
-//@Transactional(rollbackFor = Exception.class, noRollbackFor = BusinessException.class)
+@Transactional(rollbackFor = Exception.class, noRollbackFor = BusinessException.class)
 public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 
     @Autowired
@@ -775,11 +776,11 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     @Override
     public List<OnlineCheckOrdersVO> checkOrder(OnlineCheckOrdersDTO onlineCheckOrdersDTO) {
         log.info("==================【线上查询订单】==================【请求参数】 onlineCheckOrdersDTO: {}", JSON.toJSONString(onlineCheckOrdersDTO));
-        //验签
+       /* //验签
         if (!commonBusinessService.checkUniversalSign(onlineCheckOrdersDTO)) {
             log.info("==================【线上查询订单】==================【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
-        }
+        }*/
 
         //页码默认为1
         if (onlineCheckOrdersDTO.getPageNum() == null) {
