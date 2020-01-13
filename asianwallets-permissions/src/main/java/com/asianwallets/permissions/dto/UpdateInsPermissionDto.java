@@ -20,6 +20,6 @@ public class UpdateInsPermissionDto {
     @ApiModelProperty(value = "启用权限id集合")
     private List<String> openIdList;
 
-    @ApiModelProperty(value = "禁用权限id集合")
-    private List<String> offIdList;
+//    @ApiModelProperty(value = "禁用权限id集合")
+//    private List<String> offIdList;
 }

@@ -394,8 +394,22 @@ public class SysMenuServiceImpl implements SysMenuService {
             sysRoleMenu.setCreator(username);
         }
         sysRoleMenuMapper.insertList(sysRoleMenuList);
-        //禁用的权限集合
-        List<String> offIdList = updateInsPermissionDto.getOffIdList();
+        //根据权限类型查询所有权限
+        List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionType(updateInsPermissionDto.getPermissionType());
+        //机构后台对应的所有权限
+        List<String> offIdList = new ArrayList<>();
+        for (FirstMenuVO firstMenuVO : menuList) {
+            offIdList.add(firstMenuVO.getId());
+            for (SecondMenuVO secondMenuVO : firstMenuVO.getSecondMenuVOS()) {
+                offIdList.add(secondMenuVO.getId());
+                for (ThreeMenuVO threeMenuVO : secondMenuVO.getThreeMenuVOS()) {
+                    offIdList.add(threeMenuVO.getId());
+
+                }
+            }
+        }
+        //禁用的权限集合: 机构权限集合 - 启用权限集合
+        offIdList.removeAll(openIdList);
         //机构对应所有用户
         List<String> userIdList = sysUserMapper.selectUserIdBySysId(updateInsPermissionDto.getInstitutionId());
         //机构对应所有角色
@@ -412,12 +426,9 @@ public class SysMenuServiceImpl implements SysMenuService {
                 sysRoleMenuMapper.updateEnabledByRoleIdAndMenuId(insRoleId, offId, false);
             }
         }
-//        //启用机构管理员权限
-//        for (String openId : openIdList) {
-//            sysUserMenuMapper.updateEnabledByUserIdAndMenuId(sysUser.getId(), openId, true);
-//        }
         return 1;
     }
+
 
     /**
      * 运营后台查询机构权限
