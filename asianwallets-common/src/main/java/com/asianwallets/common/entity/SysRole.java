@@ -37,7 +37,7 @@ public class SysRole extends BaseEntity {
 
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")
-    private Boolean enabled = true;
+    private Boolean enabled;
 
     @ApiModelProperty(value = "权重")
     @Column(name = "sort")
