@@ -1,6 +1,7 @@
 package com.asianwallets.task.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.TcsFrozenFundsLogs;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +24,6 @@ public interface TcsFrozenFundsLogsMapper extends BaseMapper<TcsFrozenFundsLogs>
      * @param id
      * @return
      */
-    @Update("update reconciliation set status = 1 ,updateDatetime=NOW() where id = #{id}")
-    int updateTcsFrozenFundsLogsById(String id);
+    @Update("update tcs_frozenfundslogs set state= #{state},updateDatetime=NOW() where id = #{id}")
+    int updateTcsFrozenFundsLogsById(@Param("id") String id,@Param("state") int state);
 }

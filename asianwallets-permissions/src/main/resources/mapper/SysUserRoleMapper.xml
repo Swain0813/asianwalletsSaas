@@ -18,4 +18,15 @@
         where user_id = #{userId}
     </delete>
 
+    <update id="updateRoleIdByUserId">
+            update sys_user_role set
+            role_id = #{roleId}
+        where user_id = #{userId}
+    </update>
+
+    <select id="selectRoleIdByUserId" resultType="java.lang.String">
+        select role_id
+        from sys_user_role
+        where user_id = #{userId}
+    </select>
 </mapper>

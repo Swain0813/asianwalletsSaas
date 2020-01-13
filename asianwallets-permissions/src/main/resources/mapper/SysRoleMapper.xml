@@ -59,4 +59,11 @@
         from sys_role
         where sys_id = #{sysId}
     </select>
+
+    <select id="selectRoleIdBySysIdAndRoleCode" resultType="java.lang.String">
+        select id
+        from sys_role
+        where sys_id = #{sysId}
+          and role_code = 'INSTITUTION_ADMIN'
+    </select>
 </mapper>

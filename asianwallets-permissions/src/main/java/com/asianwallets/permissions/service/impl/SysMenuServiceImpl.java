@@ -2,6 +2,8 @@ package com.asianwallets.permissions.service.impl;
 
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.SysMenu;
+import com.asianwallets.common.entity.SysRole;
+import com.asianwallets.common.entity.SysRoleMenu;
 import com.asianwallets.common.entity.SysUser;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
@@ -43,6 +45,9 @@ public class SysMenuServiceImpl implements SysMenuService {
 
     @Autowired
     private SysRoleMenuMapper sysRoleMenuMapper;
+
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
 
     /**
      * 添加一二三级菜单权限信息
@@ -343,38 +348,113 @@ public class SysMenuServiceImpl implements SysMenuService {
     /**
      * 运营后台修改机构权限
      *
+     * @param username               用户名
      * @param updateInsPermissionDto 运营后台修改机构权限dto
      * @return 修改条数
      */
     @Override
     @Transactional
-    public int updateInsPermission(UpdateInsPermissionDto updateInsPermissionDto) {
+    public int updateInsPermission(String username, UpdateInsPermissionDto updateInsPermissionDto) {
+        //查询机构管理员
+        SysUser sysUser = sysUserMapper.getSysUserByUsername("admin" + updateInsPermissionDto.getInstitutionId());
+        if (sysUser == null) {
+            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+        }
+//        String defaultRoleId = sysRoleMapper.getInstitutionRoleId();
+//        if (StringUtils.isEmpty(defaultRoleId)) {
+//            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+//        }
+        //创建机构定制管理员角色
+        SysRole sysRole = new SysRole();
+        String roleId = IDS.uuid2();
+        sysRole.setId(roleId);
+        sysRole.setSysId(updateInsPermissionDto.getInstitutionId());
+        sysRole.setPermissionType(AsianWalletConstant.INSTITUTION);
+        sysRole.setRoleName("机构定制管理员");
+        sysRole.setRoleCode("INSTITUTION_ADMIN");
+        sysRole.setCreateTime(new Date());
+        sysRole.setCreator(username);
+        sysRole.setEnabled(true);
+        sysRoleMapper.insert(sysRole);
+        //修改机构管理员对应角色
+        sysUserRoleMapper.updateRoleIdByUserId(sysUser.getId(), roleId);
+        //启用的权限集合
+        List<String> openIdList = updateInsPermissionDto.getOpenIdList();
+        //分配角色对应权限
+        List<SysRoleMenu> sysRoleMenuList = new ArrayList<>();
+        for (String openId : openIdList) {
+            SysRoleMenu sysRoleMenu = new SysRoleMenu();
+            sysRoleMenu.setId(IDS.uuid2());
+            sysRoleMenu.setRoleId(roleId);
+            sysRoleMenu.setMenuId(openId);
+            sysRoleMenu.setEnabled(true);
+            sysRoleMenu.setCreateTime(new Date());
+            sysRoleMenu.setCreator(username);
+        }
+        sysRoleMenuMapper.insertList(sysRoleMenuList);
+        //禁用的权限集合
+        List<String> offIdList = updateInsPermissionDto.getOffIdList();
         //机构对应所有用户
         List<String> userIdList = sysUserMapper.selectUserIdBySysId(updateInsPermissionDto.getInstitutionId());
         //机构对应所有角色
         List<String> roleIdList = sysRoleMapper.selectRoleIdBySysId(updateInsPermissionDto.getInstitutionId());
-        //禁用的权限集合
-        List<String> offIdList = updateInsPermissionDto.getOffIdList();
         //禁用所有用户权限
-        for (String userId : userIdList) {
+        for (String insUserId : userIdList) {
             for (String offId : offIdList) {
-                sysUserMenuMapper.updateEnabledByUserIdAndMenuId(userId, offId, false);
+                sysUserMenuMapper.updateEnabledByUserIdAndMenuId(insUserId, offId, false);
             }
         }
         //禁用所有角色权限
-        for (String roleId : roleIdList) {
+        for (String insRoleId : roleIdList) {
             for (String offId : offIdList) {
-                sysRoleMenuMapper.updateEnabledByRoleIdAndMenuId(roleId, offId, false);
+                sysRoleMenuMapper.updateEnabledByRoleIdAndMenuId(insRoleId, offId, false);
             }
         }
-        //启用的权限集合
-        List<String> openIdList = updateInsPermissionDto.getOpenIdList();
+//        //启用机构管理员权限
+//        for (String openId : openIdList) {
+//            sysUserMenuMapper.updateEnabledByUserIdAndMenuId(sysUser.getId(), openId, true);
+//        }
+        return 1;
+    }
+
+    /**
+     * 运营后台查询机构权限
+     *
+     * @param updateInsPermissionDto 运营后台机构权限dto
+     * @return
+     */
+    @Override
+    public List<FirstMenuVO> getInsPermission(UpdateInsPermissionDto updateInsPermissionDto) {
         //查询机构管理员
         SysUser sysUser = sysUserMapper.getSysUserByUsername("admin" + updateInsPermissionDto.getInstitutionId());
-        //启用机构管理员权限
-        for (String openId : openIdList) {
-            sysUserMenuMapper.updateEnabledByUserIdAndMenuId(sysUser.getId(), openId, true);
+        if (sysUser == null) {
+            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
         }
-        return 1;
+        String roleId = sysRoleMapper.selectRoleIdBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId());
+        if (StringUtils.isEmpty(roleId)) {
+            roleId = sysRoleMapper.getInstitutionRoleId();
+            if (StringUtils.isEmpty(roleId)) {
+                throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+            }
+        }
+        //根据权限类型查询所有权限
+        List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionType(updateInsPermissionDto.getPermissionType());
+        Set<String> menuSet = sysMenuMapper.selectMenuByRoleId(roleId);
+        for (FirstMenuVO firstMenuVO : menuList) {
+            if (menuSet.contains(firstMenuVO.getId())) {
+                firstMenuVO.setFlag(true);
+            }
+            for (SecondMenuVO secondMenuVO : firstMenuVO.getSecondMenuVOS()) {
+                if (menuSet.contains(secondMenuVO.getId())) {
+                    secondMenuVO.setFlag(true);
+                }
+                for (ThreeMenuVO threeMenuVO : secondMenuVO.getThreeMenuVOS()) {
+                    if (menuSet.contains(threeMenuVO.getId())) {
+                        threeMenuVO.setFlag(true);
+                    }
+                }
+            }
+        }
+        return menuList;
     }
 }
