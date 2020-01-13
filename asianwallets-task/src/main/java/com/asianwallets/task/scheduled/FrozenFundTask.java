@@ -50,8 +50,8 @@ public class FrozenFundTask {
      * 预约资金冻结定时任务
      * 15分钟跑一次
      */
-//    @Scheduled(cron = "0 0/15 * * * ?")
-    @Scheduled(cron = "0/10 * * * * ? ")//每10秒执行一次 测试用
+    @Scheduled(cron = "0 0/15 * * * ?")
+//    @Scheduled(cron = "0/10 * * * * ? ")//每10秒执行一次 测试用
     @Transactional
     public void clearOperLog(){
         log.info("*********开始预约资金冻结定时任务********************");
