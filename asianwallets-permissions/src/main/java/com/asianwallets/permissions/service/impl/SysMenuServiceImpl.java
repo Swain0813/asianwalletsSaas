@@ -393,7 +393,9 @@ public class SysMenuServiceImpl implements SysMenuService {
             sysRoleMenu.setCreateTime(new Date());
             sysRoleMenu.setCreator(username);
         }
-        sysRoleMenuMapper.insertList(sysRoleMenuList);
+        if (!ArrayUtil.isEmpty(sysRoleMenuList)) {
+            sysRoleMenuMapper.insertList(sysRoleMenuList);
+        }
         //根据权限类型查询所有权限
         List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionType(updateInsPermissionDto.getPermissionType());
         //机构后台对应的所有权限
