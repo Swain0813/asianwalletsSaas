@@ -360,24 +360,24 @@ public class SysMenuServiceImpl implements SysMenuService {
         if (sysUser == null) {
             throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
         }
-//        String defaultRoleId = sysRoleMapper.getInstitutionRoleId();
-//        if (StringUtils.isEmpty(defaultRoleId)) {
-//            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
-//        }
-        //创建机构定制管理员角色
-        SysRole sysRole = new SysRole();
-        String roleId = IDS.uuid2();
-        sysRole.setId(roleId);
-        sysRole.setSysId(updateInsPermissionDto.getInstitutionId());
-        sysRole.setPermissionType(AsianWalletConstant.INSTITUTION);
-        sysRole.setRoleName("机构定制管理员");
-        sysRole.setRoleCode("INSTITUTION_ADMIN");
-        sysRole.setCreateTime(new Date());
-        sysRole.setCreator(username);
-        sysRole.setEnabled(true);
-        sysRoleMapper.insert(sysRole);
-        //修改机构管理员对应角色
-        sysUserRoleMapper.updateRoleIdByUserId(sysUser.getId(), roleId);
+        //查询机构默认角色
+        SysRole sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId());
+        if (sysRole == null) {
+            //创建机构定制管理员角色
+            sysRole = new SysRole();
+            String roleId = IDS.uuid2();
+            sysRole.setId(roleId);
+            sysRole.setSysId(updateInsPermissionDto.getInstitutionId());
+            sysRole.setPermissionType(AsianWalletConstant.INSTITUTION);
+            sysRole.setRoleName("机构定制管理员");
+            sysRole.setRoleCode("INSTITUTION_ADMIN");
+            sysRole.setCreateTime(new Date());
+            sysRole.setCreator(username);
+            sysRole.setEnabled(true);
+            sysRoleMapper.insert(sysRole);
+            //修改机构管理员对应角色
+            sysUserRoleMapper.updateRoleIdByUserId(sysUser.getId(), roleId);
+        }
         //启用的权限集合
         List<String> openIdList = updateInsPermissionDto.getOpenIdList();
         //分配角色对应权限
@@ -385,7 +385,7 @@ public class SysMenuServiceImpl implements SysMenuService {
         for (String openId : openIdList) {
             SysRoleMenu sysRoleMenu = new SysRoleMenu();
             sysRoleMenu.setId(IDS.uuid2());
-            sysRoleMenu.setRoleId(roleId);
+            sysRoleMenu.setRoleId(sysRole.getId());
             sysRoleMenu.setMenuId(openId);
             sysRoleMenu.setEnabled(true);
             sysRoleMenu.setCreateTime(new Date());
@@ -425,21 +425,21 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public List<FirstMenuVO> getInsPermission(UpdateInsPermissionDto updateInsPermissionDto) {
-        //查询机构管理员
-        SysUser sysUser = sysUserMapper.getSysUserByUsername("admin" + updateInsPermissionDto.getInstitutionId());
-        if (sysUser == null) {
-            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
-        }
-        String roleId = sysRoleMapper.selectRoleIdBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId());
-        if (StringUtils.isEmpty(roleId)) {
-            roleId = sysRoleMapper.getInstitutionRoleId();
-            if (StringUtils.isEmpty(roleId)) {
+//        //查询机构管理员
+//        SysUser sysUser = sysUserMapper.getSysUserByUsername("admin" + updateInsPermissionDto.getInstitutionId());
+//        if (sysUser == null) {
+//            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+//        }
+        SysRole sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId());
+        if (sysRole == null) {
+            sysRole = sysRoleMapper.getInstitutionRoleId();
+            if (sysRole == null) {
                 throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
             }
         }
         //根据权限类型查询所有权限
         List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionType(updateInsPermissionDto.getPermissionType());
-        Set<String> menuSet = sysMenuMapper.selectMenuByRoleId(roleId);
+        Set<String> menuSet = sysMenuMapper.selectMenuByRoleId(sysRole.getId());
         for (FirstMenuVO firstMenuVO : menuList) {
             if (menuSet.contains(firstMenuVO.getId())) {
                 firstMenuVO.setFlag(true);
