@@ -50,8 +50,8 @@ public class FrozenFundTask {
      * 预约资金冻结定时任务
      * 15分钟跑一次
      */
-    @Scheduled(cron = "0 0/15 * * * ?")
-    //@Scheduled(cron = "0/10 * * * * ? ")//每10秒执行一次 测试用
+//    @Scheduled(cron = "0 0/15 * * * ?")
+    @Scheduled(cron = "0/10 * * * * ? ")//每10秒执行一次 测试用
     @Transactional
     public void clearOperLog(){
         log.info("*********开始预约资金冻结定时任务********************");
@@ -66,20 +66,29 @@ public class FrozenFundTask {
                 Account account = accountMapper.getAccount(tcsFrozenFundsLogsList.getMvaccountId());
                 if (account == null) {
                     //当前商户不存在该币种的账户
-                    log.info("*******************预约资金冻结定时任务***************************【当前商户不存在该币种的账户】");
+                    log.info("*******************预约资金冻结定时任务***************************【当前商户不存在该币种的账户】,账户id:{}",tcsFrozenFundsLogsList.getMvaccountId());
+                    continue;
                 }
                 //预约冻结金额>结算户金额-冻结金额则不下次预约冻结
                 if (tcsFrozenFundsLogsList.getTxnamount()>account.getSettleBalance().subtract(account.getFreezeBalance()).doubleValue()) {
+                    log.info("*******************预约资金冻结定时任务***************************【预约冻结金额大于结算户金额-冻结金额】,商户号:{},预约冻结资金:{},结算金额:{}",
+                            tcsFrozenFundsLogsList.getMerchantId(),tcsFrozenFundsLogsList.getTxnamount(),account.getSettleBalance().subtract(account.getFreezeBalance()).doubleValue());
                     continue;
                 }
                 //调用清结算的资金冻结和解冻接口
                 FinancialFreezeDTO ffd = new FinancialFreezeDTO(tcsFrozenFundsLogsList);
                 BaseResponse response = clearingService.freezingFunds(ffd);
                 if (response.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                    //更新系统冻结资金记录
-                    tcsFrozenFundsLogsMapper.updateTcsFrozenFundsLogsById(tcsFrozenFundsLogsList.getId());
-                } else {//请求失败
-                    reconciliationMapper.updateStatusById(tcsFrozenFundsLogsList.getMerOrderNo(), TradeConstant.FREEZE_FALID, "预约资金冻结定时任务", "预约冻结失败");
+                    //更新系统冻结资金记录---已冻结
+                    tcsFrozenFundsLogsMapper.updateTcsFrozenFundsLogsById(tcsFrozenFundsLogsList.getId(),TradeConstant.HAVE_FROZEN);
+                } else {
+                    //更新调账记录表--冻结失败
+                    int result = reconciliationMapper.updateStatusById(tcsFrozenFundsLogsList.getMerOrderNo(), TradeConstant.FREEZE_FALID, "预约资金冻结定时任务", "预约冻结失败");
+                    if(result>0){
+                        //调账记录表更新成功的场合，更新冻结资金记录表----冻结失败
+                        tcsFrozenFundsLogsMapper.updateTcsFrozenFundsLogsById(tcsFrozenFundsLogsList.getId(),TradeConstant.FROZEN_FALID);
+                    }
+
                 }
             }
         } catch (Exception e) {
