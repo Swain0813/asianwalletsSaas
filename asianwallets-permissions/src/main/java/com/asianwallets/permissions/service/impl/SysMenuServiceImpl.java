@@ -392,6 +392,7 @@ public class SysMenuServiceImpl implements SysMenuService {
             sysRoleMenu.setEnabled(true);
             sysRoleMenu.setCreateTime(new Date());
             sysRoleMenu.setCreator(username);
+            sysRoleMenuList.add(sysRoleMenu);
         }
         if (!ArrayUtil.isEmpty(sysRoleMenuList)) {
             sysRoleMenuMapper.insertList(sysRoleMenuList);
