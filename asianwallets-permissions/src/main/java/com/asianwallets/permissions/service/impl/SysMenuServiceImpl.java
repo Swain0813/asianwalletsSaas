@@ -443,11 +443,6 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public List<FirstMenuVO> getInsPermission(UpdateInsPermissionDto updateInsPermissionDto) {
-//        //查询机构管理员
-//        SysUser sysUser = sysUserMapper.getSysUserByUsername("admin" + updateInsPermissionDto.getInstitutionId());
-//        if (sysUser == null) {
-//            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
-//        }
         SysRole sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId());
         if (sysRole == null) {
             sysRole = sysRoleMapper.getInstitutionRoleId();
