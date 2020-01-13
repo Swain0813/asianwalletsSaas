@@ -392,32 +392,48 @@ public class SysMenuServiceImpl implements SysMenuService {
             sysRoleMenu.setEnabled(true);
             sysRoleMenu.setCreateTime(new Date());
             sysRoleMenu.setCreator(username);
+            sysRoleMenuList.add(sysRoleMenu);
         }
-        sysRoleMenuMapper.insertList(sysRoleMenuList);
-        //禁用的权限集合
-        List<String> offIdList = updateInsPermissionDto.getOffIdList();
-        //机构对应所有用户
-        List<String> userIdList = sysUserMapper.selectUserIdBySysId(updateInsPermissionDto.getInstitutionId());
-        //机构对应所有角色
-        List<String> roleIdList = sysRoleMapper.selectRoleIdBySysId(updateInsPermissionDto.getInstitutionId());
-        //禁用所有用户权限
-        for (String insUserId : userIdList) {
-            for (String offId : offIdList) {
-                sysUserMenuMapper.updateEnabledByUserIdAndMenuId(insUserId, offId, false);
+        if (!ArrayUtil.isEmpty(sysRoleMenuList)) {
+            sysRoleMenuMapper.insertList(sysRoleMenuList);
+        }
+        //根据权限类型查询所有权限
+        List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionType(updateInsPermissionDto.getPermissionType());
+        //机构后台对应的所有权限
+        List<String> offIdList = new ArrayList<>();
+        for (FirstMenuVO firstMenuVO : menuList) {
+            offIdList.add(firstMenuVO.getId());
+            for (SecondMenuVO secondMenuVO : firstMenuVO.getSecondMenuVOS()) {
+                offIdList.add(secondMenuVO.getId());
+                for (ThreeMenuVO threeMenuVO : secondMenuVO.getThreeMenuVOS()) {
+                    offIdList.add(threeMenuVO.getId());
+
+                }
             }
         }
-        //禁用所有角色权限
-        for (String insRoleId : roleIdList) {
-            for (String offId : offIdList) {
-                sysRoleMenuMapper.updateEnabledByRoleIdAndMenuId(insRoleId, offId, false);
+        //禁用的权限集合: 机构权限集合 - 启用权限集合
+        offIdList.removeAll(openIdList);
+        if (!ArrayUtil.isEmpty(offIdList)) {
+            //机构对应所有用户
+            List<String> userIdList = sysUserMapper.selectUserIdBySysId(updateInsPermissionDto.getInstitutionId());
+            //机构对应所有角色
+            List<String> roleIdList = sysRoleMapper.selectRoleIdBySysId(updateInsPermissionDto.getInstitutionId());
+            //禁用所有用户权限
+            for (String insUserId : userIdList) {
+                for (String offId : offIdList) {
+                    sysUserMenuMapper.updateEnabledByUserIdAndMenuId(insUserId, offId, false);
+                }
+            }
+            //禁用所有角色权限
+            for (String insRoleId : roleIdList) {
+                for (String offId : offIdList) {
+                    sysRoleMenuMapper.updateEnabledByRoleIdAndMenuId(insRoleId, offId, false);
+                }
             }
         }
-//        //启用机构管理员权限
-//        for (String openId : openIdList) {
-//            sysUserMenuMapper.updateEnabledByUserIdAndMenuId(sysUser.getId(), openId, true);
-//        }
         return 1;
     }
+
 
     /**
      * 运营后台查询机构权限
