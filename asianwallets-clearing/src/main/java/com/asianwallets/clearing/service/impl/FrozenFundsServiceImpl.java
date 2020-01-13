@@ -101,12 +101,12 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
             map.put("respMsg", "success");
             repqo.setId(ffl.getId());
             map.put("id", ffl.getId());
-            repqo.setMerchantId(String.valueOf(ffl.getMerchantId()));
-            map.put("merchantId", String.valueOf(ffl.getMerchantId()));
-            repqo.setMerOrderNo(String.valueOf(ffl.getMerOrderNo()));
-            map.put("merOrderNo", String.valueOf(ffl.getMerOrderNo()));
-            repqo.setTxncurrency(String.valueOf(ffl.getTxncurrency()));
-            map.put("txncurrency", String.valueOf(ffl.getTxncurrency()));
+            repqo.setMerchantId(ffl.getMerchantId());
+            map.put("merchantId", ffl.getMerchantId());
+            repqo.setMerOrderNo(ffl.getMerOrderNo());
+            map.put("merOrderNo", ffl.getMerOrderNo());
+            repqo.setTxncurrency(ffl.getTxncurrency());
+            map.put("txncurrency", ffl.getTxncurrency());
             repqo.setTxnamount(ffl.getTxnamount());
             map.put("txnamount", String.valueOf(ffl.getTxnamount()));
             repqo.setState(ffl.getState());
@@ -242,26 +242,9 @@ public class FrozenFundsServiceImpl implements FrozenFundsService {
             return message;
         }
         //封装冻结记录
-        TcsFrozenFundsLogs ffl = new TcsFrozenFundsLogs();
-        ffl.setId("FT" + IDS.uniqueID());
-        ffl.setMerchantId(ffr.getMerchantId());
-        ffl.setMerOrderNo(ffr.getMerOrderNo());
-        ffl.setState(ffr.getState());
-        ffl.setTxnamount(ffr.getTxnamount());
-        ffl.setTxncurrency(ffr.getTxncurrency());
-        if (ffr.getState() == 1) {
-            //加冻结
-            ffl.setFrozenDatetime(new Date());
-            ffl.setFrozenDesc(ffr.getDesc());
-        } else if (ffr.getState() == 2) {
-            //解冻结
-            ffl.setUnfreezeDatetime(new Date());
-            ffl.setUnfrozenDesc(ffr.getDesc());
-            ffl.setUpdateDatetime(new Date());
-        }
         message.setCode(Const.Code.OK);
         message.setMsg(Const.Code.OK_MSG);
-        message.setData(new Object[]{ffl, merchant});
+        message.setData(new Object[]{ffr, merchant});
         log.info("*************** 冻结/解冻验参 verificationAPIInputParamter **************** 结束时间：{}", new Date());
         return message;
     }

@@ -148,6 +148,7 @@ public class ReconciliationServiceImpl implements ReconciliationService {
                         //冻结成功
                         //更新调账记录表
                         reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.FREEZE_SUCCESS, name, remark);
+                        return "冻结成功";
                     }else {
                         log.info("******************创建预约冻结记录失败***************************");
                         reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.FREEZE_FALID, name, remark);

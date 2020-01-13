@@ -14,14 +14,6 @@ public class OnlineCheckOrdersDTO {
     @ApiModelProperty(value = "商户编号")
     private String merchantId;
 
-    @NotNull(message = "52008")
-    @ApiModelProperty(value = "签名")
-    private String sign;
-
-    @NotNull(message = "52008")
-    @ApiModelProperty(value = "签名方式")
-    private String signType;
-
     @ApiModelProperty(value = "系统订单流水号")
     private String referenceNo;
 
@@ -39,6 +31,14 @@ public class OnlineCheckOrdersDTO {
 
     @ApiModelProperty(value = "退款状态")
     private Byte refundStatus;
+
+    @NotNull(message = "52008")
+    @ApiModelProperty(value = "签名")
+    private String sign;
+
+    @NotNull(message = "52008")
+    @ApiModelProperty(value = "签名方式")
+    private String signType;
 
     @ApiModelProperty(value = "语言")
     private String language;
