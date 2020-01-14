@@ -68,4 +68,12 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      * @return 权限集合
      */
     int updateEnabledById(@Param("list") List<String> lowLevelMenuIdList, @Param("username") String username, @Param("enabled") Boolean enabled);
+
+    /**
+     * 根据权限类型与启用禁用查询
+     *
+     * @param permissionType
+     * @return
+     */
+    List<FirstMenuVO> selectAllMenuByPermissionTypeAndEnabled(Integer permissionType);
 }

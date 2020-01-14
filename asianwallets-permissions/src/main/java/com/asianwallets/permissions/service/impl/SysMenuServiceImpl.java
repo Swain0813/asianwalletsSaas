@@ -384,6 +384,7 @@ public class SysMenuServiceImpl implements SysMenuService {
             sysRole.setCreateTime(new Date());
             sysRole.setCreator(username);
             sysRole.setEnabled(true);
+            //标记字段,让系统查不出定制角色
             sysRole.setSort(1);
             if (AsianWalletConstant.INSTITUTION.equals(updateInsPermissionDto.getPermissionType())) {
                 sysRole.setRoleName("机构定制管理员");
@@ -515,7 +516,7 @@ public class SysMenuServiceImpl implements SysMenuService {
             throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
         }
         //根据权限类型查询所有权限
-        List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionType(updateInsPermissionDto.getPermissionType());
+        List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionTypeAndEnabled(updateInsPermissionDto.getPermissionType());
         Set<String> menuSet = sysMenuMapper.selectMenuByRoleId(sysRole.getId());
         for (FirstMenuVO firstMenuVO : menuList) {
             if (menuSet.contains(firstMenuVO.getId())) {
