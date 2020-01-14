@@ -95,7 +95,7 @@
         select menu_id
         from sys_user_menu
         where user_id = #{id}
-        and enabled = 1 
+        and enabled = 1
     </select>
 
     <select id="selectMenuByRoleId" resultType="String">
