@@ -116,4 +116,10 @@
         where parent_id = #{parentId}
     </select>
 
+    <update id="updateEnabledById">
+        update sys_menu set enabled = #{enabled},modifier = #{username} ,update_time = NOW() where id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>
