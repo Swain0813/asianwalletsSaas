@@ -1,6 +1,8 @@
 package com.asianwallets.base.controller;
+import com.asianwallets.base.service.AccountService;
 import com.asianwallets.base.service.SettleOrderService;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.dto.AccountSettleDTO;
 import com.asianwallets.common.dto.ReviewSettleDTO;
 import com.asianwallets.common.dto.SettleOrderDTO;
 import com.asianwallets.common.dto.WithdrawalDTO;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -27,6 +31,9 @@ public class SettleOrderController extends BaseController {
 
     @Autowired
     private SettleOrderService settleOrderService;
+
+    @Autowired
+    private AccountService accountService;
 
 
     @ApiOperation(value = "分页查询结算交易一览查询")
@@ -53,6 +60,13 @@ public class SettleOrderController extends BaseController {
     public BaseResponse reviewSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO) {
         reviewSettleDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(settleOrderService.reviewSettlement(reviewSettleDTO));
+    }
+
+    @ApiOperation(value = "提款设置")
+    @PostMapping("/updateAccountSettle")
+    public BaseResponse updateAccountSettle(@RequestBody @Valid @ApiParam AccountSettleDTO accountSettleDTO) {
+        accountSettleDTO.setModifier(this.getSysUserVO().getUsername());
+        return ResultUtil.success(accountService.updateAccountSettle(accountSettleDTO));
     }
 
     @ApiOperation(value = "手动提款")

@@ -1,20 +1,24 @@
 package com.asianwallets.base.service.impl;
-
 import com.asianwallets.base.dao.AccountMapper;
-import com.asianwallets.base.dao.ReconciliationMapper;
+import com.asianwallets.base.dao.SettleControlMapper;
 import com.asianwallets.base.dao.TmMerChTvAcctBalanceMapper;
 import com.asianwallets.base.service.AccountService;
 import com.asianwallets.common.base.BaseServiceImpl;
-import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.Account;
+import com.asianwallets.common.entity.SettleControl;
 import com.asianwallets.common.entity.TmMerChTvAcctBalance;
+import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.*;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,6 +34,9 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
 
     @Autowired
     private TmMerChTvAcctBalanceMapper tmMerChTvAcctBalanceMapper;
+
+    @Autowired
+    private SettleControlMapper settleControlMapper;
 
 
     /**
@@ -170,5 +177,31 @@ public class AccountServiceImpl extends BaseServiceImpl<Account> implements Acco
             }
         }
         return merchantBalanceVOList;
+    }
+
+    /**
+     * 提款设置
+     * @param accountSettleDTO
+     * @return
+     */
+    @Override
+    public int updateAccountSettle(AccountSettleDTO accountSettleDTO) {
+        accountSettleDTO.setUpdateTime(new Date());
+        //根据账户id获取账户设置信息
+        SettleControl settleControl = settleControlMapper.selectByAccountId(accountSettleDTO.getAccountId());
+        if (StringUtils.isEmpty(settleControl)) {
+            SettleControl sc = new SettleControl();
+            sc.setId(IDS.uuid2());
+            sc.setAccountId(accountSettleDTO.getAccountId());
+            sc.setEnabled(true);
+            sc.setSettleSwitch(true);//默认开启自动结算
+            sc.setMinSettleAmount(!StringUtils.isEmpty(accountSettleDTO.getMinSettleAmount()) ? accountSettleDTO.getMinSettleAmount() : BigDecimal.ZERO);
+            sc.setCreateTime(new Date());
+            sc.setCreator(accountSettleDTO.getModifier());
+            return settleControlMapper.insert(sc);
+        } else {
+            BeanUtils.copyProperties(accountSettleDTO, settleControl);
+            return settleControlMapper.updateByPrimaryKeySelective(settleControl);
+        }
     }
 }

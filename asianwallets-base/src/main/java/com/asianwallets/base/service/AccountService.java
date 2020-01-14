@@ -81,4 +81,11 @@ public interface AccountService extends BaseService<Account> {
      * @return
      */
     List<MerchantBalanceVO> exportMerchantBalance(OrdersDTO ordersDTO);
+
+    /**
+     * 提款设置
+     * @param accountSettleDTO
+     * @return
+     */
+    int updateAccountSettle(AccountSettleDTO accountSettleDTO);
 }
