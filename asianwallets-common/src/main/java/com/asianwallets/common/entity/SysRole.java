@@ -41,6 +41,6 @@ public class SysRole extends BaseEntity {
 
     @ApiModelProperty(value = "权重")
     @Column(name = "sort")
-    private Integer sort;
+    private Integer sort = 0;
 
 }

@@ -53,17 +53,17 @@
                t.en_name as teName,
                t.cn_name as tcName,
                t.enabled as tEnabled
-        from (select id, en_name, cn_name, parent_id,enabled
+        from (select id, en_name, cn_name, parent_id, enabled
               from sys_menu
               where level = 0
                 and permission_type = #{permissionType}) as f
                  left join
-             (select id, en_name, cn_name, parent_id,enabled
+             (select id, en_name, cn_name, parent_id, enabled
               from sys_menu
               where level = 1
                 and permission_type = #{permissionType}) as s on s.parent_id = f.id
                  left join
-             (select id, en_name, cn_name, parent_id,enabled
+             (select id, en_name, cn_name, parent_id, enabled
               from sys_menu
               where level = 2
                 and permission_type = #{permissionType}) as t on t.parent_id = s.id
@@ -95,12 +95,14 @@
         select menu_id
         from sys_user_menu
         where user_id = #{id}
+        and enabled = 1
     </select>
 
     <select id="selectMenuByRoleId" resultType="String">
         select DISTINCT(menu_id)
         from sys_role_menu
         where role_id = #{id}
+          and enabled = 1
     </select>
 
     <delete id="deleteByMenuIdList">

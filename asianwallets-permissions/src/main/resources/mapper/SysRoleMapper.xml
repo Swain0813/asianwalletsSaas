@@ -36,22 +36,21 @@
         select
         <include refid="Base_Column_List"/>
         from sys_role
-        <where>
-            <if test="roleName != null and roleName != ''">
-                and role_name LIKE CONCAT(CONCAT('%', #{roleName}), '%')
-            </if>
-            <if test="permissionType != null">
-                and permission_type = #{permissionType}
-            </if>
-            <choose>
-                <when test="sysId != null and sysId != ''">
-                    and sys_id = #{sysId}
-                </when>
-                <otherwise>
-                    and sys_id is null
-                </otherwise>
-            </choose>
-        </where>
+        where sort = 0
+        <if test="roleName != null and roleName != ''">
+            and role_name LIKE CONCAT(CONCAT('%', #{roleName}), '%')
+        </if>
+        <if test="permissionType != null">
+            and permission_type = #{permissionType}
+        </if>
+        <choose>
+            <when test="sysId != null and sysId != ''">
+                and sys_id = #{sysId}
+            </when>
+            <otherwise>
+                and sys_id is null
+            </otherwise>
+        </choose>
     </select>
 
     <select id="selectRoleIdBySysId" resultType="java.lang.String">
