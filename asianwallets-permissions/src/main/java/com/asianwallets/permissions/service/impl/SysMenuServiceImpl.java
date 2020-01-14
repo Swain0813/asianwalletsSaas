@@ -384,7 +384,7 @@ public class SysMenuServiceImpl implements SysMenuService {
             sysRole.setCreateTime(new Date());
             sysRole.setCreator(username);
             sysRole.setEnabled(true);
-            sysRole.setRemark("0");
+            sysRole.setSort(1);
             if (AsianWalletConstant.INSTITUTION.equals(updateInsPermissionDto.getPermissionType())) {
                 sysRole.setRoleName("机构定制管理员");
                 sysRole.setRoleCode(AsianWalletConstant.INSTITUTION_ADMIN);
