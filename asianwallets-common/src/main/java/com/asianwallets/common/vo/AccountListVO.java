@@ -13,17 +13,16 @@ public class AccountListVO{
     //@ApiModelProperty(value = "账户id")
     private String id;
 
-//    @ApiModelProperty(value = "机构编号")
-//    private String institutionId;
-//
-//    @ApiModelProperty(value = "机构名称")
-//    private String institutionName;
-
     // 创建时间
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date createTime;
 
+    @ApiModelProperty(value = "机构编号")
+    private String institutionId;
+
+    @ApiModelProperty(value = "机构名称")
+    private String institutionName;
 
     @ApiModelProperty(value = "商户编号")
     private String merchantId;
