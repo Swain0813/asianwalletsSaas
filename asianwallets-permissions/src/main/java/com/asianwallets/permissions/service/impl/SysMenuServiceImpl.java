@@ -436,7 +436,6 @@ public class SysMenuServiceImpl implements SysMenuService {
                 offIdList.add(secondMenuVO.getId());
                 for (ThreeMenuVO threeMenuVO : secondMenuVO.getThreeMenuVOS()) {
                     offIdList.add(threeMenuVO.getId());
-
                 }
             }
         }
