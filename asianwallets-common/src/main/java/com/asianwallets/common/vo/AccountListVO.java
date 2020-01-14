@@ -51,9 +51,6 @@ public class AccountListVO{
     @ApiModelProperty(value = "冻结余额")
     private BigDecimal freezeBalance = BigDecimal.ZERO;
 
-    @ApiModelProperty(value = "冻结余额")
-    private BigDecimal frozenBalance = BigDecimal.ZERO;
-
     @ApiModelProperty(value = "最小起结金额")
     private BigDecimal minSettleAmount;
 
