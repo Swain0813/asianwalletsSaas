@@ -36,7 +36,7 @@
         select
         <include refid="Base_Column_List"/>
         from sys_role
-        where remark != '定制'
+        where remark != '0'
         <if test="roleName != null and roleName != ''">
             and role_name LIKE CONCAT(CONCAT('%', #{roleName}), '%')
         </if>
