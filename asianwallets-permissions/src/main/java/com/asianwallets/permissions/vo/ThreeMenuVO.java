@@ -17,6 +17,9 @@ public class ThreeMenuVO {
     @ApiModelProperty(value = "中文名称")
     private String cName;
 
+    @ApiModelProperty(value = "启用禁用")
+    private Boolean enabled;
+
     @ApiModelProperty(value = "是否选中")
     private Boolean flag = false;
 }

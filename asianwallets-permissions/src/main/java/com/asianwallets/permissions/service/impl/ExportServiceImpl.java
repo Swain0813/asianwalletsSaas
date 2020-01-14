@@ -423,4 +423,51 @@ public class ExportServiceImpl implements ExportService {
         writer.write(oList1);
         return writer;
     }
+
+    /**
+     * 导出账户信息
+     * @param list
+     * @param clazz
+     * @return
+     */
+    @Override
+    public ExcelWriter exportAccount(List<AccountListVO> list, Class clazz) {
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (AccountListVO tmMerChTvAcctBalance : list) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(tmMerChTvAcctBalance);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int i = 0; i < property.length; i++) {
+                for (String s : keySet) {
+                    if (s.equals(property[i])) {
+                        oSet1.add(comment[i]);
+                        if (s.equals("merchantType")) {
+                            if ((String.valueOf((oMap.get(s))).equals("3"))) {
+                                oList2.add("普通商户");
+                            } else if ((String.valueOf((oMap.get(s))).equals("4"))) {
+                                oList2.add("代理商户");
+                            } else if ((String.valueOf((oMap.get(s))).equals("5"))) {
+                                oList2.add("集团商户");
+                            }else {
+                                oList2.add("");
+                            }
+                        } else {
+                            oList2.add(oMap.get(s));
+                        }
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.write(oList1);
+        return writer;
+    }
 }

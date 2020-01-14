@@ -55,4 +55,13 @@ public interface ExportService {
      * @return
      */
     ExcelWriter exportAgencyShareBenefit(List<QueryAgencyShareBenefitVO> queryAgencyShareBenefitVOS, Class clazz);
+
+
+    /**
+     * 导出账户信息
+     * @param accountListVOS
+     * @param clazz
+     * @return
+     */
+    ExcelWriter exportAccount(List<AccountListVO> accountListVOS, Class clazz);
 }

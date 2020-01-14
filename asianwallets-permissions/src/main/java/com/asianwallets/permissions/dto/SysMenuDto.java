@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 
 @Data
 @ApiModel(value = "权限输入实体", description = "输入实体")
@@ -32,4 +34,7 @@ public class SysMenuDto {
 
     @ApiModelProperty(value = "启用禁用")
     private Boolean enabled;
+
+    @ApiModelProperty(value = "下级权限ID集合")
+    private List<String> lowLevelMenuIdList;
 }

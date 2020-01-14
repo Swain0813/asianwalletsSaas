@@ -10,6 +10,19 @@ eureka:
   instance:
     instance-id: asianwallets-base5001
     prefer-ip-address: true
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 60000
 
 spring:
   # 数据库配置

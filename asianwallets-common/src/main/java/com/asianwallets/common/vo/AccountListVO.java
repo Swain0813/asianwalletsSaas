@@ -13,6 +13,11 @@ public class AccountListVO{
     //@ApiModelProperty(value = "账户id")
     private String id;
 
+    // 创建时间
+    @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    public Date createTime;
+
     @ApiModelProperty(value = "机构编号")
     private String institutionId;
 
@@ -31,37 +36,26 @@ public class AccountListVO{
     //@ApiModelProperty(value = "账户编号")
     private String accountCode;
 
-    @ApiModelProperty(value = "币种")
+    @ApiModelProperty(value = "账户币种")
     private String currency;
 
     @ApiModelProperty(value = "账户余额")
     private BigDecimal balance = BigDecimal.ZERO;
 
-    @ApiModelProperty(value = "结算账户余额")
+    @ApiModelProperty(value = "结算余额")
     private BigDecimal settleBalance = BigDecimal.ZERO;
 
-    @ApiModelProperty(value = "冻结账户余额")
-    private BigDecimal freezeBalance = BigDecimal.ZERO;
-
-    @ApiModelProperty(value = "清算账户余额")
+    @ApiModelProperty(value = "清算余额")
     private BigDecimal clearBalance = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "冻结余额")
-    private BigDecimal frozenBalance = BigDecimal.ZERO;
-
-    @ApiModelProperty(value = "保证金余额")
-    private BigDecimal marginBalance = BigDecimal.ZERO;
+    private BigDecimal freezeBalance = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "最小起结金额")
     private BigDecimal minSettleAmount;
 
     @ApiModelProperty(value = "自动结算结算开关")//1-开 0-关 默认是0
     private Boolean settleSwitch;
-
-    // 创建时间
-    //@ApiModelProperty(value = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    public Date createTime;
 
     //@ApiModelProperty(value = "修改时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

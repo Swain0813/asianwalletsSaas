@@ -23,46 +23,49 @@
         <id column="fid" property="id" jdbcType="VARCHAR"/>
         <result column="feName" property="eName" jdbcType="VARCHAR"/>
         <result column="fcName" property="cName" jdbcType="VARCHAR"/>
+        <result column="fEnabled" property="enabled" jdbcType="BIT"/>
         <collection javaType="list" property="secondMenuVOS" resultMap="SecondMenuMap"/>
     </resultMap>
     <resultMap id="SecondMenuMap" type="com.asianwallets.permissions.vo.SecondMenuVO">
         <id column="sid" property="id" jdbcType="VARCHAR"/>
         <result column="seName" property="eName" jdbcType="VARCHAR"/>
         <result column="scName" property="cName" jdbcType="VARCHAR"/>
+        <result column="sEnabled" property="enabled" jdbcType="BIT"/>
         <collection javaType="list" property="threeMenuVOS" resultMap="ThreeMenuMap"/>
     </resultMap>
     <resultMap id="ThreeMenuMap" type="com.asianwallets.permissions.vo.ThreeMenuVO">
         <id column="tid" property="id" jdbcType="VARCHAR"/>
         <result column="teName" property="eName" jdbcType="VARCHAR"/>
         <result column="tcName" property="cName" jdbcType="VARCHAR"/>
+        <result column="tEnabled" property="enabled" jdbcType="BIT"/>
     </resultMap>
 
     <select id="selectAllMenuByPermissionType" resultMap="FirstMenuMap">
         select f.id      as fid,
                f.en_name as feName,
                f.cn_name as fcName,
+               f.enabled as fEnabled,
                s.id      as sid,
                s.en_name as seName,
                s.cn_name as scName,
+               s.enabled as sEnabled,
                t.id      as tid,
                t.en_name as teName,
-               t.cn_name as tcName
-        from (select id, en_name, cn_name, parent_id
+               t.cn_name as tcName,
+               t.enabled as tEnabled
+        from (select id, en_name, cn_name, parent_id,enabled
               from sys_menu
               where level = 0
-                and enabled = 1
                 and permission_type = #{permissionType}) as f
                  left join
-             (select id, en_name, cn_name, parent_id
+             (select id, en_name, cn_name, parent_id,enabled
               from sys_menu
               where level = 1
-                and enabled = 1
                 and permission_type = #{permissionType}) as s on s.parent_id = f.id
                  left join
-             (select id, en_name, cn_name, parent_id
+             (select id, en_name, cn_name, parent_id,enabled
               from sys_menu
               where level = 2
-                and enabled = 1
                 and permission_type = #{permissionType}) as t on t.parent_id = s.id
     </select>
 
@@ -113,4 +116,10 @@
         where parent_id = #{parentId}
     </select>
 
+    <update id="updateEnabledById">
+        update sys_menu set enabled = #{enabled},modifier = #{username} ,update_time = NOW() where id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

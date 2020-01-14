@@ -81,7 +81,7 @@ public interface SysMenuService {
     List<FirstMenuVO> getAllMenuByRoleId(String roleId, Integer permissionType);
 
     /**
-     * 运营后台修改机构权限
+     * 修改机构,商户,代理,pos权限
      *
      * @param username               用户名
      * @param updateInsPermissionDto 运营后台修改机构权限dto
@@ -90,9 +90,9 @@ public interface SysMenuService {
     int updateInsPermission(String username, UpdateInsPermissionDto updateInsPermissionDto);
 
     /**
-     * 运营后台查询机构权限
+     * 查询机构,商户,代理,pos权限
      *
-     * @param updateInsPermissionDto 运营后台机构权限dto
+     * @param updateInsPermissionDto 权限dto
      * @return
      */
     List<FirstMenuVO> getInsPermission(UpdateInsPermissionDto updateInsPermissionDto);

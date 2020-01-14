@@ -66,11 +66,29 @@
         from sys_role where role_name like '机构管理员%' and enabled = 1
     </select>
 
+    <select id="getPOSRoleId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role where role_name like 'POS机管理员%' and enabled = 1
+    </select>
+
+    <select id="getAgencyRoleId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role where role_name like '代理管理员%' and enabled = 1
+    </select>
+
+    <select id="getMerchantRoleId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role where role_name like '商户管理员%' and enabled = 1
+    </select>
+
     <select id="selectBySysIdAndRoleCode" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from sys_role
         where sys_id = #{sysId}
-        and role_code = 'INSTITUTION_ADMIN'
+        and role_code = #{roleCode}
     </select>
 </mapper>

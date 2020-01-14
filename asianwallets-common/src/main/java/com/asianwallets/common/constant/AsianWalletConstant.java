@@ -131,6 +131,12 @@ public class AsianWalletConstant {
     public static final Integer AGENCY = 4;//代理
     public static final Integer POS = 5;//Pos机
 
+    //角色编码标志
+    public static final String INSTITUTION_ADMIN = "INSTITUTION_ADMIN";//机构系统
+    public static final String MERCHANT_ADMIN = "MERCHANT_ADMIN";//商户系统
+    public static final String AGENCY_ADMIN = "AGENCY_ADMIN";//代理
+    public static final String POS_ADMIN = "POS_ADMIN";//Pos机
+
     //账户类型
     public static final Integer OPERATION_USER = 1;//运维
     public static final Integer INSTITUTION_USER = 2;//机构

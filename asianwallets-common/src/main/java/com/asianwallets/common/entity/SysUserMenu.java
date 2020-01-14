@@ -25,5 +25,5 @@ public class SysUserMenu extends BaseEntity {
 
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")
-    private Boolean enabled;
+    private Boolean enabled = true;
 }

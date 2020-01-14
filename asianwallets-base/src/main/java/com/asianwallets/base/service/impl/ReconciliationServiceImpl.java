@@ -238,14 +238,14 @@ public class ReconciliationServiceImpl implements ReconciliationService {
         }
         if (reconOperDTO.getChangeType() == TradeConstant.TRANSFER && AsianWalletConstant.RECONCILIATION_IN == reconOperDTO.getType()) {
             //调入
-            return doReconciliationIn(name, merchant, reconOperDTO);
+            return doReconciliationIn(name, merchant, reconOperDTO,account.getId());
         } else if (reconOperDTO.getChangeType() == TradeConstant.TRANSFER && AsianWalletConstant.RECONCILIATION_OUT == reconOperDTO.getType()) {
             //调出
             //判断余额
             if (reconOperDTO.getAmount().compareTo(account.getSettleBalance().subtract(account.getFreezeBalance())) == 1) {
                 throw new BusinessException(EResultEnum.BANLANCE_NOT_FOOL.getCode());
             }
-            return doReconciliationOut(name, merchant, reconOperDTO);
+            return doReconciliationOut(name, merchant, reconOperDTO,account.getId());
 
         } else if (reconOperDTO.getChangeType() == TradeConstant.FUND_FREEZING && AsianWalletConstant.FREEZE == reconOperDTO.getType()) {
             //冻结
@@ -272,10 +272,11 @@ public class ReconciliationServiceImpl implements ReconciliationService {
      * @param name
      * @param merchant
      * @param reconOperDTO
+     * @param accountId
      * @return
      */
-    private String doReconciliationIn(String name, Merchant merchant, ReconOperDTO reconOperDTO) {
-        Reconciliation reconciliation = createrOrder(AsianWalletConstant.RECONCILIATION_IN, name, merchant, reconOperDTO, null);
+    private String doReconciliationIn(String name, Merchant merchant, ReconOperDTO reconOperDTO,String accountId) {
+        Reconciliation reconciliation = createrOrder(AsianWalletConstant.RECONCILIATION_IN, name, merchant, reconOperDTO, accountId);
         if (reconciliationMapper.insert(reconciliation) > 0) {
             return "success";
         } else {
@@ -288,10 +289,11 @@ public class ReconciliationServiceImpl implements ReconciliationService {
      * @param name
      * @param merchant
      * @param reconOperDTO
+     * @param accountId
      * @return
      */
-    private String doReconciliationOut(String name, Merchant merchant, ReconOperDTO reconOperDTO) {
-        Reconciliation reconciliation = createrOrder(AsianWalletConstant.RECONCILIATION_OUT, name, merchant, reconOperDTO, null);
+    private String doReconciliationOut(String name, Merchant merchant, ReconOperDTO reconOperDTO,String accountId) {
+        Reconciliation reconciliation = createrOrder(AsianWalletConstant.RECONCILIATION_OUT, name, merchant, reconOperDTO, accountId);
         if (reconciliationMapper.insert(reconciliation) > 0) {
             return "success";
         } else {
@@ -357,7 +359,7 @@ public class ReconciliationServiceImpl implements ReconciliationService {
         reconciliation.setCreator(name);
         reconciliation.setMerchantOrderId(reconciliation.getId());
         //当变动类型为冻结或者解冻时
-        reconciliation.setAccountId(reconOperDTO.getChangeType() != TradeConstant.TRANSFER ? accountId : null);
+        reconciliation.setAccountId(accountId);
         reconciliation.setCreateTime(new Date());
         reconciliation.setAmount(reconOperDTO.getChangeType() == TradeConstant.THAWING_FUNDS ? reconOperDTO.getAmount().negate() : reconOperDTO.getAmount());
         //资金变动类型 1-调账 2-资金冻结 3-资金解冻

@@ -1,10 +1,7 @@
 package com.asianwallets.permissions.service.impl;
 
 import com.asianwallets.common.constant.AsianWalletConstant;
-import com.asianwallets.common.entity.SysMenu;
-import com.asianwallets.common.entity.SysRole;
-import com.asianwallets.common.entity.SysRoleMenu;
-import com.asianwallets.common.entity.SysUser;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
@@ -276,9 +273,11 @@ public class SysMenuServiceImpl implements SysMenuService {
         }
         sysMenu.setCnName(sysMenuDto.getCnName());
         sysMenu.setEnName(sysMenuDto.getEnName());
-        sysMenu.setEnabled(sysMenuDto.getEnabled());
         sysMenu.setModifier(username);
         sysMenu.setUpdateTime(new Date());
+        sysMenu.setEnabled(sysMenuDto.getEnabled());
+        //启用时修改上级权限,禁用时修改下级权限
+        sysMenuMapper.updateEnabledById(sysMenuDto.getLowLevelMenuIdList(), username, sysMenuDto.getEnabled());
         return sysMenuMapper.updateByPrimaryKeySelective(sysMenu);
     }
 
@@ -346,43 +345,88 @@ public class SysMenuServiceImpl implements SysMenuService {
     }
 
     /**
-     * 运营后台修改机构权限
+     * 修改机构,商户,代理,pos权限
      *
      * @param username               用户名
-     * @param updateInsPermissionDto 运营后台修改机构权限dto
+     * @param updateInsPermissionDto 权限dto
      * @return 修改条数
      */
     @Override
     @Transactional
     public int updateInsPermission(String username, UpdateInsPermissionDto updateInsPermissionDto) {
-        //查询机构管理员
+        //查询系统管理员
         SysUser sysUser = sysUserMapper.getSysUserByUsername("admin" + updateInsPermissionDto.getInstitutionId());
         if (sysUser == null) {
             throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
         }
-        //查询机构默认角色
-        SysRole sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId());
+        SysRole sysRole = null;
+        if (AsianWalletConstant.INSTITUTION.equals(updateInsPermissionDto.getPermissionType())) {
+            //查询机构默认角色
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.INSTITUTION_ADMIN);
+        } else if (AsianWalletConstant.MERCHANT.equals(updateInsPermissionDto.getPermissionType())) {
+            //查询商户默认角色
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.MERCHANT_ADMIN);
+        } else if (AsianWalletConstant.AGENCY.equals(updateInsPermissionDto.getPermissionType())) {
+            //查询代理默认角色
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.AGENCY_ADMIN);
+        } else if (AsianWalletConstant.POS.equals(updateInsPermissionDto.getPermissionType())) {
+            //查询pos默认角色
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.POS_ADMIN);
+        } else {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_INVALID.getCode());
+        }
         if (sysRole == null) {
-            //创建机构定制管理员角色
+            //创建定制管理员角色
             sysRole = new SysRole();
             String roleId = IDS.uuid2();
             sysRole.setId(roleId);
             sysRole.setSysId(updateInsPermissionDto.getInstitutionId());
-            sysRole.setPermissionType(AsianWalletConstant.INSTITUTION);
-            sysRole.setRoleName("机构定制管理员");
-            sysRole.setRoleCode("INSTITUTION_ADMIN");
             sysRole.setCreateTime(new Date());
             sysRole.setCreator(username);
             sysRole.setEnabled(true);
+            if (AsianWalletConstant.INSTITUTION.equals(updateInsPermissionDto.getPermissionType())) {
+                sysRole.setRoleName("机构定制管理员");
+                sysRole.setRoleCode(AsianWalletConstant.INSTITUTION_ADMIN);
+                sysRole.setPermissionType(AsianWalletConstant.INSTITUTION);
+            } else if (AsianWalletConstant.MERCHANT.equals(updateInsPermissionDto.getPermissionType())) {
+                sysRole.setRoleName("商户定制管理员");
+                sysRole.setRoleCode(AsianWalletConstant.MERCHANT_ADMIN);
+                sysRole.setPermissionType(AsianWalletConstant.MERCHANT);
+            } else if (AsianWalletConstant.AGENCY.equals(updateInsPermissionDto.getPermissionType())) {
+                sysRole.setRoleName("代理定制管理员");
+                sysRole.setRoleCode(AsianWalletConstant.AGENCY_ADMIN);
+                sysRole.setPermissionType(AsianWalletConstant.AGENCY);
+            } else if (AsianWalletConstant.POS.equals(updateInsPermissionDto.getPermissionType())) {
+                sysRole.setRoleName("POS定制管理员");
+                sysRole.setRoleCode(AsianWalletConstant.POS_ADMIN);
+                sysRole.setPermissionType(AsianWalletConstant.POS);
+            }
             sysRoleMapper.insert(sysRole);
             //修改机构管理员对应角色
             sysUserRoleMapper.updateRoleIdByUserId(sysUser.getId(), roleId);
         }
-        //启用的权限集合
+        //删除管理员对应权限
+        sysUserMenuMapper.deleteByUserId(sysUser.getId());
+        //删除系统对应权限
+        sysRoleMenuMapper.deleteByRoleId(sysRole.getId());
+        //启用权限集合
         List<String> openIdList = updateInsPermissionDto.getOpenIdList();
+        //分配管理员对应权限
+        List<SysUserMenu> sysUserMenuList = new ArrayList<>();
         //分配角色对应权限
         List<SysRoleMenu> sysRoleMenuList = new ArrayList<>();
         for (String openId : openIdList) {
+            //管理员启用权限
+            SysUserMenu sysUserMenu = new SysUserMenu();
+            sysUserMenu.setId(IDS.uuid2());
+            sysUserMenu.setUserId(sysUser.getId());
+            sysUserMenu.setMenuId(openId);
+            sysUserMenu.setEnabled(true);
+            sysUserMenu.setCreateTime(new Date());
+            sysUserMenu.setCreator(username);
+            sysUserMenuList.add(sysUserMenu);
+
+            //系统启用权限
             SysRoleMenu sysRoleMenu = new SysRoleMenu();
             sysRoleMenu.setId(IDS.uuid2());
             sysRoleMenu.setRoleId(sysRole.getId());
@@ -390,52 +434,84 @@ public class SysMenuServiceImpl implements SysMenuService {
             sysRoleMenu.setEnabled(true);
             sysRoleMenu.setCreateTime(new Date());
             sysRoleMenu.setCreator(username);
+            sysRoleMenuList.add(sysRoleMenu);
         }
-        sysRoleMenuMapper.insertList(sysRoleMenuList);
-        //禁用的权限集合
-        List<String> offIdList = updateInsPermissionDto.getOffIdList();
-        //机构对应所有用户
-        List<String> userIdList = sysUserMapper.selectUserIdBySysId(updateInsPermissionDto.getInstitutionId());
-        //机构对应所有角色
-        List<String> roleIdList = sysRoleMapper.selectRoleIdBySysId(updateInsPermissionDto.getInstitutionId());
-        //禁用所有用户权限
-        for (String insUserId : userIdList) {
-            for (String offId : offIdList) {
-                sysUserMenuMapper.updateEnabledByUserIdAndMenuId(insUserId, offId, false);
+        if (!ArrayUtil.isEmpty(sysUserMenuList)) {
+            sysUserMenuMapper.insertList(sysUserMenuList);
+        }
+        if (!ArrayUtil.isEmpty(sysRoleMenuList)) {
+            sysRoleMenuMapper.insertList(sysRoleMenuList);
+        }
+        //根据权限类型查询所有权限
+        List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionType(updateInsPermissionDto.getPermissionType());
+        List<String> offIdList = new ArrayList<>();
+        for (FirstMenuVO firstMenuVO : menuList) {
+            offIdList.add(firstMenuVO.getId());
+            for (SecondMenuVO secondMenuVO : firstMenuVO.getSecondMenuVOS()) {
+                offIdList.add(secondMenuVO.getId());
+                for (ThreeMenuVO threeMenuVO : secondMenuVO.getThreeMenuVOS()) {
+                    offIdList.add(threeMenuVO.getId());
+                }
             }
         }
-        //禁用所有角色权限
-        for (String insRoleId : roleIdList) {
-            for (String offId : offIdList) {
-                sysRoleMenuMapper.updateEnabledByRoleIdAndMenuId(insRoleId, offId, false);
+        //禁用的权限集合: 机构权限集合 - 启用权限集合
+        offIdList.removeAll(openIdList);
+        if (!ArrayUtil.isEmpty(offIdList)) {
+            //机构对应所有用户
+            List<String> userIdList = sysUserMapper.selectUserIdBySysId(updateInsPermissionDto.getInstitutionId());
+            //机构对应所有角色
+            List<String> roleIdList = sysRoleMapper.selectRoleIdBySysId(updateInsPermissionDto.getInstitutionId());
+            //禁用所有用户权限
+            for (String insUserId : userIdList) {
+                for (String offId : offIdList) {
+                    sysUserMenuMapper.updateEnabledByUserIdAndMenuId(insUserId, offId, false);
+                }
+            }
+            //禁用所有角色权限
+            for (String insRoleId : roleIdList) {
+                for (String offId : offIdList) {
+                    sysRoleMenuMapper.updateEnabledByRoleIdAndMenuId(insRoleId, offId, false);
+                }
             }
         }
-//        //启用机构管理员权限
-//        for (String openId : openIdList) {
-//            sysUserMenuMapper.updateEnabledByUserIdAndMenuId(sysUser.getId(), openId, true);
-//        }
         return 1;
     }
 
+
     /**
-     * 运营后台查询机构权限
+     * 查询机构,商户,代理,pos权限
      *
-     * @param updateInsPermissionDto 运营后台机构权限dto
+     * @param updateInsPermissionDto 权限dto
      * @return
      */
     @Override
     public List<FirstMenuVO> getInsPermission(UpdateInsPermissionDto updateInsPermissionDto) {
-//        //查询机构管理员
-//        SysUser sysUser = sysUserMapper.getSysUserByUsername("admin" + updateInsPermissionDto.getInstitutionId());
-//        if (sysUser == null) {
-//            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
-//        }
-        SysRole sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId());
-        if (sysRole == null) {
-            sysRole = sysRoleMapper.getInstitutionRoleId();
+        SysRole sysRole = null;
+        if (AsianWalletConstant.INSTITUTION.equals(updateInsPermissionDto.getPermissionType())) {
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.INSTITUTION_ADMIN);
             if (sysRole == null) {
-                throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+                sysRole = sysRoleMapper.getInstitutionRoleId();
             }
+        } else if (AsianWalletConstant.MERCHANT.equals(updateInsPermissionDto.getPermissionType())) {
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.MERCHANT_ADMIN);
+            if (sysRole == null) {
+                sysRole = sysRoleMapper.getMerchantRoleId();
+            }
+        } else if (AsianWalletConstant.AGENCY.equals(updateInsPermissionDto.getPermissionType())) {
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.AGENCY_ADMIN);
+            if (sysRole == null) {
+                sysRole = sysRoleMapper.getAgencyRoleId();
+            }
+        } else if (AsianWalletConstant.POS.equals(updateInsPermissionDto.getPermissionType())) {
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.POS_ADMIN);
+            if (sysRole == null) {
+                sysRole = sysRoleMapper.getPOSRoleId();
+            }
+        } else {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_INVALID.getCode());
+        }
+        if (sysRole == null) {
+            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
         }
         //根据权限类型查询所有权限
         List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionType(updateInsPermissionDto.getPermissionType());

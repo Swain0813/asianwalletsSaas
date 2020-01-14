@@ -45,8 +45,30 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
     SysRole getInstitutionRoleId();
 
     /**
-     * @param sysId 系统ID
+     * 查询默认POS角色ID
+     *
+     * @return 机构默认角色ID
+     */
+    SysRole getPOSRoleId();
+
+    /**
+     * 查询默认代理角色ID
+     *
+     * @return 机构默认角色ID
+     */
+    SysRole getAgencyRoleId();
+
+    /**
+     * 查询默认商户角色ID
+     *
+     * @return 机构默认角色ID
+     */
+    SysRole getMerchantRoleId();
+
+    /**
+     * @param sysId    系统ID
+     * @param roleCode 角色编码
      * @return 角色ID
      */
-    SysRole selectBySysIdAndRoleCode(String sysId);
+    SysRole selectBySysIdAndRoleCode(@Param("sysId") String sysId, @Param("roleCode") String roleCode);
 }
