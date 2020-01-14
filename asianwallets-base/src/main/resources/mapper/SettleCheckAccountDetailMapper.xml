@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.base.dao.SettleCheckAccountDetailMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.SettleCheckAccountDetail">
+	<result column="id" property="id" />
+		<result column="STFlow" property="STFlow" />
+		<result column="refcnceFlow" property="refcnceFlow" />
+		<result column="tradetype" property="tradetype" />
+		<result column="merchantid" property="merchantid" />
+		<result column="merOrderNo" property="merOrderNo" />
+		<result column="txncurrency" property="txncurrency" />
+		<result column="txnamount" property="txnamount" />
+		<result column="fee" property="fee" />
+		<result column="feecurrency" property="feecurrency" />
+		<result column="refundOrderFeeCurrency" property="refundOrderFeeCurrency" />
+		<result column="refundOrderFee" property="refundOrderFee" />
+		<result column="channelCost" property="channelCost" />
+		<result column="channelcostcurrency" property="channelcostcurrency" />
+		<result column="revokemount" property="revokemount" />
+		<result column="businessType" property="businessType" />
+		<result column="balancetype" property="balancetype" />
+		<result column="mbuaccountId" property="mbuaccountId" />
+		<result column="accountNo" property="accountNo" />
+		<result column="STstate" property="STstate" />
+		<result column="shouldSTtime" property="shouldSTtime" />
+		<result column="actualSTtime" property="actualSTtime" />
+		<result column="sysorderid" property="sysorderid" />
+		<result column="addDatetime" property="addDatetime" />
+		<result column="txndesc" property="txndesc" />
+		<result column="sltamount" property="sltamount" />
+		<result column="sltcurrency" property="sltcurrency" />
+		<result column="txnexrate" property="txnexrate" />
+		<result column="remark" property="remark" />
+		<result column="gatewayFee" property="gatewayFee" />
+		<result column="organId" property="organId" />
+		<result column="needClear" property="needClear" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator" property="creator" />
+		<result column="modifier" property="modifier" />
+	</resultMap>
+
+</mapper>
