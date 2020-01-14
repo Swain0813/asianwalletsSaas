@@ -46,7 +46,7 @@ public interface SettleOrderFeign {
     List<SettleOrder> exportSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO);
 
     @ApiOperation(value = "结算审核")
-    @PostMapping("/reviewSettlement")
+    @PostMapping("/settleorders/reviewSettlement")
     BaseResponse reviewSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO);
 
 }
