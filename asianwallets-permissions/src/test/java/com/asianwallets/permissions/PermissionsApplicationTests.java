@@ -1,7 +1,6 @@
 package com.asianwallets.permissions;
 
 import com.asianwallets.permissions.dao.SysMenuMapper;
-import com.asianwallets.permissions.vo.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,22 +18,14 @@ public class PermissionsApplicationTests {
     @Autowired
     private SysMenuMapper sysMenuMapper;
 
+
     @Test
     public void contextLoads() {
         List<String> list = new ArrayList<>();
-         FirstMenuVO firstMenuVO = sysMenuMapper.selectAllMenuById("00dcb121a4cc4baf8b62c7bae0663688");
-        for (SecondMenuVO secondMenuVO : firstMenuVO.getSecondMenuVOS()) {
-            list.add(secondMenuVO.getId());
-            for (ThreeMenuVO threeMenuVO : secondMenuVO.getThreeMenuVOS()) {
-                list.add(threeMenuVO.getId());
-            }
-        }
-        list.add(firstMenuVO.getId());
-        System.out.println(list);
+        list.add("1022e7f14c9a4bb48fcd7771df5485b5");
+        list.add("41f4afc97603429687712c89f7b4f772");
+        sysMenuMapper.updateEnabledById(list, "admin", false);
     }
-
-
-
 
 
 }

@@ -3,6 +3,7 @@ package com.asianwallets.permissions.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.SysMenu;
 import com.asianwallets.permissions.vo.FirstMenuVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -59,4 +60,12 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      */
     List<String> selectMenuByParentId(String parentId);
 
+    /**
+     * 根据权限ID集合修改启用禁用
+     *
+     * @param lowLevelMenuIdList 权限ID集合
+     * @param enabled            启用禁用
+     * @return 权限集合
+     */
+    int updateEnabledById(@Param("list") List<String> lowLevelMenuIdList, @Param("username") String username, @Param("enabled") Boolean enabled);
 }
