@@ -56,19 +56,16 @@
         from (select id, en_name, cn_name, parent_id,enabled
               from sys_menu
               where level = 0
-                and enabled = 1
                 and permission_type = #{permissionType}) as f
                  left join
              (select id, en_name, cn_name, parent_id,enabled
               from sys_menu
               where level = 1
-                and enabled = 1
                 and permission_type = #{permissionType}) as s on s.parent_id = f.id
                  left join
              (select id, en_name, cn_name, parent_id,enabled
               from sys_menu
               where level = 2
-                and enabled = 1
                 and permission_type = #{permissionType}) as t on t.parent_id = s.id
     </select>
 
