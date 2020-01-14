@@ -8,7 +8,7 @@ import java.util.List;
 
 
 @Data
-@ApiModel(value = "运营后台修改机构权限DTO", description = "运营后台修改机构权限DTO")
+@ApiModel(value = "权限dto", description = "权限dto")
 public class UpdateInsPermissionDto {
 
     @ApiModelProperty(value = "机构ID")
