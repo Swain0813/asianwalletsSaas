@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.service;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.asianwallets.common.entity.SettleCheckAccount;
 import com.asianwallets.common.vo.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,4 +65,24 @@ public interface ExportService {
      * @return
      */
     ExcelWriter exportAccount(List<AccountListVO> accountListVOS, Class clazz);
+
+    /**
+     * Excel 导出结算单1
+     *
+     * @param insPros 对象集合
+     * @param clazz   类名Class对象
+     * @return ExcelWriter writer
+     */
+    ExcelWriter getSettleCheckAccountsWriter(ExcelWriter write, String language, List<SettleCheckAccount> insPros, Class clazz);
+
+
+    /**
+     * Excel 导出结算单2
+     *
+     * @param write
+     * @param insPros
+     * @param clazz
+     * @return
+     */
+    ExcelWriter getSettleCheckAccountDetailWriter(ExcelWriter write, List<ExportSettleCheckAccountDetailVO> insPros, Class clazz);
 }
