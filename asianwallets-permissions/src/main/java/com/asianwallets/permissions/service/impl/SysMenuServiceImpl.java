@@ -361,7 +361,7 @@ public class SysMenuServiceImpl implements SysMenuService {
             throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
         }
         //查询机构默认角色
-        SysRole sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId());
+        SysRole sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.INSTITUTION_ADMIN);
         if (sysRole == null) {
             //创建机构定制管理员角色
             sysRole = new SysRole();
@@ -443,12 +443,32 @@ public class SysMenuServiceImpl implements SysMenuService {
      */
     @Override
     public List<FirstMenuVO> getInsPermission(UpdateInsPermissionDto updateInsPermissionDto) {
-        SysRole sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId());
-        if (sysRole == null) {
-            sysRole = sysRoleMapper.getInstitutionRoleId();
+        SysRole sysRole = null;
+        if (AsianWalletConstant.INSTITUTION.equals(updateInsPermissionDto.getPermissionType())) {
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.INSTITUTION_ADMIN);
             if (sysRole == null) {
-                throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+                sysRole = sysRoleMapper.getInstitutionRoleId();
             }
+        } else if (AsianWalletConstant.MERCHANT.equals(updateInsPermissionDto.getPermissionType())) {
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.MERCHANT_ADMIN);
+            if (sysRole == null) {
+                sysRole = sysRoleMapper.getMerchantRoleId();
+            }
+        } else if (AsianWalletConstant.AGENCY.equals(updateInsPermissionDto.getPermissionType())) {
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.AGENCY_ADMIN);
+            if (sysRole == null) {
+                sysRole = sysRoleMapper.getAgencyRoleId();
+            }
+        } else if (AsianWalletConstant.POS.equals(updateInsPermissionDto.getPermissionType())) {
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.POS_ADMIN);
+            if (sysRole == null) {
+                sysRole = sysRoleMapper.getPOSRoleId();
+            }
+        } else {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_INVALID.getCode());
+        }
+        if (sysRole == null) {
+            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
         }
         //根据权限类型查询所有权限
         List<FirstMenuVO> menuList = sysMenuMapper.selectAllMenuByPermissionType(updateInsPermissionDto.getPermissionType());
