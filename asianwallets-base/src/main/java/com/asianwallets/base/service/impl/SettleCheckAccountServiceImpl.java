@@ -5,20 +5,24 @@ import com.asianwallets.base.dao.SettleCheckAccountMapper;
 import com.asianwallets.base.dao.TcsStFlowMapper;
 import com.asianwallets.base.service.SettleCheckAccountService;
 import com.asianwallets.common.base.BaseServiceImpl;
+import com.asianwallets.common.dto.TradeCheckAccountDTO;
+import com.asianwallets.common.dto.TradeCheckAccountSettleExportDTO;
 import com.asianwallets.common.entity.SettleCheckAccount;
 import com.asianwallets.common.entity.SettleCheckAccountDetail;
 import com.asianwallets.common.entity.TcsStFlow;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.ExportSettleCheckAccountVO;
+import com.asianwallets.common.vo.SettleCheckAccountDetailVO;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -41,6 +45,65 @@ public class SettleCheckAccountServiceImpl extends BaseServiceImpl<SettleCheckAc
 
     @Autowired
     private SettleCheckAccountDetailMapper settleCheckAccountDetailMapper;
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/4/16
+     * @Descripate 分页查询机构结算对账
+     **/
+    @Override
+    public PageInfo<SettleCheckAccount> pageSettleAccountCheck(TradeCheckAccountDTO tradeCheckAccountDTO) {
+        return new PageInfo<SettleCheckAccount>(settleCheckAccountMapper.pageSettleAccountCheck(tradeCheckAccountDTO));
+    }
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/4/16
+     * @Descripate 分页查询机构结算对账详情
+     **/
+    @Override
+    public PageInfo<SettleCheckAccountDetail> pageSettleAccountCheckDetail(TradeCheckAccountDTO tradeCheckAccountDTO) {
+        return new PageInfo<SettleCheckAccountDetail>(settleCheckAccountDetailMapper.pageSettleAccountCheckDetail(tradeCheckAccountDTO));
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/4/16
+     * @Descripate 导出机构结算对账
+     **/
+    @Override
+    public Map<String, Object> exportSettleAccountCheck(TradeCheckAccountSettleExportDTO tradeCheckAccountDTO) {
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        map.put("Statement", settleCheckAccountMapper.exportSettleAccountCheck(tradeCheckAccountDTO));
+        List<ExportSettleCheckAccountVO> list = settleCheckAccountDetailMapper.exportSettleAccountCheckDetail(tradeCheckAccountDTO);
+        for (ExportSettleCheckAccountVO e : list) {
+            map.put(e.getCurrency(), e.getList());
+        }
+
+        for (String key : map.keySet()) {
+            double balance = 0;
+            if (!StringUtils.isEmpty(tradeCheckAccountDTO.getStartDate())) {
+                Date date = DateToolUtils.getDateByStr(tradeCheckAccountDTO.getStartDate());
+                BigDecimal bigDecimal = settleCheckAccountMapper.getBalanceByTimeAndCurrencyAndInstitutionCode(date, key, tradeCheckAccountDTO.getMerchantId());
+                balance = bigDecimal == null ? 0 : bigDecimal.doubleValue();
+            }
+            double afterBalance = 0;
+            if (!key.equals("Statement")) {
+                List<SettleCheckAccountDetailVO> list1 = (List<SettleCheckAccountDetailVO>) map.get(key);
+                for (int i = list1.size() - 1; i >= 0; i--) {
+                    SettleCheckAccountDetailVO settleCheckAccountDetail = list1.get(i);
+                    afterBalance = balance + settleCheckAccountDetail.getTxnamount().doubleValue() - settleCheckAccountDetail.getFee().doubleValue()+settleCheckAccountDetail.getRefundOrderFee().doubleValue();
+                    settleCheckAccountDetail.setBalance(balance);
+                    settleCheckAccountDetail.setAfterBalance(afterBalance);
+                    balance = afterBalance;
+                }
+            }
+        }
+
+        return map;
+    }
 
     /**
      * 机构结算信息对账
