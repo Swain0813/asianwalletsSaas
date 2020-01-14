@@ -108,6 +108,8 @@ public class TCSCtFlowServiceImpl implements TCSCtFlowService {
                 log.info("*************** 清算 IntoAndOutMerhtCLAccount2 **************** 清算户资金必须大于等于0才能操作，结束时间：{}", new Date());
                 return baseResponse;
             }
+            //商户对应的机构编号
+            ctf.setOrganId(account.getInstitutionId());
             int result = tcsCtFlowMapper.insertSelective(ctf);
             if (result > 0) {
                 baseResponse.setCode(Const.Code.OK);
