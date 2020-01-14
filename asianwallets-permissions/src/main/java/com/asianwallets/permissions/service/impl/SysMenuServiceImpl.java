@@ -1,10 +1,7 @@
 package com.asianwallets.permissions.service.impl;
 
 import com.asianwallets.common.constant.AsianWalletConstant;
-import com.asianwallets.common.entity.SysMenu;
-import com.asianwallets.common.entity.SysRole;
-import com.asianwallets.common.entity.SysRoleMenu;
-import com.asianwallets.common.entity.SysUser;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
@@ -408,13 +405,28 @@ public class SysMenuServiceImpl implements SysMenuService {
             //修改机构管理员对应角色
             sysUserRoleMapper.updateRoleIdByUserId(sysUser.getId(), roleId);
         }
-        //删除角色对应权限
+        //删除管理员对应权限
+        sysUserMenuMapper.deleteByUserId(sysUser.getId());
+        //删除系统对应权限
         sysRoleMenuMapper.deleteByRoleId(sysRole.getId());
-        //启用的权限集合
+        //启用权限集合
         List<String> openIdList = updateInsPermissionDto.getOpenIdList();
+        //分配管理员对应权限
+        List<SysUserMenu> sysUserMenuList = new ArrayList<>();
         //分配角色对应权限
         List<SysRoleMenu> sysRoleMenuList = new ArrayList<>();
         for (String openId : openIdList) {
+            //管理员启用权限
+            SysUserMenu sysUserMenu = new SysUserMenu();
+            sysUserMenu.setId(IDS.uuid2());
+            sysUserMenu.setUserId(sysUser.getId());
+            sysUserMenu.setMenuId(openId);
+            sysUserMenu.setEnabled(true);
+            sysUserMenu.setCreateTime(new Date());
+            sysUserMenu.setCreator(username);
+            sysUserMenuList.add(sysUserMenu);
+
+            //系统启用权限
             SysRoleMenu sysRoleMenu = new SysRoleMenu();
             sysRoleMenu.setId(IDS.uuid2());
             sysRoleMenu.setRoleId(sysRole.getId());
@@ -423,6 +435,9 @@ public class SysMenuServiceImpl implements SysMenuService {
             sysRoleMenu.setCreateTime(new Date());
             sysRoleMenu.setCreator(username);
             sysRoleMenuList.add(sysRoleMenu);
+        }
+        if (!ArrayUtil.isEmpty(sysUserMenuList)) {
+            sysUserMenuMapper.insertList(sysUserMenuList);
         }
         if (!ArrayUtil.isEmpty(sysRoleMenuList)) {
             sysRoleMenuMapper.insertList(sysRoleMenuList);
