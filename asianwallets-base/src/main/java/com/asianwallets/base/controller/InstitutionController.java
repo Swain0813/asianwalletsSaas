@@ -25,14 +25,14 @@ public class InstitutionController extends BaseController {
     @ApiOperation(value = "添加机构")
     @PostMapping("addInstitution")
     public BaseResponse addInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
-        return ResultUtil.success(institutionService.addInstitution(this.getSysUserVO().getName(), institutionDTO));
+        return ResultUtil.success(institutionService.addInstitution(this.getSysUserVO().getUsername(), institutionDTO));
     }
 
 
     @ApiOperation(value = "修改机构")
     @PostMapping("updateInstitution")
     public BaseResponse updateInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
-        return ResultUtil.success(institutionService.updateInstitution(this.getSysUserVO().getName(), institutionDTO));
+        return ResultUtil.success(institutionService.updateInstitution(this.getSysUserVO().getUsername(), institutionDTO));
     }
 
     @ApiOperation(value = "分页查询机构信息列表")

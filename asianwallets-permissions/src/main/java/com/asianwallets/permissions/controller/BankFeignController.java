@@ -50,7 +50,7 @@ public class BankFeignController extends BaseController {
     @ApiOperation(value = "增加银行")
     @PostMapping("/addBank")
     public BaseResponse addBank(@RequestBody @ApiParam BankDTO bankDTO) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(bankDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(bankDTO),
                 "增加银行"));
         return bankFeign.addBank(bankDTO);
     }
@@ -58,7 +58,7 @@ public class BankFeignController extends BaseController {
     @ApiOperation(value = "修改银行信息")
     @PostMapping("/updateBank")
     public BaseResponse updateBank(@RequestBody @ApiParam BankDTO bankDTO) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(bankDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(bankDTO),
                 "修改银行信息"));
         return bankFeign.updateBank(bankDTO);
     }
@@ -66,7 +66,7 @@ public class BankFeignController extends BaseController {
     @ApiOperation(value = "分页查询银行信息")
     @PostMapping("/pageFindBank")
     public BaseResponse pageFindBank(@RequestBody @ApiParam BankDTO bankDTO) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(bankDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(bankDTO),
                 "分页查询银行信息"));
         return bankFeign.pageFindBank(bankDTO);
     }
@@ -74,15 +74,15 @@ public class BankFeignController extends BaseController {
     @ApiOperation(value = "导入银行信息")
     @PostMapping("/importBank")
     public BaseResponse importBank(@RequestParam("file") @ApiParam MultipartFile file) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, null,
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, null,
                 "导入银行信息"));
-        return bankFeign.importBank(importService.importBank(getSysUserVO().getUsername(), file));
+        return bankFeign.importBank(importService.importBank(this.getSysUserVO().getUsername(), file));
     }
 
     @ApiOperation(value = "导出银行信息")
     @PostMapping("/exportBank")
     public BaseResponse exportBank(@RequestBody @ApiParam BankDTO bankDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(bankDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(bankDTO),
                 "导出银行信息"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {

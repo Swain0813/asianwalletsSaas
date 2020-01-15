@@ -31,7 +31,7 @@ public class ProductController extends BaseController {
     @ApiOperation(value = "添加产品")
     @PostMapping("/addProduct")
     public BaseResponse addProduct(@RequestBody @ApiParam ProductDTO productDTO) {
-        return ResultUtil.success(productService.addProduct(this.getSysUserVO().getName(), productDTO));
+        return ResultUtil.success(productService.addProduct(this.getSysUserVO().getUsername(), productDTO));
     }
 
     @ApiOperation(value = "更新产品")

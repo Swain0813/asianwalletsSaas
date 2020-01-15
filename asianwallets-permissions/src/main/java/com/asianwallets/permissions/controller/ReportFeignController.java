@@ -86,7 +86,7 @@ public class ReportFeignController extends BaseController {
     @ApiOperation(value = "分页查询机构日交易汇总表")
     @PostMapping("/pageFindInsDailyTrade")
     public BaseResponse pageFindInsDailyTrade(@RequestBody @ApiParam OrdersDTO ordersDTO) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
                 "分页查询机构日交易汇总表"));
         return reportFeign.pageFindInsDailyTrade(ordersDTO);
     }
@@ -94,7 +94,7 @@ public class ReportFeignController extends BaseController {
     @ApiOperation(value = "导出机构日交易汇总表")
     @PostMapping("/exportInsDailyTrade")
     public BaseResponse exportInsDailyTrade(@RequestBody @ApiParam OrdersDTO ordersDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
                 "导出机构日交易汇总表"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {

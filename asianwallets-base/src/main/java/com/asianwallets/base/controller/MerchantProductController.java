@@ -37,13 +37,13 @@ public class MerchantProductController extends BaseController {
     @ApiOperation(value = "添加商户产品")
     @PostMapping("/addMerchantProduct")
     public BaseResponse addMerchantProduct(@RequestBody @ApiParam List<MerchantProductDTO> merchantProductDTOs) {
-        return ResultUtil.success(merchantProductService.addMerchantProduct(this.getSysUserVO().getName(), merchantProductDTOs));
+        return ResultUtil.success(merchantProductService.addMerchantProduct(this.getSysUserVO().getUsername(), merchantProductDTOs));
     }
 
     @ApiOperation(value = "修改商户产品")
     @PostMapping("/updateMerchantProduct")
     public BaseResponse updateMerchantProduct(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO) {
-        return ResultUtil.success(merchantProductService.updateMerchantProduct(this.getSysUserVO().getName(), merchantProductDTO));
+        return ResultUtil.success(merchantProductService.updateMerchantProduct(this.getSysUserVO().getUsername(), merchantProductDTO));
     }
 
     @ApiOperation(value = "批量审核商户产品")

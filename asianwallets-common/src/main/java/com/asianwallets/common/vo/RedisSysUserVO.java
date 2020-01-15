@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @ApiModel(value = "Pos机登录返回输出参数", description = "Pos机登录返回输出参数")
-public class OfflineSysUserVO {
+public class RedisSysUserVO {
 
     @ApiModelProperty("用户名")
     private String username;

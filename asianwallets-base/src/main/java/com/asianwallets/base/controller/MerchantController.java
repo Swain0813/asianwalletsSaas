@@ -23,13 +23,13 @@ public class MerchantController extends BaseController {
     @ApiOperation(value = "添加商户")
     @PostMapping("addMerchant")
     public BaseResponse addMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO) {
-        return ResultUtil.success(merchantService.addMerchant(this.getSysUserVO().getName(), merchantDTO));
+        return ResultUtil.success(merchantService.addMerchant(this.getSysUserVO().getUsername(), merchantDTO));
     }
 
     @ApiOperation(value = "修改商户")
     @PostMapping("updateMerchant")
     public BaseResponse updateMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO) {
-        return ResultUtil.success(merchantService.updateMerchant(this.getSysUserVO().getName(), merchantDTO));
+        return ResultUtil.success(merchantService.updateMerchant(this.getSysUserVO().getUsername(), merchantDTO));
     }
 
     @ApiOperation(value = "分页查询商户信息列表")

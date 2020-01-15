@@ -28,13 +28,13 @@ public class BankIssuerIdController extends BaseController {
     @ApiOperation(value = "添加银行机构代码映射信息")
     @PostMapping("/addBankIssuerId")
     public BaseResponse addBankIssuerId(@RequestBody @ApiParam List<BankIssuerIdDTO> bankIssuerIdDTOList) {
-        return ResultUtil.success(bankIssuerIdService.addBankIssuerId(getSysUserVO().getUsername(), bankIssuerIdDTOList));
+        return ResultUtil.success(bankIssuerIdService.addBankIssuerId(this.getSysUserVO().getUsername(), bankIssuerIdDTOList));
     }
 
     @ApiOperation(value = "修改银行机构代码映射")
     @PostMapping("/updateBankIssuerId")
     public BaseResponse updateBankIssuerId(@RequestBody @ApiParam BankIssuerIdDTO bankIssuerIdDTO) {
-        return ResultUtil.success(bankIssuerIdService.updateBankIssuerId(getSysUserVO().getUsername(), bankIssuerIdDTO));
+        return ResultUtil.success(bankIssuerIdService.updateBankIssuerId(this.getSysUserVO().getUsername(), bankIssuerIdDTO));
     }
 
     @ApiOperation(value = "查询银行机构代码映射信息")

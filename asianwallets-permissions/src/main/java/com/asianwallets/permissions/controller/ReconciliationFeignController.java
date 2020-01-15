@@ -9,6 +9,7 @@ import com.asianwallets.common.dto.SearchAvaBalDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.vo.RedisSysUserVO;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.permissions.feign.base.ReconciliationFeign;
 import com.asianwallets.permissions.service.OperationLogService;
@@ -65,7 +66,7 @@ public class ReconciliationFeignController extends BaseController {
                                             @RequestParam(required = false) @ApiParam String remark, @RequestParam @ApiParam String tradePwd) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(this.getRequest().getParameterMap()),
                 "资金变动审核"));
-        SysUserVO sysUserVO = this.getSysUserVO();
+        RedisSysUserVO sysUserVO = this.getSysUserVO();
         if (!sysUserService.checkPassword(sysUserService.decryptPassword(tradePwd), sysUserVO.getTradePassword())) {
             throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
         }

@@ -196,7 +196,7 @@ public class AccountFeignController extends BaseController {
     @ApiOperation(value = "分页查询商户余额")
     @PostMapping("/pageFindMerchantBalance")
     public BaseResponse pageMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
                 "分页查询商户余额"));
         return accountFeign.pageFindMerchantBalance(ordersDTO);
     }
@@ -204,7 +204,7 @@ public class AccountFeignController extends BaseController {
     @ApiOperation(value = "导出商户余额")
     @PostMapping("/exportMerchantBalance")
     public BaseResponse exportMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
                 "导出商户余额"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {

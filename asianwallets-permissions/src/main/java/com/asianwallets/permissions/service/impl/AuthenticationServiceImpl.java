@@ -10,7 +10,7 @@ import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.*;
-import com.asianwallets.common.vo.OfflineSysUserVO;
+import com.asianwallets.common.vo.RedisSysUserVO;
 import com.asianwallets.common.vo.SysMenuVO;
 import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
@@ -103,7 +103,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
-            redisService.set(response.getToken(), sysUserVO.getUsername(), time * 60 * 60);
+            RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
+            redisSysUserVO.setUsername(username);
+            redisSysUserVO.setTradePassword(sysUserVO.getTradePassword());
+            redisService.set(response.getToken(), JSON.toJSONString(redisSysUserVO),time * 60 * 60);
         }
         return response;
     }
@@ -154,7 +157,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setDcc(institution.getDcc());
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
-            redisService.set(response.getToken(), sysUserVO.getUsername(), time * 60 * 60);
+            RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
+            redisSysUserVO.setUsername(username);
+            redisSysUserVO.setTradePassword(sysUserVO.getTradePassword());
+            redisService.set(response.getToken(), JSON.toJSONString(redisSysUserVO), time * 60 * 60);
         }
         return response;
     }
@@ -178,10 +184,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("===========【商户系统登录】==========【商户信息不存在!】");
             throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
         }
-//        if (!merchant.getEnabled()) {
-//            log.info("===========【商户系统登录】==========【商户已禁用!】");
-//            throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
-//        }
         //拼接用户名
         String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
@@ -197,7 +199,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
-            redisService.set(response.getToken(), sysUserVO.getUsername(), time * 60 * 60);
+            RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
+            redisSysUserVO.setUsername(username);
+            redisSysUserVO.setTradePassword(sysUserVO.getTradePassword());
+            redisService.set(response.getToken(), JSON.toJSONString(redisSysUserVO), time * 60 * 60);
         }
         return response;
     }
@@ -236,7 +241,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
-            redisService.set(response.getToken(), sysUserVO.getUsername(), time * 60 * 60);
+            RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
+            redisSysUserVO.setUsername(username);
+            redisSysUserVO.setTradePassword(sysUserVO.getTradePassword());
+            redisService.set(response.getToken(), JSON.toJSONString(redisSysUserVO), time * 60 * 60);
         }
         return response;
     }
@@ -287,10 +295,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setMd5Key(getPosMd5Key(request.getSysId()));
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
-            OfflineSysUserVO offlineSysUserVO = new OfflineSysUserVO();
-            offlineSysUserVO.setUsername(username);
-            offlineSysUserVO.setTradePassword(sysUserVO.getTradePassword());
-            redisService.set(response.getToken(), JSON.toJSONString(offlineSysUserVO));
+            RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
+            redisSysUserVO.setUsername(username);
+            redisSysUserVO.setTradePassword(sysUserVO.getTradePassword());
+            redisService.set(response.getToken(), JSON.toJSONString(redisSysUserVO));
         }
         return response;
     }
