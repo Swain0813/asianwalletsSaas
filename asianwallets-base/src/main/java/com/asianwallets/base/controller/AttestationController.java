@@ -33,7 +33,7 @@ public class AttestationController extends BaseController {
     @ApiOperation(value = "修改密钥信息")
     @PostMapping("/updateKeyInfo")
     public BaseResponse updateKeyInfo(@RequestBody @ApiParam AttestationDTO attestationDTO) {
-        attestationDTO.setModifier(this.getSysUserVO().getUsername());
+        attestationDTO.setModifier(this.getUserName());
         return ResultUtil.success(attestationService.updateKeyInfo(attestationDTO));
     }
 

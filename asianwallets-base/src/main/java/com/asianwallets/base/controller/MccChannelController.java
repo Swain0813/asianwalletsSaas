@@ -33,7 +33,7 @@ public class MccChannelController extends BaseController {
     @ApiOperation(value = "新增mccChannel")
     @PostMapping("addMccChannel")
     public BaseResponse addMccChannel(@RequestBody @ApiParam MccChannelDTO mc) {
-        mc.setCreator(this.getSysUserVO().getUsername());
+        mc.setCreator(this.getUserName());
         mc.setLanguage(this.getLanguage());
         return ResultUtil.success(mccChannelService.addMccChannel(mc));
     }
@@ -48,7 +48,7 @@ public class MccChannelController extends BaseController {
     @ApiOperation(value = "启用禁用mccChannel")
     @PostMapping("banMccChannel")
     public BaseResponse banMccChannel(@RequestBody @ApiParam MccChannelDTO mc) {
-        mc.setModifier(this.getSysUserVO().getUsername());
+        mc.setModifier(this.getUserName());
         mc.setLanguage(this.getLanguage());
         return ResultUtil.success(mccChannelService.banMccChannel(mc));
     }
