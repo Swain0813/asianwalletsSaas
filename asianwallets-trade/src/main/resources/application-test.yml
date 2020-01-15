@@ -71,10 +71,11 @@ custom:
   jwt:
     secret: t70uMTIRzeM2kOj9
     token_expire_hour: 24
-  nextPosUrl: http://119.23.136.80/ITSBoss/nextPosNotifyAction/nextPosqrbackNotify.do
-  #AD3提供的测试参数
 
-  #megaPay分发地址
+  #nextPos分发AD3地址
+  nextPosUrl: http://119.23.136.80/ITSBoss/nextPosNotifyAction/nextPosqrbackNotify.do
+
+  #megaPay分发AD3地址
   ad3ItsUrl: http://119.23.136.80/ITSBoss/v1/
 
   #收银台url
