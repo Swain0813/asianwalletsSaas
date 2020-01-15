@@ -33,6 +33,9 @@ public class AuthenticationResponse {
     @ApiModelProperty(value = "是否开通DCC")
     private Boolean dcc;
 
+    @ApiModelProperty("pos机需要的加密的md5key")
+    private String md5Key;
+
     @ApiModelProperty("角色集合")
     private List<ResRole> role;
 

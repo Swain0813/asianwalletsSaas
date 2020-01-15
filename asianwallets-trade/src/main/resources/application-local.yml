@@ -110,5 +110,3 @@ custom:
   paySuccessUrl: http://192.168.124.32:8087/checkstandweb/#/Success
   nganLuong:
     check_url: https://www.nganluong.vn/checkout.api.nganluong.post.php
-  #pos机获取md5key的加密值
-  PosAESKey: IZ3TBUtgjfNIhPcGBzEp1w==

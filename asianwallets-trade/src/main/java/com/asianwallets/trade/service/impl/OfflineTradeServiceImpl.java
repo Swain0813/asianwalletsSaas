@@ -1,7 +1,4 @@
 package com.asianwallets.trade.service.impl;
-
-import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
-import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3Constant;
@@ -26,15 +23,11 @@ import com.asianwallets.trade.utils.HandlerContext;
 import com.asianwallets.trade.utils.SettleDateUtil;
 import com.asianwallets.trade.utils.TokenUtils;
 import com.asianwallets.trade.vo.*;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -77,9 +70,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     @Autowired
     private HandlerContext handlerContext;
 
-    @ApiModelProperty("pos机获取md5key的加密值")
-    @Value("${custom.PosAESKey}")
-    private String posAESKey;
 
     /**
      * 线下登录
@@ -739,24 +729,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             }
         }
         return posQueryOrderListVO;
-    }
-
-    /**
-     * Pos 获取md5key
-     *
-     * @param merchantId 商户号
-     * @return 加密后的MD5key
-     */
-    @Override
-    public String getPosMd5Key(String merchantId) {
-        log.info("===================【POS机获取md5key】加密开始===================【参数记录】 merchantId: {}", JSON.toJSONString(merchantId));
-        String md5key = commonRedisDataService.getAttestationByMerchantId(merchantId).getMd5key();
-        //构建
-        SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, posAESKey.getBytes(Charset.defaultCharset()));
-        //加密
-        String encrypt = aes.encryptBase64(md5key);
-        log.info("===================【POS机获取md5key】加密结束===================【参数记录】 encrypt: {}", JSON.toJSONString(encrypt));
-        return encrypt;
     }
 
 }

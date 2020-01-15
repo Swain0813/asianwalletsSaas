@@ -1,5 +1,4 @@
 package com.asianwallets.trade.controller;
-
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
@@ -18,9 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
-import java.util.Map;
 
 @RestController
 @Api(description = "线下交易接口")
@@ -73,12 +70,6 @@ public class OfflineTradeController extends BaseController {
     @PostMapping("posQueryOrderDetail")
     public BaseResponse posQueryOrderDetail(@RequestBody @ApiParam @Valid PosQueryOrderListDTO posQueryOrderListDTO) {
         return ResultUtil.success(offlineTradeService.posQueryOrderDetail(posQueryOrderListDTO));
-    }
-
-    @ApiOperation(value = "POS机获取MD5key")
-    @PostMapping("getPosMd5Key")
-    public BaseResponse getPosMd5Key(@RequestBody @ApiParam Map<String, String> merchantId) {
-        return ResultUtil.success(offlineTradeService.getPosMd5Key(merchantId.get("merchantId")));
     }
 
 }
