@@ -28,13 +28,13 @@ public class NoticeController extends BaseController {
     @ApiOperation(value = "添加公告信息")
     @PostMapping("/addNotice")
     public BaseResponse addNotice(@RequestBody @ApiParam NoticeDTO noticeDTO){
-        return ResultUtil.success(noticeService.addNotice(this.getSysUserVO().getUsername(),noticeDTO));
+        return ResultUtil.success(noticeService.addNotice(this.getUserName(),noticeDTO));
     }
 
     @ApiOperation(value = "修改公告信息")
     @PostMapping("/updateNotice")
     public BaseResponse updateNotice(@RequestBody @ApiParam NoticeDTO noticeDTO){
-      return ResultUtil.success(noticeService.updateNotice(this.getSysUserVO().getUsername(),noticeDTO));
+      return ResultUtil.success(noticeService.updateNotice(this.getUserName(),noticeDTO));
     }
 
     @ApiOperation(value = "查询所有公告信息")

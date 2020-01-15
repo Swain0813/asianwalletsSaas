@@ -37,19 +37,19 @@ public class MerchantProductController extends BaseController {
     @ApiOperation(value = "添加商户产品")
     @PostMapping("/addMerchantProduct")
     public BaseResponse addMerchantProduct(@RequestBody @ApiParam List<MerchantProductDTO> merchantProductDTOs) {
-        return ResultUtil.success(merchantProductService.addMerchantProduct(this.getSysUserVO().getName(), merchantProductDTOs));
+        return ResultUtil.success(merchantProductService.addMerchantProduct(this.getUserName(), merchantProductDTOs));
     }
 
     @ApiOperation(value = "修改商户产品")
     @PostMapping("/updateMerchantProduct")
     public BaseResponse updateMerchantProduct(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO) {
-        return ResultUtil.success(merchantProductService.updateMerchantProduct(this.getSysUserVO().getName(), merchantProductDTO));
+        return ResultUtil.success(merchantProductService.updateMerchantProduct(this.getUserName(), merchantProductDTO));
     }
 
     @ApiOperation(value = "批量审核商户产品")
     @PostMapping("/auditMerchantProduct")
     public BaseResponse auditMerchantProduct(@RequestBody @ApiParam AuaditProductDTO auaditProductDTO) {
-        BaseResponse baseResponse = merchantProductService.auditMerchantProduct(this.getSysUserVO().getUsername(), auaditProductDTO);
+        BaseResponse baseResponse = merchantProductService.auditMerchantProduct(this.getUserName(), auaditProductDTO);
         String code = baseResponse.getCode();//业务返回码
         if (org.springframework.util.StringUtils.isEmpty(code)) {
             baseResponse.setCode(EResultEnum.SUCCESS.getCode());
@@ -62,7 +62,7 @@ public class MerchantProductController extends BaseController {
     @ApiOperation(value = "商户分配通道")
     @PostMapping("/allotMerProductChannel")
     public BaseResponse allotMerProductChannel(@RequestBody @ApiParam @Valid MerProDTO merProDTO) {
-        return ResultUtil.success(merchantProductService.allotMerProductChannel(this.getSysUserVO().getUsername(), merProDTO));
+        return ResultUtil.success(merchantProductService.allotMerProductChannel(this.getUserName(), merProDTO));
     }
 
     @ApiOperation(value = "分页查询商户产品信息")
@@ -113,7 +113,7 @@ public class MerchantProductController extends BaseController {
     @ApiOperation(value = "修改机构通道")
     @PostMapping("/updateMerchantChannel")
     public BaseResponse updateMerchantChannel(@RequestBody @ApiParam List<BatchUpdateSortDTO> batchUpdateSort) {
-        return ResultUtil.success(merchantProductService.updateMerchantChannel(this.getSysUserVO().getUsername(), batchUpdateSort));
+        return ResultUtil.success(merchantProductService.updateMerchantChannel(this.getUserName(), batchUpdateSort));
     }
 
     @ApiOperation(value = "查询商户分配通道关联关系")

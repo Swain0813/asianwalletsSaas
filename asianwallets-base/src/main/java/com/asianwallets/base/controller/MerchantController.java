@@ -23,13 +23,13 @@ public class MerchantController extends BaseController {
     @ApiOperation(value = "添加商户")
     @PostMapping("addMerchant")
     public BaseResponse addMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO) {
-        return ResultUtil.success(merchantService.addMerchant(this.getSysUserVO().getName(), merchantDTO));
+        return ResultUtil.success(merchantService.addMerchant(this.getUserName(), merchantDTO));
     }
 
     @ApiOperation(value = "修改商户")
     @PostMapping("updateMerchant")
     public BaseResponse updateMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO) {
-        return ResultUtil.success(merchantService.updateMerchant(this.getSysUserVO().getName(), merchantDTO));
+        return ResultUtil.success(merchantService.updateMerchant(this.getUserName(), merchantDTO));
     }
 
     @ApiOperation(value = "分页查询商户信息列表")
@@ -66,7 +66,7 @@ public class MerchantController extends BaseController {
     @ApiOperation(value = "审核商户信息接口")
     @GetMapping("/auditMerchant")
     public BaseResponse auditMerchant(@RequestParam @ApiParam String merchantId, @RequestParam @ApiParam Boolean enabled, @RequestParam(required = false) @ApiParam String remark) {
-        return ResultUtil.success(merchantService.auditMerchant(this.getSysUserVO().getUsername(), merchantId, enabled, remark));
+        return ResultUtil.success(merchantService.auditMerchant(this.getUserName(), merchantId, enabled, remark));
     }
 
     @ApiOperation(value = "代理商下拉框")
@@ -78,7 +78,7 @@ public class MerchantController extends BaseController {
     @ApiOperation(value = "禁用启用商户")
     @GetMapping("/banMerchant")
     public BaseResponse banMerchant(@RequestParam @ApiParam String merchantId, @RequestParam @ApiParam Boolean enabled) {
-        return ResultUtil.success(merchantService.banMerchant(this.getSysUserVO().getUsername(), merchantId, enabled));
+        return ResultUtil.success(merchantService.banMerchant(this.getUserName(), merchantId, enabled));
     }
 
 }

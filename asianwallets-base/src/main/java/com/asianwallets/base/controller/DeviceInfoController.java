@@ -33,21 +33,21 @@ public class DeviceInfoController extends BaseController {
     @ApiOperation(value = "新增设备信息")
     @PostMapping("/addDeviceInfo")
     public BaseResponse addDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO) {
-        deviceInfoDTO.setCreator(this.getSysUserVO().getUsername());
+        deviceInfoDTO.setCreator(this.getUserName());
         return ResultUtil.success(deviceInfoService.addDeviceInfo(deviceInfoDTO));
     }
 
     @ApiOperation(value = "启用禁用设备信息")
     @PostMapping("/banDeviceInfo")
     public BaseResponse banDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO) {
-        deviceInfoDTO.setModifier(this.getSysUserVO().getUsername());
+        deviceInfoDTO.setModifier(this.getUserName());
         return ResultUtil.success(deviceInfoService.banDeviceInfo(deviceInfoDTO));
     }
 
     @ApiOperation(value = "修改设备信息")
     @PostMapping("/updateDeviceInfo")
     public BaseResponse updateDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO) {
-        deviceInfoDTO.setModifier(this.getSysUserVO().getUsername());
+        deviceInfoDTO.setModifier(this.getUserName());
         return ResultUtil.success(deviceInfoService.updateDeviceInfo(deviceInfoDTO));
     }
 

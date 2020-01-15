@@ -33,33 +33,33 @@ public class DictionaryInfoController extends BaseController {
         if (dictionaryInfoDTO.getLanguage() == null) {
             dictionaryInfoDTO.setLanguage(this.getLanguage());
         }
-        dictionaryInfoDTO.setCreator(this.getSysUserVO().getUsername());
+        dictionaryInfoDTO.setCreator(this.getUserName());
         return ResultUtil.success(dictionaryInfoService.addDictionaryInfo(dictionaryInfoDTO));
     }
 
     @ApiOperation(value = "启用禁用字典类型")
     @PostMapping("/banDictionaryType")
     public BaseResponse banDictionaryType(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        return ResultUtil.success(dictionaryInfoService.banDictionaryType(this.getSysUserVO().getUsername(), dictionaryInfoDTO.getDictypeCode(), dictionaryInfoDTO.getEnabled()));
+        return ResultUtil.success(dictionaryInfoService.banDictionaryType(this.getUserName(), dictionaryInfoDTO.getDictypeCode(), dictionaryInfoDTO.getEnabled()));
     }
 
     @ApiOperation(value = "启用禁用字典数据")
     @PostMapping("/banDictionary")
     public BaseResponse banDictionary(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        return ResultUtil.success(dictionaryInfoService.banDictionary(this.getSysUserVO().getUsername(), dictionaryInfoDTO.getId(), dictionaryInfoDTO.getEnabled()));
+        return ResultUtil.success(dictionaryInfoService.banDictionary(this.getUserName(), dictionaryInfoDTO.getId(), dictionaryInfoDTO.getEnabled()));
     }
 
     @ApiOperation(value = "修改字典类型索引")
     @PostMapping("/updateDictionaryType")
     public BaseResponse updateDictionaryType(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        dictionaryInfoDTO.setModifier(this.getSysUserVO().getUsername());
+        dictionaryInfoDTO.setModifier(this.getUserName());
         return ResultUtil.success(dictionaryInfoService.updateDictionaryType(dictionaryInfoDTO));
     }
 
     @ApiOperation(value = "修改字典数据")
     @PostMapping("/updateDictionary")
     public BaseResponse updateDictionary(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        dictionaryInfoDTO.setModifier(this.getSysUserVO().getUsername());
+        dictionaryInfoDTO.setModifier(this.getUserName());
         return ResultUtil.success(dictionaryInfoService.updateDictionary(dictionaryInfoDTO));
     }
 
@@ -73,7 +73,7 @@ public class DictionaryInfoController extends BaseController {
     @ApiOperation(value = "新增语言")
     @PostMapping("/addOtherLanguage")
     public BaseResponse addOtherLanguage(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        dictionaryInfoDTO.setCreator(this.getSysUserVO().getUsername());
+        dictionaryInfoDTO.setCreator(this.getUserName());
         return ResultUtil.success(dictionaryInfoService.addOtherLanguage(dictionaryInfoDTO));
     }
 

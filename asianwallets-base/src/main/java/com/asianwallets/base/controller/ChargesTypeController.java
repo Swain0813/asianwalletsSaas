@@ -45,21 +45,21 @@ public class ChargesTypeController extends BaseController {
     @ApiOperation(value = "新增费率")
     @PostMapping("/addChargesType")
     public BaseResponse addChargesType(@RequestBody @ApiParam ChargesTypeDTO chargesTypeDTO) {
-        chargesTypeDTO.setCreator(this.getSysUserVO().getUsername());
+        chargesTypeDTO.setCreator(this.getUserName());
         return ResultUtil.success(chargesTypeService.addChargesType(chargesTypeDTO));
     }
 
     @ApiOperation(value = "修改费率")
     @PostMapping("/updateChargesType")
     public BaseResponse updateChargesType(@RequestBody @ApiParam ChargesTypeDTO chargesTypeDTO) {
-        chargesTypeDTO.setModifier(this.getSysUserVO().getUsername());
+        chargesTypeDTO.setModifier(this.getUserName());
         return ResultUtil.success(chargesTypeService.updateChargesType(chargesTypeDTO));
     }
 
     @ApiOperation(value = "启用禁用费率")
     @PostMapping("/banChargesType")
     public BaseResponse banChargesType(@RequestBody @ApiParam ChargesTypeDTO chargesTypeDTO) {
-        return ResultUtil.success(chargesTypeService.banChargesType(chargesTypeDTO.getEnabled(), chargesTypeDTO.getId(), this.getSysUserVO().getUsername()));
+        return ResultUtil.success(chargesTypeService.banChargesType(chargesTypeDTO.getEnabled(), chargesTypeDTO.getId(), this.getUserName()));
     }
 
 }

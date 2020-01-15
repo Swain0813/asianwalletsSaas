@@ -32,7 +32,7 @@ public class MccController extends BaseController {
     @ApiOperation(value = "新增mcc")
     @PostMapping("addMcc")
     public BaseResponse addMcc(@RequestBody @ApiParam MccDTO mccDto) {
-        mccDto.setCreator(this.getSysUserVO().getUsername());
+        mccDto.setCreator(this.getUserName());
         return ResultUtil.success(mccService.addMcc(mccDto));
     }
 
@@ -40,7 +40,7 @@ public class MccController extends BaseController {
     @PostMapping("updateMcc")
     public BaseResponse updateMcc(@RequestBody @ApiParam MccDTO mccDto) {
         mccDto.setLanguage(this.getLanguage());
-        mccDto.setModifier(this.getSysUserVO().getUsername());
+        mccDto.setModifier(this.getUserName());
         return ResultUtil.success(mccService.updateMcc(mccDto));
     }
 
@@ -53,7 +53,7 @@ public class MccController extends BaseController {
     @ApiOperation(value = "启用禁用mcc")
     @PostMapping("banMcc")
     public BaseResponse banMcc(@RequestBody @ApiParam MccDTO mccDto) {
-        mccDto.setModifier(this.getSysUserVO().getUsername());
+        mccDto.setModifier(this.getUserName());
         mccDto.setLanguage(this.getLanguage());
         return ResultUtil.success(mccService.banMcc(mccDto));
     }

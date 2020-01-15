@@ -26,13 +26,13 @@ public class ChannelController extends BaseController {
     @ApiOperation(value = "添加通道信息")
     @PostMapping("/addChannel")
     public BaseResponse addChannel(@RequestBody @ApiParam ChannelDTO channelDTO) {
-        return ResultUtil.success(channelService.addChannel(getSysUserVO().getUsername(), channelDTO));
+        return ResultUtil.success(channelService.addChannel(this.getUserName(), channelDTO));
     }
 
     @ApiOperation(value = "修改通道信息")
     @PostMapping("/updateChannel")
     public BaseResponse updateChannel(@RequestBody @ApiParam ChannelDTO channelDTO) {
-        return ResultUtil.success(channelService.updateChannel(getSysUserVO().getUsername(), channelDTO));
+        return ResultUtil.success(channelService.updateChannel(this.getUserName(), channelDTO));
     }
 
     @ApiOperation(value = "分页查询通道信息")
