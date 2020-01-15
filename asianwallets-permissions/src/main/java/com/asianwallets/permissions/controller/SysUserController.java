@@ -33,63 +33,63 @@ public class SysUserController extends BaseController {
     @ApiOperation(value = "运营后台添加用户角色,用户权限信息")
     @PostMapping("/addSysUserByOperation")
     public BaseResponse addSysUserByOperation(@RequestBody @ApiParam SysUserRoleDto sysUserRoleDto) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysUserRoleDto),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(sysUserRoleDto),
                 "运营后台添加用户信息"));
-        return ResultUtil.success(sysUserService.addSysUserByOperation(getSysUserVO().getUsername(), sysUserRoleDto));
+        return ResultUtil.success(sysUserService.addSysUserByOperation(this.getUserName(), sysUserRoleDto));
     }
 
     @ApiOperation(value = "运营后台修改用户角色,用户权限信息")
     @PostMapping("/updateSysUserByOperation")
     public BaseResponse updateSysUserByOperation(@RequestBody @ApiParam SysUserRoleDto sysUserRoleDto) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(sysUserRoleDto),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(sysUserRoleDto),
                 "运营后台修改用户信息"));
-        return ResultUtil.success(sysUserService.updateSysUserByOperation(getSysUserVO().getUsername(), sysUserRoleDto));
+        return ResultUtil.success(sysUserService.updateSysUserByOperation(this.getUserName(), sysUserRoleDto));
     }
 
     @ApiOperation(value = "机构后台添加用户角色,用户权限信息")
     @PostMapping("/addSysUserByInstitution")
     public BaseResponse addSysUserByInstitution(@RequestBody @ApiParam SysUserRoleDto sysUserRoleDto) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysUserRoleDto),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(sysUserRoleDto),
                 "机构后台添加用户角色"));
-        return ResultUtil.success(sysUserService.addSysUserByInstitution(getSysUserVO().getUsername(), sysUserRoleDto));
+        return ResultUtil.success(sysUserService.addSysUserByInstitution(this.getUserName(), sysUserRoleDto));
     }
 
     @ApiOperation(value = "机构后台修改用户角色,用户权限信息")
     @PostMapping("/updateSysUserByInstitution")
     public BaseResponse updateSysUserByInstitution(@RequestBody @ApiParam SysUserRoleDto sysUserRoleDto) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(sysUserRoleDto),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(sysUserRoleDto),
                 "机构后台修改用户角色"));
-        return ResultUtil.success(sysUserService.updateSysUserByInstitution(getSysUserVO().getUsername(), sysUserRoleDto));
+        return ResultUtil.success(sysUserService.updateSysUserByInstitution(this.getUserName(), sysUserRoleDto));
     }
 
     @ApiOperation(value = "重置密码")
     @GetMapping("/resetPassword")
     public BaseResponse resetPassword(@RequestParam @ApiParam String userId) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(userId),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(userId),
                 "重置密码"));
-        return ResultUtil.success(sysUserService.resetPassword(getSysUserVO().getUsername(), userId));
+        return ResultUtil.success(sysUserService.resetPassword(this.getUserName(), userId));
     }
 
     @ApiOperation(value = "修改密码")
     @PostMapping("/updatePassword")
     public BaseResponse updatePassword(@RequestBody @ApiParam UpdatePasswordDto updatePasswordDto) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(getRequest().getParameterMap()),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(getRequest().getParameterMap()),
                 "修改密码"));
-        return ResultUtil.success(sysUserService.updatePassword(getSysUserVO().getUsername(), updatePasswordDto));
+        return ResultUtil.success(sysUserService.updatePassword(this.getUserName(), updatePasswordDto));
     }
 
     @ApiOperation(value = "修改交易密码")
     @PostMapping("/updateTradePassword")
     public BaseResponse updateTradePassword(@RequestBody @ApiParam UpdatePasswordDto updatePasswordDto) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(getRequest().getParameterMap()),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(getRequest().getParameterMap()),
                 "修改交易密码"));
-        return ResultUtil.success(sysUserService.updateTradePassword(getSysUserVO().getUsername(), updatePasswordDto));
+        return ResultUtil.success(sysUserService.updateTradePassword(this.getUserName(), updatePasswordDto));
     }
 
     @ApiOperation(value = "查询用户详情")
     @GetMapping("/getSysUserDetail")
     public BaseResponse getSysUserDetail(@RequestParam @ApiParam String username) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(username),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSONObject.toJSONString(username),
                 "查询用户详情"));
         return ResultUtil.success(sysUserService.getSysUserDetail(username));
     }
@@ -97,7 +97,7 @@ public class SysUserController extends BaseController {
     @ApiOperation(value = "分页查询用户信息")
     @PostMapping("/pageGetSysUser")
     public BaseResponse pageGetSysUser(@RequestBody @ApiParam SysUserDto sysUserDto) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(sysUserDto),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(sysUserDto),
                 "分页查询用户信息"));
         return ResultUtil.success(sysUserService.pageGetSysUser(sysUserDto));
     }
@@ -105,7 +105,7 @@ public class SysUserController extends BaseController {
     @ApiOperation(value = "发送开户邮件")
     @PostMapping(value = "/sendInstitutionEmail")
     public BaseResponse sendInstitutionEmail(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(institutionDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSONObject.toJSONString(institutionDTO),
                 "发送开户邮件"));
         institutionDTO.setLanguage(getLanguage());
         sysUserService.openAccountEmail(institutionDTO);

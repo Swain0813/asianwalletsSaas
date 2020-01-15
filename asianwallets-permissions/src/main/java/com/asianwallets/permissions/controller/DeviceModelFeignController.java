@@ -32,7 +32,7 @@ public class DeviceModelFeignController extends BaseController {
     @ApiOperation(value = "新增设备型号")
     @PostMapping("/addDeviceModel")
     public BaseResponse addDeviceModel(@RequestBody @ApiParam DeviceModelDTO deviceModelDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(deviceModelDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(deviceModelDTO),
                 "新增设备型号"));
         return deviceModelFeign.addDeviceModel(deviceModelDTO);
     }
@@ -40,7 +40,7 @@ public class DeviceModelFeignController extends BaseController {
     @ApiOperation(value = "启用禁用设备型号")
     @PostMapping("/banDeviceModel")
     public BaseResponse banDeviceModel(@RequestBody @ApiParam DeviceModelDTO deviceModelDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceModelDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceModelDTO),
                 "启用禁用设备型号"));
         return deviceModelFeign.banDeviceModel(deviceModelDTO);
     }
@@ -48,7 +48,7 @@ public class DeviceModelFeignController extends BaseController {
     @ApiOperation(value = "修改设备型号信息")
     @PostMapping("/updateDeviceModel")
     public BaseResponse updateDeviceModel(@RequestBody @ApiParam DeviceModelDTO deviceModelDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceModelDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceModelDTO),
                 "修改设备型号信息"));
         return deviceModelFeign.updateDeviceModel(deviceModelDTO);
     }
@@ -56,7 +56,7 @@ public class DeviceModelFeignController extends BaseController {
     @ApiOperation(value = "查询设备型号信息")
     @PostMapping("/pageDeviceModel")
     public BaseResponse pageDeviceModel(@RequestBody @ApiParam DeviceModelDTO deviceModelDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(deviceModelDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(deviceModelDTO),
                 "查询设备型号信息"));
         return deviceModelFeign.pageDeviceModel(deviceModelDTO);
     }
@@ -64,7 +64,7 @@ public class DeviceModelFeignController extends BaseController {
     @ApiOperation(value = "查询厂商类别")
     @GetMapping("/queryModelCategory")
     public BaseResponse queryModelCategory() {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, null,
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, null,
                 "查询厂商类别"));
         return deviceModelFeign.queryModelCategory();
     }

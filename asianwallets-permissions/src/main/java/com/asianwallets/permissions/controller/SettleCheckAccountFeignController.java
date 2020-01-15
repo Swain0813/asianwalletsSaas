@@ -54,7 +54,7 @@ public class SettleCheckAccountFeignController extends BaseController {
     @ApiOperation(value = "查询前一天所有结算记录")
     @GetMapping("selectTcsStFlow")
     public BaseResponse selectTcsStFlow(@RequestParam @ApiParam String time) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(time),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(time),
                 "查询前一天所有结算记录"));
         return settleCheckAccountFeign.selectTcsStFlow(time);
     }
@@ -62,7 +62,7 @@ public class SettleCheckAccountFeignController extends BaseController {
     @ApiOperation(value = "分页查询机构结算对账")
     @PostMapping("pageSettleAccountCheck")
     public BaseResponse pageSettleAccountCheck(@RequestBody @ApiParam TradeCheckAccountDTO tradeCheckAccountDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(tradeCheckAccountDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(tradeCheckAccountDTO),
                 "分页查询机构结算对账"));
         return settleCheckAccountFeign.pageSettleAccountCheck(tradeCheckAccountDTO);
     }
@@ -70,7 +70,7 @@ public class SettleCheckAccountFeignController extends BaseController {
     @ApiOperation(value = "分页查询机构结算对账详情")
     @PostMapping("pageSettleAccountCheckDetail")
     public BaseResponse pageSettleAccountCheckDetail(@RequestBody @ApiParam TradeCheckAccountDTO tradeCheckAccountDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(tradeCheckAccountDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(tradeCheckAccountDTO),
                 "分页查询机构结算对账详情"));
         return settleCheckAccountFeign.pageSettleAccountCheckDetail(tradeCheckAccountDTO);
     }
@@ -78,7 +78,7 @@ public class SettleCheckAccountFeignController extends BaseController {
     @ApiOperation(value = "导出机构结算对账单")
     @PostMapping("exportSettleAccountCheck")
     public BaseResponse exportSettleAccountCheck(@RequestBody @ApiParam TradeCheckAccountSettleExportDTO tradeCheckAccountDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(tradeCheckAccountDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(tradeCheckAccountDTO),
                 "导出机构结算对账单"));
         LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) settleCheckAccountFeign.exportSettleAccountCheck(tradeCheckAccountDTO);
         if (map == null || map.size() == 0) {//数据不存在的场合

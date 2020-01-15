@@ -46,7 +46,7 @@ public class ChannelFeignController extends BaseController {
     @ApiOperation(value = "添加通道信息")
     @PostMapping("/addChannel")
     public BaseResponse addChannel(@RequestBody @ApiParam ChannelDTO channelDTO) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(channelDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(channelDTO),
                 "添加通道信息"));
         return channelFeign.addChannel(channelDTO);
     }
@@ -54,7 +54,7 @@ public class ChannelFeignController extends BaseController {
     @ApiOperation(value = "修改通道信息")
     @PostMapping("/updateChannel")
     public BaseResponse updateChannel(@RequestBody @ApiParam ChannelDTO channelDTO) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(channelDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(channelDTO),
                 "修改通道信息"));
         return channelFeign.updateChannel(channelDTO);
     }
@@ -62,7 +62,7 @@ public class ChannelFeignController extends BaseController {
     @ApiOperation(value = "分页查询通道信息")
     @PostMapping("/pageFindChannel")
     public BaseResponse pageFindChannel(@RequestBody @ApiParam ChannelDTO channelDTO) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(channelDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(channelDTO),
                 "分页查询通道信息"));
         return channelFeign.pageFindChannel(channelDTO);
     }
@@ -70,7 +70,7 @@ public class ChannelFeignController extends BaseController {
     @ApiOperation(value = "根据通道ID查询通道详情")
     @GetMapping("/getChannelById")
     public BaseResponse getChannelById(@RequestParam @ApiParam String channelId) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(channelId),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(channelId),
                 "根据通道ID查询通道详情"));
         return channelFeign.getChannelById(channelId);
     }
@@ -78,7 +78,7 @@ public class ChannelFeignController extends BaseController {
     @ApiOperation(value = "导出通道信息")
     @PostMapping("/exportChannel")
     public BaseResponse exportChannel(@RequestBody @ApiParam ChannelDTO channelDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(channelDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(channelDTO),
                 "导出通道信息"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {

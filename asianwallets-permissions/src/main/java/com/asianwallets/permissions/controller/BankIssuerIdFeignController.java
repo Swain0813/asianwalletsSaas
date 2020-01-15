@@ -50,7 +50,7 @@ public class BankIssuerIdFeignController extends BaseController {
     @ApiOperation(value = "添加银行机构代码映射信息")
     @PostMapping("/addBankIssuerId")
     public BaseResponse addBankIssuerId(@RequestBody @ApiParam List<BankIssuerIdDTO> bankIssuerIdDTOList) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(bankIssuerIdDTOList),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(bankIssuerIdDTOList),
                 "添加银行机构代码映射信息"));
         return bankIssuerIdFeign.addBankIssuerId(bankIssuerIdDTOList);
     }
@@ -58,7 +58,7 @@ public class BankIssuerIdFeignController extends BaseController {
     @ApiOperation(value = "修改银行机构代码映射")
     @PostMapping("/updateBankIssuerId")
     public BaseResponse updateBankIssuerId(@RequestBody @ApiParam BankIssuerIdDTO bankIssuerIdDTO) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(bankIssuerIdDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(bankIssuerIdDTO),
                 "修改银行机构代码映射"));
         return bankIssuerIdFeign.updateBankIssuerId(bankIssuerIdDTO);
     }
@@ -66,7 +66,7 @@ public class BankIssuerIdFeignController extends BaseController {
     @ApiOperation(value = "查询银行机构代码映射信息")
     @PostMapping("/pageFindBankIssuerId")
     public BaseResponse pageFindBankIssuerId(@RequestBody @ApiParam BankIssuerIdDTO bankIssuerIdDTO) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(bankIssuerIdDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(bankIssuerIdDTO),
                 "查询银行机构代码映射信息"));
         return bankIssuerIdFeign.pageFindBankIssuerId(bankIssuerIdDTO);
     }
@@ -74,15 +74,15 @@ public class BankIssuerIdFeignController extends BaseController {
     @ApiOperation(value = "导入银行机构代码映射信息")
     @PostMapping("/importBankIssuerId")
     public BaseResponse importBankIssuerId(@RequestParam("file") @ApiParam MultipartFile file) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, null,
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.ADD, null,
                 "导入银行机构代码映射信息"));
-        return bankIssuerIdFeign.importBankIssuerId(importService.importBankIssuerId(getSysUserVO().getUsername(), file));
+        return bankIssuerIdFeign.importBankIssuerId(importService.importBankIssuerId(this.getUserName(), file));
     }
 
     @ApiOperation(value = "导出银行机构代码映射信息")
     @PostMapping("/exportBankIssuerId")
     public BaseResponse exportBankIssuerId(@RequestBody @ApiParam BankIssuerIdDTO bankIssuerIdDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(bankIssuerIdDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(bankIssuerIdDTO),
                 "导出银行机构代码映射信息"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
