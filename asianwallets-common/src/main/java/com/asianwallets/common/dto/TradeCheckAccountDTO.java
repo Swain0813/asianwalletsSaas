@@ -13,7 +13,7 @@ public class TradeCheckAccountDTO extends BasePageHelper {
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "机构编号")
-    private String institutionCode;
+    private String merchantId;
 
     @ApiModelProperty(value = "开始时间")
     private String startDate;

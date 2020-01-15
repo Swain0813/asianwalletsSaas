@@ -44,8 +44,8 @@
 			<if test="currency != null and currency != ''">
 				AND currency = #{currency}
 			</if>
-			<if test="institutionCode != null and institutionCode != ''">
-				AND institution_code = #{institutionCode}
+			<if test="merchantId != null and merchantId != ''">
+				AND merchant_id = #{merchantId}
 			</if>
 			<if test="startDate != null and startDate != ''">
 				AND DATE_FORMAT(check_time,'%Y-%m-%d') &gt;= #{startDate}
