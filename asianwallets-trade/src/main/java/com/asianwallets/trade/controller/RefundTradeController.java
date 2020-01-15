@@ -9,7 +9,7 @@ import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
-import com.asianwallets.common.vo.OfflineSysUserVO;
+import com.asianwallets.common.vo.RedisSysUserVO;
 import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.service.RefundTradeService;
 import io.swagger.annotations.Api;
@@ -47,7 +47,7 @@ public class RefundTradeController extends BaseController {
             if (StringUtils.isEmpty(refundDTO.getToken())) {
                 throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
             }
-            OfflineSysUserVO sysUserVO = JSON.parseObject(redisService.get(refundDTO.getToken()),OfflineSysUserVO.class);
+            RedisSysUserVO sysUserVO = JSON.parseObject(redisService.get(refundDTO.getToken()), RedisSysUserVO.class);
             if (sysUserVO == null) {
                 throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
             }

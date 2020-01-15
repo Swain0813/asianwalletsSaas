@@ -9,6 +9,7 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.GetIpAddr;
 import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.utils.ValidatorToolUtils;
+import com.asianwallets.common.vo.RedisSysUserVO;
 import com.asianwallets.common.vo.SysUserVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,13 +89,13 @@ public class BaseController {
      *
      * @return
      */
-    public String getUserName() {
+    public RedisSysUserVO getUserName() {
         HttpServletRequest request = getRequest();
         String token = request.getHeader(AsianWalletConstant.tokenHeader);
         if (redisService.get(token) == null) {
             throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
         }
-        return redisService.get(token);
+        return JSON.parseObject(redisService.get(token),RedisSysUserVO.class);
     }
 
     /**

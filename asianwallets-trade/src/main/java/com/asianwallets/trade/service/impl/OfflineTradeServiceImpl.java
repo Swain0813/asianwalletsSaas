@@ -9,7 +9,7 @@ import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.*;
-import com.asianwallets.common.vo.OfflineSysUserVO;
+import com.asianwallets.common.vo.RedisSysUserVO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
@@ -31,7 +31,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -107,10 +106,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
         }
         //存放token相关信息到redis
-        OfflineSysUserVO offlineSysUserVO = new OfflineSysUserVO();
-        offlineSysUserVO.setUsername(username);
-        offlineSysUserVO.setTradePassword(sysUser.getTradePassword());
-        redisService.set(token, JSON.toJSONString(offlineSysUserVO));
+        RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
+        redisSysUserVO.setUsername(username);
+        redisSysUserVO.setTradePassword(sysUser.getTradePassword());
+        redisService.set(token, JSON.toJSONString(redisSysUserVO));
         return token;
     }
 
@@ -221,7 +220,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
         //校验Token信息
-        OfflineSysUserVO sysUser = JSON.parseObject(redisService.get(offlineTradeDTO.getToken()),OfflineSysUserVO.class);
+        RedisSysUserVO sysUser = JSON.parseObject(redisService.get(offlineTradeDTO.getToken()), RedisSysUserVO.class);
         if (sysUser==null) {
             log.info("==================【线下CSB动态扫码】==================【Token不合法】");
             throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
