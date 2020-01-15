@@ -206,6 +206,7 @@ public class SettleOrdersServiceImpl implements SettleOrdersService {
                         tma.setFee(0.0D);
                         //原账户余额
                         tma.setBalance(beforeBalance);
+                        tma.setRefundOrderFee(0.0D);
                         //变动后账户余额
                         tma.setAfterbalance(afterBalance);
                         tma.setSltexrate(Double.parseDouble("1"));
