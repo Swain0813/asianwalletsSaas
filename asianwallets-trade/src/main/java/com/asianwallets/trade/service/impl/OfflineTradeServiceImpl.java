@@ -1,6 +1,5 @@
 package com.asianwallets.trade.service.impl;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
