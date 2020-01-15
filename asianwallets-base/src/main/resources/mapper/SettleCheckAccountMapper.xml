@@ -61,15 +61,15 @@
 
 	<select id="exportSettleAccountCheck" resultMap="BaseResultMap">
 		select
-		id, DATE_FORMAT(check_time,'%Y-%m-%d') as check_time, currency, amount, fee, refund_order_fee,initial_amount, final_amount, create_time, institution_code,count,
+		id, DATE_FORMAT(check_time,'%Y-%m-%d') as check_time, currency, amount, fee, refund_order_fee,initial_amount, final_amount, create_time, merchant_id,count,
 		update_time, creator, modifier, remark
 		from settle_check_account
 		<where>
 			<if test="currency != null and currency != ''">
 				AND currency = #{currency}
 			</if>
-			<if test="institutionCode != null and institutionCode != ''">
-				AND institution_code = #{institutionCode}
+			<if test="merchantId != null and merchantId != ''">
+				AND merchant_id = #{merchantId}
 			</if>
 			<if test="startDate != null and startDate != ''">
 				AND DATE_FORMAT(check_time,'%Y-%m-%d') &gt;= #{startDate}
