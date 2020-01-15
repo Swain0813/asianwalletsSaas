@@ -33,13 +33,13 @@ public class ExchangeRateController extends BaseController {
     @ApiOperation(value = "添加汇率信息")
     @PostMapping("addExchangeRate")
     public BaseResponse addExchangeRate(@RequestBody @ApiParam @Valid ExchangeRateDTO exchangeRateDTO) {
-        return ResultUtil.success(exchangeRateService.addExchangeRate(exchangeRateDTO, this.getUserName()));
+        return ResultUtil.success(exchangeRateService.addExchangeRate(exchangeRateDTO, this.getUserName().getUsername()));
     }
 
     @ApiOperation(value = "禁用汇率信息")
     @GetMapping("banExchangeRate")
     public BaseResponse banExchangeRate(@RequestParam @ApiParam String id) {
-        return ResultUtil.success(exchangeRateService.banExchangeRate(id, this.getUserName()));
+        return ResultUtil.success(exchangeRateService.banExchangeRate(id, this.getUserName().getUsername()));
     }
 
 

@@ -40,14 +40,14 @@ public class ReconciliationController extends BaseController {
     @ApiOperation(value = "资金变动操作")
     @PostMapping("doReconciliation")
     public BaseResponse doReconciliation(@RequestBody @ApiParam @Valid ReconOperDTO reconOperDTO) {
-        return ResultUtil.success(reconciliationService.doReconciliation(this.getUserName(),reconOperDTO));
+        return ResultUtil.success(reconciliationService.doReconciliation(this.getUserName().getUsername(),reconOperDTO));
     }
 
     @ApiOperation(value = "资金变动审核")
     @GetMapping("auditReconciliation")
     public BaseResponse auditReconciliation(@RequestParam @ApiParam String reconciliationId, @RequestParam @ApiParam boolean enabled
             , @RequestParam(required = false) @ApiParam String  remark) {
-        return ResultUtil.success(reconciliationService.auditReconciliation(this.getUserName(),reconciliationId,enabled,remark));
+        return ResultUtil.success(reconciliationService.auditReconciliation(this.getUserName().getUsername(),reconciliationId,enabled,remark));
     }
 
     @ApiOperation(value = "查询可用余额")

@@ -50,7 +50,7 @@ public class MerchantFeignController extends BaseController {
     @PostMapping("addMerchant")
     public BaseResponse addMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(merchantDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(merchantDTO),
                 "添加商户"));
         return merchantFeign.addMerchant(merchantDTO);
     }
@@ -59,7 +59,7 @@ public class MerchantFeignController extends BaseController {
     @PostMapping("updateMerchant")
     public BaseResponse updateMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(merchantDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(merchantDTO),
                 "修改商户"));
         return merchantFeign.updateMerchant(merchantDTO);
     }
@@ -68,7 +68,7 @@ public class MerchantFeignController extends BaseController {
     @PostMapping("/pageFindMerchant")
     public BaseResponse pageFindMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(merchantDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(merchantDTO),
                 "分页查询商户信息列表"));
         return merchantFeign.pageFindMerchant(merchantDTO);
     }
@@ -76,7 +76,7 @@ public class MerchantFeignController extends BaseController {
     @ApiOperation(value = "导出商户")
     @PostMapping("/exportMerchant")
     public BaseResponse exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO){
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(merchantDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(merchantDTO),
                 "导出商户"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
@@ -108,7 +108,7 @@ public class MerchantFeignController extends BaseController {
     @PostMapping("/pageFindMerchantAudit")
     public BaseResponse pageFindMerchantAudit(@RequestBody @ApiParam MerchantDTO merchantDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(merchantDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(merchantDTO),
                 "分页查询商户审核信息列表"));
         return merchantFeign.pageFindMerchantAudit(merchantDTO);
     }
@@ -117,7 +117,7 @@ public class MerchantFeignController extends BaseController {
     @GetMapping("/getMerchantInfo")
     public BaseResponse getMerchantInfo(@RequestParam @ApiParam String id) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(id),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(id),
                 "根据商户Id查询商户信息详情"));
         return merchantFeign.getMerchantInfo(id);
     }
@@ -126,7 +126,7 @@ public class MerchantFeignController extends BaseController {
     @GetMapping("/getMerchantAuditInfo")
     public BaseResponse getMerchantAuditInfo(@RequestParam @ApiParam String id) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(id),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(id),
                 "根据商户Id查询商户审核信息详情"));
         return merchantFeign.getMerchantAuditInfo(id);
     }
@@ -135,7 +135,7 @@ public class MerchantFeignController extends BaseController {
     @GetMapping("/auditMerchant")
     public BaseResponse auditMerchant(@RequestParam @ApiParam String merchantId, @RequestParam @ApiParam Boolean enabled, @RequestParam(required = false) @ApiParam String remark) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(this.getRequest().getParameterMap()),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(this.getRequest().getParameterMap()),
                 "审核商户信息接口"));
         return merchantFeign.auditMerchant(merchantId, enabled, remark);
     }

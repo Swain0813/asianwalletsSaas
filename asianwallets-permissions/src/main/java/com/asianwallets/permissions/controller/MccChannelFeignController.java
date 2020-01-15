@@ -61,7 +61,7 @@ public class MccChannelFeignController extends BaseController {
     @ApiOperation(value = "新增mccChannel")
     @PostMapping("addMccChannel")
     public BaseResponse addMccChannel(@RequestBody @ApiParam MccChannelDTO mc) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(),
                 AsianWalletConstant.ADD, JSON.toJSONString(mc),
                 "新增mccChannel"));
         return mccChannelFeign.addMccChannel(mc);
@@ -70,7 +70,7 @@ public class MccChannelFeignController extends BaseController {
     @ApiOperation(value = "查询mccChannel")
     @PostMapping("pageMccChannel")
     public BaseResponse pageMccChannel(@RequestBody @ApiParam MccChannelDTO mc) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(),
                 AsianWalletConstant.SELECT, JSON.toJSONString(mc),
                 "查询mccChannel"));
         return mccChannelFeign.pageMccChannel(mc);
@@ -79,7 +79,7 @@ public class MccChannelFeignController extends BaseController {
     @ApiOperation(value = "启用禁用mccChannel")
     @PostMapping("banMccChannel")
     public BaseResponse banMccChannel(@RequestBody @ApiParam MccChannelDTO mc) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(),
                 AsianWalletConstant.UPDATE, JSON.toJSONString(mc),
                 "启用禁用mccChannel"));
         return mccChannelFeign.banMccChannel(mc);
@@ -88,7 +88,7 @@ public class MccChannelFeignController extends BaseController {
     @ApiOperation(value = "查询所有mccChannel")
     @GetMapping("inquireAllMccChannel")
     public BaseResponse inquireAllMccChannel() {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(),
                 AsianWalletConstant.SELECT, null,
                 "查询所有mccChannel"));
         return mccChannelFeign.inquireAllMccChannel();
@@ -98,16 +98,16 @@ public class MccChannelFeignController extends BaseController {
     @ApiOperation(value = "导入mccChannel")
     @PostMapping("importMccChannel")
     public BaseResponse importMccChannel(@RequestParam("file") @ApiParam MultipartFile file) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(),
                 AsianWalletConstant.ADD, null,
                 "导入mccChannel"));
-        return mccChannelFeign.importMccChannel(mccChannelFeignService.uploadMccChannel(file, this.getUserName()));
+        return mccChannelFeign.importMccChannel(mccChannelFeignService.uploadMccChannel(file, this.getUserName().getUsername()));
     }
 
     @ApiOperation(value = "导出mccChannel")
     @PostMapping("exportMccChannel")
     public BaseResponse exportMccChannel(@RequestBody @ApiParam MccChannelDTO mc, HttpServletResponse response) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(),
                 AsianWalletConstant.SELECT, null,
                 "导出mccChannel"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
@@ -136,7 +136,7 @@ public class MccChannelFeignController extends BaseController {
     @ApiOperation(value = "查询所有的通道")
     @GetMapping("selectAllChannel")
     public BaseResponse selectAllChannel() {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(),
                 AsianWalletConstant.SELECT, null,
                 "查询所有的通道"));
         return ResultUtil.success(mccChannelFeignService.selectAllChannel());

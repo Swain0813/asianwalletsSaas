@@ -52,7 +52,7 @@ public class ShareBenefitFeignController extends BaseController {
     @ApiOperation(value = "机构后台分润查询")
     @PostMapping("/getAgencyShareBenefit")
     public BaseResponse getAgencyShareBenefit(@RequestBody @ApiParam @Valid QueryAgencyShareBenefitDTO queryAgencyShareBenefitDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(queryAgencyShareBenefitDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(queryAgencyShareBenefitDTO),
                 "机构后台分润查询"));
         return shareBenefitFeign.getAgencyShareBenefit(queryAgencyShareBenefitDTO);
     }
@@ -60,7 +60,7 @@ public class ShareBenefitFeignController extends BaseController {
     @ApiOperation(value = "机构后台分润导出")
     @PostMapping("/exportAgencyShareBenefit")
     public BaseResponse exportAgencyShareBenefit(@RequestBody @ApiParam ExportAgencyShareBenefitDTO exportAgencyShareBenefitDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(exportAgencyShareBenefitDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(exportAgencyShareBenefitDTO),
                 "机构后台分润导出"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try{

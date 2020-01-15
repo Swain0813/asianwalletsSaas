@@ -36,9 +36,9 @@ public class LogoutController extends BaseController {
     public BaseResponse logout(HttpServletRequest request ) {
         String token = request.getHeader(AsianWalletConstant.tokenHeader);
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.DELETE, token,"退出登录"));
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.DELETE, token,"退出登录"));
         if(StringUtils.isNotBlank(token)){
-            redisService.set(token, JSON.toJSONString(this.getSysUserVO()),1);
+            redisService.set(token, JSON.toJSONString(this.getUserName()),1);
         }
         return ResultUtil.success();
     }

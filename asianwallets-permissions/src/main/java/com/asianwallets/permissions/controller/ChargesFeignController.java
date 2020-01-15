@@ -34,7 +34,7 @@ public class ChargesFeignController extends BaseController {
     @ApiOperation(value = "分页查询费率")
     @PostMapping("/pageChargesCondition")
     public BaseResponse pageChargesCondition(@RequestBody @ApiParam ChargesTypeDTO chargesTypeDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(chargesTypeDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(chargesTypeDTO),
                 "分页查询费率"));
         return chargesFeign.pageChargesCondition(chargesTypeDTO);
     }
@@ -42,7 +42,7 @@ public class ChargesFeignController extends BaseController {
     @ApiOperation(value = "根据ID查询费率")
     @PostMapping("/getChargesInfo")
     public BaseResponse getChargesInfo(@RequestBody ChargesTypeDTO chargesTypeDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(chargesTypeDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(chargesTypeDTO),
                 "根据ID查询费率"));
         return chargesFeign.getChargesInfo(chargesTypeDTO);
     }
@@ -51,7 +51,7 @@ public class ChargesFeignController extends BaseController {
     @ApiOperation(value = "新增费率")
     @PostMapping("/addChargesType")
     public BaseResponse addChargesType(@RequestBody @ApiParam ChargesTypeDTO chargesTypeDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(chargesTypeDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(chargesTypeDTO),
                 "新增费率"));
         return chargesFeign.addChargesType(chargesTypeDTO);
     }
@@ -59,7 +59,7 @@ public class ChargesFeignController extends BaseController {
     @ApiOperation(value = "修改费率")
     @PostMapping("/updateChargesType")
     public BaseResponse updateChargesType(@RequestBody @ApiParam ChargesTypeDTO chargesTypeDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(chargesTypeDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(chargesTypeDTO),
                 "修改费率"));
         return chargesFeign.updateChargesType(chargesTypeDTO);
     }
@@ -67,7 +67,7 @@ public class ChargesFeignController extends BaseController {
     @ApiOperation(value = "启用禁用费率")
     @PostMapping("/banChargesType")
     public BaseResponse banChargesType(@RequestBody @ApiParam ChargesTypeDTO chargesTypeDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(chargesTypeDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(chargesTypeDTO),
                 "启用禁用费率"));
         return chargesFeign.banChargesType(chargesTypeDTO);
     }

@@ -29,7 +29,7 @@ public class PayTypeController extends BaseController {
     @ApiOperation(value = "新增支付方式")
     @PostMapping("addPayType")
     public BaseResponse addPaytype(@RequestBody @ApiParam PayTypeDTO PayTypeDTO) {
-        PayTypeDTO.setCreator(this.getUserName());
+        PayTypeDTO.setCreator(this.getUserName().getUsername());
         return ResultUtil.success(PayTypeService.addPayType(PayTypeDTO));
     }
 
@@ -37,7 +37,7 @@ public class PayTypeController extends BaseController {
     @PostMapping("updatePayType")
     public BaseResponse updatePaytype(@RequestBody @ApiParam PayTypeDTO PayTypeDTO) {
         PayTypeDTO.setLanguage(this.getLanguage());
-        PayTypeDTO.setModifier(this.getUserName());
+        PayTypeDTO.setModifier(this.getUserName().getUsername());
         return ResultUtil.success(PayTypeService.updatePayType(PayTypeDTO));
     }
 
@@ -50,7 +50,7 @@ public class PayTypeController extends BaseController {
     @ApiOperation(value = "启用禁用支付方式")
     @PostMapping("banPayType")
     public BaseResponse banCurrency(@RequestBody @ApiParam PayTypeDTO PayTypeDTO) {
-        PayTypeDTO.setModifier(this.getUserName());
+        PayTypeDTO.setModifier(this.getUserName().getUsername());
         PayTypeDTO.setLanguage(this.getLanguage());
         return ResultUtil.success(PayTypeService.banPayType(PayTypeDTO));
     }

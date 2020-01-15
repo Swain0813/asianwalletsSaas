@@ -23,14 +23,14 @@ public class CurrencyController extends BaseController {
     @ApiOperation(value = "新增币种")
     @PostMapping("addCurrency")
     public BaseResponse addCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
-        currencyDTO.setCreator(this.getUserName());
+        currencyDTO.setCreator(this.getUserName().getUsername());
         return ResultUtil.success(currencyService.addCurrency(currencyDTO));
     }
 
     @ApiOperation(value = "修改币种")
     @PostMapping("updateCurrency")
     public BaseResponse updateCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
-        currencyDTO.setModifier(this.getUserName());
+        currencyDTO.setModifier(this.getUserName().getUsername());
         return ResultUtil.success(currencyService.updateCurrency(currencyDTO));
     }
 
@@ -43,7 +43,7 @@ public class CurrencyController extends BaseController {
     @ApiOperation(value = "启用禁用币种")
     @PostMapping("banCurrency")
     public BaseResponse banCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
-        currencyDTO.setModifier(this.getUserName());
+        currencyDTO.setModifier(this.getUserName().getUsername());
         return ResultUtil.success(currencyService.banCurrency(currencyDTO));
     }
 

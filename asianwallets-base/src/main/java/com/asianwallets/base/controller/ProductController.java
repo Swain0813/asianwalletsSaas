@@ -31,13 +31,13 @@ public class ProductController extends BaseController {
     @ApiOperation(value = "添加产品")
     @PostMapping("/addProduct")
     public BaseResponse addProduct(@RequestBody @ApiParam ProductDTO productDTO) {
-        return ResultUtil.success(productService.addProduct(this.getUserName(), productDTO));
+        return ResultUtil.success(productService.addProduct(this.getUserName().getUsername(), productDTO));
     }
 
     @ApiOperation(value = "更新产品")
     @PostMapping("/updateProduct")
     public BaseResponse updateProduct(@RequestBody @ApiParam ProductDTO productDTO) {
-        return ResultUtil.success(productService.updateProduct(this.getUserName(), productDTO));
+        return ResultUtil.success(productService.updateProduct(this.getUserName().getUsername(), productDTO));
     }
 
     @ApiOperation(value = "分页查询产品")

@@ -26,14 +26,14 @@ public class CountryController extends BaseController {
         if (StringUtils.isBlank(country.getLanguage())) {
             country.setLanguage(this.getLanguage());
         }
-        country.setCreator(this.getUserName());
+        country.setCreator(this.getUserName().getUsername());
         return ResultUtil.success(countryService.addCountry(country));
     }
 
     @ApiOperation(value = "修改国家")
     @PostMapping("updateCountry")
     public BaseResponse updateCountry(@RequestBody @ApiParam CountryDTO country) {
-        country.setModifier(this.getUserName());
+        country.setModifier(this.getUserName().getUsername());
         return ResultUtil.success(countryService.updateCountry(country));
     }
 
@@ -49,7 +49,7 @@ public class CountryController extends BaseController {
     @ApiOperation(value = "启用禁用国家")
     @PostMapping("banCountry")
     public BaseResponse banCountry(@RequestBody @ApiParam CountryDTO country) {
-        country.setModifier(this.getUserName());
+        country.setModifier(this.getUserName().getUsername());
         return ResultUtil.success(countryService.banCountry(country));
     }
 

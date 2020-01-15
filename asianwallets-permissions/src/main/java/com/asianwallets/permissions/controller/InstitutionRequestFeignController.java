@@ -35,7 +35,7 @@ public class InstitutionRequestFeignController extends BaseController {
     @PostMapping("/addInstitutionRequest")
     public BaseResponse addInstitutionRequest(@RequestBody @ApiParam List<InstitutionRequestDTO> institutionRequestDTO){
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(institutionRequestDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(institutionRequestDTO),
                 "添加机构请求参数设置"));
         return institutionRequestFeign.addInstitutionRequest(institutionRequestDTO);
     }
@@ -45,7 +45,7 @@ public class InstitutionRequestFeignController extends BaseController {
     @PostMapping("/pageInstitutionRequest")
     public BaseResponse pageInstitutionRequest(@RequestBody @ApiParam InstitutionRequestDTO institutionRequestDTO){
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionRequestDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionRequestDTO),
                 "分页查询机构请求参数设置"));
         return institutionRequestFeign.pageInstitutionRequest(institutionRequestDTO);
     }
@@ -54,7 +54,7 @@ public class InstitutionRequestFeignController extends BaseController {
     @PostMapping(value = "/getInstitutionRequest")
     public BaseResponse getInstitutionRequest(@RequestBody @ApiParam InstitutionRequestDTO institutionRequestDTO){
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionRequestDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionRequestDTO),
                 "根据机构编号查询机构请求参数设置的详情"));
         return institutionRequestFeign.getInstitutionRequest(institutionRequestDTO);
     }
@@ -64,7 +64,7 @@ public class InstitutionRequestFeignController extends BaseController {
     @PostMapping("/updateInstitutionRequest")
     public BaseResponse updateInstitutionRequest(@RequestBody @ApiParam List<InstitutionRequestDTO> institutionRequestDTO){
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(institutionRequestDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(institutionRequestDTO),
                 "修改机构请求参数设置"));
         return institutionRequestFeign.updateInstitutionRequest(institutionRequestDTO);
     }

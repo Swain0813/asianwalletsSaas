@@ -32,39 +32,39 @@ public class SysMenuController extends BaseController {
     @ApiOperation(value = "添加一二三级菜单权限信息")
     @PostMapping("/addThreeLayerMenu")
     public BaseResponse addThreeLayerMenu(@RequestBody @ApiParam FirstMenuDto firstMenuDto) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(firstMenuDto),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(firstMenuDto),
                 "添加一二三级菜单权限信息"));
-        return ResultUtil.success(sysMenuService.addThreeLayerMenu(this.getUserName(), firstMenuDto));
+        return ResultUtil.success(sysMenuService.addThreeLayerMenu(this.getUserName().getUsername(), firstMenuDto));
     }
 
     @ApiOperation(value = "添加二三级菜单权限信息")
     @PostMapping("/addTwoLayerMenu")
     public BaseResponse addTwoLayerMenu(@RequestBody @ApiParam SecondMenuDto secondMenuDto) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(secondMenuDto),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(secondMenuDto),
                 "添加二三级菜单权限信息"));
-        return ResultUtil.success(sysMenuService.addTwoLayerMenu(this.getUserName(), secondMenuDto));
+        return ResultUtil.success(sysMenuService.addTwoLayerMenu(this.getUserName().getUsername(), secondMenuDto));
     }
 
     @ApiOperation(value = "添加三级菜单权限信息")
     @PostMapping("/addOneLayerMenu")
     public BaseResponse addOneLayerMenu(@RequestBody @ApiParam ThreeMenuDto threeMenuDto) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(threeMenuDto),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(threeMenuDto),
                 "添加三级菜单权限信息"));
-        return ResultUtil.success(sysMenuService.addOneLayerMenu(this.getUserName(), threeMenuDto));
+        return ResultUtil.success(sysMenuService.addOneLayerMenu(this.getUserName().getUsername(), threeMenuDto));
     }
 
     @ApiOperation(value = "添加菜单权限信息")
     @PostMapping("/addMenu")
     public BaseResponse addMenu(@RequestBody @ApiParam SysMenuDto sysMenuDto) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(sysMenuDto),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysMenuDto),
                 "添加菜单权限信息"));
-        return ResultUtil.success(sysMenuService.addMenu(this.getUserName(), sysMenuDto));
+        return ResultUtil.success(sysMenuService.addMenu(this.getUserName().getUsername(), sysMenuDto));
     }
 
     @ApiOperation(value = "删除权限信息")
     @GetMapping("/deleteMenu")
     public BaseResponse deleteMenu(@RequestParam @ApiParam String menuId) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.DELETE, JSON.toJSONString(menuId),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.DELETE, JSON.toJSONString(menuId),
                 "删除权限信息"));
         return ResultUtil.success(sysMenuService.deleteMenu(menuId));
     }
@@ -72,16 +72,16 @@ public class SysMenuController extends BaseController {
     @ApiOperation(value = "修改权限信息")
     @PostMapping("/updateMenu")
     public BaseResponse updateMenu(@RequestBody @ApiParam SysMenuDto sysMenuDto) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(sysMenuDto),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(sysMenuDto),
                 "修改权限信息"));
-        return ResultUtil.success(sysMenuService.updateMenu(this.getUserName(), sysMenuDto));
+        return ResultUtil.success(sysMenuService.updateMenu(this.getUserName().getUsername(), sysMenuDto));
     }
 
     @ApiOperation(value = "查询用户所有权限信息(userId可不传)")
     @GetMapping("/getAllMenuByUserId")
     public BaseResponse getAllMenuByUserId(@RequestParam(value = "userId", required = false) @ApiParam String userId,
                                            @RequestParam("permissionType") @ApiParam Integer permissionType) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSONObject.toJSONString(getRequest().getParameterMap()),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(getRequest().getParameterMap()),
                 "查询用户所有权限信息"));
         return ResultUtil.success(sysMenuService.getAllMenuByUserId(userId, permissionType));
     }
@@ -90,7 +90,7 @@ public class SysMenuController extends BaseController {
     @GetMapping("/getAllMenuByRoleId")
     public BaseResponse getAllMenuByRoleId(@RequestParam(value = "roleId", required = false) @ApiParam String roleId,
                                            @RequestParam("permissionType") @ApiParam Integer permissionType) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSONObject.toJSONString(getRequest().getParameterMap()),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(getRequest().getParameterMap()),
                 "查询角色所有权限信息"));
         return ResultUtil.success(sysMenuService.getAllMenuByRoleId(roleId, permissionType));
     }
@@ -105,7 +105,7 @@ public class SysMenuController extends BaseController {
     @ApiOperation(value = "修改机构,商户,代理,pos权限")
     @PostMapping("/updateInsPermission")
     public BaseResponse updateInsPermission(@RequestBody @ApiParam UpdateInsPermissionDto updateInsPermissionDto) {
-        return ResultUtil.success(sysMenuService.updateInsPermission(this.getUserName(), updateInsPermissionDto));
+        return ResultUtil.success(sysMenuService.updateInsPermission(this.getUserName().getUsername(), updateInsPermissionDto));
     }
 
     @ApiOperation(value = "查询机构,商户,代理,pos权限")

@@ -24,13 +24,13 @@ public class BankCardController extends BaseController {
     @ApiOperation(value = "添加银行卡信息")
     @PostMapping("/addBankCard")
     public BaseResponse addBankCard(@RequestBody @ApiParam List<BankCardDTO> bankCardDTO) {
-        return ResultUtil.success(bankCardService.addBankCard(this.getUserName(), bankCardDTO));
+        return ResultUtil.success(bankCardService.addBankCard(this.getUserName().getUsername(), bankCardDTO));
     }
 
     @ApiOperation(value = "修改银行卡信息")
     @PostMapping("/updateBankCard")
     public BaseResponse updateBankCard(@RequestBody @ApiParam BankCardDTO bankCardDTO) {
-        return ResultUtil.success(bankCardService.updateBankCard(this.getUserName(), bankCardDTO));
+        return ResultUtil.success(bankCardService.updateBankCard(this.getUserName().getUsername(), bankCardDTO));
     }
 
     @ApiOperation(value = "根据商户id查询银行卡")
@@ -48,13 +48,13 @@ public class BankCardController extends BaseController {
     @ApiOperation(value = "启用禁用银行卡")
     @GetMapping("/banBankCard")
     public BaseResponse banBankCard(@RequestParam @ApiParam String bankCardId, @RequestParam @ApiParam Boolean enabled) {
-        return ResultUtil.success(bankCardService.banBankCard(this.getUserName(), bankCardId, enabled));
+        return ResultUtil.success(bankCardService.banBankCard(this.getUserName().getUsername(), bankCardId, enabled));
     }
 
     @ApiOperation(value = "设置默认银行卡")
     @GetMapping("/defaultBankCard")
     public BaseResponse defaultBankCard(@RequestParam @ApiParam String bankCardId, @RequestParam @ApiParam Boolean defaultFlag) {
-        return ResultUtil.success(bankCardService.defaultBankCard(this.getUserName(), bankCardId, defaultFlag));
+        return ResultUtil.success(bankCardService.defaultBankCard(this.getUserName().getUsername(), bankCardId, defaultFlag));
     }
 
 

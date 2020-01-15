@@ -40,7 +40,7 @@ public class HolidaysFeignController extends BaseController {
     @PostMapping("addHolidays")
     public BaseResponse addHolidays(@RequestBody @ApiParam HolidaysDTO holidaysDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(holidaysDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(holidaysDTO),
                 "添加节假日信息"));
         return holidaysFeign.addHolidays(holidaysDTO);
     }
@@ -50,7 +50,7 @@ public class HolidaysFeignController extends BaseController {
     @PostMapping("banHolidays")
     public BaseResponse updateHolidays(@RequestBody @ApiParam HolidaysDTO holidaysDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(holidaysDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(holidaysDTO),
                 "禁用节假日信息"));
         return holidaysFeign.banHolidays(holidaysDTO);
     }
@@ -59,7 +59,7 @@ public class HolidaysFeignController extends BaseController {
     @PostMapping("getByMultipleConditions")
     public BaseResponse getByMultipleConditions(@RequestBody @ApiParam HolidaysDTO holidaysDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(holidaysDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(holidaysDTO),
                 "分页多条件查询节假日信息"));
         return holidaysFeign.getByMultipleConditions(holidaysDTO);
     }
@@ -69,12 +69,12 @@ public class HolidaysFeignController extends BaseController {
     @PostMapping("uploadFiles")
     public BaseResponse uploadFiles(@RequestParam("file") @ApiParam MultipartFile file) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.ADD, null,
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, null,
                 "导入节假日信息"));
         MultipartConfigFactory factory = new MultipartConfigFactory();
         factory.setLocation(tmpfile);//指定临时文件路径，这个路径可以随便写
         factory.createMultipartConfig();
-        return holidaysFeign.uploadFiles(holidayFeignService.uploadFiles(file, this.getUserName()));
+        return holidaysFeign.uploadFiles(holidayFeignService.uploadFiles(file, this.getUserName().getUsername()));
     }
 
 

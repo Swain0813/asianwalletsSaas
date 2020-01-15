@@ -50,7 +50,7 @@ public class ReportFeignController extends BaseController {
     @ApiOperation(value = "DCC报表查询")
     @PostMapping("getDccReport")
     public BaseResponse getDccReport(@RequestBody @ApiParam DccReportDTO dccReportDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(dccReportDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(dccReportDTO),
                 "DCC报表查询"));
         return reportFeign.getDccReport(dccReportDTO);
     }
@@ -58,7 +58,7 @@ public class ReportFeignController extends BaseController {
     @ApiOperation(value = "DCC报表导出")
     @PostMapping("/exportDccReport")
     public BaseResponse exportDccReport(@RequestBody @ApiParam DccReportDTO dccReportDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(dccReportDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(dccReportDTO),
                 "DCC报表导出"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
@@ -86,7 +86,7 @@ public class ReportFeignController extends BaseController {
     @ApiOperation(value = "分页查询机构日交易汇总表")
     @PostMapping("/pageFindInsDailyTrade")
     public BaseResponse pageFindInsDailyTrade(@RequestBody @ApiParam OrdersDTO ordersDTO) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
                 "分页查询机构日交易汇总表"));
         return reportFeign.pageFindInsDailyTrade(ordersDTO);
     }
@@ -94,7 +94,7 @@ public class ReportFeignController extends BaseController {
     @ApiOperation(value = "导出机构日交易汇总表")
     @PostMapping("/exportInsDailyTrade")
     public BaseResponse exportInsDailyTrade(@RequestBody @ApiParam OrdersDTO ordersDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
                 "导出机构日交易汇总表"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {

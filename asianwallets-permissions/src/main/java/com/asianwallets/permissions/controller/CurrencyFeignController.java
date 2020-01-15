@@ -52,7 +52,7 @@ public class CurrencyFeignController extends BaseController {
     @ApiOperation(value = "新增币种")
     @PostMapping("addCurrency")
     public BaseResponse addCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(currencyDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(currencyDTO),
                 "新增币种"));
         return ResultUtil.success(currencyFeign.addCurrency(currencyDTO));
     }
@@ -60,7 +60,7 @@ public class CurrencyFeignController extends BaseController {
     @ApiOperation(value = "修改币种")
     @PostMapping("updateCurrency")
     public BaseResponse updateCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(currencyDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(currencyDTO),
                 "修改币种"));
         return ResultUtil.success(currencyFeign.updateCurrency(currencyDTO));
     }
@@ -68,7 +68,7 @@ public class CurrencyFeignController extends BaseController {
     @ApiOperation(value = "查询币种")
     @PostMapping("pageCurrency")
     public BaseResponse pageCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(currencyDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(currencyDTO),
                 "查询币种"));
         return ResultUtil.success(currencyFeign.pageCurrency(currencyDTO));
     }
@@ -76,7 +76,7 @@ public class CurrencyFeignController extends BaseController {
     @ApiOperation(value = "启用禁用币种")
     @PostMapping("banCurrency")
     public BaseResponse banDeviceVendor(@RequestBody @ApiParam CurrencyDTO currencyDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(currencyDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(currencyDTO),
                 "启用禁用币种"));
         return ResultUtil.success(currencyFeign.banCurrency(currencyDTO));
     }
@@ -84,7 +84,7 @@ public class CurrencyFeignController extends BaseController {
     @ApiOperation(value = "查询所有币种")
     @GetMapping("inquireAllCurrency")
     public BaseResponse inquireAllCurrency() {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, null,
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, null,
                 "查询所有币种"));
         return ResultUtil.success(currencyFeign.inquireAllCurrency());
     }
@@ -92,7 +92,7 @@ public class CurrencyFeignController extends BaseController {
     @ApiOperation(value = "导出币种信息")
     @PostMapping("/exportCurrency")
     public BaseResponse exportCurrency(@RequestBody @ApiParam CurrencyDTO currencyDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(currencyDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(currencyDTO),
                 "导出币种信息"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {

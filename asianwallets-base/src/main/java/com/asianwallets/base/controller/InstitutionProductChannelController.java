@@ -28,13 +28,13 @@ public class InstitutionProductChannelController extends BaseController {
     @ApiOperation(value = "新增机构关联产品通道信息")
     @PostMapping("/addInsProCha")
     public BaseResponse addInstitutionProductChannel(@RequestBody @ApiParam List<InstitutionProductChannelDTO> institutionProductChannelDTOList) {
-        return ResultUtil.success(institutionProductChannelService.addInstitutionProductChannel(this.getUserName(), institutionProductChannelDTOList));
+        return ResultUtil.success(institutionProductChannelService.addInstitutionProductChannel(this.getUserName().getUsername(), institutionProductChannelDTOList));
     }
 
     @ApiOperation(value = "修改机构关联产品通道信息")
     @PostMapping("/updateInsProCha")
     public BaseResponse updateInsProChaByInsId(@RequestBody @ApiParam List<InstitutionProductChannelDTO> institutionProductChannelDTOList) {
-        return ResultUtil.success(institutionProductChannelService.updateInsProChaByInsId(this.getUserName(), institutionProductChannelDTOList));
+        return ResultUtil.success(institutionProductChannelService.updateInsProChaByInsId(this.getUserName().getUsername(), institutionProductChannelDTOList));
     }
 
     @ApiOperation(value = "根据机构ID查询机构关联产品通道信息")

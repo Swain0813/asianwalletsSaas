@@ -25,14 +25,14 @@ public class InstitutionController extends BaseController {
     @ApiOperation(value = "添加机构")
     @PostMapping("addInstitution")
     public BaseResponse addInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
-        return ResultUtil.success(institutionService.addInstitution(this.getUserName(), institutionDTO));
+        return ResultUtil.success(institutionService.addInstitution(this.getUserName().getUsername(), institutionDTO));
     }
 
 
     @ApiOperation(value = "修改机构")
     @PostMapping("updateInstitution")
     public BaseResponse updateInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
-        return ResultUtil.success(institutionService.updateInstitution(this.getUserName(), institutionDTO));
+        return ResultUtil.success(institutionService.updateInstitution(this.getUserName().getUsername(), institutionDTO));
     }
 
     @ApiOperation(value = "分页查询机构信息列表")
@@ -70,7 +70,7 @@ public class InstitutionController extends BaseController {
     @ApiOperation(value = "审核机构信息接口")
     @GetMapping("/auditInstitution")
     public BaseResponse auditInstitution(@RequestParam @ApiParam String institutionId, @RequestParam @ApiParam Boolean enabled, @RequestParam(required = false) @ApiParam String remark) {
-        return ResultUtil.success(institutionService.auditInstitution(this.getUserName(), institutionId, enabled, remark));
+        return ResultUtil.success(institutionService.auditInstitution(this.getUserName().getUsername(), institutionId, enabled, remark));
     }
 
     @ApiOperation(value = "机构下拉框")
@@ -82,7 +82,7 @@ public class InstitutionController extends BaseController {
     @ApiOperation(value = "禁用启用机构")
     @GetMapping("/banInstitution")
     public BaseResponse banInstitution(@RequestParam @ApiParam String institutionId, @RequestParam @ApiParam Boolean enabled) {
-        return ResultUtil.success(institutionService.banInstitution(this.getUserName(), institutionId, enabled));
+        return ResultUtil.success(institutionService.banInstitution(this.getUserName().getUsername(), institutionId, enabled));
     }
 
 
