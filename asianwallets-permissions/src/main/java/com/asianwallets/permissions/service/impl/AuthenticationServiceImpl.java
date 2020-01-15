@@ -10,6 +10,7 @@ import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.*;
+import com.asianwallets.common.vo.OfflineSysUserVO;
 import com.asianwallets.common.vo.SysMenuVO;
 import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
@@ -286,7 +287,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setMd5Key(getPosMd5Key(request.getSysId()));
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
-            redisService.set(response.getToken(), JSON.toJSONString(sysUserVO));
+            OfflineSysUserVO offlineSysUserVO = new OfflineSysUserVO();
+            offlineSysUserVO.setUsername(username);
+            offlineSysUserVO.setTradePassword(sysUserVO.getTradePassword());
+            redisService.set(response.getToken(), JSON.toJSONString(offlineSysUserVO));
         }
         return response;
     }

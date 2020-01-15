@@ -1,5 +1,6 @@
 package com.asianwallets.trade.controller;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RefundDTO;
@@ -9,6 +10,7 @@ import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.vo.OfflineSysUserVO;
 import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.service.RefundTradeService;
@@ -47,7 +49,7 @@ public class RefundTradeController extends BaseController {
             if (StringUtils.isEmpty(refundDTO.getToken())) {
                 throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
             }
-            SysUserVO sysUserVO = JSON.parseObject(redisService.get(refundDTO.getToken()), SysUserVO.class);
+            OfflineSysUserVO sysUserVO = JSON.parseObject(redisService.get(refundDTO.getToken()),OfflineSysUserVO.class);
             if (sysUserVO == null) {
                 throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
             }
