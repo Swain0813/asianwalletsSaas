@@ -34,7 +34,7 @@ public class AttestationFeignController extends BaseController {
     @ApiOperation(value = "生成RSA公私钥")
     @GetMapping("/getRSA")
     public BaseResponse getRSA() {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, null,
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, null,
                 "生成RSA公私钥"));
         return attestationFeign.getRSA();
     }
@@ -42,7 +42,7 @@ public class AttestationFeignController extends BaseController {
     @ApiOperation(value = "查询商户公钥")
     @PostMapping("/pageKeyInfo")
     public BaseResponse pageKeyInfo(@RequestBody @ApiParam AttestationDTO attestationDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(attestationDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(attestationDTO),
                 "查询商户公钥"));
         return attestationFeign.pageKeyInfo(attestationDTO);
     }
@@ -50,7 +50,7 @@ public class AttestationFeignController extends BaseController {
     @ApiOperation(value = "修改密钥信息")
     @PostMapping("/updateKeyInfo")
     public BaseResponse updateKeyInfo(@RequestBody @ApiParam AttestationDTO attestationDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(attestationDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(attestationDTO),
                 "修改密钥信息"));
         return attestationFeign.updateKeyInfo(attestationDTO);
     }

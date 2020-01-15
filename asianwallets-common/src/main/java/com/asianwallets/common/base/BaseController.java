@@ -88,13 +88,13 @@ public class BaseController {
      *
      * @return
      */
-    public SysUserVO getSysUserVO() {
+    public String getUserName() {
         HttpServletRequest request = getRequest();
         String token = request.getHeader(AsianWalletConstant.tokenHeader);
         if (redisService.get(token) == null) {
             throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
         }
-        return JSON.parseObject(redisService.get(token), SysUserVO.class);
+        return redisService.get(token);
     }
 
     /**
