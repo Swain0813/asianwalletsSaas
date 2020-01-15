@@ -27,21 +27,21 @@ public class DeviceModelController extends BaseController {
     @ApiOperation(value = "新增设备型号")
     @PostMapping("/addDeviceModel")
     public BaseResponse addDeviceModel(@RequestBody @ApiParam DeviceModelDTO deviceModelDTO) {
-        deviceModelDTO.setCreator(this.getUserName().getUsername());
+        deviceModelDTO.setCreator(this.getSysUserVO().getUsername());
         return ResultUtil.success(deviceModelService.addDeviceModel(deviceModelDTO));
     }
 
     @ApiOperation(value = "启用禁用设备型号")
     @PostMapping("/banDeviceModel")
     public BaseResponse banDeviceModel(@RequestBody @ApiParam DeviceModelDTO deviceModelDTO) {
-        deviceModelDTO.setModifier(this.getUserName().getUsername());
+        deviceModelDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(deviceModelService.banDeviceModel(deviceModelDTO));
     }
 
     @ApiOperation(value = "修改设备型号信息")
     @PostMapping("/updateDeviceModel")
     public BaseResponse updateDeviceModel(@RequestBody @ApiParam DeviceModelDTO deviceModelDTO) {
-        deviceModelDTO.setModifier(this.getUserName().getUsername());
+        deviceModelDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(deviceModelService.updateDeviceModel(deviceModelDTO));
     }
 

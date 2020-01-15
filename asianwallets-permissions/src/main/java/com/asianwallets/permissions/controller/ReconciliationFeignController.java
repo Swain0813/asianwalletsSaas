@@ -39,7 +39,7 @@ public class ReconciliationFeignController extends BaseController {
     @ApiOperation(value = "分页查询调账单")
     @PostMapping("/pageReconciliation")
     public BaseResponse pageReconciliation(@RequestBody @ApiParam ReconciliationDTO reconciliationDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(reconciliationDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(reconciliationDTO),
                 "分页查询调账单"));
         return reconciliationFeign.pageReconciliation(reconciliationDTO);
     }
@@ -47,7 +47,7 @@ public class ReconciliationFeignController extends BaseController {
     @ApiOperation(value = "分页查询审核调账单")
     @PostMapping("/pageReviewReconciliation")
     public BaseResponse pageReviewReconciliation(@RequestBody @ApiParam ReconciliationDTO reconciliationDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(reconciliationDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(reconciliationDTO),
                 "分页查询审核调账单"));
         return reconciliationFeign.pageReviewReconciliation(reconciliationDTO);
     }
@@ -55,7 +55,7 @@ public class ReconciliationFeignController extends BaseController {
     @ApiOperation(value = "资金变动操作")
     @PostMapping("/doReconciliation")
     public BaseResponse doReconciliation(@RequestBody @ApiParam @Valid ReconOperDTO reconOperDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(reconOperDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(reconOperDTO),
                 "资金变动操作"));
         return reconciliationFeign.doReconciliation(reconOperDTO);
     }
@@ -64,9 +64,9 @@ public class ReconciliationFeignController extends BaseController {
     @GetMapping("/auditReconciliation")
     public BaseResponse auditReconciliation(@RequestParam @ApiParam String reconciliationId, @RequestParam @ApiParam boolean enabled,
                                             @RequestParam(required = false) @ApiParam String remark, @RequestParam @ApiParam String tradePwd) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(this.getRequest().getParameterMap()),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(this.getRequest().getParameterMap()),
                 "资金变动审核"));
-        RedisSysUserVO sysUserVO = this.getUserName();
+        RedisSysUserVO sysUserVO = this.getSysUserVO();
         if (!sysUserService.checkPassword(sysUserService.decryptPassword(tradePwd), sysUserVO.getTradePassword())) {
             throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
         }
@@ -76,7 +76,7 @@ public class ReconciliationFeignController extends BaseController {
     @ApiOperation(value = "查询可用余额")
     @PostMapping("/getAvailableBalance")
     public BaseResponse getAvailableBalance(@RequestBody @ApiParam @Valid SearchAvaBalDTO searchAvaBalDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(searchAvaBalDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(searchAvaBalDTO),
                 "查询可用余额"));
         return reconciliationFeign.getAvailableBalance(searchAvaBalDTO);
     }

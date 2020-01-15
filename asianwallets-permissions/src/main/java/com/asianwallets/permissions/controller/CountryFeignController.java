@@ -36,7 +36,7 @@ public class CountryFeignController extends BaseController {
     @ApiOperation(value = "新增国家")
     @PostMapping("addCountry")
     public BaseResponse addCountry(@RequestBody @ApiParam CountryDTO country) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(country),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(country),
                 "新增国家"));
         return ResultUtil.success(countryFeign.addCountry(country));
     }
@@ -44,7 +44,7 @@ public class CountryFeignController extends BaseController {
     @ApiOperation(value = "修改国家")
     @PostMapping("updateCountry")
     public BaseResponse updateCountry(@RequestBody @ApiParam CountryDTO country) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(country),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(country),
                 "修改国家"));
         return ResultUtil.success(countryFeign.updateCountry(country));
     }
@@ -52,7 +52,7 @@ public class CountryFeignController extends BaseController {
     @ApiOperation(value = "查询国家")
     @PostMapping("pageCountry")
     public BaseResponse pageCountry(@RequestBody @ApiParam CountryDTO country) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(country),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(country),
                 "查询国家"));
         return ResultUtil.success(countryFeign.pageCountry(country));
     }
@@ -60,7 +60,7 @@ public class CountryFeignController extends BaseController {
     @ApiOperation(value = "启用禁用国家")
     @PostMapping("banCountry")
     public BaseResponse banCountry(@RequestBody @ApiParam CountryDTO country) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(country),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(country),
                 "启用禁用国家"));
         return ResultUtil.success(countryFeign.banCountry(country));
     }
@@ -68,7 +68,7 @@ public class CountryFeignController extends BaseController {
     @ApiOperation(value = "查询所有国家地区")
     @GetMapping("inquireAllCountry")
     public BaseResponse inquireAllCountry() {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, null,
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, null,
                 "查询所有国家地区"));
         return ResultUtil.success(countryFeign.inquireAllCountry());
     }

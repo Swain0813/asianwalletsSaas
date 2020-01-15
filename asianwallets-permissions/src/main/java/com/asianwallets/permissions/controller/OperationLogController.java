@@ -31,7 +31,7 @@ public class OperationLogController extends BaseController {
     @PostMapping("/pageOperationLog")
     public BaseResponse pageOperationLog(@RequestBody @ApiParam OperationLogDTO operationLogDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(operationLogDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(operationLogDTO),
                 "查询所有操作日志"));
         return ResultUtil.success(operationLogService.pageOperationLog(operationLogDTO));
     }

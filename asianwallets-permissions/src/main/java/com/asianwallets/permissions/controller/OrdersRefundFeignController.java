@@ -46,7 +46,7 @@ public class OrdersRefundFeignController extends BaseController {
     @ApiOperation(value = "分页查询退款订单信息")
     @PostMapping("pageFindOrdersRefund")
     public BaseResponse pageFindOrdersRefund(@RequestBody @ApiParam OrdersRefundDTO ordersRefundDTO) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersRefundDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersRefundDTO),
                 "分页查询退款订单信息"));
         return ordersRefundFeign.pageFindOrdersRefund(ordersRefundDTO);
     }
@@ -54,7 +54,7 @@ public class OrdersRefundFeignController extends BaseController {
     @ApiOperation(value = "查询退款订单详情信息")
     @GetMapping("getOrdersRefundDetail")
     public BaseResponse getOrdersRefundDetail(@RequestParam("refundId") @ApiParam String refundId) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(refundId),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(refundId),
                 "查询退款订单详情信息"));
         return ordersRefundFeign.getOrdersRefundDetail(refundId);
     }
@@ -62,7 +62,7 @@ public class OrdersRefundFeignController extends BaseController {
     @ApiOperation(value = "导出退款")
     @PostMapping("exportOrdersRefund")
     public BaseResponse exportOrdersRefund(@RequestBody @ApiParam OrdersRefundDTO ordersRefundDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(),
                 AsianWalletConstant.SELECT, JSON.toJSONString(ordersRefundDTO),
                 "导出退款"));
         ExcelWriter writer = ExcelUtil.getBigWriter();

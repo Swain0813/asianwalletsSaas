@@ -35,7 +35,7 @@ public class MerchantReportController extends BaseController {
     @ApiOperation(value = "新增报备信息")
     @PostMapping("addReport")
     public BaseResponse addReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
-        merchantReportDTO.setCreator(this.getUserName().getUsername());
+        merchantReportDTO.setCreator(this.getSysUserVO().getUsername());
         return ResultUtil.success(merchantReportService.addReport(merchantReportDTO));
     }
 
@@ -48,14 +48,14 @@ public class MerchantReportController extends BaseController {
     @ApiOperation(value = "修改报备信息")
     @PostMapping("updateReport")
     public BaseResponse updateReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
-        merchantReportDTO.setModifier(this.getUserName().getUsername());
+        merchantReportDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(merchantReportService.updateReport(merchantReportDTO));
     }
 
     @ApiOperation(value = "启用禁用Report")
     @PostMapping("banReport")
     public BaseResponse banReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
-        merchantReportDTO.setModifier(this.getUserName().getUsername());
+        merchantReportDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(merchantReportService.banReport(merchantReportDTO));
     }
 

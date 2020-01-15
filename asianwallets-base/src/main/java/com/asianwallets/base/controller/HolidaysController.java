@@ -35,13 +35,13 @@ public class HolidaysController extends BaseController {
     @ApiOperation(value = "添加节假日信息")
     @PostMapping("addHolidays")
     public BaseResponse addHolidays(@RequestBody @ApiParam HolidaysDTO holidaysDTO) {
-        return ResultUtil.success(holidaysService.addHolidays(holidaysDTO, this.getUserName().getUsername()));
+        return ResultUtil.success(holidaysService.addHolidays(holidaysDTO, this.getSysUserVO().getUsername()));
     }
 
     @ApiOperation(value = "禁用节假日信息")
     @PostMapping("banHolidays")
     public BaseResponse updateHolidays(@RequestBody @ApiParam HolidaysDTO holidaysDTO) {
-        return ResultUtil.success(holidaysService.banHolidays(holidaysDTO, this.getUserName().getUsername()));
+        return ResultUtil.success(holidaysService.banHolidays(holidaysDTO, this.getSysUserVO().getUsername()));
     }
 
     @ApiOperation(value = "导入节假日信息")

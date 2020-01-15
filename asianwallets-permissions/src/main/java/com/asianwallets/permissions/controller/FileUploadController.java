@@ -40,7 +40,7 @@ public class FileUploadController extends BaseController {
     @PostMapping("/image")
     public BaseResponse uploadImage(@RequestParam(value = "file",required = false) @ApiParam MultipartFile file){
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, null,
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, null,
                 "图片上传"));
         MultipartConfigFactory factory = new MultipartConfigFactory();
         factory.setLocation(tmpfile);//指定临时文件路径，这个路径可以随便写

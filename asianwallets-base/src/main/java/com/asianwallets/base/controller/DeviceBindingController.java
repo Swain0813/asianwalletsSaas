@@ -32,14 +32,14 @@ public class DeviceBindingController extends BaseController {
     @ApiOperation(value = "新增设备绑定")
     @PostMapping("/addDeviceBinding")
     public BaseResponse addDeviceBinding(@RequestBody @ApiParam DeviceBindingDTO deviceBindingDTO) {
-        deviceBindingDTO.setCreator(this.getUserName().getUsername());
+        deviceBindingDTO.setCreator(this.getSysUserVO().getUsername());
         return ResultUtil.success(deviceBindingService.addDeviceBinding(deviceBindingDTO));
     }
 
     @ApiOperation(value = "解绑设备")
     @PostMapping("/banDeviceBinding")
     public BaseResponse banDeviceBinding(@RequestBody @ApiParam DeviceBindingDTO deviceBindingDTO) {
-        deviceBindingDTO.setModifier(this.getUserName().getUsername());
+        deviceBindingDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(deviceBindingService.banDeviceBinding(deviceBindingDTO));
     }
 

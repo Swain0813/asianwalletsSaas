@@ -89,7 +89,7 @@ public class BaseController {
      *
      * @return
      */
-    public RedisSysUserVO getUserName() {
+    public RedisSysUserVO getSysUserVO() {
         HttpServletRequest request = getRequest();
         String token = request.getHeader(AsianWalletConstant.tokenHeader);
         if (redisService.get(token) == null) {

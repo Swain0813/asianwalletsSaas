@@ -30,14 +30,14 @@ public class LanguageController extends BaseController {
     @ApiOperation(value = "添加语种")
     @PostMapping("/addLanguage")
     public BaseResponse addLanguage(@RequestBody @ApiParam LanguageDTO languageDTO) {
-        languageDTO.setCreator(this.getUserName().getUsername());
+        languageDTO.setCreator(this.getSysUserVO().getUsername());
         return ResultUtil.success(languageService.addLanguage(languageDTO));
     }
 
     @ApiOperation(value = "修改语种")
     @PostMapping("/updateLanguage")
     public BaseResponse updateLanguage(@RequestBody @ApiParam LanguageDTO languageDTO) {
-        languageDTO.setModifier(this.getUserName().getUsername());
+        languageDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(languageService.updateLanguage(languageDTO));
     }
 
@@ -56,6 +56,6 @@ public class LanguageController extends BaseController {
     @ApiOperation(value = "启用禁用语种")
     @PostMapping("/banLanguage")
     public BaseResponse banLanguage(@RequestBody @ApiParam LanguageDTO languageDTO) {
-        return ResultUtil.success(languageService.banLanguage(this.getUserName().getUsername(), languageDTO.getId(), languageDTO.getEnabled()));
+        return ResultUtil.success(languageService.banLanguage(this.getSysUserVO().getUsername(), languageDTO.getId(), languageDTO.getEnabled()));
     }
 }

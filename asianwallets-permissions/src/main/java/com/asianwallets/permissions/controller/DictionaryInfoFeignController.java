@@ -39,7 +39,7 @@ public class DictionaryInfoFeignController extends BaseController {
     @ApiOperation(value = "添加字典信息")
     @PostMapping("/addDictionaryInfo")
     public BaseResponse addDictionaryInfo(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(dictionaryInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(dictionaryInfoDTO),
                 "添加字典信息"));
         return dictionaryInfoFeign.addDictionaryInfo(dictionaryInfoDTO);
     }
@@ -47,7 +47,7 @@ public class DictionaryInfoFeignController extends BaseController {
     @ApiOperation(value = "启用禁用字典类型")
     @PostMapping("/banDictionaryType")
     public BaseResponse banDictionaryType(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(dictionaryInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(dictionaryInfoDTO),
                 "启用禁用字典类型"));
         return dictionaryInfoFeign.banDictionaryType(dictionaryInfoDTO);
     }
@@ -57,7 +57,7 @@ public class DictionaryInfoFeignController extends BaseController {
     @PostMapping("/addOtherLanguage")
     public BaseResponse addOtherLanguage(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
 
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(dictionaryInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(dictionaryInfoDTO),
                 "新增语言"));
         return dictionaryInfoFeign.addOtherLanguage(dictionaryInfoDTO);
     }
@@ -65,7 +65,7 @@ public class DictionaryInfoFeignController extends BaseController {
     @ApiOperation(value = "启用禁用字典数据")
     @PostMapping("/banDictionary")
     public BaseResponse banDictionary(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(dictionaryInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(dictionaryInfoDTO),
                 "启用禁用字典类型"));
         return dictionaryInfoFeign.banDictionary(dictionaryInfoDTO);
     }
@@ -73,7 +73,7 @@ public class DictionaryInfoFeignController extends BaseController {
     @ApiOperation(value = "修改字典类型索引")
     @PostMapping("/updateDictionaryType")
     public BaseResponse updateDictionaryType(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(dictionaryInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(dictionaryInfoDTO),
                 "修改字典类型索引"));
         return dictionaryInfoFeign.updateDictionaryType(dictionaryInfoDTO);
     }
@@ -81,7 +81,7 @@ public class DictionaryInfoFeignController extends BaseController {
     @ApiOperation(value = "修改字典数据")
     @PostMapping("/updateDictionary")
     public BaseResponse updateDictionary(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(dictionaryInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(dictionaryInfoDTO),
                 "修改字典数据"));
         return dictionaryInfoFeign.updateDictionary(dictionaryInfoDTO);
     }
@@ -89,7 +89,7 @@ public class DictionaryInfoFeignController extends BaseController {
     @ApiOperation(value = "根据id查询字典数据")
     @PostMapping("/getDictionaryInfo")
     public BaseResponse getDictionaryInfo(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(dictionaryInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(dictionaryInfoDTO),
                 "根据id查询字典数据"));
         return dictionaryInfoFeign.getDictionaryInfo(dictionaryInfoDTO);
     }
@@ -97,7 +97,7 @@ public class DictionaryInfoFeignController extends BaseController {
     @ApiOperation(value = "分页查询字典类型信息")
     @PostMapping("/pageDicTypeInfo")
     public BaseResponse pageDicTypeInfo(@RequestBody @ApiParam DictionaryInfoDTO dictionaryInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(dictionaryInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(dictionaryInfoDTO),
                 "分页查询字典类型信息"));
         return dictionaryInfoFeign.pageDicTypeInfo(dictionaryInfoDTO);
     }
@@ -105,7 +105,7 @@ public class DictionaryInfoFeignController extends BaseController {
     @ApiOperation(value = "查询全部数据字典信息")
     @PostMapping("/pageDictionaryInfos")
     public BaseResponse pageDictionaryInfos(@RequestBody @ApiParam DictionaryInfoAllDTO dictionaryInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(dictionaryInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(dictionaryInfoDTO),
                 "查询全部数据字典信息"));
         return dictionaryInfoFeign.pageDictionaryInfos(dictionaryInfoDTO);
     }

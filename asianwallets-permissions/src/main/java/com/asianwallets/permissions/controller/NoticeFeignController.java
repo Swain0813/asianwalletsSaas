@@ -36,7 +36,7 @@ public class NoticeFeignController extends BaseController {
     @PostMapping("/addNotice")
     public BaseResponse addNotice(@RequestBody @ApiParam NoticeDTO noticeDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(noticeDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(noticeDTO),
                 "添加公告信息"));
         return noticeFeign.addNotice(noticeDTO);
     }
@@ -45,7 +45,7 @@ public class NoticeFeignController extends BaseController {
     @PostMapping("/updateNotice")
     public BaseResponse updateNotice(@RequestBody @ApiParam NoticeDTO noticeDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(noticeDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(noticeDTO),
                 "修改公告信息"));
         return noticeFeign.updateNotice(noticeDTO);
     }
@@ -54,7 +54,7 @@ public class NoticeFeignController extends BaseController {
     @PostMapping("/pageNotice")
     public BaseResponse pageNotice(@RequestBody @ApiParam NoticeDTO noticeDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(noticeDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(noticeDTO),
                 "查询所有公告信息"));
         return noticeFeign.pageNotice(noticeDTO);
     }
@@ -63,7 +63,7 @@ public class NoticeFeignController extends BaseController {
     @PostMapping("/pageNoticeByLanguageAndCategory")
     public BaseResponse pageNoticeByLanguageAndCategory(@RequestBody @ApiParam NoticeDTO noticeDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(noticeDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(noticeDTO),
                 "根据公告类别,机构编号以及语言查询公告信息"));
         return noticeFeign.pageNoticeByLanguageAndCategory(noticeDTO);
     }

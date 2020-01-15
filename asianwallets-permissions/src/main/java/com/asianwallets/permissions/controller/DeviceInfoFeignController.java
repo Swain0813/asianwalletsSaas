@@ -61,7 +61,7 @@ public class DeviceInfoFeignController extends BaseController {
     @ApiOperation(value = "新增设备信息")
     @PostMapping("/addDeviceInfo")
     public BaseResponse addDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(deviceInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(deviceInfoDTO),
                 "新增设备信息"));
         return deviceInfoFeign.addDeviceInfo(deviceInfoDTO);
     }
@@ -69,7 +69,7 @@ public class DeviceInfoFeignController extends BaseController {
     @ApiOperation(value = "启用禁用设备信息")
     @PostMapping("/banDeviceInfo")
     public BaseResponse banDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceInfoDTO),
                 "启用禁用设备信息"));
         return deviceInfoFeign.banDeviceInfo(deviceInfoDTO);
     }
@@ -77,7 +77,7 @@ public class DeviceInfoFeignController extends BaseController {
     @ApiOperation(value = "修改设备信息")
     @PostMapping("/updateDeviceInfo")
     public BaseResponse updateDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceInfoDTO),
                 "修改设备信息"));
         return deviceInfoFeign.updateDeviceInfo(deviceInfoDTO);
     }
@@ -85,7 +85,7 @@ public class DeviceInfoFeignController extends BaseController {
     @ApiOperation(value = "查询设备信息")
     @PostMapping("/pageDeviceInfo")
     public BaseResponse pageDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(deviceInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(deviceInfoDTO),
                 "查询设备信息"));
         return deviceInfoFeign.pageDeviceInfo(deviceInfoDTO);
     }
@@ -93,18 +93,18 @@ public class DeviceInfoFeignController extends BaseController {
     @ApiOperation(value = "导入设备信息")
     @PostMapping("/uploadDeviceInfo")
     public BaseResponse uploadDeviceInfo(@RequestParam("file") @ApiParam MultipartFile file) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, null,
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, null,
                 "导入设备信息"));
         MultipartConfigFactory factory = new MultipartConfigFactory();
         factory.setLocation(tmpfile);//指定临时文件路径，这个路径可以随便写
         factory.createMultipartConfig();
-        return deviceInfoFeign.uploadDeviceInfo(deviceInfoFeignService.uploadDeviceInfo(file, this.getUserName().getUsername()));
+        return deviceInfoFeign.uploadDeviceInfo(deviceInfoFeignService.uploadDeviceInfo(file, this.getSysUserVO().getUsername()));
     }
 
     @ApiOperation(value = "导出设备信息")
     @PostMapping("/exportDeviceInfo")
     public BaseResponse exportDeviceInfo(@RequestBody @ApiParam DeviceInfoDTO deviceInfoDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(deviceInfoDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(deviceInfoDTO),
                 "导出设备信息"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {

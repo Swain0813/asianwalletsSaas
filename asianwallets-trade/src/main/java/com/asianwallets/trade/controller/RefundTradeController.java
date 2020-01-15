@@ -71,7 +71,7 @@ public class RefundTradeController extends BaseController {
     @ApiOperation(value = "人工退款接口")
     @GetMapping("artificialRefund")
     public BaseResponse artificialRefund(@RequestParam @ApiParam String refundOrderId, Boolean enabled, String remark) {
-        BaseResponse baseResponse = refundTradeService.artificialRefund(this.getUserName().getUsername(), refundOrderId, enabled, remark);
+        BaseResponse baseResponse = refundTradeService.artificialRefund(this.getSysUserVO().getUsername(), refundOrderId, enabled, remark);
         return ResultUtil.success(baseResponse);
     }
 

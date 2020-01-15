@@ -32,23 +32,23 @@ public class SysRoleController extends BaseController {
     @ApiOperation(value = "添加角色权限信息")
     @PostMapping("/addSysRole")
     public BaseResponse addSysRole(@RequestBody @ApiParam SysRoleMenuDto sysRoleMenuDto) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysRoleMenuDto),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sysRoleMenuDto),
                 "添加角色权限信息"));
-        return ResultUtil.success(sysRoleService.addSysRole(this.getUserName().getUsername(), sysRoleMenuDto));
+        return ResultUtil.success(sysRoleService.addSysRole(this.getSysUserVO().getUsername(), sysRoleMenuDto));
     }
 
     @ApiOperation(value = "修改角色权限信息")
     @PostMapping("/updateSysRole")
     public BaseResponse updateSysRole(@RequestBody @ApiParam SysRoleMenuDto sysRoleMenuDto) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(sysRoleMenuDto),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(sysRoleMenuDto),
                 "修改角色权限信息"));
-        return ResultUtil.success(sysRoleService.updateSysRole(this.getUserName().getUsername(), sysRoleMenuDto));
+        return ResultUtil.success(sysRoleService.updateSysRole(this.getSysUserVO().getUsername(), sysRoleMenuDto));
     }
 
     @ApiOperation(value = "分页查询角色信息")
     @PostMapping("/pageGetSysRole")
     public BaseResponse pageGetSysRole(@RequestBody @ApiParam SysRoleDto sysRoleDto) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(sysRoleDto),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(sysRoleDto),
                 "分页查询角色信息"));
         return ResultUtil.success(sysRoleService.pageGetSysRole(sysRoleDto));
     }
@@ -56,9 +56,9 @@ public class SysRoleController extends BaseController {
     @ApiOperation(value = "禁用/启用角色")
     @PostMapping("/banRole")
     public BaseResponse banRole(@RequestBody @ApiParam SysRoleDto sysRoleDto) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(sysRoleDto),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(sysRoleDto),
                 "禁用/启用角色"));
-        return ResultUtil.success(sysRoleService.banRole(this.getUserName().getUsername(), sysRoleDto));
+        return ResultUtil.success(sysRoleService.banRole(this.getSysUserVO().getUsername(), sysRoleDto));
     }
 
 }

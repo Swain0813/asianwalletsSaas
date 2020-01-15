@@ -28,7 +28,7 @@ public class InstitutionRequestController extends BaseController {
     @ApiOperation(value = "添加机构请求参数设置")
     @PostMapping("/addInstitutionRequest")
     public BaseResponse addInstitutionRequest(@RequestBody @ApiParam List<InstitutionRequestDTO> institutionRequestDTO) {
-        return ResultUtil.success(institutionRequestService.addInstitutionRequest(this.getUserName().getUsername(), institutionRequestDTO));
+        return ResultUtil.success(institutionRequestService.addInstitutionRequest(this.getSysUserVO().getUsername(), institutionRequestDTO));
     }
 
     @ApiOperation(value = "分页查询机构请求参数设置")
@@ -47,7 +47,7 @@ public class InstitutionRequestController extends BaseController {
     @ApiOperation(value = "修改机构请求参数设置")
     @PostMapping("/updateInstitutionRequest")
     public BaseResponse updateInstitutionRequest(@RequestBody @ApiParam List<InstitutionRequestDTO> institutionRequestDTO) {
-        return ResultUtil.success(institutionRequestService.updateInstitutionRequest(this.getUserName().getUsername(), institutionRequestDTO));
+        return ResultUtil.success(institutionRequestService.updateInstitutionRequest(this.getSysUserVO().getUsername(), institutionRequestDTO));
     }
 
 }

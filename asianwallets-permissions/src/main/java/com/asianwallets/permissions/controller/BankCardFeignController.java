@@ -35,7 +35,7 @@ public class BankCardFeignController extends BaseController {
     @ApiOperation(value = "添加银行卡信息")
     @PostMapping("/addBankCard")
     public BaseResponse addBankCard(@RequestBody @ApiParam List<BankCardDTO> bankCardDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSONArray.toJSONString(bankCardDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSONArray.toJSONString(bankCardDTO),
                 "添加银行卡信息"));
         return bankCardFeign.addBankCard(bankCardDTO);
     }
@@ -43,7 +43,7 @@ public class BankCardFeignController extends BaseController {
     @ApiOperation(value = "修改银行卡信息")
     @PostMapping("/updateBankCard")
     public BaseResponse updateBankCard(@RequestBody @ApiParam BankCardDTO bankCardDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSONArray.toJSONString(bankCardDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSONArray.toJSONString(bankCardDTO),
                 "修改银行卡信息"));
         return bankCardFeign.updateBankCard(bankCardDTO);
     }
@@ -51,7 +51,7 @@ public class BankCardFeignController extends BaseController {
     @ApiOperation(value = "根据商户id查询银行卡")
     @GetMapping("/selectBankCardByMerId")
     public BaseResponse selectBankCardByMerId(@RequestParam @ApiParam String merchantId) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(this.getRequest().getParameterMap()),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(this.getRequest().getParameterMap()),
                 "根据机构id查询银行卡"));
         return bankCardFeign.selectBankCardByMerId(merchantId);
     }
@@ -59,7 +59,7 @@ public class BankCardFeignController extends BaseController {
     @ApiOperation(value = "分页查询银行卡")
     @PostMapping("/pageBankCard")
     public BaseResponse pageBankCard(@RequestBody @ApiParam BankCardSearchDTO bankCardSearchDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSONArray.toJSONString(bankCardSearchDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONArray.toJSONString(bankCardSearchDTO),
                 "分页查询银行卡"));
         return bankCardFeign.pageBankCard(bankCardSearchDTO);
     }
@@ -67,7 +67,7 @@ public class BankCardFeignController extends BaseController {
     @ApiOperation(value = "启用禁用银行卡")
     @GetMapping("/banBankCard")
     public BaseResponse banBankCard(@RequestParam @ApiParam String bankCardId, @RequestParam @ApiParam Boolean enabled) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(this.getRequest().getParameterMap()),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(this.getRequest().getParameterMap()),
                 "启用禁用银行卡"));
         return bankCardFeign.banBankCard(bankCardId, enabled);
     }
@@ -75,7 +75,7 @@ public class BankCardFeignController extends BaseController {
     @ApiOperation(value = "设置默认银行卡")
     @GetMapping("/defaultBankCard")
     public BaseResponse defaultBankCard(@RequestParam @ApiParam String bankCardId, @RequestParam @ApiParam Boolean defaultFlag) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(this.getRequest().getParameterMap()),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(this.getRequest().getParameterMap()),
                 "设置默认银行卡"));
         return bankCardFeign.defaultBankCard(bankCardId, defaultFlag);
     }

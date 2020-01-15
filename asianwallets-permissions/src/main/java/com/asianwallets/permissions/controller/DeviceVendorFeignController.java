@@ -32,7 +32,7 @@ public class DeviceVendorFeignController extends BaseController {
     @ApiOperation(value = "新增设备厂商")
     @PostMapping("/addDeviceVendor")
     public BaseResponse addDeviceVendor(@RequestBody @ApiParam DeviceVendorDTO deviceVendorDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(deviceVendorDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(deviceVendorDTO),
                 "新增设备厂商"));
         return deviceVendorFeign.addDeviceVendor(deviceVendorDTO);
     }
@@ -40,7 +40,7 @@ public class DeviceVendorFeignController extends BaseController {
     @ApiOperation(value = "启用禁用厂商")
     @PostMapping("/banDeviceVendor")
     public BaseResponse banDeviceVendor(@RequestBody @ApiParam DeviceVendorDTO deviceVendorDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceVendorDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceVendorDTO),
                 "启用禁用厂商"));
         return deviceVendorFeign.banDeviceVendor(deviceVendorDTO);
     }
@@ -48,7 +48,7 @@ public class DeviceVendorFeignController extends BaseController {
     @ApiOperation(value = "查询设备厂商")
     @PostMapping("/pageDeviceVendor")
     public BaseResponse pageDeviceVendor(@RequestBody @ApiParam DeviceVendorDTO deviceVendorDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(deviceVendorDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(deviceVendorDTO),
                 "查询设备厂商"));
         return deviceVendorFeign.pageDeviceVendor(deviceVendorDTO);
     }
@@ -56,7 +56,7 @@ public class DeviceVendorFeignController extends BaseController {
     @ApiOperation(value = "修改设备厂商信息")
     @PostMapping("/updateDeviceVendor")
     public BaseResponse updateDeviceVendor(@RequestBody @ApiParam DeviceVendorDTO deviceVendorDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceVendorDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(deviceVendorDTO),
                 "修改设备厂商信息"));
         return deviceVendorFeign.updateDeviceVendor(deviceVendorDTO);
     }

@@ -32,7 +32,7 @@ public class DeviceBindingFeignController extends BaseController {
     @ApiOperation(value = "新增设备绑定")
     @PostMapping("/addDeviceBinding")
     public BaseResponse addDeviceBinding(@RequestBody @ApiParam DeviceBindingDTO deviceBindingDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(deviceBindingDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(deviceBindingDTO),
                 "新增设备绑定"));
         return deviceBindingFeign.addDeviceBinding(deviceBindingDTO);
     }
@@ -40,7 +40,7 @@ public class DeviceBindingFeignController extends BaseController {
     @ApiOperation(value = "解绑设备")
     @PostMapping("/banDeviceBinding")
     public BaseResponse banDeviceBinding(@RequestBody @ApiParam DeviceBindingDTO deviceBindingDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(deviceBindingDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(deviceBindingDTO),
                 "解绑设备"));
         return deviceBindingFeign.banDeviceBinding(deviceBindingDTO);
     }
@@ -48,7 +48,7 @@ public class DeviceBindingFeignController extends BaseController {
     @ApiOperation(value = "查询设备绑定信息")
     @PostMapping("/pageDeviceBinding")
     public BaseResponse pageDeviceBinding(@RequestBody @ApiParam DeviceBindingDTO deviceBindingDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(deviceBindingDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(deviceBindingDTO),
                 "查询设备绑定信息"));
         return deviceBindingFeign.pageDeviceBinding(deviceBindingDTO);
     }

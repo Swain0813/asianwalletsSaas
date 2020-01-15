@@ -54,7 +54,7 @@ public class OrdersFeignController extends BaseController {
     @ApiOperation(value = "分页查询订单信息")
     @PostMapping("pageFindOrders")
     public BaseResponse pageFindOrders(@RequestBody @ApiParam OrdersDTO ordersDTO) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
                 "分页查询订单信息"));
         return ordersFeign.pageFindOrders(ordersDTO);
     }
@@ -62,7 +62,7 @@ public class OrdersFeignController extends BaseController {
     @ApiOperation(value = "查询订单详情信息")
     @GetMapping("getOrdersDetail")
     public BaseResponse getOrdersDetail(@RequestParam("id") @ApiParam String id) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(id),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(id),
                 "查询订单详情信息"));
         return ordersFeign.getOrdersDetail(id);
     }
@@ -70,7 +70,7 @@ public class OrdersFeignController extends BaseController {
     @ApiOperation(value = "分页查询退款订单信息")
     @PostMapping("pageFindOrdersRefund")
     public BaseResponse pageFindOrdersRefund(@RequestBody @ApiParam OrdersRefundDTO ordersRefundDTO) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersRefundDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersRefundDTO),
                 "分页查询退款订单信息"));
         return ordersFeign.pageFindOrdersRefund(ordersRefundDTO);
     }
@@ -78,7 +78,7 @@ public class OrdersFeignController extends BaseController {
     @ApiOperation(value = "查询退款订单详情信息")
     @GetMapping("getOrdersRefundDetail")
     public BaseResponse getOrdersRefundDetail(@RequestParam("refundId") @ApiParam String refundId) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(refundId),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(refundId),
                 "查询退款订单详情信息"));
         return ordersFeign.getOrdersRefundDetail(refundId);
     }
@@ -86,7 +86,7 @@ public class OrdersFeignController extends BaseController {
     @ApiOperation(value = "导出退款")
     @PostMapping("exportOrdersRefund")
     public BaseResponse exportOrdersRefund(@RequestBody @ApiParam OrdersRefundDTO ordersRefundDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(),
                 AsianWalletConstant.SELECT, JSON.toJSONString(ordersRefundDTO),
                 "导出退款"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
@@ -115,7 +115,7 @@ public class OrdersFeignController extends BaseController {
     @ApiOperation(value = "导出订单")
     @PostMapping("exportOrders")
     public BaseResponse exportOrders(@RequestBody @ApiParam OrdersDTO ordersDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ordersDTO),
                 "导出订单"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
@@ -142,7 +142,7 @@ public class OrdersFeignController extends BaseController {
     @ApiOperation(value = "运营后台修改订单状态")
     @PostMapping(value = "/updateOrderStatus")
     public BaseResponse updateOrderStatus(@RequestBody @ApiParam ArtificialDTO artificialDTO) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(artificialDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(artificialDTO),
                 "运营后台修改订单状态"));
         return ordersFeign.updateOrderStatus(artificialDTO);
     }

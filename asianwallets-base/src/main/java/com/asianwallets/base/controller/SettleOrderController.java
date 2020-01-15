@@ -58,20 +58,20 @@ public class SettleOrderController extends BaseController {
     @ApiOperation(value = "结算审核")
     @PostMapping("/reviewSettlement")
     public BaseResponse reviewSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO) {
-        reviewSettleDTO.setModifier(this.getUserName().getUsername());
+        reviewSettleDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(settleOrderService.reviewSettlement(reviewSettleDTO));
     }
 
     @ApiOperation(value = "提款设置")
     @PostMapping("/updateAccountSettle")
     public BaseResponse updateAccountSettle(@RequestBody @Valid @ApiParam AccountSettleDTO accountSettleDTO) {
-        accountSettleDTO.setModifier(this.getUserName().getUsername());
+        accountSettleDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(accountService.updateAccountSettle(accountSettleDTO));
     }
 
     @ApiOperation(value = "手动提款")
     @PostMapping("/withdrawal")
     public BaseResponse withdrawal(@RequestBody @ApiParam WithdrawalDTO withdrawalDTO) {
-        return ResultUtil.success(settleOrderService.withdrawal(withdrawalDTO,this.getUserName().getUsername()));
+        return ResultUtil.success(settleOrderService.withdrawal(withdrawalDTO,this.getSysUserVO().getUsername()));
     }
 }

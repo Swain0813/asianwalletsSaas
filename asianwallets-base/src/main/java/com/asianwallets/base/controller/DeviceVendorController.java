@@ -26,14 +26,14 @@ public class DeviceVendorController extends BaseController {
     @ApiOperation(value = "新增设备厂商")
     @PostMapping("/addDeviceVendor")
     public BaseResponse addDeviceVendor(@RequestBody @ApiParam DeviceVendorDTO deviceVendorDTO) {
-        deviceVendorDTO.setCreator(this.getUserName().getUsername());
+        deviceVendorDTO.setCreator(this.getSysUserVO().getUsername());
         return ResultUtil.success(deviceVendorService.addDeviceVendor(deviceVendorDTO));
     }
 
     @ApiOperation(value = "启用禁用厂商")
     @PostMapping("/banDeviceVendor")
     public BaseResponse banDeviceVendor(@RequestBody @ApiParam DeviceVendorDTO deviceVendorDTO) {
-        deviceVendorDTO.setModifier(this.getUserName().getUsername());
+        deviceVendorDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(deviceVendorService.banDeviceVendor(deviceVendorDTO));
     }
 
@@ -46,7 +46,7 @@ public class DeviceVendorController extends BaseController {
     @ApiOperation(value = "修改设备厂商信息")
     @PostMapping("/updateDeviceVendor")
     public BaseResponse updateDeviceVendor(@RequestBody @ApiParam DeviceVendorDTO deviceVendorDTO) {
-        deviceVendorDTO.setModifier(this.getUserName().getUsername());
+        deviceVendorDTO.setModifier(this.getSysUserVO().getUsername());
         return ResultUtil.success(deviceVendorService.updateDeviceVendor(deviceVendorDTO));
     }
 

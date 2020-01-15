@@ -35,7 +35,7 @@ public class PayTypeFeignController extends BaseController {
     @ApiOperation(value = "新增支付方式")
     @PostMapping("addPayType")
     public BaseResponse addPayType(@RequestBody @ApiParam PayTypeDTO payTypeDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(payTypeDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(payTypeDTO),
                 "新增支付方式"));
         return ResultUtil.success(payTypeFeign.addPaytype(payTypeDTO));
     }
@@ -43,7 +43,7 @@ public class PayTypeFeignController extends BaseController {
     @ApiOperation(value = "修改支付方式")
     @PostMapping("updatePayType")
     public BaseResponse updateCurrency(@RequestBody @ApiParam PayTypeDTO currencyDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(currencyDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(currencyDTO),
                 "修改支付方式"));
         return ResultUtil.success(payTypeFeign.updatePaytype(currencyDTO));
     }
@@ -51,7 +51,7 @@ public class PayTypeFeignController extends BaseController {
     @ApiOperation(value = "查询支付方式")
     @PostMapping("pagePayType")
     public BaseResponse pagePayType(@RequestBody @ApiParam PayTypeDTO currencyDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(currencyDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(currencyDTO),
                 "查询支付方式"));
         return ResultUtil.success(payTypeFeign.pagePaytype(currencyDTO));
     }
@@ -59,7 +59,7 @@ public class PayTypeFeignController extends BaseController {
     @ApiOperation(value = "启用禁用支付方式")
     @PostMapping("banPayType")
     public BaseResponse banDeviceVendor(@RequestBody @ApiParam PayTypeDTO currencyDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(currencyDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(currencyDTO),
                 "启用禁用支付方式"));
         return ResultUtil.success(payTypeFeign.banCurrency(currencyDTO));
     }
@@ -67,7 +67,7 @@ public class PayTypeFeignController extends BaseController {
     @ApiOperation(value = "查询所有支付方式")
     @GetMapping("inquireAllPayType")
     public BaseResponse inquireAllPayType() {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, null,
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, null,
                 "查询所有支付方式"));
         return ResultUtil.success(payTypeFeign.inquireAllPaytype());
     }

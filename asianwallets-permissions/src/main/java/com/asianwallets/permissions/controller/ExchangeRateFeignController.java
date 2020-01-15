@@ -31,7 +31,7 @@ public class ExchangeRateFeignController extends BaseController {
     @PostMapping("addExchangeRate")
     public BaseResponse addExchangeRate(@RequestBody @ApiParam ExchangeRateDTO exchangeRateDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(exchangeRateDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(exchangeRateDTO),
                 "添加汇率信息"));
         return exchangeRateFeign.addExchangeRate(exchangeRateDTO);
     }
@@ -40,7 +40,7 @@ public class ExchangeRateFeignController extends BaseController {
     @GetMapping("banExchangeRate")
     public BaseResponse banExchangeRate(@RequestParam @ApiParam String id){
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(id),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(id),
                 "禁用汇率信息"));
         return exchangeRateFeign.banExchangeRate(id);
     }
@@ -50,7 +50,7 @@ public class ExchangeRateFeignController extends BaseController {
     @PostMapping("getByMultipleConditions")
     public BaseResponse getByMultipleConditions(@RequestBody @ApiParam ExchangeRateDTO exchangeRateDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(exchangeRateDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(exchangeRateDTO),
                 "分页查询汇率信息"));
         return exchangeRateFeign.getByMultipleConditions(exchangeRateDTO);
     }

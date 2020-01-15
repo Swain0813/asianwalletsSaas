@@ -24,13 +24,13 @@ public class BankController extends BaseController {
     @ApiOperation(value = "增加银行")
     @PostMapping("/addBank")
     public BaseResponse addBank(@RequestBody @ApiParam BankDTO bankDTO) {
-        return ResultUtil.success(bankService.addBank(this.getUserName().getUsername(), bankDTO));
+        return ResultUtil.success(bankService.addBank(this.getSysUserVO().getUsername(), bankDTO));
     }
 
     @ApiOperation(value = "修改银行信息")
     @PostMapping("/updateBank")
     public BaseResponse updateBank(@RequestBody @ApiParam BankDTO bankDTO) {
-        return ResultUtil.success(bankService.updateBank(this.getUserName().getUsername(), bankDTO));
+        return ResultUtil.success(bankService.updateBank(this.getSysUserVO().getUsername(), bankDTO));
     }
 
     @ApiOperation(value = "分页查询银行信息")

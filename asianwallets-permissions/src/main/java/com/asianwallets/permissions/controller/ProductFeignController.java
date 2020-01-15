@@ -32,7 +32,7 @@ public class ProductFeignController extends BaseController {
     @ApiOperation(value = "添加产品")
     @PostMapping("/addProduct")
     public BaseResponse addProduct(@RequestBody @ApiParam ProductDTO productDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(productDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(productDTO),
                 "添加产品"));
         return productFeign.addProduct(productDTO);
     }
@@ -40,7 +40,7 @@ public class ProductFeignController extends BaseController {
     @ApiOperation(value = "更新产品")
     @PostMapping("/updateProduct")
     public BaseResponse updateProduct(@RequestBody @ApiParam ProductDTO productDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(productDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(productDTO),
                 "更新产品"));
         return productFeign.updateProduct(productDTO);
     }
@@ -48,7 +48,7 @@ public class ProductFeignController extends BaseController {
     @ApiOperation(value = "分页查询产品")
     @PostMapping("/pageProduct")
     public BaseResponse pageProduct(@RequestBody @ApiParam ProductDTO productDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(productDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(productDTO),
                 "分页查询产品"));
         return productFeign.pageProduct(productDTO);
     }
@@ -56,7 +56,7 @@ public class ProductFeignController extends BaseController {
     @ApiOperation(value = "查询产品")
     @PostMapping("/selectProduct")
     public BaseResponse selectProduct(@RequestBody @ApiParam ProductDTO productDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(productDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(productDTO),
                 "查询产品"));
         return productFeign.selectProduct(productDTO);
     }
@@ -64,7 +64,7 @@ public class ProductFeignController extends BaseController {
     @ApiOperation(value = "根据支付方式查询所有产品")
     @GetMapping("/selectProductByPayType")
     public BaseResponse selectProductByPayType(@RequestParam @ApiParam String payType) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(this.getRequest().getParameterMap()),
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(this.getRequest().getParameterMap()),
                 "根据支付方式查询所有产品"));
         return productFeign.selectProductByPayType(payType);
     }

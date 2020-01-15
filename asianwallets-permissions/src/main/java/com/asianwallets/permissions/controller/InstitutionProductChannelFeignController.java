@@ -33,7 +33,7 @@ public class InstitutionProductChannelFeignController extends BaseController {
     @ApiOperation(value = "新增机构关联产品通道信息")
     @PostMapping("/addInsProCha")
     public BaseResponse addInstitutionProductChannel(@RequestBody @ApiParam List<InstitutionProductChannelDTO> institutionProductChannelDTOList) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(institutionProductChannelDTOList),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(institutionProductChannelDTOList),
                 "新增机构关联产品通道信息"));
         return institutionProductChannelFeign.addInsProCha(institutionProductChannelDTOList);
     }
@@ -41,7 +41,7 @@ public class InstitutionProductChannelFeignController extends BaseController {
     @ApiOperation(value = "修改机构关联产品通道信息")
     @PostMapping("/updateInsProCha")
     public BaseResponse updateInsProChaByInsId(@RequestBody @ApiParam List<InstitutionProductChannelDTO> institutionProductChannelDTOList) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(institutionProductChannelDTOList),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(institutionProductChannelDTOList),
                 "修改机构关联产品通道信息"));
         return institutionProductChannelFeign.updateInsProCha(institutionProductChannelDTOList);
     }
@@ -49,7 +49,7 @@ public class InstitutionProductChannelFeignController extends BaseController {
     @ApiOperation(value = "根据机构ID查询机构关联产品通道信息")
     @GetMapping("/getInsProChaByInsId")
     public BaseResponse getInsProChaByInsId(@RequestParam(required = false) @ApiParam String insId, @RequestParam(required = false) @ApiParam String merId) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(insId),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(insId),
                 "根据机构ID查询机构关联产品通道信息"));
         return institutionProductChannelFeign.getInsProChaByInsId(insId, merId);
     }
@@ -64,7 +64,7 @@ public class InstitutionProductChannelFeignController extends BaseController {
     @ApiOperation(value = "分页查询机构参数设置")
     @PostMapping("/pageInstitutionRequests")
     public BaseResponse pageInstitutionRequests(@RequestBody @ApiParam InstitutionRequestDTO institutionRequestDTO) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionRequestDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionRequestDTO),
                 "分页查询机构参数设置"));
         return institutionProductChannelFeign.pageInstitutionRequests(institutionRequestDTO);
     }
@@ -72,7 +72,7 @@ public class InstitutionProductChannelFeignController extends BaseController {
     @ApiOperation(value = "分页查询机构产品信息")
     @PostMapping("/pageInstitutionPro")
     public BaseResponse pageInstitutionPro(@RequestBody @ApiParam InstitutionProductDTO institutionProductDTO) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionProductDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionProductDTO),
                 "分页查询机构产品信息"));
         return institutionProductChannelFeign.pageInstitutionPro(institutionProductDTO);
     }
@@ -80,7 +80,7 @@ public class InstitutionProductChannelFeignController extends BaseController {
     @ApiOperation(value = "分页查询机构通道信息")
     @PostMapping("/pageInstitutionCha")
     public BaseResponse pageInstitutionCha(@RequestBody @ApiParam InstitutionChannelQueryDTO institutionChannelQueryDTO) {
-        operationLogService.addOperationLog(setOperationLog(this.getUserName().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionChannelQueryDTO),
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionChannelQueryDTO),
                 "分页查询机构通道信息"));
         return institutionProductChannelFeign.pageInstitutionCha(institutionChannelQueryDTO);
     }
