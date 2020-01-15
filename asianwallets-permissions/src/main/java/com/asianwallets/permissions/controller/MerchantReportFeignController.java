@@ -52,7 +52,7 @@ public class MerchantReportFeignController extends BaseController {
     @ApiOperation(value = "新增报备信息")
     @PostMapping("addReport")
     public BaseResponse addReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.ADD, JSON.toJSONString(merchantReportDTO),
                 "新增报备信息"));
         return ResultUtil.success(merchantReportFeign.addReport(merchantReportDTO));
@@ -61,7 +61,7 @@ public class MerchantReportFeignController extends BaseController {
     @ApiOperation(value = "查询报备信息")
     @PostMapping("pageReport")
     public BaseResponse pageReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.SELECT, JSON.toJSONString(merchantReportDTO),
                 "查询报备信息"));
         return ResultUtil.success(merchantReportFeign.pageReport(merchantReportDTO));
@@ -70,7 +70,7 @@ public class MerchantReportFeignController extends BaseController {
     @ApiOperation(value = "修改报备信息")
     @PostMapping("updateReport")
     public BaseResponse updateReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.UPDATE, JSON.toJSONString(merchantReportDTO),
                 "修改报备信息"));
         return ResultUtil.success(merchantReportFeign.updateReport(merchantReportDTO));
@@ -79,7 +79,7 @@ public class MerchantReportFeignController extends BaseController {
     @ApiOperation(value = "启用禁用Report")
     @PostMapping("banReport")
     public BaseResponse banReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.UPDATE, JSON.toJSONString(merchantReportDTO),
                 "启用禁用Report"));
         return ResultUtil.success(merchantReportFeign.banReport(merchantReportDTO));
@@ -89,7 +89,7 @@ public class MerchantReportFeignController extends BaseController {
     @ApiOperation(value = "导出Report")
     @PostMapping("exportReport")
     public BaseResponse exportReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.SELECT, JSON.toJSONString(merchantReportDTO),
                 "导出Report"));
         ExcelWriter writer = ExcelUtil.getBigWriter();

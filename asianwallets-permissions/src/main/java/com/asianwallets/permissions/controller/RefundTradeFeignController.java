@@ -28,7 +28,7 @@ public class RefundTradeFeignController extends BaseController {
     @ApiOperation(value = "人工退款接口")
     @GetMapping("/artificialRefund")
     public BaseResponse artificialRefund(@RequestParam @ApiParam String refundOrderId, Boolean enabled, String remark) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(this.getRequest().getParameterMap()),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(this.getRequest().getParameterMap()),
                 "人工退款接口"));
         return refundTradeFeign.artificialRefund(refundOrderId,enabled,remark);
     }

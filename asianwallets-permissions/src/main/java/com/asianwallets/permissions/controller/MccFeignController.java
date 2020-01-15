@@ -62,7 +62,7 @@ public class MccFeignController extends BaseController {
     @ApiOperation(value = "新增mcc")
     @PostMapping("addMcc")
     public BaseResponse addMcc(@RequestBody @ApiParam MccDTO mccDto) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.ADD, JSON.toJSONString(mccDto),
                 "新增mcc"));
         return mccFeign.addMcc(mccDto);
@@ -71,7 +71,7 @@ public class MccFeignController extends BaseController {
     @ApiOperation(value = "修改mcc")
     @PostMapping("updateMcc")
     public BaseResponse updateMcc(@RequestBody @ApiParam MccDTO mccDto) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.UPDATE, JSON.toJSONString(mccDto),
                 "修改mcc"));
         return mccFeign.updateMcc(mccDto);
@@ -80,7 +80,7 @@ public class MccFeignController extends BaseController {
     @ApiOperation(value = "查询mcc")
     @PostMapping("pageMcc")
     public BaseResponse pageMcc(@RequestBody @ApiParam MccDTO mccDto) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.SELECT, JSON.toJSONString(mccDto),
                 "查询mcc"));
         return mccFeign.pageMcc(mccDto);
@@ -89,7 +89,7 @@ public class MccFeignController extends BaseController {
     @ApiOperation(value = "启用禁用mcc")
     @PostMapping("banMcc")
     public BaseResponse banMcc(@RequestBody @ApiParam MccDTO mccDto) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.UPDATE, JSON.toJSONString(mccDto),
                 "启用禁用mcc"));
         return mccFeign.banMcc(mccDto);
@@ -98,7 +98,7 @@ public class MccFeignController extends BaseController {
     @ApiOperation(value = "查询所有mcc")
     @GetMapping("inquireAllMcc")
     public BaseResponse inquireAllMcc() {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.SELECT, null,
                 "查询所有mcc"));
         return mccFeign.inquireAllMcc();
@@ -108,16 +108,16 @@ public class MccFeignController extends BaseController {
     @ApiOperation(value = "导入mcc")
     @PostMapping("importMcc")
     public BaseResponse importMcc(@RequestParam("file") @ApiParam MultipartFile file) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.ADD, null,
                 "导入mcc"));
-        return mccFeign.importMcc(mccFeignService.uploadMcc(file, this.getSysUserVO().getUsername()));
+        return mccFeign.importMcc(mccFeignService.uploadMcc(file, this.getUserName()));
     }
 
     @ApiOperation(value = "导出mcc")
     @PostMapping("exportMcc")
     public BaseResponse exportMcc(@RequestBody @ApiParam MccDTO mccDto, HttpServletResponse response) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(),
                 AsianWalletConstant.SELECT, null,
                 "导出mcc"));
         ExcelWriter writer = ExcelUtil.getBigWriter();

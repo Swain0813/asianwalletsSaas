@@ -51,7 +51,7 @@ public class InstitutionFeignController extends BaseController {
     @PostMapping("addInstitution")
     public BaseResponse addInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(institutionDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.ADD, JSON.toJSONString(institutionDTO),
                 "添加机构"));
         return institutionFeign.addInstitution(institutionDTO);
     }
@@ -61,7 +61,7 @@ public class InstitutionFeignController extends BaseController {
     @PostMapping("updateInstitution")
     public BaseResponse updateInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(institutionDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(institutionDTO),
                 "修改机构"));
         return institutionFeign.updateInstitution(institutionDTO);
     }
@@ -70,7 +70,7 @@ public class InstitutionFeignController extends BaseController {
     @PostMapping("/pageFindInstitution")
     public BaseResponse pageFindInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionDTO),
                 "分页查询机构信息列表"));
         return institutionFeign.pageFindInstitution(institutionDTO);
     }
@@ -79,7 +79,7 @@ public class InstitutionFeignController extends BaseController {
     @PostMapping("/pageFindInstitutionAudit")
     public BaseResponse pageFindInstitutionAudit(@RequestBody @ApiParam InstitutionDTO institutionDTO) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionDTO),
                 "分页查询机构审核信息列表"));
         return institutionFeign.pageFindInstitutionAudit(institutionDTO);
     }
@@ -88,7 +88,7 @@ public class InstitutionFeignController extends BaseController {
     @GetMapping("/getInstitutionInfo")
     public BaseResponse getInstitutionInfo(@RequestParam @ApiParam String id) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(id),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(id),
                 "根据机构Id查询机构信息详情"));
         return institutionFeign.getInstitutionInfo(id);
     }
@@ -98,7 +98,7 @@ public class InstitutionFeignController extends BaseController {
     @GetMapping("/getInstitutionInfoAudit")
     public BaseResponse getInstitutionInfoAudit(String id) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(id),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(id),
                 "根据机构Id查询机构审核信息详情"));
         return institutionFeign.getInstitutionInfoAudit(id);
     }
@@ -107,7 +107,7 @@ public class InstitutionFeignController extends BaseController {
     @GetMapping("/auditInstitution")
     public BaseResponse auditInstitution(@RequestParam @ApiParam String institutionId, @RequestParam @ApiParam Boolean enabled, @RequestParam(required = false) @ApiParam String remark) {
         //添加操作日志
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(this.getRequest().getParameterMap()),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.UPDATE, JSON.toJSONString(this.getRequest().getParameterMap()),
                 "审核机构信息接口"));
         return institutionFeign.auditInstitution(institutionId, enabled, remark);
     }
@@ -127,7 +127,7 @@ public class InstitutionFeignController extends BaseController {
     @ApiOperation(value = "导出机构")
     @PostMapping("/exportInstitution")
     public BaseResponse exportInstitution(@RequestBody @ApiParam InstitutionDTO institutionDTO, HttpServletResponse response) {
-        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionDTO),
+        operationLogService.addOperationLog(this.setOperationLog(this.getUserName(), AsianWalletConstant.SELECT, JSON.toJSONString(institutionDTO),
                 "导出机构"));
         ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
