@@ -276,8 +276,10 @@ public class SysMenuServiceImpl implements SysMenuService {
         sysMenu.setModifier(username);
         sysMenu.setUpdateTime(new Date());
         sysMenu.setEnabled(sysMenuDto.getEnabled());
-        //启用时修改上级权限,禁用时修改下级权限
-        sysMenuMapper.updateEnabledById(sysMenuDto.getLowLevelMenuIdList(), username, sysMenuDto.getEnabled());
+        if (!ArrayUtil.isEmpty(sysMenuDto.getLowLevelMenuIdList())) {
+            //启用时修改上级权限,禁用时修改下级权限
+            sysMenuMapper.updateEnabledById(sysMenuDto.getLowLevelMenuIdList(), username, sysMenuDto.getEnabled());
+        }
         return sysMenuMapper.updateByPrimaryKeySelective(sysMenu);
     }
 
