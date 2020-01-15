@@ -110,7 +110,7 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
                 mab.setMerchantOrderId(ffl.getMerOrderNo());
                 mab.setOrganId(ffl.getId());
                 mab.setMbuaccountId(null);
-                mab.setVaccounId(mva.getAccountCode());
+                mab.setVaccounId(ffl.getMvaccountId());
                 mab.setBalance(balance);
                 mab.setBalanceTimestamp(new Date());
                 mab.setSysAddDate(new Date());
@@ -118,6 +118,7 @@ public class TCSFrozenFundsServiceImpl implements TCSFrozenFundsService {
                 mab.setBussinesstype(1);
                 mab.setCurrency(ffl.getTxncurrency());
                 mab.setFee(Double.parseDouble("0"));
+                mab.setRefundOrderFee(Double.parseDouble("0"));
                 mab.setReferenceflow(ffl.getMerOrderNo());
                 //冻结户
                 mab.setType(3);

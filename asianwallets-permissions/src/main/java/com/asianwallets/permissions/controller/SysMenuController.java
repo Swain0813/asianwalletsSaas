@@ -102,13 +102,13 @@ public class SysMenuController extends BaseController {
         return ResultUtil.success(sysMenuService.getAllMenuByUserId(userId, permissionType));
     }
 
-    @ApiOperation(value = "运营后台修改机构权限")
+    @ApiOperation(value = "修改机构,商户,代理,pos权限")
     @PostMapping("/updateInsPermission")
     public BaseResponse updateInsPermission(@RequestBody @ApiParam UpdateInsPermissionDto updateInsPermissionDto) {
         return ResultUtil.success(sysMenuService.updateInsPermission(getSysUserVO().getUsername(), updateInsPermissionDto));
     }
 
-    @ApiOperation(value = "运营后台查询机构权限")
+    @ApiOperation(value = "查询机构,商户,代理,pos权限")
     @PostMapping("/getInsPermission")
     public BaseResponse getInsPermission(@RequestBody @ApiParam UpdateInsPermissionDto updateInsPermissionDto) {
         return ResultUtil.success(sysMenuService.getInsPermission(updateInsPermissionDto));

@@ -1,4 +1,6 @@
 package com.asianwallets.permissions.service.impl;
+import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.Attestation;
@@ -8,6 +10,7 @@ import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.*;
+import com.asianwallets.common.vo.OfflineSysUserVO;
 import com.asianwallets.common.vo.SysMenuVO;
 import com.asianwallets.common.vo.SysRoleVO;
 import com.asianwallets.common.vo.SysUserVO;
@@ -31,6 +34,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Set;
 
@@ -71,6 +76,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     private DeviceBindingMapper deviceBindingMapper;
 
+    @Value("${custom.PosAESKey}")
+    private String posAESKey;
+
+
     /**
      * 运营系统登录
      *
@@ -94,7 +103,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
-            redisService.set(response.getToken(), JSON.toJSONString(sysUserVO), time * 60 * 60);
+            redisService.set(response.getToken(), sysUserVO.getUsername(), time * 60 * 60);
         }
         return response;
     }
@@ -145,7 +154,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setDcc(institution.getDcc());
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
-            redisService.set(response.getToken(), JSON.toJSONString(sysUserVO), time * 60 * 60);
+            redisService.set(response.getToken(), sysUserVO.getUsername(), time * 60 * 60);
         }
         return response;
     }
@@ -188,7 +197,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
-            redisService.set(response.getToken(), JSON.toJSONString(sysUserVO), time * 60 * 60);
+            redisService.set(response.getToken(), sysUserVO.getUsername(), time * 60 * 60);
         }
         return response;
     }
@@ -227,7 +236,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
-            redisService.set(response.getToken(), JSON.toJSONString(sysUserVO), time * 60 * 60);
+            redisService.set(response.getToken(), sysUserVO.getUsername(), time * 60 * 60);
         }
         return response;
     }
@@ -275,11 +284,35 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         //封装登录响应实体
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
+        response.setMd5Key(getPosMd5Key(request.getSysId()));
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
-            redisService.set(response.getToken(), JSON.toJSONString(sysUserVO));
+            OfflineSysUserVO offlineSysUserVO = new OfflineSysUserVO();
+            offlineSysUserVO.setUsername(username);
+            offlineSysUserVO.setTradePassword(sysUserVO.getTradePassword());
+            redisService.set(response.getToken(), JSON.toJSONString(offlineSysUserVO));
         }
         return response;
+    }
+
+    /**
+     * 根据商户号获取平台加密的md5key
+     * @param merchantId
+     * @return
+     */
+    private String getPosMd5Key(String merchantId) {
+        log.info("===================【POS机获取md5key】加密开始===================【参数记录】 merchantId: {}", JSON.toJSONString(merchantId));
+        Attestation attestation = JSON.parseObject(redisService.get(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY), Attestation.class);
+        if (attestation == null) {
+            attestation = attestationMapper.selectPlatformPub(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY);
+            redisService.set(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY, JSON.toJSONString(attestation));
+        }
+        //构建
+        SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, posAESKey.getBytes(Charset.defaultCharset()));
+        //加密
+        String encrypt = aes.encryptBase64(attestation.getMd5key());
+        log.info("===================【POS机获取md5key】加密结束===================【参数记录】 encrypt: {}", JSON.toJSONString(encrypt));
+        return encrypt;
     }
 
     /**

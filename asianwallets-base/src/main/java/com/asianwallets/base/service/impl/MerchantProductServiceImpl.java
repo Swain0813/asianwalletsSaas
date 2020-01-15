@@ -445,7 +445,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                 //如果审核记录里的启用状态为false ,则为初次添加状态
                 if (auaditProductDTO.enabled) {
                     //初次添加信息审核通过 更改主表，审核表审核信息状态
-                    MerchantProductAudit merchantProductAudit = new MerchantProductAudit();
+                    MerchantProductAudit merchantProductAudit =  merchantProductAuditMapper.selectByPrimaryKey(merProId);
                     merchantProductAudit.setId(merProId);
                     merchantProductAudit.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
                     merchantProductAudit.setModifier(username);
@@ -455,11 +455,11 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 
                     MerchantProduct merchantProduct = merchantProductMapper.selectByPrimaryKey(merProId);
                     BeanUtils.copyProperties(merchantProductAudit,merchantProduct);
-                    merchantProduct.setId(merProId);
-                    merchantProduct.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
-                    merchantProduct.setModifier(username);
-                    merchantProduct.setAuditRemark(auaditProductDTO.getRemark());
-                    merchantProduct.setEnabled(true);
+                    //merchantProduct.setId(merProId);
+                    //merchantProduct.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
+                    //merchantProduct.setModifier(username);
+                    //merchantProduct.setAuditRemark(auaditProductDTO.getRemark());
+                    //merchantProduct.setEnabled(true);
                     merchantProduct.setUpdateTime(new Date());
                     merchantProduct.setCreateTime(merchantProductAudit.getUpdateTime());
 

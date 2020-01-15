@@ -77,12 +77,22 @@ public class AccountController extends BaseController {
         return accountService.exportFrozenLogs(accountSearchDTO);
     }
 
+    /**
+     * saas后台管理系统用
+     * @param ordersDTO
+     * @return
+     */
     @ApiOperation(value = "分页查询商户余额")
     @PostMapping("/pageFindMerchantBalance")
     public BaseResponse pageMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO) {
         return ResultUtil.success(accountService.pageFindMerchantBalance(ordersDTO));
     }
 
+    /**
+     * saas后台管理系统用
+     * @param ordersDTO
+     * @return
+     */
     @ApiOperation(value = "导出商户余额")
     @PostMapping("/exportMerchantBalance")
     public List<MerchantBalanceVO> exportMerchantBalance(@RequestBody @ApiParam OrdersDTO ordersDTO) {

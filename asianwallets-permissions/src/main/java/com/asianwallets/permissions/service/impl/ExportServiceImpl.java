@@ -2,7 +2,9 @@ package com.asianwallets.permissions.service.impl;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.entity.SettleCheckAccount;
 import com.asianwallets.common.utils.BeanToMapUtil;
+import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.ReflexClazzUtils;
 import com.asianwallets.common.vo.*;
 import com.asianwallets.permissions.service.ExportService;
@@ -423,4 +425,167 @@ public class ExportServiceImpl implements ExportService {
         writer.write(oList1);
         return writer;
     }
+
+    /**
+     * 导出账户信息
+     * @param list
+     * @param clazz
+     * @return
+     */
+    @Override
+    public ExcelWriter exportAccount(List<AccountListVO> list, Class clazz) {
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (AccountListVO tmMerChTvAcctBalance : list) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(tmMerChTvAcctBalance);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int i = 0; i < property.length; i++) {
+                for (String s : keySet) {
+                    if (s.equals(property[i])) {
+                        oSet1.add(comment[i]);
+                        if (s.equals("merchantType")) {
+                            if ((String.valueOf((oMap.get(s))).equals("3"))) {
+                                oList2.add("普通商户");
+                            } else if ((String.valueOf((oMap.get(s))).equals("4"))) {
+                                oList2.add("代理商户");
+                            } else if ((String.valueOf((oMap.get(s))).equals("5"))) {
+                                oList2.add("集团商户");
+                            }else {
+                                oList2.add("");
+                            }
+                        } else {
+                            oList2.add(oMap.get(s));
+                        }
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.write(oList1);
+        return writer;
+    }
+
+    /**
+     * Excel 导出结算单1
+     *
+     * @param insPros 对象集合
+     * @param clazz   类名Class对象
+     * @return ExcelWriter writer
+     */
+    @Override
+    public ExcelWriter getSettleCheckAccountsWriter(ExcelWriter writer, String language, List<SettleCheckAccount> insPros, Class clazz) {
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (SettleCheckAccount settleCheckAccount : insPros) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(settleCheckAccount);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int i = 0; i < property.length; i++) {
+                for (String s : keySet) {
+                    if (s.equals(property[i])) {
+                        oSet1.add(comment[i]);
+                        if (s.equals("checkTime")) {
+                            oList2.add(DateToolUtils.SHORT_DATE_FORMAT.format(oMap.get(s)));
+                        } else {
+                            oList2.add(oMap.get(s));
+                        }
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.setColumnWidth(-1, 20);
+        writer.passRows(1);
+        if (AsianWalletConstant.EN_US.equals(language)) {
+            writer.merge(0, 0, 0, 7, "Institutional statement: all transactions affecting changes in balance during the previous settlement period", true);
+        } else {
+            writer.merge(0, 0, 0, 7, "机构结算单:上一个结算周期内影响余额变动的所有交易", true);
+        }
+        writer.write(oList1);
+        return writer;
+    }
+
+    /**
+     * Excel 导出结算单2
+     *
+     * @param insPros 对象集合
+     * @param clazz   类名Class对象
+     * @return ExcelWriter writer
+     */
+    @Override
+    public ExcelWriter getSettleCheckAccountDetailWriter(ExcelWriter writer, List<ExportSettleCheckAccountDetailVO> insPros, Class clazz) {
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (ExportSettleCheckAccountDetailVO settleCheckAccountDetail : insPros) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(settleCheckAccountDetail);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int i = 0; i < property.length; i++) {
+                for (String s : keySet) {
+                    if (s.equals(property[i])) {
+                        oSet1.add(comment[i]);
+                        if (s.equals("balancetype")) {
+                            if ((String.valueOf((oMap.get(s)))).equals("1")) {
+                                oList2.add("Normal Money");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("2")) {
+                                oList2.add("Freeze Funds");
+                            } else {
+                                oList2.add("");
+                            }
+                        } else if (s.equals("tradetype")) {
+                            if ((String.valueOf((oMap.get(s)))).equals("RF")) {
+                                oList2.add("refund");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("WD")) {
+                                oList2.add("withdrawals");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("ST")) {
+                                oList2.add("acquire");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("PM")) {
+                                oList2.add("payment");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("AA")) {
+                                oList2.add("reconciliation");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("RV")) {
+                                oList2.add("reverse");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("FZ")) {
+                                oList2.add("freeze");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("TW")) {
+                                oList2.add("unfreeze");
+                            } else if ((String.valueOf((oMap.get(s)))).equals("PM")) {
+                                oList2.add("payment");
+                            } else {
+                                oList2.add("");
+                            }
+                        } else {
+                            oList2.add(oMap.get(s));
+                        }
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.setColumnWidth(-1, 20);
+        writer.write(oList1);
+        return writer;
+    }
+
 }

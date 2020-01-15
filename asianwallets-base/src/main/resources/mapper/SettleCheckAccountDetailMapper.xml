@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.base.dao.SettleCheckAccountDetailMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.SettleCheckAccountDetail">
+	<result column="id" property="id" />
+		<result column="STFlow" property="STFlow" />
+		<result column="refcnceFlow" property="refcnceFlow" />
+		<result column="tradetype" property="tradetype" />
+		<result column="merchantid" property="merchantid" />
+		<result column="merOrderNo" property="merOrderNo" />
+		<result column="txncurrency" property="txncurrency" />
+		<result column="txnamount" property="txnamount" />
+		<result column="fee" property="fee" />
+		<result column="feecurrency" property="feecurrency" />
+		<result column="refundOrderFeeCurrency" property="refundOrderFeeCurrency" />
+		<result column="refundOrderFee" property="refundOrderFee" />
+		<result column="channelCost" property="channelCost" />
+		<result column="channelcostcurrency" property="channelcostcurrency" />
+		<result column="revokemount" property="revokemount" />
+		<result column="businessType" property="businessType" />
+		<result column="balancetype" property="balancetype" />
+		<result column="mbuaccountId" property="mbuaccountId" />
+		<result column="accountNo" property="accountNo" />
+		<result column="STstate" property="STstate" />
+		<result column="shouldSTtime" property="shouldSTtime" />
+		<result column="actualSTtime" property="actualSTtime" />
+		<result column="sysorderid" property="sysorderid" />
+		<result column="addDatetime" property="addDatetime" />
+		<result column="txndesc" property="txndesc" />
+		<result column="sltamount" property="sltamount" />
+		<result column="sltcurrency" property="sltcurrency" />
+		<result column="txnexrate" property="txnexrate" />
+		<result column="remark" property="remark" />
+		<result column="gatewayFee" property="gatewayFee" />
+		<result column="organId" property="organId" />
+		<result column="needClear" property="needClear" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator" property="creator" />
+		<result column="modifier" property="modifier" />
+	</resultMap>
+	<resultMap id="SecondResultMap" type="com.asianwallets.common.vo.SettleCheckAccountDetailVO" >
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="STFlow" property="STFlow" jdbcType="VARCHAR" />
+		<result column="refcnceFlow" property="refcnceFlow" jdbcType="VARCHAR" />
+		<result column="tradetype" property="tradetype" jdbcType="VARCHAR" />
+		<result column="merchantid" property="merchantid" jdbcType="VARCHAR" />
+		<result column="merOrderNo" property="merOrderNo" jdbcType="VARCHAR" />
+		<result column="txncurrency" property="txncurrency" jdbcType="VARCHAR" />
+		<result column="txnamount" property="txnamount" jdbcType="DOUBLE" />
+		<result column="fee" property="fee" jdbcType="DOUBLE" />
+		<result column="feecurrency" property="feecurrency" jdbcType="VARCHAR" />
+		<result column="refundOrderFeeCurrency" property="refundOrderFeeCurrency" />
+		<result column="refundOrderFee" property="refundOrderFee" />
+		<result column="channelCost" property="channelCost" jdbcType="DOUBLE" />
+		<result column="channelcostcurrency" property="channelcostcurrency" jdbcType="VARCHAR" />
+		<result column="revokemount" property="revokemount" jdbcType="DOUBLE" />
+		<result column="businessType" property="businessType" jdbcType="INTEGER" />
+		<result column="balancetype" property="balancetype" jdbcType="INTEGER" />
+		<result column="mbuaccountId" property="mbuaccountId" jdbcType="VARCHAR" />
+		<result column="accountNo" property="accountNo" jdbcType="VARCHAR" />
+		<result column="STstate" property="STstate" jdbcType="INTEGER" />
+		<result column="shouldSTtime" property="shouldSTtime" jdbcType="DATE" />
+		<result column="actualSTtime" property="actualSTtime" jdbcType="TIMESTAMP" />
+		<result column="sysorderid" property="sysorderid" jdbcType="VARCHAR" />
+		<result column="addDatetime" property="addDatetime" jdbcType="TIMESTAMP" />
+		<result column="txndesc" property="txndesc" jdbcType="VARCHAR" />
+		<result column="sltamount" property="sltamount" jdbcType="DOUBLE" />
+		<result column="sltcurrency" property="sltcurrency" jdbcType="VARCHAR" />
+		<result column="txnexrate" property="txnexrate" jdbcType="DOUBLE" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="gatewayFee" property="gatewayFee" jdbcType="DOUBLE" />
+		<result column="organId" property="organId" jdbcType="VARCHAR" />
+		<result column="needClear" property="needClear" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="creator" property="creator" jdbcType="VARCHAR" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="ExportSettleCheckAccountVOMap" type="com.asianwallets.common.vo.ExportSettleCheckAccountVO" >
+		<result column="txncurrency" property="currency" jdbcType="VARCHAR" />
+		<collection javaType="list" property="list" resultMap="SecondResultMap"/>
+	</resultMap>
+
+	<sql id="Base_Column_List" >
+    id,STFlow, refcnceFlow, tradetype, merchantid, merOrderNo, txncurrency, txnamount, fee,refundOrderFeeCurrency,refundOrderFee,
+    feecurrency, channelCost, channelcostcurrency, revokemount, businessType, balancetype,
+    mbuaccountId, accountNo, STstate, shouldSTtime, actualSTtime, sysorderid, addDatetime,
+    txndesc, sltamount, sltcurrency, txnexrate, remark, gatewayFee, organId, needClear,create_time,update_time,creator,modifier
+  </sql>
+
+	<select id="pageSettleAccountCheckDetail" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"/>
+		from settle_check_account_detail
+		<where>
+			<if test="currency != null and currency != ''">
+				AND txncurrency = #{currency}
+			</if>
+			<if test="merchantId != null and merchantId != ''">
+				AND merchantid = #{merchantId}
+			</if>
+			<if test="checkDate != null">
+				AND DATE_FORMAT(actualSTtime,'%Y-%m-%d') = DATE_FORMAT(#{checkDate},'%Y-%m-%d')
+			</if>
+		</where>
+	</select>
+
+	<select id="exportSettleAccountCheckDetail" resultMap="ExportSettleCheckAccountVOMap">
+		select
+		<include refid="Base_Column_List"/>
+		from settle_check_account_detail
+		<where>
+			<if test="currency != null and currency != ''">
+				AND txncurrency = #{currency}
+			</if>
+			<if test="merchantId != null and merchantId != ''">
+				AND merchantid = #{merchantId}
+			</if>
+			<if test="checkDate != null">
+				AND DATE_FORMAT(actualSTtime,'%Y-%m-%d') = DATE_FORMAT(#{checkDate},'%Y-%m-%d')
+			</if>
+			<if test="startDate != null and startDate != ''">
+				AND DATE_FORMAT(actualSTtime,'%Y-%m-%d') &gt;= #{startDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(actualSTtime,'%Y-%m-%d') &lt;= #{endDate}
+			</if>
+		</where>
+		order by addDatetime desc
+	</select>
+</mapper>

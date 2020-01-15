@@ -1,5 +1,4 @@
 package com.asianwallets.trade.service;
-
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OfflineLoginDTO;
@@ -66,12 +65,4 @@ public interface OfflineTradeService {
      * @return 订单
      */
     PosQueryOrderListVO posQueryOrderDetail(PosQueryOrderListDTO posQueryOrderListDTO);
-
-    /**
-     * Pos 获取md5key
-     *
-     * @param merchantId 商户号
-     * @return 加密后的MD5key
-     */
-    String getPosMd5Key(String merchantId);
 }

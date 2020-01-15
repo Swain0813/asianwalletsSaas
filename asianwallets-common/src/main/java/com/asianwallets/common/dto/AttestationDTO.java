@@ -18,10 +18,10 @@ public class AttestationDTO {
     @ApiModelProperty(value = "uuid")
     private String id;
 
-    @ApiModelProperty(value = "商户id")
+    @ApiModelProperty(value = "商户编号")
     private String merchantId;
 
-    @ApiModelProperty(value = "机构id")
+    @ApiModelProperty(value = "机构编号")
     private String institutionId;
 
     @ApiModelProperty(value = "商户公钥")

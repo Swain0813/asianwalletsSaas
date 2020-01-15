@@ -16,4 +16,15 @@
 		<result column="remark" property="remark" />
 	</resultMap>
 
+	<sql id="Base_Column_List">
+    id, account_id, min_settle_amount, settle_switch, enabled, create_time, update_time,
+    creator, modifier, remark
+  </sql>
+
+	<select id="selectByAccountId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"/>
+		from settle_control where account_id = #{accountId} and enabled = 1;
+	</select>
+
 </mapper>

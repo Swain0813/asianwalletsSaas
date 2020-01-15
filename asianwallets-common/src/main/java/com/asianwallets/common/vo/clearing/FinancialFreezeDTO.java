@@ -81,7 +81,13 @@ public class FinancialFreezeDTO implements Serializable{
       this.id = reconciliation.getId();
       this.merchantId = reconciliation.getMerchantId();
       this.mvaccountId = account.getId();//账户 id
-      this.desc = reconciliation.getReconciliationType() == 3 ? "加冻结" : "解冻结";
+      if(reconciliation.getReconciliationType() == 3 && reconciliation.getFreezeType()==1){
+         this.desc ="加冻结";
+      }else if(reconciliation.getReconciliationType() == 3 && reconciliation.getFreezeType()==2){
+         this.desc ="预约冻结";
+      }else {
+         this.desc ="解冻结";
+      }
       this.merOrderNo = reconciliation.getId();
       this.txncurrency = reconciliation.getCurrency();
       //订单金额,2位

@@ -36,22 +36,21 @@
         select
         <include refid="Base_Column_List"/>
         from sys_role
-        <where>
-            <if test="roleName != null and roleName != ''">
-                and role_name LIKE CONCAT(CONCAT('%', #{roleName}), '%')
-            </if>
-            <if test="permissionType != null">
-                and permission_type = #{permissionType}
-            </if>
-            <choose>
-                <when test="sysId != null and sysId != ''">
-                    and sys_id = #{sysId}
-                </when>
-                <otherwise>
-                    and sys_id is null
-                </otherwise>
-            </choose>
-        </where>
+        where sort = 0
+        <if test="roleName != null and roleName != ''">
+            and role_name LIKE CONCAT(CONCAT('%', #{roleName}), '%')
+        </if>
+        <if test="permissionType != null">
+            and permission_type = #{permissionType}
+        </if>
+        <choose>
+            <when test="sysId != null and sysId != ''">
+                and sys_id = #{sysId}
+            </when>
+            <otherwise>
+                and sys_id is null
+            </otherwise>
+        </choose>
     </select>
 
     <select id="selectRoleIdBySysId" resultType="java.lang.String">
@@ -60,10 +59,35 @@
         where sys_id = #{sysId}
     </select>
 
-    <select id="selectRoleIdBySysIdAndRoleCode" resultType="java.lang.String">
-        select id
+    <select id="getInstitutionRoleId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role where role_name like '机构管理员%' and enabled = 1
+    </select>
+
+    <select id="getPOSRoleId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role where role_name like 'POS机管理员%' and enabled = 1
+    </select>
+
+    <select id="getAgencyRoleId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role where role_name like '代理管理员%' and enabled = 1
+    </select>
+
+    <select id="getMerchantRoleId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role where role_name like '商户管理员%' and enabled = 1
+    </select>
+
+    <select id="selectBySysIdAndRoleCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
         from sys_role
         where sys_id = #{sysId}
-          and role_code = 'INSTITUTION_ADMIN'
+        and role_code = #{roleCode}
     </select>
 </mapper>

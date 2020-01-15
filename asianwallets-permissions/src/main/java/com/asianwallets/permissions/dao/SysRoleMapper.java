@@ -4,7 +4,6 @@ import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.SysRole;
 import com.asianwallets.permissions.dto.SysRoleDto;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -43,12 +42,33 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      *
      * @return 机构默认角色ID
      */
-    @Select("select id from sys_role where role_name like '机构管理员%' and enabled=1")
-    String getInstitutionRoleId();
+    SysRole getInstitutionRoleId();
 
     /**
-     * @param sysId 系统ID
+     * 查询默认POS角色ID
+     *
+     * @return 机构默认角色ID
+     */
+    SysRole getPOSRoleId();
+
+    /**
+     * 查询默认代理角色ID
+     *
+     * @return 机构默认角色ID
+     */
+    SysRole getAgencyRoleId();
+
+    /**
+     * 查询默认商户角色ID
+     *
+     * @return 机构默认角色ID
+     */
+    SysRole getMerchantRoleId();
+
+    /**
+     * @param sysId    系统ID
+     * @param roleCode 角色编码
      * @return 角色ID
      */
-    String selectRoleIdBySysIdAndRoleCode(String sysId);
+    SysRole selectBySysIdAndRoleCode(@Param("sysId") String sysId, @Param("roleCode") String roleCode);
 }

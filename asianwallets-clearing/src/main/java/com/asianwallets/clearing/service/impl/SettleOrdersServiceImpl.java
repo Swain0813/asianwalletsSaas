@@ -156,6 +156,8 @@ public class SettleOrdersServiceImpl implements SettleOrdersService {
                         tcsStFlow.setTxnamount(-1*settleOrder.getTxnamount().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                         tcsStFlow.setFee(0.0D);
                         tcsStFlow.setFeecurrency(settleOrder.getTxncurrency());
+                        tcsStFlow.setRefundOrderFeeCurrency(settleOrder.getTxncurrency());
+                        tcsStFlow.setRefundOrderFee(0.0D);
                         tcsStFlow.setChannelCost(0.0D);
                         tcsStFlow.setChannelcostcurrency(settleOrder.getTxncurrency());
                         tcsStFlow.setRevokemount(0.0D);
@@ -204,6 +206,7 @@ public class SettleOrdersServiceImpl implements SettleOrdersService {
                         tma.setFee(0.0D);
                         //原账户余额
                         tma.setBalance(beforeBalance);
+                        tma.setRefundOrderFee(0.0D);
                         //变动后账户余额
                         tma.setAfterbalance(afterBalance);
                         tma.setSltexrate(Double.parseDouble("1"));

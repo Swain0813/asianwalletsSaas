@@ -77,8 +77,7 @@ public class AccountFeignController extends BaseController {
                 writer.flush(out);
                 return ResultUtil.success();
             }
-            ExcelUtils excelUtils = new ExcelUtils();
-            excelUtils.exportExcel(dataList, AccountListVO.class, writer);
+            writer=exportService.exportAccount(dataList, AccountListVO.class);
             writer.flush(out);
         } catch (Exception e) {
             log.info("==========【导出账户信息】==========【导出账户信息导出异常】", e);

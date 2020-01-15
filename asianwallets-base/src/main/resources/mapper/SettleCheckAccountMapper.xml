@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.base.dao.SettleCheckAccountMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.SettleCheckAccount">
+	<result column="id" property="id" />
+		<result column="merchant_id" property="merchantId" />
+		<result column="check_time" property="checkTime" />
+		<result column="count" property="count" />
+		<result column="currency" property="currency" />
+		<result column="amount" property="amount" />
+		<result column="fee" property="fee" />
+		<result column="refund_order_fee" property="refundOrderFee" />
+		<result column="initial_amount" property="initialAmount" />
+		<result column="final_amount" property="finalAmount" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator" property="creator" />
+		<result column="modifier" property="modifier" />
+		<result column="remark" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List" >
+    id, merchant_id,check_time, currency, amount, fee, initial_amount, refund_order_fee,final_amount, create_time,count,
+    update_time, creator, modifier, remark
+  </sql>
+	<select id="statistical" resultMap="BaseResultMap">
+    select
+    merchantid as merchant_id,txncurrency as currency ,sum(txnamount) as amount,sum(fee) as fee,sum(refundOrderFee) as refund_order_fee ,count(txncurrency) as count
+    from settle_check_account_detail
+    WHERE DATE_FORMAT(actualSTtime,'%Y-%m-%d') = DATE_FORMAT(#{time},'%Y-%m-%d') group by merchantid,txncurrency
+  </select>
+	<select id="selectByCurrencyAndInstitutionCode" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"/>
+		from settle_check_account
+		WHERE merchant_id = #{merchantId} and currency = #{currency} order by check_time desc limit 0,1
+	</select>
+	<select id="pageSettleAccountCheck" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"/>
+		from settle_check_account
+		<where>
+			<if test="currency != null and currency != ''">
+				AND currency = #{currency}
+			</if>
+			<if test="merchantId != null and merchantId != ''">
+				AND merchant_id = #{merchantId}
+			</if>
+			<if test="startDate != null and startDate != ''">
+				AND DATE_FORMAT(check_time,'%Y-%m-%d') &gt;= #{startDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(check_time,'%Y-%m-%d') &lt;= #{endDate}
+			</if>
+			<if test="checkDate != null">
+				AND DATE_FORMAT(check_time,'%Y-%m-%d') = DATE_FORMAT(#{checkDate},'%Y-%m-%d')
+			</if>
+		</where>
+	</select>
+
+	<select id="exportSettleAccountCheck" resultMap="BaseResultMap">
+		select
+		id, DATE_FORMAT(check_time,'%Y-%m-%d') as check_time, currency, amount, fee, refund_order_fee,initial_amount, final_amount, create_time, merchant_id,count,
+		update_time, creator, modifier, remark
+		from settle_check_account
+		<where>
+			<if test="currency != null and currency != ''">
+				AND currency = #{currency}
+			</if>
+			<if test="merchantId != null and merchantId != ''">
+				AND merchant_id = #{merchantId}
+			</if>
+			<if test="startDate != null and startDate != ''">
+				AND DATE_FORMAT(check_time,'%Y-%m-%d') &gt;= #{startDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND DATE_FORMAT(check_time,'%Y-%m-%d') &lt;= #{endDate}
+			</if>
+			<if test="checkDate != null">
+				AND DATE_FORMAT(check_time,'%Y-%m-%d') = DATE_FORMAT(#{checkDate},'%Y-%m-%d')
+			</if>
+		</where>
+		order by check_time desc
+	</select>
+</mapper>

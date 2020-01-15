@@ -159,7 +159,7 @@ public class FundChangeDTO implements Serializable {
             //清算
             this.isclear = TradeConstant.CLEARING;
         }
-        this.txndesc = "";
+        this.txndesc = "退款";
         //汇率,2位
         this.txnexrate = orderRefund.getExchangeRate().doubleValue();
         if (orderRefund.getRemark() != null) {
@@ -230,8 +230,8 @@ public class FundChangeDTO implements Serializable {
             this.balancetype = TradeConstant.NORMAL_FUND;
             this.isclear = TradeConstant.SETTLE;
         }
-        this.txndesc = "";
-        this.remark = "";
+        this.txndesc = "调账";
+        this.remark = reconciliation.getRemark();
         //结算币种
         this.sltcurrency = reconciliation.getCurrency();
         this.txnexrate = 1;
