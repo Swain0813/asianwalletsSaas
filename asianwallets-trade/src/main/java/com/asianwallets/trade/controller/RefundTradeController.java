@@ -1,6 +1,5 @@
 package com.asianwallets.trade.controller;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RefundDTO;
@@ -11,7 +10,6 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.OfflineSysUserVO;
-import com.asianwallets.common.vo.SysUserVO;
 import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.service.RefundTradeService;
 import io.swagger.annotations.Api;
