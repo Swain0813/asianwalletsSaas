@@ -1,6 +1,6 @@
-package com.asianwallets.base.task;
+package com.asianwallets.task.scheduled;
 
-import com.asianwallets.base.service.SettleCheckAccountService;
+import com.asianwallets.task.service.SettleCheckAccountService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
