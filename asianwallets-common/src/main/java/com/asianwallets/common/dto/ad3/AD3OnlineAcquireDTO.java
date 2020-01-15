@@ -130,7 +130,8 @@ public class AD3OnlineAcquireDTO {
         this.productNum = "";
         this.productPrice = "";
         this.productCurrency = "";
-        this.merchantSignType = "2";//1为使用平台提供的密钥 2为使用自己生成的密钥
+        //1为使用平台提供的密钥 2为使用自己生成的密钥 channel.getExtend1()
+        this.merchantSignType = channel.getExtend1();
     }
 
     @Override
