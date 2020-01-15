@@ -117,8 +117,8 @@
 			<if test="currency != null and currency != ''">
 				AND txncurrency = #{currency}
 			</if>
-			<if test="institutionCode != null and institutionCode != ''">
-				AND merchantid = #{institutionCode}
+			<if test="merchantId != null and merchantId != ''">
+				AND merchant_id = #{merchantId}
 			</if>
 			<if test="checkDate != null">
 				AND DATE_FORMAT(actualSTtime,'%Y-%m-%d') = DATE_FORMAT(#{checkDate},'%Y-%m-%d')
