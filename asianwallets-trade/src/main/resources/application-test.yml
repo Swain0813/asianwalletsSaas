@@ -82,6 +82,3 @@ custom:
 
   #亚洲钱包的支付页面的url
   paySuccessUrl: http://192.168.124.49:8082/checkstandweb/#/Success
-
-  #pos机获取md5key的加密值
-  PosAESKey: IZ3TBUtgjfNIhPcGBzEp1w==
