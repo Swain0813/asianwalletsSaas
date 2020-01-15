@@ -72,39 +72,15 @@ custom:
     secret: M2UwFPOfdPW2JqI5
     token_expire_hour: 24
   nextPosUrl: http://119.23.136.80/ITSBoss/nextPosNotifyAction/nextPosqrbackNotify.do
-  #AD3提供的测试参数
-  #线下的商户编号
-  merchantCode: 20170921500044
-  imei: 11111
-  operatorId: '00'  #操作员ID，字符串
-  password: a123456
-  tradePwd: a123456
+
+  #megaPay分发地址
   ad3ItsUrl: http://119.23.136.80/ITSBoss/v1/
 
-  #线上 指定密钥的提供方 1为使用平台提供的密钥 2为使用自己生成的密钥
-  merchantSignType: 2
-  #线上 私钥 与提供方有关
-  platformProvidesPrivateKey: >
-    MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBANOOmUzJA
-    /AfBF3W1o/8PT0mrJkwIPdU0YaqAvhwCGzzPZWWyt/i4RfAIm3qdEQV7j
-    jPpO5oq9ZKa2zh34rwan+CdP9eNATo6obOzxZS9BcWuYhbAwtYWa9F+lc
-    frlfXgwdhD+YjWY4bfNYAJVXgtg3fmcoqsiD0Z3vEw88p0Y8DAgMBAAEC
-    gYAW01jo9vtMyhvvgAGQcXeuBGE0+gNkjCs7K1a8tWHDV486d5WWCGWe6
-    WUNlPFMc01LpeO2sWZw7YCfs9Mpq3zh6Nid7cCOQkl8IJP5CxXsG1U5Ub
-    7x07+8o6pf0uFWc1DJvWML6vDEOTFQLjrvCDVskE4uh9NIqZMaoV+GdEi
-    3AQJBAOy7KzjZte3GSQ+Qx//R0TYYAWmTkPucK55DHnfnNz837I43ejwd
-    w+4BS2szDj7WgcuQHf4zLibXwoUPYCW6FIECQQDkxt7QEwWjEOSlbRhzZ
-    KDZc1fXr0kG6ndCPBv48Ry7zRNufruNkTCHSSryYqXwa3wV90Aj4tF2yd
-    LvwqHH/JGDAkEA5mU3KKpCdLqhiqOm8qQa0GHGpiD3XtncXbgHJD0EuON
-    NuA/oSC/T64SZCSj0eVW9lweZGThod2dPqr6PHcifgQJAY4iGbh6oiC6U
-    W8igJ6wzMwg0wpj3e7PM2RtPzDoSlz584sjujoQJigJyVexHZ9dLsD7XQ
-    AWxvi3GwRt7yYeAQwJAI9JhK5ZlbKiOOwsjcJQEQADefTRoBrrxL1xzWL
-    0bPWL4jfacmREho/etFeVSu5rKFk5WQpsuLPv9B7vL7Towqg==
   #收银台url
   cashierDeskUrl: http://192.168.124.49:8082/checkstandweb/#/main
+
   #亚洲钱包的支付页面的url
   paySuccessUrl: http://192.168.124.49:8082/checkstandweb/#/Success
-  nganLuong:
-    check_url: https://www.nganluong.vn/checkout.api.nganluong.post.php
+
   #pos机获取md5key的加密值
   PosAESKey: IZ3TBUtgjfNIhPcGBzEp1w==

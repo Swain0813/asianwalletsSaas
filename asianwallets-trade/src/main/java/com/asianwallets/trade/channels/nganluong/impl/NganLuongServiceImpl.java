@@ -85,7 +85,7 @@ public class NganLuongServiceImpl implements NganLuongService {
         //将查询token放入订单
         orders.setSign(map.get("token"));
         ordersMapper.updateByPrimaryKeySelective(orders);
-        NganLuongMQDTO nganLuongMQDTO = new NganLuongMQDTO(map.get("token"), orders.getId(), channel.getChannelMerchantId(), channel.getMd5KeyStr());
+        NganLuongMQDTO nganLuongMQDTO = new NganLuongMQDTO(map.get("token"), orders.getId(), channel.getChannelMerchantId(), channel.getMd5KeyStr(), channel.getChannelSingleSelectUrl());
         String jsonNLMQDTO = JSON.toJSONString(nganLuongMQDTO);
         RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, jsonNLMQDTO);
         log.info("===============【NL网银收单接口信息记录】===============【上报NL查询订单队列1】 E_MQ_NGANLUONG_CHECK_ORDER_DL=======  jsonNLMQDTO: {}", jsonNLMQDTO);

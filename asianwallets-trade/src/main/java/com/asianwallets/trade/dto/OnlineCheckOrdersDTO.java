@@ -29,7 +29,7 @@ public class OnlineCheckOrdersDTO {
     @ApiModelProperty(value = "交易状态 1-待支付 2-交易中 3-交易成功 4-交易失败 5-已过期")
     private Byte txnStatus;
 
-    @ApiModelProperty(value = "退款状态")
+    @ApiModelProperty(value = "退款状态 1-退款中 2-部分退款成功 3-退款成功 4-退款失败")
     private Byte refundStatus;
 
     @NotNull(message = "52008")

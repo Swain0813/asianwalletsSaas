@@ -21,10 +21,10 @@ public interface Ad3Service {
      *
      * @param ad3OnlineOrderQueryDTO
      * @param headerMap
-     * @param url
+     * @param channel
      * @return
      */
-    HttpResponse ad3OnlineOrderQuery(AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO, Map<String, Object> headerMap, String url);
+    HttpResponse ad3OnlineOrderQuery(AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO, Map<String, Object> headerMap, Channel channel);
 
     /**
      * AD3线上
@@ -72,9 +72,10 @@ public interface Ad3Service {
      * 对向ad3的请求进行签名
      *
      * @param object
+     * @param privateKey
      * @return
      */
-    String signMsg(Object object);
+    String signMsg(Object object, String privateKey);
 
     /**
      * 获取终端编号和token

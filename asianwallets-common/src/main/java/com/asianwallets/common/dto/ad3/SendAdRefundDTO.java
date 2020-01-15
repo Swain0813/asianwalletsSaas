@@ -1,5 +1,7 @@
 package com.asianwallets.common.dto.ad3;
+
 import com.asianwallets.common.constant.AD3Constant;
+import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -15,16 +17,16 @@ import lombok.Data;
 public class SendAdRefundDTO {
 
     @ApiModelProperty(value = "版本号固定值")
-    private String version ;
+    private String version;
 
     @ApiModelProperty(value = "字符集")
     private String inputCharset;//1代表UTF-8、2代表GBK、3代表GB2312
 
     @ApiModelProperty(value = "语言")
-    private String language ;//1代表简体中文、2代表繁体中文、3代表英文
+    private String language;//1代表简体中文、2代表繁体中文、3代表英文
 
     @ApiModelProperty(value = "商户的唯一编号")
-    private String merchantId ;
+    private String merchantId;
 
     @ApiModelProperty(value = "原交易商户上送的商户订单号")
     private String merOrderNo;
@@ -36,7 +38,7 @@ public class SendAdRefundDTO {
     private String refundAmount;
 
     @ApiModelProperty(value = "商户加密证书方式")
-    private String merchantSignType ;
+    private String merchantSignType;
 
     @ApiModelProperty(value = " 商户退款申请的时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -52,20 +54,21 @@ public class SendAdRefundDTO {
     public SendAdRefundDTO() {
     }
 
-    public SendAdRefundDTO(String merchantOnlineCode, OrderRefund orderRefund) {
+    public SendAdRefundDTO(Channel channel, OrderRefund orderRefund) {
         this.version = "v1.0";
         this.inputCharset = AD3Constant.CHARSET_UTF_8;
         this.language = AD3Constant.LANGUAGE_CN;
-        this.merchantId = merchantOnlineCode;
+        this.merchantId = channel.getChannelMerchantId();
         this.merOrderNo = orderRefund.getOrderId();
         this.sysOrderNo = orderRefund.getChannelNumber();
-        if(orderRefund.getFeePayer()==1){
-            this.refundAmount =  String.valueOf(orderRefund.getTradeAmount());
-        }else{
-            this.refundAmount =  String.valueOf(orderRefund.getTradeAmount().add(orderRefund.getRefundOrderFeeTrade()));
+        if (orderRefund.getFeePayer() == 1) {
+            this.refundAmount = String.valueOf(orderRefund.getTradeAmount());
+        } else {
+            this.refundAmount = String.valueOf(orderRefund.getTradeAmount().add(orderRefund.getRefundOrderFeeTrade()));
         }
         this.refundOrdertime = DateToolUtils.getReqDateyyyyMMddHHmmss(orderRefund.getCreateTime());
-        this.ext1=orderRefund.getId();
-        this.merchantSignType="2";
+        this.ext1 = orderRefund.getId();
+        //ad3加密方式 channel.getExtend1()
+        this.merchantSignType = channel.getExtend1();
     }
 }

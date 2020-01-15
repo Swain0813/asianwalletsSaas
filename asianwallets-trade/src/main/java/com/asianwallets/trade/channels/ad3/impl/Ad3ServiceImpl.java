@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.ad3.impl;
+
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -62,14 +63,6 @@ import java.util.Set;
 @HandlerType(TradeConstant.AD3)
 public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Service {
 
-    @ApiModelProperty("AD3系统私钥")
-    @Value("${custom.platformProvidesPrivateKey}")
-    private String platformProvidesPrivateKey;//私钥
-
-    @ApiModelProperty("AD3签名方式")
-    @Value("${custom.merchantSignType}")
-    private String merchantSignType;//签名方式
-
     @ApiModelProperty("支付页面")
     @Value("${custom.paySuccessUrl}")
     private String paySuccessUrl;//签名方式
@@ -110,12 +103,14 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
      *
      * @param ad3OnlineOrderQueryDTO
      * @param headerMap
+     * @param channel
      * @return
      */
     @Override
-    public HttpResponse ad3OnlineOrderQuery(AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO, Map<String, Object> headerMap, String url) {
-        ad3OnlineOrderQueryDTO.setSignMsg(signMsg(ad3OnlineOrderQueryDTO));
-        return HttpClientUtils.reqPost(url, ad3OnlineOrderQueryDTO, headerMap);
+    public HttpResponse ad3OnlineOrderQuery(AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO, Map<String, Object> headerMap, Channel channel) {
+        //channel.getExtend2() ad3私钥
+        ad3OnlineOrderQueryDTO.setSignMsg(signMsg(ad3OnlineOrderQueryDTO, channel.getExtend2()));
+        return HttpClientUtils.reqPost(channel.getChannelSingleSelectUrl(), ad3OnlineOrderQueryDTO, headerMap);
     }
 
     /**
@@ -130,7 +125,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         AD3OnlineAcquireDTO ad3OnlineAcquireDTO = new AD3OnlineAcquireDTO(orders, channel);
         String url = ad3OnlineAcquireDTO.getUrl();
         ad3OnlineAcquireDTO.setUrl(null);
-        ad3OnlineAcquireDTO.setSignMsg(signMsg(ad3OnlineAcquireDTO));
+        //channel.getExtend2() ad3私钥
+        ad3OnlineAcquireDTO.setSignMsg(signMsg(ad3OnlineAcquireDTO, channel.getExtend2()));
         ad3OnlineAcquireDTO.setUrl(url);
         log.info("-------AD3线上收单参数-------AD3OnlineAcquireDTO:{}", JSON.toJSON(ad3OnlineAcquireDTO));
         //返回收款消息
@@ -682,10 +678,11 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         BaseResponse baseResponse = new BaseResponse();
         if (TradeConstant.TRADE_ONLINE.equals(orderRefund.getTradeDirection())) {
             /**************************************************** AD3线上退款 *******************************************************/
-            SendAdRefundDTO sendAdRefundDTO = new SendAdRefundDTO(channel.getChannelMerchantId(), orderRefund);
-            sendAdRefundDTO.setMerchantSignType(merchantSignType);
-            sendAdRefundDTO.setSignMsg(this.signMsg(sendAdRefundDTO));
-
+            SendAdRefundDTO sendAdRefundDTO = new SendAdRefundDTO(channel, orderRefund);
+            //channel.getExtend1() 签名方式 2020年1月15日15:51:49
+            sendAdRefundDTO.setMerchantSignType(channel.getExtend1());
+            //channel.getExtend2() ad3私钥
+            sendAdRefundDTO.setSignMsg(this.signMsg(sendAdRefundDTO, channel.getExtend2()));
             AD3ONOFFRefundDTO ad3ONOFFRefundDTO = new AD3ONOFFRefundDTO();
             ad3ONOFFRefundDTO.setChannel(channel);
             ad3ONOFFRefundDTO.setSendAdRefundDTO(sendAdRefundDTO);
@@ -927,13 +924,12 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     /**
      * 对向ad3的请求进行签名
      *
-     * @param object 参数
+     * @param object     参数
+     * @param privateKey
      * @return String
      */
     @Override
-    public String signMsg(Object object) {
-        //去空
-        String privateKey = platformProvidesPrivateKey.replaceAll("\\s*", "");
+    public String signMsg(Object object, String privateKey) {
         HashMap<String, Object> dtoMap = BeanToMapUtil.beanToMap(object);
         HashMap<String, String> map = new HashMap<>();
         Set<String> keySet = dtoMap.keySet();
@@ -944,7 +940,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         String signMsg = null;
         try {
             //签名
-            signMsg = RSAUtils.sign(msg, privateKey);
+            signMsg = RSAUtils.sign(msg, privateKey.replaceAll("\\s*", ""));
         } catch (Exception e) {
             log.info("----------------- 线上签名错误信息记录 ----------------签名原始明文:{},签名:{}", msg, signMsg);
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());

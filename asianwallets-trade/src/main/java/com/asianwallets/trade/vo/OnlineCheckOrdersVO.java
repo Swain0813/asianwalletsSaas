@@ -21,10 +21,10 @@ public class OnlineCheckOrdersVO {
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 
-    @ApiModelProperty(value = "机构订单号")
+    @ApiModelProperty(value = "商户订单号")
     private String orderNo;
 
-    @ApiModelProperty(value = "机构订单时间")
+    @ApiModelProperty(value = "商户订单时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date orderTime;
 

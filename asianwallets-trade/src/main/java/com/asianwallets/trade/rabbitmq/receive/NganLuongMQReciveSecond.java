@@ -24,7 +24,6 @@ import com.asianwallets.trade.vo.FundChangeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
@@ -63,9 +62,6 @@ public class NganLuongMQReciveSecond {
     @Autowired
     private MessageFeign messageFeign;
 
-    @Value("${custom.nganLuong.check_url}")
-    private String checkUrl;
-
     @RabbitListener(queues = "MQ_NGANLUONG_CHECK_ORDER_DL2")
     public void processNganLuongCheckOrder(String value) {
         RabbitMassage rabbitMassage = JSON.parseObject(value, RabbitMassage.class);
@@ -81,7 +77,7 @@ public class NganLuongMQReciveSecond {
             map.put("function", "GetTransactionDetail");
             map.put("token", nganLuongMQDTO.getToken());
             log.info("==============【NL查询队列2】==============【查询参数记录】 map:{}", JSON.toJSONString(map));
-            cn.hutool.http.HttpResponse execute = HttpRequest.post(checkUrl)
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(nganLuongMQDTO.getCheckUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(map)
                     .timeout(30000)
