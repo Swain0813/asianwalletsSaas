@@ -1,4 +1,5 @@
 package com.asianwallets.permissions.service.impl;
+
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.JSON;
@@ -106,7 +107,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
             redisSysUserVO.setUsername(username);
             redisSysUserVO.setTradePassword(sysUserVO.getTradePassword());
-            redisService.set(response.getToken(), JSON.toJSONString(redisSysUserVO),time * 60 * 60);
+            redisService.set(response.getToken(), JSON.toJSONString(redisSysUserVO), time * 60 * 60);
         }
         return response;
     }
@@ -150,7 +151,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         //封装登录响应实体
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
         //机构logo
-        response.setInstitutionLogo(org.springframework.util.StringUtils.isEmpty(institution.getInstitutionLogo())?null:institution.getInstitutionLogo());
+        response.setInstitutionLogo(org.springframework.util.StringUtils.isEmpty(institution.getInstitutionLogo()) ? null : institution.getInstitutionLogo());
         //公钥
         response.setPublicKey(attestation.getPubkey());
         //是否开通dcc
@@ -197,6 +198,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         //封装登录响应实体
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
+        response.setInstitutionId(merchant.getInstitutionId());
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
             RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
@@ -273,7 +275,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BusinessException(EResultEnum.MERCHANT_IS_DISABLED.getCode());
         }
         //校验商户绑定设备
-        DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(request.getSysId(),request.getImei());
+        DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(request.getSysId(), request.getImei());
         if (deviceBinding == null) {
             log.info("===========【Pos机系统登录】==========【设备编号不合法!】");
             //设备编号不合法
@@ -305,14 +307,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     /**
      * 根据商户号获取平台加密的md5key
+     *
      * @param merchantId
      * @return
      */
     private String getPosMd5Key(String merchantId) {
         log.info("===================【POS机获取md5key】加密开始===================【参数记录】 merchantId: {}", JSON.toJSONString(merchantId));
-        Attestation attestation = JSON.parseObject(redisService.get(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY), Attestation.class);
+        Attestation attestation = JSON.parseObject(redisService.get(merchantId), Attestation.class);
         if (attestation == null) {
-            attestation = attestationMapper.selectPlatformPub(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY);
+            attestation = attestationMapper.selectPlatformPub(merchantId);
             redisService.set(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY, JSON.toJSONString(attestation));
         }
         //构建

@@ -1,7 +1,5 @@
 package com.asianwallets.trade.rabbitmq.receive;
-
 import com.asianwallets.trade.service.ShareBenefitService;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;

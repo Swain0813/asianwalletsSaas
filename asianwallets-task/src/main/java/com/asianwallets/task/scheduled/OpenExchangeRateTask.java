@@ -27,7 +27,7 @@ import java.util.*;
  **/
 @Component
 @Slf4j
-@Api(value = "OPEN汇率API调用定时任务")
+@Api(value = "OPEN汇率API调用定时任务saas用")
 public class OpenExchangeRateTask {
 
     @Autowired
@@ -50,14 +50,14 @@ public class OpenExchangeRateTask {
 
 
     /**
-     * Open汇率查询定时任务
+     * OPEN汇率API调用定时任务saas用
      * 每天早上9点开始执行,执行一次
      */
     @Scheduled(cron = "0 0 9 ? * *")
     //@Scheduled(cron = "0/10 * * * * ? ")//每10秒执行一次 测试用
     @Transactional(rollbackFor = Exception.class)
     public void getOpenRate() {
-        log.info("=============【OPEN汇率调用定时任务】=============【开始执行】");
+        log.info("=============Saas【OPEN汇率调用定时任务】=============【开始执行】");
         List<String> currencyList = new ArrayList<>(13);
         currencyList.add("USD");
         currencyList.add("SGD");
@@ -97,12 +97,12 @@ public class OpenExchangeRateTask {
                 String openResponse = HttpClientUtils.reqGetString(queryUrl, null, headerMap);
                 JSONObject jsonResult = JSONObject.fromObject(openResponse);
                 if (jsonResult == null) {
-                    log.info("=============【OPEN汇率调用定时任务】=============【响应结果为空】");
-                    messageFeign.sendSimple(developerMobile, "OPEN汇率定时任务获取数据异常!【本位币种】: " + base);
-                    messageFeign.sendSimpleMail(developerEmail, "OPEN汇率定时任务获取数据异常! ", "OPEN汇率定时任务获取数据异常!【本位币种】: " + base);
+                    log.info("=============Saas【OPEN汇率调用定时任务】=============【响应结果为空】");
+                    messageFeign.sendSimple(developerMobile, "Saas OPEN汇率定时任务获取数据异常!【本位币种】: " + base);
+                    messageFeign.sendSimpleMail(developerEmail, "Saas OPEN汇率定时任务获取数据异常! ", "Saas OPEN汇率定时任务获取数据异常!【本位币种】: " + base);
                     break;
                 }
-                log.info("=============【OPEN汇率调用定时任务】=============JSON解析后的【响应参数记录】 jsonResult: {}", JSON.toJSONString(jsonResult));
+                log.info("=============Saas【OPEN汇率调用定时任务】=============JSON解析后的【响应参数记录】 jsonResult: {}", JSON.toJSONString(jsonResult));
                 //汇率集合
                 List<ExchangeRate> exchangeRates = new ArrayList<>();
                 //时间戳
@@ -122,7 +122,7 @@ public class OpenExchangeRateTask {
                         exchangeRate.setBuyRate(new BigDecimal(String.valueOf(rates.get(targetCurrency))));
                         exchangeRate.setUsingTime(new Date(timestamp * 1000L));
                         exchangeRate.setCreateTime(new Date());
-                        exchangeRate.setCreator("OPEN定时任务");
+                        exchangeRate.setCreator("Saas OPEN定时任务");
                         exchangeRate.setEnabled(true);
                         exchangeRates.add(exchangeRate);
                         //禁用已启用的对应币种的汇率信息
@@ -138,16 +138,16 @@ public class OpenExchangeRateTask {
                                 .concat(exchangeRate.getForeignCurrency()), JSON.toJSONString(exchangeRate));
                     }
                 } catch (Exception e) {
-                    log.error("=============【OPEN汇率调用定时任务】=============【同步Redis发生错误】", e);
+                    log.error("=============Saas 【OPEN汇率调用定时任务】=============【同步Redis发生错误】", e);
                 }
             }
         } catch (Exception e) {
-            log.error("=============【OPEN汇率调用定时任务】=============【定时任务发生异常】", e);
-            messageFeign.sendSimple(developerMobile, "OPEN汇率定时任务获取数据异常!");
-            messageFeign.sendSimpleMail(developerEmail, "OPEN汇率定时任务获取数据异常!", "OPEN汇率定时任务获取数据异常!");
+            log.error("=============Saas【OPEN汇率调用定时任务】=============【定时任务发生异常】", e);
+            messageFeign.sendSimple(developerMobile, "Saas OPEN汇率定时任务获取数据异常!");
+            messageFeign.sendSimpleMail(developerEmail, "Saas OPEN汇率定时任务获取数据异常!", "OPEN汇率定时任务获取数据异常!");
             throw new BusinessException(EResultEnum.ERROR.getCode());
         }
-        log.info("=============【OPEN汇率调用定时任务】=============【结束执行】");
+        log.info("=============Saas【OPEN汇率调用定时任务】=============【结束执行】");
     }
 
 

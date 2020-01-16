@@ -67,3 +67,7 @@ redis:
     min-idle: 5
     max-total: 100
     max-wait-millis: -1
+custom:
+  warning:
+    email: 842505302@qq.com
+    mobile: 18800330943

@@ -1,11 +1,9 @@
 package com.asianwallets.baseinfo;
-import java.math.BigDecimal;
-import java.util.Date;
-
 import com.asianwallets.base.BaseApplication;
 import com.asianwallets.base.dao.InstitutionProductMapper;
 import com.asianwallets.base.dao.OrdersMapper;
 import com.asianwallets.base.service.impl.InstitutionServiceImpl;
+import com.asianwallets.base.service.impl.TradeCheckAccountServiceImpl;
 import com.asianwallets.common.entity.Orders;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BaseApplication.class)
@@ -27,6 +26,9 @@ public class BaseApplicationTests {
 
     @Autowired
     private OrdersMapper ordersMapper;
+
+    @Autowired
+    private TradeCheckAccountServiceImpl tradeCheckAccountService;
 
     @Test
     public void contextLoads() {
@@ -125,8 +127,8 @@ public class BaseApplicationTests {
         orders.setRemark("3");
         ordersMapper.insert(orders);
     }
-   /* @Test
+    @Test
     public void Testa() {
-        System.out.println(institutionServiceimpl.getMerchantByInId());
-    }*/
+        tradeCheckAccountService.tradeCheckAccount();
+    }
 }

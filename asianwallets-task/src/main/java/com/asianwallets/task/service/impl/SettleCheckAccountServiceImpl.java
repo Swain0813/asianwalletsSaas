@@ -1,36 +1,23 @@
 package com.asianwallets.task.service.impl;
-
 import com.asianwallets.common.base.BaseServiceImpl;
-import com.asianwallets.common.dto.TradeCheckAccountDTO;
-import com.asianwallets.common.dto.TradeCheckAccountSettleExportDTO;
 import com.asianwallets.common.entity.SettleCheckAccount;
 import com.asianwallets.common.entity.SettleCheckAccountDetail;
 import com.asianwallets.common.entity.TcsStFlow;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
-import com.asianwallets.common.vo.ExportSettleCheckAccountVO;
-import com.asianwallets.common.vo.SettleCheckAccountDetailVO;
 import com.asianwallets.task.dao.SettleCheckAccountDetailMapper;
 import com.asianwallets.task.dao.SettleCheckAccountMapper;
 import com.asianwallets.task.dao.TcsStFlowMapper;
 import com.asianwallets.task.service.SettleCheckAccountService;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
 import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * <p>
- * 机构结算单表 服务实现类
- * </p>
- *
- * @author yx
- * @since 2020-01-14
+ * 结算对账单定时生成
  */
 @Slf4j
 @Service
@@ -48,7 +35,7 @@ public class SettleCheckAccountServiceImpl extends BaseServiceImpl<SettleCheckAc
 
 
     /**
-     * 机构结算信息对账
+     * 结算对账单定时生成
      *
      * @return
      */
