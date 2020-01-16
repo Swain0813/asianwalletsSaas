@@ -1,5 +1,4 @@
 package com.asianwallets.base.controller;
-
 import com.asianwallets.base.service.SettleCheckAccountService;
 import com.asianwallets.common.dto.TradeCheckAccountDTO;
 import com.asianwallets.common.dto.TradeCheckAccountSettleExportDTO;
@@ -10,21 +9,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.asianwallets.common.base.BaseController;
-
 import java.util.Map;
 
 /**
- * <p>
- * 机构结算单表 前端控制器
- * </p>
- *
- * @author yx
- * @since 2020-01-14
+ * 结算对账管理
  */
-@Api(description = "机构结算对账单")
+@Api(description = "结算对账单")
 @RestController
 @RequestMapping("/settleCheckAccount")
 public class SettleCheckAccountController extends BaseController {
@@ -39,19 +31,19 @@ public class SettleCheckAccountController extends BaseController {
         return ResultUtil.success(settleCheckAccountService.settleAccountCheck(DateToolUtils.getDateByStr(time)));
     }
 
-    @ApiOperation(value = "分页查询机构结算对账")
+    @ApiOperation(value = "分页查询商户结算对账")
     @PostMapping("pageSettleAccountCheck")
     public BaseResponse pageSettleAccountCheck(@RequestBody @ApiParam TradeCheckAccountDTO tradeCheckAccountDTO) {
         return ResultUtil.success(settleCheckAccountService.pageSettleAccountCheck(tradeCheckAccountDTO));
     }
 
-    @ApiOperation(value = "分页查询机构结算对账详情")
+    @ApiOperation(value = "分页查询商户结算对账详情")
     @PostMapping("pageSettleAccountCheckDetail")
     public BaseResponse pageSettleAccountCheckDetail(@RequestBody @ApiParam TradeCheckAccountDTO tradeCheckAccountDTO) {
         return ResultUtil.success(settleCheckAccountService.pageSettleAccountCheckDetail(tradeCheckAccountDTO));
     }
 
-    @ApiOperation(value = "导出机构结算对账单")
+    @ApiOperation(value = "导出商户结算对账单")
     @PostMapping("exportSettleAccountCheck")
     public Map<String, Object> exportSettleAccountCheck(@RequestBody @ApiParam TradeCheckAccountSettleExportDTO tradeCheckAccountDTO) {
         return settleCheckAccountService.exportSettleAccountCheck(tradeCheckAccountDTO);
