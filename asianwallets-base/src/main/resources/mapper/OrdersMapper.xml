@@ -398,34 +398,34 @@
                o.remark4                             as exchangeRateRemark,
 
 
-               o.report_channel_time   as reportChannelTime,
-               o.channel_number        as channelNumber,
-               o.channel_name          as channelName,
-               o.payer_name            as payerName,
-               o.payer_account         as payerAccount,
-               o.payer_bank            as payerBank,
-               o.payer_email           as payerEmail,
-               o.channel_callback_time as channelCallbackTime,
-               o.channel_fee           as channelFee,
-               o.remark5               as channelRemark,
+               o.report_channel_time                 as reportChannelTime,
+               o.channel_number                      as channelNumber,
+               o.channel_name                        as channelName,
+               o.payer_name                          as payerName,
+               o.payer_account                       as payerAccount,
+               o.payer_bank                          as payerBank,
+               o.payer_email                         as payerEmail,
+               o.channel_callback_time               as channelCallbackTime,
+               o.channel_fee                         as channelFee,
+               o.remark5                             as channelRemark,
 
-               ore.create_time         as orderRefundCreateTime,
-               ore.id                  as orderRefundId,
-               ore.order_amount        as orderRefundAmount,
-               ore.exchange_rate       as refundExchangeRate,
-               ore.channel_amount      as refundChannelAmount,
-               ore.trade_currency      as refundTradeCurrency,
-               ore.refund_status       as refundStatus,
-               ore.update_time         as refundFinishTime,
-               ore.refund_fee          as refundFee,
-               ore.remark              as refundRemark,
+               ore.create_time                       as orderRefundCreateTime,
+               ore.id                                as orderRefundId,
+               ore.order_amount                      as orderRefundAmount,
+               ore.exchange_rate                     as refundExchangeRate,
+               ore.channel_amount                    as refundChannelAmount,
+               ore.trade_currency                    as refundTradeCurrency,
+               ore.refund_status                     as refundStatus,
+               ore.update_time                       as refundFinishTime,
+               ore.refund_fee                        as refundFee,
+               ore.remark                            as refundRemark,
 
-               o.delivery_time         as deliveryTime,
-               o.product_name          as productName,
-               o.invoice_no            as invoiceNo,
-               o.provider_name         as providerName,
-               o.delivery_status       as deliveryStatus,
-               o.remark6               as logisticsRemark
+               o.delivery_time                       as deliveryTime,
+               o.product_name                        as productName,
+               o.invoice_no                          as invoiceNo,
+               o.provider_name                       as providerName,
+               o.delivery_status                     as deliveryStatus,
+               o.remark6                             as logisticsRemark
         FROM orders o
                  left join order_refund ore on o.id = ore.order_id
                  left join pay_type p on p.extend1 = o.pay_method and p.language = #{language}
@@ -471,4 +471,65 @@
         </if>
     </select>
 
+    <select id="selectByDate" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM orders
+        WHERE trade_status = 3
+        and DATE_FORMAT(create_time, '%Y-%m-%d') = #{yesterday}
+    </select>
+
+    <select id="tradeAccountCheck" resultMap="CheckAccountVOMap">
+        SELECT "1"               AS type,
+               institution_id    AS institutionId,
+               institution_name  AS institutionName,
+               merchant_id       AS merchantId,
+               merchant_name     AS merchantName,
+               order_currency    AS orderCurrency,
+               SUM(order_amount) AS totalAmount,
+               count(1)          AS totalCount,
+               SUM(fee)          AS fee,
+               NULL              AS refundAmount,
+               NULL              AS refundCount,
+               NULL              AS refundFee
+        FROM orders
+        WHERE trade_status = 3
+          AND DATE_FORMAT(create_time, '%Y-%m-%d') = #{yesterday}
+        GROUP BY order_currency, merchant_id
+        UNION
+        SELECT "2"               AS type,
+               institution_id    AS institutionId,
+               institution_name  AS institutionName,
+               merchant_id       AS merchantId,
+               merchant_name     AS merchantName,
+               order_currency    AS orderCurrency,
+               NULL              AS totalAmount,
+               NULL              AS totalCount,
+               NULL              AS fee,
+               SUM(order_amount) AS refundAmount,
+               count(1)          AS refundCount,
+               SUM(refund_fee)   AS refundFee
+        FROM order_refund
+        WHERE DATE_FORMAT(create_time, '%Y-%m-%d') = #{yesterday}
+        GROUP BY order_currency, merchant_id
+    </select>
+
+    <resultMap id="CheckAccountVOMap" type="com.asianwallets.base.vo.CheckAccountVO">
+        <result column="institutionId" property="institutionId" jdbcType="DECIMAL"/>
+        <result column="institutionName" property="institutionName" jdbcType="DECIMAL"/>
+        <result column="merchantId" property="merchantId" jdbcType="DECIMAL"/>
+        <result column="merchantName" property="merchantName" jdbcType="DECIMAL"/>
+        <result column="orderCurrency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <collection property="checkAccountListVOList" resultMap="CheckAccountListVOMap"></collection>
+    </resultMap>
+
+    <resultMap id="CheckAccountListVOMap" type="com.asianwallets.base.vo.CheckAccountListVO">
+        <result column="totalAmount" property="totalAmount" jdbcType="VARCHAR"/>
+        <result column="totalCount" property="totalCount" jdbcType="DECIMAL"/>
+        <result column="fee" property="fee" jdbcType="VARCHAR"/>
+        <result column="refundAmount" property="refundAmount" jdbcType="VARCHAR"/>
+        <result column="refundCount" property="refundCount" jdbcType="VARCHAR"/>
+        <result column="refundFee" property="refundFee" jdbcType="DECIMAL"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+    </resultMap>
 </mapper>

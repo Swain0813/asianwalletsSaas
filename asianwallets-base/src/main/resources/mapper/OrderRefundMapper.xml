@@ -245,4 +245,11 @@
                  left join pay_type p on p.extend1 = o.pay_method and p.language = #{language}
         WHERE ore.id = #{refundId}
     </select>
+
+    <select id="selectByDate" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM order_refund
+        WHERE  DATE_FORMAT(create_time, '%Y-%m-%d') = #{yesterday}
+    </select>
+
 </mapper>

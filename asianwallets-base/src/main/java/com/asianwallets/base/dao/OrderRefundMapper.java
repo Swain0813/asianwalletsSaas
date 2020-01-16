@@ -32,4 +32,12 @@ public interface OrderRefundMapper extends BaseMapper<OrderRefund> {
      * @return OrdersRefundDetailVO
      */
     OrdersRefundDetailVO selectOrdersRefundDetailById(@Param("refundId") String refundId, @Param("language") String language);
+
+    /**
+     * 根据日期查询退款订单信息
+     *
+     * @param yesterday 昨日日期
+     * @return
+     */
+    List<OrderRefund> selectByDate(String yesterday);
 }
