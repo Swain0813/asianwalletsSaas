@@ -636,7 +636,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         log.info("===================【POS机查询订单列表信息】===================【参数记录】 posQueryOrderListDTO: {}", JSON.toJSONString(posQueryOrderListDTO));
         //验签
         if (!commonBusinessService.checkUniversalSign(posQueryOrderListDTO)) {
-            log.info("==================【POS机查询商户产品,币种信息】==================【签名不匹配】");
+            log.info("==================【POS机查询订单列表信息】==================【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }
         //校验设备
