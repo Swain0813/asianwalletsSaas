@@ -214,6 +214,7 @@ public class RefundOrderMQReceive {
             OrderRefund orderRefund = JSON.parseObject(rabbitMassage.getValue(), OrderRefund.class);
             //根据订单id判断订单状态是否付款成功
             Orders order = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
+            orderRefund.setRefundMode(TradeConstant.REFUND_MODE_AUTO);
             orderRefund.setChannelNumber(order.getChannelNumber());
             Channel channel = this.commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
             log.info("========================= 【CX_GX_FAIL_DL】 ==================== orderId : 【{}】, status :【{}】 ", order.getId(), order.getTradeStatus());
