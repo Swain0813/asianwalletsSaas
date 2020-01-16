@@ -10,9 +10,19 @@ import java.util.List;
 @Repository
 public interface TradeCheckAccountMapper extends BaseMapper<TradeCheckAccount> {
 
-
+    /**
+     * 分页查询交易对账总表信息
+     *
+     * @param tradeCheckAccountDTO 查询DTO
+     * @return 总表信息集合
+     */
     List<TradeCheckAccount> pageFindTradeCheckAccount(TradeCheckAccountDTO tradeCheckAccountDTO);
 
-
-
+    /**
+     * 导出交易对账总表信息
+     *
+     * @param tradeCheckAccountDTO
+     * @return
+     */
+    List<TradeCheckAccount> exportTradeCheckAccount(TradeCheckAccountDTO tradeCheckAccountDTO);
 }

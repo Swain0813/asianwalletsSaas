@@ -8,6 +8,9 @@ import com.asianwallets.base.feign.MessageFeign;
 import com.asianwallets.base.service.TradeCheckAccountService;
 import com.asianwallets.base.vo.CheckAccountListVO;
 import com.asianwallets.base.vo.CheckAccountVO;
+import com.asianwallets.common.config.AuditorProvider;
+import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.TradeCheckAccountDTO;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
@@ -18,6 +21,9 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.ExportTradeAccountVO;
+import com.asianwallets.common.vo.TradeAccountDetailVO;
+import com.asianwallets.common.vo.TradeCheckAccountDetailVO;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -25,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -49,6 +56,9 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
 
     @Autowired
     private MessageFeign messageFeign;
+
+    @Autowired
+    private AuditorProvider auditorProvider;
 
     @Value("custom.warning.mobile")
     private String warningMobile;
@@ -124,6 +134,8 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
                 tradeCheckAccountDetail.setPayType(order.getPayMethod());
                 //创建时间
                 tradeCheckAccountDetail.setCreateTime(new Date());
+                //收单
+                tradeCheckAccountDetail.setTradeType(AsianWalletConstant.PAYMENT);
                 tradeCheckAccountDetails.add(tradeCheckAccountDetail);
             }
             for (OrderRefund orderRefund : orderRefundList) {
@@ -146,6 +158,8 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
                 tradeCheckAccountDetail.setRateType(orderRefund.getRefundRateType());
                 //退款手续费
                 tradeCheckAccountDetail.setFee(orderRefund.getRefundFee());
+                //退款
+                tradeCheckAccountDetail.setTradeType(AsianWalletConstant.REFUND);
                 //创建时间
                 tradeCheckAccountDetail.setCreateTime(new Date());
                 tradeCheckAccountDetails.add(tradeCheckAccountDetail);
@@ -180,6 +194,50 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
      */
     @Override
     public PageInfo<TradeCheckAccountDetail> pageFindTradeCheckAccountDetail(TradeCheckAccountDTO tradeCheckAccountDTO) {
-        return null;
+        return new PageInfo<>(tradeCheckAccountDetailMapper.pageFindTradeCheckAccountDetail(tradeCheckAccountDTO));
+    }
+
+    /**
+     * 导出商户交易对账单
+     *
+     * @param tradeCheckAccountDTO 查询DTO
+     * @return 对账单
+     */
+    @Override
+    public ExportTradeAccountVO exportTradeCheckAccount(TradeCheckAccountDTO tradeCheckAccountDTO) {
+        //获取当前请求语言
+        tradeCheckAccountDTO.setLanguage(auditorProvider.getLanguage());
+        //时间为空,默认为昨天
+        if (StringUtils.isEmpty(tradeCheckAccountDTO.getStartDate()) && StringUtils.isEmpty(tradeCheckAccountDTO.getEndDate())) {
+            //昨日日期
+            String yesterday = DateToolUtils.getYesterday();
+            tradeCheckAccountDTO.setStartDate(yesterday);
+            tradeCheckAccountDTO.setEndDate(yesterday);
+        }
+        //总表信息
+        List<TradeCheckAccount> tradeCheckAccountList = tradeCheckAccountMapper.exportTradeCheckAccount(tradeCheckAccountDTO);
+        //详细表信息
+        List<TradeAccountDetailVO> tradeAccountDetailVOList = tradeCheckAccountDetailMapper.exportTradeCheckAccountDetail(tradeCheckAccountDTO);
+        for (TradeAccountDetailVO accountDetail : tradeAccountDetailVOList) {
+            for (TradeCheckAccountDetailVO tradeCheckAccountDetailVO : accountDetail.getTradeCheckAccountDetailVOS()) {
+                if (AsianWalletConstant.PAYMENT.equals(tradeCheckAccountDetailVO.getTradeType())) {
+                    tradeCheckAccountDetailVO.setTradeTypeName("Payment");
+                    tradeCheckAccountDetailVO.setTradeStatusName("Payment Success");
+                } else if (AsianWalletConstant.REFUND.equals(tradeCheckAccountDetailVO.getTradeType())) {
+                    tradeCheckAccountDetailVO.setTradeTypeName("Refund");
+                    if (TradeConstant.REFUND_SUCCESS.equals(tradeCheckAccountDetailVO.getRefundStatus())) {
+                        tradeCheckAccountDetailVO.setTradeStatusName("Refund Success");
+                    } else if (TradeConstant.REFUND_WAIT.equals(tradeCheckAccountDetailVO.getRefundStatus())) {
+                        tradeCheckAccountDetailVO.setTradeStatusName("Refund Pending");
+                    } else if (TradeConstant.REFUND_FALID.equals(tradeCheckAccountDetailVO.getRefundStatus())) {
+                        tradeCheckAccountDetailVO.setTradeStatusName("Refund Fail");
+                    }
+                }
+            }
+        }
+        ExportTradeAccountVO exportTradeAccountVO = new ExportTradeAccountVO();
+        exportTradeAccountVO.setTradeCheckAccounts(tradeCheckAccountList);
+        exportTradeAccountVO.setTradeAccountDetailVOS(tradeAccountDetailVOList);
+        return exportTradeAccountVO;
     }
 }

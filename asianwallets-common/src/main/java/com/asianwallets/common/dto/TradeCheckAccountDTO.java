@@ -24,6 +24,9 @@ public class TradeCheckAccountDTO extends BasePageHelper {
     @ApiModelProperty(value = "结束时间")
     private String endDate;
 
+    @ApiModelProperty(value = "交易时间")
+    private String tradeTime;
+
     @ApiModelProperty(value = "对账时间")
     private String checkDate;
 
