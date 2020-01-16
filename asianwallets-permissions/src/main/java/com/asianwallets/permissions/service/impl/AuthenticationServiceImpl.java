@@ -312,7 +312,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.info("===================【POS机获取md5key】加密开始===================【参数记录】 merchantId: {}", JSON.toJSONString(merchantId));
         Attestation attestation = JSON.parseObject(redisService.get(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY), Attestation.class);
         if (attestation == null) {
-            attestation = attestationMapper.selectPlatformPub(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY);
+            attestation = attestationMapper.selectPlatformPub(merchantId);
             redisService.set(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY, JSON.toJSONString(attestation));
         }
         //构建
