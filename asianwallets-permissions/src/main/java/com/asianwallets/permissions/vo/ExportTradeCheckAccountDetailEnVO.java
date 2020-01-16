@@ -9,50 +9,50 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@ApiModel(value = "商户交易对账单中文输出实体", description = "商户交易对账单中文输出实体")
-public class ExportTradeCheckAccountDetailVO {
+@ApiModel(value = "商户交易对账单英文输出实体", description = "商户交易对账单英文输出实体")
+public class ExportTradeCheckAccountDetailEnVO {
 
-    @ApiModelProperty("订单创建时间")
+    @ApiModelProperty("Order Create Time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date orderCreateTime;
 
-    @ApiModelProperty("商户编号")
+    @ApiModelProperty(value = "Merchant Id")
     private String merchantId;
 
-    @ApiModelProperty("商户名称")
+    @ApiModelProperty(value = "Merchant Name")
     private String merchantName;
 
-    @ApiModelProperty("订单流水号")
+    @ApiModelProperty(value = "Order Id")
     private String orderId;
 
-    @ApiModelProperty("商户订单号")
+    @ApiModelProperty("Merchant Order Id")
     private String merchantOrderId;
 
-    @ApiModelProperty("交易金额")
+    @ApiModelProperty("Order Amount")
     private BigDecimal orderAmount;
 
-    @ApiModelProperty("交易币种")
+    @ApiModelProperty("Trade Currency")
     private String orderCurrency;
 
-    @ApiModelProperty("交易类型")
+    @ApiModelProperty("Trade Type")
     private String tradeTypeName;
 
-    @ApiModelProperty("交易状态")
+    @ApiModelProperty("Trade Status")
     private String tradeStatusName;
 
-    @ApiModelProperty("交易方向")
+    @ApiModelProperty("Trade direction")
     private Byte tradeDirection;
 
-    @ApiModelProperty("手续费类型")
+    @ApiModelProperty("Rate Type")
     private String rateType;
 
-    @ApiModelProperty("费率")
+    @ApiModelProperty("Rate")
     private BigDecimal rate;
 
-    @ApiModelProperty("手续费")
+    @ApiModelProperty("Fee")
     private BigDecimal fee;
 
-    @ApiModelProperty("交易完成时间")
+    @ApiModelProperty("Pay Finish Time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date channelCallbackTime;
 }

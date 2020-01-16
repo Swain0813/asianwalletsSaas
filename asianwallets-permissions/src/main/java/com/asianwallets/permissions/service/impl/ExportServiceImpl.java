@@ -167,7 +167,7 @@ public class ExportServiceImpl implements ExportService {
                                 oList2.add("启用");
                             } else if ((String.valueOf((oMap.get(s)))).equals("false")) {
                                 oList2.add("禁用");
-                            }else {
+                            } else {
                                 oList2.add("");
                             }
                         } else {
@@ -315,6 +315,7 @@ public class ExportServiceImpl implements ExportService {
      * 导出结算户余额流水详情
      * 导出清算金额详情
      * 导出冻结金额详情
+     *
      * @param list
      * @param clazz
      * @return
@@ -356,11 +357,11 @@ public class ExportServiceImpl implements ExportService {
                                 oList2.add("解冻");
                             } else if ((String.valueOf((oMap.get(s))).equals("PM"))) {
                                 oList2.add("付款");
-                            }  else if ((String.valueOf((oMap.get(s))).equals("RA"))) {
+                            } else if ((String.valueOf((oMap.get(s))).equals("RA"))) {
                                 oList2.add("调账");
                             } else if ((String.valueOf((oMap.get(s))).equals("SP"))) {
                                 oList2.add("分润");
-                            }else {
+                            } else {
                                 oList2.add("");
                             }
                         } else {
@@ -378,6 +379,7 @@ public class ExportServiceImpl implements ExportService {
 
     /**
      * 机构后台分润导出
+     *
      * @param queryAgencyShareBenefitVOS
      * @param clazz
      * @return
@@ -416,7 +418,7 @@ public class ExportServiceImpl implements ExportService {
                             } else {
                                 oList2.add("");
                             }
-                        }  else {
+                        } else {
                             oList2.add(oMap.get(s));
                         }
                     }
@@ -431,6 +433,7 @@ public class ExportServiceImpl implements ExportService {
 
     /**
      * 导出账户信息
+     *
      * @param list
      * @param clazz
      * @return
@@ -460,7 +463,7 @@ public class ExportServiceImpl implements ExportService {
                                 oList2.add("代理商户");
                             } else if ((String.valueOf((oMap.get(s))).equals("5"))) {
                                 oList2.add("集团商户");
-                            }else {
+                            } else {
                                 oList2.add("");
                             }
                         } else {
@@ -592,7 +595,7 @@ public class ExportServiceImpl implements ExportService {
     }
 
     /**
-     导出商户交易对账单
+     * 导出商户交易对账单
      */
     @Override
     public ExcelWriter exportTradeCheckAccount(ExportTradeAccountVO exportTradeAccountVO, String language, Class clazz1, Class clazz2) {

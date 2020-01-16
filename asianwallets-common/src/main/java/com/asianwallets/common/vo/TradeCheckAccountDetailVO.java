@@ -15,8 +15,8 @@ public class TradeCheckAccountDetailVO {
     @ApiModelProperty("订单流水号")
     private String orderId;
 
-    @ApiModelProperty("机构编号")
-    private String institutionCode;
+    @ApiModelProperty("商户编号")
+    private String merchantId;
 
     @ApiModelProperty("订单创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -25,8 +25,8 @@ public class TradeCheckAccountDetailVO {
     @ApiModelProperty("设备编号")
     private String deviceCode;
 
-    @ApiModelProperty("机构订单号")
-    private String institutionOrderId;
+    @ApiModelProperty("商户订单号")
+    private String merchantOrderId;
 
     @ApiModelProperty("支付方式")
     private String payType;
@@ -35,7 +35,7 @@ public class TradeCheckAccountDetailVO {
     private String orderCurrency;
 
     @ApiModelProperty("订单金额")
-    private BigDecimal amount;
+    private BigDecimal orderAmount;
 
     @ApiModelProperty("交易类型")
     private Byte tradeType;
@@ -54,7 +54,7 @@ public class TradeCheckAccountDetailVO {
 
     @ApiModelProperty("支付完成时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date payFinishTime;
+    private Date channelCallbackTime;
 
     @ApiModelProperty("费率类型")
     private String rateType;

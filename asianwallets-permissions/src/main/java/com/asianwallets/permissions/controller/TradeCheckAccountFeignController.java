@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.TradeCheckAccountDTO;
-import com.asianwallets.common.entity.TradeCheckAccount;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -15,9 +14,10 @@ import com.asianwallets.common.vo.ExportTradeAccountVO;
 import com.asianwallets.permissions.feign.base.TradeCheckAccountFeign;
 import com.asianwallets.permissions.service.ExportService;
 import com.asianwallets.permissions.service.OperationLogService;
+import com.asianwallets.permissions.vo.ExportTradeCheckAccountDetailEnVO;
 import com.asianwallets.permissions.vo.ExportTradeCheckAccountDetailVO;
-import com.asianwallets.permissions.vo.TradeCheckAccountDetailEnVO;
-import com.asianwallets.permissions.vo.TradeCheckAccountEnVO;
+import com.asianwallets.permissions.vo.ExportTradeCheckAccountEnVO;
+import com.asianwallets.permissions.vo.ExportTradeCheckAccountVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -78,10 +78,10 @@ public class TradeCheckAccountFeignController extends BaseController {
         try {
             if (AsianWalletConstant.EN_US.equals(this.getLanguage())) {
                 //英文的场合
-                writer = exportService.exportTradeCheckAccount(exportTradeAccountVO, this.getLanguage(), TradeCheckAccountEnVO.class, TradeCheckAccountDetailEnVO.class);
+                writer = exportService.exportTradeCheckAccount(exportTradeAccountVO, this.getLanguage(), ExportTradeCheckAccountEnVO.class, ExportTradeCheckAccountDetailEnVO.class);
             } else {
                 //中文的场合
-                writer = exportService.exportTradeCheckAccount(exportTradeAccountVO, this.getLanguage(), TradeCheckAccount.class, ExportTradeCheckAccountDetailVO.class);
+                writer = exportService.exportTradeCheckAccount(exportTradeAccountVO, this.getLanguage(), ExportTradeCheckAccountVO.class, ExportTradeCheckAccountDetailVO.class);
             }
             ServletOutputStream out = response.getOutputStream();
             writer.flush(out);

@@ -233,6 +233,13 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
                         tradeCheckAccountDetailVO.setTradeStatusName("Refund Fail");
                     }
                 }
+                if (TradeConstant.FEE_TYPE_RATE.equals(tradeCheckAccountDetailVO.getRateType())) {
+                    tradeCheckAccountDetailVO.setRateType("Single Rate");
+                } else if (TradeConstant.FEE_TYPE_QUOTA.equals(tradeCheckAccountDetailVO.getRateType())) {
+                    tradeCheckAccountDetailVO.setRateType("Single Quota");
+                } else {
+                    tradeCheckAccountDetailVO.setRateType("");
+                }
             }
         }
         ExportTradeAccountVO exportTradeAccountVO = new ExportTradeAccountVO();
