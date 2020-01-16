@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.TradeCheckAccountMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.TradeCheckAccount">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="trade_time" property="tradeTime" jdbcType="TIMESTAMP"/>
+        <result column="currency" property="currency" jdbcType="VARCHAR"/>
+        <result column="total_trade_amount" property="totalTradeAmount" jdbcType="DECIMAL"/>
+        <result column="total_trade_count" property="totalTradeCount" jdbcType="INTEGER"/>
+        <result column="total_refund_amount" property="totalRefundAmount" jdbcType="DECIMAL"/>
+        <result column="total_refund_count" property="totalRefundCount" jdbcType="INTEGER"/>
+        <result column="fee" property="fee" jdbcType="DECIMAL"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, institution_id, institution_name, merchant_id, merchant_name, trade_time, currency, 
+    total_trade_amount, total_trade_count, total_refund_amount, total_refund_count, fee, 
+    create_time, update_time, creator, modifier, remark
+  </sql>
+
+    <select id="pageFindTradeCheckAccount" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trade_check_account
+        WHERE merchant_id = #{merchantId}
+        <if test="currency != null and currency != ''">
+            AND currency = #{currency}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND DATE_FORMAT(trade_time,'%Y-%m-%d') &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND DATE_FORMAT(trade_time,'%Y-%m-%d') &lt;= #{endDate}
+        </if>
+        <if test="merchantName != null and merchantName != ''">
+            AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+        </if>
+    </select>
+</mapper>

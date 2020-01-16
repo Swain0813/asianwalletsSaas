@@ -1,5 +1,6 @@
 package com.asianwallets.base.dao;
 
+import com.asianwallets.base.vo.CheckAccountVO;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.DccReportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
@@ -55,4 +56,19 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      */
     List<DccReportVO> pageDccReport(DccReportDTO dccReportDTO);
 
+    /**
+     * 根据日期查询订单信息
+     *
+     * @param yesterday 昨日日期
+     * @return
+     */
+    List<Orders> selectByDate(String yesterday);
+
+    /**
+     * 商户交易对账单
+     *
+     * @param yesterday 昨日日期
+     * @return
+     */
+    List<CheckAccountVO> tradeAccountCheck(String yesterday);
 }

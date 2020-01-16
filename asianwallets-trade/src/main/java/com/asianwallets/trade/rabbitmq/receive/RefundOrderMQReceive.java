@@ -33,6 +33,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class RefundOrderMQReceive {
 
+    @Autowired
+    private MessageFeign messageFeign;
+
     @Value("${custom.warning.mobile}")
     private String developerMobile;
 
@@ -44,9 +47,6 @@ public class RefundOrderMQReceive {
 
     @Autowired
     private CommonBusinessService commonBusinessService;
-
-    @Autowired
-    private MessageFeign messageFeign;
 
     @Autowired
     private ClearingService clearingService;
@@ -111,8 +111,8 @@ public class RefundOrderMQReceive {
             orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, "上报清结算失败:RV_RF_FAIL_DL");
             //更新订单表
             commonBusinessService.updateOrderRefundFail(orderRefund);
-            messageFeign.sendSimple(developerMobile, "上报清结算失败 RV_RF_FAIL_DL ：{ " + value + " }");
-            messageFeign.sendSimpleMail(developerEmail, "上报清结算失败 RV_RF_FAIL_DL 预警", "RV_RF_FAIL_DL 预警 ：{ " + value + " }");
+            messageFeign.sendSimple(developerMobile, "SAAS-上报清结算失败 RV_RF_FAIL_DL ：{ " + value + " }");
+            messageFeign.sendSimpleMail(developerEmail, "SAAS-上报清结算失败 RV_RF_FAIL_DL 预警", "RV_RF_FAIL_DL 预警 ：{ " + value + " }");
         }
 
     }
@@ -156,8 +156,8 @@ public class RefundOrderMQReceive {
         } else {
             //预警机制
             reconciliationMapper.updateStatusById(reconciliation.getId(),TradeConstant.RECONCILIATION_FALID);
-            messageFeign.sendSimple(developerMobile, "上报清结算调账失败队列 RA_AA_FAIL_DL 预警 ：{ " + value + " }");//短信通知
-            messageFeign.sendSimpleMail(developerEmail, "上报清结算调账失败队列 RA_AA_FAIL_DL 预警", "RA_AA_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
+            messageFeign.sendSimple(developerMobile, "SAAS-上报清结算调账失败队列 RA_AA_FAIL_DL 预警 ：{ " + value + " }");//短信通知
+            messageFeign.sendSimpleMail(developerEmail, "SAAS-上报清结算调账失败队列 RA_AA_FAIL_DL 预警", "RA_AA_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
         }
     }
 
@@ -193,8 +193,8 @@ public class RefundOrderMQReceive {
             log.info("=================【TK_SB_FAIL_DL】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
             rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
             //预警机制
-            messageFeign.sendSimple(developerMobile, "退款上请求上游失败 TK_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
-            messageFeign.sendSimpleMail(developerEmail, "退款上请求上游失败 TK_SB_FAIL_DL 预警", "TK_SB_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
+            messageFeign.sendSimple(developerMobile, "SAAS-退款上请求上游失败 TK_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
+            messageFeign.sendSimpleMail(developerEmail, "SAAS-退款上请求上游失败 TK_SB_FAIL_DL 预警", "TK_SB_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
         }
 
     }
@@ -214,6 +214,7 @@ public class RefundOrderMQReceive {
             OrderRefund orderRefund = JSON.parseObject(rabbitMassage.getValue(), OrderRefund.class);
             //根据订单id判断订单状态是否付款成功
             Orders order = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
+            orderRefund.setRefundMode(TradeConstant.REFUND_MODE_AUTO);
             orderRefund.setChannelNumber(order.getChannelNumber());
             Channel channel = this.commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
             log.info("========================= 【CX_GX_FAIL_DL】 ==================== orderId : 【{}】, status :【{}】 ", order.getId(), order.getTradeStatus());
@@ -264,8 +265,8 @@ public class RefundOrderMQReceive {
             }
         } else {
             //预警机制
-            messageFeign.sendSimple(developerMobile, "撤销更新订单失败 CX_GX_FAIL_DL 预警 ：{ " + value + " }");//短信通知
-            messageFeign.sendSimpleMail(developerEmail, "撤销更新订单失败 CX_GX_FAIL_DL 预警", "CX_GX_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
+            messageFeign.sendSimple(developerMobile, "SAAS-撤销更新订单失败 CX_GX_FAIL_DL 预警 ：{ " + value + " }");//短信通知
+            messageFeign.sendSimpleMail(developerEmail, "SAAS-撤销更新订单失败 CX_GX_FAIL_DL 预警", "CX_GX_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
         }
     }
 
@@ -293,8 +294,8 @@ public class RefundOrderMQReceive {
             channelsAbstract.cancelPaying(channel, orderRefund, rabbitMassage);
         } else {
             //预警机制
-            messageFeign.sendSimple(developerMobile, "撤销上报上游失败 CX_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
-            messageFeign.sendSimpleMail(developerEmail, "撤销上报上游失败 CX_SB_FAIL_DL 预警", "CX_SB_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
+            messageFeign.sendSimple(developerMobile, "SAAS-撤销上报上游失败 CX_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
+            messageFeign.sendSimpleMail(developerEmail, "SAAS-撤销上报上游失败 CX_SB_FAIL_DL 预警", "CX_SB_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
         }
     }
 }

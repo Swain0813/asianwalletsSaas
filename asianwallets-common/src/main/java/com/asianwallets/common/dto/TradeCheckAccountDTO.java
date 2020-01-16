@@ -12,8 +12,11 @@ import javax.validation.constraints.NotNull;
 public class TradeCheckAccountDTO extends BasePageHelper {
 
     @NotNull(message = "50002")
-    @ApiModelProperty(value = "机构编号")
+    @ApiModelProperty(value = "商户编号")
     private String merchantId;
+
+    @ApiModelProperty(value = "商户名称")
+    private String merchantName;
 
     @ApiModelProperty(value = "开始时间")
     private String startDate;
