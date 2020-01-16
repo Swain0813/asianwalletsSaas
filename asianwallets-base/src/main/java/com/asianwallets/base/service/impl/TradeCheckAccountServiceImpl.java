@@ -8,6 +8,7 @@ import com.asianwallets.base.feign.MessageFeign;
 import com.asianwallets.base.service.TradeCheckAccountService;
 import com.asianwallets.base.vo.CheckAccountListVO;
 import com.asianwallets.base.vo.CheckAccountVO;
+import com.asianwallets.common.dto.TradeCheckAccountDTO;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.TradeCheckAccount;
@@ -17,6 +18,7 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,13 +64,13 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
     @Transactional
     public void tradeCheckAccount() {
         try {
-            log.info("==================【SAAS商户交易对账单】==================【START】");
+            log.info("==================【商户交易对账单】==================【START】");
             //昨日日期
             String yesterday = DateToolUtils.getYesterday();
             //交易订单与退款订单汇总信息计算
             List<CheckAccountVO> checkAccountVOList = ordersMapper.tradeAccountCheck(yesterday);
             if (ArrayUtil.isEmpty(checkAccountVOList)) {
-                log.info("==================【SAAS商户交易对账单】==================【昨日订单信息数据为空】");
+                log.info("==================【商户交易对账单】==================【昨日订单信息数据为空】");
                 return;
             }
             List<TradeCheckAccount> tradeCheckAccounts = new ArrayList<>();
@@ -151,11 +153,33 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
             tradeCheckAccountMapper.insertList(tradeCheckAccounts);
             tradeCheckAccountDetailMapper.insertList(tradeCheckAccountDetails);
         } catch (Exception e) {
-            log.info("==================【SAAS商户交易对账单】==================【定时任务异常】", e);
-            messageFeign.sendSimple(warningMobile, "昨日的机构交易对账定时任务出错!");
-            messageFeign.sendSimpleMail(warningEmail, "昨日的机构交易对账定时任务出错!", "昨日的机构交易对账定时任务出错!");
+            log.info("==================【商户交易对账单】==================【定时任务异常】", e);
+            messageFeign.sendSimple(warningMobile, "SAAS-昨日的机构交易对账定时任务出错!");
+            messageFeign.sendSimpleMail(warningEmail, "SAAS-昨日的机构交易对账定时任务出错!", "SAAS-昨日的机构交易对账定时任务出错!");
             throw new BusinessException(EResultEnum.ERROR.getCode());
         }
-        log.info("==================【SAAS商户交易对账单】==================【END】");
+        log.info("==================【商户交易对账单】==================【END】");
+    }
+
+    /**
+     * 分页查询交易对账总表信息
+     *
+     * @param tradeCheckAccountDTO 查询DTO
+     * @return 总表信息集合
+     */
+    @Override
+    public PageInfo<TradeCheckAccount> pageFindTradeCheckAccount(TradeCheckAccountDTO tradeCheckAccountDTO) {
+        return new PageInfo<>(tradeCheckAccountMapper.pageFindTradeCheckAccount(tradeCheckAccountDTO));
+    }
+
+    /**
+     * 分页查询交易对账详细表信息
+     *
+     * @param tradeCheckAccountDTO 查询DTO
+     * @return 详情表信息集合
+     */
+    @Override
+    public PageInfo<TradeCheckAccountDetail> pageFindTradeCheckAccountDetail(TradeCheckAccountDTO tradeCheckAccountDTO) {
+        return null;
     }
 }
