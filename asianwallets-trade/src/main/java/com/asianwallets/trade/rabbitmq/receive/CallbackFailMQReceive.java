@@ -71,8 +71,8 @@ public class CallbackFailMQReceive {
             log.info("==================【回调商户队列信息记录】==================【三次回调完成,回调商户失败】");
             //回调下游商户失败原因
             ordersMapper.updateOrderRemark(onlineCallbackVO.getReferenceNo(), "商户回调返回消息不为SUCCESS");
-            messageFeign.sendSimple(mobile, "回调商户失败 MQ_AW_CALLBACK_URL_FAIL 预警 ：{ " + value + " }");//短信通知
-            messageFeign.sendSimpleMail(email, "回调商户失败 MQ_AW_CALLBACK_URL_FAIL 预警", "MQ_AW_CALLBACK_URL_FAIL 预警 ：{ " + value + " }");//邮件通知
+            messageFeign.sendSimple(mobile, "SAAS-回调商户失败 MQ_AW_CALLBACK_URL_FAIL 预警 ：{ " + value + " }");//短信通知
+            messageFeign.sendSimpleMail(email, "SAAS-回调商户失败 MQ_AW_CALLBACK_URL_FAIL 预警", "MQ_AW_CALLBACK_URL_FAIL 预警 ：{ " + value + " }");//邮件通知
         }
     }
 

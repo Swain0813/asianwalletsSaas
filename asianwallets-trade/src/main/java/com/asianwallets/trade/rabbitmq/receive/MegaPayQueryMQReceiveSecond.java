@@ -1,5 +1,4 @@
 package com.asianwallets.trade.rabbitmq.receive;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -13,7 +12,6 @@ import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
-import com.asianwallets.trade.feign.MessageFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
@@ -25,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.util.Date;
 
 /**
@@ -58,8 +55,6 @@ public class MegaPayQueryMQReceiveSecond {
     @Autowired
     private ChannelsFeign channelsFeign;
 
-    @Autowired
-    private MessageFeign messageFeign;
 
     @RabbitListener(queues = "MQ_MEGAPAY_THB_CHECK_ORDER2")
     public void megaPayQuery(String value) {
