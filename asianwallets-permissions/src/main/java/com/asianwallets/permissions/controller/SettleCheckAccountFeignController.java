@@ -1,5 +1,4 @@
 package com.asianwallets.permissions.controller;
-
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
@@ -12,7 +11,6 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
-import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.vo.ExportSettleCheckAccountDetailEnVO;
 import com.asianwallets.common.vo.ExportSettleCheckAccountDetailVO;
 import com.asianwallets.common.vo.SettleCheckAccountEnVO;
@@ -26,27 +24,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * @description: 机构结算对账单
- * @author: YangXu
- * @create: 2020-01-14 15:56
- **/
+ * 结算对账单
+ */
 @RestController
-@Api(description = "机构结算对账单接口")
+@Api(description = "结算对账单")
 @RequestMapping("/settleCheckAccount")
 public class SettleCheckAccountFeignController extends BaseController {
 
     @Autowired
     private SettleCheckAccountFeign settleCheckAccountFeign;
+
     @Autowired
     private OperationLogService operationLogService;
+
     @Autowired
     private ExportService exportService;
 
@@ -59,27 +55,27 @@ public class SettleCheckAccountFeignController extends BaseController {
         return settleCheckAccountFeign.selectTcsStFlow(time);
     }
 
-    @ApiOperation(value = "分页查询机构结算对账")
+    @ApiOperation(value = "分页查询商户结算对账")
     @PostMapping("pageSettleAccountCheck")
     public BaseResponse pageSettleAccountCheck(@RequestBody @ApiParam TradeCheckAccountDTO tradeCheckAccountDTO) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(tradeCheckAccountDTO),
-                "分页查询机构结算对账"));
+                "分页查询商户结算对账"));
         return settleCheckAccountFeign.pageSettleAccountCheck(tradeCheckAccountDTO);
     }
 
-    @ApiOperation(value = "分页查询机构结算对账详情")
+    @ApiOperation(value = "分页查询商户结算对账详情")
     @PostMapping("pageSettleAccountCheckDetail")
     public BaseResponse pageSettleAccountCheckDetail(@RequestBody @ApiParam TradeCheckAccountDTO tradeCheckAccountDTO) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(tradeCheckAccountDTO),
-                "分页查询机构结算对账详情"));
+                "分页查询商户结算对账详情"));
         return settleCheckAccountFeign.pageSettleAccountCheckDetail(tradeCheckAccountDTO);
     }
 
-    @ApiOperation(value = "导出机构结算对账单")
+    @ApiOperation(value = "导出商户结算对账单")
     @PostMapping("exportSettleAccountCheck")
     public BaseResponse exportSettleAccountCheck(@RequestBody @ApiParam TradeCheckAccountSettleExportDTO tradeCheckAccountDTO) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(tradeCheckAccountDTO),
-                "导出机构结算对账单"));
+                "导出商户结算对账单"));
         LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) settleCheckAccountFeign.exportSettleAccountCheck(tradeCheckAccountDTO);
         if (map == null || map.size() == 0) {//数据不存在的场合
             throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());

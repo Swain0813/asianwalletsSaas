@@ -24,7 +24,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-@Api(value = "机构日交易汇总表定时任务")
+@Api(value = "saas商户日交易汇总表定时任务")
 public class InsDailyTradeTask {
 
     @Autowired
@@ -43,7 +43,7 @@ public class InsDailyTradeTask {
     private String developerEmail;
 
     /**
-     * 机构日交易汇总表定时任务
+     * 商户日交易汇总表定时任务
      * 每天早上1点执行一次
      */
     @Scheduled(cron = "0 0 1 ? * *")

@@ -1,5 +1,4 @@
 package com.asianwallets.trade.rabbitmq.receive;
-
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -24,10 +23,10 @@ import com.asianwallets.trade.vo.FundChangeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +60,12 @@ public class NganLuongMQReciveSecond {
 
     @Autowired
     private MessageFeign messageFeign;
+
+    @Value("${custom.warning.mobile}")
+    private String mobile;
+
+    @Value("${custom.warning.email}")
+    private String email;
 
     @RabbitListener(queues = "MQ_NGANLUONG_CHECK_ORDER_DL2")
     public void processNganLuongCheckOrder(String value) {
@@ -224,6 +229,9 @@ public class NganLuongMQReciveSecond {
         } else {
             log.info("==============【NL查询队列2】==============【二次查询,订单为交易中】 rabbitMassage : {}", JSON.toJSONString(rabbitMassage));
             //短信通知
+            messageFeign.sendSimple(mobile, "SAAS-NGANLUONG查询队列查询预警 E_MQ_NGANLUONG_CHECK_ORDER_DL2: { " + nganLuongMQDTO.getOrderId() + " }");
+            //邮件通知
+            messageFeign.sendSimpleMail(email, "SAAS-NGANLUONG查询队列查询预警 E_MQ_NGANLUONG_CHECK_ORDER_DL2", "E_MQ_NGANLUONG_CHECK_ORDER_DL2预警: { " + nganLuongMQDTO.getOrderId() + " }");
         }
     }
 }

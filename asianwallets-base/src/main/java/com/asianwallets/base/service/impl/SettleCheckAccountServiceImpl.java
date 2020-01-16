@@ -1,5 +1,4 @@
 package com.asianwallets.base.service.impl;
-
 import com.asianwallets.base.dao.SettleCheckAccountDetailMapper;
 import com.asianwallets.base.dao.SettleCheckAccountMapper;
 import com.asianwallets.base.dao.TcsStFlowMapper;
@@ -20,17 +19,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * <p>
- * 机构结算单表 服务实现类
- * </p>
- *
- * @author yx
- * @since 2020-01-14
+ * 结算对账管理的实现类
  */
 @Slf4j
 @Service
@@ -50,7 +43,7 @@ public class SettleCheckAccountServiceImpl extends BaseServiceImpl<SettleCheckAc
      * @return
      * @Author YangXu
      * @Date 2019/4/16
-     * @Descripate 分页查询机构结算对账
+     * @Descripate 分页查询商户结算对账
      **/
     @Override
     public PageInfo<SettleCheckAccount> pageSettleAccountCheck(TradeCheckAccountDTO tradeCheckAccountDTO) {
@@ -60,7 +53,7 @@ public class SettleCheckAccountServiceImpl extends BaseServiceImpl<SettleCheckAc
      * @return
      * @Author YangXu
      * @Date 2019/4/16
-     * @Descripate 分页查询机构结算对账详情
+     * @Descripate 分页查询商户结算对账详情
      **/
     @Override
     public PageInfo<SettleCheckAccountDetail> pageSettleAccountCheckDetail(TradeCheckAccountDTO tradeCheckAccountDTO) {
@@ -71,7 +64,7 @@ public class SettleCheckAccountServiceImpl extends BaseServiceImpl<SettleCheckAc
      * @return
      * @Author YangXu
      * @Date 2019/4/16
-     * @Descripate 导出机构结算对账
+     * @Descripate 导出商户结算对账
      **/
     @Override
     public Map<String, Object> exportSettleAccountCheck(TradeCheckAccountSettleExportDTO tradeCheckAccountDTO) {
@@ -81,7 +74,6 @@ public class SettleCheckAccountServiceImpl extends BaseServiceImpl<SettleCheckAc
         for (ExportSettleCheckAccountVO e : list) {
             map.put(e.getCurrency(), e.getList());
         }
-
         for (String key : map.keySet()) {
             double balance = 0;
             if (!StringUtils.isEmpty(tradeCheckAccountDTO.getStartDate())) {
@@ -101,12 +93,11 @@ public class SettleCheckAccountServiceImpl extends BaseServiceImpl<SettleCheckAc
                 }
             }
         }
-
         return map;
     }
 
     /**
-     * 机构结算信息对账
+     * 结算信息对账
      *
      * @return
      */
