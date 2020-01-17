@@ -678,6 +678,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             basicInfoVO.setChannel(channel);
             basicInfoVO.setProduct(product);
             basicInfoVO.setMerchantProduct(merchantProduct);
+            break;
         }
         if (basicInfoVO.getChannel() == null) {
             log.info("-----------------【线上获取基础信息】-----------------映射表信息未配置");

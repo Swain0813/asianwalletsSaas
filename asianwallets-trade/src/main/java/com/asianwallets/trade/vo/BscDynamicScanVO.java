@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 @ApiModel(value = "线下下单BSC响应实体", description = "线下下单BSC响应实体")
 public class BscDynamicScanVO {
 
-    @ApiModelProperty(value = "机构编号")
+    @ApiModelProperty(value = "商户编号")
     private String merchantId;
 
-    @ApiModelProperty(value = "机构订单号")
+    @ApiModelProperty(value = "商户订单号")
     private String orderNo;
 
     @ApiModelProperty(value = "系统流水号")
@@ -26,7 +26,7 @@ public class BscDynamicScanVO {
     @ApiModelProperty(value = "订单金额")
     private BigDecimal orderAmount;
 
-    @ApiModelProperty(value = "机构订单时间")
+    @ApiModelProperty(value = "商户订单时间")
     public String orderTime;
 
     @ApiModelProperty(value = "订单状态 1-待支付 2-交易中 3-交易成功 4-交易失败 5-已过期")
