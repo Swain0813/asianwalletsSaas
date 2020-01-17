@@ -32,7 +32,7 @@ public class OfflineTradeDTO {
     @ApiModelProperty(value = "商户订单时间")
     private String orderTime;
 
-    @NotNull(message = "50002")
+//    @NotNull(message = "50002")
     @ApiModelProperty(value = "产品编号")
     private Integer productCode;
 

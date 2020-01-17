@@ -76,7 +76,7 @@
           AND b.enabled = 1
           AND c.enabled = 1
           AND p.enabled = 1
-          AND p.trade_direction = 1
+          AND p.trade_direction = #{tradeDirection}
           AND c.currency = p.currency
           AND mp.merchant_id = #{merchantId}
           AND b.issuer_id = #{issuerId}

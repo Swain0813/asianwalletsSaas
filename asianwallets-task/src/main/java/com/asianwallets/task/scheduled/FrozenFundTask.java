@@ -21,7 +21,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-@Api(value = "预约资金冻结定时任务")
+@Api(value = "saas预约资金冻结定时任务")
 public class FrozenFundTask {
 
     @Autowired
@@ -54,7 +54,7 @@ public class FrozenFundTask {
 //    @Scheduled(cron = "0/10 * * * * ? ")//每10秒执行一次 测试用
     @Transactional
     public void clearOperLog(){
-        log.info("*********开始预约资金冻结定时任务********************");
+        log.info("*********saas开始预约资金冻结定时任务********************");
         try {
             List<TcsFrozenFundsLogs> tcsFrozenFundsLogsLists = tcsFrozenFundsLogsMapper.getTcsFrozenFundsLogs();
             if (ArrayUtil.isEmpty(tcsFrozenFundsLogsLists)) {
@@ -96,6 +96,6 @@ public class FrozenFundTask {
             messageFeign.sendSimple(developerMobile, "预约资金冻结定时任务发生异常!");
             messageFeign.sendSimpleMail(developerEmail, "预约资金冻结定时任务发生异常", "预约资金冻结定时任务发生异常");
         }
-        log.info("***********结束预约资金冻结定时任务******************");
+        log.info("***********saas结束预约资金冻结定时任务******************");
     }
 }

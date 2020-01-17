@@ -24,7 +24,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-@Api(value = "机构日交易汇总表定时任务")
+@Api(value = "SAAS机构日交易汇总表定时任务")
 public class InsDailyTradeTask {
 
     @Autowired
@@ -80,8 +80,8 @@ public class InsDailyTradeTask {
             log.info("=============【机构日交易汇总表定时任务】=============【结束执行】 insertNum: {}", insertNum);
         } catch (Exception e) {
             log.info("=============【机构日交易汇总表定时任务】=============【定时任务异常】", e);
-            messageFeign.sendSimple(developerMobile, "机构日交易汇总表定时任务异常!");
-            messageFeign.sendSimpleMail(developerEmail, "机构日交易汇总表定时任务异常!", "机构日交易汇总表定时任务异常!");
+            messageFeign.sendSimple(developerMobile, "SAAS机构日交易汇总表定时任务异常!");
+            messageFeign.sendSimpleMail(developerEmail, "SAAS机构日交易汇总表定时任务异常!", "SAAS机构日交易汇总表定时任务异常!");
             throw new BusinessException(EResultEnum.ERROR.getCode());
         }
     }

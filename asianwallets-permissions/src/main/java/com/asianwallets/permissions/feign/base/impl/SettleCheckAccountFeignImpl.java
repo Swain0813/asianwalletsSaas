@@ -1,5 +1,4 @@
 package com.asianwallets.permissions.feign.base.impl;
-
 import com.asianwallets.common.dto.TradeCheckAccountDTO;
 import com.asianwallets.common.dto.TradeCheckAccountSettleExportDTO;
 import com.asianwallets.common.exception.BusinessException;
@@ -7,7 +6,6 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.permissions.feign.base.SettleCheckAccountFeign;
 import org.springframework.stereotype.Component;
-
 import java.util.Map;
 
 /**

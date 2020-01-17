@@ -1,5 +1,4 @@
 package com.asianwallets.trade.rabbitmq.receive;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -17,14 +16,12 @@ import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
-import com.asianwallets.trade.vo.FundChangeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.util.Date;
 
 /**
@@ -140,8 +137,6 @@ public class MegaPayQueryMQReceive {
                         FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                         BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
                         if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
-                            //请求成功
-                            FundChangeVO fundChangeVO = (FundChangeVO) fundChangeResponse.getData();
                             if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
                                 //业务处理失败
                                 log.info("==============【MegaPay-THB查询队列1】============== 【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");

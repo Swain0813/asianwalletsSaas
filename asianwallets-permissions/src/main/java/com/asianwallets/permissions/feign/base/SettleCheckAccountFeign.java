@@ -1,10 +1,7 @@
 package com.asianwallets.permissions.feign.base;
-
 import com.asianwallets.common.dto.TradeCheckAccountDTO;
 import com.asianwallets.common.dto.TradeCheckAccountSettleExportDTO;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.response.ResultUtil;
-import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.permissions.feign.base.impl.SettleCheckAccountFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -13,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.Map;
 
 /**
@@ -27,15 +23,15 @@ public interface SettleCheckAccountFeign {
     @GetMapping("/settleCheckAccount/selectTcsStFlow")
     BaseResponse selectTcsStFlow(@RequestParam("time") @ApiParam String time);
 
-    @ApiOperation(value = "分页查询机构结算对账")
+    @ApiOperation(value = "分页查询商户结算对账")
     @PostMapping("/settleCheckAccount/pageSettleAccountCheck")
     BaseResponse pageSettleAccountCheck(@RequestBody @ApiParam TradeCheckAccountDTO tradeCheckAccountDTO);
 
-    @ApiOperation(value = "分页查询机构结算对账详情")
+    @ApiOperation(value = "分页查询商户结算对账详情")
     @PostMapping("/settleCheckAccount/pageSettleAccountCheckDetail")
     BaseResponse pageSettleAccountCheckDetail(@RequestBody @ApiParam TradeCheckAccountDTO tradeCheckAccountDTO);
 
-    @ApiOperation(value = "导出机构结算对账单")
+    @ApiOperation(value = "导出商户结算对账单")
     @PostMapping("/settleCheckAccount/exportSettleAccountCheck")
     Map<String, Object> exportSettleAccountCheck(@RequestBody @ApiParam TradeCheckAccountSettleExportDTO tradeCheckAccountDTO);
 }
