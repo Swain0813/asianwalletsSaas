@@ -321,5 +321,6 @@ public class FundChangeDTO implements Serializable {
         this.fee = 0.00;//手续费,2位
         this.feecurrency = settleOrder.getTxncurrency();//手续费币种
         this.channelCost = 0.00;//通道成本 2位
+        this.shouldDealtime =DateToolUtils.formatTimestamp.format(new Date());
     }
 }

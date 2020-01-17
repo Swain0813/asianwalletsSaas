@@ -14,7 +14,6 @@ import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.WithdrawalVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
@@ -268,8 +267,6 @@ public class SettleOrderServiceImpl implements SettleOrderService {
                 settleOrder.setCreator(userName);//创建人
                 //将机构结算金额通过调账调出去上报清结算
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(settleOrder);
-                //应结算日期
-                fundChangeDTO.setShouldDealtime(DateToolUtils.formatTimestamp.format(new Date()));
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                     //上报清结算成功的场合,插入数据到机构结算表
