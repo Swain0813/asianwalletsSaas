@@ -74,7 +74,6 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
     @Transactional
     public void tradeCheckAccount() {
         try {
-            log.info("==================【商户交易对账单】==================【START】");
             //昨日日期
             String yesterday = DateToolUtils.getYesterday();
             //交易订单与退款订单汇总信息计算
@@ -172,7 +171,6 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
             messageFeign.sendSimpleMail(warningEmail, "SAAS-昨日的机构交易对账定时任务出错!", "SAAS-昨日的机构交易对账定时任务出错!");
             throw new BusinessException(EResultEnum.ERROR.getCode());
         }
-        log.info("==================【商户交易对账单】==================【END】");
     }
 
     /**
