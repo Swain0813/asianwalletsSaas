@@ -139,7 +139,7 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
             }
             for (OrderRefund orderRefund : orderRefundList) {
                 TradeCheckAccountDetail tradeCheckAccountDetail = new TradeCheckAccountDetail();
-                BeanUtils.copyProperties(tradeCheckAccountDetail, tradeCheckAccountDetail);
+                BeanUtils.copyProperties(orderRefund, tradeCheckAccountDetail);
                 tradeCheckAccountDetail.setId(IDS.uuid2());
                 //退款订单id
                 tradeCheckAccountDetail.setOrderId(orderRefund.getId());
@@ -167,8 +167,8 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
             tradeCheckAccountDetailMapper.insertList(tradeCheckAccountDetails);
         } catch (Exception e) {
             log.info("==================【商户交易对账单】==================【定时任务异常】", e);
-            messageFeign.sendSimple(warningMobile, "SAAS-昨日的机构交易对账定时任务出错!");
-            messageFeign.sendSimpleMail(warningEmail, "SAAS-昨日的机构交易对账定时任务出错!", "SAAS-昨日的机构交易对账定时任务出错!");
+            messageFeign.sendSimple(warningMobile, "SAAS-昨日的商户交易对账定时任务出错!");
+            messageFeign.sendSimpleMail(warningEmail, "SAAS-昨日的商户交易对账定时任务出错!", "SAAS-昨日的商户交易对账定时任务出错!");
             throw new BusinessException(EResultEnum.ERROR.getCode());
         }
     }
