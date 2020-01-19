@@ -356,7 +356,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setTradeCurrency(channel.getCurrency());
         orders.setImei(offlineTradeDTO.getImei());
         orders.setOperatorId(offlineTradeDTO.getOperatorId());
-        orders.setProductCode(offlineTradeDTO.getProductCode());
+        orders.setProductCode(product.getProductCode());
         orders.setProductName(offlineTradeDTO.getProductName());
         orders.setProductDescription(offlineTradeDTO.getProductDescription());
         orders.setChannelCode(channel.getChannelCode());
