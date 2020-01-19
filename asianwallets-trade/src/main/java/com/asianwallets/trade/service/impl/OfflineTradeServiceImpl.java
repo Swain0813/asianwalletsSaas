@@ -122,12 +122,12 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwME0yMDE5MTIyMDMzNjAiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1NzkxNDIwODg5NTEsImV4cCI6MTU3OTIyODQ4OH0.-L7jU7A0ZB2rMK6_Hs9kKIHD8puGDxmCLXB5fxvQ6IvFSFFfSVTQJ0fWU4bAR6fD0D1ArL8TT3ZwvYceRh4aoA";
         OfflineTradeDTO offlineTradeDTO = new OfflineTradeDTO();
         offlineTradeDTO.setMerchantId("M201912203360");
-        offlineTradeDTO.setOrderNo(IDS.uuid2());
+        offlineTradeDTO.setOrderNo(IDS.uniqueID().toString());
         offlineTradeDTO.setOrderCurrency("SGD");
         offlineTradeDTO.setOrderAmount(new BigDecimal("1").setScale(2, BigDecimal.ROUND_DOWN));
         offlineTradeDTO.setOrderTime(DateToolUtils.formatDate(new Date()));
-        //offlineTradeDTO.setProductCode(31);
-        offlineTradeDTO.setIssuerId("Alipay");
+        offlineTradeDTO.setProductCode(31);
+//        offlineTradeDTO.setIssuerId("Alipay");
         offlineTradeDTO.setImei("线下CSB");
         offlineTradeDTO.setOperatorId("00");
         offlineTradeDTO.setToken(token);
@@ -277,43 +277,53 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         InstitutionRequestParameters institutionRequestParameters = commonRedisDataService.getInstitutionRequestByIdAndDirection(institution.getId(), TradeConstant.TRADE_UPLINE);
         //校验机构必填请求输入参数
         checkRequestParameters(offlineTradeDTO, institutionRequestParameters);
-        //查询订单币种信息
         Currency currency = commonRedisDataService.getCurrencyByCode(offlineTradeDTO.getOrderCurrency());
         //校验输入参数合法性
         checkParamValidity(offlineTradeDTO, currency);
-        //查询商户关联信息
-        List<OnlineInfoDetailVO> onlineInfoDetailVOList = merchantProductMapper.selectOnlineInfoDetail(offlineTradeDTO.getMerchantId(), offlineTradeDTO.getIssuerId(),TradeConstant.TRADE_UPLINE);
-        if (ArrayUtil.isEmpty(onlineInfoDetailVOList)) {
-            log.info("================【线下业务接口】================【商户产品通道信息不存在】");
-            throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_CHANNEL_NOT_EXISTS.getCode());
+        Product product = commonRedisDataService.getProductByCode(offlineTradeDTO.getProductCode());
+        MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchant.getId(), product.getId());
+        List<String> chaBankIdList = commonRedisDataService.getChaBankIdByMerProId(merchantProduct.getId());
+        List<ChannelBank> channelBankList = new ArrayList<>();
+        for (String chaBankId : chaBankIdList) {
+            ChannelBank channelBank = commonRedisDataService.getChaBankById(chaBankId);
+            if (channelBank != null) {
+                channelBankList.add(channelBank);
+            }
+        }
+        Channel channel = null;
+        BankIssuerId bankIssuerId = null;
+        for (ChannelBank channelBank : channelBankList) {
+            channel = commonRedisDataService.getChannelById(channelBank.getChannelId());
+            if (channel != null && channel.getEnabled()) {
+                bankIssuerId = bankIssuerIdMapper.selectByChannelCode(channel.getChannelCode());
+                if (bankIssuerId != null) {
+                    log.info("==================【线下收单】==================【通道】  channel: {}", JSON.toJSONString(channel));
+                    log.info("==================【线下收单】==================【银行机构映射】  bankIssuerId: {}", JSON.toJSONString(bankIssuerId));
+                    break;
+                }
+            }
+        }
+        if (channel == null) {
+            log.info("==================【线下收单】==================【通道信息不合法】");
+            throw new BusinessException(EResultEnum.CHANNEL_IS_NOT_EXISTS.getCode());
+        }
+        if (!channel.getEnabled()) {
+            log.info("==================【线下收单】==================【通道信息不合法】");
+            throw new BusinessException(EResultEnum.CHANNEL_STATUS_ABNORMAL.getCode());
+        }
+        if (bankIssuerId == null) {
+            log.info("==================【线下收单】==================【银行机构映射信息不存在】");
+            throw new BusinessException(EResultEnum.BANK_MAPPING_NO_EXIST.getCode());
         }
         BasicInfoVO basicsInfoVO = new BasicInfoVO();
-        for (OnlineInfoDetailVO onlineInfoDetailVO : onlineInfoDetailVOList) {
-            //通道
-            Channel channel = commonRedisDataService.getChannelByChannelCode(onlineInfoDetailVO.getChannelCode());
-            //映射表
-            BankIssuerId bankIssuerId = bankIssuerIdMapper.selectBankAndIssuerId(channel.getCurrency(), onlineInfoDetailVO.getBankName(), channel.getChannelCode());
-            if (bankIssuerId == null) {
-                continue;
-            }
-            channel.setIssuerId(bankIssuerId.getIssuerId());
-            //产品
-            Product product = commonRedisDataService.getProductByCode(onlineInfoDetailVO.getProductCode());
-            //商户产品
-            MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(offlineTradeDTO.getMerchantId(), product.getId());
-            basicsInfoVO.setInstitution(institution);
-            basicsInfoVO.setMerchant(merchant);
-            basicsInfoVO.setProduct(product);
-            basicsInfoVO.setMerchantProduct(merchantProduct);
-            basicsInfoVO.setCurrency(currency);
-            basicsInfoVO.setChannel(channel);
-            basicsInfoVO.setBankName(onlineInfoDetailVO.getBankName());
-            break;
-        }
-        if (basicsInfoVO.getChannel() == null) {
-            log.info("================【线下业务接口】================【映射表信息未配置】");
-            throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_CHANNEL_NOT_EXISTS.getCode());
-        }
+        channel.setIssuerId(bankIssuerId.getIssuerId());
+        basicsInfoVO.setBankName(bankIssuerId.getBankName());
+        basicsInfoVO.setMerchant(merchant);
+        basicsInfoVO.setProduct(product);
+        basicsInfoVO.setChannel(channel);
+        basicsInfoVO.setMerchantProduct(merchantProduct);
+        basicsInfoVO.setInstitution(institution);
+        basicsInfoVO.setCurrency(currency);
         return basicsInfoVO;
     }
 
