@@ -39,8 +39,8 @@
             <if test="merchantId != null and merchantId != ''">
                 AND merchant_id = #{merchantId}
             </if>
-            <if test="pubkey != null and pubkey != ''">
-                AND pf_md5key = #{pubkey}
+            <if test="merPubkey != null and merPubkey != ''">
+                AND pf_md5key = #{merPubkey}
             </if>
             <if test="md5key != null and md5key != ''">
                 AND md5key = #{md5key}
