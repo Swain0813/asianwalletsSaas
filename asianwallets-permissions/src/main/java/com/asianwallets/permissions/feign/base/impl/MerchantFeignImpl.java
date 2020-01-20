@@ -68,5 +68,10 @@ public class MerchantFeignImpl implements MerchantFeign {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
+    @Override
+    public BaseResponse selectFindMerchant(MerchantDTO merchantDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
 
 }

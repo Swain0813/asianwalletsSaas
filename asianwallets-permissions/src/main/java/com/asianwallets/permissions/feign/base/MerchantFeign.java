@@ -57,4 +57,7 @@ public interface MerchantFeign {
     @GetMapping("/merchant/banMerchant")
     BaseResponse banMerchant(@RequestParam("merchantId") @ApiParam String merchantId, @RequestParam("enabled") @ApiParam Boolean enabled);
 
+    @ApiOperation(value = "查询集团商户及集团商户下属商户")
+    @GetMapping("/merchant/selectFindMerchant")
+    BaseResponse selectFindMerchant(MerchantDTO merchantDTO);
 }

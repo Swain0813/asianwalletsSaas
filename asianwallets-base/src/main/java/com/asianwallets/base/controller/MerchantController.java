@@ -37,6 +37,11 @@ public class MerchantController extends BaseController {
     public BaseResponse pageFindMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO) {
         return ResultUtil.success(merchantService.pageFindMerchant(merchantDTO));
     }
+    @ApiOperation(value = "查询集团商户及集团商户下属商户")
+    @PostMapping("/selectFindMerchant")
+    public BaseResponse selectFindMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO) {
+        return ResultUtil.success(merchantService.selectFindMerchant(merchantDTO));
+    }
 
     @ApiOperation(value = "导出商户")
     @PostMapping("/exportMerchant")

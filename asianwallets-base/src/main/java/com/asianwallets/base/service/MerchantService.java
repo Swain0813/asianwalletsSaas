@@ -100,4 +100,12 @@ public interface MerchantService extends BaseService<Merchant> {
      * @return
      **/
     int banMerchant(String username, String merchantId, Boolean enabled);
+
+    /**
+     * @Author YangXu
+     * @Date 2020/1/20
+     * @Descripate 查询集团商户及集团商户下属商户
+     * @return
+     **/
+    List<Merchant> selectFindMerchant(MerchantDTO merchantDTO);
 }

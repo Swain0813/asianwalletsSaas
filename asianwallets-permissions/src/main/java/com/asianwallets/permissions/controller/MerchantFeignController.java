@@ -73,6 +73,15 @@ public class MerchantFeignController extends BaseController {
         return merchantFeign.pageFindMerchant(merchantDTO);
     }
 
+    @ApiOperation(value = "查询集团商户及集团商户下属商户")
+    @PostMapping("/selectFindMerchant")
+    public BaseResponse selectFindMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO) {
+        //添加操作日志
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(merchantDTO),
+                "查询集团商户及集团商户下属商户"));
+        return merchantFeign.selectFindMerchant(merchantDTO);
+    }
+
     @ApiOperation(value = "导出商户")
     @PostMapping("/exportMerchant")
     public BaseResponse exportMerchant(@RequestBody @ApiParam MerchantDTO merchantDTO){

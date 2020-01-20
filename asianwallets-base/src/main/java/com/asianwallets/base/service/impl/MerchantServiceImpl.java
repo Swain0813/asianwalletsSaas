@@ -484,4 +484,20 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
         }
         return num;
     }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/1/20
+     * @Descripate 查询集团商户及集团商户下属商户
+     * @return
+     **/
+    @Override
+    public List<Merchant> selectFindMerchant(MerchantDTO merchantDTO) {
+        merchantDTO.setLanguage(auditorProvider.getLanguage());
+        List<Merchant> list = merchantMapper.pageFindMerchant(merchantDTO);
+        if(!StringUtils.isEmpty(merchantDTO.getGroupMasterAccount())){
+            list.add(merchantMapper.selectByPrimaryKey(merchantDTO.getGroupMasterAccount()));
+        }
+        return list;
+    }
 }
