@@ -1,7 +1,9 @@
 package com.asianwallets.common.response;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +34,9 @@ public class AuthenticationResponse {
 
     @ApiModelProperty("机构logo")
     private String institutionLogo;
+
+    @ApiModelProperty("商户类型")
+    private String merchantType;
 
     @ApiModelProperty(value = "是否开通DCC")
     private Boolean dcc;
