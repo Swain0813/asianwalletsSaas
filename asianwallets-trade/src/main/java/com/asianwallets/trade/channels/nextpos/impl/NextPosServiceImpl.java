@@ -401,6 +401,12 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
             //请求成功
             Map<String, Object> map = (Map<String, Object>) baseResponse.getData();
             if (baseResponse.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
+                //交易成功
+                String refCode = String.valueOf(map.get("refCode"));
+                Base64 b64 = new Base64();
+                byte[] asciiByteArr = b64.decode(refCode.getBytes());
+                String respCode = new String(asciiByteArr);
+                orderRefund.setSign(respCode);
                 if (map.get(channel.getPayCode()).equals("SUCCESS")) {
                     //更新订单状态
                     if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS, null, new Date()) == 1) {
@@ -446,7 +452,6 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
         BaseResponse baseResponse = new BaseResponse();
         //获取原订单的refCode字段(NextPos用)
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
-        orderRefund.setSign(orders.getSign());
         NextPosRefundDTO nextPosRefundDTO = new NextPosRefundDTO(orderRefund, channel);
         log.info("=================【NextPos撤销 cancelPaying】=================【请求Channels服务NextPos退款】请求参数 nextPosRefundDTO: {} ", JSON.toJSONString(nextPosRefundDTO));
         BaseResponse response = channelsFeign.nextPosRefund(nextPosRefundDTO);

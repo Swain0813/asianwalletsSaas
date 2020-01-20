@@ -127,60 +127,64 @@
 
     <select id="pageFindOrdersRefund" resultMap="pageFindOrdersRefundMap">
         select
-        id,
-        create_time,
-        institution_id,
-        institution_name,
-        merchant_id,
-        merchant_name,
-        merchant_order_id,
-        merchant_type,
-        order_id,
-        order_amount,
-        order_currency,
-        channel_name,
-        trade_currency,
-        trade_amount,
-        refund_status,
-        refund_mode,
-        trade_direction,
-        refund_type,
-        update_time,
-        remark
-        from order_refund
+        o.id,
+        o.create_time,
+        o.institution_id,
+        o.institution_name,
+        o.merchant_id,
+        o.merchant_name,
+        o.merchant_order_id,
+        o.merchant_type,
+        o.order_id,
+        o.order_amount,
+        o.order_currency,
+        o.channel_name,
+        o.trade_currency,
+        o.trade_amount,
+        o.refund_status,
+        o.refund_mode,
+        o.trade_direction,
+        o.refund_type,
+        o.update_time,
+        o.remark
+        from order_refund o
+        LEFT JOIN merchant m on o.merchant_id = m.id
         <where>
             <if test="refundCurrency !=null and refundCurrency !=''">
-                order_currency LIKE CONCAT(CONCAT('%', #{refundCurrency}), '%')
+                o.order_currency LIKE CONCAT(CONCAT('%', #{refundCurrency}), '%')
             </if>
             <if test="id !=null and id !=''">
-                AND id LIKE CONCAT(CONCAT('%', #{id}), '%')
+                AND o.id LIKE CONCAT(CONCAT('%', #{id}), '%')
             </if>
             <if test="merchantOrderId !=null and merchantOrderId !=''">
-                AND merchant_order_id LIKE CONCAT(CONCAT('%', #{merchantOrderId}), '%')
+                AND o.merchant_order_id LIKE CONCAT(CONCAT('%', #{merchantOrderId}), '%')
             </if>
             <if test="refundAmount !=null">
-                AND order_amount = #{refundAmount}
+                AND o.order_amount = #{refundAmount}
             </if>
             <if test="institutionCode !=null and institutionCode !=''">
-                AND institution_id LIKE CONCAT(CONCAT('%', #{institutionCode}), '%')
+                AND o.institution_id LIKE CONCAT(CONCAT('%', #{institutionCode}), '%')
             </if>
             <if test="institutionName !=null and institutionName !=''">
-                AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+                AND o.institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
             </if>
             <if test="refundStatus !=null">
-                AND refund_status = #{refundStatus}
+                AND o.refund_status = #{refundStatus}
             </if>
             <if test="refundMode !=null">
-                AND refund_mode = #{refundMode}
+                AND o.refund_mode = #{refundMode}
             </if>
             <if test="startDate != null and startDate != '' ">
-                AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startDate}
+                AND DATE_FORMAT(o.create_time,'%Y-%m-%d') &gt;= #{startDate}
             </if>
             <if test="endDate != null and endDate != ''">
-                AND DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endDate}
+                AND DATE_FORMAT(o.create_time,'%Y-%m-%d') &lt;= #{endDate}
             </if>
             <if test="orderId != null and orderId != ''">
-                AND order_id = #{orderId}
+                AND o.order_id = #{orderId}
+            </if>
+            <if test="merchantStatus != null">
+                AND m.enabled = #{merchantStatus}
             </if>
         </where>
     </select>
@@ -247,9 +251,10 @@
     </select>
 
     <select id="selectByDate" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/>
+        SELECT
+        <include refid="Base_Column_List"/>
         FROM order_refund
-        WHERE  DATE_FORMAT(create_time, '%Y-%m-%d') = #{yesterday}
+        WHERE DATE_FORMAT(create_time, '%Y-%m-%d') = #{yesterday}
     </select>
 
 </mapper>

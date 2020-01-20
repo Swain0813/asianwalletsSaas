@@ -8,6 +8,10 @@ import com.asianwallets.base.feign.MessageFeign;
 import com.asianwallets.base.service.TradeCheckAccountService;
 import com.asianwallets.base.vo.CheckAccountListVO;
 import com.asianwallets.base.vo.CheckAccountVO;
+import com.asianwallets.common.config.AuditorProvider;
+import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.TradeCheckAccountDTO;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.TradeCheckAccount;
@@ -17,12 +21,17 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.vo.ExportTradeAccountVO;
+import com.asianwallets.common.vo.TradeAccountDetailVO;
+import com.asianwallets.common.vo.TradeCheckAccountDetailVO;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -48,6 +57,9 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
     @Autowired
     private MessageFeign messageFeign;
 
+    @Autowired
+    private AuditorProvider auditorProvider;
+
     @Value("custom.warning.mobile")
     private String warningMobile;
 
@@ -62,13 +74,12 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
     @Transactional
     public void tradeCheckAccount() {
         try {
-            log.info("==================【SAAS商户交易对账单】==================【START】");
             //昨日日期
             String yesterday = DateToolUtils.getYesterday();
             //交易订单与退款订单汇总信息计算
             List<CheckAccountVO> checkAccountVOList = ordersMapper.tradeAccountCheck(yesterday);
             if (ArrayUtil.isEmpty(checkAccountVOList)) {
-                log.info("==================【SAAS商户交易对账单】==================【昨日订单信息数据为空】");
+                log.info("==================【商户交易对账单】==================【昨日订单信息数据为空】");
                 return;
             }
             List<TradeCheckAccount> tradeCheckAccounts = new ArrayList<>();
@@ -122,11 +133,13 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
                 tradeCheckAccountDetail.setPayType(order.getPayMethod());
                 //创建时间
                 tradeCheckAccountDetail.setCreateTime(new Date());
+                //收单
+                tradeCheckAccountDetail.setTradeType(AsianWalletConstant.PAYMENT);
                 tradeCheckAccountDetails.add(tradeCheckAccountDetail);
             }
             for (OrderRefund orderRefund : orderRefundList) {
                 TradeCheckAccountDetail tradeCheckAccountDetail = new TradeCheckAccountDetail();
-                BeanUtils.copyProperties(tradeCheckAccountDetail, tradeCheckAccountDetail);
+                BeanUtils.copyProperties(orderRefund, tradeCheckAccountDetail);
                 tradeCheckAccountDetail.setId(IDS.uuid2());
                 //退款订单id
                 tradeCheckAccountDetail.setOrderId(orderRefund.getId());
@@ -144,6 +157,8 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
                 tradeCheckAccountDetail.setRateType(orderRefund.getRefundRateType());
                 //退款手续费
                 tradeCheckAccountDetail.setFee(orderRefund.getRefundFee());
+                //退款
+                tradeCheckAccountDetail.setTradeType(AsianWalletConstant.REFUND);
                 //创建时间
                 tradeCheckAccountDetail.setCreateTime(new Date());
                 tradeCheckAccountDetails.add(tradeCheckAccountDetail);
@@ -151,11 +166,83 @@ public class TradeCheckAccountServiceImpl implements TradeCheckAccountService {
             tradeCheckAccountMapper.insertList(tradeCheckAccounts);
             tradeCheckAccountDetailMapper.insertList(tradeCheckAccountDetails);
         } catch (Exception e) {
-            log.info("==================【SAAS商户交易对账单】==================【定时任务异常】", e);
-            messageFeign.sendSimple(warningMobile, "昨日的机构交易对账定时任务出错!");
-            messageFeign.sendSimpleMail(warningEmail, "昨日的机构交易对账定时任务出错!", "昨日的机构交易对账定时任务出错!");
+            log.info("==================【商户交易对账单】==================【定时任务异常】", e);
+            messageFeign.sendSimple(warningMobile, "SAAS-昨日的商户交易对账定时任务出错!");
+            messageFeign.sendSimpleMail(warningEmail, "SAAS-昨日的商户交易对账定时任务出错!", "SAAS-昨日的商户交易对账定时任务出错!");
             throw new BusinessException(EResultEnum.ERROR.getCode());
         }
-        log.info("==================【SAAS商户交易对账单】==================【END】");
+    }
+
+    /**
+     * 分页查询交易对账总表信息
+     *
+     * @param tradeCheckAccountDTO 查询DTO
+     * @return 总表信息集合
+     */
+    @Override
+    public PageInfo<TradeCheckAccount> pageFindTradeCheckAccount(TradeCheckAccountDTO tradeCheckAccountDTO) {
+        return new PageInfo<>(tradeCheckAccountMapper.pageFindTradeCheckAccount(tradeCheckAccountDTO));
+    }
+
+    /**
+     * 分页查询交易对账详细表信息
+     *
+     * @param tradeCheckAccountDTO 查询DTO
+     * @return 详情表信息集合
+     */
+    @Override
+    public PageInfo<TradeCheckAccountDetail> pageFindTradeCheckAccountDetail(TradeCheckAccountDTO tradeCheckAccountDTO) {
+        return new PageInfo<>(tradeCheckAccountDetailMapper.pageFindTradeCheckAccountDetail(tradeCheckAccountDTO));
+    }
+
+    /**
+     * 导出商户交易对账单
+     *
+     * @param tradeCheckAccountDTO 查询DTO
+     * @return 对账单
+     */
+    @Override
+    public ExportTradeAccountVO exportTradeCheckAccount(TradeCheckAccountDTO tradeCheckAccountDTO) {
+        //获取当前请求语言
+        tradeCheckAccountDTO.setLanguage(auditorProvider.getLanguage());
+        //时间为空,默认为昨天
+        if (StringUtils.isEmpty(tradeCheckAccountDTO.getStartDate()) && StringUtils.isEmpty(tradeCheckAccountDTO.getEndDate())) {
+            //昨日日期
+            String yesterday = DateToolUtils.getYesterday();
+            tradeCheckAccountDTO.setStartDate(yesterday);
+            tradeCheckAccountDTO.setEndDate(yesterday);
+        }
+        //总表信息
+        List<TradeCheckAccount> tradeCheckAccountList = tradeCheckAccountMapper.exportTradeCheckAccount(tradeCheckAccountDTO);
+        //详细表信息
+        List<TradeAccountDetailVO> tradeAccountDetailVOList = tradeCheckAccountDetailMapper.exportTradeCheckAccountDetail(tradeCheckAccountDTO);
+        for (TradeAccountDetailVO accountDetail : tradeAccountDetailVOList) {
+            for (TradeCheckAccountDetailVO tradeCheckAccountDetailVO : accountDetail.getTradeCheckAccountDetailVOS()) {
+                if (AsianWalletConstant.PAYMENT.equals(tradeCheckAccountDetailVO.getTradeType())) {
+                    tradeCheckAccountDetailVO.setTradeTypeName("Payment");
+                    tradeCheckAccountDetailVO.setTradeStatusName("Payment Success");
+                } else if (AsianWalletConstant.REFUND.equals(tradeCheckAccountDetailVO.getTradeType())) {
+                    tradeCheckAccountDetailVO.setTradeTypeName("Refund");
+                    if (TradeConstant.REFUND_SUCCESS.equals(tradeCheckAccountDetailVO.getRefundStatus())) {
+                        tradeCheckAccountDetailVO.setTradeStatusName("Refund Success");
+                    } else if (TradeConstant.REFUND_WAIT.equals(tradeCheckAccountDetailVO.getRefundStatus())) {
+                        tradeCheckAccountDetailVO.setTradeStatusName("Refund Pending");
+                    } else if (TradeConstant.REFUND_FALID.equals(tradeCheckAccountDetailVO.getRefundStatus())) {
+                        tradeCheckAccountDetailVO.setTradeStatusName("Refund Fail");
+                    }
+                }
+                if (TradeConstant.FEE_TYPE_RATE.equals(tradeCheckAccountDetailVO.getRateType())) {
+                    tradeCheckAccountDetailVO.setRateType("Single Rate");
+                } else if (TradeConstant.FEE_TYPE_QUOTA.equals(tradeCheckAccountDetailVO.getRateType())) {
+                    tradeCheckAccountDetailVO.setRateType("Single Quota");
+                } else {
+                    tradeCheckAccountDetailVO.setRateType("");
+                }
+            }
+        }
+        ExportTradeAccountVO exportTradeAccountVO = new ExportTradeAccountVO();
+        exportTradeAccountVO.setTradeCheckAccounts(tradeCheckAccountList);
+        exportTradeAccountVO.setTradeAccountDetailVOS(tradeAccountDetailVOList);
+        return exportTradeAccountVO;
     }
 }

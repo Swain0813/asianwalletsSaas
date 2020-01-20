@@ -39,11 +39,8 @@
             <if test="merchantId != null and merchantId != ''">
                 AND merchant_id = #{merchantId}
             </if>
-            <if test="pubkey != null and pubkey != ''">
-                AND pf_md5key = #{pubkey}
-            </if>
-            <if test="md5key != null and md5key != ''">
-                AND md5key = #{md5key}
+            <if test="merPubkey != null and merPubkey != ''">
+                AND mer_pubkey = #{merPubkey}
             </if>
             <if test="createTime != null">
                 AND create_time = #{createTime}

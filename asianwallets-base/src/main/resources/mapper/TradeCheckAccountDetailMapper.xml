@@ -1,38 +1,95 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.asianwallets.base.dao.TradeCheckAccountDetailMapper" >
-  <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.TradeCheckAccountDetail" >
-    <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="institution_id" property="institutionId" jdbcType="VARCHAR" />
-    <result column="institution_name" property="institutionName" jdbcType="VARCHAR" />
-    <result column="merchant_id" property="merchantId" jdbcType="VARCHAR" />
-    <result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
-    <result column="order_id" property="orderId" jdbcType="VARCHAR" />
-    <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR" />
-    <result column="order_amount" property="orderAmount" jdbcType="DECIMAL" />
-    <result column="order_currency" property="orderCurrency" jdbcType="VARCHAR" />
-    <result column="order_create_time" property="orderCreateTime" jdbcType="TIMESTAMP" />
-    <result column="trade_type" property="tradeType" jdbcType="TINYINT" />
-    <result column="trade_status" property="tradeStatus" jdbcType="TINYINT" />
-    <result column="cancel_status" property="cancelStatus" jdbcType="TINYINT" />
-    <result column="refund_status" property="refundStatus" jdbcType="TINYINT" />
-    <result column="trade_direction" property="tradeDirection" jdbcType="TINYINT" />
-    <result column="rate_type" property="rateType" jdbcType="VARCHAR" />
-    <result column="rate" property="rate" jdbcType="DECIMAL" />
-    <result column="pay_type" property="payType" jdbcType="VARCHAR" />
-    <result column="fee" property="fee" jdbcType="DECIMAL" />
-    <result column="channel_callback_time" property="channelCallbackTime" jdbcType="TIMESTAMP" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="creator" property="creator" jdbcType="VARCHAR" />
-    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-    <result column="remark" property="remark" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="Base_Column_List" >
+<mapper namespace="com.asianwallets.base.dao.TradeCheckAccountDetailMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.TradeCheckAccountDetail">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR"/>
+        <result column="order_amount" property="orderAmount" jdbcType="DECIMAL"/>
+        <result column="order_currency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <result column="order_create_time" property="orderCreateTime" jdbcType="TIMESTAMP"/>
+        <result column="trade_type" property="tradeType" jdbcType="TINYINT"/>
+        <result column="trade_status" property="tradeStatus" jdbcType="TINYINT"/>
+        <result column="cancel_status" property="cancelStatus" jdbcType="TINYINT"/>
+        <result column="refund_status" property="refundStatus" jdbcType="TINYINT"/>
+        <result column="trade_direction" property="tradeDirection" jdbcType="TINYINT"/>
+        <result column="rate_type" property="rateType" jdbcType="VARCHAR"/>
+        <result column="rate" property="rate" jdbcType="DECIMAL"/>
+        <result column="pay_type" property="payType" jdbcType="VARCHAR"/>
+        <result column="fee" property="fee" jdbcType="DECIMAL"/>
+        <result column="channel_callback_time" property="channelCallbackTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, institution_id, institution_name, merchant_id, merchant_name, order_id, merchant_order_id, 
     order_amount, order_currency, order_create_time, trade_type, trade_status, cancel_status, 
     refund_status, trade_direction, rate_type, rate, pay_type, fee, channel_callback_time, 
     create_time, update_time, creator, modifier, remark
   </sql>
 
+    <select id="pageFindTradeCheckAccountDetail" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trade_check_account_detail
+        WHERE merchant_id = #{merchantId}
+        <if test="currency != null and currency != ''">
+            AND currency = #{currency}
+        </if>
+        <if test="tradeTime != null and tradeTime != ''">
+            AND DATE_FORMAT(trade_time,'%Y-%m-%d') &gt;= #{tradeTime}
+        </if>
+    </select>
+
+    <select id="exportTradeCheckAccountDetail" resultMap="TradeAccountDetailVOMap">
+        select
+        id, order_id, order_create_time, merchant_order_id, order_currency,
+        merchant_id,
+        order_amount, trade_type, trade_status, channel_callback_time,rate, fee,refund_status,rate_type,
+        create_time, update_time, creator, modifier, remark
+        from trade_check_account_detail
+        where merchant_id = #{merchantId}
+        <if test="startDate != null and startDate != ''">
+            AND DATE_FORMAT(order_create_time,'%Y-%m-%d')&gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND DATE_FORMAT(order_create_time,'%Y-%m-%d') &lt;= #{endDate}
+        </if>
+        <if test="currency != null and currency != ''">
+            AND order_currency = #{currency}
+        </if>
+        <if test="merchantName != null and merchantName != ''">
+            AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+        </if>
+        order by create_time desc
+    </select>
+
+    <resultMap id="TradeAccountDetailVOMap" type="com.asianwallets.common.vo.TradeAccountDetailVO">
+        <result column="order_currency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <collection property="tradeCheckAccountDetailVOS" javaType="list" resultMap="TradeCheckAccountDetailVOMap"/>
+    </resultMap>
+
+    <resultMap id="TradeCheckAccountDetailVOMap" type="com.asianwallets.common.vo.TradeCheckAccountDetailVO">
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="order_create_time" property="orderCreateTime" jdbcType="TIMESTAMP"/>
+        <result column="merchant_order_id" property="merchantOrderId" jdbcType="VARCHAR"/>
+        <result column="pay_type" property="payType" jdbcType="VARCHAR"/>
+        <result column="order_currency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <result column="order_amount" property="orderAmount" jdbcType="DECIMAL"/>
+        <result column="trade_type" property="tradeType" jdbcType="TINYINT"/>
+        <result column="trade_status" property="tradeStatus" jdbcType="TINYINT"/>
+        <result column="refund_status" property="refundStatus" jdbcType="TINYINT"/>
+        <result column="channel_callback_time" property="channelCallbackTime" jdbcType="TIMESTAMP"/>
+        <result column="rate_type" property="rateType" jdbcType="VARCHAR"/>
+        <result column="rate" property="rate" jdbcType="DECIMAL"/>
+        <result column="fee" property="fee" jdbcType="DECIMAL"/>
+    </resultMap>
 </mapper>

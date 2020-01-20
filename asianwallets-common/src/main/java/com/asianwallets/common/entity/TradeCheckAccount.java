@@ -45,22 +45,22 @@ public class TradeCheckAccount extends BaseEntity {
 
     @ApiModelProperty(value = "总收单金额")
     @Column(name = "total_trade_amount")
-    private BigDecimal totalTradeAmount;
+    private BigDecimal totalTradeAmount = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "总收单笔数")
     @Column(name = "total_trade_count")
-    private Integer totalTradeCount;
+    private Integer totalTradeCount = 0;
 
     @ApiModelProperty(value = "总退款金额")
     @Column(name = "total_refund_amount")
-    private BigDecimal totalRefundAmount;
+    private BigDecimal totalRefundAmount = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "总退款笔数")
     @Column(name = "total_refund_count")
-    private Integer totalRefundCount;
+    private Integer totalRefundCount = 0;
 
     @ApiModelProperty(value = "手续费")
     @Column(name = "fee")
-    private BigDecimal fee;
+    private BigDecimal fee = BigDecimal.ZERO;
 
 }

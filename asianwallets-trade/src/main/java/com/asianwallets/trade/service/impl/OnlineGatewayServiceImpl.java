@@ -654,7 +654,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
      * @return BasicInfoVO 线上基础信息实体
      */
     private BasicInfoVO getOnlineInfo(String merchantId, String issuerId) {
-        List<OnlineInfoDetailVO> onlineInfoDetailVOList = merchantProductMapper.selectOnlineInfoDetail(merchantId, issuerId);
+        List<OnlineInfoDetailVO> onlineInfoDetailVOList = merchantProductMapper.selectOnlineInfoDetail(merchantId, issuerId,TradeConstant.TRADE_ONLINE);
         if (onlineInfoDetailVOList == null || onlineInfoDetailVOList.size() == 0) {
             log.info("-----------------【线上获取基础信息】-----------------商户产品通道信息不存在 直连从数据库查询关系信息为空");
             throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_CHANNEL_NOT_EXISTS.getCode());
@@ -678,6 +678,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             basicInfoVO.setChannel(channel);
             basicInfoVO.setProduct(product);
             basicInfoVO.setMerchantProduct(merchantProduct);
+            break;
         }
         if (basicInfoVO.getChannel() == null) {
             log.info("-----------------【线上获取基础信息】-----------------映射表信息未配置");

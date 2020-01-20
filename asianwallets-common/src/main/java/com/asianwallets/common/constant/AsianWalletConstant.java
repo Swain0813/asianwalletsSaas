@@ -124,6 +124,10 @@ public class AsianWalletConstant {
     public static final Byte SETTLE_AUTO = 1;//自动结算
     public static final Byte SETTLE_ACCORD = 2;//手动结算
 
+    //商户交易对账详情交易类型
+    public static final Byte PAYMENT = 1;//收单
+    public static final Byte REFUND = 2;//退款
+
     //登录类型
     public static final Integer OPERATION = 1;//运维系统
     public static final Integer INSTITUTION = 2;//机构系统

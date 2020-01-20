@@ -258,7 +258,7 @@
                 AND o.trade_status = #{txnStatus}
             </if>
             <if test="refundStatus != null">
-                AND o.refund_status = #{refundStatus}
+                AND (o.refund_status = #{refundStatus} or o.cancel_status = 2)
             </if>
             <if test="startDate != null and startDate != ''">
                 AND o.create_time &gt;= #{startDate}

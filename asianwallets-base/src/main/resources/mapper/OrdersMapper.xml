@@ -242,6 +242,12 @@
             <if test="merchantName != null and merchantName != ''">
                 AND o.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
             </if>
+            <if test="groupMerchantCode != null and groupMerchantCode != ''">
+                AND o.group_merchant_code = #{groupMerchantCode}
+            </if>
+            <if test="groupMerchantName != null and groupMerchantName != ''">
+                AND o.group_merchant_name LIKE CONCAT(CONCAT('%', #{groupMerchantName}), '%')
+            </if>
             <if test="institutionId != null and institutionId != ''">
                 AND o.institution_id = #{institutionId}
             </if>
@@ -323,6 +329,12 @@
             </if>
             <if test="merchantName != null and merchantName != ''">
                 AND o.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+            </if>
+            <if test="groupMerchantCode != null and groupMerchantCode != ''">
+                AND o.group_merchant_code = #{groupMerchantCode}
+            </if>
+            <if test="groupMerchantName != null and groupMerchantName != ''">
+                AND o.group_merchant_name LIKE CONCAT(CONCAT('%', #{groupMerchantName}), '%')
             </if>
             <if test="merchantType != null and merchantType != ''">
                 AND o.merchant_type = #{merchantType}

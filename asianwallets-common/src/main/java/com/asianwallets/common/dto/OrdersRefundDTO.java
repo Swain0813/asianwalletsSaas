@@ -38,6 +38,9 @@ public class OrdersRefundDTO extends BasePageHelper {
     @ApiModelProperty(value = "退款方式 - 1：系统退款 2：人工退款")
     private Byte refundMode;
 
+    @ApiModelProperty(value = "商户状态")
+    private Boolean merchantStatus;
+
     @ApiModelProperty(value = "退款申请开始时间")
     private String startDate;
 
