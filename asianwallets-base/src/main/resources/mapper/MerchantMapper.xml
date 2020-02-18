@@ -215,8 +215,10 @@
     </select>
 
     <select id="getMerchant" resultMap="BaseResultMap">
-        select
-        id,cn_name,enabled
+        select id,
+               cn_name,
+               enabled,
+               institution_id
         from merchant
         WHERE id=#{code}
     </select>
