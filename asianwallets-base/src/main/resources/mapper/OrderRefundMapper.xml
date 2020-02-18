@@ -162,6 +162,12 @@
             <if test="refundAmount !=null">
                 AND o.order_amount = #{refundAmount}
             </if>
+            <if test="groupMerchantCode != null and groupMerchantCode != ''">
+                AND o.group_merchant_code = #{groupMerchantCode}
+            </if>
+            <if test="groupMerchantName != null and groupMerchantName != ''">
+                AND o.group_merchant_name LIKE CONCAT(CONCAT('%', #{groupMerchantName}), '%')
+            </if>
             <if test="institutionCode !=null and institutionCode !=''">
                 AND o.institution_id LIKE CONCAT(CONCAT('%', #{institutionCode}), '%')
             </if>
