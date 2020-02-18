@@ -156,6 +156,9 @@
             <if test="id !=null and id !=''">
                 AND o.id LIKE CONCAT(CONCAT('%', #{id}), '%')
             </if>
+            <if test="merchantId !=null and merchantId !=''">
+                AND o.merchant_id LIKE CONCAT(CONCAT('%', #{merchantId}), '%')
+            </if>
             <if test="merchantOrderId !=null and merchantOrderId !=''">
                 AND o.merchant_order_id LIKE CONCAT(CONCAT('%', #{merchantOrderId}), '%')
             </if>

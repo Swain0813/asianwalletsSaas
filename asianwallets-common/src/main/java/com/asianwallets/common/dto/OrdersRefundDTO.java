@@ -35,6 +35,9 @@ public class OrdersRefundDTO extends BasePageHelper {
     @ApiModelProperty(value = "机构编号")
     private String institutionCode;
 
+    @ApiModelProperty(value = "商户编号")
+    private String merchantId;
+
     @ApiModelProperty(value = "机构名称")
     private String institutionName;
 
