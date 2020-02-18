@@ -1,4 +1,5 @@
 package com.asianwallets.permissions.controller;
+
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
@@ -27,9 +28,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 结算交易相关模块
@@ -71,6 +76,7 @@ public class SettleOrderFeignController extends BaseController {
 
     /**
      * saas后台结算审核导出
+     *
      * @param settleOrderDTO
      * @param response
      * @return
@@ -111,7 +117,7 @@ public class SettleOrderFeignController extends BaseController {
      */
     @ApiOperation(value = "其他系统结算导出功能")
     @PostMapping("/exportOtherSettleOrder")
-    public BaseResponse exportInsSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO,HttpServletResponse response) {
+    public BaseResponse exportInsSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO, HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(settleOrderDTO),
                 "其他系统结算导出功能"));
         ExcelWriter writer = null;
@@ -147,7 +153,6 @@ public class SettleOrderFeignController extends BaseController {
     }
 
 
-
     @ApiOperation(value = "结算审核")
     @PostMapping("/reviewSettlement")
     public BaseResponse reviewSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO) {
@@ -158,5 +163,25 @@ public class SettleOrderFeignController extends BaseController {
             throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
         }
         return settleOrderFeign.reviewSettlement(reviewSettleDTO);
+    }
+
+    @ApiOperation(value = "手动提款")
+    @PostMapping("/withdrawal")
+    public BaseResponse withdrawal(@RequestBody @ApiParam WithdrawalDTO withdrawalDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(withdrawalDTO),
+                "手动提款"));
+        //校验交易密码
+        if (!sysUserService.checkPassword(withdrawalDTO.getTradePwd(), this.getSysUserVO().getTradePassword())) {
+            throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
+        }
+        return settleOrderFeign.withdrawal(withdrawalDTO);
+    }
+
+    @ApiOperation(value = "提款设置")
+    @PostMapping("/updateAccountSettle")
+    public BaseResponse updateAccountSettle(@RequestBody @ApiParam AccountSettleDTO accountSettleDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(accountSettleDTO),
+                "提款设置"));
+        return settleOrderFeign.updateAccountSettle(accountSettleDTO);
     }
 }
