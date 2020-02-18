@@ -10,12 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * <p>
- * 机构结算单表
- * </p>
- *
- * @author yx
- * @since 2020-01-14
+ * 结算单表
  */
 @Data
 @Entity
@@ -72,7 +67,7 @@ public class SettleCheckAccount extends BaseEntity {
 	@ApiModelProperty(value = "期初金额")
 	@Column(name ="initial_amount")
 	private BigDecimal initialAmount;
-	
+
     /**
      * 期末金额
      */
