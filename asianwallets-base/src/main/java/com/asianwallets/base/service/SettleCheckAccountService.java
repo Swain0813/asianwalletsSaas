@@ -4,7 +4,7 @@ import com.asianwallets.common.base.BaseService;
 import com.asianwallets.common.dto.TradeCheckAccountDTO;
 import com.asianwallets.common.dto.TradeCheckAccountSettleExportDTO;
 import com.asianwallets.common.entity.SettleCheckAccount;
-import com.asianwallets.common.entity.SettleCheckAccountDetail;
+import com.asianwallets.common.vo.PageSettleCheckAccountDetailVO;
 import com.asianwallets.common.vo.SettleCheckAccountVO;
 import com.github.pagehelper.PageInfo;
 
@@ -37,7 +37,7 @@ public interface SettleCheckAccountService extends BaseService<SettleCheckAccoun
      * @Date 2019/4/16
      * @Descripate 分页查询商户结算对账详情
      **/
-    PageInfo<SettleCheckAccountDetail> pageSettleAccountCheckDetail(TradeCheckAccountDTO tradeCheckAccountDTO);
+    PageInfo<PageSettleCheckAccountDetailVO> pageSettleAccountCheckDetail(TradeCheckAccountDTO tradeCheckAccountDTO);
 
     /**
      * @return

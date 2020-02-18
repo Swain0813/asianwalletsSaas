@@ -13,6 +13,7 @@ import com.asianwallets.common.entity.TcsStFlow;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ExportSettleCheckAccountVO;
+import com.asianwallets.common.vo.PageSettleCheckAccountDetailVO;
 import com.asianwallets.common.vo.SettleCheckAccountDetailVO;
 import com.asianwallets.common.vo.SettleCheckAccountVO;
 import com.github.pagehelper.PageInfo;
@@ -60,8 +61,8 @@ public class SettleCheckAccountServiceImpl extends BaseServiceImpl<SettleCheckAc
      * @Descripate 分页查询商户结算对账详情
      **/
     @Override
-    public PageInfo<SettleCheckAccountDetail> pageSettleAccountCheckDetail(TradeCheckAccountDTO tradeCheckAccountDTO) {
-        return new PageInfo<SettleCheckAccountDetail>(settleCheckAccountDetailMapper.pageSettleAccountCheckDetail(tradeCheckAccountDTO));
+    public PageInfo<PageSettleCheckAccountDetailVO> pageSettleAccountCheckDetail(TradeCheckAccountDTO tradeCheckAccountDTO) {
+        return new PageInfo<PageSettleCheckAccountDetailVO>(settleCheckAccountDetailMapper.pageSettleAccountCheckDetail(tradeCheckAccountDTO));
     }
 
     /**

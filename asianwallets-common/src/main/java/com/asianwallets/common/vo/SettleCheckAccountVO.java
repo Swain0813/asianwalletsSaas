@@ -20,7 +20,6 @@ public class SettleCheckAccountVO {
 
     private static final long serialVersionUID = 1L;
 
-
     @ApiModelProperty(value = "id")
     public String id;
 
@@ -87,9 +86,9 @@ public class SettleCheckAccountVO {
     private BigDecimal finalAmount;
 
     /**
-     * 期末金额
+     * 商户名
      */
     @ApiModelProperty(value = "商户名")
-    private BigDecimal merchantName;
+    private String merchantName;
 
 }
