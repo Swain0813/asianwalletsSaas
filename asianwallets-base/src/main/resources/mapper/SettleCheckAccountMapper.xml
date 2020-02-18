@@ -10,36 +10,62 @@
 		<result column="count" property="count" />
 		<result column="currency" property="currency" />
 		<result column="amount" property="amount" />
-		<result column="fee" property="fee" />
-		<result column="refund_order_fee" property="refundOrderFee" />
-		<result column="initial_amount" property="initialAmount" />
-		<result column="final_amount" property="finalAmount" />
-		<result column="create_time" property="createTime" />
-		<result column="update_time" property="updateTime" />
-		<result column="creator" property="creator" />
-		<result column="modifier" property="modifier" />
-		<result column="remark" property="remark" />
+		<result column="fee" property="fee"/>
+		<result column="refund_order_fee" property="refundOrderFee"/>
+		<result column="initial_amount" property="initialAmount"/>
+		<result column="final_amount" property="finalAmount"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="creator" property="creator"/>
+		<result column="modifier" property="modifier"/>
+		<result column="remark" property="remark"/>
 	</resultMap>
-	<sql id="Base_Column_List" >
-    id, merchant_id,check_time, currency, amount, fee, initial_amount, refund_order_fee,final_amount, create_time,count,
+
+	<resultMap id="PageResultMap" type="com.asianwallets.common.vo.SettleCheckAccountVO">
+		<result column="id" property="id"/>
+		<result column="merchant_id" property="merchantId"/>
+		<result column="check_time" property="checkTime"/>
+		<result column="count" property="count"/>
+		<result column="currency" property="currency"/>
+		<result column="amount" property="amount"/>
+		<result column="fee" property="fee"/>
+		<result column="refund_order_fee" property="refundOrderFee"/>
+		<result column="initial_amount" property="initialAmount"/>
+		<result column="final_amount" property="finalAmount"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="creator" property="creator"/>
+		<result column="modifier" property="modifier"/>
+		<result column="remark" property="remark"/>
+		<result column="merchant_name" property="merchantName"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, merchant_id,check_time, currency, amount, fee, initial_amount, refund_order_fee,final_amount, create_time,count,
     update_time, creator, modifier, remark
-  </sql>
+	</sql>
 	<select id="statistical" resultMap="BaseResultMap">
-    select
-    merchantid as merchant_id,txncurrency as currency ,sum(txnamount) as amount,sum(fee) as fee,sum(refundOrderFee) as refund_order_fee ,count(txncurrency) as count
-    from settle_check_account_detail
-    WHERE DATE_FORMAT(actualSTtime,'%Y-%m-%d') = DATE_FORMAT(#{time},'%Y-%m-%d') group by merchantid,txncurrency
-  </select>
+		select merchantid          as merchant_id,
+			   txncurrency         as currency,
+			   sum(txnamount)      as amount,
+			   sum(fee)            as fee,
+			   sum(refundOrderFee) as refund_order_fee,
+			   count(txncurrency)  as count
+		from settle_check_account_detail
+		WHERE DATE_FORMAT(actualSTtime, '%Y-%m-%d') = DATE_FORMAT(#{time}, '%Y-%m-%d')
+		group by merchantid, txncurrency
+	</select>
 	<select id="selectByCurrencyAndInstitutionCode" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"/>
 		from settle_check_account
 		WHERE merchant_id = #{merchantId} and currency = #{currency} order by check_time desc limit 0,1
 	</select>
-	<select id="pageSettleAccountCheck" resultMap="BaseResultMap">
+	<select id="pageSettleAccountCheck" resultMap="PageResultMap">
 		select
 		<include refid="Base_Column_List"/>
-		from settle_check_account
+		,m.cn_name as merchant_name
+		from settle_check_account sca left join merchant m on sca.merchant_id = m.id
 		<where>
 			<if test="currency != null and currency != ''">
 				AND currency = #{currency}

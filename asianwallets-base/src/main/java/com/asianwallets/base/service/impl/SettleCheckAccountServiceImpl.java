@@ -1,4 +1,5 @@
 package com.asianwallets.base.service.impl;
+
 import com.asianwallets.base.dao.SettleCheckAccountDetailMapper;
 import com.asianwallets.base.dao.SettleCheckAccountMapper;
 import com.asianwallets.base.dao.TcsStFlowMapper;
@@ -13,12 +14,14 @@ import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ExportSettleCheckAccountVO;
 import com.asianwallets.common.vo.SettleCheckAccountDetailVO;
+import com.asianwallets.common.vo.SettleCheckAccountVO;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -46,9 +49,10 @@ public class SettleCheckAccountServiceImpl extends BaseServiceImpl<SettleCheckAc
      * @Descripate 分页查询商户结算对账
      **/
     @Override
-    public PageInfo<SettleCheckAccount> pageSettleAccountCheck(TradeCheckAccountDTO tradeCheckAccountDTO) {
-        return new PageInfo<SettleCheckAccount>(settleCheckAccountMapper.pageSettleAccountCheck(tradeCheckAccountDTO));
+    public PageInfo<SettleCheckAccountVO> pageSettleAccountCheck(TradeCheckAccountDTO tradeCheckAccountDTO) {
+        return new PageInfo<SettleCheckAccountVO>(settleCheckAccountMapper.pageSettleAccountCheck(tradeCheckAccountDTO));
     }
+
     /**
      * @return
      * @Author YangXu
