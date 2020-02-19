@@ -29,10 +29,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * 结算交易
@@ -83,12 +80,15 @@ public class SettleOrderServiceImpl implements SettleOrderService {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         String merchantType = commonService.getMerchant(merchantId).getMerchantType();
-        if (StringUtils.isEmpty(merchantType) || !merchantType.equals(String.valueOf(AsianWalletConstant.GROUP_USER))) {
-            throw new BusinessException(EResultEnum.NOT_A_GROUP_MERCHANT.getCode());
+        List<SettleOrder> settleOrders = new ArrayList<>();
+        if (!StringUtils.isEmpty(merchantType) || merchantType.equals(String.valueOf(AsianWalletConstant.GROUP_USER))) {
+            List<String> merchantIds = merchantMapper.selectByGroupMasterAccount(merchantId);
+            settleOrders = settleOrderMapper.pageGroupSettleOrder(merchantIds, settleOrderDTO.getTxncurrency(),
+                    settleOrderDTO.getBankCodeCurrency(), settleOrderDTO.getStartDate(), settleOrderDTO.getEndDate());
+        } else if (!StringUtils.isEmpty(merchantType) || !merchantType.equals(String.valueOf(AsianWalletConstant.GROUP_USER))) {
+            settleOrders = settleOrderMapper.pageGroupSettleOrder(Arrays.asList(merchantId), settleOrderDTO.getTxncurrency(),
+                    settleOrderDTO.getBankCodeCurrency(), settleOrderDTO.getStartDate(), settleOrderDTO.getEndDate());
         }
-        List<String> merchantIds = merchantMapper.selectByGroupMasterAccount(merchantId);
-        List<SettleOrder> settleOrders = settleOrderMapper.pageGroupSettleOrder(merchantIds, settleOrderDTO.getTxncurrency(),
-                settleOrderDTO.getBankCodeCurrency(), settleOrderDTO.getStartDate(), settleOrderDTO.getEndDate());
         return new PageInfo<SettleOrder>(settleOrders);
     }
 

@@ -71,3 +71,4 @@ asianwallets-eureka/target/
 asianwallets-channels/target/
 asianwallets-clearing/target/
 asianwallets-trade/target/
+/asianwallets-trade/src/main/resources/rebel.xml
