@@ -95,6 +95,31 @@
         group by batch_no
     </select>
 
+    <select id="pageGroupSettleOrder" resultType="com.asianwallets.common.entity.SettleOrder">
+        select
+        <include refid="Base_Column_List"/>
+        from settle_order
+        <where>
+            merchant_id IN
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="startDate!=null">
+                AND create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate!=null">
+                AND create_time &lt;= #{endDate}
+            </if>
+            <if test="txncurrency!=null and txncurrency != ''">
+                AND txncurrency=#{txncurrency}
+            </if>
+            <if test="bankCodeCurrency!=null and bankCodeCurrency != ''">
+                AND bankcode_currency=#{bankCodeCurrency}
+            </if>
+        </where>
+        group by batch_no
+    </select>
+
     <select id="pageSettleOrderDetail" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

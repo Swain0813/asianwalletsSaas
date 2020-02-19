@@ -42,6 +42,12 @@ public class SettleOrderController extends BaseController {
         return ResultUtil.success(settleOrderService.pageSettleOrder(settleOrderDTO));
     }
 
+    @ApiOperation(value = "分页查询集团结算交易一览查询")
+    @PostMapping("/pageGroupSettleOrder")
+    public BaseResponse pageGroupSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO) {
+        return ResultUtil.success(settleOrderService.pageGroupSettleOrder(settleOrderDTO));
+    }
+
 
     @ApiOperation(value = "分页查询结算交易详情")
     @PostMapping("/pageSettleOrderDetail")

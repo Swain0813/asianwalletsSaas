@@ -1,9 +1,11 @@
 package com.asianwallets.base.service;
+
 import com.asianwallets.common.dto.ReviewSettleDTO;
 import com.asianwallets.common.dto.SettleOrderDTO;
 import com.asianwallets.common.dto.WithdrawalDTO;
 import com.asianwallets.common.entity.SettleOrder;
 import com.github.pagehelper.PageInfo;
+
 import java.util.List;
 
 /**
@@ -18,6 +20,14 @@ public interface SettleOrderService {
      * @return
      */
     PageInfo<SettleOrder> pageSettleOrder(SettleOrderDTO settleOrderDTO);
+
+    /**
+     * 查询集团提款
+     *
+     * @param settleOrderDTO
+     * @return
+     */
+    PageInfo<SettleOrder> pageGroupSettleOrder(SettleOrderDTO settleOrderDTO);
 
     /**
      * 结算交易详情

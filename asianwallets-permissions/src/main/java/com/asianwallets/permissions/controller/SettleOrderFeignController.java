@@ -66,6 +66,14 @@ public class SettleOrderFeignController extends BaseController {
         return settleOrderFeign.pageSettleOrder(settleOrderDTO);
     }
 
+    @ApiOperation(value = "分页查询集团结算交易一览查询")
+    @PostMapping("/pageGroupSettleOrder")
+    public BaseResponse pageGroupSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(settleOrderDTO),
+                "分页查询集团结算交易一览查询"));
+        return settleOrderFeign.pageGroupSettleOrder(settleOrderDTO);
+    }
+
     @ApiOperation(value = "结算交易分页查询详情")
     @PostMapping("/pageSettleOrderDetail")
     public BaseResponse pageSettleOrderDetail(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO) {

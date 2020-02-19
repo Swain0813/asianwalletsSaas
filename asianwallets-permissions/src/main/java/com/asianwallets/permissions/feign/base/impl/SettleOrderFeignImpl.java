@@ -33,6 +33,18 @@ public class SettleOrderFeignImpl implements SettleOrderFeign {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
+
+    /**
+     * 分页查询集团结算交易一览查询
+     *
+     * @param settleOrderDTO
+     * @return
+     */
+    @Override
+    public BaseResponse pageGroupSettleOrder(SettleOrderDTO settleOrderDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
     /**
      * 机构结算交易详情分页查询
      *

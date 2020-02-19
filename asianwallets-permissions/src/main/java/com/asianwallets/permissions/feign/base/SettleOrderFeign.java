@@ -30,6 +30,14 @@ public interface SettleOrderFeign {
     @PostMapping("/settleorders/pageSettleOrder")
     BaseResponse pageSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO);
 
+    /**
+     * 分页查询集团结算交易一览查询
+     *
+     * @param settleOrderDTO
+     * @return
+     */
+    @PostMapping("/settleorders/pageGroupSettleOrder")
+    BaseResponse pageGroupSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO);
 
     /**
      * 结算交易分页详情

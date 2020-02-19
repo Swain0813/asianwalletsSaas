@@ -1,8 +1,11 @@
 package com.asianwallets.base.dao;
+
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.SettleOrderDTO;
 import com.asianwallets.common.entity.SettleOrder;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 /**
@@ -35,4 +38,16 @@ public interface SettleOrderMapper extends BaseMapper<SettleOrder> {
      * @return
      */
     List<SettleOrder> exportSettleOrderInfo(SettleOrderDTO settleOrderDTO);
+
+    /**
+     * 集团商户提款查询
+     *
+     * @param merchantIds
+     * @param txncurrency
+     * @param bankCodeCurrency
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<SettleOrder> pageGroupSettleOrder(@Param("item") List<String> merchantIds, @Param("txncurrency") String txncurrency, @Param("bankCodeCurrency") String bankCodeCurrency, @Param("startDate") String startDate, @Param("endDate") String endDate);
 }
