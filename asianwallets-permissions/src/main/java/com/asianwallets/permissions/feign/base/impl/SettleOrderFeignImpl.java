@@ -46,6 +46,17 @@ public class SettleOrderFeignImpl implements SettleOrderFeign {
     }
 
     /**
+     * 集团提款审核
+     *
+     * @param reviewSettleDTO
+     * @return
+     */
+    @Override
+    public BaseResponse reviewGroupSettlement(ReviewSettleDTO reviewSettleDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
      * 机构结算交易详情分页查询
      *
      * @param settleOrderDTO

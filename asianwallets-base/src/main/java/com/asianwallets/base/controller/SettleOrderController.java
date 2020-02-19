@@ -68,6 +68,13 @@ public class SettleOrderController extends BaseController {
         return ResultUtil.success(settleOrderService.reviewSettlement(reviewSettleDTO));
     }
 
+    @ApiOperation(value = "集团商户结算审核")
+    @PostMapping("/reviewGroupSettlement")
+    public BaseResponse reviewGroupSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO) {
+        reviewSettleDTO.setModifier(this.getSysUserVO().getUsername());
+        return ResultUtil.success(settleOrderService.reviewGroupSettlement(reviewSettleDTO));
+    }
+
     @ApiOperation(value = "提款设置")
     @PostMapping("/updateAccountSettle")
     public BaseResponse updateAccountSettle(@RequestBody @Valid @ApiParam AccountSettleDTO accountSettleDTO) {

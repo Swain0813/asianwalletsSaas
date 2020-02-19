@@ -91,6 +91,7 @@
             <if test="tradeStatus!=null">
                 and trade_status=#{tradeStatus}
             </if>
+            and extend3 !="2"
         </where>
         group by batch_no
     </select>

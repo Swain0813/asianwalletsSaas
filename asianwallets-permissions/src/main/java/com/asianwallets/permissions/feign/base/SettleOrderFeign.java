@@ -40,6 +40,15 @@ public interface SettleOrderFeign {
     BaseResponse pageGroupSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO);
 
     /**
+     * 集团提款审核
+     *
+     * @param reviewSettleDTO
+     * @return
+     */
+    @PostMapping("/settleorders/reviewGroupSettlement")
+    public BaseResponse reviewGroupSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO);
+
+    /**
      * 结算交易分页详情
      *
      * @param settleOrderDTO

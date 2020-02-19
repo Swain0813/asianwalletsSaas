@@ -3,6 +3,7 @@ package com.asianwallets.permissions.controller;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -72,6 +73,14 @@ public class SettleOrderFeignController extends BaseController {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(settleOrderDTO),
                 "分页查询集团结算交易一览查询"));
         return settleOrderFeign.pageGroupSettleOrder(settleOrderDTO);
+    }
+
+    @ApiOperation(value = "集团商户结算审核")
+    @PostMapping("/reviewGroupSettlement")
+    public BaseResponse reviewGroupSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(this.getRequest().getParameterMap()),
+                "集团商户结算审核"));
+        return settleOrderFeign.reviewGroupSettlement(reviewSettleDTO);
     }
 
     @ApiOperation(value = "结算交易分页查询详情")

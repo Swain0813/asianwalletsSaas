@@ -47,13 +47,23 @@ public interface SettleOrderService {
 
     /**
      * 结算审核
+     *
      * @param reviewSettleDTO
      * @return
      */
     int reviewSettlement(ReviewSettleDTO reviewSettleDTO);
 
     /**
-     *手动提款
+     * 集团商户结算审核
+     *
+     * @param reviewSettleDTO
+     * @return
+     */
+    int reviewGroupSettlement(ReviewSettleDTO reviewSettleDTO);
+
+    /**
+     * 手动提款
+     *
      * @param withdrawalDTO
      * @param userName
      */

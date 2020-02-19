@@ -183,6 +183,54 @@ public class SettleOrderServiceImpl implements SettleOrderService {
     }
 
     /**
+     * 集团商户结算审核
+     *
+     * @param reviewSettleDTO
+     * @return
+     */
+    @Override
+    public int reviewGroupSettlement(ReviewSettleDTO reviewSettleDTO) {
+        log.info("------------集团商户结算审核------------settleOrderDTO:{}", JSON.toJSON(reviewSettleDTO));
+        if (StringUtils.isEmpty(reviewSettleDTO.getReviewStatus())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        List<ReviewSettleInfoDTO> rsInfos = reviewSettleDTO.getReviewSettleInfoDTOS();
+        ArrayList<SettleOrder> soList = new ArrayList<>();
+        BigDecimal allFee = BigDecimal.ZERO;
+        for (ReviewSettleInfoDTO rsInfo : rsInfos) {
+            SettleOrder sOrder = settleOrderMapper.selectByPrimaryKey(rsInfo.getId());
+            //判断是否为结算中
+            if (sOrder == null || !sOrder.getTradeStatus().equals(TradeConstant.AUDIT_WAIT)) {
+                throw new BusinessException(EResultEnum.TRADE_STATUS_IS_ERROR.getCode());
+            }
+            sOrder.setModifier(reviewSettleDTO.getModifier());//修改人
+            sOrder.setUpdateTime(new Date());//更新时间
+            sOrder.setTradeFee(reviewSettleDTO.getTradeFee());//批次交易手续费
+            //集团商户结算审核备注
+            sOrder.setExtend4(reviewSettleDTO.getRemark());
+            soList.add(sOrder);
+        }
+        int tag = 0;
+        if (String.valueOf(reviewSettleDTO.getReviewStatus()).equals(String.valueOf(TradeConstant.GROUP_AUDIT_FAIL))) {
+            log.info("------------审核失败------------settleOrderList:{}", JSON.toJSON(soList));
+            soList.forEach(s -> s.setExtend3(String.valueOf(TradeConstant.GROUP_AUDIT_FAIL)));
+            log.info("------------审核失败 更新参数------------settleOrderList:{}", JSON.toJSON(soList));
+        } else if (String.valueOf(reviewSettleDTO.getReviewStatus()).equals(String.valueOf(TradeConstant.GROUP_AUDIT_SUCCESS))) {
+            log.info("------------审核成功------------");
+            soList.forEach(s -> s.setExtend3(String.valueOf(TradeConstant.GROUP_AUDIT_SUCCESS)));//设置成功状态
+            log.info("------------审核成功 更新参数------------settleOrderList:{}", JSON.toJSON(soList));
+        }
+        for (SettleOrder settleOrder : soList) {
+            tag += settleOrderMapper.updateByPrimaryKey(settleOrder);
+        }
+        if (tag != soList.size()) {
+            log.info("-------------更新失败 后台数据未更新完全-------------");
+            throw new BusinessException(EResultEnum.UPDATE_FAILED.getCode());
+        }
+        return tag;
+    }
+
+    /**
      * 失败情况下的处理
      *
      * @param settleOrderDTO
