@@ -61,12 +61,21 @@ public interface MerchantMapper extends BaseMapper<Merchant> {
     * @Descripate 导出商户
     * @return
     **/
-    List<Merchant> exportMerchant(MerchantDTO merchantDTO);
+   List<Merchant> exportMerchant(MerchantDTO merchantDTO);
 
     /**
      * 根据商户编号获取商户信息
+     *
      * @param code
      * @return
      */
-    Merchant  getMerchant(@Param("code") String code);
+    Merchant getMerchant(@Param("code") String code);
+
+    /**
+     * 通过集团商户号查询子商户
+     *
+     * @param merchantId
+     * @return
+     */
+    List<String> selectByGroupMasterAccount(@Param("merchantId") String merchantId);
 }

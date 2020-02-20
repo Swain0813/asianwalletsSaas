@@ -1,9 +1,12 @@
 package com.asianwallets.base.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.AccountMapper;
 import com.asianwallets.base.dao.BankCardMapper;
+import com.asianwallets.base.dao.MerchantMapper;
 import com.asianwallets.base.dao.SettleOrderMapper;
 import com.asianwallets.base.service.ClearingService;
+import com.asianwallets.base.service.CommonService;
 import com.asianwallets.base.service.ReconciliationService;
 import com.asianwallets.base.service.SettleOrderService;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -23,12 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * 结算交易
@@ -47,12 +48,17 @@ public class SettleOrderServiceImpl implements SettleOrderService {
     @Autowired
     private AccountMapper accountMapper;
 
-
     @Autowired
     private BankCardMapper bankCardMapper;
 
     @Autowired
     private ClearingService clearingService;
+
+    @Autowired
+    private CommonService commonService;
+
+    @Autowired
+    private MerchantMapper merchantMapper;
 
     /**
      * 结算交易一览查询
@@ -64,6 +70,26 @@ public class SettleOrderServiceImpl implements SettleOrderService {
     public PageInfo<SettleOrder> pageSettleOrder(SettleOrderDTO settleOrderDTO) {
         return new PageInfo<SettleOrder>(settleOrderMapper.pageSettleOrder(settleOrderDTO));
 
+    }
+
+    @Override
+    public PageInfo<SettleOrder> pageGroupSettleOrder(SettleOrderDTO settleOrderDTO) {
+        //校验
+        String merchantId = settleOrderDTO.getMerchantId();
+        if (StringUtils.isEmpty(merchantId)) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        String merchantType = commonService.getMerchant(merchantId).getMerchantType();
+        List<SettleOrder> settleOrders = new ArrayList<>();
+        if (!StringUtils.isEmpty(merchantType) || merchantType.equals(String.valueOf(AsianWalletConstant.GROUP_USER))) {
+            List<String> merchantIds = merchantMapper.selectByGroupMasterAccount(merchantId);
+            settleOrders = settleOrderMapper.pageGroupSettleOrder(merchantIds, settleOrderDTO.getTxncurrency(),
+                    settleOrderDTO.getBankCodeCurrency(), settleOrderDTO.getStartDate(), settleOrderDTO.getEndDate());
+        } else if (!StringUtils.isEmpty(merchantType) || !merchantType.equals(String.valueOf(AsianWalletConstant.GROUP_USER))) {
+            settleOrders = settleOrderMapper.pageGroupSettleOrder(Arrays.asList(merchantId), settleOrderDTO.getTxncurrency(),
+                    settleOrderDTO.getBankCodeCurrency(), settleOrderDTO.getStartDate(), settleOrderDTO.getEndDate());
+        }
+        return new PageInfo<SettleOrder>(settleOrders);
     }
 
     /**
@@ -91,6 +117,7 @@ public class SettleOrderServiceImpl implements SettleOrderService {
 
     /**
      * 结算审核
+     *
      * @param reviewSettleDTO
      * @return
      */
@@ -156,6 +183,21 @@ public class SettleOrderServiceImpl implements SettleOrderService {
     }
 
     /**
+     * 集团商户结算审核
+     *
+     * @param reviewSettleDTO
+     * @return
+     */
+    @Override
+    public int reviewGroupSettlement(GroupReviewSettleDTO reviewSettleDTO) {
+        log.info("------------集团商户结算审核------------settleOrderDTO:{}", JSON.toJSON(reviewSettleDTO));
+        if (StringUtils.isEmpty(reviewSettleDTO.getReviewStatus()) || StringUtils.isEmpty(reviewSettleDTO.getBatchNo())) {
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        return settleOrderMapper.updateByBatchNo(reviewSettleDTO);
+    }
+
+    /**
      * 失败情况下的处理
      *
      * @param settleOrderDTO
@@ -193,6 +235,7 @@ public class SettleOrderServiceImpl implements SettleOrderService {
 
     /**
      * 手动提款
+     *
      * @param withdrawalDTO
      * @param userName
      */
@@ -223,7 +266,7 @@ public class SettleOrderServiceImpl implements SettleOrderService {
                 throw new BusinessException(EResultEnum.INSUFFICIENT_WITHDRAWAL_AMOUNT.getCode());
             }
             //获取银行卡信息
-            BankCard bankCard = bankCardMapper.getBankCardInfo(withdrawalBankDTO.getMerchantId(),withdrawalBankDTO.getBankCodeCurrency());
+            BankCard bankCard = bankCardMapper.getBankCardInfo(withdrawalBankDTO.getMerchantId(), withdrawalBankDTO.getBankCodeCurrency());
             if (bankCard != null && bankCard.getBankAccountCode() != null && bankCard.getBankCurrency() != null) {
                 //机构结算表的数据的设置
                 SettleOrder settleOrder = new SettleOrder();
@@ -272,7 +315,7 @@ public class SettleOrderServiceImpl implements SettleOrderService {
                     //上报清结算成功的场合,插入数据到机构结算表
                     settleOrderMapper.insert(settleOrder);
                     return "提款成功";
-                }else {
+                } else {
                     log.info("************上报清结算失败**************************");
                     return "提款失败";
                 }

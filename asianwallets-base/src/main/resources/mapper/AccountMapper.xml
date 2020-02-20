@@ -140,17 +140,17 @@
 
 	<select id="getAccountByWithdrawal" resultMap="TecondResultMap">
         SELECT a.id,
-               a.institution_id,
-               a.institution_name,
-               a.merchant_id,
-               a.merchant_name
-               a.account_code,
-               a.currency,
-               a.settle_balance,
-               a.freeze_balance,
-               a.settle_balance - a.freeze_balance as available_balance,
-               s.settle_switch,
-               s.min_settle_amount
+			   a.institution_id,
+			   a.institution_name,
+			   a.merchant_id,
+			   a.merchant_name,
+			   a.account_code,
+			   a.currency,
+			   a.settle_balance,
+			   a.freeze_balance,
+			   a.settle_balance - a.freeze_balance as available_balance,
+			   s.settle_switch,
+			   s.min_settle_amount
         FROM account a
                  left join settle_control s on a.id = s.account_id
         WHERE a.settle_balance - a.freeze_balance >= s.min_settle_amount

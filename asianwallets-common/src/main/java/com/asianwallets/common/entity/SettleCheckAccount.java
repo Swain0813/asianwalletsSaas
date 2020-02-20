@@ -1,24 +1,16 @@
 package com.asianwallets.common.entity;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import com.asianwallets.common.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * <p>
- * 机构结算单表
- * </p>
- *
- * @author yx
- * @since 2020-01-14
+ * 结算单表
  */
 @Data
 @Entity
@@ -68,12 +60,14 @@ public class SettleCheckAccount extends BaseEntity {
 	@ApiModelProperty(value = "退还收单手续费")
 	@Column(name ="refund_order_fee")
 	private BigDecimal refundOrderFee;
+
     /**
      * 期初金额
      */
 	@ApiModelProperty(value = "期初金额")
 	@Column(name ="initial_amount")
 	private BigDecimal initialAmount;
+
     /**
      * 期末金额
      */

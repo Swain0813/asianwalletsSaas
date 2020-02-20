@@ -1,9 +1,10 @@
 package com.asianwallets.base.dao;
 
-import com.asianwallets.common.base. BaseMapper;
+import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.TradeCheckAccountDTO;
 import com.asianwallets.common.dto.TradeCheckAccountSettleExportDTO;
 import com.asianwallets.common.entity.SettleCheckAccount;
+import com.asianwallets.common.vo.SettleCheckAccountVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
@@ -31,12 +32,12 @@ public interface SettleCheckAccountMapper extends  BaseMapper<SettleCheckAccount
     List<SettleCheckAccount> statistical(Date time);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/4/16
      * @Descripate 分页查询机构结算对账
-     * @return
      **/
-    List<SettleCheckAccount> pageSettleAccountCheck(TradeCheckAccountDTO tradeCheckAccountDTO);
+    List<SettleCheckAccountVO> pageSettleAccountCheck(TradeCheckAccountDTO tradeCheckAccountDTO);
 
 
     /**
