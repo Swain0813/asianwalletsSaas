@@ -256,7 +256,8 @@
         select id,
                cn_name,
                enabled,
-               institution_id
+               institution_id,
+               merchant_type
         from merchant
         WHERE id = #{code}
     </select>
