@@ -1,5 +1,6 @@
 package com.asianwallets.base.service;
 
+import com.asianwallets.common.dto.GroupReviewSettleDTO;
 import com.asianwallets.common.dto.ReviewSettleDTO;
 import com.asianwallets.common.dto.SettleOrderDTO;
 import com.asianwallets.common.dto.WithdrawalDTO;
@@ -59,7 +60,7 @@ public interface SettleOrderService {
      * @param reviewSettleDTO
      * @return
      */
-    int reviewGroupSettlement(ReviewSettleDTO reviewSettleDTO);
+    int reviewGroupSettlement(GroupReviewSettleDTO reviewSettleDTO);
 
     /**
      * 手动提款

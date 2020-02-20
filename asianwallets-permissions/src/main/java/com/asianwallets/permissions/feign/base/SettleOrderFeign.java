@@ -1,9 +1,6 @@
 package com.asianwallets.permissions.feign.base;
 
-import com.asianwallets.common.dto.AccountSettleDTO;
-import com.asianwallets.common.dto.ReviewSettleDTO;
-import com.asianwallets.common.dto.SettleOrderDTO;
-import com.asianwallets.common.dto.WithdrawalDTO;
+import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.impl.SettleOrderFeignImpl;
@@ -46,7 +43,7 @@ public interface SettleOrderFeign {
      * @return
      */
     @PostMapping("/settleorders/reviewGroupSettlement")
-    public BaseResponse reviewGroupSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO);
+    public BaseResponse reviewGroupSettlement(@RequestBody @ApiParam GroupReviewSettleDTO reviewSettleDTO);
 
     /**
      * 结算交易分页详情

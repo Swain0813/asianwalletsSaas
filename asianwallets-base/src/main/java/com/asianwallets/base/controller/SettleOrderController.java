@@ -2,10 +2,7 @@ package com.asianwallets.base.controller;
 import com.asianwallets.base.service.AccountService;
 import com.asianwallets.base.service.SettleOrderService;
 import com.asianwallets.common.base.BaseController;
-import com.asianwallets.common.dto.AccountSettleDTO;
-import com.asianwallets.common.dto.ReviewSettleDTO;
-import com.asianwallets.common.dto.SettleOrderDTO;
-import com.asianwallets.common.dto.WithdrawalDTO;
+import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
@@ -70,9 +67,9 @@ public class SettleOrderController extends BaseController {
 
     @ApiOperation(value = "集团商户结算审核")
     @PostMapping("/reviewGroupSettlement")
-    public BaseResponse reviewGroupSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO) {
-        reviewSettleDTO.setModifier(this.getSysUserVO().getUsername());
-        return ResultUtil.success(settleOrderService.reviewGroupSettlement(reviewSettleDTO));
+    public BaseResponse reviewGroupSettlement(@RequestBody @ApiParam GroupReviewSettleDTO groupReviewSettleDTO) {
+        groupReviewSettleDTO.setModifier(this.getSysUserVO().getUsername());
+        return ResultUtil.success(settleOrderService.reviewGroupSettlement(groupReviewSettleDTO));
     }
 
     @ApiOperation(value = "提款设置")

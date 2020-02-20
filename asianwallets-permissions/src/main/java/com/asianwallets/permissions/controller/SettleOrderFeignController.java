@@ -77,7 +77,7 @@ public class SettleOrderFeignController extends BaseController {
 
     @ApiOperation(value = "集团商户结算审核")
     @PostMapping("/reviewGroupSettlement")
-    public BaseResponse reviewGroupSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO) {
+    public BaseResponse reviewGroupSettlement(@RequestBody @ApiParam GroupReviewSettleDTO reviewSettleDTO) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(this.getRequest().getParameterMap()),
                 "集团商户结算审核"));
         return settleOrderFeign.reviewGroupSettlement(reviewSettleDTO);

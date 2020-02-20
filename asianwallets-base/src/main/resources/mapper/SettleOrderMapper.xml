@@ -55,6 +55,12 @@
     intermediary_bank_account_no,intermediary_bank_country,intermediary_other_code,create_time, update_time, creator, modifier, remark,
     merchant_id,merchant_name,reverse_rate,fee_rate,extend1,extend2,extend3,extend4,fee,settle_type,institution_adress,institution_postal_code
     </sql>
+    <update id="updateByBatchNo">
+        update settle_order
+        set extend3 = #{reviewStatus},
+            extend4 = #{remark}
+        where batch_no = #{batchNo};
+    </update>
 
     <select id="pageSettleOrder" resultMap="BaseResultMap">
         select
