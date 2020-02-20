@@ -16,6 +16,7 @@ import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
+import com.asianwallets.common.vo.RedisSysUserVO;
 import com.asianwallets.permissions.feign.base.SettleOrderFeign;
 import com.asianwallets.permissions.service.OperationLogService;
 import com.asianwallets.permissions.service.SettleOrderFeignService;
@@ -80,6 +81,10 @@ public class SettleOrderFeignController extends BaseController {
     public BaseResponse reviewGroupSettlement(@RequestBody @ApiParam GroupReviewSettleDTO reviewSettleDTO) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(this.getRequest().getParameterMap()),
                 "集团商户结算审核"));
+        RedisSysUserVO sysUserVO = this.getSysUserVO();
+        if (!sysUserService.checkPassword(sysUserService.decryptPassword(reviewSettleDTO.getTradePwd()), sysUserVO.getTradePassword())) {
+            throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
+        }
         return settleOrderFeign.reviewGroupSettlement(reviewSettleDTO);
     }
 

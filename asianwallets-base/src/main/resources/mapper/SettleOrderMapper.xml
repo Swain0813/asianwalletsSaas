@@ -123,6 +123,7 @@
             <if test="bankCodeCurrency!=null and bankCodeCurrency != ''">
                 AND bankcode_currency=#{bankCodeCurrency}
             </if>
+            AND extend3 != "1"
         </where>
         group by batch_no
     </select>

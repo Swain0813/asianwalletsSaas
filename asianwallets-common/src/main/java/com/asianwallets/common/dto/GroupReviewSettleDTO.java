@@ -18,6 +18,9 @@ public class GroupReviewSettleDTO {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "交易密码")
+    private String tradePwd;
+
     @ApiModelProperty(value = "更改者")
     private String modifier;
 }
