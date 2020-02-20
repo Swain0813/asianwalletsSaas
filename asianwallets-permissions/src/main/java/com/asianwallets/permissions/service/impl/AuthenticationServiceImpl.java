@@ -242,6 +242,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         //封装登录响应实体
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
+        response.setAgentType(merchant.getAgentType());
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
             RedisSysUserVO redisSysUserVO = new RedisSysUserVO();

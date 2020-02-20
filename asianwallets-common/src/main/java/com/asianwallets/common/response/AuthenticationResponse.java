@@ -38,6 +38,9 @@ public class AuthenticationResponse {
     @ApiModelProperty("商户类型")
     private String merchantType;
 
+    @ApiModelProperty("代理商类型")
+    private String agentType;
+
     @ApiModelProperty(value = "是否开通DCC")
     private Boolean dcc;
 
