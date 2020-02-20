@@ -49,7 +49,7 @@
         <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-        id,batch_no, institution_id, institution_name, txncurrency, txnamount, account_code, account_name,
+        id,institution_id,batch_no, institution_name, txncurrency, txnamount, account_code, account_name,
     bank_name, swift_code, iban, bank_code, bank_currency, bankcode_currency,trade_status, trade_fee, fee_currency,
     rate, settle_amount,total_settle_amount, settle_channel,intermediary_bank_code,intermediary_bank_name,intermediary_bank_address,receiver_address,
     intermediary_bank_account_no,intermediary_bank_country,intermediary_other_code,create_time, update_time, creator, modifier, remark,
@@ -102,7 +102,7 @@
         group by batch_no
     </select>
 
-    <select id="pageGroupSettleOrder" resultType="com.asianwallets.common.entity.SettleOrder">
+    <select id="pageGroupSettleOrder" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from settle_order
@@ -111,10 +111,10 @@
             <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
                 #{item}
             </foreach>
-            <if test="startDate!=null">
+            <if test="startDate!=null  and startDate != ''">
                 AND create_time &gt;= #{startDate}
             </if>
-            <if test="endDate!=null">
+            <if test="endDate!=null and endDate != ''">
                 AND create_time &lt;= #{endDate}
             </if>
             <if test="txncurrency!=null and txncurrency != ''">

@@ -50,7 +50,7 @@ public interface SettleOrderMapper extends BaseMapper<SettleOrder> {
      * @param endDate
      * @return
      */
-    List<SettleOrder> pageGroupSettleOrder(@Param("item") List<String> merchantIds, @Param("txncurrency") String txncurrency, @Param("bankCodeCurrency") String bankCodeCurrency, @Param("startDate") String startDate, @Param("endDate") String endDate);
+    List<SettleOrder> pageGroupSettleOrder(@Param("list") List<String> merchantIds, @Param("txncurrency") String txncurrency, @Param("bankCodeCurrency") String bankCodeCurrency, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
     /**
      * 通过批次号更新settleOrder
