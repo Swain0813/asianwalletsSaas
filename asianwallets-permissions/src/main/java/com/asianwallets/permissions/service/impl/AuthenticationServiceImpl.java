@@ -231,7 +231,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         if(!merchant.getMerchantType().equals("4")){
             log.info("===========【代理商系统登录】==========【非代理商用户!】");
-            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }
         //拼接用户名
         String username = request.getUsername().concat(request.getSysId());
