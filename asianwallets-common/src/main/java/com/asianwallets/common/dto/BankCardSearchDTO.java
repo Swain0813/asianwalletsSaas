@@ -20,6 +20,9 @@ public class BankCardSearchDTO extends BasePageHelper {
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 
+    @ApiModelProperty(value = "代理商编号")
+    private String agentId;
+
     @ApiModelProperty(value = "商户类型")
     private String merchantType;
 
