@@ -1,9 +1,11 @@
 package com.asianwallets.common.dto;
+
 import com.asianwallets.common.base.BasePageHelper;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -27,6 +29,9 @@ public class MerchantProductDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "产品id")
     private String productId;
+
+    @ApiModelProperty(value = "代理商编号")
+    private String agentId;
 
     @ApiModelProperty(value = "商户名称")
     private String merchantName;

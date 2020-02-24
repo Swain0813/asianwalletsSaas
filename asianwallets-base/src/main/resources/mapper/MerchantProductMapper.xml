@@ -91,6 +91,9 @@
             <if test="institutionId!=null and institutionId != ''">
                 and i.id=#{institutionId}
             </if>
+            <if test="agentId!=null and agentId != ''">
+                and m.agent_id=#{agentId}
+            </if>
             <if test="merchantName != null and merchantName != ''">
                 and mp.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
             </if>
