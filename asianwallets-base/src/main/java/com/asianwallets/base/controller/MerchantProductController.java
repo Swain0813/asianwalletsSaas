@@ -1,6 +1,7 @@
 package com.asianwallets.base.controller;
 
 import com.asianwallets.base.service.MerchantProductService;
+import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.response.BaseResponse;
@@ -13,7 +14,6 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.asianwallets.common.base.BaseController;
 
 import javax.validation.Valid;
 import java.util.List;

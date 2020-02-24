@@ -21,6 +21,7 @@ import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.vo.ChaBankRelVO;
 import com.asianwallets.common.vo.MerChannelVO;
+import com.asianwallets.common.vo.MerchantProductVO;
 import com.asianwallets.common.vo.MerchantRelevantVO;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -549,8 +550,8 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
      * @Descripate 分页查询商户产品信息
      **/
     @Override
-    public PageInfo<MerchantProduct> pageFindMerProduct(MerchantProductDTO merchantProductDTO) {
-        return new PageInfo<MerchantProduct>(merchantProductMapper.pageFindMerProduct(merchantProductDTO));
+    public PageInfo<MerchantProductVO> pageFindMerProduct(MerchantProductDTO merchantProductDTO) {
+        return new PageInfo<MerchantProductVO>(merchantProductMapper.pageFindMerProduct(merchantProductDTO));
     }
 
     /**
