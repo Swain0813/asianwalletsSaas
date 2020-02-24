@@ -229,6 +229,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("===========【代理商系统登录】==========【代理商已禁用!】");
             throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
         }
+        if(!merchant.getMerchantType().equals("4")){
+            log.info("===========【代理商系统登录】==========【非代理商用户!】");
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
         //拼接用户名
         String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
@@ -242,6 +246,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         //封装登录响应实体
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
+        response.setInstitutionId(merchant.getInstitutionId());
         response.setAgentType(merchant.getAgentType());
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
