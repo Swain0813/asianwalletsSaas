@@ -232,6 +232,8 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             shareBenefitLogs.setMerchantOrderId(orders.getMerchantOrderId());
             shareBenefitLogs.setExtend3(orders.getChannelCode());//通道编号
             shareBenefitLogs.setExtend4(orders.getChannelName());//通道名称
+            shareBenefitLogs.setExtend5(orders.getMerchantOrderId());//商户流水号
+            shareBenefitLogs.setExtend6(orders.getChannelNumber());//通道流水号
         } else {
             //TODO
             shareBenefitLogs.setOrderId("");
@@ -244,8 +246,10 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             shareBenefitLogs.setTradeCurrency("");
             shareBenefitLogs.setTradeAmount(BigDecimal.ZERO);
             shareBenefitLogs.setMerchantOrderId("");
-            shareBenefitLogs.setExtend3("");
-            shareBenefitLogs.setExtend4("");
+            shareBenefitLogs.setExtend3("");//通道编号
+            shareBenefitLogs.setExtend4("");//通道名称
+            shareBenefitLogs.setExtend5("");//商户流水号
+            shareBenefitLogs.setExtend6("");//通道流水号
         }
         shareBenefitLogs.setAgentId(basicInfoVO.getMerchant().getId());
         shareBenefitLogs.setAgentName(basicInfoVO.getMerchant().getCnName());

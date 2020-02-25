@@ -142,13 +142,13 @@ public class ShareBenefitLogs extends BaseEntity {
     /**
      * 备注5
      */
-	@ApiModelProperty(value = "extend5")
+	@ApiModelProperty(value = "商户流水号")
 	@Column(name ="extend5")
 	private String extend5;
     /**
      * 备注6
      */
-	@ApiModelProperty(value = "extend6")
+	@ApiModelProperty(value = "通道流水号")
 	@Column(name ="extend6")
 	private String extend6;
 

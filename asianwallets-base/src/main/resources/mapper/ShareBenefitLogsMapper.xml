@@ -56,8 +56,10 @@
 		<result column="remark" property="remark" jdbcType="VARCHAR"/>
 		<result column="extend1" property="productCode" jdbcType="VARCHAR"/>
 		<result column="extend2" property="productName" jdbcType="VARCHAR"/>
-		<result column="extend4" property="channelCode" jdbcType="VARCHAR"/>
-		<result column="extend5" property="channelName" jdbcType="VARCHAR"/>
+		<result column="extend3" property="channelCode" jdbcType="VARCHAR"/>
+		<result column="extend4" property="channelName" jdbcType="VARCHAR"/>
+		<result column="extend5" property="merchantOrderId" jdbcType="VARCHAR"/>
+		<result column="extend6" property="channelOrderId" jdbcType="VARCHAR"/>
 	</resultMap>
 
 	<select id="pageAgencyShareBenefit" resultMap="QueryAgencyShareBenefitVOMap">
@@ -78,7 +80,9 @@
 		extend1 as extend1,
 		exten2 as extend2,
 		extend3 as extend3,
-		exten4 as extend4
+		exten4 as extend4,
+		exten6 as extend6,
+		exten5 as extend5
 		FROM share_benefit_logs
 		where institution_id = #{institutionCode}
 		<if test="agentId != null and agentId != ''">
@@ -132,7 +136,9 @@
 		extend1 as extend1,
 		exten2 as extend2,
 		extend3 as extend3,
-		exten4 as extend4
+		exten4 as extend4,
+		exten6 as extend6,
+		exten5 as extend5
 		FROM share_benefit_logs
 		where institution_id = #{institutionCode}
 		<if test="agentId != null and agentId != ''">
