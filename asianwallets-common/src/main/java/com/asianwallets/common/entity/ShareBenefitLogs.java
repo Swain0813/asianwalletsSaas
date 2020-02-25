@@ -118,25 +118,25 @@ public class ShareBenefitLogs extends BaseEntity {
 	@Column(name ="divided_ratio")
 	private BigDecimal dividedRatio;
 
-	@ApiModelProperty(value = "extend1")
+	@ApiModelProperty(value = "产品编号")
 	@Column(name ="extend1")
 	private String extend1;
     /**
      * 备注2
      */
-	@ApiModelProperty(value = "extend2")
+	@ApiModelProperty(value = "产品名称")
 	@Column(name ="extend2")
 	private String extend2;
     /**
      * 备注3
      */
-	@ApiModelProperty(value = "extend3")
+	@ApiModelProperty(value = "通道编号")
 	@Column(name ="extend3")
 	private String extend3;
     /**
      * 备注4
      */
-	@ApiModelProperty(value = "extend4")
+	@ApiModelProperty(value = "通道名称")
 	@Column(name ="extend4")
 	private String extend4;
     /**

@@ -44,6 +44,8 @@
 		<result column="createTime" property="createTime" jdbcType="VARCHAR"/>
 		<result column="agentId" property="agentId" jdbcType="VARCHAR"/>
 		<result column="agentName" property="agentName" jdbcType="VARCHAR"/>
+		<result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
+		<result column="merchantName" property="merchantName" jdbcType="VARCHAR"/>
 		<result column="agentType" property="agentType" jdbcType="VARCHAR"/>
 		<result column="tradeCurrency" property="tradeCurrency" jdbcType="VARCHAR"/>
 		<result column="tradeAmount" property="tradeAmount" jdbcType="DECIMAL"/>
@@ -52,6 +54,10 @@
 		<result column="shareBenefit" property="shareBenefit" jdbcType="DECIMAL"/>
 		<result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
 		<result column="remark" property="remark" jdbcType="VARCHAR"/>
+		<result column="extend1" property="productCode" jdbcType="VARCHAR"/>
+		<result column="extend2" property="productName" jdbcType="VARCHAR"/>
+		<result column="extend4" property="channelCode" jdbcType="VARCHAR"/>
+		<result column="extend5" property="channelName" jdbcType="VARCHAR"/>
 	</resultMap>
 
 	<select id="pageAgencyShareBenefit" resultMap="QueryAgencyShareBenefitVOMap">
@@ -65,8 +71,14 @@
 		share_benefit as shareBenefit,
 		agent_id as agentId,
 		agent_name as agentName,
+		merchant_id as merchantId,
+		merchant_name as merchantName,
 		agent_type as agentType,
-		remark as remark
+		remark as remark,
+		extend1 as extend1,
+		exten2 as extend2,
+		extend3 as extend3,
+		exten4 as extend4
 		FROM share_benefit_logs
 		where institution_id = #{institutionCode}
 		<if test="agentId != null and agentId != ''">
@@ -74,6 +86,12 @@
 		</if>
 		<if test="agentName != null and agentName != ''">
 			AND agentName LIKE CONCAT(CONCAT('%', #{agentName}), '%')
+		</if>
+		<if test="merchantId != null and merchantId != ''">
+			AND merchant_id = #{merchantId}
+		</if>
+		<if test="merchantName != null and merchantName != ''">
+			AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
 		</if>
 		<if test="agentType != null and agentType != ''">
 			AND agent_type = #{agentType}
@@ -107,8 +125,14 @@
 		share_benefit as shareBenefit,
 		agent_id as agentId,
 		agent_name as agentName,
+		merchant_id as merchantId,
+		merchant_name as merchantName,
 		agent_type as agentType,
-		remark as remark
+		remark as remark,
+		extend1 as extend1,
+		exten2 as extend2,
+		extend3 as extend3,
+		exten4 as extend4
 		FROM share_benefit_logs
 		where institution_id = #{institutionCode}
 		<if test="agentId != null and agentId != ''">
@@ -116,6 +140,12 @@
 		</if>
 		<if test="agentName != null and agentName != ''">
 			AND agentName LIKE CONCAT(CONCAT('%', #{agentName}), '%')
+		</if>
+		<if test="merchantId != null and merchantId != ''">
+			AND merchant_id = #{merchantId}
+		</if>
+		<if test="merchantName != null and merchantName != ''">
+			AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
 		</if>
 		<if test="agentType != null and agentType != ''">
 			AND agent_type = #{agentType}
