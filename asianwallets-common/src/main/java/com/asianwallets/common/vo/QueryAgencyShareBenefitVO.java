@@ -29,6 +29,12 @@ public class QueryAgencyShareBenefitVO {
     @ApiModelProperty(value = "订单币种")
     private String tradeCurrency;
 
+    @ApiModelProperty(value = "产品编号")
+    private String productCode;
+
+    @ApiModelProperty(value = "产品名称")
+    private String productName;
+
     @ApiModelProperty(value = "订单金额")
     private BigDecimal tradeAmount;
 

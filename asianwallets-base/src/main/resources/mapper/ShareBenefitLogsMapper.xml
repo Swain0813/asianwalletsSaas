@@ -52,6 +52,8 @@
 		<result column="shareBenefit" property="shareBenefit" jdbcType="DECIMAL"/>
 		<result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
 		<result column="remark" property="remark" jdbcType="VARCHAR"/>
+		<result column="extend1" property="productCode" jdbcType="VARCHAR"/>
+		<result column="extend2" property="productName" jdbcType="VARCHAR"/>
 	</resultMap>
 
 	<select id="pageAgencyShareBenefit" resultMap="QueryAgencyShareBenefitVOMap">
@@ -66,7 +68,9 @@
 		agent_id as agentId,
 		agent_name as agentName,
 		agent_type as agentType,
-		remark as remark
+		remark as remark,
+		extend1 as extend1,
+		exten2 as extend2
 		FROM share_benefit_logs
 		where institution_id = #{institutionCode}
 		<if test="agentId != null and agentId != ''">
@@ -108,7 +112,9 @@
 		agent_id as agentId,
 		agent_name as agentName,
 		agent_type as agentType,
-		remark as remark
+		remark as remark,
+		extend1 as extend1,
+		exten2 as extend2
 		FROM share_benefit_logs
 		where institution_id = #{institutionCode}
 		<if test="agentId != null and agentId != ''">

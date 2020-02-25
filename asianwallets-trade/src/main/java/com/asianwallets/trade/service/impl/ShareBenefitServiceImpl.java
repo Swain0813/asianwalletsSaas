@@ -247,7 +247,8 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
         shareBenefitLogs.setAgentName(basicInfoVO.getMerchant().getCnName());
         shareBenefitLogs.setAgentType(agentType);
         shareBenefitLogs.setOrderType(type);
-
+        shareBenefitLogs.setExtend1(basicInfoVO.getProduct().getProductCode().toString());
+        shareBenefitLogs.setExtend1(basicInfoVO.getProduct().getProductName());
         //shareBenefitLogs.setFee(new BigDecimal("0"));
         //shareBenefitLogs.setShareBenefit(new BigDecimal("0"));
 

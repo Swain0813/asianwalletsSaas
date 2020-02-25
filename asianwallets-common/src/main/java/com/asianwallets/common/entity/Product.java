@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 
+
 /**
  * 产品表
  */
@@ -16,7 +17,7 @@ import java.math.BigDecimal;
 @Table(name =  "product")
 public class Product extends BaseEntity {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	@ApiModelProperty(value = "产品编号")
 	@Column(name ="product_code")
