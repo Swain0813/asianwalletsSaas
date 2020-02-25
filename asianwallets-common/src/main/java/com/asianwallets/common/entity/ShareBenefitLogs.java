@@ -63,7 +63,7 @@ public class ShareBenefitLogs extends BaseEntity {
 	@ApiModelProperty(value = "代理商名称")
 	@Column(name ="agent_name")
 	private String agentName;
-	
+
     /**
      * 代理商类型 1-渠道代理 2-商户代理
      */
