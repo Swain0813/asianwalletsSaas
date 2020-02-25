@@ -230,6 +230,8 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             shareBenefitLogs.setTradeCurrency(orders.getTradeCurrency());
             shareBenefitLogs.setTradeAmount(orders.getTradeAmount());
             shareBenefitLogs.setMerchantOrderId(orders.getMerchantOrderId());
+            shareBenefitLogs.setExtend3(orders.getChannelCode());//通道编号
+            shareBenefitLogs.setExtend4(orders.getChannelName());//通道名称
         } else {
             //TODO
             shareBenefitLogs.setOrderId("");
@@ -242,13 +244,15 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             shareBenefitLogs.setTradeCurrency("");
             shareBenefitLogs.setTradeAmount(BigDecimal.ZERO);
             shareBenefitLogs.setMerchantOrderId("");
+            shareBenefitLogs.setExtend3("");
+            shareBenefitLogs.setExtend4("");
         }
         shareBenefitLogs.setAgentId(basicInfoVO.getMerchant().getId());
         shareBenefitLogs.setAgentName(basicInfoVO.getMerchant().getCnName());
         shareBenefitLogs.setAgentType(agentType);
         shareBenefitLogs.setOrderType(type);
-        shareBenefitLogs.setExtend1(basicInfoVO.getProduct().getProductCode().toString());
-        shareBenefitLogs.setExtend1(basicInfoVO.getProduct().getProductName());
+        shareBenefitLogs.setExtend1(basicInfoVO.getProduct().getProductCode().toString());//产品编号
+        shareBenefitLogs.setExtend2(basicInfoVO.getProduct().getProductName());//产品名称
         //shareBenefitLogs.setFee(new BigDecimal("0"));
         //shareBenefitLogs.setShareBenefit(new BigDecimal("0"));
 

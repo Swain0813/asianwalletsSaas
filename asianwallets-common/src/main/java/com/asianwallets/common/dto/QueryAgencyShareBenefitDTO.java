@@ -32,6 +32,12 @@ public class QueryAgencyShareBenefitDTO extends BasePageHelper {
     @ApiModelProperty(value = "代理商名称")
     private String agentName;
 
+    @ApiModelProperty(value = "商户编号")
+    private String merchantId;
+
+    @ApiModelProperty(value = "商户名称")
+    private String merchantName;
+
     @ApiModelProperty(value = "代理商类型")//1-渠道代理 2-商户代理
     private String agentType;
 
