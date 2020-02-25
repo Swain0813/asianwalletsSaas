@@ -1,27 +1,32 @@
 package com.asianwallets.common.vo;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * @description:
+ * @author: YangXu
+ * @create: 2020-02-25 15:19
+ **/
 @Data
-@ApiModel(value = "机构后台分润查询英文版", description = "机构后台分润查询英文版")
-public class QueryAgencyShareBenefitEnVO {
+@ApiModel(value = "代理商后台分润查询英文版", description = "代理商后台分润查询英文版")
+public class QueryAgencyShareBenefitTwoEnVO {
 
     @ApiModelProperty(value = "Creation Time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date createTime;
 
-    @ApiModelProperty(value = "Agent Id")
-    private String agentId;
+    @ApiModelProperty(value = "merchantId")
+    private String merchantId;
 
-    @ApiModelProperty(value = "Agent Name")
-    private String agentName;
+    @ApiModelProperty(value = "merchantName")
+    private String merchantName;
 
-    @ApiModelProperty(value = "Agent Type")// 1-渠道代理 2-商户代理
-    private String agentType;
 
     @ApiModelProperty(value = "Order Id")
     private String orderId;
