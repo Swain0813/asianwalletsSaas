@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.feign.base;
 
+import com.asianwallets.common.dto.AgentChannelsDTO;
 import com.asianwallets.common.dto.ChannelDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.ChannelExportVO;
@@ -41,4 +42,7 @@ public interface ChannelFeign {
     @ApiOperation(value = "查询所有通道编号")
     @PostMapping("/channel/getAllChannelCode")
     List<String> getAllChannelCode();
+
+    @PostMapping("/channel/pageAgentChannels")
+    BaseResponse pageAgentChannels(@RequestBody @ApiParam AgentChannelsDTO agentChannelsDTO);
 }

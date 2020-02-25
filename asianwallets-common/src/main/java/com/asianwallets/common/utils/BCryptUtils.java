@@ -1,8 +1,6 @@
 package com.asianwallets.common.utils;
-
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * BCrypt加密工具类

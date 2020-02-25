@@ -277,6 +277,22 @@
         <result column="bankCurrency" property="bankCurrency" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <resultMap id="AgentChannelsVOMap" type="com.asianwallets.common.vo.AgentChannelsVO">
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
+        <result column="channel_currency" property="channelCurrency" jdbcType="VARCHAR"/>
+        <result column="channel_fee_type" property="channelFeeType" jdbcType="VARCHAR"/>
+        <result column="channel_rate" property="channelRate" jdbcType="DECIMAL"/>
+        <result column="channel_can_refund" property="channelCanRefund" jdbcType="BIT"/>
+        <result column="channel_can_refund_fee" property="channelCanRefundFee" jdbcType="TINYINT"/>
+        <result column="channel_status" property="channelStatus" jdbcType="BIT"/>
+        <result column="divided_ratio" property="dividedRatio" jdbcType="DECIMAL"/>
+        <collection javaType="list" property="channelAvailableBanks" resultMap="channelAvailableBanksVOMap"/>
+    </resultMap>
+    <resultMap id="channelAvailableBanksVOMap" type="java.lang.String">
+        <result column="bank_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <select id="exportChannel" resultType="com.asianwallets.common.vo.ChannelExportVO">
         SELECT
         ch.channel_code AS channelCode,
@@ -339,5 +355,45 @@
     <select id="selectAllChannelCode" resultType="String">
         select channel_code
         from channel;
+    </select>
+
+    <select id="pageAgentChannels" resultMap="AgentChannelsVOMap">
+        select c.create_time,
+        c.channel_cn_name as channel_name,
+        c.currency as channel_currency,
+        c.channel_rate,
+        d.name as channel_fee_type,
+        c.support_refund_state as channel_can_refund,
+        c.refunding_is_return_fee as channel_can_refund_fee,
+        c.enabled as channel_status,
+        mp.divided_ratio,
+        b.bank_name
+        from merchant m
+        left join merchant_product mp on m.id = mp.merchant_id
+        left join merchant_channel mc on mp.id = mc.mer_pro_id
+        left join channel_bank cb on mc.cha_ban_id = cb.id
+        left join channel c on cb.channel_id = c.id
+        left join bank b on cb.bank_id = b.id
+        left join dictionary d on c.channel_fee_type = d.code
+        <where>
+            m.enabled = 1 and mp.enabled = 1 and mc.enabled = 1
+            and cb.enabled = 1 and b.enabled = 1
+            and d.language = #{language}
+            <if test="agentId != null and agentId != ''">
+                and m.id=#{agentId}
+            </if>
+            <if test="channelName != null and channelName != ''">
+                and c.channel_cn_name LIKE CONCAT(CONCAT('%', #{channelName}), '%')
+            </if>
+            <if test="payType != null and payType != ''">
+                and c.pay_type =#{payType}
+            </if>
+            <if test="channelStatus != null">
+                and c.enabled =#{channelStatus}
+            </if>
+            <if test="channelCurrency != null and channelCurrency != ''">
+                and c.currency =#{channelCurrency}
+            </if>
+        </where>
     </select>
 </mapper>

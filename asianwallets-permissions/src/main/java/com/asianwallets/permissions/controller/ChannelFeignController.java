@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.dto.AgentChannelsDTO;
 import com.asianwallets.common.dto.ChannelDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -100,5 +101,13 @@ public class ChannelFeignController extends BaseController {
             writer.close();
         }
         return ResultUtil.success();
+    }
+
+    @ApiOperation(value = "代理商渠道查询")
+    @PostMapping("/pageAgentChannels")
+    public BaseResponse pageAgentChannels(@RequestBody @ApiParam AgentChannelsDTO agentChannelsDTO) {
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(agentChannelsDTO),
+                "代理商渠道查询"));
+        return channelFeign.pageAgentChannels(agentChannelsDTO);
     }
 }

@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.feign.base.impl;
 
+import com.asianwallets.common.dto.AgentChannelsDTO;
 import com.asianwallets.common.dto.ChannelDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -40,6 +41,11 @@ public class ChannelFeignImpl implements ChannelFeign {
 
     @Override
     public List<String> getAllChannelCode() {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse pageAgentChannels(AgentChannelsDTO agentChannelsDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

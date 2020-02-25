@@ -2,6 +2,7 @@ package com.asianwallets.base.controller;
 
 import com.asianwallets.base.service.ChannelService;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.dto.AgentChannelsDTO;
 import com.asianwallets.common.dto.ChannelDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
@@ -57,5 +58,12 @@ public class ChannelController extends BaseController {
     @PostMapping("/getAllChannelCode")
     public List<String> getAllChannelCode() {
         return channelService.getAllChannelCode();
+    }
+
+    @ApiOperation(value = "代理商渠道查询")
+    @PostMapping("/pageAgentChannels")
+    public BaseResponse pageAgentChannels(@RequestBody @ApiParam AgentChannelsDTO agentChannelsDTO) {
+        agentChannelsDTO.setLanguage(this.getLanguage());
+        return ResultUtil.success(channelService.pageAgentChannels(agentChannelsDTO));
     }
 }
