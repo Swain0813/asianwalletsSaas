@@ -26,6 +26,12 @@ public class QueryAgencyShareBenefitEnVO {
     @ApiModelProperty(value = "Order Id")
     private String orderId;
 
+    @ApiModelProperty(value = "merchantOrderId")
+    private String merchantOrderId;
+
+    @ApiModelProperty(value = "channelOrderId")
+    private String channelOrderId;
+
     @ApiModelProperty(value = "Order Currency")
     private String tradeCurrency;
 

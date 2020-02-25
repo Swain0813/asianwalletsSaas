@@ -30,6 +30,12 @@ public class QueryAgencyShareBenefitTwoVO {
     @ApiModelProperty(value = "交易流水号")
     private String orderId;
 
+    @ApiModelProperty(value = "商户流水号")
+    private String merchantOrderId;
+
+    @ApiModelProperty(value = "通道流水号")
+    private String channelOrderId;
+
     @ApiModelProperty(value = "订单币种")
     private String tradeCurrency;
 
