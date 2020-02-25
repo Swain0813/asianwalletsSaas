@@ -8,6 +8,7 @@ import com.asianwallets.base.dao.ProductMapper;
 import com.asianwallets.base.service.ChannelService;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.dto.AgentChannelsDTO;
 import com.asianwallets.common.dto.ChannelDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelBank;
@@ -19,6 +20,7 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.common.utils.ReflexClazzUtils;
+import com.asianwallets.common.vo.AgentChannelsVO;
 import com.asianwallets.common.vo.ChannelDetailVO;
 import com.asianwallets.common.vo.ChannelExportVO;
 import com.asianwallets.common.vo.ChannelVO;
@@ -278,5 +280,16 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public List<String> getAllChannelCode() {
         return channelMapper.selectAllChannelCode();
+    }
+
+    /**
+     * 代理商渠道查询
+     *
+     * @param agentChannelsDTO
+     * @return
+     */
+    @Override
+    public PageInfo<AgentChannelsVO> pageAgentChannels(AgentChannelsDTO agentChannelsDTO) {
+        return new PageInfo<>(channelMapper.pageAgentChannels(agentChannelsDTO));
     }
 }

@@ -1,8 +1,10 @@
 package com.asianwallets.base.dao;
 
 import com.asianwallets.common.base.BaseMapper;
+import com.asianwallets.common.dto.AgentChannelsDTO;
 import com.asianwallets.common.dto.ChannelDTO;
 import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.vo.AgentChannelsVO;
 import com.asianwallets.common.vo.ChannelDetailVO;
 import com.asianwallets.common.vo.ChannelExportVO;
 import com.asianwallets.common.vo.ChannelVO;
@@ -62,4 +64,12 @@ public interface ChannelMapper extends BaseMapper<Channel> {
      * @return 通道编号集合
      */
     List<String> selectAllChannelCode();
+
+    /**
+     * 代理商渠道查询
+     *
+     * @param agentChannelsDTO
+     * @return
+     */
+    List<AgentChannelsVO> pageAgentChannels(AgentChannelsDTO agentChannelsDTO);
 }
