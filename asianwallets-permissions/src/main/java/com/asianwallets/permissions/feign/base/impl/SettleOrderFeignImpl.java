@@ -1,7 +1,6 @@
 package com.asianwallets.permissions.feign.base.impl;
 
-import com.asianwallets.common.dto.ReviewSettleDTO;
-import com.asianwallets.common.dto.SettleOrderDTO;
+import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.SettleOrder;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -31,6 +30,29 @@ public class SettleOrderFeignImpl implements SettleOrderFeign {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
+
+    /**
+     * 分页查询集团结算交易一览查询
+     *
+     * @param settleOrderDTO
+     * @return
+     */
+    @Override
+    public BaseResponse pageGroupSettleOrder(SettleOrderDTO settleOrderDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
+     * 集团提款审核
+     *
+     * @param reviewSettleDTO
+     * @return
+     */
+    @Override
+    public BaseResponse reviewGroupSettlement(GroupReviewSettleDTO reviewSettleDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
     /**
      * 机构结算交易详情分页查询
      *
@@ -55,11 +77,34 @@ public class SettleOrderFeignImpl implements SettleOrderFeign {
 
     /**
      * 结算审核
+     *
      * @param reviewSettleDTO
      * @return
      */
     @Override
     public BaseResponse reviewSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
+     * 提款设置
+     *
+     * @param accountSettleDTO
+     * @return
+     */
+    @Override
+    public BaseResponse updateAccountSettle(AccountSettleDTO accountSettleDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
+     * 手动提款
+     *
+     * @param withdrawalDTO
+     * @return
+     */
+    @Override
+    public BaseResponse withdrawal(WithdrawalDTO withdrawalDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

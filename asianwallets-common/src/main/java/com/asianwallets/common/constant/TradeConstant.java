@@ -60,6 +60,10 @@ public class TradeConstant {
     public static final Byte AUDIT_SUCCESS = 2; //审核通过
     public static final Byte AUDIT_FAIL = 3; //审核不通过
 
+    //---------------集团商户审核状态 audit status
+    public static final Byte GROUP_AUDIT_SUCCESS = 1; //审核通过
+    public static final Byte GROUP_AUDIT_FAIL = 2; //审核不通过
+
     //---------------付款状态 payment status
     public static final Byte PAYMENT_START = 1; //待付款
     public static final Byte PAYMENT_WAIT = 2; //付款中

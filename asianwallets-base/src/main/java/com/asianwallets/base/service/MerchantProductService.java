@@ -2,9 +2,11 @@ package com.asianwallets.base.service;
 
 import com.asianwallets.common.base.BaseService;
 import com.asianwallets.common.dto.*;
-import com.asianwallets.common.entity.*;
+import com.asianwallets.common.entity.MerchantProduct;
+import com.asianwallets.common.entity.MerchantProductAudit;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.MerChannelVO;
+import com.asianwallets.common.vo.MerchantProductVO;
 import com.asianwallets.common.vo.MerchantRelevantVO;
 import com.github.pagehelper.PageInfo;
 
@@ -55,12 +57,12 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 分页查询商户产品信息
-     * @return
      **/
-    PageInfo<MerchantProduct> pageFindMerProduct(MerchantProductDTO merchantProductDTO);
+    PageInfo<MerchantProductVO> pageFindMerProduct(MerchantProductDTO merchantProductDTO);
 
     /**
      * @Author YangXu

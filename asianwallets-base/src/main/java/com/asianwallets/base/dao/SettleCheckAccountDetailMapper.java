@@ -1,10 +1,11 @@
 package com.asianwallets.base.dao;
 
-import com.asianwallets.common.base. BaseMapper;
+import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.TradeCheckAccountDTO;
 import com.asianwallets.common.dto.TradeCheckAccountSettleExportDTO;
 import com.asianwallets.common.entity.SettleCheckAccountDetail;
 import com.asianwallets.common.vo.ExportSettleCheckAccountVO;
+import com.asianwallets.common.vo.PageSettleCheckAccountDetailVO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface SettleCheckAccountDetailMapper extends  BaseMapper<SettleCheckA
      * @Date 2019/4/16
      * @Descripate 分页查询机构结算对账详情
      **/
-    List<SettleCheckAccountDetail> pageSettleAccountCheckDetail(TradeCheckAccountDTO tradeCheckAccountDTO);
+    List<PageSettleCheckAccountDetailVO> pageSettleAccountCheckDetail(TradeCheckAccountDTO tradeCheckAccountDTO);
 
     /**
      * @return

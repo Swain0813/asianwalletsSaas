@@ -100,7 +100,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-    id, institution_id, institution_name, merchant_id, merchant_name, second_merchant_name, 
+        id, institution_id, institution_name, merchant_id, merchant_name, second_merchant_name,
     second_merchant_code, agent_code, agent_name, group_merchant_code, group_merchant_name, 
     trade_type, trade_direction, merchant_order_time, merchant_order_id, order_amount, 
     order_currency, imei, operator_id, order_for_trade_rate, trade_for_order_rate, exchange_rate, 
@@ -115,7 +115,7 @@
     channel_gateway_status, channel_gateway_fee_type, channel_gateway_rate, channel_gateway_fee, 
     language, create_time, update_time, creator, modifier, remark, remark1, remark2, 
     remark3, remark4, remark5, remark6, remark7, remark8
-  </sql>
+    </sql>
 
     <resultMap id="DccReportMap" type="com.asianwallets.common.vo.DccReportVO">
         <result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
@@ -306,6 +306,7 @@
         o.channel_number,
         o.order_currency,
         o.order_amount,
+        o.trade_direction,
         o.fee,
         o.trade_currency,
         o.trade_amount,

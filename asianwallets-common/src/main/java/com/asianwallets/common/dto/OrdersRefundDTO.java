@@ -20,6 +20,12 @@ public class OrdersRefundDTO extends BasePageHelper {
     @ApiModelProperty(value = "商户订单号")
     private String merchantOrderId;
 
+    @ApiModelProperty(value = "集团商户编号")
+    private String groupMerchantCode;
+
+    @ApiModelProperty(value = "集团商户名称")
+    private String groupMerchantName;
+
     @ApiModelProperty(value = "交易流水号")
     private String orderId;
 
@@ -28,6 +34,9 @@ public class OrdersRefundDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "机构编号")
     private String institutionCode;
+
+    @ApiModelProperty(value = "商户编号")
+    private String merchantId;
 
     @ApiModelProperty(value = "机构名称")
     private String institutionName;

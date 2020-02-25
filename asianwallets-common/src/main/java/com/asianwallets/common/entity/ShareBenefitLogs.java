@@ -24,112 +24,93 @@ public class ShareBenefitLogs extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 订单ID
-     */
 	@ApiModelProperty(value = "订单ID")
 	@Column(name ="order_id")
 	private String orderId;
-    /**
-     * 机构编号
-     */
+
 	@ApiModelProperty(value = "机构编号")
 	@Column(name ="institution_id")
 	private String institutionId;
-    /**
-     * 机构名称
-     */
+
 	@ApiModelProperty(value = "机构名称")
 	@Column(name ="institution_name")
 	private String institutionName;
-    /**
-     * 商户名称
-     */
+
 	@ApiModelProperty(value = "商户名称")
 	@Column(name ="merchant_name")
 	private String merchantName;
-    /**
-     * 商户名称
-     */
+
 	@ApiModelProperty(value = "商户订单号")
 	@Column(name ="merchant_order_id")
 	private String merchantOrderId;
-    /**
-     * 商户编号
-     */
+
 	@ApiModelProperty(value = "商户编号")
 	@Column(name ="merchant_id")
 	private String merchantId;
 
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "通道编号")
 	@Column(name ="channel_code")
 	private String channelCode;
-    /**
-     * 通道名称
-     */
+
 	@ApiModelProperty(value = "通道名称")
 	@Column(name ="channel_name")
 	private String channelName;
-    /**
-     * 代理商编号
-     */
+
 	@ApiModelProperty(value = "代理商编号")
 	@Column(name ="agent_id")
 	private String agentId;
-    /**
-     * 代理商名称
-     */
+
 	@ApiModelProperty(value = "代理商名称")
 	@Column(name ="agent_name")
 	private String agentName;
+
     /**
      * 代理商类型 1-渠道代理 2-商户代理
      */
 	@ApiModelProperty(value = "代理商类型 1-渠道代理 2-商户代理")
 	@Column(name ="agent_type")
 	private String agentType;
+
     /**
      * 订单类型 1-收  2-付
      */
 	@ApiModelProperty(value = "订单类型 1-收  2-付")
 	@Column(name ="order_type")
 	private Integer orderType;
-    /**
-     * 订单币种
-     */
+
 	@ApiModelProperty(value = "订单币种")
 	@Column(name ="trade_currency")
 	private String tradeCurrency;
-    /**
-     * 订单金额
-     */
+
 	@ApiModelProperty(value = "订单金额")
 	@Column(name ="trade_amount")
 	private BigDecimal tradeAmount;
-    /**
-     * 代理商手续费
-     */
+
 	@ApiModelProperty(value = "代理商手续费")
 	@Column(name ="fee")
 	private BigDecimal fee;
+
     /**
      * 分润金额
      */
 	@ApiModelProperty(value = "分润金额")
 	@Column(name ="share_benefit")
 	private BigDecimal shareBenefit;
+
     /**
      * 1:待分润，2：已分润
      */
 	@ApiModelProperty(value = "1:待分润，2：已分润")
 	@Column(name ="is_share")
 	private Byte isShare;
+
     /**
      * 分润模式 1-分成 2-费用差
      */
 	@ApiModelProperty(value = "分润模式 1-分成 2-费用差")
 	@Column(name ="divided_mode")
 	private Byte dividedMode;
+
     /**
      * 分润比例
      */

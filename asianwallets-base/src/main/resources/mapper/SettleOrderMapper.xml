@@ -49,12 +49,18 @@
         <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-        id,batch_no, institution_id, institution_name, txncurrency, txnamount, account_code, account_name,
+        id,institution_id,batch_no, institution_name, txncurrency, txnamount, account_code, account_name,
     bank_name, swift_code, iban, bank_code, bank_currency, bankcode_currency,trade_status, trade_fee, fee_currency,
     rate, settle_amount,total_settle_amount, settle_channel,intermediary_bank_code,intermediary_bank_name,intermediary_bank_address,receiver_address,
     intermediary_bank_account_no,intermediary_bank_country,intermediary_other_code,create_time, update_time, creator, modifier, remark,
     merchant_id,merchant_name,reverse_rate,fee_rate,extend1,extend2,extend3,extend4,fee,settle_type,institution_adress,institution_postal_code
     </sql>
+    <update id="updateByBatchNo">
+        update settle_order
+        set extend3 = #{reviewStatus},
+            extend4 = #{remark}
+        where batch_no = #{batchNo};
+    </update>
 
     <select id="pageSettleOrder" resultMap="BaseResultMap">
         select
@@ -91,6 +97,33 @@
             <if test="tradeStatus!=null">
                 and trade_status=#{tradeStatus}
             </if>
+            and extend3 !="2"
+        </where>
+        group by batch_no
+    </select>
+
+    <select id="pageGroupSettleOrder" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from settle_order
+        <where>
+            merchant_id IN
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="startDate!=null  and startDate != ''">
+                AND create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate!=null and endDate != ''">
+                AND create_time &lt;= #{endDate}
+            </if>
+            <if test="txncurrency!=null and txncurrency != ''">
+                AND txncurrency=#{txncurrency}
+            </if>
+            <if test="bankCodeCurrency!=null and bankCodeCurrency != ''">
+                AND bankcode_currency=#{bankCodeCurrency}
+            </if>
+            AND extend3 != "1"
         </where>
         group by batch_no
     </select>

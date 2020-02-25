@@ -156,11 +156,20 @@
             <if test="id !=null and id !=''">
                 AND o.id LIKE CONCAT(CONCAT('%', #{id}), '%')
             </if>
+            <if test="merchantId !=null and merchantId !=''">
+                AND o.merchant_id LIKE CONCAT(CONCAT('%', #{merchantId}), '%')
+            </if>
             <if test="merchantOrderId !=null and merchantOrderId !=''">
                 AND o.merchant_order_id LIKE CONCAT(CONCAT('%', #{merchantOrderId}), '%')
             </if>
             <if test="refundAmount !=null">
                 AND o.order_amount = #{refundAmount}
+            </if>
+            <if test="groupMerchantCode != null and groupMerchantCode != ''">
+                AND o.group_merchant_code = #{groupMerchantCode}
+            </if>
+            <if test="groupMerchantName != null and groupMerchantName != ''">
+                AND o.group_merchant_name LIKE CONCAT(CONCAT('%', #{groupMerchantName}), '%')
             </if>
             <if test="institutionCode !=null and institutionCode !=''">
                 AND o.institution_id LIKE CONCAT(CONCAT('%', #{institutionCode}), '%')

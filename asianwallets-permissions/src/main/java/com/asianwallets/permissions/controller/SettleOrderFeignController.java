@@ -1,7 +1,9 @@
 package com.asianwallets.permissions.controller;
+
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -14,6 +16,7 @@ import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
+import com.asianwallets.common.vo.RedisSysUserVO;
 import com.asianwallets.permissions.feign.base.SettleOrderFeign;
 import com.asianwallets.permissions.service.OperationLogService;
 import com.asianwallets.permissions.service.SettleOrderFeignService;
@@ -27,9 +30,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 结算交易相关模块
@@ -61,6 +68,26 @@ public class SettleOrderFeignController extends BaseController {
         return settleOrderFeign.pageSettleOrder(settleOrderDTO);
     }
 
+    @ApiOperation(value = "分页查询集团结算交易一览查询")
+    @PostMapping("/pageGroupSettleOrder")
+    public BaseResponse pageGroupSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(settleOrderDTO),
+                "分页查询集团结算交易一览查询"));
+        return settleOrderFeign.pageGroupSettleOrder(settleOrderDTO);
+    }
+
+    @ApiOperation(value = "集团商户结算审核")
+    @PostMapping("/reviewGroupSettlement")
+    public BaseResponse reviewGroupSettlement(@RequestBody @ApiParam GroupReviewSettleDTO reviewSettleDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(this.getRequest().getParameterMap()),
+                "集团商户结算审核"));
+        RedisSysUserVO sysUserVO = this.getSysUserVO();
+        if (!sysUserService.checkPassword(sysUserService.decryptPassword(reviewSettleDTO.getTradePwd()), sysUserVO.getTradePassword())) {
+            throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
+        }
+        return settleOrderFeign.reviewGroupSettlement(reviewSettleDTO);
+    }
+
     @ApiOperation(value = "结算交易分页查询详情")
     @PostMapping("/pageSettleOrderDetail")
     public BaseResponse pageSettleOrderDetail(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO) {
@@ -71,6 +98,7 @@ public class SettleOrderFeignController extends BaseController {
 
     /**
      * saas后台结算审核导出
+     *
      * @param settleOrderDTO
      * @param response
      * @return
@@ -111,7 +139,7 @@ public class SettleOrderFeignController extends BaseController {
      */
     @ApiOperation(value = "其他系统结算导出功能")
     @PostMapping("/exportOtherSettleOrder")
-    public BaseResponse exportInsSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO,HttpServletResponse response) {
+    public BaseResponse exportInsSettleOrder(@RequestBody @ApiParam SettleOrderDTO settleOrderDTO, HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(settleOrderDTO),
                 "其他系统结算导出功能"));
         ExcelWriter writer = null;
@@ -147,7 +175,6 @@ public class SettleOrderFeignController extends BaseController {
     }
 
 
-
     @ApiOperation(value = "结算审核")
     @PostMapping("/reviewSettlement")
     public BaseResponse reviewSettlement(@RequestBody @ApiParam ReviewSettleDTO reviewSettleDTO) {
@@ -158,5 +185,25 @@ public class SettleOrderFeignController extends BaseController {
             throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
         }
         return settleOrderFeign.reviewSettlement(reviewSettleDTO);
+    }
+
+    @ApiOperation(value = "手动提款")
+    @PostMapping("/withdrawal")
+    public BaseResponse withdrawal(@RequestBody @ApiParam WithdrawalDTO withdrawalDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(withdrawalDTO),
+                "手动提款"));
+        //校验交易密码
+        if (!sysUserService.checkPassword(withdrawalDTO.getTradePwd(), this.getSysUserVO().getTradePassword())) {
+            throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
+        }
+        return settleOrderFeign.withdrawal(withdrawalDTO);
+    }
+
+    @ApiOperation(value = "提款设置")
+    @PostMapping("/updateAccountSettle")
+    public BaseResponse updateAccountSettle(@RequestBody @ApiParam AccountSettleDTO accountSettleDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(accountSettleDTO),
+                "提款设置"));
+        return settleOrderFeign.updateAccountSettle(accountSettleDTO);
     }
 }

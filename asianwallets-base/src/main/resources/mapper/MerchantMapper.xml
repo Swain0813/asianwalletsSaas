@@ -124,28 +124,66 @@
 
     </select>
     <select id="getMerchantInfo" resultMap="BaseResultMap">
-		select
-	    m.institution_id,
-        m.agent_id,
-        m.parent_id,
-        i.cn_name as ext5,
-        m1.cn_name as ext6,
-        m2.cn_name as ext7,
-        m.agent_type,
-		m.id,m.cn_name,m.en_name,m.country_type,m.country as country,m.mcc,m.region as region,m.merchant_type,m.group_master_account,m.develop_sales,
-		m.company_regist_number,m.company_validity,m.legal_passport_code,m.legal_passport_validity,
-		 co.area_code as country_code,m.institution_adress,m.legal_passport_img,m.institution_contract,m.company_articles,m.business_certificate,m.institution_phone,
-		m.legal_name,m.business_category,m.business_license,m.industry_category,m.merchant_postal_code,m.merchant_email,m.merchant_web_url,
-		m.contact_address,m.contact_people,m.contact_phone,m.audit_status,m.ext7,m.ext6,m.ext5,m.ext4,m.ext3,m.ext2,m.ext1,m.create_time,m.update_time,
-		m.creator,m.modifier,m.remark,m.enabled
-		from merchant m
-		left join institution i on m.institution_id = i.id
-		left join merchant m1 on m.agent_id = m1.id
-		left join merchant m2 on m.parent_id = m2.id
-		left join country co on m.country = co.extend1 and co.language = #{language}
-		left join country c1 on m.region = c1.extend1 and c1.language = #{language}
-		where m.id=#{id}
-	</select>
+        select m.institution_id,
+               m.agent_id,
+               m.parent_id,
+               i.cn_name    as ext5,
+               m1.cn_name   as ext6,
+               m2.cn_name   as ext7,
+               m.agent_type,
+               m.id,
+               m.cn_name,
+               m.en_name,
+               m.country_type,
+               m.country    as country,
+               m.mcc,
+               m.region     as region,
+               m.merchant_type,
+               m.group_master_account,
+               m.develop_sales,
+               m.company_regist_number,
+               m.company_validity,
+               m.legal_passport_code,
+               m.legal_passport_validity,
+               co.area_code as country_code,
+               m.institution_adress,
+               m.legal_passport_img,
+               m.institution_contract,
+               m.company_articles,
+               m.business_certificate,
+               m.institution_phone,
+               m.legal_name,
+               m.business_category,
+               m.business_license,
+               m.industry_category,
+               m.merchant_postal_code,
+               m.merchant_email,
+               m.merchant_web_url,
+               m.contact_address,
+               m.contact_people,
+               m.contact_phone,
+               m.audit_status,
+               m.ext7,
+               m.ext6,
+               m.ext5,
+               m.ext4,
+               m.ext3,
+               m.ext2,
+               m.ext1,
+               m.create_time,
+               m.update_time,
+               m.creator,
+               m.modifier,
+               m.remark,
+               m.enabled
+        from merchant m
+                 left join institution i on m.institution_id = i.id
+                 left join merchant m1 on m.agent_id = m1.id
+                 left join merchant m2 on m.parent_id = m2.id
+                 left join country co on m.country = co.extend1 and co.language = #{language}
+                 left join country c1 on m.region = c1.extend1 and c1.language = #{language}
+        where m.id = #{id}
+    </select>
 
     <select id="exportMerchant" resultMap="BaseResultMap">
         select
@@ -215,10 +253,13 @@
     </select>
 
     <select id="getMerchant" resultMap="BaseResultMap">
-        select
-        id,cn_name,enabled
+        select id,
+               cn_name,
+               enabled,
+               institution_id,
+               merchant_type
         from merchant
-        WHERE id=#{code}
+        WHERE id = #{code}
     </select>
     <select id="getAllAgent" resultMap="BaseResultMap">
         select id as id ,en_name as enName,cn_name as cnName,agent_type as agentType from merchant
@@ -230,5 +271,10 @@
                 and agent_type=#{agentType}
             </if>
         </where>
+    </select>
+    <select id="selectByGroupMasterAccount" resultType="java.lang.String">
+        select id
+        from merchant
+        where group_master_account = #{merchantId};
     </select>
 </mapper>
