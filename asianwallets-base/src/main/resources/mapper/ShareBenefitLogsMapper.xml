@@ -76,8 +76,8 @@
         merchant_id as merchantId,
         merchant_name as merchantName,
         agent_type as agentType,
-        remark as remark,
-        extend1 as extend1,
+        remark,
+        extend1,
         extend2,
         extend3,
         extend4,
@@ -132,13 +132,13 @@
         merchant_id as merchantId,
         merchant_name as merchantName,
         agent_type as agentType,
-        remark as remark,
-        extend1 as extend1,
-        exten2 as extend2,
-        extend3 as extend3,
-        exten4 as extend4,
-        exten6 as extend6,
-        exten5 as extend5
+        remark,
+        extend1,
+        extend2,
+        extend3,
+        extend4,
+        extend6,
+        extend5
         FROM share_benefit_logs
         where institution_id = #{institutionCode}
         <if test="agentId != null and agentId != ''">
