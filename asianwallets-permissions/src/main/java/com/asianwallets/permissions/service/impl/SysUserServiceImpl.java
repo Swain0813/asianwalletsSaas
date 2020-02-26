@@ -343,10 +343,6 @@ public class SysUserServiceImpl implements SysUserService {
             log.info("******************【重置密码成初始密码】*************【用户信息不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }
-        if (StringUtils.isBlank(sysUser.getEmail())) {
-            log.info("******************【重置密码成初始密码】******************【用户邮箱为空!】");
-            throw new BusinessException(EResultEnum.USER_EMAIL_IS_NOT_NULL.getCode());
-        }
         //重置登录密码与交易密码为初始密码
         sysUser.setPassword(BCryptUtils.encode("123456"));
         sysUser.setTradePassword(BCryptUtils.encode("123456"));
