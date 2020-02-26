@@ -66,13 +66,21 @@ public interface SysUserService {
 
 
     /**
-     * 重置登录密码
+     * 重置密码并发送邮件
      *
      * @param username 用户名
      * @param userId   用户ID
      * @return 修改条数
      */
     int resetPassword(String username, String userId);
+
+    /**
+     * 重置密码成初始密码
+     * @param username
+     * @param userId
+     * @return
+     */
+    int resetPwd(String username, String userId);
 
     /**
      * 修改登录密码

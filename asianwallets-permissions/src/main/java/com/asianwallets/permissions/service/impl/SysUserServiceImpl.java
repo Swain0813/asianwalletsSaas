@@ -293,8 +293,8 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     /**
-     * 重置登录密码
-     *
+     * 重置密码并发送邮件
+     *登录密码和交易密码都重置
      * @param username 用户名
      * @param userId   用户ID
      * @return 修改条数
@@ -324,6 +324,34 @@ public class SysUserServiceImpl implements SysUserService {
         map.put("pwd", randomPassword);
         map.put("twd", randomTradePassword);
         messageFeign.sendTemplateMail(sysUser.getEmail(), auditorProvider.getLanguage(), Status._0, map);
+        return sysUserMapper.updateByPrimaryKeySelective(sysUser);
+    }
+
+
+    /**
+     * 重置密码成初始密码
+     * 登录密码和交易密码都重置
+     * @param username
+     * @param userId
+     * @return
+     */
+    @Override
+    @Transactional
+    public int resetPwd(String username, String userId) {
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
+        if (sysUser == null) {
+            log.info("******************【重置密码成初始密码】*************【用户信息不存在!】");
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        if (StringUtils.isBlank(sysUser.getEmail())) {
+            log.info("******************【重置密码成初始密码】******************【用户邮箱为空!】");
+            throw new BusinessException(EResultEnum.USER_EMAIL_IS_NOT_NULL.getCode());
+        }
+        //重置登录密码与交易密码为初始密码
+        sysUser.setPassword(BCryptUtils.encode("123456"));
+        sysUser.setTradePassword(BCryptUtils.encode("123456"));
+        sysUser.setModifier(username);
+        sysUser.setUpdateTime(new Date());
         return sysUserMapper.updateByPrimaryKeySelective(sysUser);
     }
 
