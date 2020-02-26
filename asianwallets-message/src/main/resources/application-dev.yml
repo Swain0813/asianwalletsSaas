@@ -30,17 +30,6 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
-redis:
-  database: 0
-  password: h3m9aMVHC1GiCkTnLH9J
-  host: 127.0.0.1
-  port: 6379
-  time: 0
-  pool:
-    max-idle: 100
-    min-idle: 5
-    max-total: 100
-    max-wait-millis: -1
 
 #项目自定义配置
 custom:
