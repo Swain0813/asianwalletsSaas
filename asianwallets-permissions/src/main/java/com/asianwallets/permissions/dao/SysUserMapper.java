@@ -44,11 +44,10 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      */
     List<String> selectUserIdBySysId(String sysId);
 
-
     /**
-     * 根据系统id查询用户信息
-     * @param sysId
+     * 根据商户编号获取用户信息
+     * @param userName
      * @return
      */
-    SysUser getSysUserBySysId(String sysId);
+    SysUser getSysUserByMerchantId(String userName);
 }

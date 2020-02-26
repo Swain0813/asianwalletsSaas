@@ -338,7 +338,7 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     @Transactional
     public int resetPwd(String username, String merchantId) {
-        SysUser sysUser = sysUserMapper.getSysUserBySysId(merchantId);
+        SysUser sysUser = sysUserMapper.getSysUserByMerchantId("admin"+merchantId);
         if (sysUser == null) {
             log.info("******************【重置密码成初始密码】*************【用户信息不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
