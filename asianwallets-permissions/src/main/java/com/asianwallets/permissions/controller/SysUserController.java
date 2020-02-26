@@ -71,7 +71,7 @@ public class SysUserController extends BaseController {
     }
 
     @ApiOperation(value = "重置密码成初始密码")
-    @GetMapping("/resetPassword")
+    @GetMapping("/resetPwd")
     public BaseResponse resetPwd(@RequestParam @ApiParam String userId) {
         operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(userId),
                 "重置密码成初始密码"));
