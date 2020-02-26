@@ -329,16 +329,16 @@ public class SysUserServiceImpl implements SysUserService {
 
 
     /**
-     * 重置密码成初始密码
+     * 根据商户编号重置密码成初始密码
      * 登录密码和交易密码都重置
      * @param username
-     * @param userId
+     * @param merchantId
      * @return
      */
     @Override
     @Transactional
-    public int resetPwd(String username, String userId) {
-        SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
+    public int resetPwd(String username, String merchantId) {
+        SysUser sysUser = sysUserMapper.getSysUserBySysId(merchantId);
         if (sysUser == null) {
             log.info("******************【重置密码成初始密码】*************【用户信息不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());

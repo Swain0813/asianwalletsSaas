@@ -70,12 +70,12 @@ public class SysUserController extends BaseController {
         return ResultUtil.success(sysUserService.resetPassword(this.getSysUserVO().getUsername(), userId));
     }
 
-    @ApiOperation(value = "重置密码成初始密码")
+    @ApiOperation(value = "根据商户编号重置密码成初始密码")
     @GetMapping("/resetPwd")
-    public BaseResponse resetPwd(@RequestParam @ApiParam String userId) {
-        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(userId),
-                "重置密码成初始密码"));
-        return ResultUtil.success(sysUserService.resetPwd(this.getSysUserVO().getUsername(), userId));
+    public BaseResponse resetPwd(@RequestParam @ApiParam String merchantId) {
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(merchantId),
+                "根据商户编号重置密码成初始密码"));
+        return ResultUtil.success(sysUserService.resetPwd(this.getSysUserVO().getUsername(), merchantId));
     }
 
     @ApiOperation(value = "修改密码")

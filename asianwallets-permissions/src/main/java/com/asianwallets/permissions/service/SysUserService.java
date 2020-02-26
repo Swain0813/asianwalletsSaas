@@ -75,12 +75,12 @@ public interface SysUserService {
     int resetPassword(String username, String userId);
 
     /**
-     * 重置密码成初始密码
+     * 根据商户编号重置密码成初始密码
      * @param username
-     * @param userId
+     * @param merchantId
      * @return
      */
-    int resetPwd(String username, String userId);
+    int resetPwd(String username, String merchantId);
 
     /**
      * 修改登录密码

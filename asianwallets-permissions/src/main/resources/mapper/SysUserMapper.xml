@@ -21,6 +21,11 @@
         <result column="enabled" property="enabled" jdbcType="BIT"/>
     </resultMap>
 
+    <sql id="Base_Column_List">
+      id,sys_id,sys_type,permission_type,name,username,password,trade_password,mobile,email,
+      language,creator,modifier,create_time,update_time,enabled
+    </sql>
+
     <resultMap id="SysUserVOMap" type="com.asianwallets.common.vo.SysUserVO">
         <id column="id" property="id"/>
         <id column="sys_id" property="sysId"/>
@@ -220,6 +225,13 @@
 
     <select id="selectUserIdBySysId" resultType="java.lang.String">
         select id
+        from sys_user
+        where sys_id = #{sysId}
+    </select>
+
+    <select id="getSysUserBySysId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
         from sys_user
         where sys_id = #{sysId}
     </select>

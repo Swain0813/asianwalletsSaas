@@ -43,4 +43,12 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @return 用户ID集合
      */
     List<String> selectUserIdBySysId(String sysId);
+
+
+    /**
+     * 根据系统id查询用户信息
+     * @param sysId
+     * @return
+     */
+    SysUser getSysUserBySysId(String sysId);
 }
