@@ -65,7 +65,7 @@ redis:
 
 security:
   jwt:
-    secret: h3m9aMVHC1GiCkTnLH9JWHYU
+    secret: h3m9aMVHC1GiCkTnLH9JWHYUYPU
     token_expire_hour: 24
 
 #项目自定义配置

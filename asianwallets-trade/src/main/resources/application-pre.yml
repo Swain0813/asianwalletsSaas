@@ -4,7 +4,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:5000/eureka/
     registerWithEureka: true
     fetchRegistry: true
 
@@ -79,7 +79,7 @@ custom:
   ad3ItsUrl: http://119.23.136.80/ITSBoss/v1/
 
   #收银台url
-  cashierDeskUrl: http://192.168.124.49:8082/checkstandweb/#/main
+  cashierDeskUrl: http://testsaas.asianwallets.com/saascheckstandweb/#/main
 
   #亚洲钱包的支付页面的url
-  paySuccessUrl: http://192.168.124.49:8082/checkstandweb/#/Success
+  paySuccessUrl: http://testsaas.asianwallets.com/saascheckstandweb/#/Success
