@@ -57,7 +57,7 @@ spring:
     jdbc:
       initialize-schema: NEVER
 redis:
-  database: 1
+  database: 0
   password: Uj7cELl8emRBqPEE
   host: redis.asia
   port: 6379

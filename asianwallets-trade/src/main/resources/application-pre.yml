@@ -1,5 +1,5 @@
 server:
-  port: 9004
+  port: 5010
 
 eureka:
   client:
@@ -52,7 +52,7 @@ spring:
 
 # redis 配置
 redis:
-  database: 1
+  database: 0
   password: Uj7cELl8emRBqPEE
   host: redis.asia
   port: 6379
