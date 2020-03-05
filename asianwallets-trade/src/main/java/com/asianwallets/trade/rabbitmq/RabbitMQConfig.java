@@ -142,4 +142,137 @@ public class RabbitMQConfig {
         return new Queue(E_MQ_AW_CALLBACK_URL_FAIL, true, false, false, args);
     }
 
+
+    /* ===========================================      NganLuong查询队列1      =============================================== */
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL = AD3MQConstant.MQ_NGANLUONG_CHECK_ORDER_DL;//NganLuong查询订单状态队列
+    public static final String E_MQ_NGANLUONG_CHECK_ORDER_DL = AD3MQConstant.E_MQ_NGANLUONG_CHECK_ORDER_DL;//NganLuong查询订单死信队列
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL_KEY = AD3MQConstant.MQ_NGANLUONG_CHECK_ORDER_DL_KEY;//NganLuong查询订单信息key
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE = AD3MQConstant.MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE;//NganLuong查询订单死信路由
+
+
+    @Bean
+    public Queue operateNGANLUONGQuery() {
+        return new Queue(RabbitMQConfig.MQ_NGANLUONG_CHECK_ORDER_DL, true, false, false);
+    }
+
+    //用于NL通道查询队列的死信路由
+    @Bean
+    public DirectExchange exchangeNGANLUONGQuery() {
+        return new DirectExchange(MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE);
+    }
+
+    //NL通道查询队列的绑定exchange 到出队队列
+    @Bean
+    public Binding deadLetterBindingNGANLUONGuery() {
+        return BindingBuilder.bind(operateNGANLUONGQuery()).to(exchangeNGANLUONGQuery()).with(MQ_NGANLUONG_CHECK_ORDER_DL_KEY);
+    }
+
+    //NL通道查询队列的配置死信队列,即入队队列
+    @Bean
+    public Queue deadLetterQueueNGANLUONGuery() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-message-ttl", 1000 * 60 * 5);//延迟队列5分钟
+        args.put("x-dead-letter-exchange", MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE);
+        args.put("x-dead-letter-routing-key", MQ_NGANLUONG_CHECK_ORDER_DL_KEY);
+        return new Queue(E_MQ_NGANLUONG_CHECK_ORDER_DL, true, false, false, args);
+    }
+    /* ===========================================      NganLuong查询队列2      =============================================== */
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL2 = AD3MQConstant.MQ_NGANLUONG_CHECK_ORDER_DL2;//NganLuong查询订单状态队列2
+    public static final String E_MQ_NGANLUONG_CHECK_ORDER_DL2 = AD3MQConstant.E_MQ_NGANLUONG_CHECK_ORDER_DL2;//NganLuong查询订单死信队列
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL_KEY2 = AD3MQConstant.MQ_NGANLUONG_CHECK_ORDER_DL_KEY2;//NganLuong查询订单信息key
+    public static final String MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE2 = AD3MQConstant.MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE2;//NganLuong查询订单死信路由
+
+    @Bean
+    public Queue operateNGANLUONGQuery2() {
+        return new Queue(RabbitMQConfig.MQ_NGANLUONG_CHECK_ORDER_DL2, true, false, false);
+    }
+
+    //用于NL通道查询队列的死信路由2
+    @Bean
+    public DirectExchange exchangeNGANLUONGQuery2() {
+        return new DirectExchange(MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE2);
+    }
+
+    //NL通道查询队列的绑定exchange2 到出队队列
+    @Bean
+    public Binding deadLetterBindingNGANLUONGuery2() {
+        return BindingBuilder.bind(operateNGANLUONGQuery2()).to(exchangeNGANLUONGQuery2()).with(MQ_NGANLUONG_CHECK_ORDER_DL_KEY2);
+    }
+
+    //NL通道查询队列的配置死信队列2,即入队队列
+    @Bean
+    public Queue deadLetterQueueNGANLUONGuery2() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-message-ttl", 1000 * 60 * 30);//延迟队列5分钟
+        args.put("x-dead-letter-exchange", MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE2);
+        args.put("x-dead-letter-routing-key", MQ_NGANLUONG_CHECK_ORDER_DL_KEY2);
+        return new Queue(E_MQ_NGANLUONG_CHECK_ORDER_DL2, true, false, false, args);
+    }
+
+    /* ===========================================      MegaPay-THB查询队列1      =============================================== */
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER = AD3MQConstant.MQ_MEGAPAY_THB_CHECK_ORDER;//MegaPay-THB查询队列1
+    public static final String E_MQ_MEGAPAY_THB_CHECK_ORDER = AD3MQConstant.E_MQ_MEGAPAY_THB_CHECK_ORDER;//MegaPay-THB查询死信队列1
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER_KEY = AD3MQConstant.MQ_MEGAPAY_THB_CHECK_ORDER_KEY;//MegaPay-THB查询死信队列1路由
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE = AD3MQConstant.MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE;//MegaPay-THB查询死信队列1交换机
+
+
+    @Bean
+    public Queue operateMegaPayTHBQuery() {
+        return new Queue(RabbitMQConfig.MQ_MEGAPAY_THB_CHECK_ORDER, true, false, false);
+    }
+
+    //用于MegaPayTHB通道查询队列的死信路由
+    @Bean
+    public DirectExchange exchangeMegaPayTHBQuery() {
+        return new DirectExchange(MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE);
+    }
+
+    //MegaPayTHB通道查询队列的绑定exchange 到出队队列
+    @Bean
+    public Binding deadLetterBindingMegaPayTHBQuery() {
+        return BindingBuilder.bind(operateMegaPayTHBQuery()).to(exchangeMegaPayTHBQuery()).with(MQ_MEGAPAY_THB_CHECK_ORDER_KEY);
+    }
+
+    //MegaPayTHB通道查询队列的配置死信队列,即入队队列
+    @Bean
+    public Queue deadLetterQueueMegaPayTHBQuery() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-message-ttl", 1000 * 60 * 5);//延迟队列5分钟
+        args.put("x-dead-letter-exchange", MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE);
+        args.put("x-dead-letter-routing-key", MQ_MEGAPAY_THB_CHECK_ORDER_KEY);
+        return new Queue(E_MQ_MEGAPAY_THB_CHECK_ORDER, true, false, false, args);
+    }
+    /* ===========================================      MegaPay-THB查询队列2      =============================================== */
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER2 = AD3MQConstant.MQ_MEGAPAY_THB_CHECK_ORDER2;//MegaPay-THB查询队列2
+    public static final String E_MQ_MEGAPAY_THB_CHECK_ORDER2 = AD3MQConstant.E_MQ_MEGAPAY_THB_CHECK_ORDER2;//MegaPay-THB查询死信队列2
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER_KEY2 = AD3MQConstant.MQ_MEGAPAY_THB_CHECK_ORDER_KEY2;//MegaPay-THB查询死信队列2路由
+    public static final String MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE2 = AD3MQConstant.MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE2;//MegaPay-THB查询死信队列2交换机
+
+
+    @Bean
+    public Queue operateMegaPayTHBQuery2() {
+        return new Queue(RabbitMQConfig.MQ_MEGAPAY_THB_CHECK_ORDER2, true, false, false);
+    }
+
+    //用于MegaPayTHB通道查询队列2的死信路由
+    @Bean
+    public DirectExchange exchangeMegaPayTHBQuery2() {
+        return new DirectExchange(MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE2);
+    }
+
+    //MegaPayTHB通道查询队列2的绑定exchange 到出队队列
+    @Bean
+    public Binding deadLetterBindingMegaPayTHBQuery2() {
+        return BindingBuilder.bind(operateMegaPayTHBQuery2()).to(exchangeMegaPayTHBQuery2()).with(MQ_MEGAPAY_THB_CHECK_ORDER_KEY2);
+    }
+
+    //MegaPayTHB通道查询队列2的配置死信队列,即入队队列
+    @Bean
+    public Queue deadLetterQueueMegaPayTHBQuery2() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-message-ttl", 1000 * 60 * 30);//延迟队列5分钟
+        args.put("x-dead-letter-exchange", MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE2);
+        args.put("x-dead-letter-routing-key", MQ_MEGAPAY_THB_CHECK_ORDER_KEY2);
+        return new Queue(E_MQ_MEGAPAY_THB_CHECK_ORDER2, true, false, false, args);
+    }
 }
