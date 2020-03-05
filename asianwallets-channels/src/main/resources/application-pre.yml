@@ -8,7 +8,7 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
   instance:
-    instance-id: asianwallets-base5001
+    instance-id: asianwallets-channels5005
     prefer-ip-address: true
 
 ribbon:

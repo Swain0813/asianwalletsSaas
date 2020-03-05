@@ -7,6 +7,9 @@ eureka:
       defaultZone: http://localhost:5000/eureka/
     registerWithEureka: true
     fetchRegistry: true
+  instance:
+    instance-id: asianwallets-clearing5008
+    prefer-ip-address: true
 
 ribbon:
   ReadTimeout: 10000

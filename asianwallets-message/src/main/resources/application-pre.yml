@@ -7,6 +7,9 @@ eureka:
       defaultZone: http://localhost:5000/eureka/
     registerWithEureka: true
     fetchRegistry: true
+  instance:
+    instance-id: asianwallets-message5004
+    prefer-ip-address: true
 
 spring:
   # 数据库配置
