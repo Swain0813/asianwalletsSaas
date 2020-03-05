@@ -1,6 +1,4 @@
 package com.asianwallets.channels;
-
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -19,7 +17,6 @@ import java.util.Properties;
 @SpringBootApplication(scanBasePackages = "com.asianwallets")
 @EnableEurekaClient
 @EnableDiscoveryClient
-@MapperScan(basePackages = "src/main/resources/mapper")
 public class ChannelsApplication extends SpringBootServletInitializer {
 
     @Override
