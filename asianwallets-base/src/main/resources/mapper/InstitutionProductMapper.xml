@@ -148,7 +148,7 @@
     </select>
 
     <resultMap id="InstitutionChannelMap" type="com.asianwallets.common.vo.InstitutionChannelQueryVO">
-        <id column="institutionId" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institutionId" property="institutionId" jdbcType="VARCHAR"/>
         <result column="institutionName" property="institutionName" jdbcType="VARCHAR"/>
         <result column="channelCode" property="channelCode" jdbcType="VARCHAR"/>
         <result column="channelCnName" property="channelCnName" jdbcType="VARCHAR"/>
