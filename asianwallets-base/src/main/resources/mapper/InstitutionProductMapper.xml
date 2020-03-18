@@ -133,7 +133,7 @@
         p.trade_direction AS transType
         FROM institution_product ip
         LEFT JOIN product p ON ip.product_id = p.id
-        LEFT JOIN pay_type pt ON p.pay_type = pt.extend1  AND pt.language = #{language}
+        LEFT JOIN pay_type pt ON p.pay_type = pt.extend1 AND pt.language = #{language}
         <where>
             <if test="institutionId!=null and institutionId!= ''">
                 AND ip.institution_id=#{institutionId}
@@ -171,21 +171,22 @@
 
     <select id="pageInstitutionCha" resultMap="InstitutionChannelMap">
         SELECT
-               ip.institution_id                as  institutionId,
-               ip.institution_name              as  institutionName,
-               c.channel_code                   as channelCode,
-               c.channel_cn_name                as channelCnName,
-               c.currency                       as currency,
-               c.support_refund_state           as supportRefundState,
-               c.refunding_is_return_fee        as refundingIsReturnFee,
-               c.sort                           as sort,
-               c.enabled                        as enabled,
-               b.id                             as bankID,
-               b.bank_code                      as bankCode,
-               b.bank_name                      as bankName,
-               b.bank_country                   as bankCountry,
-               b.bank_currency                  as bankCurrency,
-               b.issuer_id                      as bankIssuerId
+        ip.institution_id as institutionId,
+        ip.institution_name as institutionName,
+        c.channel_code as channelCode,
+        c.channel_cn_name as channelCnName,
+        c.currency as currency,
+        c.support_refund_state as supportRefundState,
+        c.refunding_is_return_fee as refundingIsReturnFee,
+        c.sort as sort,
+        c.enabled as enabled,
+        b.id as bankID,
+        b.bank_code as bankCode,
+        b.bank_name as bankName,
+        b.bank_country as bankCountry,
+        b.bank_currency as bankCurrency,
+        b.issuer_id as bankIssuerId,
+        ip.create_time
         FROM institution_product ip
         left join institution_channel ic on ic.ins_pro_id=ip.id
         left join channel c on c.id=ic.channel_id
@@ -215,7 +216,6 @@
             </if>
         </where>
     </select>
-
 
 
 </mapper>
