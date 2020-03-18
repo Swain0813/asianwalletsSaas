@@ -1,4 +1,5 @@
 package com.asianwallets.common.dto;
+import com.asianwallets.common.base.BasePageHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @ApiModel(value = "机构通道查询输入参数", description = "机构通道查询输入参数")
-public class InstitutionChannelQueryDTO {
+public class InstitutionChannelQueryDTO extends BasePageHelper {
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "机构编号")
