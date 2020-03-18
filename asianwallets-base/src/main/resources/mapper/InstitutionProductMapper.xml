@@ -204,13 +204,13 @@
             <if test="currency != null and currency != ''">
                 AND c.currency = #{currency}
             </if>
-            <if test="enabled != null">
+            <if test="enabled != null ">
                 and c.enabled=#{enabled}
             </if>
             <if test="supportRefundState != null and supportRefundState != ''">
                 AND c.support_refund_state = #{supportRefundState}
             </if>
-            <if test="refundingIsReturnFee != null and refundingIsReturnFee != ''">
+            <if test="refundingIsReturnFee != null">
                 AND c.refunding_is_return_fee = #{refundingIsReturnFee}
             </if>
         </where>
