@@ -1,6 +1,7 @@
 package com.asianwallets.common.dto.doku;
 
 import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -65,8 +66,6 @@ public class DOKURequestDTO {
     @ApiModelProperty(value = "")
     private String BASKET;
 
-    @ApiModelProperty(value = "Channel")
-    private Channel channel;
 
     public DOKURequestDTO() {
     }
@@ -86,6 +85,13 @@ public class DOKURequestDTO {
         this.EMAIL = orders.getPayerEmail();
         this.PAYMENTCHANNEL = channel.getIssuerId();
         this.BASKET = "ITEM1,10000.00,2,20000.00;ITEM2,20000.00,4,80000.00";
-        this.channel = channel;
+    }
+
+
+    public DOKURequestDTO(OrderRefund orderRefund, Channel channel) {
+        this.MALLID = channel.getChannelMerchantId();
+        this.CHAINMERCHANT = "NA";
+        this.TRANSIDMERCHANT = orderRefund.getOrderId();
+        this.SESSIONID = "SESSIONID";
     }
 }
