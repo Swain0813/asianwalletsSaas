@@ -554,12 +554,14 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
         }
         //CSB请求二维码接口公共参数实体
-        AD3CSBScanPayDTO ad3CSBScanPayDTO = new AD3CSBScanPayDTO(orders, channel);
+        AD3CSBScanPayDTO ad3CSBScanPayDTO = new AD3CSBScanPayDTO(ad3ParamsConfig.getMerchantCodeOffline());
         //CSB请求二维码接口业务参数实体
         CSBScanBizContentDTO csbScanBizContent = new CSBScanBizContentDTO(orders, ad3LoginVO.getTerminalId(), ad3ParamsConfig.getOperatorIdOffline(), ad3ParamsConfig.getChannelCallbackUrl() + "/offlineCallback/ad3Callback", channel);
         //生成ad3签名
         ad3CSBScanPayDTO.setSignMsg(createAD3Signature(ad3CSBScanPayDTO, csbScanBizContent, ad3LoginVO.getToken()));
         ad3CSBScanPayDTO.setBizContent(csbScanBizContent);
+        ad3CSBScanPayDTO.setOrders(orders);
+        ad3CSBScanPayDTO.setChannel(channel);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【AD3线下CSB接口请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3CSBScanPayDTO));
         BaseResponse channelResponse = channelsFeign.ad3OfflineCsb(ad3CSBScanPayDTO);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【AD3线下CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -591,12 +593,14 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
         }
         //BSC请求二维码接口公共参数实体
-        AD3BSCScanPayDTO ad3BSCScanPayDTO = new AD3BSCScanPayDTO(orders, channel);
+        AD3BSCScanPayDTO ad3BSCScanPayDTO = new AD3BSCScanPayDTO(ad3ParamsConfig.getMerchantCodeOffline());
         //BSC支付接口业务参数实体
         BSCScanBizContentDTO bscScanBizContentDTO = new BSCScanBizContentDTO(orders, ad3LoginVO.getTerminalId(), ad3ParamsConfig.getOperatorIdOffline(), authCode, channel);
         //生成ad3签名
         ad3BSCScanPayDTO.setSignMsg(createAD3Signature(ad3BSCScanPayDTO, bscScanBizContentDTO, ad3LoginVO.getToken()));
         ad3BSCScanPayDTO.setBizContent(bscScanBizContentDTO);
+        ad3BSCScanPayDTO.setOrders(orders);
+        ad3BSCScanPayDTO.setChannel(channel);
         log.info("==================【线下BSC动态扫码】==================【调用Channels服务】【AD3线下BSC接口请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3BSCScanPayDTO));
         BaseResponse channelResponse = channelsFeign.ad3OfflineBsc(ad3BSCScanPayDTO);
         log.info("==================【线下BSC动态扫码】==================【调用Channels服务】【AD3线下BSC接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));

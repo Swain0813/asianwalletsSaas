@@ -97,8 +97,8 @@ custom:
   password: a123456
   tradePwd: a123456
   #AD3给亚洲钱包提供的商户号---线下商户号
-  merchantCodeOffline: 20200115500444
-  imeiOffline: 3333333
+  merchantCodeOffline: 20170921500044
+  imeiOffline: 11111
   operatorIdOffline: '00'  #操作员ID，字符串
   passwordOffline: a123456
   tradePwdOffline: a123456
