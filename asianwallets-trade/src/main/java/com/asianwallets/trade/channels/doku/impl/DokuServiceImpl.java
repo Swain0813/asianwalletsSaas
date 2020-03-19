@@ -10,6 +10,7 @@ import com.asianwallets.common.dto.doku.DOKUReqDTO;
 import com.asianwallets.common.dto.doku.DOKURequestDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -172,6 +173,41 @@ public class DokuServiceImpl extends ChannelsAbstractAdapter implements DokuServ
 
     @Override
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
-        return super.cancelPaying(channel, orderRefund, rabbitMassage);
+        BaseResponse baseResponse = new BaseResponse();
+        //获取原订单的refCode字段(NextPos用)
+        Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
+        DOKURefundDTO dokuRequestDTO = new DOKURefundDTO(orders, channel);
+        DOKUReqDTO dokuReqDTO = new DOKUReqDTO();
+        dokuReqDTO.setDokuRefundDTO(dokuRequestDTO);
+        dokuReqDTO.setKey(channel.getMd5KeyStr());
+        log.info("============【DOKU撤销 cancelPaying】============【请求参数】 dokuReqDTO: {}", JSON.toJSONString(dokuReqDTO));
+        BaseResponse response = channelsFeign.dokuRefund(dokuReqDTO);
+        log.info("============【DOKU撤销 cancelPaying】============【响应参数】 baseResponse: {}", JSON.toJSONString(response));
+        if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            if (response.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
+                //撤销成功
+                Map<String, String> respMap = (Map<String, String>) response.getData();
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+                log.info("=================【DOKU撤销 cancelPaying】=================【撤销成功】orderId : {}", orders.getId());
+                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
+            }else{
+                //撤销失败
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
+                log.info("=================【DOKU撤销 cancelPaying】=================【撤销失败】orderId : {}", orders.getId());
+                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
+            }
+
+        }else{
+            //请求失败
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+            log.info("=================【DOKU撤销 cancelPaying】=================【请求失败】orderId : {}", orders.getId());
+            RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+            if (rabbitMassage == null) {
+                rabbitMassage = rabbitOrderMsg;
+            }
+            log.info("=================【DOKU撤销 cancelPaying】=================【上报通道】rabbitMassage: {} ", JSON.toJSON(rabbitMassage));
+            rabbitMQSender.send(AD3MQConstant.CX_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
+        }
+        return baseResponse;
     }
 }

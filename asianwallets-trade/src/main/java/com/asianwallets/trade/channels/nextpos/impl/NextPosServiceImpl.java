@@ -460,18 +460,18 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
             //请求成功
             if (response.getMsg().equals(TradeConstant.HTTP_SUCCESS_MSG)) {
                 //撤销成功
-                response.setCode(EResultEnum.SUCCESS.getCode());
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 log.info("=================【NextPos退款 cancelPaying】=================【撤销成功】orderId : {}", orders.getId());
                 ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
             } else {
                 //撤销失败
-                response.setCode(EResultEnum.REFUND_FAIL.getCode());
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=================【NextPos退款 cancelPaying】=================【撤销失败】orderId : {}", orders.getId());
                 ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
             }
         } else {
             //请求失败
-            response.setCode(EResultEnum.REFUNDING.getCode());
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
             log.info("=================【NextPos退款 cancelPaying】=================【请求失败】orderId : {}", orders.getId());
             RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             if (rabbitMassage == null) {
