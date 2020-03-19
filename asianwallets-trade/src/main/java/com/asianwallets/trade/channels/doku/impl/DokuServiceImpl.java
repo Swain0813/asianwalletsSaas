@@ -174,9 +174,7 @@ public class DokuServiceImpl extends ChannelsAbstractAdapter implements DokuServ
     @Override
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
-        //获取原订单的refCode字段(NextPos用)
-        Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
-        DOKURefundDTO dokuRequestDTO = new DOKURefundDTO(orders, channel);
+        DOKURefundDTO dokuRequestDTO = new DOKURefundDTO(orderRefund, channel);
         DOKUReqDTO dokuReqDTO = new DOKUReqDTO();
         dokuReqDTO.setDokuRefundDTO(dokuRequestDTO);
         dokuReqDTO.setKey(channel.getMd5KeyStr());
@@ -188,19 +186,19 @@ public class DokuServiceImpl extends ChannelsAbstractAdapter implements DokuServ
                 //撤销成功
                 Map<String, String> respMap = (Map<String, String>) response.getData();
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                log.info("=================【DOKU撤销 cancelPaying】=================【撤销成功】orderId : {}", orders.getId());
-                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
+                log.info("=================【DOKU撤销 cancelPaying】=================【撤销成功】orderId : {}", orderRefund.getOrderId());
+                ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
             }else{
                 //撤销失败
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
-                log.info("=================【DOKU撤销 cancelPaying】=================【撤销失败】orderId : {}", orders.getId());
-                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
+                log.info("=================【DOKU撤销 cancelPaying】=================【撤销失败】orderId : {}", orderRefund.getOrderId());
+                ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
             }
 
         }else{
             //请求失败
             baseResponse.setCode(EResultEnum.REFUNDING.getCode());
-            log.info("=================【DOKU撤销 cancelPaying】=================【请求失败】orderId : {}", orders.getId());
+            log.info("=================【DOKU撤销 cancelPaying】=================【请求失败】orderId : {}", orderRefund.getOrderId());
             RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             if (rabbitMassage == null) {
                 rabbitMassage = rabbitOrderMsg;
