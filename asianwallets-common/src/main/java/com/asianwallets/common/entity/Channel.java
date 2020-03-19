@@ -69,33 +69,33 @@ public class Channel extends BaseEntity {
     @Column(name = "service_name_mark")
     private String serviceNameMark;
 
-//    @ApiModelProperty(value = "服务器回调地址")
-//    @Column(name = "notify_server_url")
-//    private String notifyServerUrl;
-//
-//    @ApiModelProperty(value = "浏览器回调地址")
-//    @Column(name = "notify_browser_url")
-//    private String notifyBrowserUrl;
-//
-//    @ApiModelProperty(value = "支付url")
-//    @Column(name = "pay_url")
-//    private String payUrl;
-//
-//    @ApiModelProperty(value = "撤销url")
-//    @Column(name = "void_url")
-//    private String voidUrl;
+    @ApiModelProperty(value = "服务器回调地址")
+    @Column(name = "notify_server_url")
+    private String notifyServerUrl;
 
-//    @ApiModelProperty(value = "退款url")
-//    @Column(name = "refund_url")
-//    private String refundUrl;
+    @ApiModelProperty(value = "浏览器回调地址")
+    @Column(name = "notify_browser_url")
+    private String notifyBrowserUrl;
 
-//    @ApiModelProperty(value = "通道单个查询url")
-//    @Column(name = "channel_single_select_url")
-//    private String channelSingleSelectUrl;
-//
-//    @ApiModelProperty(value = "通道批量查询url")
-//    @Column(name = "channel_batch_select_url")
-//    private String channelBatchSelectUrl;
+    @ApiModelProperty(value = "支付url")
+    @Column(name = "pay_url")
+    private String payUrl;
+
+    @ApiModelProperty(value = "撤销url")
+    @Column(name = "void_url")
+    private String voidUrl;
+
+    @ApiModelProperty(value = "退款url")
+    @Column(name = "refund_url")
+    private String refundUrl;
+
+    @ApiModelProperty(value = "通道单个查询url")
+    @Column(name = "channel_single_select_url")
+    private String channelSingleSelectUrl;
+
+    @ApiModelProperty(value = "通道批量查询url")
+    @Column(name = "channel_batch_select_url")
+    private String channelBatchSelectUrl;
 
     @ApiModelProperty(value = "通道最小限额")
     @Column(name = "limit_min_amount")
@@ -171,45 +171,45 @@ public class Channel extends BaseEntity {
     @Column(name = "md5_key_str")
     private String md5KeyStr;
 
-//    @ApiModelProperty(value = "扩展字段1")
-//    @Column(name = "extend1")
-//    private String extend1;
-//
-//    @ApiModelProperty(value = "扩展字段2")
-//    @Column(name = "extend2")
-//    private String extend2;
-//
-//    @ApiModelProperty(value = "扩展字段3")
-//    @Column(name = "extend3")
-//    private String extend3;
-//
-//    @ApiModelProperty(value = "扩展字段4")
-//    @Column(name = "extend4")
-//    private String extend4;
-//
-//    @ApiModelProperty(value = "扩展字段5")
-//    @Column(name = "extend5")
-//    private String extend5;
-//
-//    @ApiModelProperty(value = "扩展字段6")
-//    @Column(name = "extend6")
-//    private String extend6;
-//
-//    @ApiModelProperty(value = "扩展字段7")
-//    @Column(name = "extend7")
-//    private String extend7;
-//
-//    @ApiModelProperty(value = "扩展字段8")
-//    @Column(name = "extend8")
-//    private String extend8;
-//
-//    @ApiModelProperty(value = "扩展字段9")
-//    @Column(name = "extend9")
-//    private String extend9;
-//
-//    @ApiModelProperty(value = "扩展字段10")
-//    @Column(name = "extend10")
-//    private String extend10;
+    @ApiModelProperty(value = "扩展字段1")
+    @Column(name = "extend1")
+    private String extend1;
+
+    @ApiModelProperty(value = "扩展字段2")
+    @Column(name = "extend2")
+    private String extend2;
+
+    @ApiModelProperty(value = "扩展字段3")
+    @Column(name = "extend3")
+    private String extend3;
+
+    @ApiModelProperty(value = "扩展字段4")
+    @Column(name = "extend4")
+    private String extend4;
+
+    @ApiModelProperty(value = "扩展字段5")
+    @Column(name = "extend5")
+    private String extend5;
+
+    @ApiModelProperty(value = "扩展字段6")
+    @Column(name = "extend6")
+    private String extend6;
+
+    @ApiModelProperty(value = "扩展字段7")
+    @Column(name = "extend7")
+    private String extend7;
+
+    @ApiModelProperty(value = "扩展字段8")
+    @Column(name = "extend8")
+    private String extend8;
+
+    @ApiModelProperty(value = "扩展字段9")
+    @Column(name = "extend9")
+    private String extend9;
+
+    @ApiModelProperty(value = "扩展字段10")
+    @Column(name = "extend10")
+    private String extend10;
 
     @ApiModelProperty(value = "是否报备")
     @Column(name = "is_report")
