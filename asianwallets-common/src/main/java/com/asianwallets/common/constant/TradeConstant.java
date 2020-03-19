@@ -260,4 +260,5 @@ public class TradeConstant {
     public static final String WECHAT = "WECHAT"; //WECHAT线上扫码
     public static final String CLOUD = "CLOUD"; //云闪付
     public static final String EGHL = "EGHL"; //云闪付
+    public static final String DOKU = "DOKU"; //DOKU
 }

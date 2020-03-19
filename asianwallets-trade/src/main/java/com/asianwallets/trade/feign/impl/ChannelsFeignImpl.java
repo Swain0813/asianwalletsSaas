@@ -149,6 +149,16 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
+    public BaseResponse checkStatus(DOKUReqDTO dokuReqDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse dokuRefund(DOKUReqDTO dokuReqDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
     public BaseResponse megaPayQuery(MegaPayQueryDTO megaPayQueryDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }

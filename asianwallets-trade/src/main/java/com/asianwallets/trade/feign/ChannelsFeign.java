@@ -129,6 +129,14 @@ public interface ChannelsFeign {
     @PostMapping("doku/payment")
     BaseResponse dokuPay(DOKUReqDTO dokuReqDTO);
 
+    @ApiOperation(value = "Doku查询接口")
+    @PostMapping("doku/checkStatus")
+    BaseResponse checkStatus(DOKUReqDTO dokuReqDTO);
+
+    @ApiOperation(value = "Doku退款接口")
+    @PostMapping("doku/refund")
+    BaseResponse dokuRefund(DOKUReqDTO dokuReqDTO);
+
     @ApiOperation(value = "AD3线下CSB")
     @PostMapping("/ad3/offlineCsb")
     BaseResponse ad3OfflineCsb(@RequestBody @ApiParam AD3CSBScanPayDTO ad3CSBScanPayDTO);
@@ -152,4 +160,7 @@ public interface ChannelsFeign {
     @ApiOperation(value = "AD3查询接口")
     @PostMapping("/ad3/query")
     BaseResponse query(@RequestBody @ApiParam AD3ONOFFRefundDTO ad3ONOFFRefundDTO);
+
+
+
 }
