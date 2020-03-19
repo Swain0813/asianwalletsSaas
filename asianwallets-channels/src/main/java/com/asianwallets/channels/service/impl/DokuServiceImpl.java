@@ -3,15 +3,14 @@ package com.asianwallets.channels.service.impl;
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.DokuService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.doku.DOKUReqDTO;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.response.HttpResponse;
 import com.asianwallets.common.utils.BeanToMapUtil;
-import com.asianwallets.common.utils.HttpClientUtils;
 import com.asianwallets.common.utils.XMLUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,9 @@ public class DokuServiceImpl implements DokuService {
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
 
+    @Autowired
+    private ChannelsConfig channelsConfig;
+
 
     /**
      * @return
@@ -58,7 +60,7 @@ public class DokuServiceImpl implements DokuService {
         String body = null;
         Map<String, Object> map = BeanToMapUtil.beanToMap(dokuReqDTO.getDokuRequestDTO());
         try {
-            cn.hutool.http.HttpResponse execute = HttpRequest.post("")
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getDokuPayUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(map)
                     .timeout(20000)
@@ -106,7 +108,7 @@ public class DokuServiceImpl implements DokuService {
         String body = null;
         Map<String, Object> map = BeanToMapUtil.beanToMap(dokuReqDTO.getDokuRequestDTO());
         try {
-            cn.hutool.http.HttpResponse execute = HttpRequest.post("")
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getCheckUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(map)
                     .timeout(20000)
@@ -166,7 +168,7 @@ public class DokuServiceImpl implements DokuService {
         int status = 0;
         String body = null;
         try {
-            cn.hutool.http.HttpResponse execute = HttpRequest.post("")
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getDokuPayUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(map)
                     .timeout(20000)
