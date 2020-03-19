@@ -326,6 +326,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             redisService.set(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY, JSON.toJSONString(attestation));
         }
         //构建
+        log.info("===================【POS机获取md5key】===================【参数记录】 posAESKey: {},md5key:{}", JSON.toJSONString(posAESKey), JSON.toJSONString(attestation.getMd5key()));
         SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, posAESKey.getBytes(Charset.defaultCharset()));
         //加密
         String encrypt = aes.encryptBase64(attestation.getMd5key());

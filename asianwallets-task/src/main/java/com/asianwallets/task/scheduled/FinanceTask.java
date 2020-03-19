@@ -37,8 +37,8 @@ public class FinanceTask {
         log.info("************saas定时生成机构对账结算单数据结束****************");
     }
 
-    //@Scheduled(cron = "0 0 2 ? * *")//每天早上1点执行一次
-    @Scheduled(cron = "0/10 * * * * ? ")//每10秒执行一次 测试用
+    @Scheduled(cron = "0 0 2 ? * *")//每天早上1点执行一次
+//    @Scheduled(cron = "0/10 * * * * ? ")//每10秒执行一次 测试用
     public void tradeCheckAccount() {
         log.info("==================【SAAS定时生成商户交易对账单】==================【START】");
         tradeCheckAccountFeign.tradeCheckAccount();

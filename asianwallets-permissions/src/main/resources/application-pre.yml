@@ -80,4 +80,4 @@ file:
   tmpfile: /usr/local/tomcat/apache-tomcat-8.5.38/webapps/tmp
 custom:
   #pos机获取md5key的加密值
-  PosAESKey: IZ3TBUtgjfNIhPcGBzEp1w==
+  PosAESKey: aQPazi6N80CYvbf9QsiYmQ==

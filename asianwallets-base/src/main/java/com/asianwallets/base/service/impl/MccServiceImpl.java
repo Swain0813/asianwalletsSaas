@@ -133,13 +133,19 @@ public class MccServiceImpl implements MccService {
         if (StringUtils.isBlank(mccDTO.getId()) || mccDTO.getEnabled() == null) {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        Mcc mcc = mccMapper.selectByExtend1AndLanguage(mccDTO.getId(), null);
-        if (mcc == null) {
+        List<Mcc> mccs = mccMapper.selectByExtend1(mccDTO.getId());
+        if (mccs == null || mccs.size() == 0) {
             throw new BusinessException(EResultEnum.INFORMATION_DOES_NOT_EXIST.getCode());
         }
-        mcc.setEnabled(mccDTO.getEnabled());
-        mcc.setModifier(mccDTO.getModifier());
-        return mccMapper.updateByCode(mcc);
+        mccs.forEach(n -> {
+            n.setEnabled(mccDTO.getEnabled());
+            n.setModifier(mccDTO.getModifier());
+        });
+        int i = 0;
+        for (Mcc mcc : mccs) {
+            i = i + mccMapper.updateByCode(mcc);
+        }
+        return i;
     }
 
     /**
