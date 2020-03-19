@@ -23,6 +23,7 @@ import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
+import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.MerchantMapper;
 import com.asianwallets.trade.dao.MerchantProductMapper;
@@ -40,6 +41,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,6 +88,10 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 
     @Autowired
     private Ad3Service ad3Service;
+
+    @Autowired
+    @Qualifier(value = "ad3ParamsConfig")
+    private AD3ParamsConfig ad3ParamsConfig;
 
     //收银台地址
     @Value("${custom.cashierDeskUrl}")
@@ -654,7 +660,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
      * @return BasicInfoVO 线上基础信息实体
      */
     private BasicInfoVO getOnlineInfo(String merchantId, String issuerId) {
-        List<OnlineInfoDetailVO> onlineInfoDetailVOList = merchantProductMapper.selectOnlineInfoDetail(merchantId, issuerId,TradeConstant.TRADE_ONLINE);
+        List<OnlineInfoDetailVO> onlineInfoDetailVOList = merchantProductMapper.selectOnlineInfoDetail(merchantId, issuerId, TradeConstant.TRADE_ONLINE);
         if (onlineInfoDetailVOList == null || onlineInfoDetailVOList.size() == 0) {
             log.info("-----------------【线上获取基础信息】-----------------商户产品通道信息不存在 直连从数据库查询关系信息为空");
             throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_CHANNEL_NOT_EXISTS.getCode());
@@ -848,7 +854,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
         //判断通道
         if (channel.getServiceNameMark().equals(TradeConstant.AD3)) {
-            AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO = new AD3OnlineOrderQueryDTO(orders, channel);
+            AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO = new AD3OnlineOrderQueryDTO(orders, ad3ParamsConfig.getMerchantCode());
             ad3OnlineOrderQueryDTO.setMerorderDatetime(DateUtil.format(orders.getReportChannelTime(), "yyyyMMddHHmmss"));
             HttpResponse httpResponse = ad3Service.ad3OnlineOrderQuery(ad3OnlineOrderQueryDTO, null, channel);
             if (!httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {

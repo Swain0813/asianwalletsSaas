@@ -22,6 +22,7 @@ import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.megaPay.MegaPayService;
+import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dto.MegaPayBrowserCallbackDTO;
@@ -38,6 +39,7 @@ import com.asianwallets.trade.vo.FundChangeVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +60,10 @@ import java.util.Map;
 @Transactional
 @HandlerType(TradeConstant.MEGAPAY)
 public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaPayService {
+
+    @Autowired
+    @Qualifier(value = "ad3ParamsConfig")
+    private AD3ParamsConfig ad3ParamsConfig;
 
     @Autowired
     private RabbitMQSender rabbitMQSender;
@@ -99,7 +105,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
     public BaseResponse onlinePay(Orders orders, Channel channel) {
         BaseResponse response = new BaseResponse();
         if (orders.getTradeCurrency().equalsIgnoreCase("THB")) {//megaPay THB通道
-            MegaPayRequestDTO megaPayRequestDTO = new MegaPayRequestDTO(orders, channel);
+            MegaPayRequestDTO megaPayRequestDTO = new MegaPayRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/megaPayThbBrowserCallback"));
             log.info("===============【MegaPay-THB网银收单】===============【调用Channels服务-请求参数】 megaPayRequestDTO: {}", JSON.toJSONString(megaPayRequestDTO));
             response = channelsFeign.megaPayTHB(megaPayRequestDTO);
             log.info("===============【MegaPay-THB网银收单】===============【调用Channels服务-响应参数】 response: {}", JSON.toJSONString(response));
@@ -115,7 +121,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
             RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(param));
             rabbitMQSender.send(AD3MQConstant.E_MQ_MEGAPAY_THB_CHECK_ORDER, JSON.toJSONString(rabbitMassage));
         } else if (orders.getTradeCurrency().equalsIgnoreCase("IDR")) {//megaPay IDR通道
-            MegaPayIDRRequestDTO megaPayIDRRequestDTO = new MegaPayIDRRequestDTO(orders, channel);
+            MegaPayIDRRequestDTO megaPayIDRRequestDTO = new MegaPayIDRRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/megaPayIdrBrowserCallback"));
             log.info("===============【MegaPay-IDR网银收单】===============【调用Channels服务-请求参数】 megaPayIDRRequestDTO: {}", JSON.toJSONString(megaPayIDRRequestDTO));
             response = channelsFeign.megaPayIDR(megaPayIDRRequestDTO);
             log.info("===============【MegaPay-IDR网银收单】===============【调用Channels服务-响应参数】 response: {}", JSON.toJSONString(response));

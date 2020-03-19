@@ -55,12 +55,12 @@ public class MegaPayRequestDTO {
     public MegaPayRequestDTO() {
     }
 
-    public MegaPayRequestDTO(Orders orders, Channel channel) {
+    public MegaPayRequestDTO(Orders orders, Channel channel, String retURL) {
         this.merID = channel.getChannelMerchantId();//商户号
         this.orderID = orders.getId();//订单号
         this.amt = String.valueOf(orders.getChannelAmount());//订单金额
         this.bMode = channel.getIssuerId().toLowerCase();//银行机构号,必须小写
-        this.retURL = channel.getNotifyServerUrl();//页面返回地址
+        this.retURL = retURL;//页面返回地址
         this.cusID = "";
         this.c_Name = "";
         this.institutionOrderId = orders.getMerchantOrderId();

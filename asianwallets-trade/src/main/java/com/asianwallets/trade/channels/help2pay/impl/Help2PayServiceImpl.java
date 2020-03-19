@@ -18,6 +18,7 @@ import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.help2pay.Help2PayService;
+import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dto.Help2PayCallbackDTO;
@@ -31,6 +32,7 @@ import com.asianwallets.trade.vo.FundChangeVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -45,6 +47,10 @@ import java.util.Date;
 @Slf4j
 @HandlerType(TradeConstant.HELP2PAY)
 public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help2PayService {
+
+    @Autowired
+    @Qualifier(value = "ad3ParamsConfig")
+    private AD3ParamsConfig ad3ParamsConfig;
 
     @Autowired
     private ChannelsFeign channelsFeign;
@@ -80,7 +86,7 @@ public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help
      */
     @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
-        Help2PayRequestDTO help2PayRequestDTO = new Help2PayRequestDTO(orders, channel, channel.getNotifyBrowserUrl(), channel.getNotifyServerUrl(), channel.getMd5KeyStr());
+        Help2PayRequestDTO help2PayRequestDTO = new Help2PayRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/help2PayBrowserCallback"), ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/help2PayServerCallback"), channel.getMd5KeyStr());
         //生成签名
         help2PayRequestDTO.setKey(createHelp2PaySign(help2PayRequestDTO, channel.getMd5KeyStr()));
         //生成签名之后的时间格式要换掉

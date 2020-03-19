@@ -19,6 +19,7 @@ import com.asianwallets.common.utils.XMLUtil;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.wechat.WechantService;
+import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
@@ -32,6 +33,7 @@ import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -53,6 +55,11 @@ import java.util.Map;
 @Transactional
 @HandlerType(TradeConstant.WECHAT)
 public class WechantServiceImpl extends ChannelsAbstractAdapter implements WechantService {
+
+
+    @Autowired
+    @Qualifier(value = "ad3ParamsConfig")
+    private AD3ParamsConfig ad3ParamsConfig;
 
     @Autowired
     private ChannelsFeign channelsFeign;
@@ -241,7 +248,7 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
      */
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
-        WechatCSBDTO wechatCSBDTO = new WechatCSBDTO(orders, channel);
+        WechatCSBDTO wechatCSBDTO = new WechatCSBDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/offlineCallback").concat("/wechatCSBCallback"));
         log.info("==================【线下CSB动态扫码】==================调用Channels服务【Wechat-CSB接口】-请求实体  wechatCSBDTO: {}", JSON.toJSONString(wechatCSBDTO));
         BaseResponse channelResponse = channelsFeign.wechatOfflineCSB(wechatCSBDTO);
         log.info("==================【线下CSB动态扫码】==================调用Channels服务【Wechat-CSB接口】-响应结果  channelResponse:{}", channelResponse);

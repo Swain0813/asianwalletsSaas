@@ -122,8 +122,8 @@ public class AliPayWebDTO {
         this._input_charset = "UTF-8";
         this.subject = orders.getProductName();
         this.md5KeyStr = channel.getMd5KeyStr();
-        this.notify_url = channel.getNotifyServerUrl();//后台回调地址
-        this.return_url = channel.getNotifyBrowserUrl();//浏览器回调地址
+        //this.notify_url = notifyUrl;//后台回调地址
+        //this.return_url = returnUrl;//浏览器回调地址
         this.out_trade_no = orders.getId();
         this.currency = orders.getTradeCurrency();
         this.body = null;

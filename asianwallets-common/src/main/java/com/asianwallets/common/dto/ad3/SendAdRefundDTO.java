@@ -69,6 +69,6 @@ public class SendAdRefundDTO {
         this.refundOrdertime = DateToolUtils.getReqDateyyyyMMddHHmmss(orderRefund.getCreateTime());
         this.ext1 = orderRefund.getId();
         //ad3加密方式 channel.getExtend1()
-        this.merchantSignType = channel.getExtend1();
+        this.merchantSignType = "2";
     }
 }

@@ -1,6 +1,7 @@
 package com.asianwallets.channels.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.WechatService;
 import com.asianwallets.common.constant.AD3Constant;
@@ -44,6 +45,9 @@ public class WechatServiceImpl implements WechatService {
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
 
+    @Autowired
+    private ChannelsConfig channelsConfig;
+
 
     /**
      * @param wechatQueryDTO 微信查询实体
@@ -59,7 +63,7 @@ public class WechatServiceImpl implements WechatService {
         queryMap.put("out_trade_no", wechatQueryDTO.getOut_trade_no());
         queryMap.put("nonce_str", wechatQueryDTO.getNonce_str());
         queryMap.put("sign_type", wechatQueryDTO.getSign_type());
-        String queryUrl = wechatQueryDTO.getChannel().getChannelSingleSelectUrl();//wechat查询订单url
+        String queryUrl = channelsConfig.getWechatQueryUrl();//wechat查询订单url
         Map<String, String> queryResultMap = signAndPay(queryMap, queryUrl, wechatQueryDTO.getMd5KeyStr());
         BaseResponse baseResponse = new BaseResponse();
         //默认失败
@@ -115,8 +119,6 @@ public class WechatServiceImpl implements WechatService {
             channelsOrder.setPayerName(orders.getPayerName());
             channelsOrder.setPayerBank(orders.getPayerBank());
             channelsOrder.setPayerEmail(orders.getPayerEmail());
-            channelsOrder.setBrowserUrl(channel.getNotifyBrowserUrl());
-            channelsOrder.setServerUrl(channel.getNotifyServerUrl());
             channelsOrder.setIssuerId(orders.getIssuerId());
             channelsOrder.setMd5KeyStr(channel.getMd5KeyStr());
             channelsOrder.setCreateTime(new Date());
@@ -136,7 +138,7 @@ public class WechatServiceImpl implements WechatService {
             paramMap.put("spbill_create_ip", wechatBSCDTO.getSpbill_create_ip());
             paramMap.put("detail", wechatBSCDTO.getDetail());
             paramMap.put("version", wechatBSCDTO.getVersion());
-            Map<String, String> resultMap = signAndPay(paramMap, wechatBSCDTO.getChannel().getPayUrl(), channel.getMd5KeyStr());//微信支付接口结果map
+            Map<String, String> resultMap = signAndPay(paramMap, channelsConfig.getWechatOfflineBSC(), channel.getMd5KeyStr());//微信支付接口结果map
             if (resultMap == null || resultMap.size() == 0) {
                 log.info("----------------Wechat线下BSC收单接口信息记录-----------------调用上游支付接口返回结果为空");
                 baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
@@ -172,7 +174,7 @@ public class WechatServiceImpl implements WechatService {
                                 queryMap.put("out_trade_no", wechatBSCDTO.getOut_trade_no());
                                 queryMap.put("nonce_str", wechatBSCDTO.getNonce_str());
                                 queryMap.put("sign_type", wechatBSCDTO.getSign_type());
-                                String queryUrl = wechatBSCDTO.getChannel().getChannelSingleSelectUrl();//wechat查询订单url
+                                String queryUrl = channelsConfig.getWechatQueryUrl();//wechat查询订单url
                                 Thread.sleep(10000); //等待10秒
                                 queryResultMap = signAndPay(queryMap, queryUrl, channel.getMd5KeyStr());
                                 if (queryResultMap == null || queryResultMap.size() == 0) {
@@ -225,7 +227,7 @@ public class WechatServiceImpl implements WechatService {
                             queryMap.put("out_trade_no", wechatBSCDTO.getOut_trade_no());
                             queryMap.put("nonce_str", wechatBSCDTO.getNonce_str());
                             queryMap.put("sign_type", wechatBSCDTO.getSign_type());
-                            String queryUrl = wechatBSCDTO.getChannel().getChannelSingleSelectUrl();//wechat查询订单url
+                            String queryUrl =  channelsConfig.getWechatQueryUrl();//wechat查询订单url
                             queryResultMap = signAndPay(queryMap, queryUrl, channel.getMd5KeyStr());
                             if (queryResultMap == null || queryResultMap.size() == 0) {
                                 log.info("------------------Wechat线下BSC收单接口信息记录------------------调用上游查询接口返回结果为空");
@@ -464,8 +466,6 @@ public class WechatServiceImpl implements WechatService {
             channelsOrder.setPayerBank(orders.getPayerBank());
             channelsOrder.setPayerEmail(orders.getPayerEmail());
             channelsOrder.setOrderType(AD3Constant.TRADE_ORDER);
-            channelsOrder.setBrowserUrl(channel.getNotifyBrowserUrl());
-            channelsOrder.setServerUrl(channel.getNotifyServerUrl());
             channelsOrder.setIssuerId(orders.getIssuerId());
             channelsOrder.setMd5KeyStr(channel.getMd5KeyStr());
             channelsOrder.setCreateTime(new Date());
@@ -487,7 +487,7 @@ public class WechatServiceImpl implements WechatService {
             paramMap.put("trade_type", wechatCSBDTO.getTrade_type());
             paramMap.put("detail", wechatCSBDTO.getDetail());
             paramMap.put("version", wechatCSBDTO.getVersion());
-            Map<String, String> resultMap = signAndPay(paramMap, wechatCSBDTO.getChannel().getPayUrl(), channel.getMd5KeyStr());
+            Map<String, String> resultMap = signAndPay(paramMap, channelsConfig.getWechatOfflineCSB(), channel.getMd5KeyStr());
             if (resultMap == null || resultMap.size() == 0) {
                 log.info("----------------Wechat线下CSB收单接口信息记录-----------------调用上游支付接口返回结果为空");
                 baseResponse.setCode("302");
@@ -569,7 +569,7 @@ public class WechatServiceImpl implements WechatService {
         try {
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
             //这里的FILE PATH 使用extend5字段
-            FileInputStream instream = new FileInputStream(new File(wechaRefundDTO.getChannel().getExtend5() + wechaRefundDTO.getMch_id() + ".p12"));
+            FileInputStream instream = new FileInputStream(new File(channelsConfig.getFliePath() + wechaRefundDTO.getMch_id() + ".p12"));
             try {
                 keyStore.load(instream, wechaRefundDTO.getMch_id().toCharArray());
             } finally {
@@ -618,7 +618,7 @@ public class WechatServiceImpl implements WechatService {
             log.info("------------------- 微信退款接口 -------------------xmlstr:" + xmlstr);
             if (xmlstr != null && !xmlstr.equals("")) {
                 //第三步，将xml参数post到指定接口
-                HttpPost httpPost = new HttpPost(wechaRefundDTO.getChannel().getRefundUrl());
+                HttpPost httpPost = new HttpPost(channelsConfig.getWechatRefundUrl());
                 //添加参数
                 StringEntity entity = new StringEntity(xmlstr, "UTF-8");
                 entity.setContentType("application/xml");
@@ -678,7 +678,7 @@ public class WechatServiceImpl implements WechatService {
     public BaseResponse wechatCancel(WechatCancelDTO wechatCancelDTO) {
         KeyStore keyStore = null;
         //这里的FILE PATH 使用extend5字段
-        try (FileInputStream instream = new FileInputStream(wechatCancelDTO.getChannel().getExtend5() + wechatCancelDTO.getChannelMerchantId() + ".p12")) {
+        try (FileInputStream instream = new FileInputStream(channelsConfig.getFliePath() + wechatCancelDTO.getChannelMerchantId() + ".p12")) {
             keyStore = KeyStore.getInstance("PKCS12");
             keyStore.load(instream, wechatCancelDTO.getChannelMerchantId().toCharArray());
         } catch (Exception e) {
@@ -726,7 +726,7 @@ public class WechatServiceImpl implements WechatService {
             //第二步，将请求参数拼装成XML字符串
             String xmlstr = UUIDHelper.map2XMLForWeChat(map);
             //第三步，将xml参数post到指定接口
-            HttpPost httpPost = new HttpPost(wechatCancelDTO.getChannel().getVoidUrl());
+            HttpPost httpPost = new HttpPost(channelsConfig.getWechatCancelUrl());
             //添加参数
             StringEntity entity = new StringEntity(xmlstr, "UTF-8");
             entity.setContentType("application/xml");

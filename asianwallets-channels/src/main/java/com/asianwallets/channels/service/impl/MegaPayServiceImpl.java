@@ -4,6 +4,7 @@ import cn.hutool.http.Header;
 import cn.hutool.http.HttpException;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.MegaPayService;
 import com.asianwallets.common.constant.AD3Constant;
@@ -19,16 +20,11 @@ import com.asianwallets.common.utils.MD5;
 import com.asianwallets.common.utils.XMLUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,6 +41,9 @@ public class MegaPayServiceImpl implements MegaPayService {
 
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
+
+    @Autowired
+    private ChannelsConfig channelsConfig;
 
     /**
      * @return
@@ -83,7 +82,7 @@ public class MegaPayServiceImpl implements MegaPayService {
                 co.setCreateTime(new Date());
                 channelsOrderMapper.insert(co);
             }
-            cn.hutool.http.HttpResponse execute = HttpRequest.post(megaPayRequestDTO.getChannel().getPayUrl())
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getMegaPayTHBUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(BeanToMapUtil.beanToMap(megaPayRequestDTO))
                     .timeout(20000)
@@ -147,7 +146,7 @@ public class MegaPayServiceImpl implements MegaPayService {
                 co.setCreateTime(new Date());
                 channelsOrderMapper.insert(co);
             }
-            cn.hutool.http.HttpResponse execute = HttpRequest.post(megaPayIDRRequestDTO.getChannel().getPayUrl())
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getMegaPayIDRUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(BeanToMapUtil.beanToMap(megaPayIDRRequestDTO))
                     .timeout(20000)
@@ -192,7 +191,6 @@ public class MegaPayServiceImpl implements MegaPayService {
             channelsOrder.setTradeCurrency(orders.getTradeCurrency());
             channelsOrder.setTradeAmount(new BigDecimal(nextPosRequestDTO.getAmt()));
             channelsOrder.setReqIp(orders.getReqIp());
-            channelsOrder.setServerUrl(nextPosRequestDTO.getChannel().getNotifyServerUrl());
             channelsOrder.setTradeStatus(TradeConstant.TRADE_WAIT);
             channelsOrder.setIssuerId(channel.getIssuerId());
             channelsOrder.setOrderType(AD3Constant.TRADE_ORDER);
@@ -215,7 +213,7 @@ public class MegaPayServiceImpl implements MegaPayService {
             paramMap.put("product", nextPosRequestDTO.getProduct());
             paramMap.put("return_url", nextPosRequestDTO.getReturn_url());
             log.info("==================【NextPos收单接口】==================【NextPos接口请求参数】 paramMap: {}", JSON.toJSONString(paramMap));
-            cn.hutool.http.HttpResponse execute = HttpRequest.post(channel.getPayUrl())
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getNextPosUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(paramMap)
                     .timeout(20000)
@@ -282,7 +280,7 @@ public class MegaPayServiceImpl implements MegaPayService {
     @Override
     public BaseResponse nextPosQuery(NextPosQueryDTO nextPosQueryDTO) {
         log.info("==================【NextPos查询订单】==================【请求参数】 nextPosQueryDTO: {}", JSON.toJSONString(nextPosQueryDTO));
-        String nextPosQueryUrl = nextPosQueryDTO.getChannel().getChannelSingleSelectUrl();
+        String nextPosQueryUrl = channelsConfig.getNextPosQueryUrl();
         log.info("==================【NextPos查询订单】==================【查询请求URL】 nextPosQueryUrl: {}", nextPosQueryUrl);
         BaseResponse baseResponse = new BaseResponse();
         try {
@@ -354,7 +352,7 @@ public class MegaPayServiceImpl implements MegaPayService {
         String requestSign = MD5.MD5Encode(requestClearText).toUpperCase();
         nextPosRefundDTO.setMark(requestSign);
         log.info("==================【NextPos退款】==================【Channel服务请求参数】 nextPosRefundDTO: {}", JSON.toJSONString(nextPosRefundDTO));
-        String nextPosRefundUrl = nextPosRefundDTO.getChannel().getRefundUrl();
+        String nextPosRefundUrl = channelsConfig.getNextPosRefundUrl();
         log.info("==================【NextPos退款】==================【NextPos退款请求URL】 nextPosRefundUrl: {}", nextPosRefundUrl);
         BaseResponse baseResponse = new BaseResponse();
         try {

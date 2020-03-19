@@ -143,7 +143,7 @@ public class EnetsSMRequestDTO {
     public EnetsSMRequestDTO() {
     }
 
-    public EnetsSMRequestDTO(Orders orders, Channel channel) {
+    public EnetsSMRequestDTO(Orders orders, Channel channel, String callBackUrl) {
         this.tid = "37066801";
         this.mid = channel.getChannelMerchantId();
         this.retrievalRef = UUIDHelper.getRandomString(12);
@@ -165,7 +165,7 @@ public class EnetsSMRequestDTO {
         ArrayList<JsonCommunicationData> communicationDatas = new ArrayList<>();
         JsonCommunicationData communicationData = new JsonCommunicationData();
         communicationData.setCommunicationCategory("URL");
-        communicationData.setCommunicationDestination(channel.getNotifyServerUrl());
+        communicationData.setCommunicationDestination(callBackUrl);
         communicationData.setCommunicationType("https_proxy");
         Map<String, String> addon = new HashMap<>();
         //external_API_keyID

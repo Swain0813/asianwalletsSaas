@@ -1,7 +1,9 @@
 package com.asianwallets.channels.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.XenditService;
 import com.asianwallets.common.constant.AD3Constant;
@@ -16,6 +18,7 @@ import com.asianwallets.common.utils.HttpClientUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +30,9 @@ public class XenditServiceImpl implements XenditService {
 
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
+
+    @Autowired
+    private ChannelsConfig channelsConfig;
 
     /**
      * xendit网银收单方法
@@ -65,7 +71,7 @@ public class XenditServiceImpl implements XenditService {
         BaseResponse baseResponse = new BaseResponse();
         Map map = new HashMap();
         map.put("Authorization", "Basic " + xenditDTO.getMd5KeyStr());
-        HttpResponse httpResponse = HttpClientUtils.reqPost(xenditDTO.getChannel().getPayUrl(), xenditDTO.getXenditPayRequestDTO(), map);
+        HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getXenditCusPayUrl(), xenditDTO.getXenditPayRequestDTO(), map);
         log.info("----------------- xendit收单接口返回----------------- httpResponse:{}", JSON.toJSONString(httpResponse));
         if (httpResponse.getHttpStatus() == 200) {
             XenditPayResDTO xenditPayResDTO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), XenditPayResDTO.class);

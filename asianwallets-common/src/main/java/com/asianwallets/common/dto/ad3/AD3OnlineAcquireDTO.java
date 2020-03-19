@@ -105,7 +105,7 @@ public class AD3OnlineAcquireDTO {
 
     }
 
-    public AD3OnlineAcquireDTO(Orders orders, Channel channel) {
+    public AD3OnlineAcquireDTO(Orders orders, Channel channel, String receiveUrl, String pickupUrl) {
         this.inputCharset = AD3Constant.CHARSET_UTF_8;
         this.language = AD3Constant.LANGUAGE_CN;//语言
         this.merchantId = channel.getChannelMerchantId();
@@ -115,9 +115,8 @@ public class AD3OnlineAcquireDTO {
         this.merorderAmount = String.valueOf(orders.getChannelAmount());
         this.payType = channel.getPayCode();
         this.issuerId = channel.getIssuerId();
-        this.receiveUrl = channel.getNotifyServerUrl();
-        this.pickupUrl = channel.getNotifyBrowserUrl();
-        this.url = channel.getPayUrl();
+        this.receiveUrl = receiveUrl;
+        this.pickupUrl = pickupUrl;
         this.ext1 = orders.getRemark1();
         this.ext2 = orders.getRemark2();
         this.ext3 = orders.getRemark3();
@@ -131,7 +130,7 @@ public class AD3OnlineAcquireDTO {
         this.productPrice = "";
         this.productCurrency = "";
         //1为使用平台提供的密钥 2为使用自己生成的密钥 channel.getExtend1()
-        this.merchantSignType = channel.getExtend1();
+        this.merchantSignType = "2";
     }
 
     @Override

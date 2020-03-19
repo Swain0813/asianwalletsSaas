@@ -20,6 +20,7 @@ import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.enets.EnetsService;
+import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dto.EnetsCallbackDTO;
@@ -35,6 +36,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +59,10 @@ import java.util.Objects;
 @Transactional
 @HandlerType(TradeConstant.ENETS)
 public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsService {
+
+    @Autowired
+    @Qualifier(value = "ad3ParamsConfig")
+    private AD3ParamsConfig ad3ParamsConfig;
 
     @Autowired
     private ChannelsFeign channelsFeign;
@@ -92,7 +98,7 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
      */
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
-        EnetsSMRequestDTO enetsSMRequestDTO = new EnetsSMRequestDTO(orders, channel);
+        EnetsSMRequestDTO enetsSMRequestDTO = new EnetsSMRequestDTO(orders, channel,ad3ParamsConfig.getChannelCallbackUrl().concat("/offlineCallback/eNetsCsbCallback"));
         EnetsOffLineRequestDTO enetsOffLineRequestDTO = new EnetsOffLineRequestDTO(enetsSMRequestDTO, orders, channel);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【Enets-CSB接口请求参数】 enetsOffLineRequestDTO: {}", JSON.toJSONString(enetsOffLineRequestDTO));
         BaseResponse channelResponse = channelsFeign.eNetsPosCSBPay(enetsOffLineRequestDTO);
@@ -140,9 +146,9 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
         json.put("currencyCode", orders.getTradeCurrency());
         json.put("paymentMode", "DD");
         json.put("merchantTimeZone", "+8:00");
-        json.put("b2sTxnEndURL", channel.getNotifyBrowserUrl());
+        json.put("b2sTxnEndURL", ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsBankBrowserCallback"));
         json.put("b2sTxnEndURLParam", "");
-        json.put("s2sTxnEndURL", channel.getNotifyServerUrl());
+        json.put("s2sTxnEndURL",  ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsBankServerCallback"));
         json.put("s2sTxnEndURLParam", "");
         json.put("clientType", "W");
         json.put("supMsg", "");
@@ -197,8 +203,8 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
         }
         String txnAmount = Integer.toString(temamt); //交易金额
         String merchantTxnRef = orders.getId(); //商户交易订单流水号
-        String b2sTxnEndURL = channel.getNotifyBrowserUrl(); //浏览器地址
-        String s2sTxnEndURL = channel.getNotifyServerUrl(); //服务器地址
+        String b2sTxnEndURL =  ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsQrCodeBrowserCallback"); //浏览器地址
+        String s2sTxnEndURL =  ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsQrCodeServerCallback"); //服务器地址
         String merchantTxnDtm = DateToolUtils.getReqDateH(new Date()); //商户交易时间
         String submissionMode = "B"; //提交方式 B:浏览器 S:服务器
         String paymentType = "SALE"; //产品类型 :SALE

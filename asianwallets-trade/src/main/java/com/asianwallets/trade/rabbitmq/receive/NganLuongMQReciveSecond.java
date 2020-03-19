@@ -67,6 +67,9 @@ public class NganLuongMQReciveSecond {
     @Value("${custom.warning.email}")
     private String email;
 
+    @Value("${custom.nganLuong.check_url}")
+    private String checkUrl;
+
     @RabbitListener(queues = "MQ_NGANLUONG_CHECK_ORDER_DL2")
     public void processNganLuongCheckOrder(String value) {
         RabbitMassage rabbitMassage = JSON.parseObject(value, RabbitMassage.class);
@@ -82,7 +85,7 @@ public class NganLuongMQReciveSecond {
             map.put("function", "GetTransactionDetail");
             map.put("token", nganLuongMQDTO.getToken());
             log.info("==============【NL查询队列2】==============【查询参数记录】 map:{}", JSON.toJSONString(map));
-            cn.hutool.http.HttpResponse execute = HttpRequest.post(nganLuongMQDTO.getCheckUrl())
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(checkUrl)
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(map)
                     .timeout(30000)

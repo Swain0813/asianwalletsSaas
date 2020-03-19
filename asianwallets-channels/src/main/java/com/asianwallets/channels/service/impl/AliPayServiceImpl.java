@@ -1,6 +1,7 @@
 package com.asianwallets.channels.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.AliPayService;
 import com.asianwallets.common.constant.AD3Constant;
@@ -35,6 +36,9 @@ public class AliPayServiceImpl implements AliPayService {
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
 
+    @Autowired
+    private ChannelsConfig channelsConfig;
+
     /**
      * aliPay查询
      *
@@ -45,7 +49,7 @@ public class AliPayServiceImpl implements AliPayService {
     public BaseResponse aliPayQuery(AliPayQueryDTO aliPayQueryDTO) {
         log.info("==================AliPay查询订单接口信息记录================== 请求参数 aliPayQueryDTO:{}", JSON.toJSONString(aliPayQueryDTO));
         //获取调用接口所需参数
-        String queryUrl = aliPayQueryDTO.getChannel().getChannelSingleSelectUrl();//alipay查询接口请求地址
+        String queryUrl = channelsConfig.getAliPayOfflineBSC();//alipay查询接口请求地址
         //把请求参数打包成数组存入map
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("service", aliPayQueryDTO.getService());
@@ -60,7 +64,7 @@ public class AliPayServiceImpl implements AliPayService {
         //设置编码集
         aliPayRequest.setCharset(aliPayQueryDTO.get_input_charset());
         aliPayRequest.setParameters(AlipayCore.generatNameValuePair(sPara));
-        aliPayRequest.setUrl(queryUrl + "_input_charset=" + aliPayQueryDTO.get_input_charset());
+        aliPayRequest.setUrl(channelsConfig.getAliPayCSBUrl() + "_input_charset=" + aliPayQueryDTO.get_input_charset());
         BaseResponse baseResponse = new BaseResponse();
         //默认失败
         baseResponse.setCode(TradeConstant.HTTP_FAIL);
@@ -133,8 +137,6 @@ public class AliPayServiceImpl implements AliPayService {
             channelsOrder.setPayerEmail(orders.getPayerEmail());
             channelsOrder.setOrderType(AD3Constant.TRADE_ORDER);
             channelsOrder.setMd5KeyStr(channel.getMd5KeyStr());
-            channelsOrder.setBrowserUrl(channel.getNotifyBrowserUrl());
-            channelsOrder.setServerUrl(channel.getNotifyServerUrl());
             channelsOrder.setTradeStatus(TradeConstant.TRADE_WAIT);
             channelsOrder.setIssuerId(orders.getIssuerId());
             channelsOrder.setMd5KeyStr(channel.getMd5KeyStr());
@@ -167,14 +169,14 @@ public class AliPayServiceImpl implements AliPayService {
             //设置编码集
             aliPayRequest.setCharset(aliPayOfflineBSCDTO.get_input_charset());
             aliPayRequest.setParameters(AlipayCore.generatNameValuePair(sPara));
-            aliPayRequest.setUrl(aliPayOfflineBSCDTO.getChannel().getPayUrl() + "_input_charset=" + aliPayOfflineBSCDTO.get_input_charset());
+            aliPayRequest.setUrl(channelsConfig.getAliPayOfflineBSC() + "_input_charset=" + aliPayOfflineBSCDTO.get_input_charset());
             //调用支付宝BSC接口
             log.info("-----------------AliPay线下BSC收单接口信息记录-----------------开始调用支付宝BSC接口");
             HttpResponse aliPayResponse = httpProtocolHandler.execute(aliPayRequest, "", "");
             log.info("-----------------AliPay线下BSC收单接口信息记录-----------------结束调用支付宝BSC接口");
             if (aliPayResponse == null) {
                 log.info("-----------------AliPay线下BSC收单接口信息记录-----------------alipay返回信息为null");
-                Map<String, String> queryMap = aliPayQueryOrder(orders.getId(), aliPayOfflineBSCDTO.getChannel().getChannelSingleSelectUrl());
+                Map<String, String> queryMap = aliPayQueryOrder(orders.getId(), channelsConfig.getAliPayOfflineBSC());
                 String isTradeSuccess = queryMap.get("queryStatus");//查询返回交易状态
                 log.info("=====================AliPay线下BSC收单接口信息记录=======================未知情况下查询alipay返回状态:{}", isTradeSuccess);
                 if ("SUCCESS".equals(isTradeSuccess)) {
@@ -191,7 +193,7 @@ public class AliPayServiceImpl implements AliPayService {
                         //等待付款，继续查询
                         for (int i = 0; i < 8; i++) {
                             Thread.sleep(3000); //线程等待3秒
-                            queryMap = aliPayQueryOrder(orders.getId(), aliPayOfflineBSCDTO.getChannel().getChannelSingleSelectUrl());
+                            queryMap = aliPayQueryOrder(orders.getId(), channelsConfig.getAliPayOfflineBSC());
                             trade_status = queryMap.get("alipay_trans_status");//继续查询交易状态
                             if (trade_status.equals("TRADE_SUCCESS")) {
                                 //支付成功时
@@ -274,7 +276,7 @@ public class AliPayServiceImpl implements AliPayService {
                 baseResponse.setCode("302");
             } else {
                 //未知情况需要调用查询接口重新查询
-                Map<String, String> queryMap = aliPayQueryOrder(orders.getId(), aliPayOfflineBSCDTO.getChannel().getChannelSingleSelectUrl());
+                Map<String, String> queryMap = aliPayQueryOrder(orders.getId(), channelsConfig.getAliPayOfflineBSC());
                 String isTradeSuccess = queryMap.get("queryStatus");//查询返回交易状态
                 log.info("==================AliPay线下BSC收单接口信息记录=======================未知情况下查询alipay返回状态:{}", isTradeSuccess);
                 if ("SUCCESS".equals(isTradeSuccess)) {
@@ -290,7 +292,7 @@ public class AliPayServiceImpl implements AliPayService {
                         //等待付款，继续查询
                         for (int i = 0; i < 8; i++) {
                             Thread.sleep(3000); //线程等待3秒
-                            queryMap = aliPayQueryOrder(orders.getId(), aliPayOfflineBSCDTO.getChannel().getChannelSingleSelectUrl());
+                            queryMap = aliPayQueryOrder(orders.getId(), channelsConfig.getAliPayOfflineBSC());
                             trade_status = queryMap.get("alipay_trans_status");//继续查询交易状态
                             if (trade_status.equals("TRADE_SUCCESS")) {
                                 //支付成功时
@@ -309,7 +311,7 @@ public class AliPayServiceImpl implements AliPayService {
                     //等待付款，继续查询
                     for (int i = 0; i < 10; i++) {
                         Thread.sleep(3000); //线程等待3秒
-                        queryMap = aliPayQueryOrder(orders.getId(), aliPayOfflineBSCDTO.getChannel().getChannelSingleSelectUrl());
+                        queryMap = aliPayQueryOrder(orders.getId(), channelsConfig.getAliPayOfflineBSC());
                         String trade_status = queryMap.get("alipay_trans_status");//继续查询交易状态
                         if (trade_status.equals("TRADE_SUCCESS")) {
                             //支付成功时
@@ -473,7 +475,7 @@ public class AliPayServiceImpl implements AliPayService {
                 new NameValuePair("currency", aliPayRefundDTO.getCurrency()),
                 new NameValuePair("sign_type", aliPayRefundDTO.getSign_type()),// 签名方式只支持DSA、RSA、MD5。
                 new NameValuePair("sign", aliPayRefundDTO.getSign())};// 签名
-        String url = aliPayRefundDTO.getChannel().getRefundUrl();//退款地址
+        String url = channelsConfig.getAliPayRefundUrl();//退款地址
         PostMethod post = new PostMethod(url);
         post.setRequestBody(param);
         HttpClient httpclient = new HttpClient();
@@ -551,8 +553,6 @@ public class AliPayServiceImpl implements AliPayService {
         channelsOrder.setPayerName(orders.getPayerName());
         channelsOrder.setPayerBank(orders.getPayerBank());
         channelsOrder.setPayerEmail(orders.getPayerEmail());
-        channelsOrder.setBrowserUrl(channel.getNotifyBrowserUrl());
-        channelsOrder.setServerUrl(channel.getNotifyServerUrl());
         channelsOrder.setTradeStatus(TradeConstant.TRADE_WAIT);
         channelsOrder.setIssuerId(orders.getIssuerId());
         channelsOrder.setMd5KeyStr(aliPayCSBDTO.getMd5KeyStr());
@@ -618,7 +618,7 @@ public class AliPayServiceImpl implements AliPayService {
         log.info("=================【AliPayCSB收单】=====================  sign: {}", sign);
         NameValuePair[] param = CreateAlipayHttpPostParams(signMap);
         //建立请求
-        String url = aliPayCSBDTO.getChannel().getPayUrl() + "_input_charset=" + aliPayCSBDTO.get_input_charset();
+        String url = channelsConfig.getAliPayCSBUrl() + "_input_charset=" + aliPayCSBDTO.get_input_charset();
         try {
             PostMethod post = new PostMethod(url);
             post.setRequestBody(param);
@@ -767,7 +767,7 @@ public class AliPayServiceImpl implements AliPayService {
         stringBuffer.append("<title>ASIAN WALLET</title>\n");
         stringBuffer.append("</head>\n");
         stringBuffer.append("<body>\n");
-        stringBuffer.append("<form method=\"post\" name=\"SendForm\" action=\"" + aliPayWebDTO.getChannel().getPayUrl() + "\">\n");
+        stringBuffer.append("<form method=\"post\" name=\"SendForm\" action=\"" + channelsConfig.getENetsJumpUrl() + "\">\n");
         stringBuffer.append("<input type='hidden' name='service' value='" + aliPayWebDTO.getService() + "'/>\n");
         stringBuffer.append("<input type='hidden' name='partner' value='" + aliPayWebDTO.getPartner() + "'/>\n");
         stringBuffer.append("<input type='hidden' name='_input_charset' value='" + aliPayWebDTO.get_input_charset() + "'/>\n");
@@ -839,7 +839,7 @@ public class AliPayServiceImpl implements AliPayService {
         baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
         try {
             //获取调用接口所需参数
-            String cancelUrl = aliPayCancelDTO.getChannel().getVoidUrl(); //alipay撤销订单接口请求地址
+            String cancelUrl =  channelsConfig.getAliPayOfflineBSC(); //alipay撤销订单接口请求地址
             //把请求参数打包成数组存入map
             Map<String, String> sParaTemp = new HashMap<>();
             sParaTemp.put("service", aliPayCancelDTO.getService());

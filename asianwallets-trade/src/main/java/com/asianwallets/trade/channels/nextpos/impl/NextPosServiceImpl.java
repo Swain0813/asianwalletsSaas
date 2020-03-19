@@ -22,6 +22,7 @@ import com.asianwallets.common.utils.MD5;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.nextpos.NextPosService;
+import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.ReconciliationMapper;
@@ -34,6 +35,7 @@ import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +59,10 @@ import java.util.Map;
 @Transactional
 @HandlerType(TradeConstant.NEXTPOS)
 public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextPosService {
+
+    @Autowired
+    @Qualifier(value = "ad3ParamsConfig")
+    private AD3ParamsConfig ad3ParamsConfig;
 
     @Autowired
     private ChannelsFeign channelsFeign;
@@ -95,7 +101,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
         //NextPos-CSB接口请求实体
-        NextPosRequestDTO nextPosRequestDTO = new NextPosRequestDTO(orders, channel, channel.getNotifyServerUrl());
+        NextPosRequestDTO nextPosRequestDTO = new NextPosRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/nextPosCallback"));
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【NextPos-CSB接口请求参数】 nextPosRequestDTO: {}", JSON.toJSONString(nextPosRequestDTO));
         BaseResponse channelResponse = channelsFeign.nextPosCsb(nextPosRequestDTO);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【NextPos-CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -111,7 +117,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
     @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
         //NextPos-CSB接口请求实体
-        NextPosRequestDTO nextPosRequestDTO = new NextPosRequestDTO(orders, channel, channel.getNotifyServerUrl());
+        NextPosRequestDTO nextPosRequestDTO = new NextPosRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/nextPosCallback"));
         log.info("==================【线上动态扫码】==================【调用Channels服务】【NextPos-CSB接口请求参数】 nextPosRequestDTO: {}", JSON.toJSONString(nextPosRequestDTO));
         BaseResponse channelResponse = channelsFeign.nextPosCsb(nextPosRequestDTO);
         log.info("==================【线上动态扫码】==================【调用Channels服务】【NextPos-CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));

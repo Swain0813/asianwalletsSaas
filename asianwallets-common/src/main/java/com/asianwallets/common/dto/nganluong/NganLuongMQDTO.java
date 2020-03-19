@@ -25,17 +25,13 @@ public class NganLuongMQDTO {
     @ApiModelProperty(value = "md5Key")
     private String md5Key;
 
-    @ApiModelProperty(value = "checkUrl")
-    private String checkUrl;
-
     public NganLuongMQDTO() {
     }
 
-    public NganLuongMQDTO(String token, String orderId, String channelMerchantId, String md5Key, String checkUrl) {
+    public NganLuongMQDTO(String token, String orderId, String channelMerchantId, String md5Key) {
         this.token = token;
         this.orderId = orderId;
         this.channelMerchantId = channelMerchantId;
         this.md5Key = md5Key;
-        this.checkUrl = checkUrl;
     }
 }

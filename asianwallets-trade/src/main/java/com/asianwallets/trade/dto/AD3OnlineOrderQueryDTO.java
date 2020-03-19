@@ -1,7 +1,6 @@
 package com.asianwallets.trade.dto;
 
 import cn.hutool.core.date.DateUtil;
-import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.Orders;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -35,11 +34,11 @@ public class AD3OnlineOrderQueryDTO {
     private String signMsg;
 
 
-    public AD3OnlineOrderQueryDTO(Orders orders, Channel channel) {
-        this.merchantId = channel.getChannelMerchantId();
+    public AD3OnlineOrderQueryDTO(Orders orders, String merchantOnlineCode) {
+        this.merchantId = merchantOnlineCode;
         this.merOrderNo = orders.getId();
         this.merorderDatetime = DateUtil.format(orders.getReportChannelTime(), "yyyyMMddHHmmss");
         //1为使用平台提供的密钥 2为使用自己生成的密钥 channel.getExtend1()
-        this.merchantSignType = channel.getExtend1();
+        this.merchantSignType = "2";
     }
 }

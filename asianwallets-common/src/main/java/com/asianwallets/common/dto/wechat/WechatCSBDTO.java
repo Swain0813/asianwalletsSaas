@@ -77,7 +77,7 @@ public class WechatCSBDTO {
     public WechatCSBDTO() {
     }
 
-    public WechatCSBDTO(Orders orders, Channel channel) {
+    public WechatCSBDTO(Orders orders, Channel channel, String notify_url) {
         this.appid = "wx14e049b9320bccca";
         this.nonce_str = UUIDHelper.getRandomString(32);
         this.mch_id = channel.getChannelMerchantId();
@@ -96,7 +96,7 @@ public class WechatCSBDTO {
         //获取5分钟后的日期
         Date expireTime = DateToolUtils.getBeforeOrAfterDateByMinNumber(new Date(), 5);
         this.time_expire = DateToolUtils.formatDate(expireTime, "yyyyMMddHHmmss");
-        this.notify_url = channel.getNotifyServerUrl();
+        this.notify_url = notify_url;
         this.trade_type = "NATIVE";
         this.spbill_create_ip = "8.8.8.8";
         this.version = "1.0";
