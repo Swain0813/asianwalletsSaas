@@ -1,7 +1,5 @@
 package com.asianwallets.permissions.service.impl;
 
-import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
-import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.Attestation;
@@ -36,7 +34,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Set;
 
@@ -76,10 +73,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Autowired
     private DeviceBindingMapper deviceBindingMapper;
-
-    @Value("${custom.PosAESKey}")
-    private String posAESKey;
-
 
     /**
      * 运营系统登录
@@ -319,19 +312,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     private String getPosMd5Key(String merchantId) {
-        log.info("===================【POS机获取md5key】加密开始===================【参数记录】 merchantId: {}", JSON.toJSONString(merchantId));
+        log.info("===================【POS机获取md5key】开始===================【参数记录】 merchantId: {}", JSON.toJSONString(merchantId));
         Attestation attestation = JSON.parseObject(redisService.get(merchantId), Attestation.class);
         if (attestation == null) {
             attestation = attestationMapper.selectPlatformPub(merchantId);
             redisService.set(AsianWalletConstant.ATTESTATION_CACHE_PLATFORM_KEY, JSON.toJSONString(attestation));
         }
-        //构建
-        log.info("===================【POS机获取md5key】===================【参数记录】 posAESKey: {},md5key:{}", JSON.toJSONString(posAESKey), JSON.toJSONString(attestation.getMd5key()));
-        SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, posAESKey.getBytes(Charset.defaultCharset()));
-        //加密
-        String encrypt = aes.encryptBase64(attestation.getMd5key());
-        log.info("===================【POS机获取md5key】加密结束===================【参数记录】 encrypt: {}", JSON.toJSONString(encrypt));
-        return encrypt;
+        log.info("===================【POS机获取md5key】束===================【参数记录】 encrypt: {}", JSON.toJSONString(attestation.getMd5key()));
+        return attestation.getMd5key();
     }
 
     /**
