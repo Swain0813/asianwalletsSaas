@@ -196,7 +196,7 @@ public class TradeConstant {
     public static final Byte TRADE_SUCCESS = 2; //交易成功
     public static final Byte TRADE_FALID = 3; //交易失败
 
-    //------------线上通道标识
+    //------------通道标识
     public static final String AD3 = "AD3";
     public static final String MEGAPAY = "MEGAPAY";
     public static final String HELP2PAY = "HELP2PAY";
