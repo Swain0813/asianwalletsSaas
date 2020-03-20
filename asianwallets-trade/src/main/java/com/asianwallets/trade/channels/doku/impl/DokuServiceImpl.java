@@ -159,13 +159,13 @@ public class DokuServiceImpl extends ChannelsAbstractAdapter implements DokuServ
             }else{
                 //其他状态
                 response.setCode(EResultEnum.REFUND_FAIL.getCode());
-                log.info("=================【NextPos撤销】================= 【其他状态】orderId : {}", orderRefund.getOrderId());
+                log.info("=================【DOKU撤销】================= 【其他状态】orderId : {}", orderRefund.getOrderId());
             }
         }else{
             //请求失败
             //请求失败
             response.setCode(EResultEnum.REFUNDING.getCode());
-            log.info("=================【NextPos撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
+            log.info("=================【DOKU撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
             rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return response;
