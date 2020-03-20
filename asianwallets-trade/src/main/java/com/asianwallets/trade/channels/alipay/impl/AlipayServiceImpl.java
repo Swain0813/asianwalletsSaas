@@ -15,6 +15,7 @@ import com.asianwallets.common.utils.AlipayCore;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.alipay.AlipayService;
+import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -52,6 +54,10 @@ import java.util.Map;
 @Transactional
 @HandlerType(TradeConstant.ALIPAY)
 public class AlipayServiceImpl extends ChannelsAbstractAdapter implements AlipayService {
+
+    @Autowired
+    @Qualifier(value = "ad3ParamsConfig")
+    private AD3ParamsConfig ad3ParamsConfig;
 
     @Autowired
     private ChannelsFeign channelsFeign;
@@ -158,7 +164,7 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
         stringBuffer.append("<title>ASIAN WALLET</title>\n");
         stringBuffer.append("</head>\n");
         stringBuffer.append("<body>\n");
-        stringBuffer.append("<form method=\"post\" name=\"SendForm\" action=\"" + channel.getPayUrl() + "\">\n");
+        //stringBuffer.append("<form method=\"post\" name=\"SendForm\" action=\"" + channel.getPayUrl() + "\">\n");
         stringBuffer.append("<input type='hidden' name='service' value='" + aliPayWebDTO.getService() + "'/>\n");
         stringBuffer.append("<input type='hidden' name='partner' value='" + aliPayWebDTO.getPartner() + "'/>\n");
         stringBuffer.append("<input type='hidden' name='_input_charset' value='" + aliPayWebDTO.get_input_charset() + "'/>\n");
@@ -359,7 +365,7 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
      */
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
-        AliPayCSBDTO aliPayCSBDTO = new AliPayCSBDTO(orders, channel);
+        AliPayCSBDTO aliPayCSBDTO = new AliPayCSBDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/aliPayCB_TPMQRCReturn"));
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【Alipay线下CSB接口请求参数】 aliPayCSBDTO: {}", JSON.toJSONString(aliPayCSBDTO));
         BaseResponse channelResponse = channelsFeign.aliPayCSB(aliPayCSBDTO);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【Alipay线下CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));

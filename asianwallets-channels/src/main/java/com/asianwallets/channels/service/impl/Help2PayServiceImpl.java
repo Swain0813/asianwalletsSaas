@@ -1,8 +1,10 @@
 package com.asianwallets.channels.service.impl;
+
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpException;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.Help2PayService;
 import com.asianwallets.common.constant.AD3Constant;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
@@ -37,6 +40,9 @@ public class Help2PayServiceImpl implements Help2PayService {
 
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
+
+    @Autowired
+    private ChannelsConfig channelsConfig;
 
     @Override
     public BaseResponse help2Pay(Help2PayRequestDTO help2PayRequestDTO) {
@@ -70,7 +76,7 @@ public class Help2PayServiceImpl implements Help2PayService {
                 channelsOrderMapper.insert(co);
             }
             //todo
-            cn.hutool.http.HttpResponse execute = HttpRequest.post(help2PayRequestDTO.getChannel().getPayUrl())
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getHelp2PayUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(BeanToMapUtil.beanToMap(help2PayRequestDTO))
                     .timeout(20000)
@@ -109,13 +115,13 @@ public class Help2PayServiceImpl implements Help2PayService {
         BaseResponse response = new BaseResponse();
         try {
             // 这里将查询的url作为IP地址
-            help2PayOutDTO.setClientIP(help2PayOutDTO.getChannel().getChannelSingleSelectUrl());
+            help2PayOutDTO.setClientIP(channelsConfig.getHelp2PayOutIP());
             help2PayOutDTO.setKey(createDepositRequestKey(help2PayOutDTO));
             log.info("----------------- HELP2PAY汇款接口 ----------------- help2PayOutDTO:{}", JSON.toJSONString(help2PayOutDTO));
             long start = System.currentTimeMillis();
             //todo
-            log.info("------- HELP2PAY汇款接口消耗时间 -------url:{} ", help2PayOutDTO.getChannel().getPayUrl());
-            cn.hutool.http.HttpResponse execute = HttpRequest.post(help2PayOutDTO.getChannel().getPayUrl())
+            log.info("------- HELP2PAY汇款接口消耗时间 -------url:{} ", channelsConfig.getHelp2PayOutUrl());
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getHelp2PayOutUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(BeanToMapUtil.beanToMap(help2PayOutDTO))
                     .timeout(200000)

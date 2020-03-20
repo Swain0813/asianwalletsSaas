@@ -1,7 +1,9 @@
 package com.asianwallets.channels.service.impl;
+
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.VTCService;
 import com.asianwallets.common.constant.AD3Constant;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -31,6 +34,9 @@ public class VTCServiceImpl implements VTCService {
 
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
+
+    @Autowired
+    private ChannelsConfig channelsConfig;
 
     /**
      * vtcPay收单接口
@@ -70,12 +76,12 @@ public class VTCServiceImpl implements VTCService {
         BaseResponse response = new BaseResponse();
         log.info("-----------------VTC收单接口----------------- vtcRequestDTO:{}", JSON.toJSONString(vtcRequestDTO));
         long start = System.currentTimeMillis();
-        cn.hutool.http.HttpResponse execute = HttpRequest.get(vtcRequestDTO.getChannel().getPayUrl())
+        cn.hutool.http.HttpResponse execute = HttpRequest.get(channelsConfig.getVtcPayUrl())
                 .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                 .form(BeanToMapUtil.beanToMap(vtcRequestDTO))
                 .timeout(20000)
                 .execute();
-        log.info("-----------------VTC收单接口-----------------上报VTC url记录:{}", vtcRequestDTO.getChannel().getPayUrl());
+        log.info("-----------------VTC收单接口-----------------上报VTC url记录:{}", channelsConfig.getVtcPayUrl());
         long end = System.currentTimeMillis();
         log.info("-------VTC通道消耗时间-------Time:{} MS", (end - start));
         int status = execute.getStatus();

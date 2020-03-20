@@ -2,6 +2,7 @@ package com.asianwallets.channels.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.EnetsService;
 import com.asianwallets.common.constant.AD3Constant;
@@ -35,6 +36,9 @@ public class EnetsServiceImpl implements EnetsService {
 
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
+
+    @Autowired
+    private ChannelsConfig channelsConfig;
 
     /**
      * @return
@@ -79,8 +83,8 @@ public class EnetsServiceImpl implements EnetsService {
         }
 
         BaseResponse response = new BaseResponse();
-        enetsBankRequestDTO.setPayUrl(enetsBankRequestDTO.getChannel().getPayUrl());
-        enetsBankRequestDTO.setJumpUrl(enetsBankRequestDTO.getChannel().getPayUrl());
+        enetsBankRequestDTO.setPayUrl(channelsConfig.getENetsDebitUrl());
+        enetsBankRequestDTO.setJumpUrl(channelsConfig.getENetsJumpUrl());
 
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("<!DOCTYPE html>\n");
@@ -89,7 +93,7 @@ public class EnetsServiceImpl implements EnetsService {
         stringBuffer.append("<title>ASIAN WALLET</title>\n");
         stringBuffer.append("</head>\n");
         stringBuffer.append("<body>\n");
-        stringBuffer.append("<form method=\"post\" id=\"frmid\" name=\"SendForm\" action=\"" + enetsBankRequestDTO.getChannel().getPayUrl() + "\">\n");
+        stringBuffer.append("<form method=\"post\" id=\"frmid\" name=\"SendForm\" action=\"" + channelsConfig.getENetsJumpUrl() + "\">\n");
         stringBuffer.append("<input type='hidden' name='keyId' value='" + enetsBankRequestDTO.getKeyId() + "'/>\n");
         stringBuffer.append("<input type='hidden' name='hmac' value='" + enetsBankRequestDTO.getHmac() + "'/>\n");
         stringBuffer.append("<input type='hidden' name='txnReq' value='" + enetsBankRequestDTO.getTxnReq() + "'/>\n");
@@ -155,7 +159,7 @@ public class EnetsServiceImpl implements EnetsService {
             //System.setProperty("https.protocols", "TLSv1.2");
             HTTPUtil httpUtil = new HTTPUtil();
             log.info("=================【Enets线下CSB】=================【请求Enets-CSB请求参数】 requestJsonDate: {}", requestJsonDate);
-            String responseString = httpUtil.postRequest(enetsOffLineRequestDTO.getChannel().getPayUrl(), requestJsonDate, httpUtil.generateJsonHeaders(sign, enetsOffLineRequestDTO.getApiKeyId()));
+            String responseString = httpUtil.postRequest(channelsConfig.getENetsPOSUrl(), requestJsonDate, httpUtil.generateJsonHeaders(sign, enetsOffLineRequestDTO.getApiKeyId()));
             log.info("=================【Enets线下CSB】=================【请求Enets-CSB响应参数】 responseString: {}", JSON.toJSONString(responseString));
             JSONObject jsonObject = JSON.parseObject(responseString);
             String return_mti = jsonObject.getString("mti");

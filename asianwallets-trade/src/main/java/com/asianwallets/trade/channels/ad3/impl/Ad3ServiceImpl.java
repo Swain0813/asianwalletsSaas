@@ -26,6 +26,7 @@ import com.asianwallets.common.vo.RefundAdResponseVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
+import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
@@ -39,10 +40,9 @@ import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -63,9 +63,9 @@ import java.util.Set;
 @HandlerType(TradeConstant.AD3)
 public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Service {
 
-    @ApiModelProperty("支付页面")
-    @Value("${custom.paySuccessUrl}")
-    private String paySuccessUrl;//签名方式
+    @Autowired
+    @Qualifier(value = "ad3ParamsConfig")
+    private AD3ParamsConfig ad3ParamsConfig;
 
     @Autowired
     private ChannelsFeign channelsFeign;
@@ -109,8 +109,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     @Override
     public HttpResponse ad3OnlineOrderQuery(AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO, Map<String, Object> headerMap, Channel channel) {
         //channel.getExtend2() ad3私钥
-        ad3OnlineOrderQueryDTO.setSignMsg(signMsg(ad3OnlineOrderQueryDTO, channel.getExtend2()));
-        return HttpClientUtils.reqPost(channel.getChannelSingleSelectUrl(), ad3OnlineOrderQueryDTO, headerMap);
+        ad3OnlineOrderQueryDTO.setSignMsg(signMsg(ad3OnlineOrderQueryDTO, ad3ParamsConfig.getMerchantSignType()));
+        return HttpClientUtils.reqPost(ad3ParamsConfig.getAd3Url() + "/v1/merQueryOneOrder.json", ad3OnlineOrderQueryDTO, headerMap);
     }
 
     /**
@@ -122,15 +122,15 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
      */
     public BaseResponse onlinePay(Orders orders, Channel channel) {
         //封装参数
-        AD3OnlineAcquireDTO ad3OnlineAcquireDTO = new AD3OnlineAcquireDTO(orders, channel);
+        AD3OnlineAcquireDTO ad3OnlineAcquireDTO = new AD3OnlineAcquireDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl() + "/onlinecallback/callback", ad3ParamsConfig.getChannelCallbackUrl() + "/onlinecallback/paysuccess");
         String url = ad3OnlineAcquireDTO.getUrl();
         ad3OnlineAcquireDTO.setUrl(null);
         //channel.getExtend2() ad3私钥
-        ad3OnlineAcquireDTO.setSignMsg(signMsg(ad3OnlineAcquireDTO, channel.getExtend2()));
+        ad3OnlineAcquireDTO.setSignMsg(signMsg(ad3OnlineAcquireDTO, ad3ParamsConfig.getMerchantSignType()));
         ad3OnlineAcquireDTO.setUrl(url);
         log.info("-------AD3线上收单参数-------AD3OnlineAcquireDTO:{}", JSON.toJSON(ad3OnlineAcquireDTO));
         //返回收款消息
-        log.info("-----------------URL---------------- type:{}**issuerId:{}**url:{}", channel.getChannelEnName(), channel.getIssuerId(), channel.getPayUrl());
+        //log.info("-----------------URL---------------- type:{}**issuerId:{}**url:{}", channel.getChannelEnName(), channel.getIssuerId(), channel.getPayUrl());
         log.info("==================【线上AD3收款】==================【调用Channels服务】【AD3线上收单接口请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3OnlineAcquireDTO));
         BaseResponse channelResponse = channelsFeign.ad3OnlinePay(ad3OnlineAcquireDTO);
         log.info("==================【线上AD3收款】==================【调用Channels服务】【AD3线上收单接口请求参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -312,7 +312,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             } else {
                 try {
                     //返回支付成功页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_SUCCESS);
+                    response.sendRedirect(ad3ParamsConfig.getAd3Url() + "?page=" + TradeConstant.PAGE_SUCCESS);
                 } catch (IOException e) {
                     log.error("------------------【AD3线上网关Browser回调】--------------调用AW支付成功页面失败", e);
                 }
@@ -325,7 +325,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             } else {
                 try {
                     //返回支付中页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_PROCESSING);
+                    response.sendRedirect(ad3ParamsConfig.getAd3Url() + "?page=" + TradeConstant.PAGE_PROCESSING);
                 } catch (IOException e) {
                     log.error("------------------【AD3线上网关Browser回调】--------------调用AW支付中页面失败", e);
                 }
@@ -544,11 +544,24 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
      */
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
+        //获取ad3的终端号和token
+        AD3LoginVO ad3LoginVO = this.getTerminalIdAndToken();
+        if (ad3LoginVO == null) {
+            log.info("==================【线下CSB动态扫码】==================【调用【AD3登陆接口异常】】ad3LoginVO: {}", JSON.toJSONString(ad3LoginVO));
+            orders.setUpdateTime(new Date());//修改时间
+            orders.setRemark("调用AD3登陆接口异常");
+            ordersMapper.updateByPrimaryKeySelective(orders);
+            throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
+        }
         //CSB请求二维码接口公共参数实体
-        AD3CSBScanPayDTO ad3CSBScanPayDTO = new AD3CSBScanPayDTO(orders, channel);
+        AD3CSBScanPayDTO ad3CSBScanPayDTO = new AD3CSBScanPayDTO(ad3ParamsConfig.getMerchantCodeOffline());
         //CSB请求二维码接口业务参数实体
-        CSBScanBizContentDTO csbScanBizContent = new CSBScanBizContentDTO(orders, channel);
+        CSBScanBizContentDTO csbScanBizContent = new CSBScanBizContentDTO(orders, ad3LoginVO.getTerminalId(), ad3ParamsConfig.getOperatorIdOffline(), ad3ParamsConfig.getChannelCallbackUrl() + "/offlineCallback/ad3Callback", channel);
+        //生成ad3签名
+        ad3CSBScanPayDTO.setSignMsg(createAD3Signature(ad3CSBScanPayDTO, csbScanBizContent, ad3LoginVO.getToken()));
         ad3CSBScanPayDTO.setBizContent(csbScanBizContent);
+        ad3CSBScanPayDTO.setOrders(orders);
+        ad3CSBScanPayDTO.setChannel(channel);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【AD3线下CSB接口请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3CSBScanPayDTO));
         BaseResponse channelResponse = channelsFeign.ad3OfflineCsb(ad3CSBScanPayDTO);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【AD3线下CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -570,11 +583,24 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
      */
     @Override
     public BaseResponse offlineBSC(Orders orders, Channel channel, String authCode) {
+        //获取ad3的终端号和token
+        AD3LoginVO ad3LoginVO = this.getTerminalIdAndToken();
+        if (ad3LoginVO == null) {
+            log.info("==================【线下BSC动态扫码】==================【调用【AD3登陆接口异常】】ad3LoginVO: {}", JSON.toJSONString(ad3LoginVO));
+            orders.setUpdateTime(new Date());//修改时间
+            orders.setRemark("调用AD3登陆接口异常");
+            ordersMapper.updateByPrimaryKeySelective(orders);
+            throw new BusinessException(EResultEnum.TOKEN_IS_INVALID.getCode());
+        }
         //BSC请求二维码接口公共参数实体
-        AD3BSCScanPayDTO ad3BSCScanPayDTO = new AD3BSCScanPayDTO(orders, channel);
+        AD3BSCScanPayDTO ad3BSCScanPayDTO = new AD3BSCScanPayDTO(ad3ParamsConfig.getMerchantCodeOffline());
         //BSC支付接口业务参数实体
-        BSCScanBizContentDTO bscScanBizContentDTO = new BSCScanBizContentDTO(orders, authCode, channel);
+        BSCScanBizContentDTO bscScanBizContentDTO = new BSCScanBizContentDTO(orders, ad3LoginVO.getTerminalId(), ad3ParamsConfig.getOperatorIdOffline(), authCode, channel);
+        //生成ad3签名
+        ad3BSCScanPayDTO.setSignMsg(createAD3Signature(ad3BSCScanPayDTO, bscScanBizContentDTO, ad3LoginVO.getToken()));
         ad3BSCScanPayDTO.setBizContent(bscScanBizContentDTO);
+        ad3BSCScanPayDTO.setOrders(orders);
+        ad3BSCScanPayDTO.setChannel(channel);
         log.info("==================【线下BSC动态扫码】==================【调用Channels服务】【AD3线下BSC接口请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3BSCScanPayDTO));
         BaseResponse channelResponse = channelsFeign.ad3OfflineBsc(ad3BSCScanPayDTO);
         log.info("==================【线下BSC动态扫码】==================【调用Channels服务】【AD3线下BSC接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -680,9 +706,9 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             /**************************************************** AD3线上退款 *******************************************************/
             SendAdRefundDTO sendAdRefundDTO = new SendAdRefundDTO(channel, orderRefund);
             //channel.getExtend1() 签名方式 2020年1月15日15:51:49
-            sendAdRefundDTO.setMerchantSignType(channel.getExtend1());
+            sendAdRefundDTO.setMerchantSignType(ad3ParamsConfig.getMerchantSignType());
             //channel.getExtend2() ad3私钥
-            sendAdRefundDTO.setSignMsg(this.signMsg(sendAdRefundDTO, channel.getExtend2()));
+            sendAdRefundDTO.setSignMsg(this.signMsg(sendAdRefundDTO, ad3ParamsConfig.getPlatformProvidesPrivateKey()));
             AD3ONOFFRefundDTO ad3ONOFFRefundDTO = new AD3ONOFFRefundDTO();
             ad3ONOFFRefundDTO.setChannel(channel);
             ad3ONOFFRefundDTO.setSendAdRefundDTO(sendAdRefundDTO);
@@ -737,14 +763,14 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             /***************************************************** AD3线下退款 ************************************************/
             log.info("==================【AD3线下退款】================== OrderRefund: {}", JSON.toJSONString(orderRefund));
             //获取ad3的终端号和token
-            AD3LoginVO ad3LoginVO = this.getTerminalIdAndToken(channel);
+            AD3LoginVO ad3LoginVO = this.getTerminalIdAndToken();
             if (ad3LoginVO == null) {
                 log.info("************退款时 --- 退款操作AD3登录时未获取到终端号和token*****************ad3LoginVO：{}", JSON.toJSON(ad3LoginVO));
                 baseResponse.setMsg(EResultEnum.REFUNDING.getCode());
                 return baseResponse;
             }
             AD3RefundDTO ad3RefundDTO = new AD3RefundDTO(channel.getChannelMerchantId());
-            AD3RefundWorkDTO ad3RefundWorkDTO = new AD3RefundWorkDTO(ad3LoginVO.getTerminalId(), channel.getExtend2(), channel.getExtend4(), orderRefund);
+            AD3RefundWorkDTO ad3RefundWorkDTO = new AD3RefundWorkDTO(ad3LoginVO.getTerminalId(), ad3ParamsConfig.getOperatorIdOffline(), ad3ParamsConfig.getTradePwdOffline(), orderRefund);
             ad3RefundDTO.setSignMsg(this.createAD3Signature(ad3RefundDTO, ad3RefundWorkDTO, ad3LoginVO.getToken()));
             ad3RefundDTO.setBizContent(ad3RefundWorkDTO);
             AD3ONOFFRefundDTO ad3ONOFFRefundDTO = new AD3ONOFFRefundDTO();
@@ -816,7 +842,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         }
         BaseResponse response = new BaseResponse();
         //获取ad3的终端号和token
-        AD3LoginVO ad3LoginVO = this.getTerminalIdAndToken(channel);
+        AD3LoginVO ad3LoginVO = this.getTerminalIdAndToken();
         if (ad3LoginVO == null) {
             log.info("************退款时 --- 退款操作AD3登录时未获取到终端号和token*****************ad3LoginVO：{}", JSON.toJSON(ad3LoginVO));
             response.setCode(EResultEnum.REFUND_FAIL.getCode());
@@ -825,7 +851,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         //AD3通道订单信息-查询订单接口公共参数实体
         AD3QuerySingleOrderDTO ad3QuerySingleOrderDTO = new AD3QuerySingleOrderDTO(channel.getChannelMerchantId());//商户号
         //查询订单接业务共参数实体
-        QueryOneOrderBizContentDTO queryBizContent = new QueryOneOrderBizContentDTO(ad3LoginVO.getTerminalId(), channel.getExtend2(), 1, orderRefund.getOrderId(), "");
+        QueryOneOrderBizContentDTO queryBizContent = new QueryOneOrderBizContentDTO(ad3LoginVO.getTerminalId(), ad3ParamsConfig.getOperatorIdOffline(), 1, orderRefund.getOrderId(), "");
         //生成查询签名
         String querySign = this.createAD3Signature(ad3QuerySingleOrderDTO, queryBizContent, ad3LoginVO.getToken());
         ad3QuerySingleOrderDTO.setBizContent(queryBizContent);
@@ -881,14 +907,14 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse response = new BaseResponse();
         //获取ad3的终端号和token
-        AD3LoginVO ad3LoginVO = this.getTerminalIdAndToken(channel);
+        AD3LoginVO ad3LoginVO = this.getTerminalIdAndToken();
         if (ad3LoginVO == null) {
             log.info("************退款时 --- 退款操作AD3登录时未获取到终端号和token*****************ad3LoginVO：{}", JSON.toJSON(ad3LoginVO));
             response.setCode(EResultEnum.REFUND_FAIL.getCode());
             return response;
         }
         AD3RefundDTO ad3RefundDTO = new AD3RefundDTO(channel.getChannelMerchantId());
-        AD3RefundWorkDTO ad3RefundWorkDTO = new AD3RefundWorkDTO(ad3LoginVO.getTerminalId(), channel.getExtend2(), channel.getExtend4(), orderRefund);
+        AD3RefundWorkDTO ad3RefundWorkDTO = new AD3RefundWorkDTO(ad3LoginVO.getTerminalId(), ad3ParamsConfig.getOperatorIdOffline(), ad3ParamsConfig.getTradePwdOffline(), orderRefund);
         ad3RefundDTO.setSignMsg(this.createAD3Signature(ad3RefundDTO, ad3RefundWorkDTO, ad3LoginVO.getToken()));
         ad3RefundDTO.setBizContent(ad3RefundWorkDTO);
         AD3ONOFFRefundDTO ad3ONOFFRefundDTO = new AD3ONOFFRefundDTO();
@@ -955,20 +981,20 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
      * @return AD3LoginVO
      */
     @Override
-    public AD3LoginVO getTerminalIdAndToken(Channel channel) {
+    public AD3LoginVO getTerminalIdAndToken() {
         AD3LoginVO ad3LoginVO = null;
         String token = redisService.get(AD3Constant.AD3_LOGIN_TOKEN);
         String terminalId = redisService.get(AD3Constant.AD3_LOGIN_TERMINAL);
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(terminalId)) {
             //AD3登陆业务参数实体
-            LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT, channel);
+            LoginBizContentDTO bizContent = new LoginBizContentDTO(AD3Constant.LOGIN_OUT, ad3ParamsConfig.getOperatorIdOffline(), MD5Util.getMD5String(ad3ParamsConfig.getPasswordOffline()), ad3ParamsConfig.getImeiOffline());
             //AD3登陆公共参数实体
-            AD3LoginDTO ad3LoginDTO = new AD3LoginDTO(channel.getChannelMerchantId(), bizContent);
+            AD3LoginDTO ad3LoginDTO = new AD3LoginDTO(ad3ParamsConfig.getMerchantCodeOffline(), bizContent);
             //先登出
-            HttpClientUtils.reqPost(channel.getExtend5(), ad3LoginDTO, null);
+            HttpClientUtils.reqPost(ad3ParamsConfig.getAd3Url() + "/terminalLogin.json", ad3LoginDTO, null);
             //再登陆
             bizContent.setType(AD3Constant.LOGIN_IN);
-            HttpResponse httpResponse = HttpClientUtils.reqPost(channel.getExtend5(), ad3LoginDTO, null);
+            HttpResponse httpResponse = HttpClientUtils.reqPost(ad3ParamsConfig.getAd3Url() + "/terminalLogin.json", ad3LoginDTO, null);
             //状态码为200
             if (httpResponse != null && httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
                 ad3LoginVO = JSON.parseObject(String.valueOf(httpResponse.getJsonObject()), AD3LoginVO.class);
@@ -996,17 +1022,16 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
      */
     @Override
     public String createAD3Signature(Object commonObj, Object businessObj, String token) {
-        Map<String, Object> commonMap = ReflexClazzUtils.getFieldNames(commonObj);
-        Map<String, Object> businessMap = ReflexClazzUtils.getFieldNames(businessObj);
+        Map<String, String> commonMap = ReflexClazzUtils.getFieldForStringValue(commonObj);
+        Map<String, String> businessMap = ReflexClazzUtils.getFieldForStringValue(businessObj);
         commonMap.putAll(businessMap);
-        HashMap<String, String> paramMap = new HashMap<>();
-        for (String str : commonMap.keySet()) {
-            paramMap.put(str, String.valueOf(commonMap.get(str)));
-        }
-        String signature = SignTools.getSignStr(paramMap);//密文字符串拼装处理
-        String ad3Signature = MD5Util.getMD5String(signature + "&" + token).toUpperCase();//与token进行拼接MD5加密
-        log.info("ad3签名:{}", ad3Signature);
-        return ad3Signature;
+        String signature = SignTools.getSignStr(commonMap);
+        String clearText = signature + "&" + token;
+        log.info("=================【AD3线下接口】=================【签名前的明文】 clearText: {}", clearText);
+        //与token进行拼接MD5加密
+        String sign = MD5Util.getMD5String(clearText);
+        log.info("=================【AD3线下接口】=================【签名后的密文】 sign: {}", sign);
+        return sign;
     }
 
 }

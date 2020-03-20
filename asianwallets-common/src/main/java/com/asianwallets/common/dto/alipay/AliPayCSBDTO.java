@@ -115,12 +115,12 @@ public class AliPayCSBDTO {
     public AliPayCSBDTO() {
     }
 
-    public AliPayCSBDTO(Orders orders, Channel channel) {
+    public AliPayCSBDTO(Orders orders, Channel channel, String notifyUrl) {
         this.service = "alipay.acquire.precreate";
         this.partner = channel.getChannelMerchantId();
         this.md5KeyStr = channel.getMd5KeyStr();
         this._input_charset = "UTF-8";
-        this.notify_url = channel.getNotifyServerUrl();
+        this.notify_url = notifyUrl;
         this.timestamp = DateToolUtils.getReqDateG(new Date());
         this.terminal_timestamp = DateToolUtils.getReqDateG(new Date());
         this.out_trade_no = orders.getId();

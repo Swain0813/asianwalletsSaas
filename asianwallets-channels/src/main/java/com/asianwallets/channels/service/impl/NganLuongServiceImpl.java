@@ -1,7 +1,9 @@
 package com.asianwallets.channels.service.impl;
+
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.NganLuongService;
 import com.asianwallets.common.constant.AD3Constant;
@@ -18,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
@@ -33,6 +36,9 @@ public class NganLuongServiceImpl implements NganLuongService {
 
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
+
+    @Autowired
+    private ChannelsConfig channelsConfig;
 
     /**
      * @return
@@ -72,9 +78,9 @@ public class NganLuongServiceImpl implements NganLuongService {
         }
 
         BaseResponse response = new BaseResponse();
-        log.info("-----------------NganLuong收单接口----------------- nganLuongDTO:{} getNganLuongPayUrl:{}", JSON.toJSONString(nganLuongDTO), nganLuongDTO.getChannel().getPayUrl());
+        log.info("-----------------NganLuong收单接口----------------- nganLuongDTO:{} getNganLuongPayUrl:{}", JSON.toJSONString(nganLuongDTO), channelsConfig.getNganLuongPayUrl());
         long start = System.currentTimeMillis();
-        cn.hutool.http.HttpResponse execute = HttpRequest.post(nganLuongDTO.getChannel().getPayUrl())
+        cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getNganLuongPayUrl())
                 .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                 .form(BeanToMapUtil.beanToMap(nganLuongDTO.getNganLuongRequestDTO()))
                 .timeout(20000)
@@ -113,7 +119,7 @@ public class NganLuongServiceImpl implements NganLuongService {
     public BaseResponse nganLuongQuery(NganLuongQueryDTO nganLuongQueryDTO) {
         BaseResponse baseResponse = new BaseResponse();
         log.info("=============== 【NL查询接口】===============【查询参数记录】 nganLuongQueryDTO:{}", JSON.toJSONString(nganLuongQueryDTO));
-        cn.hutool.http.HttpResponse execute = HttpRequest.post(nganLuongQueryDTO.getChannel().getChannelSingleSelectUrl())
+        cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getNganLuongPayUrl())
                 .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                 .form(BeanToMapUtil.beanToMap(nganLuongQueryDTO))
                 .timeout(30000)

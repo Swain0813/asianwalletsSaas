@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.eghl.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -14,6 +15,7 @@ import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.eghl.EGHLService;
+import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dto.EghlBrowserCallbackDTO;
@@ -27,11 +29,13 @@ import com.asianwallets.trade.vo.FundChangeVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -71,6 +75,10 @@ public class EGHLServiceImpl extends ChannelsAbstractAdapter implements EGHLServ
     @Autowired
     private CommonRedisDataService commonRedisDataService;
 
+    @Autowired
+    @Qualifier(value = "ad3ParamsConfig")
+    private AD3ParamsConfig ad3ParamsConfig;
+
     /**
      * EGHL收单方法
      *
@@ -80,7 +88,7 @@ public class EGHLServiceImpl extends ChannelsAbstractAdapter implements EGHLServ
      */
     @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
-        EGHLRequestDTO eghlRequestDTO = new EGHLRequestDTO(orders, channel);
+        EGHLRequestDTO eghlRequestDTO = new EGHLRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eghlBrowserCallback"), ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eghlServerCallback"));
         log.info("----------------- EGHL收单方法 ----------------- eghlRequestDTO: {}", JSON.toJSONString(eghlRequestDTO));
         BaseResponse channelResponse = channelsFeign.eGHLPay(eghlRequestDTO);
         log.info("----------------- EGHL收单方法 返回----------------- response: {}", JSON.toJSONString(channelResponse));

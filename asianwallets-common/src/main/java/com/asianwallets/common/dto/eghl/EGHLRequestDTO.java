@@ -84,7 +84,7 @@ public class EGHLRequestDTO {
     public EGHLRequestDTO() {
     }
 
-    public EGHLRequestDTO(Orders orders, Channel channel) {
+    public EGHLRequestDTO(Orders orders, Channel channel, String merchantReturnURL, String merchantCallBackURL) {
         this.TransactionType = "SALE";
         this.PymtMethod = "DD";
         this.ServiceID = channel.getChannelMerchantId();
@@ -92,8 +92,8 @@ public class EGHLRequestDTO {
         this.OrderNumber = orders.getId();
         this.PaymentDesc = "eGHL";
         this.MerchantName = "";
-        this.MerchantReturnURL = channel.getNotifyServerUrl();//服务回调
-        this.MerchantCallBackURL = channel.getNotifyBrowserUrl();//浏览器回调
+        this.MerchantReturnURL = merchantReturnURL;//服务回调
+        this.MerchantCallBackURL = merchantCallBackURL;//浏览器回调
         this.Amount = String.valueOf(orders.getChannelAmount());
         this.CurrencyCode = orders.getTradeCurrency();
         this.CustIP = orders.getReqIp();

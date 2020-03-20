@@ -3,6 +3,7 @@ package com.asianwallets.channels.service.impl;
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.EghlService;
 import com.asianwallets.common.constant.AD3Constant;
@@ -32,6 +33,10 @@ public class EghlServiceImpl implements EghlService {
 
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
+
+    @Autowired
+    private ChannelsConfig channelsConfig;
+
 
     /**
      * @return
@@ -73,7 +78,7 @@ public class EghlServiceImpl implements EghlService {
         BaseResponse response = new BaseResponse();
         log.info("-----------------eghl收单接口----------------- eghlRequestDTO:{}", JSON.toJSONString(eghlRequestDTO));
         long start = System.currentTimeMillis();
-        cn.hutool.http.HttpResponse execute = HttpRequest.post(eghlRequestDTO.getChannel().getPayUrl())
+        cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getPayUrl())
                 .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                 .form(BeanToMapUtil.beanToMap(eghlRequestDTO))
                 .timeout(20000)

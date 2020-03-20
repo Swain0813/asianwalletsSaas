@@ -39,11 +39,9 @@ public class AD3CSBScanPayDTO {
     public AD3CSBScanPayDTO() {
     }
 
-    public AD3CSBScanPayDTO(Orders orders, Channel channel) {
-        this.channel = channel;
+    public AD3CSBScanPayDTO(String merchantId) {
         this.inputCharset = AD3Constant.CHARSET_UTF_8;
         this.language = AD3Constant.LANGUAGE_CN;
-        this.merchantId = channel.getChannelMerchantId();
-        this.orders = orders;
+        this.merchantId = merchantId;
     }
 }
