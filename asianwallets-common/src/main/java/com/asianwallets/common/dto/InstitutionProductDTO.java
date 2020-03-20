@@ -4,16 +4,16 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
 
 @Data
 @ApiModel(value = "机构产品查询输入参数", description = "机构产品查询输入参数")
 public class InstitutionProductDTO extends BasePageHelper {
 
-    @NotNull(message = "50002")
     @ApiModelProperty(value = "机构编号")
     private String institutionId;
+
+    @ApiModelProperty(value = "商户编号")
+    private String merchantId;
 
     @ApiModelProperty(value = "产品id")
     private String productId;

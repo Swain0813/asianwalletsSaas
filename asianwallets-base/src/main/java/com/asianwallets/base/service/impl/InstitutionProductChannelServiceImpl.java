@@ -1,5 +1,4 @@
 package com.asianwallets.base.service.impl;
-import java.util.*;
 import com.asianwallets.base.dao.InstitutionChannelMapper;
 import com.asianwallets.base.dao.InstitutionProductMapper;
 import com.asianwallets.base.dao.ProductChannelMapper;
@@ -26,6 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -188,6 +190,7 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
     public PageInfo<InstitutionProductVO> pageInstitutionPro(InstitutionProductDTO institutionProductDTO){
         //当前请求语言
         institutionProductDTO.setLanguage(auditorProvider.getLanguage());
+        institutionProductDTO.setSort("ip.create_time");
         return new PageInfo(institutionProductMapper.pageInstitutionPro(institutionProductDTO));
     }
 

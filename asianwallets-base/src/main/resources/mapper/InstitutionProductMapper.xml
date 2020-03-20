@@ -133,10 +133,14 @@
         p.trade_direction AS transType
         FROM institution_product ip
         LEFT JOIN product p ON ip.product_id = p.id
+        left join merchant m on ip.institution_id = m.institution_id
         LEFT JOIN pay_type pt ON p.pay_type = pt.extend1 AND pt.language = #{language}
         <where>
             <if test="institutionId!=null and institutionId!= ''">
                 AND ip.institution_id=#{institutionId}
+            </if>
+            <if test="merchantId!=null and merchantId!= ''">
+                AND m.merchant_id= #{merchantId}
             </if>
             <if test="transType!=null and transType!= ''">
                 AND p.trade_direction=#{transType}
