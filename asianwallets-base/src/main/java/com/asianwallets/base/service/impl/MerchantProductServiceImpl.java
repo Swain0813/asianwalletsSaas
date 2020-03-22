@@ -377,7 +377,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     jobDataMap.put("merProId", merProId);
                     JobDetail jobDetail = JobBuilder.newJob(ProductInfoJob.class).withIdentity(name, group).setJobData(jobDataMap).build();
                     //表达式调度构建器(即任务执行的时间)
-                    Date runDate = oldMerchantProductAudit.getEffectTime();
+                    Date runDate = oldMerchantProductAudit==null?null:oldMerchantProductAudit.getEffectTime();
                     if (runDate == null) {
                         baseResponse.setCode(EResultEnum.EFFECTTIME_IS_NULL.getCode());//生效时间不能为空
                         return baseResponse;
