@@ -214,4 +214,11 @@ public interface CommonBusinessService {
      * @param orders 订单
      */
     void sendEmail(Orders orders);
+    /**
+     * @Author YangXu
+     * @Date 2020/3/24
+     * @Descripate 退还收单手续费的时候是否调分润
+     * @return
+     **/
+    void refundShareBinifit(OrderRefund orderRefund);
 }

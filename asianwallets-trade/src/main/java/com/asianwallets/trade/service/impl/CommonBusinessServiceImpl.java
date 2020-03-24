@@ -1024,4 +1024,32 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         }
         log.info("*********************支付成功发送支付通知邮件 End*************************************");
     }
+    /**
+     * @Author YangXu
+     * @Date 2020/3/24
+     * @Descripate 退还收单手续费的时候是否调分润
+     * @return
+     **/
+    @Override
+    public void refundShareBinifit(OrderRefund orderRefund) {
+
+        if(orderRefund.getRefundOrderFee() != null && orderRefund.getRefundOrderFee().compareTo(BigDecimal.ZERO)==1){
+
+            log.info("================== 退款成功的时候分润调账===================== orderId : {}",orderRefund.getOrderId());
+            ShareBenefitLogs shareBenefitLogs = shareBenefitLogsMapper.selectByOrderId(orderRefund.getOrderId());
+            if(shareBenefitLogs!=null && shareBenefitLogsMapper.selectCountByOrderId(orderRefund.getOrderId()) == 1){
+                shareBenefitLogs.setId("SL" + IDS.uniqueID());
+                double amount = shareBenefitLogs.getShareBenefit()*-1;
+                shareBenefitLogs.setShareBenefit(amount);
+                shareBenefitLogs.setCreateTime(new Date());
+                shareBenefitLogs.setUpdateTime(new Date());
+                shareBenefitLogs.setIsShare(TradeConstant.SHARE_BENEFIT_WAIT);
+                shareBenefitLogs.setExtend2("退款收单手续费调账");
+                shareBenefitLogsMapper.insert(shareBenefitLogs);
+            }
+
+
+        }
+
+    }
 }
