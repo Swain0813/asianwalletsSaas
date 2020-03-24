@@ -85,7 +85,7 @@ public class MegaPayServiceImpl implements MegaPayService {
             cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getMegaPayTHBUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(BeanToMapUtil.beanToMap(megaPayRequestDTO))
-                    .timeout(20000)
+                    .timeout(20000).setSSLProtocol("TLSv1")
                     .execute();
             int status = execute.getStatus();
             body = execute.body();
