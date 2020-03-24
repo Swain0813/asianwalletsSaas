@@ -47,6 +47,9 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
     @Value("${custom.warning.email}")
     private String developerEmail;
 
+    @Value("${custom.warning.mobile}")
+    private String mobile;
+
     @Autowired
     private MessageFeign messageFeign;
 
@@ -124,7 +127,8 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
                 //计算分润
                 CalcFeeVO calcFeeVO = this.calculateShareBenefit(type, orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
                 if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
-                    messageFeign.sendSimpleMail(developerEmail, "代理商产品算费失败 预警", "代理商商户号 ：{ " + channelAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
+                    messageFeign.sendSimple(mobile, "SAAS-代理商产品算费失败");//短信通知
+                    messageFeign.sendSimpleMail(developerEmail, "saas-代理商产品算费失败 预警", "代理商商户号 ：{ " + channelAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
                     throw new BusinessException(EResultEnum.ERROR.getCode());
                 }
                 //分润金额
@@ -134,6 +138,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
 
         } catch (Exception e) {
             log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 【异常】 orderId: 【{}】,Exception :【{}】", orderId, e);
+            messageFeign.sendSimple(mobile, "SAAS-插入分润流水发生异常");//短信通知
             rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orderId);
             //回滚
             throw new BusinessException(EResultEnum.ERROR.getCode());
