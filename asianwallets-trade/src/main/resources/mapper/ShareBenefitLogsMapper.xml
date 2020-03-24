@@ -45,7 +45,7 @@
     <select id="selectByOrderId" resultMap="BaseResultMap">
 		select
 		<include refid="BaseSql"></include>
-		where order_id = #{orderId} and extend2 = null
+		where order_id = #{orderId} and remark = null
 	</select>
 
 </mapper>

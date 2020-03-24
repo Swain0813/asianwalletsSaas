@@ -1048,7 +1048,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                     shareBenefitLog.setCreateTime(new Date());
                     shareBenefitLog.setUpdateTime(new Date());
                     shareBenefitLog.setIsShare(TradeConstant.SHARE_BENEFIT_WAIT);
-                    shareBenefitLog.setExtend2("退款收单手续费调账");
+                    shareBenefitLog.setRemark("退款收单手续费调账");
                     shareBenefitLogsMapper.insert(shareBenefitLog);
                 }
             }
