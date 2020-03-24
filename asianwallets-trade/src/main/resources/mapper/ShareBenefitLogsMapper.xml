@@ -35,17 +35,18 @@
 		<result column="extend4" property="extend4" />
 		<result column="extend5" property="extend5" />
 		<result column="extend6" property="extend6" />
+		<result column="extend7" property="extend7" />
 	</resultMap>
 
 	<sql id="BaseSql">
         id,order_id, institution_id,institution_name,merchant_name,merchant_id,channel_code,channel_name,agent_id,agent_name,agent_type,order_type,merchant_order_id,
         trade_currency,trade_amount,fee,share_benefit,is_share,divided_mode,divided_ratio,create_time,update_time,creator,modifier,remark,extend1,
-        extend2,extend3,extend4,extend5,extend6
+        extend2,extend3,extend4,extend5,extend6,extend7
     </sql>
     <select id="selectByOrderId" resultMap="BaseResultMap">
 		select
 		<include refid="BaseSql"></include>  FROM share_benefit_logs
-		where order_id = #{orderId} and remark is null
+		where order_id = #{orderId} and extend7 is null
 	</select>
 
 </mapper>
