@@ -1035,23 +1035,26 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
      **/
     @Override
     public void refundShareBinifit(OrderRefund orderRefund) {
+        try {
+            if (orderRefund.getRefundOrderFee() != null && orderRefund.getRefundOrderFee().compareTo(BigDecimal.ZERO) == 1) {
 
-        if (orderRefund.getRefundOrderFee() != null && orderRefund.getRefundOrderFee().compareTo(BigDecimal.ZERO) == 1) {
-
-            log.info("================== 退款成功的时候分润调账===================== orderId : {}", orderRefund.getOrderId());
-            List<ShareBenefitLogs> shareBenefitLogs = shareBenefitLogsMapper.selectByOrderId(orderRefund.getOrderId());
-            for (ShareBenefitLogs shareBenefitLog : shareBenefitLogs) {
-                if (shareBenefitLogs != null && shareBenefitLogsMapper.selectCountByOrderId(orderRefund.getOrderId(), shareBenefitLog.getAgentType()) == 1) {
-                    shareBenefitLog.setId("SL" + IDS.uniqueID());
-                    BigDecimal amount = shareBenefitLog.getShareBenefit().multiply(new BigDecimal(-1));
-                    shareBenefitLog.setShareBenefit(amount);
-                    shareBenefitLog.setCreateTime(new Date());
-                    shareBenefitLog.setUpdateTime(new Date());
-                    shareBenefitLog.setIsShare(TradeConstant.SHARE_BENEFIT_WAIT);
-                    shareBenefitLog.setRemark("退款收单手续费调账");
-                    shareBenefitLogsMapper.insert(shareBenefitLog);
+                log.info("================== 退款成功的时候分润调账===================== orderId : {}", orderRefund.getOrderId());
+                List<ShareBenefitLogs> shareBenefitLogs = shareBenefitLogsMapper.selectByOrderId(orderRefund.getOrderId());
+                for (ShareBenefitLogs shareBenefitLog : shareBenefitLogs) {
+                    if (shareBenefitLogs != null && shareBenefitLogsMapper.selectCountByOrderId(orderRefund.getOrderId(), shareBenefitLog.getAgentType()) == 1) {
+                        shareBenefitLog.setId("SL" + IDS.uniqueID());
+                        BigDecimal amount = shareBenefitLog.getShareBenefit().multiply(new BigDecimal(-1));
+                        shareBenefitLog.setShareBenefit(amount);
+                        shareBenefitLog.setCreateTime(new Date());
+                        shareBenefitLog.setUpdateTime(new Date());
+                        shareBenefitLog.setIsShare(TradeConstant.SHARE_BENEFIT_WAIT);
+                        shareBenefitLog.setRemark("退款收单手续费调账");
+                        shareBenefitLogsMapper.insert(shareBenefitLog);
+                    }
                 }
             }
+        } catch (Exception e) {
+            log.info("================== 退款成功的时候分润调账异常===================== orderId : {}", orderRefund.getOrderId());
         }
 
     }
