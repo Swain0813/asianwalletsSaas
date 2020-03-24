@@ -45,7 +45,7 @@
     <select id="selectByOrderId" resultMap="BaseResultMap">
 		select
 		<include refid="BaseSql"></include>  FROM share_benefit_logs
-		where order_id = #{orderId} and remark = null
+		where order_id = #{orderId} and remark is null
 	</select>
 
 </mapper>
