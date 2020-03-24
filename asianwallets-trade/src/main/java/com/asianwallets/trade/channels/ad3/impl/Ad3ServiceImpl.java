@@ -724,6 +724,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
                     //改原订单状态
                     commonBusinessService.updateOrderRefundSuccess(orderRefund);
+                    //退还分润
+                    commonBusinessService.refundShareBinifit(orderRefund);
                 } else if (response.getMsg().equals("T001")) {
                     //退款失败
                     baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
@@ -788,6 +790,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, refundAdResponseVO.getTxnId(), null);
                     //改原订单状态
                     commonBusinessService.updateOrderRefundSuccess(orderRefund);
+                    //退还分润
+                    commonBusinessService.refundShareBinifit(orderRefund);
                 } else {
                     //退款失败
                     log.info("==================【AD3线下退款】================== 【退款失败】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));

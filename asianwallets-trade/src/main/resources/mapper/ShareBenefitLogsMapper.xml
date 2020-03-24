@@ -42,5 +42,10 @@
         trade_currency,trade_amount,fee,share_benefit,is_share,divided_mode,divided_ratio,create_time,update_time,creator,modifier,remark,extend1,
         extend2,extend3,extend4,extend5,extend6
     </sql>
+    <select id="selectByOrderId" resultMap="BaseResultMap">
+		select
+		<include refid="BaseSql"></include>
+		where order_id = #{orderId} and extend2 = null
+	</select>
 
 </mapper>

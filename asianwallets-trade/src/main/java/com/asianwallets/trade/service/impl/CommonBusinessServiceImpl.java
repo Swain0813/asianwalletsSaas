@@ -1,4 +1,5 @@
 package com.asianwallets.trade.service.impl;
+
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -15,10 +16,7 @@ import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
-import com.asianwallets.trade.dao.AccountMapper;
-import com.asianwallets.trade.dao.OrderRefundMapper;
-import com.asianwallets.trade.dao.OrdersMapper;
-import com.asianwallets.trade.dao.SettleControlMapper;
+import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.feign.MessageFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.CommonBusinessService;
@@ -33,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -80,6 +79,9 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
 
     @Value("${custom.warning.email}")
     private String warningEmail;
+
+    @Autowired
+    private ShareBenefitLogsMapper shareBenefitLogsMapper;
 
     /**
      * 使用机构对应平台的RSA私钥生成签名【回调时用】
@@ -1024,31 +1026,32 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         }
         log.info("*********************支付成功发送支付通知邮件 End*************************************");
     }
+
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/3/24
      * @Descripate 退还收单手续费的时候是否调分润
-     * @return
      **/
     @Override
     public void refundShareBinifit(OrderRefund orderRefund) {
 
-        if(orderRefund.getRefundOrderFee() != null && orderRefund.getRefundOrderFee().compareTo(BigDecimal.ZERO)==1){
+        if (orderRefund.getRefundOrderFee() != null && orderRefund.getRefundOrderFee().compareTo(BigDecimal.ZERO) == 1) {
 
-            log.info("================== 退款成功的时候分润调账===================== orderId : {}",orderRefund.getOrderId());
-            ShareBenefitLogs shareBenefitLogs = shareBenefitLogsMapper.selectByOrderId(orderRefund.getOrderId());
-            if(shareBenefitLogs!=null && shareBenefitLogsMapper.selectCountByOrderId(orderRefund.getOrderId()) == 1){
-                shareBenefitLogs.setId("SL" + IDS.uniqueID());
-                double amount = shareBenefitLogs.getShareBenefit()*-1;
-                shareBenefitLogs.setShareBenefit(amount);
-                shareBenefitLogs.setCreateTime(new Date());
-                shareBenefitLogs.setUpdateTime(new Date());
-                shareBenefitLogs.setIsShare(TradeConstant.SHARE_BENEFIT_WAIT);
-                shareBenefitLogs.setExtend2("退款收单手续费调账");
-                shareBenefitLogsMapper.insert(shareBenefitLogs);
+            log.info("================== 退款成功的时候分润调账===================== orderId : {}", orderRefund.getOrderId());
+            List<ShareBenefitLogs> shareBenefitLogs = shareBenefitLogsMapper.selectByOrderId(orderRefund.getOrderId());
+            for (ShareBenefitLogs shareBenefitLog : shareBenefitLogs) {
+                if (shareBenefitLogs != null && shareBenefitLogsMapper.selectCountByOrderId(orderRefund.getOrderId(), shareBenefitLog.getAgentType()) == 1) {
+                    shareBenefitLog.setId("SL" + IDS.uniqueID());
+                    BigDecimal amount = shareBenefitLog.getShareBenefit().multiply(new BigDecimal(-1));
+                    shareBenefitLog.setShareBenefit(amount);
+                    shareBenefitLog.setCreateTime(new Date());
+                    shareBenefitLog.setUpdateTime(new Date());
+                    shareBenefitLog.setIsShare(TradeConstant.SHARE_BENEFIT_WAIT);
+                    shareBenefitLog.setExtend2("退款收单手续费调账");
+                    shareBenefitLogsMapper.insert(shareBenefitLog);
+                }
             }
-
-
         }
 
     }

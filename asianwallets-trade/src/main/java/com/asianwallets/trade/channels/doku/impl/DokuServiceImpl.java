@@ -89,6 +89,8 @@ public class DokuServiceImpl extends ChannelsAbstractAdapter implements DokuServ
                 orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, String.valueOf(respMap.get("REFNUM")), null);
                 //改原订单状态
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
+                //退还分润
+                commonBusinessService.refundShareBinifit(orderRefund);
             }else{
                 //退款失败
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());

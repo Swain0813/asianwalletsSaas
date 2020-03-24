@@ -113,6 +113,8 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
                 orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, map.get("refund_id"), null);
                 //改原订单状态
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
+                //退还分润
+                commonBusinessService.refundShareBinifit(orderRefund);
             } else {
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=================【WeChant退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));

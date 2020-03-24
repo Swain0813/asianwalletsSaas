@@ -215,6 +215,8 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
                 orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, map.get("alipay_trans_id"), null);
                 //改原订单状态
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
+                //退还分润
+                commonBusinessService.refundShareBinifit(orderRefund);
             } else {
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=====================【AliPay退款】==================== 【退款失败】 : {} ", JSON.toJSON(orderRefund));
