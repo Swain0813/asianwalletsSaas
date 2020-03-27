@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -201,5 +200,17 @@ public class ChannelDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "银行ID集合")
     private List<String> bankIdList;
+
+    @ApiModelProperty(value = "IMEI")
+    private String imei;
+
+    @ApiModelProperty(value = "操作员id")
+    private String operatorId;
+
+    @ApiModelProperty(value = "登录密码")
+    private String password;
+
+    @ApiModelProperty(value = "交易密码")
+    private String tradePwd;
 
 }

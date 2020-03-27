@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -197,4 +196,16 @@ public class ChannelDetailVO {
 
     @ApiModelProperty(value = "通道关联银行实体")
     private List<BankVO> bankVOList;
+
+    @ApiModelProperty(value = "IMEI")
+    private String imei;
+
+    @ApiModelProperty(value = "操作员id")
+    private String operatorId;
+
+    @ApiModelProperty(value = "登录密码")
+    private String password;
+
+    @ApiModelProperty(value = "交易密码")
+    private String tradePwd;
 }

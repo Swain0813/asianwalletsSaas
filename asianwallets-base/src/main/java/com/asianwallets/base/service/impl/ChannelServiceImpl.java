@@ -31,6 +31,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -103,6 +104,17 @@ public class ChannelServiceImpl implements ChannelService {
         channel.setChannelCode(IDS.uniqueID().toString());
         channel.setCreator(username);
         channel.setCreateTime(new Date());
+
+        /*imei*/
+        channel.setExtend1(channelDTO.getImei());
+        /*操作员id*/
+        channel.setExtend2(channelDTO.getOperatorId());
+        /*登录密码*/
+        channel.setExtend3(channelDTO.getPassword());
+        /*交易密码*/
+        channel.setExtend4(channelDTO.getTradePwd());
+
+
         List<ProductChannel> productChannelList = Lists.newArrayList();
         //分配产品通道信息
         for (String productId : channelDTO.getProductIdList()) {
@@ -177,6 +189,24 @@ public class ChannelServiceImpl implements ChannelService {
         BeanUtils.copyProperties(channelDTO, channel, ReflexClazzUtils.getNullPropertyNames(channelDTO));
         channel.setUpdateTime(new Date());
         channel.setModifier(username);
+
+        if (!StringUtils.isEmpty(channelDTO.getImei())) {
+            /*操作员id*/
+            channel.setExtend1(channelDTO.getImei());
+        }
+        if (!StringUtils.isEmpty(channelDTO.getOperatorId())) {
+            /*操作员id*/
+            channel.setExtend2(channelDTO.getOperatorId());
+        }
+        if (!StringUtils.isEmpty(channelDTO.getPassword())) {
+            /*登录密码*/
+            channel.setExtend3(channelDTO.getPassword());
+        }
+        if (!StringUtils.isEmpty(channelDTO.getTradePwd())) {
+            /*交易密码*/
+            channel.setExtend4(channelDTO.getTradePwd());
+        }
+
         //删除产品通道关联关系
         productChannelMapper.deleteByChannelId(channelDTO.getChannelId());
         List<ProductChannel> productChannelList = Lists.newArrayList();
