@@ -76,10 +76,10 @@ custom:
     token_expire_hour: 24
 
   #nextPos分发AD3地址
-  nextPosUrl: http://119.23.136.80/ITSBoss/nextPosNotifyAction/nextPosqrbackNotify.do
+  nextPosUrl: http://its.54javacoder.top/nextPosNotifyAction/nextPosqrbackNotify.do
 
   #megaPayAD3分发地址
-  ad3ItsUrl: http://119.23.136.80/ITSBoss/v1/
+  ad3ItsUrl: https://its.alldebitpay.com/v1/
 
   #收银台url
   cashierDeskUrl: http://testsaas.asianwallets.com/saascheckstandweb/#/main
