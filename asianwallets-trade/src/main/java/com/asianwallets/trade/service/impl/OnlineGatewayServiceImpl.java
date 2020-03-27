@@ -854,7 +854,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
         //判断通道
         if (channel.getServiceNameMark().equals(TradeConstant.AD3)) {
-            AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO = new AD3OnlineOrderQueryDTO(orders, ad3ParamsConfig.getMerchantCode());
+            AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO = new AD3OnlineOrderQueryDTO(orders, channel.getChannelMerchantId());
             ad3OnlineOrderQueryDTO.setMerorderDatetime(DateUtil.format(orders.getReportChannelTime(), "yyyyMMddHHmmss"));
             HttpResponse httpResponse = ad3Service.ad3OnlineOrderQuery(ad3OnlineOrderQueryDTO, null, channel);
             if (!httpResponse.getHttpStatus().equals(AsianWalletConstant.HTTP_SUCCESS_STATUS)) {
