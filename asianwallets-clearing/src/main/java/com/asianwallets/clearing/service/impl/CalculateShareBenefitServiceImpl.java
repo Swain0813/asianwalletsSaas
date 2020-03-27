@@ -49,6 +49,7 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
 
     @Autowired
     private TmMerChTvAcctBalanceMapper tmMerChTvAcctBalanceMapper;
+
     /**
      * @return
      * @Author YangXu
@@ -85,12 +86,12 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                 List<TcsStFlow> list3 = new ArrayList<>();
                 int num = 0;
                 for (ShareBenefitLogs sl : list) {
-                    afterBalance = ComDoubleUtil.addBySize(beforeBalance,sl.getShareBenefit().doubleValue(),2);
-                    if(afterBalance<0.0D){
-                        log.info("*************** calculateSharebenefit 单调分润 ************** 结算户余额为负 流水号 ：{} ,afterBalance", sl.getId(),afterBalance);
-                        return;
-                    }
+                    afterBalance = ComDoubleUtil.addBySize(beforeBalance, sl.getShareBenefit().doubleValue(), 2);
                     beforeBalance = afterBalance;
+                }
+                if (afterBalance < 0.0D) {
+                    log.info("*************** calculateSharebenefit 单调分润 ************** 结算户余额为负 afterBalance", afterBalance);
+                    return;
                 }
 
                 beforeBalance = account.getSettleBalance().doubleValue();
@@ -108,13 +109,13 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                         return;
                     }
                     log.info("*************** calculateSharebenefit 单调分润 **************,准备执行编号为：{} 分润 ：{} 的待流水记录，期初余额：{}", sl.getId(), sl.getShareBenefit(), beforeBalance);
-                    afterBalance = ComDoubleUtil.addBySize(beforeBalance,sl.getShareBenefit().doubleValue(),2);
+                    afterBalance = ComDoubleUtil.addBySize(beforeBalance, sl.getShareBenefit().doubleValue(), 2);
                     log.info("*************** calculateSharebenefit 单调分润 **************,准备执行编号为：{} 分润 ：{} 的待流水记录，期末余额：{}", sl.getId(), sl.getShareBenefit(), afterBalance);
 
 
                     //插入结算户流水 --- 已结算记录
                     TcsStFlow tcsStFlow = new TcsStFlow();
-                    tcsStFlow.setSTFlow("SF"+ IDS.uniqueID());
+                    tcsStFlow.setSTFlow("SF" + IDS.uniqueID());
                     tcsStFlow.setRefcnceFlow(sl.getOrderId());
                     tcsStFlow.setTradetype("SP");
                     tcsStFlow.setMerchantid(sl.getAgentId());
@@ -180,7 +181,7 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                     list1.add(tma);
                     beforeBalance = afterBalance;
                     //更新分润记录表变成已分润
-                    num += shareBenefitLogsMapper.updateByIsShare(sl.getId(),TradeConstant.SHARE_BENEFIT_SUCCESS);
+                    num += shareBenefitLogsMapper.updateByIsShare(sl.getId(), TradeConstant.SHARE_BENEFIT_SUCCESS);
                 }
                 log.info("**************** calculateShareForMerchantGroup2 单组分润 **************# 代理商户为:{}，币种为:{}的期末结算余额为:{}", agentCode, currency, afterBalance);
                 int result3 = tcsStFlowMapper.insertList(list3);
@@ -192,7 +193,7 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return;
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 log.error("**************** calculateShareForMerchantGroup2 单组分润 ************** 代理商户号：{} ， 币种 ：{} ，异常：{}", agentCode, currency, e);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             } finally {
@@ -201,7 +202,7 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                 }
                 log.info("********************* release lock success ******************** : {}", key);
             }
-        }else {
+        } else {
             log.info("********************* get lock failed ******************** : {} : " + key);
         }
     }
