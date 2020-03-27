@@ -61,12 +61,6 @@ public class NganLuongMQReciveSecond {
     @Autowired
     private MessageFeign messageFeign;
 
-    @Value("${custom.warning.mobile}")
-    private String mobile;
-
-    @Value("${custom.warning.email}")
-    private String email;
-
     @Value("${custom.nganLuong.check_url}")
     private String checkUrl;
 
@@ -231,10 +225,6 @@ public class NganLuongMQReciveSecond {
             }
         } else {
             log.info("==============【NL查询队列2】==============【二次查询,订单为交易中】 rabbitMassage : {}", JSON.toJSONString(rabbitMassage));
-            //短信通知
-            messageFeign.sendSimple(mobile, "SAAS-NGANLUONG查询队列查询预警 E_MQ_NGANLUONG_CHECK_ORDER_DL2: { " + nganLuongMQDTO.getOrderId() + " }");
-            //邮件通知
-            messageFeign.sendSimpleMail(email, "SAAS-NGANLUONG查询队列查询预警 E_MQ_NGANLUONG_CHECK_ORDER_DL2", "E_MQ_NGANLUONG_CHECK_ORDER_DL2预警: { " + nganLuongMQDTO.getOrderId() + " }");
         }
     }
 }

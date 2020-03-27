@@ -108,7 +108,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
                 //计算分润
                 CalcFeeVO calcFeeVO = this.calculateShareBenefit(type, orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
                 if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
-                    messageFeign.sendSimpleMail(developerEmail, "代理商产品算费失败 预警", "代理商商户号 ：{ " + merchantAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
+                    messageFeign.sendSimpleMail(developerEmail, "SAAS-代理商产品算费失败 预警", "代理商商户号 ：{ " + merchantAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
                     throw new BusinessException(EResultEnum.ERROR.getCode());
                 }
                 //分润金额

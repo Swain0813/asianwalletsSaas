@@ -93,8 +93,8 @@ public class FrozenFundTask {
             }
         } catch (Exception e) {
             log.error("预约资金冻结定时任务发生异常==={}", e);
-            messageFeign.sendSimple(developerMobile, "预约资金冻结定时任务发生异常!");
-            messageFeign.sendSimpleMail(developerEmail, "预约资金冻结定时任务发生异常", "预约资金冻结定时任务发生异常");
+            messageFeign.sendSimple(developerMobile, "SAAS-预约资金冻结定时任务发生异常!");
+            messageFeign.sendSimpleMail(developerEmail, "SAAS-预约资金冻结定时任务发生异常", "SAAS-预约资金冻结定时任务发生异常");
         }
         log.info("***********saas结束预约资金冻结定时任务******************");
     }
