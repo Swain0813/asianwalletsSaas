@@ -367,7 +367,7 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
      */
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
-        AliPayCSBDTO aliPayCSBDTO = new AliPayCSBDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/aliPayCB_TPMQRCReturn"));
+        AliPayCSBDTO aliPayCSBDTO = new AliPayCSBDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/offlineCallback/aliPayCsbServerCallback"));
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【Alipay线下CSB接口请求参数】 aliPayCSBDTO: {}", JSON.toJSONString(aliPayCSBDTO));
         BaseResponse channelResponse = channelsFeign.aliPayCSB(aliPayCSBDTO);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【Alipay线下CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));

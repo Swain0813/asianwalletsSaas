@@ -250,7 +250,7 @@ public class WechantServiceImpl extends ChannelsAbstractAdapter implements Wecha
      */
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
-        WechatCSBDTO wechatCSBDTO = new WechatCSBDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/offlineCallback").concat("/wechatCSBCallback"));
+        WechatCSBDTO wechatCSBDTO = new WechatCSBDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/offlineCallback").concat("/wechatCsbServerCallback"));
         log.info("==================【线下CSB动态扫码】==================调用Channels服务【Wechat-CSB接口】-请求实体  wechatCSBDTO: {}", JSON.toJSONString(wechatCSBDTO));
         BaseResponse channelResponse = channelsFeign.wechatOfflineCSB(wechatCSBDTO);
         log.info("==================【线下CSB动态扫码】==================调用Channels服务【Wechat-CSB接口】-响应结果  channelResponse:{}", channelResponse);
