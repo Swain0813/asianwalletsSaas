@@ -248,6 +248,9 @@ public class Ad3ServiceImpl implements Ad3Service {
         log.info("----------------------向上游接口发送订单接口返回----------------------http状态码:{},body:{}", status, JSON.toJSON(body));
         //判断HTTP状态码
         if (status != AsianWalletConstant.HTTP_SUCCESS_STATUS || StringUtils.isEmpty(body)) {
+            if (status == AsianWalletConstant.HTTP_LOCATION_STATUS) {
+                log.info("----------------------向上游接口发送订单接口返回----------------------http 302.重定向地址:{}", JSON.toJSON(channelsConfig.getOnlineBank().concat(execute.header("Location"))));
+            }
             response.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
             return response;
         }

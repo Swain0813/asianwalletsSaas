@@ -171,19 +171,19 @@ public class Channel extends BaseEntity {
     @Column(name = "md5_key_str")
     private String md5KeyStr;
 
-    @ApiModelProperty(value = "扩展字段1")
+    @ApiModelProperty(value = "IMEI")
     @Column(name = "extend1")
     private String extend1;
 
-    @ApiModelProperty(value = "扩展字段2")
+    @ApiModelProperty(value = "操作员id")
     @Column(name = "extend2")
     private String extend2;
 
-    @ApiModelProperty(value = "扩展字段3")
+    @ApiModelProperty(value = "登录密码")
     @Column(name = "extend3")
     private String extend3;
 
-    @ApiModelProperty(value = "扩展字段4")
+    @ApiModelProperty(value = "交易密码")
     @Column(name = "extend4")
     private String extend4;
 

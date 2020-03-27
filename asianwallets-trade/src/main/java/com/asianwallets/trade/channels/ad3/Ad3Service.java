@@ -82,7 +82,7 @@ public interface Ad3Service {
      *
      * @return
      */
-    AD3LoginVO getTerminalIdAndToken();
+    AD3LoginVO getTerminalIdAndToken(Channel channel);
 
 
     /**
