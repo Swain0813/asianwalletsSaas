@@ -97,4 +97,4 @@ custom:
   nganLuong:
     check_url: https://www.nganluong.vn/checkout.api.nganluong.post.php
   #给AD3的回调URL
-  channelCallbackUrl: https://test.asianwallets.com/tra
+  channelCallbackUrl: https://testsaas.asianwallets.com/tra
