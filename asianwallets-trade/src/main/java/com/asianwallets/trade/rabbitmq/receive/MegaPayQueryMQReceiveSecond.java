@@ -12,7 +12,6 @@ import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
-import com.asianwallets.trade.feign.MessageFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
@@ -21,7 +20,6 @@ import com.asianwallets.trade.vo.FundChangeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
@@ -56,16 +54,6 @@ public class MegaPayQueryMQReceiveSecond {
 
     @Autowired
     private ChannelsFeign channelsFeign;
-
-    @Autowired
-    private MessageFeign messageFeign;
-
-    @Value("${custom.warning.mobile}")
-    private String mobile;
-
-    @Value("${custom.warning.email}")
-    private String email;
-
 
     @RabbitListener(queues = "MQ_MEGAPAY_THB_CHECK_ORDER2")
     public void megaPayQuery(String value) {
@@ -206,10 +194,6 @@ public class MegaPayQueryMQReceiveSecond {
             }
         } else {
             log.info("==============【MegaPay-THB查询队列2】============== 【二次查询,订单为交易中】 rabbitMassage : {}", JSON.toJSONString(rabbitMassage));
-            //短信通知
-            messageFeign.sendSimple(mobile, "SAAS-MegaPay-THB查询队列查询预警 E_MQ_MEGAPAY_THB_CHECK_ORDER2: { " + orderId + " }");
-            //邮件通知
-            messageFeign.sendSimpleMail(email, "SAAS-MegaPay-THB查询队列查询预警 E_MQ_MEGAPAY_THB_CHECK_ORDER2", "E_MQ_MEGAPAY_THB_CHECK_ORDER2预警: { " + orderId + " }");
         }
     }
 }

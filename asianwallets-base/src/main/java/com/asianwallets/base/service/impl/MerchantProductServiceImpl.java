@@ -126,10 +126,12 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                             throw new BusinessException(EResultEnum.RATE_IS_ILLEGAL.getCode());
                         }
                     }
-                } else if (agentMerchantProduct != null && !agentMerchantProduct.getRateType().equals(agentMerchantProduct.getRateType())) {
-                    //商户的产品费率类型和代理商的产品费率类型不一致
-                    throw new BusinessException(EResultEnum.RATE_TYPE_IS_DIFFERENT.getCode());
                 }
+
+//                else if (agentMerchantProduct != null && !agentMerchantProduct.getRateType().equals(agentMerchantProduct.getRateType())) {
+//                    //商户的产品费率类型和代理商的产品费率类型不一致
+//                    throw new BusinessException(EResultEnum.RATE_TYPE_IS_DIFFERENT.getCode());
+//                }
             }
 
             String id = IDS.uuid2();
@@ -268,10 +270,11 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                         throw new BusinessException(EResultEnum.RATE_IS_ILLEGAL.getCode());
                     }
                 }
-            } else if (agentMerchantProduct != null && !agentMerchantProduct.getRateType().equals(agentMerchantProduct.getRateType())) {
-                //商户的产品费率类型和代理商的产品费率类型不一致
-                throw new BusinessException(EResultEnum.RATE_TYPE_IS_DIFFERENT.getCode());
             }
+//            else if (agentMerchantProduct != null && !agentMerchantProduct.getRateType().equals(agentMerchantProduct.getRateType())) {
+//                //商户的产品费率类型和代理商的产品费率类型不一致
+//                throw new BusinessException(EResultEnum.RATE_TYPE_IS_DIFFERENT.getCode());
+//            }
         }
 
         if (oldMerchantProductAudit == null) {
