@@ -206,15 +206,15 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         try {
             ExchangeRate localToForeignRate = commonRedisDataService.getExchangeRateByCurrency(localCurrency, foreignCurrency);
             if (localToForeignRate == null || localToForeignRate.getBuyRate() == null) {
-                messageFeign.sendSimple(warningMobile, "换汇计算:查询汇率异常!本位币种:" + localCurrency + " 目标币种:" + foreignCurrency);
-                messageFeign.sendSimpleMail(warningEmail, "换汇计算:查询汇率异常!", "换汇计算:查询汇率异常!本位币种:" + localCurrency + " 目标币种:" + foreignCurrency);
+                messageFeign.sendSimple(warningMobile, "SAAS-换汇计算:查询汇率异常!本位币种:" + localCurrency + " 目标币种:" + foreignCurrency);
+                messageFeign.sendSimpleMail(warningEmail, "SAAS-换汇计算:查询汇率异常!", "换汇计算:查询汇率异常!本位币种:" + localCurrency + " 目标币种:" + foreignCurrency);
                 calcExchangeRateVO.setExchangeStatus(TradeConstant.SWAP_FALID);
                 return calcExchangeRateVO;
             }
             ExchangeRate foreignToLocalRate = commonRedisDataService.getExchangeRateByCurrency(foreignCurrency, localCurrency);
             if (foreignToLocalRate == null || foreignToLocalRate.getBuyRate() == null) {
-                messageFeign.sendSimple(warningMobile, "换汇计算:查询汇率异常!本位币种:" + foreignCurrency + " 目标币种:" + localCurrency);
-                messageFeign.sendSimpleMail(warningEmail, "换汇计算:查询汇率异常!", "换汇计算:查询汇率异常!本位币种:" + foreignCurrency + " 目标币种:" + localCurrency);
+                messageFeign.sendSimple(warningMobile, "SAAS-换汇计算:查询汇率异常!本位币种:" + foreignCurrency + " 目标币种:" + localCurrency);
+                messageFeign.sendSimpleMail(warningEmail, "SAAS-换汇计算:查询汇率异常!", "换汇计算:查询汇率异常!本位币种:" + foreignCurrency + " 目标币种:" + localCurrency);
                 calcExchangeRateVO.setExchangeStatus(TradeConstant.SWAP_FALID);
                 return calcExchangeRateVO;
             }
