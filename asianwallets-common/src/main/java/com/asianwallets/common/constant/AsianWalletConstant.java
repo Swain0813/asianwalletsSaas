@@ -9,6 +9,8 @@ package com.asianwallets.common.constant;
 public class AsianWalletConstant {
     //http 200 状态码
     public static final int HTTP_SUCCESS_STATUS = 200;
+    //http 302 状态码
+    public static final int HTTP_LOCATION_STATUS = 302;
 
     // 商户返回的回调状态
     public static final String CALLBACK_SUCCESS = "success";
