@@ -101,19 +101,19 @@
 
     <sql id="Base_Column_List">
         id, institution_id, institution_name, merchant_id, merchant_name, second_merchant_name,
-    second_merchant_code, agent_code, agent_name, group_merchant_code, group_merchant_name, 
-    trade_type, trade_direction, merchant_order_time, merchant_order_id, order_amount, 
-    order_currency, imei, operator_id, order_for_trade_rate, trade_for_order_rate, exchange_rate, 
+    second_merchant_code, agent_code, agent_name, group_merchant_code, group_merchant_name,
+    trade_type, trade_direction, merchant_order_time, merchant_order_id, order_amount,
+    order_currency, imei, operator_id, order_for_trade_rate, trade_for_order_rate, exchange_rate,
     exchange_time, exchange_status, product_code, product_name, channel_code, channel_name, merchant_type,
-    trade_currency, trade_amount, trade_status, cancel_status, refund_status, connect_method, 
-    settle_status, channel_number, charge_status, charge_time, pay_method, req_ip, channel_amount, 
-    report_number, report_channel_time, channel_callback_time, up_channel_fee, float_rate, 
-    add_value, payer_name, payer_account, payer_bank, payer_email, payer_phone, payer_address, 
+    trade_currency, trade_amount, trade_status, cancel_status, refund_status, connect_method,
+    settle_status, channel_number, charge_status, charge_time, pay_method, req_ip, channel_amount,
+    report_number, report_channel_time, channel_callback_time, up_channel_fee, float_rate,
+    add_value, payer_name, payer_account, payer_bank, payer_email, payer_phone, payer_address,
     invoice_no, provider_name, product_description,courier_code, delivery_time, delivery_status, received_status,
     sign, received_time, product_settle_cycle, issuer_id, bank_name, browser_url, server_url, fee_trade,
-    fee_payer, rate_type, rate, fee, channel_fee_type, channel_rate, channel_fee, channel_gateway_charge, 
-    channel_gateway_status, channel_gateway_fee_type, channel_gateway_rate, channel_gateway_fee, 
-    language, create_time, update_time, creator, modifier, remark, remark1, remark2, 
+    fee_payer, rate_type, rate, fee, channel_fee_type, channel_rate, channel_fee, channel_gateway_charge,
+    channel_gateway_status, channel_gateway_fee_type, channel_gateway_rate, channel_gateway_fee,
+    language, create_time, update_time, creator, modifier, remark, remark1, remark2,
     remark3, remark4, remark5, remark6, remark7, remark8
     </sql>
 
@@ -177,6 +177,7 @@
         <result column="remark6" property="logisticsRemark"/>
 
         <result column="merchantId" property="merchantId"/>
+        <result column="merchantName" property="merchantName"/>
         <result column="tradeDirection" property="tradeDirection"/>
         <result column="rateType" property="rateType"/>
         <result column="feePayer" property="feePayer"/>
@@ -465,6 +466,7 @@
                o.remark6                             as logisticsRemark,
 
                o.merchant_id                         as merchantId,
+               o.merchant_name                       as merchantName,
                o.trade_direction                     as tradeDirection,
                o.rate_type                           as rateType,
                o.fee_payer                           as feePayer,
