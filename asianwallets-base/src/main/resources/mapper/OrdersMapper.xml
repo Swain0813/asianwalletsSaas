@@ -176,6 +176,13 @@
         <result column="deliveryStatus" property="deliveryStatus"/>
         <result column="remark6" property="logisticsRemark"/>
 
+        <result column="merchantId" property="merchantId"/>
+        <result column="tradeDirection" property="tradeDirection"/>
+        <result column="rateType" property="rateType"/>
+        <result column="feePayer" property="feePayer"/>
+        <result column="remark7" property="remark7"/>
+        <result column="receivedStatus" property="receivedStatus"/>
+
         <collection javaType="list" property="ordersDetailRefundVOS" resultMap="RefundDetailVO"/>
     </resultMap>
     <resultMap id="RefundDetailVO" type="com.asianwallets.common.vo.OrdersDetailRefundVO">
@@ -189,6 +196,12 @@
         <result column="refundFinishTime" property="refundFinishTime"/>
         <result column="refundFee" property="refundFee"/>
         <result column="refundRemark" property="refundRemark"/>
+        <result column="refundChannel" property="refundChannel"/>
+        <result column="refundOrderFee" property="refundOrderFee"/>
+        <result column="payerAccount" property="payerAccount"/>
+        <result column="swiftCode" property="swiftCode"/>
+        <result column="payerBank" property="payerBank"/>
+        <result column="refundType" property="refundType"/>
     </resultMap>
 
     <select id="selectByImei" resultMap="BaseResultMap">
@@ -432,13 +445,28 @@
                ore.update_time                       as refundFinishTime,
                ore.refund_fee                        as refundFee,
                ore.remark                            as refundRemark,
+               ore.channel_name                      as refundChannel,
+               ore.refund_order_fee                  as refundOrderFee,
+               ore.payer_account                     as payerAccount,
+               ore.swift_code                        as swiftCode,
+               ore.payer_bank                        as payerBank,
+               ore.refund_type                       as refundType,
 
                o.delivery_time                       as deliveryTime,
                o.product_name                        as productName,
                o.invoice_no                          as invoiceNo,
                o.provider_name                       as providerName,
                o.delivery_status                     as deliveryStatus,
-               o.remark6                             as logisticsRemark
+               o.remark6                             as logisticsRemark,
+
+               o.merchant_id                         as merchantId,
+               o.trade_direction                     as tradeDirection,
+               o.rate_type                           as rateType,
+               o.fee_payer                           as feePayer,
+               o.remark7                             as remark7,
+               o.received_status                     as receivedStatus
+
+
         FROM orders o
                  left join order_refund ore on o.id = ore.order_id
                  left join pay_type p on p.extend1 = o.pay_method and p.language = #{language}

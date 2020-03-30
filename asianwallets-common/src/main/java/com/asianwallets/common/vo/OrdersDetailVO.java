@@ -171,4 +171,24 @@ public class OrdersDetailVO {
 
     //----------------------【退款信息】----------------------------
     public List<OrdersDetailRefundVO> ordersDetailRefundVOS;
+
+    //----------------------【商户后台新增字段】----------------------------
+    @ApiModelProperty(value = "商户编号")
+    private String merchantId;
+
+    @ApiModelProperty(value = "交易类型")//1-线上 2-线下
+    private Byte tradeDirection;
+
+    @ApiModelProperty(value = "手续费类型")
+    private String rateType;
+
+    @ApiModelProperty(value = "手续费承担方")//1:商家 2:用户
+    private Byte feePayer;
+
+    @ApiModelProperty(value = "商户返回信息(remark7)")
+    private String remark7;
+
+    @ApiModelProperty(value = "签收状态")//1-未签收 2-已签收 默认是未签收
+    private Byte receivedStatus;
+
 }
