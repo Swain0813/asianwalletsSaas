@@ -246,6 +246,11 @@
                ore.refund_fee                        as refundFee,
                ore.refund_fee_trade                  as refundFeeTrade,
                ore.remark                            as refundRemark,
+               ore.refund_type                       as refundType,
+               ore.merchant_name                     as merchantName,
+               ore.refund_order_fee                  as refundOrderFee,
+               ore.refund_rate_type                  as refundRateType,
+               ore.refund_rate                       as refundRate,
 
                o.delivery_time                       as deliveryTime,
                o.product_name                        as productName,
@@ -253,6 +258,8 @@
                o.provider_name                       as providerName,
                o.delivery_status                     as deliveryStatus,
                o.remark6                             as logisticsRemark
+
+
         FROM order_refund ore
                  left join orders o on ore.order_id = o.id
                  left join pay_type p on p.extend1 = o.pay_method and p.language = #{language}

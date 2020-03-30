@@ -172,4 +172,20 @@ public class OrdersRefundDetailVO {
     @ApiModelProperty(value = "物流备注(remark6)")
     private String logisticsRemark;
 
+
+    //商户后台新增字段
+    @ApiModelProperty(value = "退款类型")// 1：全额退款 2：部分退款
+    private Byte refundType;
+
+    @ApiModelProperty(value = "商户名称")
+    private String merchantName;
+
+    @ApiModelProperty(value = "退还收单手续费金额（订单币种）")
+    private BigDecimal refundOrderFee;
+
+    @ApiModelProperty(value = "手续费类型")
+    private Byte refundRateType;
+
+    @ApiModelProperty(value = "退款费率")
+    private BigDecimal refundRate;
 }
