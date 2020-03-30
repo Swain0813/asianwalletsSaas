@@ -147,7 +147,7 @@ public class SysRoleServiceImpl implements SysRoleService {
                 }
             }
         }
-        return new PageInfo<>(sysRoleMapper.pageGetSysRole(sysRoleDto));
+        return new PageInfo<>(sysRoles);
     }
 
 }
