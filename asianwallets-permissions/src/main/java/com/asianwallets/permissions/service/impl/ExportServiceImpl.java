@@ -274,6 +274,14 @@ public class ExportServiceImpl implements ExportService {
                             } else {
                                 oList2.add("");
                             }
+                        } else if (s.equals("deliveryStatus")) {
+                            if (String.valueOf(oMap.get(s)).equals("1")) {
+                                oList2.add("未发货");
+                            } else if (String.valueOf(oMap.get(s)).equals("2")) {
+                                oList2.add("已发货");
+                            } else {
+                                oList2.add("");
+                            }
                         } else {
                             oList2.add(oMap.get(s));
                         }
