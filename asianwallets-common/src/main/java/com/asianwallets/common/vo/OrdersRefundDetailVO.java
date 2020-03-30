@@ -180,6 +180,9 @@ public class OrdersRefundDetailVO {
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 
+    @ApiModelProperty(value = "交易类型")//1-线上 2-线下
+    private Byte tradeDirection;
+
     @ApiModelProperty(value = "退还收单手续费金额（订单币种）")
     private BigDecimal refundOrderFee;
 
