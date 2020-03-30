@@ -200,7 +200,7 @@
         <result column="refundOrderFee" property="refundOrderFee"/>
         <result column="payerAccount" property="payerAccount"/>
         <result column="swiftCode" property="swiftCode"/>
-        <result column="payerBank" property="payerBank"/>
+        <result column="refundPayBank" property="refundPayBank"/>
         <result column="refundType" property="refundType"/>
     </resultMap>
 
@@ -449,7 +449,7 @@
                ore.refund_order_fee                  as refundOrderFee,
                ore.payer_account                     as payerAccount,
                ore.swift_code                        as swiftCode,
-               ore.payer_bank                        as payerBank,
+               ore.payer_bank                        as refundPayBank,
                ore.refund_type                       as refundType,
 
                o.delivery_time                       as deliveryTime,

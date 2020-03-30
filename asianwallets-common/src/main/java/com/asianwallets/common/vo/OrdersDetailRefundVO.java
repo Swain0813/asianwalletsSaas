@@ -58,7 +58,7 @@ public class OrdersDetailRefundVO {
     private String swiftCode;
 
     @ApiModelProperty(value = "付款人银行")
-    private String payerBank;
+    private String refundPayBank;
 
     @ApiModelProperty(value = "退款类型")// 1：全额退款 2：部分退款
     private Byte refundType;
