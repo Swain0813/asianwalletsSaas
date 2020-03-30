@@ -176,6 +176,9 @@ public class OrdersDetailVO {
     @ApiModelProperty(value = "商户编号")
     private String merchantId;
 
+    @ApiModelProperty(value = "商户名称")
+    private String merchantName;
+
     @ApiModelProperty(value = "交易类型")//1-线上 2-线下
     private Byte tradeDirection;
 
