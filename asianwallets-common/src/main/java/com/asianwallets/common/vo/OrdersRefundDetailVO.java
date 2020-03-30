@@ -184,7 +184,7 @@ public class OrdersRefundDetailVO {
     private BigDecimal refundOrderFee;
 
     @ApiModelProperty(value = "手续费类型")
-    private Byte refundRateType;
+    private String refundRateType;
 
     @ApiModelProperty(value = "退款费率")
     private BigDecimal refundRate;
