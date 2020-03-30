@@ -122,7 +122,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
      */
     public BaseResponse onlinePay(Orders orders, Channel channel) {
         //封装参数
-        AD3OnlineAcquireDTO ad3OnlineAcquireDTO = new AD3OnlineAcquireDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl() + "/onlinecallback/callback", ad3ParamsConfig.getChannelCallbackUrl() + "/onlinecallback/paysuccess");
+        AD3OnlineAcquireDTO ad3OnlineAcquireDTO = new AD3OnlineAcquireDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl() + "/onlineCallback/ad3OnlineServerCallback", ad3ParamsConfig.getChannelCallbackUrl() + "/onlineCallback/ad3OnlineBrowserCallback");
         String url = ad3OnlineAcquireDTO.getUrl();
         ad3OnlineAcquireDTO.setUrl(null);
         //channel.getExtend2() ad3私钥
@@ -556,7 +556,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         //CSB请求二维码接口公共参数实体
         AD3CSBScanPayDTO ad3CSBScanPayDTO = new AD3CSBScanPayDTO(channel.getChannelMerchantId());
         //CSB请求二维码接口业务参数实体
-        CSBScanBizContentDTO csbScanBizContent = new CSBScanBizContentDTO(orders, ad3LoginVO.getTerminalId(), channel.getExtend2(), ad3ParamsConfig.getChannelCallbackUrl() + "/offlineCallback/ad3Callback", channel);
+        CSBScanBizContentDTO csbScanBizContent = new CSBScanBizContentDTO(orders, ad3LoginVO.getTerminalId(), channel.getExtend2(), ad3ParamsConfig.getChannelCallbackUrl() + "/offlineCallback/ad3CsbServerCallback", channel);
         //生成ad3签名
         ad3CSBScanPayDTO.setSignMsg(createAD3Signature(ad3CSBScanPayDTO, csbScanBizContent, ad3LoginVO.getToken()));
         ad3CSBScanPayDTO.setBizContent(csbScanBizContent);

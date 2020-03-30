@@ -76,10 +76,10 @@ custom:
     token_expire_hour: 24
 
   #nextPos分发AD3地址
-  nextPosUrl: http://119.23.136.80/ITSBoss/nextPosNotifyAction/nextPosqrbackNotify.do
+  nextPosUrl: http://its.54javacoder.top/nextPosNotifyAction/nextPosqrbackNotify.do
 
   #megaPayAD3分发地址
-  ad3ItsUrl: http://119.23.136.80/ITSBoss/v1/
+  ad3ItsUrl: https://its.alldebitpay.com/v1/
 
   #收银台url
   cashierDeskUrl: http://testsaas.asianwallets.com/saascheckstandweb/#/main
@@ -90,55 +90,11 @@ custom:
   #AD3提供的生产环境地址
   #url
   ad3Url: https://pgw.alldebitpay.com
-  #AD3给亚洲钱包提供的商户号---线上商户号
-  merchantCode: 20190524500137
-  imei: 2222222
-  operatorId: '00'  #操作员ID，字符串
-  password: a123456
-  tradePwd: a123456
-  #AD3给亚洲钱包提供的商户号---线下商户号
-  merchantCodeOffline: 20200115500444
-  imeiOffline: 3333333
-  operatorIdOffline: '00'  #操作员ID，字符串
-  passwordOffline: a123456
-  tradePwdOffline: a123456
 
   #线上 指定密钥的提供方 1为使用平台提供的密钥 2为使用自己生成的密钥
   merchantSignType: 2
-  #线上 私钥 与提供方有关
-  platformProvidesPrivateKey: >
-    MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCEH2/
-    vtqHVHnzegqPxzWXevPJE7UZ16tACF8v11ovsZEzBepMCZyoWACNGIy
-    b2DbuIFtK9yZxkMLsTuWqYiHkCLgjXK99Z/Hp/nen6er3BomeEnNW5F
-    rdOyQ4/FWjNYPTPp8VbhEJJhMyEbrdMuckZRbpYkdkUTLhnc5Axbttx
-    45AkLoJy/XBppzcPMX5uLM7z8KMZDwO/YvKvpZ/mNYqLOpWQBvxsuTx
-    0ZCRyqPZHVHB5qSdtYtAcL6NYIZuwXPtH0jJWK7X/7OUQMGW7uGogtA
-    jOq9vAt16lnPiK1lzfvmliIQeFdWHtxKRdeWpEGKeHZ/VYoTQaoOe+5
-    M/+G2kRAgMBAAECggEAVGXgkzgO2JzJFzpMj8GtOUNpXy5SvDBq/2tE
-    Fp4ec7r+bPlnvzk3YSZlYgBCexr6mEw8ApAvHrEiT885kIZdBk9xxkF
-    4Q3tMpQiy1hZh8LdVeRjWTY19Ow6j0xhSAh/VQnDhWTx7O4thOZef75
-    seIs6v4rQH/zei9DKWAX3XIEBaanOVr5o/SKYlpsmHXoQXXzxYbi02W
-    4USMvgNuvDpbrejMINxffB+otQcnMLhR4B/s50CGm+AUzH6lgfkR/BI
-    l/A1Wt3qSFqOldTqwFp+laQY8WqFpd7yFWgLU6rspHVZo5ZiguC2zBf
-    ebLvDiGk4zlL1NsJCaYnKSTZj74TjgQKBgQC7Vs1lIbtlcf7PkxBeiu
-    KFO6EOsC2DOtX1TxjCyk+MAbyfRdHMUTikHNRn1EZgBKOtcWGr75z+/
-    0oDRdlYsYmfQTOwaOkat1QrFkM4moAQC7pekvlA3vz9nzr0Pn4tHu+x
-    XqzY76LXEHiVOrAzVJkrj0OqsGy7XJX/h3dOgsjeZQKBgQC0i++q35F
-    M8XXtyjYS3/FEEuN3xqBpCBOVX1A/RhN2o4LXqjKhvak4SogoVfx0DP
-    cQsVGr+YgDe/vlyGW/G3cLKMK5oNOfsm44oOtDy+uBKx6oSqVm+ZK0d
-    NT5nGOIvjPZRgjDvE2RGMrYXaw0BhHxuSiGq/mdBJviLlMOrbSPPQKB
-    gFSxPVIHGe0WyBeXaMMVDqsk9f7p7ulw4+FuzMbjJ2soLdnjeqFf5rd
-    qwSvfb6Fg944lv/426Ubuqssn/MZ4HLt+gpuyEhAd6VNBUUp5roOSic
-    LPtxd4t+8A2WoqBmjnn30UTBgW3gtUSu9MBPRvvn9O2UyFTeK2TKmk2
-    G8J+T1xAoGATlZ5g1bGIPCUDr0ygTYR5Uuczxer+ma6uJFGrG2nfE6u
-    Mw1yMqOsjPQp5/aHN4N4oBGQMmJvFbPyNF2jaCxulrT06L5TlHNDR+b
-    qrdwJL16aSsM4yVl4wjv/PN8SgP6mWJv+qY9GyLJNMVxTn68SkiOY5f
-    YwtGSPjrAy8aeFNLECgYAEKXlGxmAitHW8lNMAzLgbtw7ETrYINuKB7
-    FmLnDDR2bFzDsh7ZWonxId/8xxNdIJOg2lZhDg0UhHiDw7mmrpvUZ+I
-    Ln07rKL4UalElso2p/ZGReHY1jV8mtLzt+d0n9FexlUHxVMIZ+cJmVn
-    t5NkYPRmf9YLusOcOujIWHaULJg==
   #NL查询URL
   nganLuong:
     check_url: https://www.nganluong.vn/checkout.api.nganluong.post.php
   #给AD3的回调URL
-  channelCallbackUrl: https://test.asianwallets.com/tra
+  channelCallbackUrl: https://testsaas.asianwallets.com/tra

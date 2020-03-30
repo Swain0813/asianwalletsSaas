@@ -101,7 +101,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
         //NextPos-CSB接口请求实体
-        NextPosRequestDTO nextPosRequestDTO = new NextPosRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/nextPosCallback"));
+        NextPosRequestDTO nextPosRequestDTO = new NextPosRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/nextPosCallback"));
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【NextPos-CSB接口请求参数】 nextPosRequestDTO: {}", JSON.toJSONString(nextPosRequestDTO));
         BaseResponse channelResponse = channelsFeign.nextPosCsb(nextPosRequestDTO);
         log.info("==================【线下CSB动态扫码】==================【调用Channels服务】【NextPos-CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -117,7 +117,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
     @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
         //NextPos-CSB接口请求实体
-        NextPosRequestDTO nextPosRequestDTO = new NextPosRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/nextPosCallback"));
+        NextPosRequestDTO nextPosRequestDTO = new NextPosRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/nextPosCallback"));
         log.info("==================【线上动态扫码】==================【调用Channels服务】【NextPos-CSB接口请求参数】 nextPosRequestDTO: {}", JSON.toJSONString(nextPosRequestDTO));
         BaseResponse channelResponse = channelsFeign.nextPosCsb(nextPosRequestDTO);
         log.info("==================【线上动态扫码】==================【调用Channels服务】【NextPos-CSB接口响应参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
