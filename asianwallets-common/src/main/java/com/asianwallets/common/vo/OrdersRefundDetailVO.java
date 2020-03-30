@@ -177,6 +177,9 @@ public class OrdersRefundDetailVO {
     @ApiModelProperty(value = "退款类型")// 1：全额退款 2：部分退款
     private Byte refundType;
 
+    @ApiModelProperty(value = "商户编号")
+    private String merchantId;
+
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 

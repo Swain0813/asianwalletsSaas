@@ -252,6 +252,7 @@
                ore.refund_rate_type                  as refundRateType,
                ore.refund_rate                       as refundRate,
                ore.trade_direction                   as tradeDirection,
+               ore.merchant_id                       as merchantId,
 
                o.delivery_time                       as deliveryTime,
                o.product_name                        as productName,
