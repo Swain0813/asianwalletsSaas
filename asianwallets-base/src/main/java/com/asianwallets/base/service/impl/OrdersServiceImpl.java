@@ -4,6 +4,7 @@ import com.asianwallets.base.dao.InsDailyTradeMapper;
 import com.asianwallets.base.dao.OrdersMapper;
 import com.asianwallets.base.service.OrdersService;
 import com.asianwallets.common.config.AuditorProvider;
+import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.DccReportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.InsDailyTrade;
@@ -54,6 +55,19 @@ public class OrdersServiceImpl implements OrdersService {
     @Override
     public OrdersDetailVO getOrdersDetail(String id) {
         OrdersDetailVO ordersDetailVO = ordersMapper.selectOrdersDetailById(id, auditorProvider.getLanguage());
+        if (TradeConstant.EN_US.equals(auditorProvider.getLanguage())) {
+            if (TradeConstant.FEE_TYPE_RATE.equals(ordersDetailVO.getRateType())) {
+                ordersDetailVO.setRateType("Single Rate");
+            } else {
+                ordersDetailVO.setRateType("Single Quota");
+            }
+        } else {
+            if (TradeConstant.FEE_TYPE_RATE.equals(ordersDetailVO.getRateType())) {
+                ordersDetailVO.setRateType("单笔费率");
+            } else {
+                ordersDetailVO.setRateType("单笔定额");
+            }
+        }
         List<OrdersDetailRefundVO> ordersDetailRefundVOS = ordersDetailVO.getOrdersDetailRefundVOS();
         List<OrdersDetailRefundVO> collect = ordersDetailRefundVOS.stream().sorted(Comparator.comparing(OrdersDetailRefundVO::getOrderRefundCreateTime).reversed()).collect(Collectors.toList());
         ordersDetailVO.setOrdersDetailRefundVOS(collect);

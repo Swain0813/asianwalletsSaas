@@ -236,11 +236,16 @@
         o.trade_direction as tradeDirection,
         o.trade_type as tradeType,
         o.req_ip as reqIp,
-        o.imei ,
+        o.imei,
         p.name as payMethod,
         o.product_name as goodsName,
         o.payer_name as payerName,
         o.payer_email as payerEmail,
+        o.institution_id as institutionId,
+        o.institution_name as institutionName,
+        o.invoice_no as invoiceNo,
+        o.delivery_status as deliveryStatus,
+        o.delivery_time as deliveryTime,
         o.remark
         FROM orders o LEFT JOIN pay_type p on o.pay_method = p.extend1 AND p.`language`= #{language}
         <where>
