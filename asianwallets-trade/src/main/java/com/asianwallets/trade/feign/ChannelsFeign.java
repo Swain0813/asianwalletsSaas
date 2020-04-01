@@ -13,6 +13,7 @@ import com.asianwallets.common.dto.help2pay.Help2PayOutDTO;
 import com.asianwallets.common.dto.help2pay.Help2PayRequestDTO;
 import com.asianwallets.common.dto.megapay.*;
 import com.asianwallets.common.dto.nganluong.NganLuongDTO;
+import com.asianwallets.common.dto.qfpay.QfPayDTO;
 import com.asianwallets.common.dto.vtc.VTCRequestDTO;
 import com.asianwallets.common.dto.wechat.*;
 import com.asianwallets.common.dto.xendit.XenditDTO;
@@ -161,6 +162,24 @@ public interface ChannelsFeign {
     @PostMapping("/ad3/query")
     BaseResponse query(@RequestBody @ApiParam AD3ONOFFRefundDTO ad3ONOFFRefundDTO);
 
+    @ApiOperation(value = "QfPayCSB收单接口")
+    @PostMapping("qfPay/qfPayCSB")
+    BaseResponse qfPayCSB(QfPayDTO qfPayDTO);
 
+    @ApiOperation(value = "QfPayBSC收单接口")
+    @PostMapping("qfPay/qfPayBSC")
+    BaseResponse qfPayBSC(QfPayDTO qfPayDTO);
+
+    @ApiOperation(value = "QfPay查询接口")
+    @PostMapping("qfPay/qfPayQuery")
+    BaseResponse qfPayQuery(QfPayDTO qfPayDTO);
+
+    @ApiOperation(value = "QfPay退款接口")
+    @PostMapping("qfPay/qfPayRefund")
+    BaseResponse qfPayRefund(QfPayDTO qfPayDTO);
+
+    @ApiOperation(value = "QfPay退款查询接口")
+    @PostMapping("qfPay/qfPayRefundSearch")
+    BaseResponse qfPayRefundSearch(QfPayDTO qfPayDTO);
 
 }
