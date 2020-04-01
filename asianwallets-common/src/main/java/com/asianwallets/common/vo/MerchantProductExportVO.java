@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 @Data
 public class MerchantProductExportVO {
 
-
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date createTime;
@@ -45,6 +44,33 @@ public class MerchantProductExportVO {
 
     @ApiModelProperty(value = "附加值")
     private BigDecimal addValue;
+
+    @ApiModelProperty(value = "浮动率")
+    private BigDecimal floatRate;
+
+    @ApiModelProperty(value = "分润比例")
+    private BigDecimal dividedRatio;
+
+    @ApiModelProperty(value = "手续费承担方")//1-商家 2-用户
+    private Byte feePayer;
+
+    @ApiModelProperty(value = "退款是否收费")//1-是 0-否
+    private Boolean refundDefault;
+
+    @ApiModelProperty(value = "退款费率类型")
+    private String refundRateType;
+
+    @ApiModelProperty(value = "退款手续费最小值")
+    private BigDecimal refundMinTate;
+
+    @ApiModelProperty(value = "退款手续费最大值")
+    private BigDecimal refundMaxTate;
+
+    @ApiModelProperty(value = "退款费率")//dic_7_1-单笔费率,dic_7_2-单笔定额
+    private BigDecimal refundRate;
+
+    @ApiModelProperty(value = "退款附加值")
+    private BigDecimal refundAddValue;
 
     @ApiModelProperty(value = "状态")
     private Boolean enabled;
