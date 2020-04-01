@@ -58,6 +58,9 @@ public class ExportOrdersVO {
     @ApiModelProperty(value = "通道名称")
     private String channelName;
 
+    @ApiModelProperty(value = "银行名称")
+    private String bankName;
+
     @ApiModelProperty(value = "通道流水号")
     private String channelNumber;
 

@@ -221,6 +221,7 @@
         o.merchant_id as merchantId,
         o.merchant_name as merchantName,
         o.channel_name as channelName,
+        o.bank_name as bankName,
         concat(p.name,'-',o.trade_currency) as productName,
         o.order_currency as orderCurrency,
         o.order_amount as orderAmount,
