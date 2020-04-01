@@ -307,7 +307,6 @@ public class RabbitMQConfig {
         args.put("x-dead-letter-routing-key", MQ_QFPAY_REFUND_SEARCH_KEY);
         return new Queue(E_MQ_QFPAY_REFUND_SEARCH, true, false, false, args);
     }
-
     /* ===========================================     Qfpay Canneling 查询队列      =============================================== */
     public static final String MQ_QFPAY_CANNEL_SEARCH = AD3MQConstant.MQ_QFPAY_CANNEL_SEARCH;//MegaPay-THB查询队列2
     public static final String E_MQ_QFPAY_CANNEL_SEARCH = AD3MQConstant.E_MQ_QFPAY_CANNEL_SEARCH;//MegaPay-THB查询死信队列2
@@ -338,35 +337,8 @@ public class RabbitMQConfig {
         return new Queue(E_MQ_QFPAY_CANNEL_SEARCH, true, false, false, args);
     }
 
-    /* ===========================================     Qfpay Canneling2 查询队列      =============================================== */
-    public static final String MQ_QFPAY_CANNEL_SEARCH2 = AD3MQConstant.MQ_QFPAY_CANNEL_SEARCH2;//MegaPay-THB查询队列2
-    public static final String E_MQ_QFPAY_CANNEL_SEARCH2 = AD3MQConstant.E_MQ_QFPAY_CANNEL_SEARCH2;//MegaPay-THB查询死信队列2
-    public static final String MQ_QFPAY_CANNEL_SEARCH_KEY2 = AD3MQConstant.MQ_QFPAY_CANNEL_SEARCH_KEY2;//MegaPay-THB查询死信队列2路由
-    public static final String MQ_QFPAY_CANNEL_SEARCH_EXCHANGE2 = AD3MQConstant.MQ_QFPAY_CANNEL_SEARCH_EXCHANGE2;//MegaPay-THB查询死信队列2交换机
 
-    @Bean
-    public Queue operateMQ_QFPAY_CANNEL_SEARCH2() {
-        return new Queue(RabbitMQConfig.MQ_QFPAY_CANNEL_SEARCH2, true, false, false);
-    }
 
-    @Bean
-    public DirectExchange exchangeMQ_QFPAY_CANNEL_SEARCH2() {
-        return new DirectExchange(MQ_QFPAY_CANNEL_SEARCH_EXCHANGE2);
-    }
-
-    @Bean
-    public Binding deadLetterBindingMQ_QFPAY_CANNEL_SEARCH2() {
-        return BindingBuilder.bind(operateMQ_QFPAY_CANNEL_SEARCH2()).to(exchangeMQ_QFPAY_CANNEL_SEARCH2()).with(MQ_QFPAY_CANNEL_SEARCH_KEY2);
-    }
-
-    @Bean
-    public Queue deadLetterQueueMQ_QFPAY_CANNEL_SEARCH2() {
-        Map<String, Object> args = new HashMap<>();
-        args.put("x-message-ttl", 1000 * 60 * 30);//延迟队列5分钟
-        args.put("x-dead-letter-exchange", MQ_QFPAY_CANNEL_SEARCH_EXCHANGE2);
-        args.put("x-dead-letter-routing-key", MQ_QFPAY_CANNEL_SEARCH_KEY2);
-        return new Queue(E_MQ_QFPAY_CANNEL_SEARCH2, true, false, false, args);
-    }
 
     /* ===========================================     QfPay-CSB查询队列      =============================================== */
     public static final String MQ_QFPAY_CSB_CHECK_ORDER = AD3MQConstant.MQ_QFPAY_CSB_CHECK_ORDER;//QFPAY-CSB查询队列

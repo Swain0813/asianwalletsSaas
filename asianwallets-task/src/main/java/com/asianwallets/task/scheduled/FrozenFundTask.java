@@ -1,4 +1,5 @@
 package com.asianwallets.task.scheduled;
+
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.Account;
 import com.asianwallets.common.entity.TcsFrozenFundsLogs;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Component
@@ -30,10 +32,10 @@ public class FrozenFundTask {
     @Autowired
     private MessageFeign messageFeign;
 
-    @Value("${custom.developer.mobile}")
+    @Value("${custom.warning.mobile}")
     private String developerMobile;
 
-    @Value("${custom.developer.email}")
+    @Value("${custom.warning.email}")
     private String developerEmail;
 
     @Autowired
@@ -53,7 +55,7 @@ public class FrozenFundTask {
     @Scheduled(cron = "0 0/15 * * * ?")
 //    @Scheduled(cron = "0/10 * * * * ? ")//每10秒执行一次 测试用
     @Transactional
-    public void clearOperLog(){
+    public void clearOperLog() {
         log.info("*********saas开始预约资金冻结定时任务********************");
         try {
             List<TcsFrozenFundsLogs> tcsFrozenFundsLogsLists = tcsFrozenFundsLogsMapper.getTcsFrozenFundsLogs();
@@ -61,18 +63,18 @@ public class FrozenFundTask {
                 log.info("=============【预约资金冻结定时任务】=============【预约冻结记录为空】");
                 return;
             }
-            for(TcsFrozenFundsLogs tcsFrozenFundsLogsList:tcsFrozenFundsLogsLists){
+            for (TcsFrozenFundsLogs tcsFrozenFundsLogsList : tcsFrozenFundsLogsLists) {
                 //获取账户信息
                 Account account = accountMapper.getAccount(tcsFrozenFundsLogsList.getMvaccountId());
                 if (account == null) {
                     //当前商户不存在该币种的账户
-                    log.info("*******************预约资金冻结定时任务***************************【当前商户不存在该币种的账户】,账户id:{}",tcsFrozenFundsLogsList.getMvaccountId());
+                    log.info("*******************预约资金冻结定时任务***************************【当前商户不存在该币种的账户】,账户id:{}", tcsFrozenFundsLogsList.getMvaccountId());
                     continue;
                 }
                 //预约冻结金额>结算户金额-冻结金额则不下次预约冻结
-                if (tcsFrozenFundsLogsList.getTxnamount()>account.getSettleBalance().subtract(account.getFreezeBalance()).doubleValue()) {
+                if (tcsFrozenFundsLogsList.getTxnamount() > account.getSettleBalance().subtract(account.getFreezeBalance()).doubleValue()) {
                     log.info("*******************预约资金冻结定时任务***************************【预约冻结金额大于结算户金额-冻结金额】,商户号:{},预约冻结资金:{},结算金额:{}",
-                            tcsFrozenFundsLogsList.getMerchantId(),tcsFrozenFundsLogsList.getTxnamount(),account.getSettleBalance().subtract(account.getFreezeBalance()).doubleValue());
+                            tcsFrozenFundsLogsList.getMerchantId(), tcsFrozenFundsLogsList.getTxnamount(), account.getSettleBalance().subtract(account.getFreezeBalance()).doubleValue());
                     continue;
                 }
                 //调用清结算的资金冻结和解冻接口
@@ -80,13 +82,13 @@ public class FrozenFundTask {
                 BaseResponse response = clearingService.freezingFunds(ffd);
                 if (response.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                     //更新系统冻结资金记录---已冻结
-                    tcsFrozenFundsLogsMapper.updateTcsFrozenFundsLogsById(tcsFrozenFundsLogsList.getId(),TradeConstant.HAVE_FROZEN);
+                    tcsFrozenFundsLogsMapper.updateTcsFrozenFundsLogsById(tcsFrozenFundsLogsList.getId(), TradeConstant.HAVE_FROZEN);
                 } else {
                     //更新调账记录表--冻结失败
                     int result = reconciliationMapper.updateStatusById(tcsFrozenFundsLogsList.getMerOrderNo(), TradeConstant.FREEZE_FALID, "预约资金冻结定时任务", "预约冻结失败");
-                    if(result>0){
+                    if (result > 0) {
                         //调账记录表更新成功的场合，更新冻结资金记录表----冻结失败
-                        tcsFrozenFundsLogsMapper.updateTcsFrozenFundsLogsById(tcsFrozenFundsLogsList.getId(),TradeConstant.FROZEN_FALID);
+                        tcsFrozenFundsLogsMapper.updateTcsFrozenFundsLogsById(tcsFrozenFundsLogsList.getId(), TradeConstant.FROZEN_FALID);
                     }
 
                 }

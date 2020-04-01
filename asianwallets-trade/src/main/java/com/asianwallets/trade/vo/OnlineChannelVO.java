@@ -31,9 +31,6 @@ public class OnlineChannelVO {
     @ApiModelProperty(value = "通道logo")
     private String channelImg;
 
-    @ApiModelProperty(value = "银行机构代码")
-    private String issuerId;
-
     @ApiModelProperty(value = "通道支付方式CODE")
     private String channelPayType;
 

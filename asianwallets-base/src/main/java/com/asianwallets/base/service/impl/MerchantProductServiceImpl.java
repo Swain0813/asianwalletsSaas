@@ -359,10 +359,14 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
         int num = 0;
         for (String merProId : list) {
             MerchantProduct oldMerchantProduct = merchantProductMapper.selectByPrimaryKey(merProId);
+            if(oldMerchantProduct==null){
+                //商户产品信息不存在
+                throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_DOES_NOT_EXIST.getCode());
+            }
             //如果该商户已经不存在或者禁用的话，是不允许进行修改的
             Merchant merchant = merchantMapper.selectByPrimaryKey(oldMerchantProduct.getMerchantId());
             if (merchant == null) {//商户信息不存在
-                throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());//商户信息不存在
+                throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
             }
             //商户已禁用
             if (!merchant.getEnabled()) {
