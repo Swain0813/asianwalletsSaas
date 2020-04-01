@@ -240,8 +240,7 @@ public class QfPayServiceImpl extends ChannelsAbstractAdapter implements QfPaySe
                     rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
                 }
                 log.info("=================【QfPay cancelPaying】=================【上报通道】rabbitMassage: {} ", JSON.toJSON(rabbitMassage));
-                rabbitMQSender.send(AD3MQConstant.CX_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
-
+                rabbitMQSender.send(AD3MQConstant.E_MQ_QFPAY_CANNEL_SEARCH, JSON.toJSONString(rabbitMassage));
             } else {
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=================【QfPay cancelPaying】=================【撤销失败】orderId : {}", orders.getId());
