@@ -275,4 +275,70 @@ public class RabbitMQConfig {
         args.put("x-dead-letter-routing-key", MQ_MEGAPAY_THB_CHECK_ORDER_KEY2);
         return new Queue(E_MQ_MEGAPAY_THB_CHECK_ORDER2, true, false, false, args);
     }
+
+
+    /* ===========================================      Qfpay Refunding 查询队列      =============================================== */
+    public static final String MQ_QFPAY_REFUND_SEARCH = AD3MQConstant.MQ_QFPAY_REFUND_SEARCH;//MegaPay-THB查询队列2
+    public static final String E_MQ_QFPAY_REFUND_SEARCH = AD3MQConstant.E_MQ_QFPAY_REFUND_SEARCH;//MegaPay-THB查询死信队列2
+    public static final String MQ_QFPAY_REFUND_SEARCH_KEY = AD3MQConstant.MQ_QFPAY_REFUND_SEARCH_KEY;//MegaPay-THB查询死信队列2路由
+    public static final String MQ_QFPAY_REFUND_SEARCH_EXCHANGE = AD3MQConstant.MQ_QFPAY_REFUND_SEARCH_EXCHANGE;//MegaPay-THB查询死信队列2交换机
+
+
+    @Bean
+    public Queue operateMQ_QFPAY_REFUND_SEARCH() {
+        return new Queue(RabbitMQConfig.MQ_QFPAY_REFUND_SEARCH, true, false, false);
+    }
+
+    @Bean
+    public DirectExchange exchangeMQ_QFPAY_REFUND_SEARCH() {
+        return new DirectExchange(MQ_QFPAY_REFUND_SEARCH_EXCHANGE);
+    }
+
+    @Bean
+    public Binding deadLetterBindingMQ_QFPAY_REFUND_SEARCH() {
+        return BindingBuilder.bind(operateMQ_QFPAY_REFUND_SEARCH()).to(exchangeMQ_QFPAY_REFUND_SEARCH()).with(MQ_QFPAY_REFUND_SEARCH_KEY);
+    }
+
+    @Bean
+    public Queue deadLetterQueueMQ_QFPAY_REFUND_SEARCH() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-message-ttl", 1000 * 60 * 30);//延迟队列5分钟
+        args.put("x-dead-letter-exchange", MQ_QFPAY_REFUND_SEARCH_EXCHANGE);
+        args.put("x-dead-letter-routing-key", MQ_QFPAY_REFUND_SEARCH_KEY);
+        return new Queue(E_MQ_QFPAY_REFUND_SEARCH, true, false, false, args);
+    }
+    /* ===========================================     Qfpay Canneling 查询队列      =============================================== */
+    public static final String MQ_QFPAY_CANNEL_SEARCH = AD3MQConstant.MQ_QFPAY_CANNEL_SEARCH;//MegaPay-THB查询队列2
+    public static final String E_MQ_QFPAY_CANNEL_SEARCH = AD3MQConstant.E_MQ_QFPAY_CANNEL_SEARCH;//MegaPay-THB查询死信队列2
+    public static final String MQ_QFPAY_CANNEL_SEARCH_KEY = AD3MQConstant.MQ_QFPAY_CANNEL_SEARCH_KEY;//MegaPay-THB查询死信队列2路由
+    public static final String MQ_QFPAY_CANNEL_SEARCH_EXCHANGE = AD3MQConstant.MQ_QFPAY_CANNEL_SEARCH_EXCHANGE;//MegaPay-THB查询死信队列2交换机
+
+    @Bean
+    public Queue operateMQ_QFPAY_CANNEL_SEARCH() {
+        return new Queue(RabbitMQConfig.MQ_QFPAY_CANNEL_SEARCH, true, false, false);
+    }
+
+    @Bean
+    public DirectExchange exchangeMQ_QFPAY_CANNEL_SEARCH() {
+        return new DirectExchange(MQ_QFPAY_CANNEL_SEARCH_EXCHANGE);
+    }
+
+    @Bean
+    public Binding deadLetterBindingMQ_QFPAY_CANNEL_SEARCH() {
+        return BindingBuilder.bind(operateMQ_QFPAY_CANNEL_SEARCH()).to(exchangeMQ_QFPAY_CANNEL_SEARCH()).with(MQ_QFPAY_CANNEL_SEARCH_KEY);
+    }
+
+    @Bean
+    public Queue deadLetterQueueMQ_QFPAY_CANNEL_SEARCH() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-message-ttl", 1000 * 60 * 30);//延迟队列5分钟
+        args.put("x-dead-letter-exchange", MQ_QFPAY_CANNEL_SEARCH_EXCHANGE);
+        args.put("x-dead-letter-routing-key", MQ_QFPAY_CANNEL_SEARCH_KEY);
+        return new Queue(E_MQ_QFPAY_CANNEL_SEARCH, true, false, false, args);
+    }
+
+
+
+
+
 }
