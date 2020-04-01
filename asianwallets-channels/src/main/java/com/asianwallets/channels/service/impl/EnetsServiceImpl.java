@@ -108,6 +108,7 @@ public class EnetsServiceImpl implements EnetsService {
                 "    };\n</script>");
         stringBuffer.append("</html>\n");
         response.setData(stringBuffer.toString());
+        response.setCode(TradeConstant.HTTP_SUCCESS);
         //response.setData(enetsBankRequestDTO);
         log.info("-----------------eNets网银收单接口信息记录-----------------enetsBankRequestDTO:{}", stringBuffer.toString());
         return response;
