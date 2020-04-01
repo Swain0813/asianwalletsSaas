@@ -143,7 +143,7 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                     tcsStFlow.setGatewayFee(0.0D);
                     tcsStFlow.setNeedClear(1);
                     if (sl.getShareBenefit().doubleValue() < 0.0D) {
-                        tcsStFlow.setRemark("挂账");
+                        tcsStFlow.setRemark("挂账或退还分润");
                     }
                     list3.add(tcsStFlow);
 
@@ -176,7 +176,7 @@ public class CalculateShareBenefitServiceImpl implements CalculateShareBenefitSe
                     tma.setSltexrate(0.0D);
                     tma.setGatewayFee(0.0D);
                     if (sl.getShareBenefit().doubleValue() < 0.0D) {
-                        tma.setRemark("挂账");
+                        tma.setRemark("挂账或退还分润");
                     }
                     list1.add(tma);
                     beforeBalance = afterBalance;

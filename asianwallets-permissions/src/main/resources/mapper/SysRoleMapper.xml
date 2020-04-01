@@ -37,6 +37,7 @@
         <include refid="Base_Column_List"/>
         from sys_role
         where sort = 0
+        and remark is null
         <if test="roleName != null and roleName != ''">
             and role_name LIKE CONCAT(CONCAT('%', #{roleName}), '%')
         </if>

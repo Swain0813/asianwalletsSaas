@@ -3,6 +3,7 @@ package com.asianwallets.base.service.impl;
 import com.asianwallets.base.dao.OrderRefundMapper;
 import com.asianwallets.base.service.OrdersRefundService;
 import com.asianwallets.common.config.AuditorProvider;
+import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.OrdersRefundDTO;
 import com.asianwallets.common.vo.OrdersRefundDetailVO;
 import com.asianwallets.common.vo.OrdersRefundVO;
@@ -42,7 +43,21 @@ public class OrdersRefundServiceImpl implements OrdersRefundService {
      */
     @Override
     public OrdersRefundDetailVO getOrdersRefundDetail(String refundId) {
-        return orderRefundMapper.selectOrdersRefundDetailById(refundId, auditorProvider.getLanguage());
+        OrdersRefundDetailVO ordersRefundDetailVO = orderRefundMapper.selectOrdersRefundDetailById(refundId, auditorProvider.getLanguage());
+        if (TradeConstant.EN_US.equals(auditorProvider.getLanguage())) {
+            if (TradeConstant.FEE_TYPE_RATE.equals(ordersRefundDetailVO.getRefundRateType())) {
+                ordersRefundDetailVO.setRefundRateType("Single Rate");
+            } else {
+                ordersRefundDetailVO.setRefundRateType("Single Quota");
+            }
+        } else {
+            if (TradeConstant.FEE_TYPE_RATE.equals(ordersRefundDetailVO.getRefundRateType())) {
+                ordersRefundDetailVO.setRefundRateType("单笔费率");
+            } else {
+                ordersRefundDetailVO.setRefundRateType("单笔定额");
+            }
+        }
+        return ordersRefundDetailVO;
     }
 
     /**

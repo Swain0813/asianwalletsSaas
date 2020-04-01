@@ -1,5 +1,6 @@
 package com.asianwallets.common.utils;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,6 +35,7 @@ public class SignTools {
             }
             signStr = sb.toString();
         }
+        log.info("-----------签名原文-----------str:{}", JSON.toJSONString(signStr));
         return signStr;
     }
 
@@ -52,6 +54,7 @@ public class SignTools {
              */
             Map<String, String> map = new TreeMap<String, String>(
                     new Comparator<String>() {
+                        @Override
                         public int compare(String obj1, String obj2) {
                             //
                             return obj1.compareTo(obj2);
@@ -127,6 +130,7 @@ public class SignTools {
              */
             Map<String, String> map = new TreeMap<String, String>(
                     new Comparator<String>() {
+                        @Override
                         public int compare(String obj1, String obj2) {
                             //
                             return obj1.compareTo(obj2);

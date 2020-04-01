@@ -42,4 +42,24 @@ public class OrdersDetailRefundVO {
 
     @ApiModelProperty(value = "退款备注")
     private String refundRemark;
+
+    //商户后台新增字段
+    @ApiModelProperty(value = "退款通道")
+    private String refundChannel;
+
+    @ApiModelProperty(value = "退还收单手续费金额（订单币种）")
+    private BigDecimal refundOrderFee;
+
+    //机构后台新增字段
+    @ApiModelProperty(value = "付款人账户")
+    private String payerAccount;
+
+    @ApiModelProperty(value = "Swift Code")
+    private String swiftCode;
+
+    @ApiModelProperty(value = "付款人银行")
+    private String refundPayBank;
+
+    @ApiModelProperty(value = "退款类型")// 1：全额退款 2：部分退款
+    private Byte refundType;
 }

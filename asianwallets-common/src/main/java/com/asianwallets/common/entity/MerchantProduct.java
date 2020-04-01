@@ -140,21 +140,27 @@ public class MerchantProduct extends BaseEntity {
 	@ApiModelProperty(value = "ext1")
 	@Column(name ="ext1")
 	private String ext1;
+
 	@ApiModelProperty(value = "ext2")
 	@Column(name ="ext2")
 	private String ext2;
+
 	@ApiModelProperty(value = "ext3")
 	@Column(name ="ext3")
 	private String ext3;
+
 	@ApiModelProperty(value = "ext4")
 	@Column(name ="ext4")
 	private String ext4;
+
 	@ApiModelProperty(value = "ext5")
 	@Column(name ="ext5")
 	private String ext5;
+
 	@ApiModelProperty(value = "ext6")
 	@Column(name ="ext6")
 	private String ext6;
+
 	@ApiModelProperty(value = "ext7")
 	@Column(name ="ext7")
 	private String ext7;
