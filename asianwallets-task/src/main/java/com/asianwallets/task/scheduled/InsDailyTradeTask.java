@@ -36,10 +36,10 @@ public class InsDailyTradeTask {
     @Autowired
     private MessageFeign messageFeign;
 
-    @Value("${custom.developer.mobile}")
+    @Value("${custom.warning.mobile}")
     private String developerMobile;
 
-    @Value("${custom.developer.email}")
+    @Value("${custom.warning.email}")
     private String developerEmail;
 
     /**

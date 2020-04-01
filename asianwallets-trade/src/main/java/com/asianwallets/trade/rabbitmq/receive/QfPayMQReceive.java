@@ -13,13 +13,11 @@ import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.qfpay.QfPayDTO;
 import com.asianwallets.common.dto.qfpay.QfPayQueryDTO;
 import com.asianwallets.common.dto.qfpay.QfPayRefundSerDTO;
-import com.asianwallets.common.dto.qfpay.QfResDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.RabbitMassage;
 import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.ChannelMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
@@ -31,7 +29,6 @@ import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonService;
-import com.asianwallets.trade.vo.FundChangeVO;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -74,10 +71,10 @@ public class QfPayMQReceive {
     @Autowired
     private CommonBusinessService commonBusinessService;
 
-    @Value("${custom.developer.mobile}")
+    @Value("${custom.warning.mobile}")
     private String developerMobile;
 
-    @Value("${custom.developer.email}")
+    @Value("${custom.warning.email}")
     private String developerEmail;
 
 
@@ -195,7 +192,7 @@ public class QfPayMQReceive {
                     //退款失败
                     log.info("=================【MQ_QFPAY_CANNEL_SEARCH】=================【撤销失败】orderId : {}", orderRefund.getOrderId());
                     ordersMapper.updateOrderCancelStatus(orderRefund.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
-                }else{
+                } else {
                     //退款中
                     log.info("===============【MQ_QFPAY_CANNEL_SEARCH】===============【退款操作 退款中查询上报队列 E_MQ_QFPAY_CANNEL_SEARCH】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
                     rabbitMQSender.send(AD3MQConstant.E_MQ_QFPAY_CANNEL_SEARCH, JSON.toJSONString(rabbitMassage));
