@@ -2,6 +2,7 @@ package com.asianwallets.trade.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.dto.ArtificialDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -11,10 +12,11 @@ import com.asianwallets.trade.channels.ad3.Ad3Service;
 import com.asianwallets.trade.channels.alipay.AlipayService;
 import com.asianwallets.trade.channels.enets.EnetsService;
 import com.asianwallets.trade.channels.nextpos.NextPosService;
+import com.asianwallets.trade.channels.qfpay.QfPayService;
 import com.asianwallets.trade.channels.wechat.WechantService;
 import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
-import com.asianwallets.common.dto.ArtificialDTO;
 import com.asianwallets.trade.dto.EnetsPosCallbackDTO;
+import com.asianwallets.trade.dto.QfPayCallbackDTO;
 import com.asianwallets.trade.service.CommonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -60,6 +62,9 @@ public class OfflineCallbackController extends BaseController {
 
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+    private QfPayService qfPayService;
 
     @ApiOperation(value = "ad3线下服务器回调接口")
     @PostMapping("/ad3CsbServerCallback")
@@ -136,6 +141,25 @@ public class OfflineCallbackController extends BaseController {
     @PostMapping("/wechatCsbServerCallback")
     public void wechatCsbServerCallback(HttpServletRequest request, HttpServletResponse response) {
         wechantService.wechatCsbServerCallback(request, response);
+    }
+
+    @ApiOperation(value = "QfPay服务器回调")
+    @PostMapping("/qfPayServerCallback")
+    public String qfPayServerCallback(HttpServletRequest request) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        if (ArrayUtil.isEmpty(parameterMap)) {
+            log.info("=================【QfPay服务器回调】=================【回调参数记录为空】");
+            return "";
+        }
+        log.info("=================【QfPay服务器回调】=================【回调参数记录】 parameterMap:{}", JSON.toJSONString(parameterMap));
+        HashMap<String, String> dtoMap = new HashMap<>();
+        Set<String> set = parameterMap.keySet();
+        for (String key : set) {
+            dtoMap.put(key, parameterMap.get(key)[0]);
+        }
+        QfPayCallbackDTO qfPayCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), QfPayCallbackDTO.class);
+        log.info("=================【QfPay服务器回调】=================【JSON解析后的回调参数记录】 qfPayCallbackDTO:{}", JSON.toJSONString(qfPayCallbackDTO));
+        return qfPayService.qfPayServerCallback(qfPayCallbackDTO);
     }
 
     @ApiOperation(value = "人工回调")

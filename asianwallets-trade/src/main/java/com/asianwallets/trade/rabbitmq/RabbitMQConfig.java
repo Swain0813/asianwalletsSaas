@@ -368,5 +368,34 @@ public class RabbitMQConfig {
         return new Queue(E_MQ_QFPAY_CANNEL_SEARCH2, true, false, false, args);
     }
 
+    /* ===========================================     QfPay-CSB查询队列      =============================================== */
+    public static final String MQ_QFPAY_CSB_CHECK_ORDER = AD3MQConstant.MQ_QFPAY_CSB_CHECK_ORDER;//QFPAY-CSB查询队列
+    public static final String E_MQ_QFPAY_CSB_CHECK_ORDER = AD3MQConstant.E_MQ_QFPAY_CSB_CHECK_ORDER;//QFPAY-CSB查询死信队列
+    public static final String MQ_QFPAY_CSB_CHECK_ORDER_KEY = AD3MQConstant.MQ_QFPAY_CSB_CHECK_ORDER_KEY;//QFPAY-CSB查询死信队列路由
+    public static final String MQ_QFPAY_CSB_CHECK_ORDER_EXCHANGE = AD3MQConstant.MQ_QFPAY_CSB_CHECK_ORDER_EXCHANGE;//QFPAY-CSB查询死信队列交换机
+
+    @Bean
+    public Queue qfPayCsbCheckOrderMQ() {
+        return new Queue(RabbitMQConfig.MQ_QFPAY_CSB_CHECK_ORDER, true, false, false);
+    }
+
+    @Bean
+    public DirectExchange qfPayCsbCheckOrderMQExchange() {
+        return new DirectExchange(MQ_QFPAY_CSB_CHECK_ORDER_EXCHANGE);
+    }
+
+    @Bean
+    public Binding bindQfPayCheckOrderMQToExchange() {
+        return BindingBuilder.bind(qfPayCsbCheckOrderMQ()).to(qfPayCsbCheckOrderMQExchange()).with(MQ_QFPAY_CSB_CHECK_ORDER_KEY);
+    }
+
+    @Bean
+    public Queue configQfPayCsbCheckOrderMQ() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-message-ttl", 1000 * 30);
+        args.put("x-dead-letter-exchange", MQ_QFPAY_CSB_CHECK_ORDER_EXCHANGE);
+        args.put("x-dead-letter-routing-key", MQ_QFPAY_CSB_CHECK_ORDER_KEY);
+        return new Queue(E_MQ_QFPAY_CSB_CHECK_ORDER, true, false, false, args);
+    }
 
 }

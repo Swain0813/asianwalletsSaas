@@ -76,4 +76,10 @@ public class AD3MQConstant {
     public static final String E_MQ_QFPAY_CANNEL_SEARCH2 = "E_MQ_QFPAY_CANNEL_SEARCH2";//Qfpay查询死信队列2
     public static final String MQ_QFPAY_CANNEL_SEARCH_KEY2 ="MQ_QFPAY_CANNEL_SEARCH_KEY2";//Qfpay查询死信队列2路由
     public static final String MQ_QFPAY_CANNEL_SEARCH_EXCHANGE2 = "MQ_QFPAY_CANNEL_SEARCH_EXCHANGE2";//Qfpay查询死信队列2交换机
+
+    /* ===========================================      QfPay-CSB查询队列      =============================================== */
+    public static final String MQ_QFPAY_CSB_CHECK_ORDER = "MQ_QFPAY_CSB_CHECK_ORDER";//QFPAY-CSB查询队列
+    public static final String E_MQ_QFPAY_CSB_CHECK_ORDER = "E_MQ_QFPAY_CSB_CHECK_ORDER";//QFPAY-CSB查询死信队列
+    public static final String MQ_QFPAY_CSB_CHECK_ORDER_KEY = "MQ_QFPAY_CSB_CHECK_ORDER_KEY";//QFPAY-CSB查询死信队列路由
+    public static final String MQ_QFPAY_CSB_CHECK_ORDER_EXCHANGE = "MQ_QFPAY_CSB_CHECK_ORDER_EXCHANGE";//QFPAY-CSB查询死信队列交换机
 }
