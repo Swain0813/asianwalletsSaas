@@ -68,7 +68,7 @@ redis:
 
 #项目自定义配置
 custom:
-  developer:
+  warning:
     email: shenxinr@qq.com
     mobile: 18505513542
   #XE汇率API
