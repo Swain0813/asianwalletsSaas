@@ -380,7 +380,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     jobDataMap.put("merProId", merProId);
                     JobDetail jobDetail = JobBuilder.newJob(ProductInfoJob.class).withIdentity(name, group).setJobData(jobDataMap).build();
                     //表达式调度构建器(即任务执行的时间)
-                    Date runDate = oldMerchantProductAudit==null?null:oldMerchantProductAudit.getEffectTime();
+                    Date runDate = oldMerchantProductAudit == null ? null : oldMerchantProductAudit.getEffectTime();
                     if (runDate == null) {
                         baseResponse.setCode(EResultEnum.EFFECTTIME_IS_NULL.getCode());//生效时间不能为空
                         return baseResponse;
@@ -449,7 +449,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                 //如果审核记录里的启用状态为false ,则为初次添加状态
                 if (auaditProductDTO.enabled) {
                     //初次添加信息审核通过 更改主表，审核表审核信息状态
-                    MerchantProductAudit merchantProductAudit =  merchantProductAuditMapper.selectByPrimaryKey(merProId);
+                    MerchantProductAudit merchantProductAudit = merchantProductAuditMapper.selectByPrimaryKey(merProId);
                     merchantProductAudit.setId(merProId);
                     merchantProductAudit.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
                     merchantProductAudit.setModifier(username);
@@ -458,7 +458,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 
 
                     MerchantProduct merchantProduct = merchantProductMapper.selectByPrimaryKey(merProId);
-                    BeanUtils.copyProperties(merchantProductAudit,merchantProduct);
+                    BeanUtils.copyProperties(merchantProductAudit, merchantProduct);
                     //merchantProduct.setId(merProId);
                     //merchantProduct.setAuditStatus(TradeConstant.AUDIT_SUCCESS);
                     //merchantProduct.setModifier(username);
@@ -575,8 +575,8 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
      * @Descripate 根据产品Id查询商户产品详情
      **/
     @Override
-    public MerchantProduct getMerProductById(String merProductId) {
-        return merchantProductMapper.selectByPrimaryKey(merProductId);
+    public MerchantProductVO getMerProductById(String merProductId) {
+        return merchantProductMapper.selectById(merProductId);
     }
 
     /**

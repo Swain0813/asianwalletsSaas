@@ -30,6 +30,9 @@ public class MerchantProductVO {
     @ApiModelProperty(value = "创建者")
     private String creator;
 
+    @ApiModelProperty(value = "机构号")
+    private String institutionId;
+
     @ApiModelProperty(value = "更改者")
     private String modifier;
 
