@@ -104,7 +104,11 @@ public class QfPayServiceImpl extends ChannelsAbstractAdapter implements QfPaySe
                 commonBusinessService.refundShareBinifit(orderRefund);
             } else if ("1143".equals(qfResDTO.getStatus()) || "1145".equals(qfResDTO.getStatus())) {
                 //退款中
-                //TODO 
+                if (rabbitMassage == null) {
+                    rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                }
+                log.info("===============【QfPay退款】===============【退款操作 退款中查询上报队列 E_MQ_QFPAY_REFUND_SEARCH】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+                rabbitMQSender.send(AD3MQConstant.E_MQ_QFPAY_REFUND_SEARCH, JSON.toJSONString(rabbitMassage));
 
             }else{
                 //退款失败

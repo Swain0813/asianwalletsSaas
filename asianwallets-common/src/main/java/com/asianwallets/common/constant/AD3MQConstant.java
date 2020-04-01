@@ -58,4 +58,22 @@ public class AD3MQConstant {
     public static final String E_MQ_NGANLUONG_CHECK_ORDER_DL2 = "E_MQ_NGANLUONG_CHECK_ORDER_DL2";//NganLuong查询订单状态队列死信队列2
     public static final String MQ_NGANLUONG_CHECK_ORDER_DL_KEY2 = "MQ_NGANLUONG_CHECK_ORDER_DL_KEY2";//NganLuong查询订单状态队列2
     public static final String MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE2 = "MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE2";//NganLuong查询订单状态队列2
+
+    /* ===========================================      Qfpay Refunding 查询队列      =============================================== */
+    public static final String MQ_QFPAY_REFUND_SEARCH= "MQ_QFPAY_REFUND_SEARCH";//Qfpay查询队列2
+    public static final String E_MQ_QFPAY_REFUND_SEARCH = "E_MQ_QFPAY_REFUND_SEARCH";//Qfpay查询死信队列2
+    public static final String MQ_QFPAY_REFUND_SEARCH_KEY ="MQ_QFPAY_REFUND_SEARCH_KEY";//Qfpay查询死信队列2路由
+    public static final String MQ_QFPAY_REFUND_SEARCH_EXCHANGE = "MQ_QFPAY_REFUND_SEARCH_EXCHANGE";//Qfpay查询死信队列2交换机
+
+    /* ===========================================      Qfpay Canneling 查询队列      =============================================== */
+    public static final String MQ_QFPAY_CANNEL_SEARCH= "MQ_QFPAY_CANNEL_SEARCH";//Qfpay查询队列2
+    public static final String E_MQ_QFPAY_CANNEL_SEARCH = "E_MQ_QFPAY_CANNEL_SEARCH";//Qfpay查询死信队列2
+    public static final String MQ_QFPAY_CANNEL_SEARCH_KEY ="MQ_QFPAY_CANNEL_SEARCH_KEY";//Qfpay查询死信队列2路由
+    public static final String MQ_QFPAY_CANNEL_SEARCH_EXCHANGE = "MQ_QFPAY_CANNEL_SEARCH_EXCHANGE";//Qfpay查询死信队列2交换机
+
+    /* ===========================================      Qfpay Canneling2 查询队列      =============================================== */
+    public static final String MQ_QFPAY_CANNEL_SEARCH2= "MQ_QFPAY_CANNEL_SEARCH2";//Qfpay查询队列2
+    public static final String E_MQ_QFPAY_CANNEL_SEARCH2 = "E_MQ_QFPAY_CANNEL_SEARCH2";//Qfpay查询死信队列2
+    public static final String MQ_QFPAY_CANNEL_SEARCH_KEY2 ="MQ_QFPAY_CANNEL_SEARCH_KEY2";//Qfpay查询死信队列2路由
+    public static final String MQ_QFPAY_CANNEL_SEARCH_EXCHANGE2 = "MQ_QFPAY_CANNEL_SEARCH_EXCHANGE2";//Qfpay查询死信队列2交换机
 }
