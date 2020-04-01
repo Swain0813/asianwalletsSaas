@@ -273,6 +273,7 @@
                m.institution_id
         from merchant_product mp
                  left join merchant m on mp.merchant_id = m.id
+        where mp.id = #{merProductId}
     </select>
 
 </mapper>
