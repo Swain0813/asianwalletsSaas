@@ -188,8 +188,9 @@ public class QfPayServiceImpl extends ChannelsAbstractAdapter implements QfPaySe
                 }
             }else if("1143".equals(qfResDTO.getStatus()) || "1145".equals(qfResDTO.getStatus())){
                 //交易中
-
-                //TODO
+                response.setCode(EResultEnum.REFUNDING.getCode());
+                log.info("=================【QfPay cancel】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
+                rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
             }else{
                 //交易失败
                 response.setCode(EResultEnum.REFUND_FAIL.getCode());
@@ -199,7 +200,7 @@ public class QfPayServiceImpl extends ChannelsAbstractAdapter implements QfPaySe
         }else {
             //请求失败
             response.setCode(EResultEnum.REFUNDING.getCode());
-            log.info("=================【NextPos撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
+            log.info("=================【QfPay cancel】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
             rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return response;
