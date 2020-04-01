@@ -104,7 +104,7 @@ public class QfPayServiceImpl extends ChannelsAbstractAdapter implements QfPaySe
                 commonBusinessService.refundShareBinifit(orderRefund);
             } else if ("1143".equals(qfResDTO.getStatus()) || "1145".equals(qfResDTO.getStatus())) {
                 //退款中
-                //TODO
+                //TODO 
 
             }else{
                 //退款失败
