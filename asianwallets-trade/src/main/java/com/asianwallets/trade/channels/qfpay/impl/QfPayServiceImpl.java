@@ -236,7 +236,11 @@ public class QfPayServiceImpl extends ChannelsAbstractAdapter implements QfPaySe
                 ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
             }else if ("1143".equals(qfResDTO.getStatus()) || "1145".equals(qfResDTO.getStatus())) {
                 //退款中
-                //TODO
+                if (rabbitMassage == null) {
+                    rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                }
+                log.info("=================【QfPay cancelPaying】=================【上报通道】rabbitMassage: {} ", JSON.toJSON(rabbitMassage));
+                rabbitMQSender.send(AD3MQConstant.CX_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
 
             } else {
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
@@ -247,9 +251,8 @@ public class QfPayServiceImpl extends ChannelsAbstractAdapter implements QfPaySe
             //请求失败
             baseResponse.setCode(EResultEnum.REFUNDING.getCode());
             log.info("=================【QfPay cancelPaying】=================【请求失败】orderId : {}", orders.getId());
-            RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             if (rabbitMassage == null) {
-                rabbitMassage = rabbitOrderMsg;
+                rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
             log.info("=================【QfPay cancelPaying】=================【上报通道】rabbitMassage: {} ", JSON.toJSON(rabbitMassage));
             rabbitMQSender.send(AD3MQConstant.CX_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));

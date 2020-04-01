@@ -13,6 +13,7 @@ import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.qfpay.QfPayDTO;
 import com.asianwallets.common.dto.qfpay.QfPayQueryDTO;
 import com.asianwallets.common.dto.qfpay.QfPayRefundSerDTO;
+import com.asianwallets.common.dto.qfpay.QfResDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.RabbitMassage;
@@ -156,5 +157,6 @@ public class QfPayMQReceive {
 
 
     }
+
 
 }
