@@ -51,6 +51,7 @@
     <resultMap id="PageResultMap" type="com.asianwallets.common.vo.MerchantProductVO">
         <result column="id" property="id"/>
         <result column="merchant_id" property="merchantId"/>
+        <result column="institution_id" property="institutionId"/>
         <result column="product_id" property="productId"/>
         <result column="merchant_name" property="merchantName"/>
         <result column="product_abbrev" property="productAbbrev"/>
@@ -172,16 +173,19 @@
 
     <select id="exportMerProduct" resultMap="BaseResultMap">
         select
-        mp.id, mp.merchant_id, mp.product_id,  mp.merchant_name,
+        mp.id, mp.merchant_id, mp.product_id, mp.merchant_name,
         case
         when mp.product_abbrev is null then concat(pt.name,"-",p.currency)
         else mp.product_abbrev
         end as product_abbrev,
-        mp.trade_direction,  mp.trans_type, mp.pay_type,
+        mp.trade_direction, mp.trans_type, mp.pay_type,
         d.name as rate_type,
-        mp.min_tate,  mp.max_tate, mp.rate, mp.add_value, mp.limit_amount, mp.daily_trading_count, mp.float_rate, mp.divided_ratio, mp.divided_mode,
-        mp.fee_payer, mp.refund_default, d1.name as refund_rate_type, mp.refund_min_tate, mp.refund_max_tate, mp.refund_rate, mp.refund_add_value, mp.settle_cycle,
-        mp.audit_status, mp.audit_remark, mp.effect_time, mp.create_time, mp.update_time, mp.creator, mp.modifier, mp.remark, mp.enabled, mp.ext1, mp.ext2,
+        mp.min_tate, mp.max_tate, mp.rate, mp.add_value, mp.limit_amount, mp.daily_trading_count, mp.float_rate,
+        mp.divided_ratio, mp.divided_mode,
+        mp.fee_payer, mp.refund_default, d1.name as refund_rate_type, mp.refund_min_tate, mp.refund_max_tate,
+        mp.refund_rate, mp.refund_add_value, mp.settle_cycle,
+        mp.audit_status, mp.audit_remark, mp.effect_time, mp.create_time, mp.update_time, mp.creator, mp.modifier,
+        mp.remark, mp.enabled, mp.ext1, mp.ext2,
         mp.ext3, mp.ext4, mp.ext5,
         mp.ext6, mp.ext7
         from merchant_product mp left join product p on p.id = mp.product_id
@@ -222,6 +226,11 @@
                 AND mp.DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
             </if>
         </where>
+    </select>
+    <select id="selectById" resultMap="com.asianwallets.common.vo.MerchantProductVO">
+        select
+        <include refid="Base_Column_List"/>,m.institution_id
+        from merchant_product mp left join merchant m on mp.merchant_id = m.id
     </select>
 
 </mapper>

@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author yx
@@ -24,36 +24,36 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/9
      * @Descripate 添加商户产品
-     * @return
      **/
     int addMerchantProduct(String name, List<MerchantProductDTO> merchantProductDTOs);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/9
      * @Descripate 商户分配通道
-     * @return
      **/
     int allotMerProductChannel(String username, MerProDTO merProDTO);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/9
      * @Descripate 修改商户产品
-     * @return
      **/
     int updateMerchantProduct(String name, MerchantProductDTO merchantProductDTO);
 
-   /**
-    * @Author YangXu
-    * @Date 2019/12/10
-    * @Descripate 批量审核商户产品
-    * @return
-    **/
-   BaseResponse auditMerchantProduct(String username, AuaditProductDTO auaditProductDTO);
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/10
+     * @Descripate 批量审核商户产品
+     **/
+    BaseResponse auditMerchantProduct(String username, AuaditProductDTO auaditProductDTO);
 
 
     /**
@@ -65,75 +65,75 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
     PageInfo<MerchantProductVO> pageFindMerProduct(MerchantProductDTO merchantProductDTO);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 分页查询商户审核产品信息
-     * @return
      **/
     PageInfo<MerchantProductAudit> pageFindMerProductAudit(MerchantProductDTO merchantProductDTO);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 根据产品Id查询商户产品详情
-     * @return
      **/
-    MerchantProduct getMerProductById(String merProductId);
+    MerchantProductVO getMerProductById(String merProductId);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 根据Id查询商户产品审核详情
-     * @return
      **/
     MerchantProductAudit getMerProductAuditById(String merProductId);
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 分页查询商户产品通道管理信息
-     * @return
      **/
     PageInfo<MerChannelVO> pageFindMerProChannel(SearchChannelDTO searchChannelDTO);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 修改机构通道
-     * @return
      **/
     int updateMerchantChannel(String username, List<BatchUpdateSortDTO> batchUpdateSort);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 查询商户分配通道关联关系
-     * @return
      **/
     List<MerchantRelevantVO> getRelevantInfo(String merchantId);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/10
      * @Descripate 导出商户产品信息
-     * @return
      **/
     List<MerchantProduct> exportMerProduct(MerchantProductDTO merchantProductDTO);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/11
      * @Descripate 根据商户通道Id查询商户通道详情
-     * @return
      **/
     MerChannelVO getMerChannelInfoById(String merChannelId);
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/12
      * @Descripate 导出商户通道信息
-     * @return
      **/
     List<MerChannelVO> exportMerChannel(SearchChannelDTO searchChannelDTO);
 }
