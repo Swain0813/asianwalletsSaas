@@ -227,7 +227,7 @@
             </if>
         </where>
     </select>
-    <select id="selectById" resultMap="com.asianwallets.common.vo.MerchantProductVO">
+    <select id="selectById" resultMap="PageResultMap">
         select
         <include refid="Base_Column_List"/>,m.institution_id
         from merchant_product mp left join merchant m on mp.merchant_id = m.id

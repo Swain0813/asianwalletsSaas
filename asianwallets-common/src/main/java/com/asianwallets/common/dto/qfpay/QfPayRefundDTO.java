@@ -32,15 +32,16 @@ public class QfPayRefundDTO {
 
     public QfPayRefundDTO(Channel channel, OrderRefund orderRefund) {
         this.merchantId = Integer.parseInt(channel.getChannelMerchantId().split("\\|")[0]);
-        this.cash =orderRefund.getTradeAmount().intValue();
+        this.cash = orderRefund.getTradeAmount().intValue();
         this.orderNum = orderRefund.getChannelNumber();
         this.outTradeNo = orderRefund.getId();
     }
+
     public QfPayRefundDTO(Channel channel, Orders orders) {
         this.merchantId = Integer.parseInt(channel.getChannelMerchantId().split("\\|")[0]);
-        this.cash =orders.getTradeAmount().intValue();
+        this.cash = orders.getTradeAmount().intValue();
         this.orderNum = orders.getChannelNumber();
         //撤销是没有生成订单 拿R+机构订单号作为退款单号
-        this.outTradeNo = "R"+orders.getInstitutionOrderId();
+        this.outTradeNo = "R" + orders.getMerchantOrderId();
     }
 }
