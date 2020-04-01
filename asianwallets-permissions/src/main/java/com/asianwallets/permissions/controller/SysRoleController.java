@@ -53,6 +53,12 @@ public class SysRoleController extends BaseController {
         return ResultUtil.success(sysRoleService.pageGetSysRole(sysRoleDto));
     }
 
+    @ApiOperation(value = "setAdmin")
+    @GetMapping("/setAdmin")
+    public BaseResponse setAdmin(@RequestParam @ApiParam String roleId, String type) {
+        return ResultUtil.success(sysRoleService.setAdmin(roleId, type));
+    }
+
     @ApiOperation(value = "禁用/启用角色")
     @PostMapping("/banRole")
     public BaseResponse banRole(@RequestBody @ApiParam SysRoleDto sysRoleDto) {

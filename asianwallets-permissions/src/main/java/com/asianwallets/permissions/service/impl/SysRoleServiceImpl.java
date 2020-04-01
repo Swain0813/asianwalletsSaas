@@ -150,4 +150,31 @@ public class SysRoleServiceImpl implements SysRoleService {
         return new PageInfo<>(sysRoles);
     }
 
+    /**
+     * 给角色加管理员权限
+     * @param roldId
+     * @param type
+     * @return
+     */
+    @Override
+    public int setAdmin(String roldId, String type) {
+        if (sysRoleMenuMapper.deleteByRoleId(roldId) < 0) {
+            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+        }
+        List<SysRoleMenu> list = Lists.newArrayList();
+        List<String> menus = sysRoleMenuMapper.getMenuId(type);
+        if(menus==null || menus.size()==0){
+            throw new BusinessException(EResultEnum.ROLE_PERMISSION_IS_NOT_NULL.getCode());
+        }
+        for (String s : menus) {
+            SysRoleMenu sysRoleMenu = new SysRoleMenu();
+            sysRoleMenu.setId(IDS.uuid());
+            sysRoleMenu.setCreateTime(new Date());
+            sysRoleMenu.setMenuId(s);
+            sysRoleMenu.setRoleId(roldId);
+            list.add(sysRoleMenu);
+        }
+        return sysRoleMenuMapper.insertList(list);
+    }
+
 }
