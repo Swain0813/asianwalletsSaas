@@ -29,16 +29,6 @@ public interface EnetsService {
      */
     ResponseEntity<Void> eNetsCsbCallback(EnetsPosCallbackDTO enetsPosCallbackDTO, HttpServletResponse response);
 
-
-    /**
-     * enets网银收单方法
-     *
-     * @param orders  订单
-     * @param channel 通道
-     * @return
-     */
-    BaseResponse eNetsBankPay(Orders orders, Channel channel);
-
     /**
      * enets线上扫码收单方法
      *
@@ -46,7 +36,7 @@ public interface EnetsService {
      * @param channel 通道
      * @return
      */
-    BaseResponse eNetsOnlineQRCode(Orders orders, Channel channel);
+    BaseResponse onlinePay(Orders orders, Channel channel);
 
     /**
      * enets网银浏览器回调方法
