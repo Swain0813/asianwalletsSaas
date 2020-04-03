@@ -24,6 +24,6 @@
         <include refid="commonSql"/>
         from holidays
         where DATE_FORMAT(date, '%Y-%m-%d') = #{date}
-        and enabled = 1
+        and enabled = 1 limit 1
     </select>
 </mapper>
