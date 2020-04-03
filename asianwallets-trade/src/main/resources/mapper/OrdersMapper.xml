@@ -73,6 +73,8 @@
         <result column="fee_payer" property="feePayer" jdbcType="TINYINT"/>
         <result column="rate_type" property="rateType" jdbcType="VARCHAR"/>
         <result column="rate" property="rate" jdbcType="DECIMAL"/>
+        <result column="max_tate" property="maxTate" jdbcType="DECIMAL"/>
+        <result column="min_tate" property="minTate" jdbcType="DECIMAL"/>
         <result column="fee" property="fee" jdbcType="DECIMAL"/>
         <result column="fee_trade" property="feeTrade" jdbcType="DECIMAL"/>
         <result column="channel_fee_type" property="channelFeeType" jdbcType="VARCHAR"/>
@@ -130,7 +132,7 @@
     fee_payer, rate_type, rate, fee, channel_fee_type, channel_rate, channel_fee, channel_gateway_charge, 
     channel_gateway_status, channel_gateway_fee_type, channel_gateway_rate, channel_gateway_fee, 
     language, create_time, update_time, creator, modifier, remark, remark1, remark2, 
-    remark3, remark4, remark5, remark6, remark7, remark8
+    remark3, remark4, remark5, remark6, remark7, remark8,min_tate,max_tate
     </sql>
 
     <select id="selectByMerchantOrderId" resultMap="BaseResultMap">
@@ -380,6 +382,8 @@
     </select>
 
     <select id="selectByChannelNumber" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/> from orders where channel_number = #{orderNum}
+        select
+        <include refid="Base_Column_List"/>
+        from orders where channel_number = #{orderNum}
     </select>
 </mapper>

@@ -377,6 +377,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         commonBusinessService.getUrl(offlineTradeDTO.getServerUrl(), orders);
         //orders.setChannelAmount(new BigDecimal("0"));
         orders.setFloatRate(merchantProduct.getFloatRate());
+        /*最大值*/
+        orders.setMaxTate(merchantProduct.getMaxTate());
+        /*最小值*/
+        orders.setMinTate(merchantProduct.getMinTate());
         orders.setReportChannelTime(new Date());
         orders.setPayerName(offlineTradeDTO.getPayerName());
         orders.setPayerBank(offlineTradeDTO.getPayerBank());
