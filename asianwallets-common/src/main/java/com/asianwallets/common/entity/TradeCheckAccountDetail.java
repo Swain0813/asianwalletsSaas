@@ -91,6 +91,14 @@ public class TradeCheckAccountDetail extends BaseEntity {
     @Column(name = "fee")
     private BigDecimal fee;
 
+    @ApiModelProperty(value = "最小值")
+    @Column(name = "min_tate")
+    private BigDecimal minTate = BigDecimal.ZERO;
+
+    @ApiModelProperty(value = "最大值")
+    @Column(name = "max_tate")
+    private BigDecimal maxTate = BigDecimal.ZERO;
+
     @ApiModelProperty(value = "支付完成时间")
     @Column(name = "channel_callback_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

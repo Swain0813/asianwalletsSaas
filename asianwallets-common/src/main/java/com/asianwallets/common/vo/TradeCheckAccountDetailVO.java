@@ -65,5 +65,9 @@ public class TradeCheckAccountDetailVO {
     @ApiModelProperty("手续费")
     private BigDecimal fee;
 
+    @ApiModelProperty(value = "最小值")
+    private BigDecimal minTate = BigDecimal.ZERO;
 
+    @ApiModelProperty(value = "最大值")
+    private BigDecimal maxTate = BigDecimal.ZERO;
 }

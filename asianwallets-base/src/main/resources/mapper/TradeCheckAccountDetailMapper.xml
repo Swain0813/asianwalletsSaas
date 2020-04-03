@@ -19,6 +19,8 @@
         <result column="trade_direction" property="tradeDirection" jdbcType="TINYINT"/>
         <result column="rate_type" property="rateType" jdbcType="VARCHAR"/>
         <result column="rate" property="rate" jdbcType="DECIMAL"/>
+        <result column="min_tate" property="minTate" jdbcType="DECIMAL"/>
+        <result column="max_tate" property="maxTate" jdbcType="DECIMAL"/>
         <result column="pay_type" property="payType" jdbcType="VARCHAR"/>
         <result column="fee" property="fee" jdbcType="DECIMAL"/>
         <result column="channel_callback_time" property="channelCallbackTime" jdbcType="TIMESTAMP"/>
@@ -32,7 +34,7 @@
     id, institution_id, institution_name, merchant_id, merchant_name, order_id, merchant_order_id, 
     order_amount, order_currency, order_create_time, trade_type, trade_status, cancel_status, 
     refund_status, trade_direction, rate_type, rate, pay_type, fee, channel_callback_time, 
-    create_time, update_time, creator, modifier, remark
+    create_time, update_time, creator, modifier, remark,min_tate,max_tate
   </sql>
 
     <select id="pageFindTradeCheckAccountDetail" resultMap="BaseResultMap">
@@ -53,7 +55,7 @@
         id, order_id, order_create_time, merchant_order_id, order_currency,
         merchant_id,
         order_amount, trade_type, trade_status, channel_callback_time,rate, fee,refund_status,rate_type,
-        create_time, update_time, creator, modifier, remark
+        create_time, update_time, creator, modifier, remark,min_tate,max_tate
         from trade_check_account_detail
         where merchant_id = #{merchantId}
         <if test="startDate != null and startDate != ''">
@@ -68,7 +70,7 @@
         <if test="merchantName != null and merchantName != ''">
             AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
         </if>
-        order by create_time desc
+        order by channel_callback_time desc
     </select>
 
     <resultMap id="TradeAccountDetailVOMap" type="com.asianwallets.common.vo.TradeAccountDetailVO">
@@ -90,6 +92,8 @@
         <result column="channel_callback_time" property="channelCallbackTime" jdbcType="TIMESTAMP"/>
         <result column="rate_type" property="rateType" jdbcType="VARCHAR"/>
         <result column="rate" property="rate" jdbcType="DECIMAL"/>
+        <result column="min_tate" property="minTate" jdbcType="DECIMAL"/>
+        <result column="max_tate" property="maxTate" jdbcType="DECIMAL"/>
         <result column="fee" property="fee" jdbcType="DECIMAL"/>
     </resultMap>
 </mapper>

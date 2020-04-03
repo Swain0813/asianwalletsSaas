@@ -49,6 +49,12 @@ public class ExportTradeCheckAccountDetailVO {
     @ApiModelProperty("费率")
     private BigDecimal rate;
 
+    @ApiModelProperty(value = "保底手续费")
+    private BigDecimal minTate = BigDecimal.ZERO;
+
+    @ApiModelProperty(value = "封顶手续费")
+    private BigDecimal maxTate = BigDecimal.ZERO;
+
     @ApiModelProperty("手续费")
     private BigDecimal fee;
 

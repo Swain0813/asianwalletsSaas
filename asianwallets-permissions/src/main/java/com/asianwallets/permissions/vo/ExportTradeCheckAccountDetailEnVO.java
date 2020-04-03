@@ -49,6 +49,12 @@ public class ExportTradeCheckAccountDetailEnVO {
     @ApiModelProperty("Rate")
     private BigDecimal rate;
 
+    @ApiModelProperty(value = "Guarantee Fee")
+    private BigDecimal minTate = BigDecimal.ZERO;
+
+    @ApiModelProperty(value = "Capping Fee")
+    private BigDecimal maxTate = BigDecimal.ZERO;
+
     @ApiModelProperty("Fee")
     private BigDecimal fee;
 
