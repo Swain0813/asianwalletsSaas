@@ -169,4 +169,7 @@ public class AsianWalletConstant {
 
     //密钥管理表的平台私钥缓存
     public static final String ATTESTATION_CACHE_PLATFORM_KEY = "attestationCachePlatformKey";
+
+    //支付方式缓存
+    public static final String PAY_TYPE_CACHE_KEY = "PAY_TYPE_CACHE_KEY";
 }

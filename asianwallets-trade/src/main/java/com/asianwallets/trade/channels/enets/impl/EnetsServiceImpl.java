@@ -11,9 +11,11 @@ import com.asianwallets.common.dto.enets.EnetsSMRequestDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.entity.PayType;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.ComTools;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
@@ -49,6 +51,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -120,72 +123,121 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
      */
     @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
-        //获取enets支付所需参数
-        String netsMid = channel.getChannelMerchantId(); //enets通道商户号
-        //标价金额,外币交易的支付金额精确到币种的最小单位，参数值不能带小数点。
-        String amt = String.valueOf(orders.getTradeAmount());
-        int temamt = 0;
-        if (!StringUtils.isEmpty(amt)) {
-            Double amt_d = new Double(amt);
-            temamt = BigDecimal.valueOf(amt_d).multiply(new BigDecimal(100)).intValue();//通道要求要放大100倍上送
+        PayType payType = commonRedisDataService.getPayTypeByExtend1AndLanguage(orders.getPayMethod(), AsianWalletConstant.ZH_CN);
+        String txnReq = null;
+        String sign = null;
+        if (payType.getName().contains("扫码")) {
+            log.info("----------------- enets线上扫码方法开始 ----------------- ");
+            //获取enets支付所需参数
+            String netsMid = channel.getChannelMerchantId(); //enets通道商户号
+            //标价金额,外币交易的支付金额精确到币种的最小单位，参数值不能带小数点。
+            String amt = String.valueOf(orders.getTradeAmount());
+            int temamt = 0;
+            if (!StringUtils.isEmpty(amt)) {
+                Double amt_d = new Double(amt);
+                temamt = BigDecimal.valueOf(amt_d).multiply(new BigDecimal(100)).intValue();//通道要求要放大100倍上送
+            }
+            String txnAmount = Integer.toString(temamt); //交易金额
+            String merchantTxnRef = orders.getId(); //商户交易订单流水号
+            String b2sTxnEndURL = ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsQrCodeBrowserCallback"); //浏览器地址
+            String s2sTxnEndURL = ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsQrCodeServerCallback"); //服务器地址
+            String merchantTxnDtm = DateToolUtils.getReqDateH(new Date()); //商户交易时间
+            String submissionMode = "B"; //提交方式 B:浏览器 S:服务器
+            String paymentType = "SALE"; //产品类型 :SALE
+            String paymentMode = "QR"; //支付类型:QR
+            String clientType = "W"; //W:计算机浏览器
+            String currencyCode = orders.getTradeCurrency();//订单币种
+            String merchantTimeZone = "+8:00";//当地时区
+            String netsMidIndicator = "U";
+            String tid = "";
+            String b2sTxnEndURLParam = "";//前台通知地址参数
+            String s2sTxnEndURLParam = "";//后台通知地址参数
+            String supMsg = "";
+            String ipAddress = "192.168.15.92";
+            String language = "en";
+            String secretKey = "77bf7976-5969-49fa-9a71-87e3d5e7a75f";//MerOtherCert字段
+            JSONObject json = new JSONObject();
+            //区分排序
+            json.put("netsMid", netsMid);
+            json.put("tid", tid);
+            json.put("submissionMode", submissionMode);
+            json.put("txnAmount", txnAmount);
+            json.put("merchantTxnRef", merchantTxnRef);
+            json.put("merchantTxnDtm", merchantTxnDtm);
+            json.put("paymentType", paymentType);
+            json.put("currencyCode", currencyCode);
+            json.put("paymentMode", paymentMode);
+            json.put("merchantTimeZone", merchantTimeZone);
+            json.put("b2sTxnEndURL", b2sTxnEndURL);
+            json.put("b2sTxnEndURLParam", b2sTxnEndURLParam);
+            json.put("s2sTxnEndURL", s2sTxnEndURL);
+            json.put("s2sTxnEndURLParam", s2sTxnEndURLParam);
+            json.put("clientType", clientType);
+            json.put("supMsg", supMsg);
+            json.put("netsMidIndicator", netsMidIndicator);
+            json.put("ipAddress", ipAddress);
+            json.put("language", language);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("ss", "1");//默认
+            jsonObject.put("msg", json.toString());
+            //交易请求参数
+            txnReq = jsonObject.toString();
+            //生成签名
+            sign = createSign(txnReq, secretKey);
+            log.info("----------------- enets线上扫码方法结束 ----------------- ");
+        } else if (payType.getName().contains("网银")) {
+            log.info("----------------- enets线上网银方法开始 ----------------- ");
+            //需要把金额变成分,金额转换 通道要求要放大100倍上送
+            double tempAmount = ComTools.mul(orders.getTradeAmount().doubleValue(), 100);
+            BigDecimal b1 = new BigDecimal(tempAmount);
+            tempAmount = b1.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue();
+            DecimalFormat decimalFormat0 = new DecimalFormat("###0");
+            String amt = decimalFormat0.format(tempAmount);
+            JSONObject json = new JSONObject();
+            //区分排序
+            json.put("netsMid", channel.getChannelMerchantId());
+            json.put("tid", "192.168.15.92");
+            json.put("submissionMode", "B");
+            json.put("txnAmount", amt);
+            json.put("merchantTxnRef", orders.getId());
+            json.put("merchantTxnDtm", DateToolUtils.getReqDateH(orders.getMerchantOrderTime()));
+            json.put("paymentType", "SALE");
+            json.put("currencyCode", orders.getTradeCurrency());
+            json.put("paymentMode", "DD");
+            json.put("merchantTimeZone", "+8:00");
+            json.put("b2sTxnEndURL", ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsBankBrowserCallback"));
+            json.put("b2sTxnEndURLParam", "");
+            json.put("s2sTxnEndURL", ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsBankServerCallback"));
+            json.put("s2sTxnEndURLParam", "");
+            json.put("clientType", "W");
+            json.put("supMsg", "");
+            json.put("netsMidIndicator", "U");
+            json.put("ipAddress", "192.168.15.92");
+            json.put("language", "en");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("ss", "1");
+            jsonObject.put("msg", json.toString());
+            //交易请求参数
+            txnReq = jsonObject.toString();
+            //生成签名
+            sign = createSign(txnReq, channel.getMd5KeyStr());
+            log.info("----------------- enets线上网银方法结束 ----------------- ");
         }
-        String txnAmount = Integer.toString(temamt); //交易金额
-        String merchantTxnRef = orders.getId(); //商户交易订单流水号
-        String b2sTxnEndURL = ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsQrCodeBrowserCallback"); //浏览器地址
-        String s2sTxnEndURL = ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsQrCodeServerCallback"); //服务器地址
-        String merchantTxnDtm = DateToolUtils.getReqDateH(new Date()); //商户交易时间
-        String submissionMode = "B"; //提交方式 B:浏览器 S:服务器
-        String paymentType = "SALE"; //产品类型 :SALE
-        String paymentMode = "QR"; //支付类型:QR
-        String clientType = "W"; //W:计算机浏览器
-        String currencyCode = orders.getTradeCurrency();//订单币种
-        String merchantTimeZone = "+8:00";//当地时区
-        String netsMidIndicator = "U";
-        String tid = "";
-        String b2sTxnEndURLParam = "";//前台通知地址参数
-        String s2sTxnEndURLParam = "";//后台通知地址参数
-        String supMsg = "";
-        String ipAddress = "192.168.15.92";
-        String language = "en";
-        //String keyId = channel.getMd5KeyStr();
-        String secretKey = "77bf7976-5969-49fa-9a71-87e3d5e7a75f";//MerOtherCert字段
-        JSONObject json = new JSONObject();
-        //区分排序
-        json.put("netsMid", netsMid);
-        json.put("tid", tid);
-        json.put("submissionMode", submissionMode);
-        json.put("txnAmount", txnAmount);
-        json.put("merchantTxnRef", merchantTxnRef);
-        json.put("merchantTxnDtm", merchantTxnDtm);
-        json.put("paymentType", paymentType);
-        json.put("currencyCode", currencyCode);
-        json.put("paymentMode", paymentMode);
-        json.put("merchantTimeZone", merchantTimeZone);
-        json.put("b2sTxnEndURL", b2sTxnEndURL);
-        json.put("b2sTxnEndURLParam", b2sTxnEndURLParam);
-        json.put("s2sTxnEndURL", s2sTxnEndURL);
-        json.put("s2sTxnEndURLParam", s2sTxnEndURLParam);
-        json.put("clientType", clientType);
-        json.put("supMsg", supMsg);
-        json.put("netsMidIndicator", netsMidIndicator);
-        json.put("ipAddress", ipAddress);
-        json.put("language", language);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("ss", "1");//默认
-        jsonObject.put("msg", json.toString());
-        //交易请求参数
-        String txnReq = jsonObject.toString();
-        //生成签名
-        String sign = createSign(txnReq, secretKey);
-        EnetsBankRequestDTO enetsBankRequestDTO = new EnetsBankRequestDTO(txnReq, orders.getMerchantOrderId(), sign, channel);
-        enetsBankRequestDTO.setKeyId(channel.getMd5KeyStr());
-        log.info("----------------- enets线上扫码收单方法 ----------------- enetsBankRequestDTO: {}", JSON.toJSONString(enetsBankRequestDTO));
+        EnetsBankRequestDTO enetsBankRequestDTO = new EnetsBankRequestDTO();
+        enetsBankRequestDTO.setTxnReq(txnReq);
+        enetsBankRequestDTO.setHmac(sign);
+        enetsBankRequestDTO.setMd5KeyStr(channel.getMd5KeyStr());
+        enetsBankRequestDTO.setInstitutionOrderId(orders.getMerchantOrderId());
+        enetsBankRequestDTO.setChannel(channel);
+        log.info("----------------- enets线上收单方法 调用channelFeign ----------------- enetsBankRequestDTO: {}", JSON.toJSONString(enetsBankRequestDTO));
         BaseResponse channelResponse = channelsFeign.eNetsBankPay(enetsBankRequestDTO);
-        log.info("----------------- enets线上扫码收单方法 返回----------------- baseResponse: {}", JSON.toJSONString(channelResponse));
-        OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
+        log.info("----------------- enets线上收单方法 返回----------------- baseResponse: {}", JSON.toJSONString(channelResponse));
+        if (channelResponse == null || !TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
         String responseData = (String) channelResponse.getData();
         if (!StringUtils.isEmpty(responseData)) {
-            //网银
+            OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
             onlineTradeVO.setRespCode("T000");
             onlineTradeVO.setCode_url(responseData);
             onlineTradeVO.setType(TradeConstant.ONLINE_BANKING);

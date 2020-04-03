@@ -311,6 +311,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         try {
             //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
+
             BaseResponse baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
             baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
             baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
@@ -404,6 +405,10 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             orders.setProductSettleCycle(SettleDateUtil.getSettleDate(merchantProduct.getSettleCycle()));
         }
         orders.setFloatRate(merchantProduct.getFloatRate());
+        /*最大值*/
+        orders.setMaxTate(merchantProduct.getMaxTate());
+        /*最小值*/
+        orders.setMinTate(merchantProduct.getMinTate());
         orders.setIssuerId(channel.getIssuerId());
         orders.setBankName(basicInfoVO.getBankName());
         orders.setBrowserUrl(onlineTradeDTO.getBrowserUrl());
@@ -501,6 +506,10 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             orders.setProductSettleCycle(SettleDateUtil.getSettleDate(merchantProduct.getSettleCycle()));
         }
         orders.setFloatRate(merchantProduct.getFloatRate());
+        /*最大值*/
+        orders.setMaxTate(merchantProduct.getMaxTate());
+        /*最小值*/
+        orders.setMinTate(merchantProduct.getMinTate());
         orders.setIssuerId(channel.getIssuerId());
         orders.setBankName(basicInfoVO.getBankName());
     }

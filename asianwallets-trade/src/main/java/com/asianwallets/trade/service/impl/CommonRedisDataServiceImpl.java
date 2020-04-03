@@ -61,6 +61,9 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     @Autowired
     private AccountMapper accountMapper;
 
+    @Autowired
+    private PayTypeMapper payTypeMapper;
+
     /**
      * 根据币种编码获取币种信息
      *
@@ -420,5 +423,31 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         }
         log.info("==================【根据商户编号和币种查询账户】==================【账户信息】 account: {}", JSON.toJSONString(account));
         return account;
+    }
+
+    /**
+     * 获取支付方式.
+     *
+     * @param extend1  extend1 id 查询
+     * @param language 语言
+     * @return the payType by extend-1 and language
+     */
+    @Override
+    public PayType getPayTypeByExtend1AndLanguage(String extend1, String language) {
+        PayType payType = JSON.parseObject(redisService.get(AsianWalletConstant.PAY_TYPE_CACHE_KEY.concat("_").concat(extend1).concat("_").concat(language)), PayType.class);
+        try {
+            if (payType == null) {
+                payType = payTypeMapper.selectByExtend1AndLanguage(extend1, language);
+                if (payType == null) {
+                    log.info("==================【根据extend1编号和语言查询支付方式】==================【payType不存在】 merchantId: {} | currency: {}", extend1, language);
+                    return null;
+                }
+                redisService.set(AsianWalletConstant.PAY_TYPE_CACHE_KEY.concat("_").concat(extend1).concat("_").concat(language), JSON.toJSONString(payType));
+            }
+        } catch (Exception e) {
+            log.info("==================【根据extend1编号和语言查询支付方式】==================【获取异常】", e);
+        }
+        log.info("==================【根据extend1编号和语言查询支付方式】==================【支付方式】 payType: {}", JSON.toJSONString(payType));
+        return payType;
     }
 }

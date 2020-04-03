@@ -176,7 +176,7 @@ public class Orders extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date chargeTime;
 
-    @ApiModelProperty(value = "付款方式")
+    @ApiModelProperty(value = "支付方式")
     @Column(name = "pay_method")
     private String payMethod;
 
@@ -299,6 +299,14 @@ public class Orders extends BaseEntity {
     @ApiModelProperty(value = "手续费费率")
     @Column(name = "rate")
     private BigDecimal rate = BigDecimal.ZERO;
+
+    @ApiModelProperty(value = "最小值")
+    @Column(name = "min_tate")
+    private BigDecimal minTate = BigDecimal.ZERO;
+
+    @ApiModelProperty(value = "最大值")
+    @Column(name = "max_tate")
+    private BigDecimal maxTate = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "手续费(订单币种对交易币种的手续费)")
     @Column(name = "fee")

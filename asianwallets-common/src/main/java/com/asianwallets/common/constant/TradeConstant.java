@@ -202,10 +202,7 @@ public class TradeConstant {
     public static final String HELP2PAY = "HELP2PAY";
     public static final String NEXTPOS = "NEXTPOS";
     public static final String ENETS = "ENETS";
-    /* enets 线上网银标识*/
-    public static final String ENETS_OB = "ENETS_OB";
     public static final String NGANLUONG = "NGANLUONG";
-
 
     //--------------发货状态
     public static final Byte UNSHIPPED = 1; //未发货

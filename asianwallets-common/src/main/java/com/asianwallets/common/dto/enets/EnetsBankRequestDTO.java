@@ -15,7 +15,7 @@ import lombok.Data;
 public class EnetsBankRequestDTO {
 
     @ApiModelProperty(value = "keyId")
-    private String keyId;
+    private String keyId = "524b1a17-3dfd-431b-b4cf-c20d86e07366";
 
     @ApiModelProperty(value = "签名")
     private String hmac;

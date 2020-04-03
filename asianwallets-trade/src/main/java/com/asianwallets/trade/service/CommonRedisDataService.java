@@ -11,6 +11,7 @@ public interface CommonRedisDataService {
 
     /**
      * 根据币种编码获取币种信息
+     *
      * @param code
      * @return
      */
@@ -114,4 +115,14 @@ public interface CommonRedisDataService {
      * @return 账户
      */
     Account getAccountByMerchantIdAndCurrency(String merchantId, String currency);
+
+
+    /**
+     * 获取支付方式.
+     *
+     * @param extend1  extend1 id 查询
+     * @param language 语言
+     * @return the pay type by extend 1 and language
+     */
+    PayType getPayTypeByExtend1AndLanguage(String extend1, String language);
 }
