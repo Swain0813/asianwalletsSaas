@@ -228,6 +228,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         orderRefund.setRefundRateType(merchantProduct.getRefundRateType());
         //退款费率
         orderRefund.setRefundRate(merchantProduct.getRefundRate());
+        if (merchantProduct.getRefundMaxTate() != null && merchantProduct.getRefundMinTate() != null) {
+            orderRefund.setRefundMaxTate(merchantProduct.getRefundMaxTate());
+            orderRefund.setRefundMinTate(merchantProduct.getRefundMinTate());
+        }
         log.info("=========================【退款 refundOrder】========================= 退款是否收费:{},退款手续费金额:{},费率类型:{}******", merchantProduct.getRefundDefault(), poundage, merchantProduct.getRefundRateType());
         /***************************************************************  判断账户余额  *************************************************************/
         //判断结算户金额
