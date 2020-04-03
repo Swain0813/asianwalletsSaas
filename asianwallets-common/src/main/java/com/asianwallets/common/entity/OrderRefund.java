@@ -276,6 +276,14 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "refund_order_fee_trade")
     private BigDecimal refundOrderFeeTrade;
 
+    @ApiModelProperty(value = "退款费率的最小值")
+    @Column(name = "refund_min_tate")
+    private BigDecimal refundMinTate;
+
+    @ApiModelProperty(value = "退款费率的最大值")
+    @Column(name = "refund_max_tate")
+    private BigDecimal refundMaxTate;
+
     @ApiModelProperty(value = "备注1")
     @Column(name = "remark1")
     private String remark1;

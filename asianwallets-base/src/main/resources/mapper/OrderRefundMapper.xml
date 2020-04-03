@@ -76,6 +76,8 @@
         <result column="refund_fee_trade" property="refundFeeTrade" jdbcType="DECIMAL"/>
         <result column="refund_order_fee" property="refundOrderFee" jdbcType="DECIMAL"/>
         <result column="refund_order_fee_trade" property="refundOrderFeeTrade" jdbcType="DECIMAL"/>
+        <result column="refund_min_tate" property="refundMinTate" jdbcType="DECIMAL"/>
+        <result column="refund_max_tate" property="refundMaxTate" jdbcType="DECIMAL"/>
         <result column="remark4" property="remark4" jdbcType="VARCHAR"/>
         <result column="remark5" property="remark5" jdbcType="VARCHAR"/>
         <result column="remark6" property="remark6" jdbcType="VARCHAR"/>
@@ -111,7 +113,7 @@
         id, refund_type, refund_mode, refund_status, trade_type, trade_direction, institution_id,
         institution_name, agency_code, agency_name, group_merchant_code, group_merchant_name,
         second_merchant_name, second_merchant_code, language,merchant_id,merchant_name, merchant_order_time,
-        merchant_order_id,
+        merchant_order_id,refund_min_tate,refund_max_tate,
         order_amount, order_currency, order_for_trade_rate, trade_for_order_rate, channel_name,
         channel_code, product_name, product_code, imei, operator_id, token, exchange_rate,
         exchange_time, exchange_status, trade_currency, trade_amount, order_id, refund_channel_number,

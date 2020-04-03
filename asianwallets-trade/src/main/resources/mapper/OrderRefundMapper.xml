@@ -76,6 +76,8 @@
         <result column="refund_fee_trade" property="refundFeeTrade" jdbcType="DECIMAL"/>
         <result column="refund_order_fee" property="refundOrderFee" jdbcType="DECIMAL"/>
         <result column="refund_order_fee_trade" property="refundOrderFeeTrade" jdbcType="DECIMAL"/>
+        <result column="refund_min_tate" property="refundMinTate" jdbcType="DECIMAL"/>
+        <result column="refund_max_tate" property="refundMaxTate" jdbcType="DECIMAL"/>
         <result column="remark4" property="remark4" jdbcType="VARCHAR"/>
         <result column="remark5" property="remark5" jdbcType="VARCHAR"/>
         <result column="remark6" property="remark6" jdbcType="VARCHAR"/>
@@ -92,7 +94,7 @@
     exchange_time, exchange_status, trade_currency, trade_amount, order_id, refund_channel_number,
     channel_number, pay_method, req_ip, create_time, update_time, creator, modifier,
     remark, float_rate, add_value, payer_name, payer_account, payer_bank, payer_email,
-    payer_phone, swift_code, sign, remark1, remark2, remark3, channel_rate, channel_fee_type,
+    payer_phone, swift_code, sign, remark1, remark2, remark3, channel_rate, channel_fee_type,refund_min_tate,refund_max_tate,
     channel_gateway_rate, channel_gateway_fee, channel_gateway_fee_type, channel_gateway_charge,refund_fee_trade,
     channel_gateway_status, product_settle_cycle, channel_amount, fee_payer, channel_fee,refund_order_fee_trade,
     refund_rate_type, refund_rate, refund_fee, refund_order_fee, remark4, remark5, remark6,
