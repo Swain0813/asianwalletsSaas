@@ -43,4 +43,13 @@ public interface SysRoleService {
      */
     int banRole(String username, SysRoleDto sysRoleDto);
 
+
+    /**
+     * 给角色加管理员权限
+     * @param roldId
+     * @param type
+     * @return
+     */
+    int setAdmin(String roldId,String type);
+
 }

@@ -1,4 +1,5 @@
 package com.asianwallets.task.scheduled;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.ExchangeRate;
@@ -18,6 +19,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -39,10 +41,10 @@ public class OpenExchangeRateTask {
     @Autowired
     private RedisService redisService;
 
-    @Value("${custom.developer.mobile}")
+    @Value("${custom.warning.mobile}")
     private String developerMobile;
 
-    @Value("${custom.developer.email}")
+    @Value("${custom.warning.email}")
     private String developerEmail;
 
     @Value("${custom.open.appId}")

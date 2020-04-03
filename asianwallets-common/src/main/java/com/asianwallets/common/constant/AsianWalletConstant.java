@@ -31,6 +31,7 @@ public class AsianWalletConstant {
     public static final int FOUR = 4;
     public static final int ZERO = 0;
     public static final int ONE = 1;
+    public static final int FIVE = 5;
 
     //操作日志表中的操作类型
     public static final Byte ADD = 1; //增

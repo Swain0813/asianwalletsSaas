@@ -65,7 +65,7 @@ redis:
 
 #项目自定义配置
 custom:
-  developer:
+  warning:
     email: 842505302@qq.com,mandymiao@asianwallets.com,kexz@asianwallets.com
     mobile: 18800330943
   #XE汇率API

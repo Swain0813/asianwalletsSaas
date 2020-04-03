@@ -1,8 +1,10 @@
 package com.asianwallets.permissions.controller;
 
+import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.TradeCheckAccountDTO;
 import com.asianwallets.common.exception.BusinessException;
@@ -10,6 +12,7 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.ArrayUtil;
+import com.asianwallets.common.utils.SpringContextUtil;
 import com.asianwallets.common.vo.ExportTradeAccountVO;
 import com.asianwallets.permissions.feign.base.TradeCheckAccountFeign;
 import com.asianwallets.permissions.service.ExportService;
@@ -31,6 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.HashMap;
 
 @Api(description = "商户交易对账单")
 @RestController
@@ -69,13 +74,18 @@ public class TradeCheckAccountFeignController extends BaseController {
     public BaseResponse exportTradeCheckAccount(@RequestBody @ApiParam @Valid TradeCheckAccountDTO tradeCheckAccountDTO, HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(tradeCheckAccountDTO),
                 "导出商户交易对账单"));
-        ExportTradeAccountVO exportTradeAccountVO = tradeCheckAccountFeign.exportTradeCheckAccount(tradeCheckAccountDTO);
-        //数据不存在的场合
-        if (exportTradeAccountVO == null || ArrayUtil.isEmpty(exportTradeAccountVO.getTradeCheckAccounts()) || ArrayUtil.isEmpty(exportTradeAccountVO.getTradeAccountDetailVOS())) {
-            throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
-        }
-        ExcelWriter writer = null;
+        ExcelWriter writer = ExcelUtil.getBigWriter();
         try {
+            ExportTradeAccountVO exportTradeAccountVO = tradeCheckAccountFeign.exportTradeCheckAccount(tradeCheckAccountDTO);
+            ServletOutputStream out = response.getOutputStream();
+            //数据不存在的场合
+            if (exportTradeAccountVO == null || ArrayUtil.isEmpty(exportTradeAccountVO.getTradeCheckAccounts()) || ArrayUtil.isEmpty(exportTradeAccountVO.getTradeAccountDetailVOS())) {
+                //数据不存在的场合
+                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(getLanguage());
+                writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
+                writer.flush(out);
+                return ResultUtil.success();
+            }
             if (AsianWalletConstant.EN_US.equals(this.getLanguage())) {
                 //英文的场合
                 writer = exportService.exportTradeCheckAccount(exportTradeAccountVO, this.getLanguage(), ExportTradeCheckAccountEnVO.class, ExportTradeCheckAccountDetailEnVO.class);
@@ -83,7 +93,6 @@ public class TradeCheckAccountFeignController extends BaseController {
                 //中文的场合
                 writer = exportService.exportTradeCheckAccount(exportTradeAccountVO, this.getLanguage(), ExportTradeCheckAccountVO.class, ExportTradeCheckAccountDetailVO.class);
             }
-            ServletOutputStream out = response.getOutputStream();
             writer.flush(out);
         } catch (Exception e) {
             log.info("==============【导出商户交易对账单】==============【接口异常】", e);

@@ -378,4 +378,8 @@
             </if>
         </where>
     </select>
+
+    <select id="selectByChannelNumber" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from orders where channel_number = #{orderNum}
+    </select>
 </mapper>

@@ -62,7 +62,7 @@ redis:
 
 #项目自定义配置
 custom:
-  developer:
+  warning:
     email: yangshanlong@asianwallets.com
     mobile: 18270654875
   #Open汇率API

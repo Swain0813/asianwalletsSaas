@@ -3,6 +3,7 @@ package com.asianwallets.permissions.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.entity.SysRoleMenu;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -43,4 +44,14 @@ public interface SysRoleMenuMapper extends BaseMapper<SysRoleMenu> {
      * @return
      */
     int updateEnabledByRoleIdAndMenuId(@Param("roleId") String roleId, @Param("offId") String offId, @Param("enabled") Boolean enabled);
+
+
+    /**
+     * 根据权限类型查询权限id
+     * @param type
+     * @return
+     */
+    @Select("select id from sys_menu where permission_type = #{type}")
+    List<String> getMenuId(String type);
+
 }

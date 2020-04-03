@@ -104,4 +104,12 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @return List<MockOrdersVO>
      */
     List<MockOrdersVO> getByMultipleConditions(MockOrdersDTO ordersDTO);
+
+    /**
+     * 根据通道流水号查询订单
+     *
+     * @param orderNum 通道流水号
+     * @return
+     */
+    Orders selectByChannelNumber(String orderNum);
 }
