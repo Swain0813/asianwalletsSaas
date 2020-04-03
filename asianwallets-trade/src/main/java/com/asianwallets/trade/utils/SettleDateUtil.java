@@ -31,20 +31,22 @@ public class SettleDateUtil {
      * @return date
      */
     public static String getSettleDate(String settleCycle) {
-        int offset = Integer.parseInt(settleCycle.substring(2));//偏移量
-        //T+0实时清结算
-        //if (offset == 0) {
+        //偏移量
+        int offset = Integer.parseInt(settleCycle.substring(2));
         //获取结算日
-        Date calcDate = get(new Date(), offset, "中国");
+        Date calcDate = new Date();
+        for (int i = 0; i < offset; i++) {
+            calcDate = get(calcDate, 1);
+        }
         //计算出来的结算日的字符串格式
         String calcDateString = DateToolUtils.getReqDate(calcDate);
         //今天的字符串格式
-        String today = DateToolUtils.getReqDate(new Date());
+        String todayString = DateToolUtils.getReqDate(new Date());
         //如果计算出来的结算日是今天,那么实时结算
-        if (calcDateString.equals(today)) {
+        if (calcDateString.equals(todayString)) {
             return DateToolUtils.formatDate(calcDate);
         } else {
-            ////如果计算出来的结算日不是今天,那么从当日零点开始
+            //如果计算出来的结算日不是今天,那么从当日零点开始
             return DateToolUtils.formatDate(DateToolUtils.getDayStart(calcDate));
         }
     }
@@ -67,8 +69,8 @@ public class SettleDateUtil {
      * @param date date
      * @return 布尔值
      */
-    public static boolean judgeHolidays(Date date, String country) {
-        Holidays holidays = settleDateUtil.holidaysMapper.selectByDateAndCountry(DateToolUtils.getReqDate(date), country);
+    public static boolean judgeHolidays(Date date) {
+        Holidays holidays = settleDateUtil.holidaysMapper.selectByDateAndCountry(DateToolUtils.getReqDate(date));
         return holidays != null;
     }
 
@@ -86,18 +88,17 @@ public class SettleDateUtil {
     /**
      * 返回偏移后不是周末或者节假日的日期
      *
-     * @param date    日期
-     * @param offset  偏移量
-     * @param country 国家
+     * @param date   日期
+     * @param offset 偏移量
      * @return date
      */
-    private static Date get(Date date, Integer offset, String country) {
+    private static Date get(Date date, Integer offset) {
         //获取偏移后的日期
         Date dateTime = getLastDate(date, offset);
         //判断是否是周末或者节假日
-        if (judgeWeekend(dateTime) || judgeHolidays(dateTime, country)) {
+        if (judgeWeekend(dateTime) || judgeHolidays(dateTime)) {
             offset++;
-            return get(date, offset, country);
+            return get(date, offset);
         } else {
             return dateTime;
         }

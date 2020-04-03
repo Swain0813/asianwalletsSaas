@@ -24,7 +24,6 @@
         <include refid="commonSql"/>
         from holidays
         where DATE_FORMAT(date, '%Y-%m-%d') = #{date}
-        and country_code = #{country}
         and enabled = 1
     </select>
 </mapper>
