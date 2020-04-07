@@ -232,8 +232,8 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             shareBenefitLogs.setMerchantId(orders.getMerchantId());
             shareBenefitLogs.setChannelCode(orders.getChannelCode());
             shareBenefitLogs.setChannelName(orders.getChannelName());
-            shareBenefitLogs.setTradeCurrency(orders.getTradeCurrency());
-            shareBenefitLogs.setTradeAmount(orders.getTradeAmount());
+            shareBenefitLogs.setTradeCurrency(orders.getOrderCurrency());
+            shareBenefitLogs.setTradeAmount(orders.getOrderAmount());
             shareBenefitLogs.setMerchantOrderId(orders.getMerchantOrderId());
             shareBenefitLogs.setExtend3(orders.getChannelCode());//通道编号
             shareBenefitLogs.setExtend4(orders.getChannelName());//通道名称
