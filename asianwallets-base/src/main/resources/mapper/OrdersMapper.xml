@@ -590,7 +590,7 @@
         count(1) as totalCount,
         order_currency as orderCurrency
         from orders
-        <where>
+        where trade_status = 3
             <if test="merchantId != null and merchantId != ''">
                 AND merchant_id = #{merchantId}
             </if>
@@ -600,7 +600,6 @@
             <if test="endDate != null and endDate != ''">
                 AND create_time &lt;= #{endDate}
             </if>
-        </where>
         GROUP BY order_currency
     </select>
 
