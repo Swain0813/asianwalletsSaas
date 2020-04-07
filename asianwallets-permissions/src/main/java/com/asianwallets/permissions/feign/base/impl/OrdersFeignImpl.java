@@ -50,4 +50,14 @@ public class OrdersFeignImpl implements OrdersFeign {
     public BaseResponse updateOrderStatus(ArtificialDTO artificialDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BaseResponse statistics(OrdersDTO ordersDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse productStatistics(OrdersDTO ordersDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

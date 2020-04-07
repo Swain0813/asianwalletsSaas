@@ -47,4 +47,12 @@ public interface OrdersFeign {
     @ApiOperation(value = "运营后台修改订单状态")
     @PostMapping("/offlineCallback/artificialCallback")
     BaseResponse updateOrderStatus(ArtificialDTO artificialDTO);
+
+    @ApiOperation(value = "交易统计")
+    @PostMapping("/orders/statistics")
+    BaseResponse statistics(OrdersDTO ordersDTO);
+
+    @ApiOperation(value = "产品交易统计")
+    @PostMapping("/orders/productStatistics")
+    BaseResponse productStatistics(OrdersDTO ordersDTO);
 }

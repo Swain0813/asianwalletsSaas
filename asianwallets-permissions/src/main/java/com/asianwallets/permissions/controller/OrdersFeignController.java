@@ -150,16 +150,16 @@ public class OrdersFeignController extends BaseController {
     @ApiOperation(value = "交易统计")
     @PostMapping("statistics")
     public BaseResponse statistics(@RequestBody @ApiParam OrdersDTO ordersDTO) {
-        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(artificialDTO),
-                "运营后台修改订单状态"));
-        return ResultUtil.success(ordersFeign.statistics(ordersDTO));
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(ordersDTO),
+                "交易统计"));
+        return ordersFeign.statistics(ordersDTO);
     }
 
     @ApiOperation(value = "产品交易统计")
     @PostMapping("productStatistics")
     public BaseResponse productStatistics(@RequestBody @ApiParam OrdersDTO ordersDTO) {
-        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSONObject.toJSONString(artificialDTO),
-                "运营后台修改订单状态"));
-        return ResultUtil.success(ordersFeign.productStatistics(ordersDTO));
+        operationLogService.addOperationLog(setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSONObject.toJSONString(ordersDTO),
+                "产品交易统计"));
+        return ordersFeign.productStatistics(ordersDTO);
     }
 }
