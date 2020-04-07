@@ -2,6 +2,7 @@ package com.asianwallets.permissions.feign.base.impl;
 
 import com.asianwallets.common.dto.ExportAgencyShareBenefitDTO;
 import com.asianwallets.common.dto.QueryAgencyShareBenefitDTO;
+import com.asianwallets.common.dto.ShareBenefitStatisticalDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -9,6 +10,7 @@ import com.asianwallets.common.vo.QueryAgencyShareBenefitVO;
 import com.asianwallets.permissions.feign.base.ShareBenefitFeign;
 import org.springframework.stereotype.Component;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -34,6 +36,11 @@ public class ShareBenefitFeignImpl implements ShareBenefitFeign {
      */
     @Override
     public List<QueryAgencyShareBenefitVO> exportAgencyShareBenefit(ExportAgencyShareBenefitDTO exportAgencyShareBenefitDTO){
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse shareBenefitStatistical(@Valid ShareBenefitStatisticalDTO shareBenefitStatisticalDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

@@ -3,6 +3,7 @@ package com.asianwallets.base.controller;
 import com.asianwallets.base.service.ShareBenefitService;
 import com.asianwallets.common.dto.ExportAgencyShareBenefitDTO;
 import com.asianwallets.common.dto.QueryAgencyShareBenefitDTO;
+import com.asianwallets.common.dto.ShareBenefitStatisticalDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.QueryAgencyShareBenefitVO;
@@ -40,4 +41,12 @@ public class ShareBenefitController {
     public List<QueryAgencyShareBenefitVO> exportAgencyShareBenefit(@RequestBody @ApiParam @Valid ExportAgencyShareBenefitDTO exportAgencyShareBenefitDTO) {
         return shareBenefitService.exportAgencyShareBenefit(exportAgencyShareBenefitDTO);
     }
+
+    @ApiOperation(value = "分润统计")
+    @PostMapping("/shareBenefitStatistical")
+    public BaseResponse shareBenefitStatistical(@RequestBody @ApiParam @Valid ShareBenefitStatisticalDTO shareBenefitStatisticalDTO) {
+        return ResultUtil.success(shareBenefitService.shareBenefitStatistical(shareBenefitStatisticalDTO));
+    }
+
+
 }
