@@ -53,10 +53,17 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
 
     /**
      * 查询默认代理角色ID
+     *普通代理商
      *
      * @return 机构默认角色ID
      */
     SysRole getAgencyRoleId();
+
+    /**
+     * 渠道代理商
+     * @return
+     */
+    SysRole getAgencyChannelRoleId();
 
     /**
      * 查询默认商户角色ID
