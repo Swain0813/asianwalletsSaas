@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Data
 @ApiModel(value = "通道导出输出实体", description = "通道导出输出实体")
-public class ChannelExportVO {
+public class ChannelExport {
 
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -35,9 +35,6 @@ public class ChannelExportVO {
     private BigDecimal limitMaxAmount;
 
     @ApiModelProperty(value = "通道状态")
-    private Boolean enabled;
-
-    @ApiModelProperty(value = "通道状态")
     private String enabledStr;
 
     @ApiModelProperty(value = "payCode")
@@ -48,9 +45,6 @@ public class ChannelExportVO {
 
     @ApiModelProperty(value = "结算周期")
     private String settleCycle;
-
-    @ApiModelProperty(value = "是否支持退款")
-    private Boolean supportRefundState;
 
     @ApiModelProperty(value = "是否支持退款")
     private String supportRefundStateStr;
