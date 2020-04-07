@@ -106,7 +106,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
                 //创建流水对象
                 ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "2", orders, null, basicInfoVO);
                 //计算分润
-                CalcFeeVO calcFeeVO = this.calculateShareBenefit(type, orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
+                CalcFeeVO calcFeeVO = this.calculateShareBenefit(type,"2", orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
                 if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
                     messageFeign.sendSimpleMail(developerEmail, "SAAS-代理商产品算费失败 预警", "代理商商户号 ：{ " + merchantAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
                     throw new BusinessException(EResultEnum.ERROR.getCode());
@@ -125,7 +125,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
                 //创建流水对象
                 ShareBenefitLogs shareBenefitLogs = this.createShareBenefitLogs(type, "1", orders, null, basicInfoVO);
                 //计算分润
-                CalcFeeVO calcFeeVO = this.calculateShareBenefit(type, orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
+                CalcFeeVO calcFeeVO = this.calculateShareBenefit(type,"1" ,orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
                 if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
                     messageFeign.sendSimple(mobile, "SAAS-代理商产品算费失败");//短信通知
                     messageFeign.sendSimpleMail(developerEmail, "saas-代理商产品算费失败 预警", "代理商商户号 ：{ " + channelAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
@@ -151,7 +151,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
      * @Date 2020/1/6
      * @Descripate 计算分润
      **/
-    private CalcFeeVO calculateShareBenefit(Integer type, Orders orders, Object object, MerchantProduct merchantProduct, ShareBenefitLogs shareBenefitLogs) {
+    private CalcFeeVO calculateShareBenefit(Integer type,  String agentType,Orders orders, Object object, MerchantProduct merchantProduct, ShareBenefitLogs shareBenefitLogs) {
         log.error("================== 【calculateShareBenefit 计算分润】====================");
         CalcFeeVO calcFeeVO = new CalcFeeVO();
         calcFeeVO.setChargeStatus(TradeConstant.CHARGE_STATUS_FALID);
@@ -161,7 +161,11 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
         BigDecimal orderFee = BigDecimal.ZERO;
         if (type == 1) {
             amount = orders.getTradeAmount();
-            orderFee = orders.getFee();
+            if(agentType.equals("2")){
+                orderFee = orders.getFee();
+            }else {
+                orderFee = orders.getFeeTrade();
+            }
         } else if (type == 2) {
             //    TODO
         }
@@ -182,7 +186,8 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             log.info("================== 【calculateShareBenefit 计算分润】=================== 【手续费模式异常】 calcFeeVO: {} ", JSON.toJSONString(calcFeeVO));
             return calcFeeVO;
         }
-        if (type == 1 && !orders.getOrderCurrency().equals(orders.getTradeCurrency())) {
+        if (type == 1 && agentType.equals("2") && !orders.getOrderCurrency().equals(orders.getTradeCurrency())) {
+            //若为普通代理手续费需要换汇
             if (org.springframework.util.StringUtils.isEmpty(orders.getTradeForOrderRate())) {
                 log.info("==================【calculateShareBenefit 计算分润】===================【换汇异常】 orders.getTradeForOrderRate()为null");
                 return calcFeeVO;
@@ -232,8 +237,15 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             shareBenefitLogs.setMerchantId(orders.getMerchantId());
             shareBenefitLogs.setChannelCode(orders.getChannelCode());
             shareBenefitLogs.setChannelName(orders.getChannelName());
-            shareBenefitLogs.setTradeCurrency(orders.getTradeCurrency());
-            shareBenefitLogs.setTradeAmount(orders.getTradeAmount());
+            if(agentType.equals("2")){
+                //商户代理
+                shareBenefitLogs.setTradeCurrency(orders.getOrderCurrency());
+                shareBenefitLogs.setTradeAmount(orders.getOrderAmount());
+            }else{
+                //渠道代理
+                shareBenefitLogs.setTradeCurrency(orders.getTradeCurrency());
+                shareBenefitLogs.setTradeAmount(orders.getTradeAmount());
+            }
             shareBenefitLogs.setMerchantOrderId(orders.getMerchantOrderId());
             shareBenefitLogs.setExtend3(orders.getChannelCode());//通道编号
             shareBenefitLogs.setExtend4(orders.getChannelName());//通道名称
@@ -262,8 +274,6 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
         shareBenefitLogs.setOrderType(type);
         shareBenefitLogs.setExtend1(basicInfoVO.getProduct().getProductCode().toString());//产品编号
         shareBenefitLogs.setExtend2(basicInfoVO.getProduct().getProductName());//产品名称
-        //shareBenefitLogs.setFee(new BigDecimal("0"));
-        //shareBenefitLogs.setShareBenefit(new BigDecimal("0"));
 
         shareBenefitLogs.setIsShare(TradeConstant.SHARE_BENEFIT_WAIT);
         shareBenefitLogs.setDividedMode(basicInfoVO.getMerchantProduct().getDividedMode());
