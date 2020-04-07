@@ -124,7 +124,7 @@ public class ExportServiceImpl implements ExportService {
                             } else if ((String.valueOf((oMap.get(s)))).equals("2")) {
                                 oList2.add("用户");
                             }
-                        }else if (s.equals("enabled")) {
+                        } else if (s.equals("enabled")) {
                             if ((String.valueOf((oMap.get(s)))).equals("true")) {
                                 oList2.add("启用");
                             } else if ((String.valueOf((oMap.get(s)))).equals("false")) {
