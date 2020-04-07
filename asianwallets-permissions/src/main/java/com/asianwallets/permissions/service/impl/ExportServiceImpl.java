@@ -222,7 +222,7 @@ public class ExportServiceImpl implements ExportService {
             totalFee = totalFee.add(order.getFee());
             totalChannelFee = totalChannelFee.add(order.getChannelFee());
         }
-        writer.setColumnWidth(-1, 40);
+        writer.setColumnWidth(-1, 39);
 //        StyleSet style = writer.getStyleSet();
 //        CellStyle cellStyle = style.getHeadCellStyle();
 //        cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.BLUE.getIndex());
