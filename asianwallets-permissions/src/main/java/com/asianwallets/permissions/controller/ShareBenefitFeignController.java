@@ -7,6 +7,7 @@ import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.ExportAgencyShareBenefitDTO;
 import com.asianwallets.common.dto.QueryAgencyShareBenefitDTO;
+import com.asianwallets.common.dto.ShareBenefitStatisticalDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -54,6 +55,13 @@ public class ShareBenefitFeignController extends BaseController {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(queryAgencyShareBenefitDTO),
                 "机构后台分润查询"));
         return shareBenefitFeign.getAgencyShareBenefit(queryAgencyShareBenefitDTO);
+    }
+    @ApiOperation(value = "分润统计")
+    @PostMapping("/shareBenefitStatistical")
+    public BaseResponse shareBenefitStatistical(@RequestBody @ApiParam @Valid ShareBenefitStatisticalDTO shareBenefitStatisticalDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(shareBenefitStatisticalDTO),
+                "分润统计"));
+        return shareBenefitFeign.shareBenefitStatistical(shareBenefitStatisticalDTO);
     }
 
     @ApiOperation(value = "机构后台分润导出")
