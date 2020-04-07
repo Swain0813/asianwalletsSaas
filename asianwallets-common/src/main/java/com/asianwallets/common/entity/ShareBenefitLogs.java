@@ -78,11 +78,11 @@ public class ShareBenefitLogs extends BaseEntity {
 	@Column(name ="order_type")
 	private Integer orderType;
 
-	@ApiModelProperty(value = "订单币种")
+	@ApiModelProperty(value = "币种")
 	@Column(name ="trade_currency")
 	private String tradeCurrency;
 
-	@ApiModelProperty(value = "订单金额")
+	@ApiModelProperty(value = "金额")
 	@Column(name ="trade_amount")
 	private BigDecimal tradeAmount;
 
