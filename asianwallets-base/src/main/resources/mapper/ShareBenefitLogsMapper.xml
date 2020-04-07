@@ -62,6 +62,11 @@
         <result column="extend6" property="channelOrderId" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <resultMap id="ShareBenefitStatisticalVOMap" type="com.asianwallets.common.vo.ShareBenefitStatisticalVO">
+        <result column="currency" property="currency" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+    </resultMap>
+
     <select id="pageAgencyShareBenefit" resultMap="QueryAgencyShareBenefitVOMap">
         SELECT create_time as createTime,
         order_id as orderId,
@@ -171,6 +176,19 @@
         <if test="endDate != null  and endDate != ''">
             AND create_time &lt;= #{endDate}
         </if>
+    </select>
+    <select id="shareBenefitStatistical" resultMap="ShareBenefitStatisticalVOMap">
+        SELECT trade_currency as currency,sum(share_benefit) as amount
+        FROM share_benefit_logs
+        where agent_id = #{agentId}
+        and is_share = 2
+        <if test="startDate != null and startDate != ''">
+            AND create_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null  and endDate != ''">
+            AND create_time &lt;= #{endDate}
+        </if>
+        group by trade_currency
     </select>
 
 </mapper>

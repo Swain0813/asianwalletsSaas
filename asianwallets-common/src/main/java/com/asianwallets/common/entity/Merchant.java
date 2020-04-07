@@ -24,7 +24,7 @@ public class Merchant extends BaseEntity {
     @Column(name = "agent_id")
     private String agentId;
 
-    @ApiModelProperty(value = "代理商类型")
+    @ApiModelProperty(value = "代理商类型")//代理商类型 1渠道代理 2商户代理
     @Column(name = "agent_type")
     private String agentType;
 
@@ -57,7 +57,7 @@ public class Merchant extends BaseEntity {
     @Column(name = "mcc")
     private String mcc;
 
-    @ApiModelProperty(value = "商户类型")
+    @ApiModelProperty(value = "商户类型")//商户类型 3普通商户 4代理商户 5集团商户
     @Column(name = "merchant_type")
     private String merchantType;
 

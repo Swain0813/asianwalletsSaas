@@ -506,6 +506,11 @@ public class SysMenuServiceImpl implements SysMenuService {
             if (sysRole == null) {
                 sysRole = sysRoleMapper.getAgencyRoleId();
             }
+        }  else if (AsianWalletConstant.AGENCY_CHANNEL.equals(updateInsPermissionDto.getPermissionType())) {
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.AGENCY_ADMIN_CHANNEL);
+            if (sysRole == null) {
+                sysRole = sysRoleMapper.getAgencyChannelRoleId();
+            }
         } else if (AsianWalletConstant.POS.equals(updateInsPermissionDto.getPermissionType())) {
             sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.POS_ADMIN);
             if (sysRole == null) {

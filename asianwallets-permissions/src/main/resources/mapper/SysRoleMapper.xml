@@ -75,7 +75,13 @@
     <select id="getAgencyRoleId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from sys_role where role_name like '代理管理员%' and enabled = 1
+        from sys_role where role_name like '普通代理管理员%' and enabled = 1
+    </select>
+
+    <select id="getAgencyChannelRoleId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role where role_name like '渠道代理管理员%' and enabled = 1
     </select>
 
     <select id="getMerchantRoleId" resultMap="BaseResultMap">

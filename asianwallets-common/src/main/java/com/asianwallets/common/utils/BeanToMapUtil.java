@@ -26,7 +26,7 @@ public class BeanToMapUtil {
             PropertyDescriptor[] descriptors = propertyUtilsBean.getPropertyDescriptors(obj);
             for (PropertyDescriptor descriptor : descriptors) {
                 String name = descriptor.getName();
-                if (!"class".equals(name) && !StringUtils.isEmpty(String.valueOf(propertyUtilsBean.getNestedProperty(obj, name)))) {
+                if (!"class".equals(name)) {
                     params.put(name, propertyUtilsBean.getNestedProperty(obj, name));
                 }
             }
