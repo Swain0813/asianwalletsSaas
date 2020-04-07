@@ -39,4 +39,16 @@ public class OrdersController extends BaseController {
     public List<ExportOrdersVO> exportOrders(@RequestBody @ApiParam OrdersDTO ordersDTO) {
         return ordersService.exportOrders(ordersDTO);
     }
+
+    @ApiOperation(value = "交易统计")
+    @PostMapping("statistics")
+    public BaseResponse statistics(@RequestBody @ApiParam OrdersDTO ordersDTO) {
+        return ResultUtil.success(ordersService.statistics(ordersDTO));
+    }
+
+    @ApiOperation(value = "产品交易统计")
+    @PostMapping("productStatistics")
+    public BaseResponse productStatistics(@RequestBody @ApiParam OrdersDTO ordersDTO) {
+        return ResultUtil.success(ordersService.productStatistics(ordersDTO));
+    }
 }

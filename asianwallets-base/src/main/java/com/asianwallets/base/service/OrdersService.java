@@ -4,10 +4,7 @@ import com.asianwallets.common.dto.DccReportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.InsDailyTrade;
 import com.asianwallets.common.entity.Orders;
-import com.asianwallets.common.vo.DccReportVO;
-import com.asianwallets.common.vo.ExportOrdersVO;
-import com.asianwallets.common.vo.InsDailyTradeVO;
-import com.asianwallets.common.vo.OrdersDetailVO;
+import com.asianwallets.common.vo.*;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -70,4 +67,20 @@ public interface OrdersService {
      * @return 订单集合
      */
     List<InsDailyTradeVO> exportInsDailyTrade(OrdersDTO ordersDTO);
+
+    /**
+     * 交易统计
+     *
+     * @param ordersDTO 订单实体
+     * @return 订单统计信息
+     */
+    List<OrdersStatisticsVO> statistics(OrdersDTO ordersDTO);
+
+    /**
+     * 产品交易统计
+     *
+     * @param ordersDTO 订单实体
+     * @return 订单统计信息
+     */
+    List<OrdersProStatisticsVO> productStatistics(OrdersDTO ordersDTO);
 }

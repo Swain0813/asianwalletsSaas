@@ -583,4 +583,48 @@
         <result column="refundFee" property="refundFee" jdbcType="DECIMAL"/>
         <result column="type" property="type" jdbcType="VARCHAR"/>
     </resultMap>
+
+
+    <select id="statistics" resultType="com.asianwallets.common.vo.OrdersStatisticsVO">
+        select sum(order_amount) as totalAmount,
+        count(1) as totalCount,
+        order_currency as orderCurrency
+        from orders
+        <where>
+            <if test="merchantId != null and merchantId != ''">
+                AND merchant_id = #{merchantId}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND create_time &lt;= #{endDate}
+            </if>
+        </where>
+        GROUP BY order_currency
+    </select>
+
+    <select id="productStatistics" resultType="com.asianwallets.common.vo.OrdersProStatisticsVO">
+        SELECT
+        o.order_currency AS orderCurrency,
+        sum(o.order_amount) AS totalAmount,
+        count(1) as totalCount,
+        DATE_FORMAT(o.create_time, '%Y-%m-%d') AS createTime,
+        concat(p.`name`,'-',o.trade_currency) AS productName
+        FROM orders o LEFT JOIN pay_type p on o.pay_method = p.extend1 and p.`language` = #{language}
+        WHERE o.trade_status = 3
+        <if test="merchantId != null and merchantId != ''">
+            AND o.merchant_id = #{merchantId}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND o.create_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND o.create_time &lt;= #{endDate}
+        </if>
+        <if test="tradeDirection != null">
+            AND o.trade_direction = #{tradeDirection}
+        </if>
+        GROUP BY o.pay_method, DATE_FORMAT(o.create_time, '%Y-%m-%d')
+    </select>
 </mapper>

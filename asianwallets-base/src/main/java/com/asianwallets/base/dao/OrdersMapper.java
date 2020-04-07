@@ -5,9 +5,7 @@ import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.DccReportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.Orders;
-import com.asianwallets.common.vo.DccReportVO;
-import com.asianwallets.common.vo.ExportOrdersVO;
-import com.asianwallets.common.vo.OrdersDetailVO;
+import com.asianwallets.common.vo.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -71,4 +69,20 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @return
      */
     List<CheckAccountVO> tradeAccountCheck(String yesterday);
+
+    /**
+     * 交易统计
+     *
+     * @param ordersDTO 订单实体
+     * @return 订单统计信息
+     */
+    List<OrdersStatisticsVO> statistics(OrdersDTO ordersDTO);
+
+    /**
+     * 产品交易统计
+     *
+     * @param ordersDTO 订单实体
+     * @return 订单统计信息
+     */
+    List<OrdersProStatisticsVO> productStatistics(OrdersDTO ordersDTO);
 }
