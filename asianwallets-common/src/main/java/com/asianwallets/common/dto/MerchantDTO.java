@@ -57,7 +57,7 @@ public class MerchantDTO extends BasePageHelper {
     @ApiModelProperty(value = "mcc")
     private String mcc;
 
-    @ApiModelProperty(value = "商户类型")
+    @ApiModelProperty(value = "商户类型")// 3普通商户 4代理商户 5集团商户
     private String merchantType;
 
     @ApiModelProperty(value = "集团主账户")
