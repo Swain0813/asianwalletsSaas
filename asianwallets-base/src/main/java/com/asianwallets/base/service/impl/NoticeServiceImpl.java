@@ -58,7 +58,7 @@ public class NoticeServiceImpl extends BaseServiceImpl<Notice> implements Notice
         notice.setId(IDS.uuid2());//id
         notice.setCreateTime(new Date());//创建时间
         notice.setCreator(userName);//创建人
-        notice.setEnabled(false);//启用
+        notice.setEnabled(true);//启用
       return noticeMapper.insert(notice);
     }
 
