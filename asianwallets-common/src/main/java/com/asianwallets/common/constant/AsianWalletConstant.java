@@ -135,8 +135,9 @@ public class AsianWalletConstant {
     public static final Integer OPERATION = 1;//运维系统
     public static final Integer INSTITUTION = 2;//机构系统
     public static final Integer MERCHANT = 3;//商户系统
-    public static final Integer AGENCY = 4;//代理
+    public static final Integer AGENCY = 4;//普通代理商
     public static final Integer POS = 5;//Pos机
+    public static final Integer AGENCY_CHANNEL = 6;//渠道代理商
 
     //角色编码标志
     public static final String INSTITUTION_ADMIN = "INSTITUTION_ADMIN";//机构系统

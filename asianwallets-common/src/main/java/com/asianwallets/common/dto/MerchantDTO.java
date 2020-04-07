@@ -22,7 +22,7 @@ public class MerchantDTO extends BasePageHelper {
     @ApiModelProperty(value = "机构名称")
     private String institutionName;
 
-    @ApiModelProperty(value = "代理商类型")
+    @ApiModelProperty(value = "代理商类型")//1渠道代理 2商户代理
     private String agentType;
 
     @ApiModelProperty(value = "代理商编号")
