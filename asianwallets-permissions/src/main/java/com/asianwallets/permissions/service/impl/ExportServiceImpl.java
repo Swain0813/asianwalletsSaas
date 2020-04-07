@@ -222,6 +222,7 @@ public class ExportServiceImpl implements ExportService {
             totalFee = totalFee.add(order.getFee());
             totalChannelFee = totalChannelFee.add(order.getChannelFee());
         }
+        //设置列宽
         writer.setColumnWidth(-1, 40);
 //        StyleSet style = writer.getStyleSet();
 //        CellStyle cellStyle = style.getHeadCellStyle();
@@ -331,6 +332,8 @@ public class ExportServiceImpl implements ExportService {
                     break;
             }
         }
+        //为了移除表头多余一格
+        statistics.remove(statistics.size() - 1);
         oList1.add(0, statistics);
         oList1.add(1, oSet1);
         writer.write(oList1);
