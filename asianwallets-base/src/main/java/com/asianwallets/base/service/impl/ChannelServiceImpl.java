@@ -298,6 +298,16 @@ public class ChannelServiceImpl implements ChannelService {
             } else if ("3".equals(channelExportVO.getRefundingIsReturnFee())) {
                 channelExportVO.setRefundingIsReturnFee("仅限当日退还");
             }
+            if (channelExportVO.getEnabled()) {
+                channelExportVO.setEnabledStr("启用");
+            } else {
+                channelExportVO.setEnabledStr("禁用");
+            }
+            if (channelExportVO.getSupportRefundState()) {
+                channelExportVO.setSupportRefundStateStr("支持");
+            } else {
+                channelExportVO.setSupportRefundStateStr("不支持");
+            }
         }
         return channelExportVOList;
     }

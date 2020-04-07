@@ -15,6 +15,7 @@ import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.ExcelUtils;
 import com.asianwallets.common.utils.SpringContextUtil;
+import com.asianwallets.common.vo.ChannelExport;
 import com.asianwallets.common.vo.ChannelExportVO;
 import com.asianwallets.permissions.feign.base.ChannelFeign;
 import com.asianwallets.permissions.service.OperationLogService;
@@ -92,7 +93,7 @@ public class ChannelFeignController extends BaseController {
                 return ResultUtil.success();
             }
             ExcelUtils excelUtils = new ExcelUtils();
-            excelUtils.exportExcel(dataList, ChannelExportVO.class, writer);
+            excelUtils.exportExcel(dataList, ChannelExport.class, writer);
             writer.flush(out);
         } catch (Exception e) {
             log.info("==========【导出通道信息】==========【导出通道信息异常】", e);
