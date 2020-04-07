@@ -161,7 +161,11 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
         BigDecimal orderFee = BigDecimal.ZERO;
         if (type == 1) {
             amount = orders.getTradeAmount();
-            orderFee = orders.getFee();
+            if(agentType.equals("2")){
+                orderFee = orders.getFee();
+            }else {
+                orderFee = orders.getFeeTrade();
+            }
         } else if (type == 2) {
             //    TODO
         }
@@ -182,7 +186,8 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             log.info("================== 【calculateShareBenefit 计算分润】=================== 【手续费模式异常】 calcFeeVO: {} ", JSON.toJSONString(calcFeeVO));
             return calcFeeVO;
         }
-        if (type == 1 && !orders.getOrderCurrency().equals(orders.getTradeCurrency())) {
+        if (type == 1 && agentType.equals("2") && !orders.getOrderCurrency().equals(orders.getTradeCurrency())) {
+            //若为普通代理手续费需要换汇
             if (org.springframework.util.StringUtils.isEmpty(orders.getTradeForOrderRate())) {
                 log.info("==================【calculateShareBenefit 计算分润】===================【换汇异常】 orders.getTradeForOrderRate()为null");
                 return calcFeeVO;
