@@ -5,12 +5,17 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.util.Date;
 
 @Data
 @ApiModel(value = "用户查询输出实体", description = "用户查询输出实体")
 public class SysUserSecVO {
+
+    @ApiModelProperty(value = "商户编号")
+    private String merchantId;
+
+    @ApiModelProperty(value = "商户名称")
+    private String merchantName;
 
     @ApiModelProperty(value = "用户Id")
     private String userId;

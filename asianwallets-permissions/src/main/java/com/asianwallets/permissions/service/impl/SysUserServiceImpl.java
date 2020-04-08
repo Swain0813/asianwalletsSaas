@@ -294,7 +294,8 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * 重置密码并发送邮件
-     *登录密码和交易密码都重置
+     * 登录密码和交易密码都重置
+     *
      * @param username 用户名
      * @param userId   用户ID
      * @return 修改条数
@@ -331,6 +332,7 @@ public class SysUserServiceImpl implements SysUserService {
     /**
      * 根据商户编号重置密码成初始密码
      * 登录密码和交易密码都重置
+     *
      * @param username
      * @param merchantId
      * @return
@@ -338,7 +340,7 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     @Transactional
     public int resetPwd(String username, String merchantId) {
-        SysUser sysUser = sysUserMapper.getSysUserByMerchantId("admin"+merchantId);
+        SysUser sysUser = sysUserMapper.getSysUserByMerchantId("admin" + merchantId);
         if (sysUser == null) {
             log.info("******************【重置密码成初始密码】*************【用户信息不存在!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
@@ -430,15 +432,22 @@ public class SysUserServiceImpl implements SysUserService {
      */
     @Override
     public PageInfo<SysUserSecVO> pageGetSysUser(SysUserDto sysUserDto) {
-        List<SysUserSecVO> sysUserList = new ArrayList<>();
+        List<SysUserSecVO> sysUserList;
         sysUserDto.setSort("s.create_time");
         if (AsianWalletConstant.OPERATION.equals(sysUserDto.getPermissionType())) {
             //运营系统
             sysUserList = sysUserMapper.pageGetSysUserByOperation(sysUserDto);
         } else {
+            BaseResponse baseResponse = merchantFeign.getMerchantInfo(sysUserDto.getSysId());
+            Merchant merchant = objectMapper.convertValue(baseResponse.getData(), Merchant.class);
+            if (merchant == null) {
+                throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
+            }
             sysUserDto.setUsername(sysUserDto.getUsername() + sysUserDto.getSysId());
             sysUserList = sysUserMapper.pageGetSysUserByOperation(sysUserDto);
             for (SysUserSecVO sysUserSecVO : sysUserList) {
+                sysUserSecVO.setMerchantId(sysUserSecVO.getMerchantId());
+                sysUserSecVO.setMerchantName(sysUserSecVO.getMerchantName());
                 if (!StringUtils.isEmpty(sysUserSecVO.getSysId())) {
                     sysUserSecVO.setUsername(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
                     sysUserSecVO.setCreator(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
