@@ -160,15 +160,30 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         ordersMapper.insert(orders);
         log.info("---------------【线上直连落地结束】---------------");
         log.info("---------------【线上直连收单上报通道开始】---------------");
-        //上报通道
+        BaseResponse baseResponse = getBaseResponse(basicInfoVO, orders);
+        log.info("---------------【线上直连收单结束】---------------");
+        return baseResponse;
+    }
+
+    private BaseResponse getBaseResponse(BasicInfoVO basicInfoVO, Orders orders) {
         OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+        baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
         try {
             //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
-            BaseResponse baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
-            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
-            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
-            onlineTradeVO = (OnlineTradeVO) baseResponse.getData();
+            PayType payType = commonRedisDataService.getPayTypeByExtend1AndLanguage(basicInfoVO.getChannel().getPayType(), AsianWalletConstant.ZH_CN);
+            if (payType.getName().contains("CSB")) {
+                //通道配置为线下通道时
+                baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
+                onlineTradeVO.setCode_url(String.valueOf(baseResponse.getData()));
+                onlineTradeVO.setRespCode("T000");
+                onlineTradeVO.setType(TradeConstant.ONLINE_BANKING);
+            } else {
+                baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
+                onlineTradeVO = (OnlineTradeVO) baseResponse.getData();
+            }
             //间联
             if (!StringUtils.isEmpty(baseResponse.getData()) && TradeConstant.INDIRECTCONNECTION.equals(orders.getConnectMethod())) {
                 if (!StringUtils.isEmpty(onlineTradeVO.getRespCode())) {
@@ -177,15 +192,12 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                     onlineTradeScanVO.setTradeAmount(orders.getTradeAmount());
                     onlineTradeScanVO.setTradeCurrency(orders.getTradeCurrency());
                     baseResponse.setData(onlineTradeScanVO);
-                    log.info("---------------【线上直连收单结束】--------------- onlineTradeScanVO:{}", JSON.toJSONString(onlineTradeScanVO));
                     return baseResponse;
                 }
             }
             baseResponse.setData(onlineTradeVO);
-            log.info("---------------【线上直连收单结束】--------------- onlineTradeVO:{}", JSON.toJSONString(onlineTradeVO));
             return baseResponse;
         } catch (Exception e) {
-            log.info("==================【线上直连】==================【上报通道异常】", e);
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
     }
@@ -307,34 +319,9 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         ordersMapper.updateByPrimaryKey(orders);
         log.info("---------------【线上收银台落地结束】---------------");
         log.info("---------------【线上收银台收单上报通道开始】---------------");
-        OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
-        try {
-            //上报通道
-            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
-
-            BaseResponse baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
-            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
-            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
-            onlineTradeVO = (OnlineTradeVO) baseResponse.getData();
-            //间联
-            if (!StringUtils.isEmpty(baseResponse.getData()) && TradeConstant.INDIRECTCONNECTION.equals(orders.getConnectMethod())) {
-                if (!StringUtils.isEmpty(onlineTradeVO.getRespCode())) {
-                    OnlineTradeScanVO onlineTradeScanVO = new OnlineTradeScanVO();
-                    BeanUtils.copyProperties(onlineTradeVO, onlineTradeScanVO);
-                    onlineTradeScanVO.setTradeAmount(orders.getTradeAmount());
-                    onlineTradeScanVO.setTradeCurrency(orders.getTradeCurrency());
-                    baseResponse.setData(onlineTradeScanVO);
-                    log.info("---------------【线上收银台收单结束】--------------- onlineTradeScanVO:{}", JSON.toJSONString(onlineTradeScanVO));
-                    return baseResponse;
-                }
-            }
-            baseResponse.setData(onlineTradeVO);
-            log.info("---------------【线上收银台收单结束】--------------- onlineTradeVO:{}", JSON.toJSONString(onlineTradeVO));
-            return baseResponse;
-        } catch (Exception e) {
-            log.info("==================【线上收银台】==================【上报通道异常】", e);
-            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
-        }
+        BaseResponse baseResponse = getBaseResponse(basicInfoVO, orders);
+        log.info("---------------【线上收银台收单结束】---------------");
+        return baseResponse;
     }
 
     /**
