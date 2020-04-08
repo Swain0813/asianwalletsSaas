@@ -446,8 +446,8 @@ public class SysUserServiceImpl implements SysUserService {
             sysUserDto.setUsername(sysUserDto.getUsername() + sysUserDto.getSysId());
             sysUserList = sysUserMapper.pageGetSysUserByOperation(sysUserDto);
             for (SysUserSecVO sysUserSecVO : sysUserList) {
-                sysUserSecVO.setMerchantId(sysUserSecVO.getMerchantId());
-                sysUserSecVO.setMerchantName(sysUserSecVO.getMerchantName());
+                sysUserSecVO.setMerchantId(merchant.getId());
+                sysUserSecVO.setMerchantName(merchant.getCnName());
                 if (!StringUtils.isEmpty(sysUserSecVO.getSysId())) {
                     sysUserSecVO.setUsername(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
                     sysUserSecVO.setCreator(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
