@@ -1,5 +1,6 @@
 package com.asianwallets.permissions.feign.base.impl;
 
+import com.asianwallets.common.dto.NoticeAddDTO;
 import com.asianwallets.common.dto.NoticeDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -21,7 +22,7 @@ public class NoticeFeignImpl implements NoticeFeign {
      * @param noticeDTO
      */
     @Override
-    public BaseResponse addNotice(@RequestBody @ApiParam NoticeDTO noticeDTO) {
+    public BaseResponse addNotice(@RequestBody @ApiParam NoticeAddDTO noticeDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -32,7 +33,7 @@ public class NoticeFeignImpl implements NoticeFeign {
      * @return
      */
     @Override
-    public BaseResponse updateNotice(@RequestBody @ApiParam NoticeDTO noticeDTO) {
+    public BaseResponse updateNotice(@RequestBody @ApiParam NoticeAddDTO noticeDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
