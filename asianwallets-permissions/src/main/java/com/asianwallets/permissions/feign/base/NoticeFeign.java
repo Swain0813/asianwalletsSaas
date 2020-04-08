@@ -1,5 +1,5 @@
 package com.asianwallets.permissions.feign.base;
-
+import com.asianwallets.common.dto.NoticeAddDTO;
 import com.asianwallets.common.dto.NoticeDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.impl.NoticeFeignImpl;
@@ -20,7 +20,7 @@ public interface NoticeFeign {
      * @return
      */
     @PostMapping("/notice/addNotice")
-    BaseResponse addNotice(@RequestBody @ApiParam NoticeDTO noticeDTO);
+    BaseResponse addNotice(@RequestBody @ApiParam NoticeAddDTO noticeDTO);
 
     /**
      * 修改公告信息
@@ -29,7 +29,7 @@ public interface NoticeFeign {
      * @return
      */
     @PostMapping("/notice/updateNotice")
-    BaseResponse updateNotice(@RequestBody @ApiParam NoticeDTO noticeDTO);
+    BaseResponse updateNotice(@RequestBody @ApiParam NoticeAddDTO noticeDTO);
 
     /**
      * 查询所有公告信息

@@ -201,6 +201,6 @@
   "30035": "The institution does not exist",
   "30036": "Merchant does not exist",
   "30037": "Shop ID already exists",
-  "30038": "This business does not belong to this organization",
+  "30038": "The expiration time must be greater than the current system time",
   "30039": "Key information does not exist"
 }

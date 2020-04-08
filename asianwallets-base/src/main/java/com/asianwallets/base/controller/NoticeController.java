@@ -1,5 +1,6 @@
 package com.asianwallets.base.controller;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.dto.NoticeAddDTO;
 import com.asianwallets.common.dto.NoticeDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
@@ -27,13 +28,13 @@ public class NoticeController extends BaseController {
 
     @ApiOperation(value = "添加公告信息")
     @PostMapping("/addNotice")
-    public BaseResponse addNotice(@RequestBody @ApiParam NoticeDTO noticeDTO){
+    public BaseResponse addNotice(@RequestBody @ApiParam NoticeAddDTO noticeDTO){
         return ResultUtil.success(noticeService.addNotice(this.getSysUserVO().getUsername(),noticeDTO));
     }
 
     @ApiOperation(value = "修改公告信息")
     @PostMapping("/updateNotice")
-    public BaseResponse updateNotice(@RequestBody @ApiParam NoticeDTO noticeDTO){
+    public BaseResponse updateNotice(@RequestBody @ApiParam NoticeAddDTO noticeDTO){
       return ResultUtil.success(noticeService.updateNotice(this.getSysUserVO().getUsername(),noticeDTO));
     }
 

@@ -2,6 +2,7 @@ package com.asianwallets.permissions.controller;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.dto.NoticeAddDTO;
 import com.asianwallets.common.dto.NoticeDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.permissions.feign.base.NoticeFeign;
@@ -34,7 +35,7 @@ public class NoticeFeignController extends BaseController {
 
     @ApiOperation(value = "添加公告信息")
     @PostMapping("/addNotice")
-    public BaseResponse addNotice(@RequestBody @ApiParam NoticeDTO noticeDTO) {
+    public BaseResponse addNotice(@RequestBody @ApiParam NoticeAddDTO noticeDTO) {
         //添加操作日志
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(noticeDTO),
                 "添加公告信息"));
@@ -43,7 +44,7 @@ public class NoticeFeignController extends BaseController {
 
     @ApiOperation(value = "修改公告信息")
     @PostMapping("/updateNotice")
-    public BaseResponse updateNotice(@RequestBody @ApiParam NoticeDTO noticeDTO) {
+    public BaseResponse updateNotice(@RequestBody @ApiParam NoticeAddDTO noticeDTO) {
         //添加操作日志
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(noticeDTO),
                 "修改公告信息"));
