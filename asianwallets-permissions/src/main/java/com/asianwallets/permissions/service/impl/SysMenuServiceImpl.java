@@ -369,11 +369,14 @@ public class SysMenuServiceImpl implements SysMenuService {
             //查询商户默认角色
             sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.MERCHANT_ADMIN);
         } else if (AsianWalletConstant.AGENCY.equals(updateInsPermissionDto.getPermissionType())) {
-            //查询代理默认角色
+            //查询普通代理默认角色
             sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.AGENCY_ADMIN);
         } else if (AsianWalletConstant.POS.equals(updateInsPermissionDto.getPermissionType())) {
             //查询pos默认角色
             sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.POS_ADMIN);
+        } else if (AsianWalletConstant.AGENCY_CHANNEL.equals(updateInsPermissionDto.getPermissionType())) {
+            //查询渠道代理默认角色
+            sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.AGENCY_ADMIN_CHANNEL);
         } else {
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_INVALID.getCode());
         }
@@ -397,13 +400,17 @@ public class SysMenuServiceImpl implements SysMenuService {
                 sysRole.setRoleCode(AsianWalletConstant.MERCHANT_ADMIN);
                 sysRole.setPermissionType(AsianWalletConstant.MERCHANT);
             } else if (AsianWalletConstant.AGENCY.equals(updateInsPermissionDto.getPermissionType())) {
-                sysRole.setRoleName("代理定制管理员");
+                sysRole.setRoleName("普通代理定制管理员");
                 sysRole.setRoleCode(AsianWalletConstant.AGENCY_ADMIN);
                 sysRole.setPermissionType(AsianWalletConstant.AGENCY);
             } else if (AsianWalletConstant.POS.equals(updateInsPermissionDto.getPermissionType())) {
                 sysRole.setRoleName("POS定制管理员");
                 sysRole.setRoleCode(AsianWalletConstant.POS_ADMIN);
                 sysRole.setPermissionType(AsianWalletConstant.POS);
+            } else if (AsianWalletConstant.AGENCY_CHANNEL.equals(updateInsPermissionDto.getPermissionType())) {
+                sysRole.setRoleName("渠道代理定制管理员");
+                sysRole.setRoleCode(AsianWalletConstant.AGENCY_ADMIN_CHANNEL);
+                sysRole.setPermissionType(AsianWalletConstant.AGENCY_CHANNEL);
             }
             sysRoleMapper.insert(sysRole);
             //修改机构管理员对应角色
@@ -506,7 +513,7 @@ public class SysMenuServiceImpl implements SysMenuService {
             if (sysRole == null) {
                 sysRole = sysRoleMapper.getAgencyRoleId();
             }
-        }  else if (AsianWalletConstant.AGENCY_CHANNEL.equals(updateInsPermissionDto.getPermissionType())) {
+        } else if (AsianWalletConstant.AGENCY_CHANNEL.equals(updateInsPermissionDto.getPermissionType())) {
             sysRole = sysRoleMapper.selectBySysIdAndRoleCode(updateInsPermissionDto.getInstitutionId(), AsianWalletConstant.AGENCY_ADMIN_CHANNEL);
             if (sysRole == null) {
                 sysRole = sysRoleMapper.getAgencyChannelRoleId();
