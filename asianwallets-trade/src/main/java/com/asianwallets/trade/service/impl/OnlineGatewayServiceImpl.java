@@ -179,7 +179,13 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                 baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
                 onlineTradeVO.setCode_url(String.valueOf(baseResponse.getData()));
                 onlineTradeVO.setRespCode("T000");
-                onlineTradeVO.setType(TradeConstant.ONLINE_BANKING);
+                //Enets通道需要Base64解码
+                if (AD3Constant.ENETS.equalsIgnoreCase(basicInfoVO.getChannel().getIssuerId())) {
+                    //线下enets需要base64解码
+                    onlineTradeVO.setType(TradeConstant.SCAN_DECODE);
+                } else {
+                    onlineTradeVO.setType(TradeConstant.ONLINE_BANKING);
+                }
             } else {
                 baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
                 onlineTradeVO = (OnlineTradeVO) baseResponse.getData();

@@ -252,6 +252,7 @@ public class TradeConstant {
     //--------------收单类型
     public static final String SCAN_CODE = "1"; //扫码
     public static final String ONLINE_BANKING = "NETBANK"; //网银
+    public static final String SCAN_DECODE = "DECODE"; //enets线下扫码 需要Base64
     public static final String CHANNELS = "CHANNELS"; //通道网银系统
     public static final String ENETS_BANK = "ENETS_BANK"; //enets网银
     public static final String NEXTPOS_AD3 = "TAIQR"; //NEXTPOST线上扫码
