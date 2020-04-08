@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Date;
 
 /**
  * 公告过期用job
@@ -29,7 +30,9 @@ public class NoticeInfoJob implements BaseJob {
         Notice  notice = noticeMapper.selectByPrimaryKey(noticeId);
         //将要过期的公告禁用
         notice.setEnabled(false);
+        notice.setUpdateTime(new Date());
+        notice.setModifier("公告过期用job");
+        notice.setRemark("公告过期用job");
         noticeMapper.updateByPrimaryKeySelective(notice);
-
     }
 }
