@@ -616,7 +616,7 @@
             AND o.merchant_id = #{merchantId}
         </if>
         <if test="groupMerchantCode != null and groupMerchantCode != ''">
-            AND o.group_master_account = #{groupMerchantCode}
+            AND o.group_merchant_code = #{groupMerchantCode}
         </if>
         <if test="startDate != null and startDate != ''">
             AND o.create_time &gt;= #{startDate}
