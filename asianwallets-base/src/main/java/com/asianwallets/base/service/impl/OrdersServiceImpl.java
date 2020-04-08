@@ -9,8 +9,6 @@ import com.asianwallets.common.dto.DccReportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.InsDailyTrade;
 import com.asianwallets.common.entity.Orders;
-import com.asianwallets.common.exception.BusinessException;
-import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.*;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -158,9 +156,6 @@ public class OrdersServiceImpl implements OrdersService {
      */
     @Override
     public List<OrdersStatisticsVO> statistics(OrdersDTO ordersDTO) {
-        if (StringUtils.isEmpty(ordersDTO.getMerchantId())) {
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
         return ordersMapper.statistics(ordersDTO);
     }
 
@@ -172,9 +167,6 @@ public class OrdersServiceImpl implements OrdersService {
      */
     @Override
     public List<OrdersProStatisticsVO> productStatistics(OrdersDTO ordersDTO) {
-        if (StringUtils.isEmpty(ordersDTO.getMerchantId())) {
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
         ordersDTO.setLanguage(auditorProvider.getLanguage());
         return ordersMapper.productStatistics(ordersDTO);
     }

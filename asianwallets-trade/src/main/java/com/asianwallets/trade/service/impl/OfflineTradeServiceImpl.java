@@ -356,8 +356,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             orders.setAgentCode(agentMerchant.getId());
             orders.setAgentName(agentMerchant.getCnName());
         }
-//        orders.setGroupMerchantCode("");
-//        orders.setGroupMerchantName("");
+        orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
+        orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
         orders.setTradeType(TradeConstant.GATHER_TYPE);
         orders.setTradeDirection(TradeConstant.TRADE_UPLINE);
         orders.setMerchantOrderTime(DateToolUtils.getReqDateG(offlineTradeDTO.getOrderTime()));

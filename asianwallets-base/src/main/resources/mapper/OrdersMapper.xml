@@ -591,15 +591,15 @@
         order_currency as orderCurrency
         from orders
         where trade_status = 3
-            <if test="merchantId != null and merchantId != ''">
-                AND merchant_id = #{merchantId}
-            </if>
-            <if test="startDate != null and startDate != ''">
-                AND create_time &gt;= #{startDate}
-            </if>
-            <if test="endDate != null and endDate != ''">
-                AND create_time &lt;= #{endDate}
-            </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND merchant_id = #{merchantId}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND create_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND create_time &lt;= #{endDate}
+        </if>
         GROUP BY order_currency
     </select>
 
@@ -614,6 +614,9 @@
         WHERE o.trade_status = 3
         <if test="merchantId != null and merchantId != ''">
             AND o.merchant_id = #{merchantId}
+        </if>
+        <if test="groupMerchantCode != null and groupMerchantCode != ''">
+            AND o.group_master_account = #{groupMerchantCode}
         </if>
         <if test="startDate != null and startDate != ''">
             AND o.create_time &gt;= #{startDate}
