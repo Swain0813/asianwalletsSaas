@@ -39,6 +39,9 @@
             <if test="institutionName != null and institutionName != ''">
                 AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
             </if>
+            <if test="channelNumber != null and channelNumber != ''">
+                AND channel_code = #{channelNumber}
+            </if>
             <if test="startDate != null and startDate != ''">
                 AND create_time &gt;= #{startDate}
             </if>
