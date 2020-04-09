@@ -182,6 +182,9 @@
             <if test="refundStatus !=null">
                 AND o.refund_status = #{refundStatus}
             </if>
+            <if test="refundType !=null">
+                AND o.refund_type = #{refundType}
+            </if>
             <if test="refundMode !=null">
                 AND o.refund_mode = #{refundMode}
             </if>

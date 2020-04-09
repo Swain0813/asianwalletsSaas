@@ -73,6 +73,9 @@ public class OrdersRefundVO {
     @ApiModelProperty(value = "交易类型:1-线上 2-线下")
     private Byte tradeDirection;
 
+    @ApiModelProperty(value = "退款类型  导出用")
+    private String refundTypeStr;
+
     @ApiModelProperty(value = "退款状态 导出用")
     private String refundStatusStr;
 

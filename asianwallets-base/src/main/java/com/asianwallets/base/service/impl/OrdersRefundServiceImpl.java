@@ -71,7 +71,7 @@ public class OrdersRefundServiceImpl implements OrdersRefundService {
         ordersRefundDTO.setPageSize(Integer.MAX_VALUE);
         List<OrdersRefundVO> ordersRefundVOS = orderRefundMapper.pageFindOrdersRefund(ordersRefundDTO);
         for (OrdersRefundVO ordersRefundVO : ordersRefundVOS) {
-//            退款状态 1:退款中 2:退款成功 3:退款失败 4:系统创建失败
+          //退款状态 1:退款中 2:退款成功 3:退款失败 4:系统创建失败
             if (ordersRefundVO.getRefundStatus() == 1) {
                 ordersRefundVO.setRefundStatusStr("退款中");
             } else if (ordersRefundVO.getRefundStatus() == 2) {
@@ -80,6 +80,12 @@ public class OrdersRefundServiceImpl implements OrdersRefundService {
                 ordersRefundVO.setRefundStatusStr("退款失败");
             } else {
                 ordersRefundVO.setRefundStatusStr("系统创建失败");
+            }
+            //退款类型 - 1：全额退款 2：部分退款
+            if(ordersRefundVO.getRefundType()==1){
+                ordersRefundVO.setRefundStatusStr("全额退款");
+            }else {
+                ordersRefundVO.setRefundStatusStr("部分退款");
             }
         }
         return ordersRefundVOS;

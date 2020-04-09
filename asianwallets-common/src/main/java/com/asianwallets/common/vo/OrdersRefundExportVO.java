@@ -55,7 +55,10 @@ public class OrdersRefundExportVO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date completeTime;
 
-    @ApiModelProperty(value = "退款状态 导出用")
+    @ApiModelProperty(value = "退款类型")//1：全额退款 2：部分退款
+    private String refundTypeStr;
+
+    @ApiModelProperty(value = "退款状态")
     private String refundStatusStr;
 
     @ApiModelProperty(value = "备注")
