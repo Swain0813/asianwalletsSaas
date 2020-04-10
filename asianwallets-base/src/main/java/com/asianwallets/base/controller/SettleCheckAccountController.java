@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import com.asianwallets.common.base.BaseController;
 import java.util.Map;
 
-/**
- * 结算对账管理
- */
-@Api(description = "结算对账单")
+@Api(description = "商户结算对账单")
 @RestController
 @RequestMapping("/settleCheckAccount")
 public class SettleCheckAccountController extends BaseController {
