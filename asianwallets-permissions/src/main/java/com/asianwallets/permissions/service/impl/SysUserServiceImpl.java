@@ -440,14 +440,13 @@ public class SysUserServiceImpl implements SysUserService {
         } else {
             BaseResponse baseResponse = merchantFeign.getMerchantInfo(sysUserDto.getSysId());
             Merchant merchant = objectMapper.convertValue(baseResponse.getData(), Merchant.class);
-            if (merchant == null) {
-                throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
-            }
             sysUserDto.setUsername(sysUserDto.getUsername() + sysUserDto.getSysId());
             sysUserList = sysUserMapper.pageGetSysUserByOperation(sysUserDto);
             for (SysUserSecVO sysUserSecVO : sysUserList) {
-                sysUserSecVO.setMerchantId(merchant.getId());
-                sysUserSecVO.setMerchantName(merchant.getCnName());
+                if (merchant != null) {
+                    sysUserSecVO.setMerchantId(merchant.getId());
+                    sysUserSecVO.setMerchantName(merchant.getCnName());
+                }
                 if (!StringUtils.isEmpty(sysUserSecVO.getSysId())) {
                     sysUserSecVO.setUsername(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
                     sysUserSecVO.setCreator(sysUserSecVO.getUsername().replace(sysUserSecVO.getSysId(), ""));
