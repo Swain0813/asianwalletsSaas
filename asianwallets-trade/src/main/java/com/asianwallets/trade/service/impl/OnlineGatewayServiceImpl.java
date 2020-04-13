@@ -184,7 +184,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                     //线下enets需要base64解码
                     onlineTradeVO.setType(TradeConstant.SCAN_DECODE);
                 } else {
-                    onlineTradeVO.setType(TradeConstant.ONLINE_BANKING);
+                    onlineTradeVO.setType(TradeConstant.WECHAT);
                 }
             } else {
                 baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
