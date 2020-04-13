@@ -356,8 +356,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         //INDIRECTCONNECTION 间连
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.DIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
-        orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
-        orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
+      /*  orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
+        orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());*/
         //代理商
         if (!StringUtils.isEmpty(merchant.getAgentId())) {
             Merchant agentMerchant = commonRedisDataService.getMerchantById(merchant.getAgentId());
