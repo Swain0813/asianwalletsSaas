@@ -168,8 +168,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     private BaseResponse getBaseResponse(BasicInfoVO basicInfoVO, Orders orders) {
         OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
         BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
-        baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
         try {
             //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
@@ -198,9 +196,13 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                     onlineTradeScanVO.setTradeAmount(orders.getTradeAmount());
                     onlineTradeScanVO.setTradeCurrency(orders.getTradeCurrency());
                     baseResponse.setData(onlineTradeScanVO);
+                    baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+                    baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
                     return baseResponse;
                 }
             }
+            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
             baseResponse.setData(onlineTradeVO);
             return baseResponse;
         } catch (Exception e) {
