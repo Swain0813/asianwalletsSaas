@@ -125,6 +125,9 @@
         <if test="merchantName != null and merchantName != ''">
             AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
         </if>
+        <if test="orderCurrency != null and orderCurrency != ''">
+            AND currency = #{orderCurrency}
+        </if>
         <if test="institutionId != null and institutionId != ''">
             AND institution_id = #{institutionId}
         </if>
@@ -173,6 +176,9 @@
         </if>
         <if test="institutionId != null and institutionId != ''">
             AND institution_id = #{institutionId}
+        </if>
+        <if test="orderCurrency != null and orderCurrency != ''">
+            AND currency = #{orderCurrency}
         </if>
         <if test="institutionName != null and institutionName != ''">
             AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
