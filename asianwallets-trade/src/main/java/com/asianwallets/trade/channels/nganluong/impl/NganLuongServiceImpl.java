@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.nganluong.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -20,12 +19,10 @@ import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.utils.HandlerType;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,10 +37,6 @@ public class NganLuongServiceImpl implements NganLuongService {
     @Autowired
     @Qualifier(value = "ad3ParamsConfig")
     private AD3ParamsConfig ad3ParamsConfig;
-
-    @ApiModelProperty("支付页面")
-    @Value("${custom.paySuccessUrl}")
-    private String paySuccessUrl;//签名方式
 
     @Autowired
     private ChannelsFeign channelsFeign;
@@ -63,7 +56,7 @@ public class NganLuongServiceImpl implements NganLuongService {
      */
     @Override
     public BaseResponse nganLuongPay(Orders orders, Channel channel, BaseResponse baseResponse) {
-        NganLuongRequestDTO nganLuongRequestDTO = new NganLuongRequestDTO(channel, orders, ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_SUCCESS, paySuccessUrl + "?page=" + TradeConstant.PAGE_PROCESSING);
+        NganLuongRequestDTO nganLuongRequestDTO = new NganLuongRequestDTO(channel, orders, ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_SUCCESS, ad3ParamsConfig.getPaySuccessUrl()  + "?page=" + TradeConstant.PAGE_PROCESSING);
         NganLuongDTO nganLuongDTO = new NganLuongDTO(nganLuongRequestDTO, orders.getMerchantOrderId(), orders.getReqIp(), channel);
         log.info("===============【NL网银收单接口信息记录】===============【请求实体】 nganLuongDTO: {}", JSON.toJSONString(nganLuongDTO));
         BaseResponse response = channelsFeign.nganLuongPay(nganLuongDTO);

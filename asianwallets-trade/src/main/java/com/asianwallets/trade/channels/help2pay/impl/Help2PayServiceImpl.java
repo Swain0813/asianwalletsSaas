@@ -73,10 +73,6 @@ public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help
     @Autowired
     private CommonRedisDataService commonRedisDataService;
 
-    @ApiModelProperty("支付页面")
-    @Value("${custom.paySuccessUrl}")
-    private String paySuccessUrl;
-
     /**
      * 线上收单方法
      *
@@ -146,7 +142,7 @@ public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help
             } else {
                 try {
                     //返回支付成功页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_SUCCESS);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_SUCCESS);
                 } catch (IOException e) {
                     log.error("--------------help2Pay浏览器回调接口信息记录--------------调用AW支付成功页面失败", e);
                 }
@@ -159,7 +155,7 @@ public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help
             } else {
                 try {
                     //返回支付中页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_PROCESSING);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_PROCESSING);
                 } catch (IOException e) {
                     log.error("--------------help2Pay浏览器回调接口信息记录--------------调用AW支付中页面失败", e);
                 }

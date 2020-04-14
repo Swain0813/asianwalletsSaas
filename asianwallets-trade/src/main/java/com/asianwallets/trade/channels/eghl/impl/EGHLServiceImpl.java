@@ -26,11 +26,9 @@ import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
 import com.asianwallets.trade.vo.FundChangeVO;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -52,10 +50,6 @@ public class EGHLServiceImpl extends ChannelsAbstractAdapter implements EGHLServ
 
     @Autowired
     private ChannelsFeign channelsFeign;
-
-    @ApiModelProperty("支付页面")
-    @Value("${custom.paySuccessUrl}")
-    private String paySuccessUrl;//签名方式
 
     @Autowired
     private OrdersMapper ordersMapper;
@@ -142,7 +136,7 @@ public class EGHLServiceImpl extends ChannelsAbstractAdapter implements EGHLServ
             } else {
                 try {
                     //返回支付成功页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_SUCCESS);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_SUCCESS);
                 } catch (IOException e) {
                     log.error("--------------EGHL回调浏览器方法信息记录--------------调用AW支付成功页面失败", e);
                 }
@@ -155,7 +149,7 @@ public class EGHLServiceImpl extends ChannelsAbstractAdapter implements EGHLServ
             } else {
                 try {
                     //返回支付中页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_PROCESSING);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_PROCESSING);
                 } catch (IOException e) {
                     log.error("--------------EGHL回调浏览器方法信息记录--------------调用AW支付中页面失败", e);
                 }

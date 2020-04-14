@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.enets.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -33,19 +32,16 @@ import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
 import com.asianwallets.trade.vo.FundChangeVO;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
@@ -85,10 +81,6 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
-
-    @ApiModelProperty("支付页面")
-    @Value("${custom.paySuccessUrl}")
-    private String paySuccessUrl;
 
     /**
      * Enets线下CSB方法
@@ -410,7 +402,7 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
             } else {
                 try {
                     //返回支付成功页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_SUCCESS);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_SUCCESS);
                 } catch (IOException e) {
                     log.error("--------------eNets网银浏览器回调接口信息记录--------------调用AW支付成功页面失败", e);
                 }
@@ -423,7 +415,7 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
             } else {
                 try {
                     //返回支付中页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_PROCESSING);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_PROCESSING);
                 } catch (IOException e) {
                     log.error("--------------eNets网银浏览器回调接口信息记录--------------调用AW支付中页面失败", e);
                 }
@@ -461,11 +453,11 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
             log.info("=================【eNets网银服务器回调接口信息记录】=================【订单状态不为支付中】");
             return new ResponseEntity<Void>(HttpStatus.OK);
         }
-//        //校验订单信息
-//        if (!enetsCallbackDTO.getCurrencyCode().equals(orders.getTradeCurrency())) {
-//            log.info("=================【eNets网银服务器回调接口信息记录】=================【订单信息不匹配】");
-//            return new ResponseEntity<Void>(HttpStatus.OK);
-//        }
+        //校验订单信息
+        if (!enetsCallbackDTO.getCurrencyCode().equals(orders.getTradeCurrency())) {
+            log.info("=================【eNets网银服务器回调接口信息记录】=================【订单信息不匹配】");
+            return new ResponseEntity<Void>(HttpStatus.OK);
+        }
         orders.setChannelNumber(enetsCallbackDTO.getNetsTxnRef());//通道流水号
         orders.setChannelCallbackTime(new Date());
         orders.setUpdateTime(new Date());
@@ -593,7 +585,7 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
             } else {
                 try {
                     //返回支付成功页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_SUCCESS);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_SUCCESS);
                 } catch (IOException e) {
                     log.error("--------------eNets线上扫码浏览器回调接口信息记录--------------调用AW支付成功页面失败", e);
                 }
@@ -606,7 +598,7 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
             } else {
                 try {
                     //返回支付中页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_PROCESSING);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_PROCESSING);
                 } catch (IOException e) {
                     log.error("--------------eNets线上扫码浏览器回调接口信息记录--------------调用AW支付中页面失败", e);
                 }

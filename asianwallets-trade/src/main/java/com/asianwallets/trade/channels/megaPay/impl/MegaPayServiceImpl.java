@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.megaPay.impl;
-
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -36,16 +35,13 @@ import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
 import com.asianwallets.trade.vo.FundChangeVO;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -85,14 +81,6 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
-
-    @ApiModelProperty("支付页面")
-    @Value("${custom.paySuccessUrl}")
-    private String paySuccessUrl;//签名方式
-
-    @ApiModelProperty("AD3 ITS地址")
-    @Value("${custom.ad3ItsUrl}")
-    private String ad3ItsUrl;//签名方式
 
     /**
      * MegaPay网银收单方法
@@ -318,7 +306,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
         if (!StringUtils.isEmpty(megaPayBrowserCallbackDTO.getOrderID())) {
             if (megaPayBrowserCallbackDTO.getOrderID().startsWith("CBO")) {
                 log.info("===========【megaPayTHB浏览器回调方法信息记录】==============这笔回调订单信息属于AD3 orderId:{}", megaPayBrowserCallbackDTO.getOrderID());
-                String ad3Url = ad3ItsUrl.concat("megaPayToMerchant.do");
+                String ad3Url = ad3ParamsConfig.getAd3ItsUrl().concat("megaPayToMerchant.do");
                 log.info("----------------------回调信息分发AD3方法记录----------------------分发AD3URL:{},参数:{}", ad3Url, JSON.toJSONString(megaPayBrowserCallbackDTO));
                 //分发给AD3
                 cn.hutool.http.HttpResponse execute = HttpRequest.get(ad3Url)
@@ -351,7 +339,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
             } else {
                 try {
                     //返回支付成功页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_SUCCESS);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_SUCCESS);
                 } catch (IOException e) {
                     log.info("--------------megaPayTHB浏览器回调接口信息记录--------------调用AW支付成功页面失败", e);
                 }
@@ -364,7 +352,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
             } else {
                 try {
                     //返回支付中页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_PROCESSING);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_PROCESSING);
                 } catch (IOException e) {
                     log.info("--------------megaPayTHB浏览器回调接口信息记录--------------调用AW支付中页面失败", e);
                 }
@@ -545,7 +533,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
             } else {
                 try {
                     //返回支付成功页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_SUCCESS);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_SUCCESS);
                 } catch (IOException e) {
                     log.info("--------------megaPayIDR浏览器回调接口信息记录--------------调用AW支付成功页面失败", e);
                 }
@@ -558,7 +546,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
             } else {
                 try {
                     //返回支付中页面
-                    response.sendRedirect(paySuccessUrl + "?page=" + TradeConstant.PAGE_PROCESSING);
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_PROCESSING);
                 } catch (IOException e) {
                     log.info("--------------megaPayIDR浏览器回调接口信息记录--------------调用AW支付中页面失败", e);
                 }
@@ -573,7 +561,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
      * @param url                      url
      */
     public String megaTHBCallbackAD3(MegaPayServerCallbackDTO megaPayServerCallbackDTO, String url) {
-        String ad3Url = ad3ItsUrl.concat(url);
+        String ad3Url = ad3ParamsConfig.getAd3ItsUrl().concat(url);
         log.info("----------------------megaPay-THB通道回调AD3信息记录----------------------分发AD3URL:{}", ad3Url);
         Map<String, Object> map = new HashMap<>();
         map.put("inv", megaPayServerCallbackDTO.getInv());
@@ -601,7 +589,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
      * @param url url
      */
     public String callbackAD3(Object obj, String url) {
-        String ad3Url = ad3ItsUrl.concat(url);
+        String ad3Url = ad3ParamsConfig.getAd3ItsUrl().concat(url);
         log.info("----------------------回调信息分发AD3方法记录----------------------分发AD3URL:{}", ad3Url);
         log.info("----------------------回调信息分发AD3方法记录----------------------分发AD3参数:{}", JSON.toJSONString(obj));
         //分发给AD3
@@ -622,7 +610,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
      * @param url                         url
      */
     public String megaIDRCallbackAD3(MegaPayIDRServerCallbackDTO megaPayIDRServerCallbackDTO, String url) {
-        String ad3Url = ad3ItsUrl.concat(url);
+        String ad3Url = ad3ParamsConfig.getAd3ItsUrl().concat(url);
         log.info("----------------------megaPay-IDR通道回调AD3信息记录----------------------分发AD3URL:{}", ad3Url);
         Map<String, Object> map = new HashMap<>();
         map.put("np_inv", megaPayIDRServerCallbackDTO.getNp_inv());

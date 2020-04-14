@@ -88,9 +88,6 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
     @Autowired
     private OrdersMapper ordersMapper;
 
-    @Value("${custom.nextPosUrl}")
-    private String nextPosUrl;
-
     /**
      * NextPos线下CSB
      *
@@ -141,10 +138,10 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
         String einv = String.valueOf(map.get("einv"));
         if (einv.startsWith("CBO")) {
             log.info("================【NextPos回调】================【该笔回调订单属于AD3】 orderId:{}", einv);
-            log.info("================【NextPos回调】================【分发AD3URL】ad3URL: {}", nextPosUrl);
+            log.info("================【NextPos回调】================【分发AD3URL】ad3URL: {}", ad3ParamsConfig.getNextPosUrl());
             log.info("================【NextPos回调】================【分发AD3参数】map: {}", JSON.toJSONString(map));
             //分发给AD3
-            cn.hutool.http.HttpResponse execute = HttpRequest.post(nextPosUrl)
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(ad3ParamsConfig.getNextPosUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(map)
                     .timeout(20000)
