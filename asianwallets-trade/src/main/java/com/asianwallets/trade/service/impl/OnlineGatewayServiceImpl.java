@@ -23,7 +23,6 @@ import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
-import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
 import com.asianwallets.trade.dao.MerchantMapper;
 import com.asianwallets.trade.dao.MerchantProductMapper;
@@ -41,7 +40,6 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,9 +87,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     @Autowired
     private Ad3Service ad3Service;
 
-    @Autowired
-    @Qualifier(value = "ad3ParamsConfig")
-    private AD3ParamsConfig ad3ParamsConfig;
 
     //收银台地址
     @Value("${custom.cashierDeskUrl}")
@@ -351,15 +346,15 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setInstitutionName(institution.getCnName());
         orders.setMerchantId(merchant.getId());
         orders.setMerchantType(merchant.getMerchantType());
-        orders.setMerchantName(merchant.getCnName());
-        orders.setSecondMerchantName(merchant.getCnName());
-        orders.setSecondMerchantCode(merchant.getId());
+        orders.setMerchantName(merchant.getCnName());;
         orders.setAgentCode(merchant.getAgentId());
         //INDIRECTCONNECTION 间连
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.DIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
-      /*  orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
-        orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());*/
+        if (!StringUtils.isEmpty(merchant.getGroupMasterAccount())) {
+            orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
+            orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
+        }
         //代理商
         if (!StringUtils.isEmpty(merchant.getAgentId())) {
             Merchant agentMerchant = commonRedisDataService.getMerchantById(merchant.getAgentId());
@@ -783,12 +778,11 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     @Override
     public List<OnlineCheckOrdersVO> checkOrder(OnlineCheckOrdersDTO onlineCheckOrdersDTO) {
         log.info("==================【线上查询订单】==================【请求参数】 onlineCheckOrdersDTO: {}", JSON.toJSONString(onlineCheckOrdersDTO));
-       /* //验签
+       //验签
         if (!commonBusinessService.checkUniversalSign(onlineCheckOrdersDTO)) {
             log.info("==================【线上查询订单】==================【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
-        }*/
-
+        }
         //页码默认为1
         if (onlineCheckOrdersDTO.getPageNum() == null) {
             onlineCheckOrdersDTO.setPageNum(1);

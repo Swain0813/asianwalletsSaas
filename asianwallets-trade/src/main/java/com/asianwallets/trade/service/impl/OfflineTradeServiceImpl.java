@@ -349,8 +349,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setInstitutionName(institution.getCnName());
         orders.setMerchantId(merchant.getId());
         orders.setMerchantName(merchant.getCnName());
-//        orders.setSecondMerchantName("");
-//        orders.setSecondMerchantCode("");
         if (!StringUtils.isEmpty(merchant.getAgentId())) {
             Merchant agentMerchant = commonRedisDataService.getMerchantById(merchant.getAgentId());
             orders.setAgentCode(agentMerchant.getId());
@@ -375,7 +373,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setChannelName(channel.getChannelCnName());
         orders.setPayMethod(product.getPayType());
         commonBusinessService.getUrl(offlineTradeDTO.getServerUrl(), orders);
-        //orders.setChannelAmount(new BigDecimal("0"));
         orders.setFloatRate(merchantProduct.getFloatRate());
         /*最大值*/
         orders.setMaxTate(merchantProduct.getMaxTate());
