@@ -83,9 +83,9 @@ public class OrdersRefundServiceImpl implements OrdersRefundService {
             }
             //退款类型 - 1：全额退款 2：部分退款
             if(ordersRefundVO.getRefundType()==1){
-                ordersRefundVO.setRefundStatusStr("全额退款");
+                ordersRefundVO.setRefundTypeStr("全额退款");
             }else {
-                ordersRefundVO.setRefundStatusStr("部分退款");
+                ordersRefundVO.setRefundTypeStr("部分退款");
             }
         }
         return ordersRefundVOS;

@@ -45,7 +45,6 @@ public class OrdersRefundExportVO {
     private String channelName;
 
     @ApiModelProperty(value = "渠道退款币种")
-    @Column(name = "trade_currency")
     private String tradeCurrency;
 
     @ApiModelProperty(value = "渠道退款金额")
