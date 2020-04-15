@@ -444,7 +444,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         CsbDynamicScanVO csbDynamicScanVO = new CsbDynamicScanVO();
         try {
             //上报通道
-            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
+            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark().split("_")[0]);
             BaseResponse baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
             csbDynamicScanVO.setQrCodeUrl(String.valueOf(baseResponse.getData()));
         } catch (Exception e) {
@@ -501,7 +501,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         ordersMapper.insert(orders);
         try {
             //上报通道
-            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark());
+            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark().split("_")[0]);
             channelsAbstract.offlineBSC(orders, basicInfoVO.getChannel(), offlineTradeDTO.getAuthCode());
         } catch (Exception e) {
             log.info("==================【线下BSC动态扫码】==================【上报通道异常】", e);

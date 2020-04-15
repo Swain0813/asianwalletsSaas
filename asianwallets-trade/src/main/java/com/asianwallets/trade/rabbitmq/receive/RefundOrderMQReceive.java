@@ -101,7 +101,7 @@ public class RefundOrderMQReceive {
             ChannelsAbstract channelsAbstract = null;
             try {
                 log.info("========================= 【RV_RF_FAIL_DL】 ==================== 【Channel Name】  channel: 【{}】", JSON.toJSONString(channel));
-                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
+                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
             } catch (Exception e) {
                 log.info("========================= 【RV_RF_FAIL_DL】 ==================== 【Exception】 e : 【{}】", e);
             }
@@ -178,7 +178,7 @@ public class RefundOrderMQReceive {
             Channel channel = this.commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
             ChannelsAbstract channelsAbstract = null;
             try {
-                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
+                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
             } catch (Exception e) {
                 log.info("========================= 【TK_SB_FAIL_DL】 ChannelsAbstract ==================== Exception : 【{}】,rabbitMassage : 【{}】", e, JSON.toJSONString(rabbitMassage));
             }
@@ -222,7 +222,7 @@ public class RefundOrderMQReceive {
             ChannelsAbstract channelsAbstract = null;
             try {
                 log.info("=========================【CX_GX_FAIL_DL】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
-                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
+                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
             } catch (Exception e) {
                 log.info("=========================【CX_GX_FAIL_DL】========================= 【Exception】 Exception:【{}】", e);
             }
@@ -287,7 +287,7 @@ public class RefundOrderMQReceive {
             ChannelsAbstract channelsAbstract = null;
             try {
                 log.info("=========================【CX_SB_FAIL_DL】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
-                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
+                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
             } catch (Exception e) {
                 log.info("========================= 【CX_SB_FAIL_DL】==================== 【channelsAbstract Exception】 : 【{}】", e);
             }

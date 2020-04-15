@@ -317,7 +317,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             ChannelsAbstract channelsAbstract = null;
             try {
                 log.info("=========================【退款 refundOrder】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
-                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
+                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
             } catch (Exception e) {
                 log.info("=========================【退款 refundOrder】========================= Exception:【{}】", e);
             }
@@ -351,7 +351,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         ChannelsAbstract channelsAbstract = null;
         try {
             log.info("=========================【退款 doRefundOrder】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
-            channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark());
+            channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
         } catch (Exception e) {
             log.info("=========================【退款 doRefundOrder】========================= 【doRefundOrder Exception】 Exception:【{}】", e);
         }
