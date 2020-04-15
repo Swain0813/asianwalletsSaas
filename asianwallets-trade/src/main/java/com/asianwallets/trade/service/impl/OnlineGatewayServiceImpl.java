@@ -1,5 +1,4 @@
 package com.asianwallets.trade.service.impl;
-
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
@@ -45,7 +44,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -162,11 +160,11 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 
     private BaseResponse getBaseResponse(BasicInfoVO basicInfoVO, Orders orders) {
         OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
-        BaseResponse baseResponse = new BaseResponse();
         try {
+            //返回结果
+            BaseResponse baseResponse = new BaseResponse();
             //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark().split("_")[0]);
-            //PayType payType = commonRedisDataService.getPayTypeByExtend1AndLanguage(basicInfoVO.getChannel().getPayType(), AsianWalletConstant.ZH_CN);
             if (basicInfoVO.getChannel().getServiceNameMark().split("_")[1].contains("CSB")) {
                 //通道配置为线下通道时
                 baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
@@ -348,7 +346,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setMerchantType(merchant.getMerchantType());
         orders.setMerchantName(merchant.getCnName());;
         orders.setAgentCode(merchant.getAgentId());
-        //INDIRECTCONNECTION 间连
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.DIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
         if (!StringUtils.isEmpty(merchant.getGroupMasterAccount())) {
@@ -395,9 +392,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             orders.setProductSettleCycle(SettleDateUtil.getSettleDate(merchantProduct.getSettleCycle()));
         }
         orders.setFloatRate(merchantProduct.getFloatRate());
-        /*最大值*/
         orders.setMaxTate(merchantProduct.getMaxTate());
-        /*最小值*/
         orders.setMinTate(merchantProduct.getMinTate());
         orders.setIssuerId(channel.getIssuerId());
         orders.setBankName(basicInfoVO.getBankName());
@@ -429,7 +424,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setSecondMerchantName(merchant.getCnName());
         orders.setSecondMerchantCode(merchant.getId());
         orders.setAgentCode(merchant.getAgentId());
-        //INDIRECTCONNECTION 间连
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.DIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
         orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
@@ -496,9 +490,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             orders.setProductSettleCycle(SettleDateUtil.getSettleDate(merchantProduct.getSettleCycle()));
         }
         orders.setFloatRate(merchantProduct.getFloatRate());
-        /*最大值*/
         orders.setMaxTate(merchantProduct.getMaxTate());
-        /*最小值*/
         orders.setMinTate(merchantProduct.getMinTate());
         orders.setIssuerId(channel.getIssuerId());
         orders.setBankName(basicInfoVO.getBankName());
@@ -893,9 +885,9 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                             commonBusinessService.createAccount(orders);
                         }
                         //分润
-                       /* if (!StringUtils.isEmpty(orders.getAgencyCode())) {
-                            rabbitMQSender.send(AD3MQConstant.MQ_FR_DL, orders.getId());
-                        }*/
+                        if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
+                            rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
+                        }
                         //更新成功,上报清结算
                         FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                         //上报清结算资金变动接口
