@@ -118,7 +118,7 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
         PayType payType = commonRedisDataService.getPayTypeByExtend1AndLanguage(orders.getPayMethod(), AsianWalletConstant.ZH_CN);
         String txnReq = null;
         String sign = null;
-        if (channel.getServiceNameMark().split("_")[1].equals("CSB")) {
+        if (channel.getServiceNameMark().split("_")[1].equals("QR")) {
             log.info("----------------- enets线上扫码方法开始 ----------------- ");
             //获取enets支付所需参数
             String netsMid = channel.getChannelMerchantId(); //enets通道商户号
