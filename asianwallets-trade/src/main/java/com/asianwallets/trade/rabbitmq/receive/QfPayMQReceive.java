@@ -1,11 +1,4 @@
 package com.asianwallets.trade.rabbitmq.receive;
-
-/**
- * @description:
- * @author: YangXu
- * @create: 2020-02-12 17:28
- **/
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -28,7 +21,6 @@ import com.asianwallets.trade.feign.MessageFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
-import com.asianwallets.trade.service.CommonService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -39,18 +31,11 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class QfPayMQReceive {
-
-    @Autowired
-    private CommonService commonService;
-
     @Autowired
     private ClearingService clearingService;
 
     @Autowired
     private RabbitMQSender rabbitMQSender;
-
-    @Autowired
-    private OrderRefundMapper refundOrderMapper;
 
     @Autowired
     private ReconciliationMapper reconciliationMapper;
