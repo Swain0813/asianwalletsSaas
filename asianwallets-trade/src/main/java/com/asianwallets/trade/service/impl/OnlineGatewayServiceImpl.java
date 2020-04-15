@@ -166,8 +166,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         try {
             //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark().split("_")[0]);
-            PayType payType = commonRedisDataService.getPayTypeByExtend1AndLanguage(basicInfoVO.getChannel().getPayType(), AsianWalletConstant.ZH_CN);
-            if (payType.getName().contains("CSB")) {
+            //PayType payType = commonRedisDataService.getPayTypeByExtend1AndLanguage(basicInfoVO.getChannel().getPayType(), AsianWalletConstant.ZH_CN);
+            if (basicInfoVO.getChannel().getServiceNameMark().split("_")[1].contains("CSB")) {
                 //通道配置为线下通道时
                 baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
                 onlineTradeVO.setCode_url(String.valueOf(baseResponse.getData()));

@@ -118,7 +118,7 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
         PayType payType = commonRedisDataService.getPayTypeByExtend1AndLanguage(orders.getPayMethod(), AsianWalletConstant.ZH_CN);
         String txnReq = null;
         String sign = null;
-        if (payType.getName().contains("扫码")) {
+        if (channel.getServiceNameMark().split("_")[1].equals("CSB")) {
             log.info("----------------- enets线上扫码方法开始 ----------------- ");
             //获取enets支付所需参数
             String netsMid = channel.getChannelMerchantId(); //enets通道商户号
@@ -177,7 +177,7 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
             //生成签名
             sign = createSign(txnReq, secretKey);
             log.info("----------------- enets线上扫码方法结束 ----------------- ");
-        } else if (payType.getName().contains("网银")) {
+        } else if (channel.getServiceNameMark().split("_")[1].equals("OB")) {
             log.info("----------------- enets线上网银方法开始 ----------------- ");
             //需要把金额变成分,金额转换 通道要求要放大100倍上送
             double tempAmount = ComTools.mul(orders.getTradeAmount().doubleValue(), 100);
