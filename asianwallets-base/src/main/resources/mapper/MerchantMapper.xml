@@ -194,7 +194,7 @@
         m1.cn_name as ext6,
         m2.cn_name as ext7,
         m.agent_type,
-        m.id,m.cn_name,m.en_name,m.country_type,co.country_name as country,m.mcc,c1.area_name as
+        m.id,m.cn_name,m.en_name,m.country_type,co.country_name as country,mc.name as m.mcc,c1.area_name as
         region,m.merchant_type,m.group_master_account,m.develop_sales,
         m.company_regist_number,m.company_validity,m.legal_passport_code,m.legal_passport_validity,
         co.area_code as
@@ -203,6 +203,7 @@
         m.contact_address,m.contact_people,m.contact_phone,m.audit_status,m.ext7,m.ext6,m.ext5,m.ext4,m.ext3,m.ext2,m.ext1,m.create_time,m.update_time,
         m.creator,m.modifier,m.remark,m.enabled
         from merchant m
+        left join mcc mc on m.mcc = mc.code
         left join institution i on m.institution_id = i.id
         left join merchant m1 on m.agent_id = m1.id
         left join merchant m2 on m.parent_id = m2.id
