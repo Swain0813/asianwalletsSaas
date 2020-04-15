@@ -247,7 +247,6 @@ public class EGHLServiceImpl extends ChannelsAbstractAdapter implements EGHLServ
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
                     if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
                         //请求成功
-                        FundChangeVO fundChangeVO = (FundChangeVO) fundChangeResponse.getData();
                         if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
                             //业务处理失败
                             log.info("=================【EGHL回调服务器方法信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");

@@ -246,7 +246,6 @@ public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help
                     //上报清结算资金变动接口
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
                     //请求成功
-                    FundChangeVO fundChangeVO = (FundChangeVO) fundChangeResponse.getData();
                     if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
                         //业务处理失败
                         log.info("=================【help2Pay服务器回调接口信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");

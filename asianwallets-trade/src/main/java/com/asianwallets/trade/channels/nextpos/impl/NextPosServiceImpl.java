@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.nextpos.impl;
-
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -36,12 +35,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
