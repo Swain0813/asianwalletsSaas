@@ -194,7 +194,7 @@
         m1.cn_name as ext6,
         m2.cn_name as ext7,
         m.agent_type,
-        m.id,m.cn_name,m.en_name,m.country_type,co.country_name as country,mc.name as m.mcc,c1.area_name as
+        m.id,m.cn_name,m.en_name,m.country_type,co.country_name as country,mc.name as mcc,c1.area_name as
         region,m.merchant_type,m.group_master_account,m.develop_sales,
         m.company_regist_number,m.company_validity,m.legal_passport_code,m.legal_passport_validity,
         co.area_code as
