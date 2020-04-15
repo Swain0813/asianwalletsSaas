@@ -227,12 +227,6 @@ public class TradeConstant {
     //----------机构结算交易的key
     public static final String FLAY_KEY = "SETTLE_ORDER_TASK";
 
-    //----------结算表更新应结算日期的key
-    public static final String UPDATE_STF_FLAY_KEY = "UPDATE_STFLOW_TASK";
-
-    //----------毛利表更新应结算日期的key
-    public static final String UPDATE_GP_FLAY_KEY = "UPDATE_GP_TASK";
-
     //----------机构产品结算周期类型
     public static final String DELIVERED = "妥投结算";
     public static final String FUTURE_TIME = "2088-08-08 08:08:08";
