@@ -1,4 +1,5 @@
 package com.asianwallets.trade.service.impl;
+
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
@@ -44,6 +45,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -175,7 +177,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                     //线下enets需要base64解码
                     onlineTradeVO.setType(TradeConstant.SCAN_DECODE);
                 } else {
-                    onlineTradeVO.setType(TradeConstant.WECHAT);
+                    //针对线下通道 返回的参数需要转换为二维码 增加标识 SCAN_CODE
+                    onlineTradeVO.setType(TradeConstant.SCAN_CODE);
                 }
             } else {
                 baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
@@ -344,7 +347,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setInstitutionName(institution.getCnName());
         orders.setMerchantId(merchant.getId());
         orders.setMerchantType(merchant.getMerchantType());
-        orders.setMerchantName(merchant.getCnName());;
+        orders.setMerchantName(merchant.getCnName());
         orders.setAgentCode(merchant.getAgentId());
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.DIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
@@ -770,7 +773,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     @Override
     public List<OnlineCheckOrdersVO> checkOrder(OnlineCheckOrdersDTO onlineCheckOrdersDTO) {
         log.info("==================【线上查询订单】==================【请求参数】 onlineCheckOrdersDTO: {}", JSON.toJSONString(onlineCheckOrdersDTO));
-       //验签
+        //验签
         if (!commonBusinessService.checkUniversalSign(onlineCheckOrdersDTO)) {
             log.info("==================【线上查询订单】==================【签名不匹配】");
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());

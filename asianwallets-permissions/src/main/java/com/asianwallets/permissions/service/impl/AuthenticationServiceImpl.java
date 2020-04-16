@@ -178,6 +178,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("===========【商户系统登录】==========【商户信息不存在!】");
             throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
         }
+        //获取机构信息
+        BaseResponse institutionResponse = institutionFeign.getInstitutionInfoById(merchant.getInstitutionId());
+        Institution institution = objectMapper.convertValue(institutionResponse.getData(), Institution.class);
+        if (institution == null) {
+            log.info("===========【机构系统登录】==========【机构信息不存在!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
+        }
         //拼接用户名
         String username = request.getUsername().concat(request.getSysId());
         SysUserVO sysUserVO = sysUserService.getSysUser(username);
@@ -193,6 +200,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
         response.setInstitutionId(merchant.getInstitutionId());
         response.setMerchantType(merchant.getMerchantType());
+        response.setInstitutionLogo(institution.getInstitutionLogo());
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
             RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
@@ -222,9 +230,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("===========【代理商系统登录】==========【代理商已禁用!】");
             throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
         }
-        if(!merchant.getMerchantType().equals("4")){
+        if (!merchant.getMerchantType().equals("4")) {
             log.info("===========【代理商系统登录】==========【非代理商用户!】");
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        //获取机构信息
+        BaseResponse institutionResponse = institutionFeign.getInstitutionInfoById(merchant.getInstitutionId());
+        Institution institution = objectMapper.convertValue(institutionResponse.getData(), Institution.class);
+        if (institution == null) {
+            log.info("===========【机构系统登录】==========【机构信息不存在!】");
+            throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
         }
         //拼接用户名
         String username = request.getUsername().concat(request.getSysId());
@@ -241,6 +256,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
         response.setInstitutionId(merchant.getInstitutionId());
         response.setAgentType(merchant.getAgentType());
+        response.setInstitutionLogo(institution.getInstitutionLogo());
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
             RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
