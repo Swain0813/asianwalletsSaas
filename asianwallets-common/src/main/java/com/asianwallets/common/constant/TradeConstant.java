@@ -244,7 +244,7 @@ public class TradeConstant {
             "</html>";
 
     //--------------收单类型
-    public static final String SCAN_CODE = "1"; //扫码
+    public static final String SCAN_CODE = "SCAN"; //扫码
     public static final String ONLINE_BANKING = "NETBANK"; //网银
     public static final String SCAN_DECODE = "DECODE"; //enets线下扫码 需要Base64
     public static final String CHANNELS = "CHANNELS"; //通道网银系统
