@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.eghl.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -237,7 +239,7 @@ public class EGHLServiceImpl extends ChannelsAbstractAdapter implements EGHLServ
                     }
                     //分润
                     if (!StringUtils.isEmpty(orders.getAgentCode())) {
-                    rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
+                        rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
                     FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                     //上报清结算资金变动接口
@@ -267,7 +269,7 @@ public class EGHLServiceImpl extends ChannelsAbstractAdapter implements EGHLServ
             log.info("=================【EGHL回调服务器方法信息记录】=================【订单已支付失败】 orderId: {}", orders.getId());
             orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
             //上游返回的错误code
-            orders.setRemark4(status);
+            orders.setRemark5(status);
             try {
                 //更改channelsOrders状态
                 channelsOrderMapper.updateStatusById(eghlBrowserCallbackDTO.getPaymentID(), eghlBrowserCallbackDTO.getTxnID(), TradeConstant.TRADE_FALID);

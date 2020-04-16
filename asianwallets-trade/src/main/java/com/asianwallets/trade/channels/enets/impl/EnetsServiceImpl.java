@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.enets.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -42,6 +43,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
@@ -527,7 +529,7 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
             //支付失败
             orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
             //上游返回的错误code
-            orders.setRemark4(enetsCallbackDTO.getNetsTxnMsg());
+            orders.setRemark5(enetsCallbackDTO.getNetsTxnMsg());
             //更改channelsOrders状态
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), enetsCallbackDTO.getNetsTxnRef(), TradeConstant.TRADE_FALID);
@@ -707,7 +709,7 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
             log.info("===============【eNets线上扫码服务器回调】===============【订单已支付失败】 orderId: {}", orders.getId());
             orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
             //上游返回的错误code
-            orders.setRemark4(enetsCallbackDTO.getNetsTxnMsg());
+            orders.setRemark5(enetsCallbackDTO.getNetsTxnMsg());
             //更改channelsOrders状态
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), enetsCallbackDTO.getNetsTxnRef(), TradeConstant.TRADE_FALID);

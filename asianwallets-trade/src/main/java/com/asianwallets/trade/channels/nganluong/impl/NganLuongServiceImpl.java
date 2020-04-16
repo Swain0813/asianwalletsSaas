@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.nganluong.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -56,7 +57,7 @@ public class NganLuongServiceImpl implements NganLuongService {
      */
     @Override
     public BaseResponse nganLuongPay(Orders orders, Channel channel, BaseResponse baseResponse) {
-        NganLuongRequestDTO nganLuongRequestDTO = new NganLuongRequestDTO(channel, orders, ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_SUCCESS, ad3ParamsConfig.getPaySuccessUrl()  + "?page=" + TradeConstant.PAGE_PROCESSING);
+        NganLuongRequestDTO nganLuongRequestDTO = new NganLuongRequestDTO(channel, orders, ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_SUCCESS, ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_PROCESSING);
         NganLuongDTO nganLuongDTO = new NganLuongDTO(nganLuongRequestDTO, orders.getMerchantOrderId(), orders.getReqIp(), channel);
         log.info("===============【NL网银收单接口信息记录】===============【请求实体】 nganLuongDTO: {}", JSON.toJSONString(nganLuongDTO));
         BaseResponse response = channelsFeign.nganLuongPay(nganLuongDTO);
@@ -72,7 +73,7 @@ public class NganLuongServiceImpl implements NganLuongService {
         if (!error_code.equals("00")) {
             baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
             //上游返回的错误code
-            orders.setRemark4(error_code.concat(" ").concat(map.get("description")));
+            orders.setRemark5(error_code.concat(" ").concat(map.get("description")));
             //更新订单信息
             try {
                 ordersMapper.updateByPrimaryKeySelective(orders);

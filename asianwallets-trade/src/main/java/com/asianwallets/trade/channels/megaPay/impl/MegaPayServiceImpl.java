@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.megaPay.impl;
+
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -42,6 +43,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -262,7 +264,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
             log.info("===========【megaPayTHB服务器回调方法信息记录】==============【订单已支付失败】 orderId: {}", orders.getId());
             orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
             //上游返回的错误code
-            orders.setRemark4(megaPayServerCallbackDTO.getResult());
+            orders.setRemark5(megaPayServerCallbackDTO.getResult());
             //更改channelsOrders状态
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), null, TradeConstant.TRADE_FALID);

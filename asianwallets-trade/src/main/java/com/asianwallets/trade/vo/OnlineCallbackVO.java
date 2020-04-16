@@ -62,7 +62,7 @@ public class OnlineCallbackVO {
         this.orderCurrency = orders.getOrderCurrency();
         this.orderAmount = orders.getOrderAmount();
         this.fee = orders.getFee();
-        this.remark = orders.getRemark4();
+        this.remark = orders.getRemark5();
         this.txnStatus = orders.getTradeStatus();
     }
 
