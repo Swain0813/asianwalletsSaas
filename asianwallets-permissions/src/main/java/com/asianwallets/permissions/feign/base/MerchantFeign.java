@@ -47,7 +47,7 @@ public interface MerchantFeign {
 
     @ApiOperation(value = "代理商下拉框")
     @GetMapping("/merchant/getAllAgent")
-    BaseResponse getAllAgent(@RequestParam("merchantType") @ApiParam String merchantType,@RequestParam("agentType") @ApiParam String agentType);
+    BaseResponse getAllAgent(@RequestParam("merchantType") @ApiParam String merchantType,@RequestParam("agentType") @ApiParam String agentType,@RequestParam(required = false) @ApiParam String institutionCode);
 
     @ApiOperation(value = "导出商户")
     @PostMapping("/merchant/exportMerchant")

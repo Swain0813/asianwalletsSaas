@@ -53,7 +53,7 @@ public interface MerchantMapper extends BaseMapper<Merchant> {
      * @Descripate 代理商下拉框
      * @return
      **/
-    List<Merchant> getAllAgent(@Param("merchantType") String merchantType,@Param("agentType")String agentType);
+    List<Merchant> getAllAgent(@Param("merchantType") String merchantType,@Param("agentType")String agentType,@Param("institutionCode")String institutionCode);
 
    /**
     * @Author YangXu

@@ -271,6 +271,9 @@
             <if test="agentType != null and agentType != ''">
                 and agent_type=#{agentType}
             </if>
+            <if test="institutionCode != null and institutionCode != ''">
+                and institution_id=#{institutionCode}
+            </if>
         </where>
     </select>
     <select id="selectByGroupMasterAccount" resultType="java.lang.String">
