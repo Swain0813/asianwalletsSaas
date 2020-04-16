@@ -28,12 +28,9 @@ import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
-import com.asianwallets.trade.vo.FundChangeVO;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
@@ -274,7 +271,7 @@ public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help
             log.info("=================【help2Pay服务器回调接口信息记录】=================【订单已支付失败】 orderId: {}", orders.getId());
             //支付失败
             orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
-            orders.setRemark4(status);
+            orders.setRemark5(status);
             try {
                 //更改channelsOrders状态
                 channelsOrderMapper.updateStatusById(help2PayCallbackDTO.getReference(), help2PayCallbackDTO.getID(), TradeConstant.TRADE_FALID);

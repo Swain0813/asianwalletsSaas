@@ -166,7 +166,6 @@ public class OfflineCallbackController extends BaseController {
     @PostMapping("/artificialCallback")
     public BaseResponse artificialCallback(@RequestBody @ApiParam ArtificialDTO artificialDTO) {
         log.info("================【人工回调】================【输入参数记录】 artificialDTO: {}", JSON.toJSONString(artificialDTO));
-        //artificialDTO.setUserName(getSysUserVO().getUsername());
         return ResultUtil.success(commonService.artificialCallback(artificialDTO));
     }
 }
