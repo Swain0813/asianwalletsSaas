@@ -141,16 +141,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         //设置订单属性
         Orders orders = setOnlineOrdersInfo(onlineTradeDTO, basicInfoVO);
         //截取币种默认值
-        commonBusinessService.interceptDigit(orders, currency);
-        //校验是否换汇
-        commonBusinessService.swapRateByPayment(basicInfoVO, orders);
-        //校验商户产品与通道的限额
-        commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
-        //计算手续费
-        commonBusinessService.calculateCost(basicInfoVO, orders);
-        orders.setReportChannelTime(new Date());
-        orders.setTradeStatus(TradeConstant.ORDER_PAYING);
-        orders.setTradeStatus(TradeConstant.PAYMENT_WAIT);
+        calculateCost(orders, basicInfoVO, currency);
         log.info("-----------------【线上直连】--------------【订单信息】 orders:{}", JSON.toJSONString(orders));
         ordersMapper.insert(orders);
         log.info("---------------【线上直连落地结束】---------------");
@@ -160,15 +151,22 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         return baseResponse;
     }
 
+    /**
+     * 调用channel
+     *
+     * @param basicInfoVO 基础信息实体
+     * @param orders      订单
+     * @return BaseResponse
+     */
     private BaseResponse getBaseResponse(BasicInfoVO basicInfoVO, Orders orders) {
         OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
         try {
             //返回结果
-            BaseResponse baseResponse = new BaseResponse();
+            BaseResponse baseResponse;
             //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark().split("_")[0]);
             if (basicInfoVO.getChannel().getServiceNameMark().split("_")[1].contains("CSB")) {
-                //通道配置为线下通道时
+                //下单路径 通道配置为线下通道时
                 baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
                 onlineTradeVO.setCode_url(String.valueOf(baseResponse.getData()));
                 onlineTradeVO.setRespCode("T000");
@@ -181,6 +179,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                     onlineTradeVO.setType(TradeConstant.SCAN_CODE);
                 }
             } else {
+                //下单路径 通道配置为线上通道时
                 baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
                 onlineTradeVO = (OnlineTradeVO) baseResponse.getData();
             }
@@ -202,6 +201,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             baseResponse.setData(onlineTradeVO);
             return baseResponse;
         } catch (Exception e) {
+            log.info("----------------线上下单 getBaseResponse方法异常---------------- e:{}", JSON.toJSONString(e.getMessage()));
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
     }
@@ -306,17 +306,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         basicInfoVO.setMerchant(merchant);
         //截取币种默认值
         Currency currency = commonRedisDataService.getCurrencyByCode(dto.getOrderCurrency());
-        commonBusinessService.interceptDigit(orders, currency);
         setCashierValue(basicInfoVO, orders);
-        //校验是否换汇
-        commonBusinessService.swapRateByPayment(basicInfoVO, orders);
-        //校验商户产品与通道的限额
-        commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
-        //计算手续费
-        commonBusinessService.calculateCost(basicInfoVO, orders);
-        orders.setReportChannelTime(new Date());
-        orders.setTradeStatus(TradeConstant.ORDER_PAYING);
-        orders.setTradeStatus(TradeConstant.PAYMENT_WAIT);
+        calculateCost(orders, basicInfoVO, currency);
         //用作判断收银台的重复订单号
         orders.setReportNumber("Q" + IDS.uniqueID().toString());
         log.info("-----------------【线上收银台】--------------【订单信息】 orders:{}", JSON.toJSONString(orders));
@@ -326,6 +317,26 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         BaseResponse baseResponse = getBaseResponse(basicInfoVO, orders);
         log.info("---------------【线上收银台收单结束】---------------");
         return baseResponse;
+    }
+
+    /**
+     * 计算费用
+     *
+     * @param orders      订单
+     * @param basicInfoVO 基础信息实体
+     * @param currency    币种
+     */
+    private void calculateCost(Orders orders, BasicInfoVO basicInfoVO, Currency currency) {
+        commonBusinessService.interceptDigit(orders, currency);
+        //校验是否换汇
+        commonBusinessService.swapRateByPayment(basicInfoVO, orders);
+        //校验商户产品与通道的限额
+        commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //计算手续费
+        commonBusinessService.calculateCost(basicInfoVO, orders);
+        orders.setReportChannelTime(new Date());
+        orders.setTradeStatus(TradeConstant.ORDER_PAYING);
+        orders.setTradeStatus(TradeConstant.PAYMENT_WAIT);
     }
 
     /**
