@@ -44,6 +44,9 @@ public class OnlineCallbackVO {
     @ApiModelProperty(value = "订单状态")
     private Byte txnStatus;
 
+    @ApiModelProperty(value = "备注")
+    private String remark;
+
     @ApiModelProperty(value = "签名")
     private String sign;
 
@@ -59,6 +62,7 @@ public class OnlineCallbackVO {
         this.orderCurrency = orders.getOrderCurrency();
         this.orderAmount = orders.getOrderAmount();
         this.fee = orders.getFee();
+        this.remark = orders.getRemark4();
         this.txnStatus = orders.getTradeStatus();
     }
 
