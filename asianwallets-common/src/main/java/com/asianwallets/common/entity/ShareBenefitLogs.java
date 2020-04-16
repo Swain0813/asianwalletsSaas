@@ -152,7 +152,7 @@ public class ShareBenefitLogs extends BaseEntity {
 	@Column(name ="extend6")
 	private String extend6;
 
-	@ApiModelProperty(value = "通道流水号")
+	@ApiModelProperty(value = "原订单手续费")
 	@Column(name ="extend7")
 	private String extend7;
 

@@ -268,6 +268,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             shareBenefitLogs.setExtend5("");//商户流水号
             shareBenefitLogs.setExtend6("");//通道流水号
         }
+        shareBenefitLogs.setExtend7(orders.getFee().toString());//原订单手续费
         shareBenefitLogs.setAgentId(basicInfoVO.getMerchant().getId());
         shareBenefitLogs.setAgentName(basicInfoVO.getMerchant().getCnName());
         shareBenefitLogs.setAgentType(agentType);
