@@ -168,7 +168,7 @@ public class DokuServiceImpl implements DokuService {
         int status = 0;
         String body = null;
         try {
-            cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getDokuPayUrl())
+            cn.hutool.http.HttpResponse execute = HttpRequest.post(channelsConfig.getDokuRefundUrl())
                     .header(Header.CONTENT_TYPE, "application/x-www-form-urlencoded")
                     .form(map)
                     .timeout(20000)

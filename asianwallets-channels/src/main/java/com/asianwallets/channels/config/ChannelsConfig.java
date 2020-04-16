@@ -125,6 +125,10 @@ public class ChannelsConfig {
     @Value("${custom.doku.checkUrl}")
     private String checkUrl;
 
+    @ApiModelProperty("DOKU系统的退款URL")
+    @Value("${custom.doku.refundUrl}")
+    private String dokuRefundUrl;
+
     @ApiModelProperty("QFPAY系统的CSBURL")
     @Value("${custom.qfpay.csbUrl}")
     private String qfPayCSBUrl;
