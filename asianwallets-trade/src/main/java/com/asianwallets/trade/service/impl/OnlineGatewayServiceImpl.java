@@ -832,8 +832,8 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     /**
      * 收银台查询订单状态
      *
-     * @param onlineOrderQueryDTO
-     * @return
+     * @param onlineOrderQueryDTO 查询DTO
+     * @return BaseResponse
      */
     @Override
     public BaseResponse onlineOrderQuery(OnlineOrderQueryDTO onlineOrderQueryDTO) {
