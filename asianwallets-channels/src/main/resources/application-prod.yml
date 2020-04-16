@@ -108,8 +108,8 @@ custom:
     fliePath: /usr/CBPayFiles/ITS/channelcert/
     cancelUrl: https://api.mch.weixin.qq.com/secapi/pay/reverse
   doku:
-    dokuPayUrl: https://staging.doku.com/Suite/Receive
-    checkUrl: https://staging.doku.com/CheckStatus
+    dokuPayUrl: https://pay.doku.com/Suite/Receive
+    checkUrl: https://pay.doku.com/CheckStatus
     refundUrl: https://pay.doku.com/Suite/DoRefundRequest
   qfpay:
     csbUrl: https://openapi.qfpay.info/api/v3/receiptsQRCode

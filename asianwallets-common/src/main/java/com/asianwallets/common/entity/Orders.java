@@ -356,31 +356,31 @@ public class Orders extends BaseEntity {
     @Column(name = "sign")
     private String sign;
 
-    @ApiModelProperty(value = "remark1")
+    @ApiModelProperty(value = "remark1(对外API用)")
     @Column(name = "remark1")
     private String remark1;
 
-    @ApiModelProperty(value = "remark2")
+    @ApiModelProperty(value = "remark2(对外API用)")
     @Column(name = "remark2")
     private String remark2;
 
-    @ApiModelProperty(value = "remark3")
+    @ApiModelProperty(value = "remark3(对外API用)")
     @Column(name = "remark3")
     private String remark3;
 
-    @ApiModelProperty(value = "remark4")
+    @ApiModelProperty(value = "remark4(换汇备注)")
     @Column(name = "remark4")
     private String remark4;
 
-    @ApiModelProperty(value = "remark5")
+    @ApiModelProperty(value = "remark5(通道备注)")
     @Column(name = "remark5")
     private String remark5;
 
-    @ApiModelProperty(value = "remark6")
+    @ApiModelProperty(value = "remark6(物流备注)")
     @Column(name = "remark6")
     private String remark6;
 
-    @ApiModelProperty(value = "remark7")
+    @ApiModelProperty(value = "remark7(商户返回信息)")
     @Column(name = "remark7")
     private String remark7;
 

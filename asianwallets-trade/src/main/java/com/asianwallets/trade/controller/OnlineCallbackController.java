@@ -5,6 +5,7 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
+import com.asianwallets.trade.channels.doku.DokuService;
 import com.asianwallets.trade.channels.eghl.EGHLService;
 import com.asianwallets.trade.channels.enets.EnetsService;
 import com.asianwallets.trade.channels.help2pay.Help2PayService;
@@ -51,6 +52,9 @@ public class OnlineCallbackController extends BaseController {
 
     @Autowired
     private Help2PayService help2PayService;
+
+    @Autowired
+    private DokuService dokuService;
 
     @ApiOperation(value = "ad3线上服务器回调接口")
     @PostMapping("/ad3OnlineServerCallback")
@@ -363,4 +367,33 @@ public class OnlineCallbackController extends BaseController {
         megaPayService.megaPayIdrBrowserCallback(megaPayIDRBrowserCallbackDTO, response);
     }
 
+    @ApiOperation(value = "DOKU通道服务器回调")
+    @PostMapping("/dokuServerCallback")
+    public void dokuServerCallback(HttpServletRequest request) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        log.info("==============【DOKU服务器回调接口】==============【回调参数】 parameterMap:{}", JSON.toJSONString(parameterMap));
+        Map<String, String> dtoMap = new HashMap<>();
+        Set<String> set = parameterMap.keySet();
+        for (String key : set) {
+            dtoMap.put(key, parameterMap.get(key)[0]);
+        }
+        DokuServerCallbackDTO dokuServerCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), DokuServerCallbackDTO.class);
+        log.info("==============【DOKU服务器回调接口】==============【JSON解析后的回调参数记录】 dokuServerCallbackDTO:{}", JSON.toJSONString(dokuServerCallbackDTO));
+        dokuService.dokuServerCallback(dokuServerCallbackDTO);
+    }
+
+    @ApiOperation(value = "DOKU通道浏览器回调")
+    @PostMapping("/dokuBrowserCallback")
+    public void dokuBrowserCallback(HttpServletRequest request,HttpServletResponse response) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        log.info("==============【DOKU浏览器回调接口】==============【回调参数】 parameterMap:{}", JSON.toJSONString(parameterMap));
+        Map<String, String> dtoMap = new HashMap<>();
+        Set<String> set = parameterMap.keySet();
+        for (String key : set) {
+            dtoMap.put(key, parameterMap.get(key)[0]);
+        }
+        DokuBrowserCallbackDTO dokuBrowserCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), DokuBrowserCallbackDTO.class);
+        log.info("==============【DOKU浏览器回调接口】==============【JSON解析后的回调参数记录】 dokuBrowserCallbackDTO:{}", JSON.toJSONString(dokuBrowserCallbackDTO));
+        dokuService.dokuBrowserCallback(dokuBrowserCallbackDTO,response);
+    }
 }

@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -73,18 +74,18 @@ public class DOKURequestDTO {
     public DOKURequestDTO(Orders orders, Channel channel) {
         this.MALLID = channel.getChannelMerchantId();
         this.CHAINMERCHANT = "NA";
-        this.AMOUNT = String.valueOf(orders.getChannelAmount());
-        this.PURCHASEAMOUNT = String.valueOf(orders.getChannelAmount());
+        this.AMOUNT = String.valueOf(orders.getTradeAmount().setScale(2, BigDecimal.ROUND_DOWN));
+        this.PURCHASEAMOUNT = String.valueOf(orders.getTradeAmount().setScale(2, BigDecimal.ROUND_DOWN));
         this.TRANSIDMERCHANT = orders.getId();
-        this.PAYMENTTYPE = "SALE";
+        //this.PAYMENTTYPE = "SALE";
         this.REQUESTDATETIME = DateToolUtils.getReqDateyyyyMMddHHmmss(new Date());
         this.CURRENCY = "360";
         this.PURCHASECURRENCY = "360";
-        this.SESSIONID = "SESSIONID";
+        this.SESSIONID = "21l5pi3g1qn7ikx";
         this.NAME = orders.getPayerName();
         this.EMAIL = orders.getPayerEmail();
-        this.PAYMENTCHANNEL = channel.getIssuerId();
-        this.BASKET = "ITEM1,10000.00,2,20000.00;ITEM2,20000.00,4,80000.00";
+        this.PAYMENTCHANNEL = orders.getIssuerId();
+        this.BASKET = "Item 1," + this.AMOUNT + ",1," + this.PURCHASEAMOUNT;
     }
 
 

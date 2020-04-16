@@ -143,7 +143,7 @@
 
     <update id="updateOrderRemark">
         update orders
-        set remark = #{remark}
+        set remark7 = #{remark}
         where id = #{id};
     </update>
 
