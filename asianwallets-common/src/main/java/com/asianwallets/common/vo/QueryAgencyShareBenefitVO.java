@@ -71,4 +71,7 @@ public class QueryAgencyShareBenefitVO {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "原订单手续费")
+    private String orderFee;
+
 }

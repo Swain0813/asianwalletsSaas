@@ -67,6 +67,9 @@ public class QueryAgencyShareBenefitTwoEnVO {
     @ApiModelProperty(value = "Share Benefit Status")//1:待分润，2：已分润
     private Byte isShare;
 
+    @ApiModelProperty(value = "Order Fee")//原订单
+    private String orderFee;
+
     @ApiModelProperty(value = "Remark")
     private String remark;
 

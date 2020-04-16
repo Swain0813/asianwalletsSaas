@@ -70,6 +70,9 @@ public class QueryAgencyShareBenefitOneVO {
     @ApiModelProperty(value = "分润状态")//1:待分润，2：已分润
     private Byte isShare;
 
+    @ApiModelProperty(value = "订单手续费")//
+    private String orderFee;
+
     @ApiModelProperty(value = "备注")
     private String remark;
 }

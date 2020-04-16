@@ -60,6 +60,7 @@
         <result column="extend4" property="channelName" jdbcType="VARCHAR"/>
         <result column="extend5" property="merchantOrderId" jdbcType="VARCHAR"/>
         <result column="extend6" property="channelOrderId" jdbcType="VARCHAR"/>
+        <result column="extend7" property="orderFee" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="ShareBenefitStatisticalVOMap" type="com.asianwallets.common.vo.ShareBenefitStatisticalVO">
@@ -87,7 +88,8 @@
         extend3,
         extend4,
         extend6,
-        extend5
+        extend5,
+        extend7
         FROM share_benefit_logs
         where institution_id = #{institutionCode}
         <if test="agentId != null and agentId != ''">
@@ -143,7 +145,8 @@
         extend3,
         extend4,
         extend6,
-        extend5
+        extend5,
+        extend7
         FROM share_benefit_logs
         where institution_id = #{institutionCode}
         <if test="agentId != null and agentId != ''">
