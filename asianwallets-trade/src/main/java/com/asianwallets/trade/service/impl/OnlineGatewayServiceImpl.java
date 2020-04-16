@@ -160,15 +160,22 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         return baseResponse;
     }
 
+    /**
+     * 调用channel
+     *
+     * @param basicInfoVO 基础信息实体
+     * @param orders      订单
+     * @return BaseResponse
+     */
     private BaseResponse getBaseResponse(BasicInfoVO basicInfoVO, Orders orders) {
         OnlineTradeVO onlineTradeVO = new OnlineTradeVO();
         try {
             //返回结果
-            BaseResponse baseResponse = new BaseResponse();
+            BaseResponse baseResponse;
             //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark().split("_")[0]);
             if (basicInfoVO.getChannel().getServiceNameMark().split("_")[1].contains("CSB")) {
-                //通道配置为线下通道时
+                //下单路径 通道配置为线下通道时
                 baseResponse = channelsAbstract.offlineCSB(orders, basicInfoVO.getChannel());
                 onlineTradeVO.setCode_url(String.valueOf(baseResponse.getData()));
                 onlineTradeVO.setRespCode("T000");
@@ -181,6 +188,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                     onlineTradeVO.setType(TradeConstant.SCAN_CODE);
                 }
             } else {
+                //下单路径 通道配置为线上通道时
                 baseResponse = channelsAbstract.onlinePay(orders, basicInfoVO.getChannel());
                 onlineTradeVO = (OnlineTradeVO) baseResponse.getData();
             }
@@ -202,6 +210,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             baseResponse.setData(onlineTradeVO);
             return baseResponse;
         } catch (Exception e) {
+            log.info("----------------线上下单 getBaseResponse方法异常---------------- e:{}", JSON.toJSONString(e.getMessage()));
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
     }
