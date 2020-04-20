@@ -125,7 +125,6 @@
         <result column="channel_img" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
         <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
         <result column="channel_cn_name" property="channelCnName" jdbcType="VARCHAR"/>
-        <result column="channel_currency_icon" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
         <result column="defaults" property="defaultValue" jdbcType="VARCHAR"/>
         <result column="channel_currency_icon" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
         <result column="issuer_id" property="issuerId" jdbcType="VARCHAR"/>
