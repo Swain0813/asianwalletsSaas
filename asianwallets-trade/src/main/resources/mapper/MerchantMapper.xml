@@ -93,6 +93,15 @@
         <collection javaType="list" property="bankReleVantVOList" resultMap="BankReleVantVOMap"/>
     </resultMap>
 
+    <resultMap id="BankReleVantVOMap" type="com.asianwallets.trade.vo.BankReleVantVO">
+        <result column="bank_id" property="bankId" jdbcType="VARCHAR"/>
+        <result column="bank_name" property="bankName" jdbcType="VARCHAR"/>
+        <result column="bank_country" property="bankCountry" jdbcType="VARCHAR"/>
+        <result column="bank_currency" property="bankCurrency" jdbcType="VARCHAR"/>
+        <result column="bank_issuerId" property="bankIssuerId" jdbcType="VARCHAR"/>
+        <result column="bank_img" property="bankImg" jdbcType="VARCHAR"/>
+    </resultMap>
+
 
     <resultMap id="OnlineMerchantNoBankVOMap" type="com.asianwallets.trade.vo.OnlineMerchantVO">
         <id column="id" property="merchantId" jdbcType="VARCHAR"/>
@@ -126,19 +135,8 @@
         <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
         <result column="channel_cn_name" property="channelCnName" jdbcType="VARCHAR"/>
         <result column="defaults" property="defaultValue" jdbcType="VARCHAR"/>
-        <result column="channel_currency_icon" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
         <result column="issuer_id" property="issuerId" jdbcType="VARCHAR"/>
         <result column="channel_img" property="channelImg" jdbcType="VARCHAR"/>
-    </resultMap>
-
-
-    <resultMap id="BankReleVantVOMap" type="com.asianwallets.trade.vo.BankReleVantVO">
-        <result column="bank_id" property="bankId" jdbcType="VARCHAR"/>
-        <result column="bank_name" property="bankName" jdbcType="VARCHAR"/>
-        <result column="bank_country" property="bankCountry" jdbcType="VARCHAR"/>
-        <result column="bank_currency" property="bankCurrency" jdbcType="VARCHAR"/>
-        <result column="bank_issuerId" property="bankIssuerId" jdbcType="VARCHAR"/>
-        <result column="bank_img" property="bankImg" jdbcType="VARCHAR"/>
     </resultMap>
 
     <select id="selectRelevantInfo" resultMap="OnlineMerchantVOMap">
@@ -207,7 +205,6 @@
         </if>
     </select>
 
-
     <select id="selectRelevantInfoNoBank" resultMap="OnlineMerchantNoBankVOMap">
         select
         m.id,
@@ -231,7 +228,6 @@
         ch.currency as channel_currency,
         ch.channel_code,
         ch.channel_cn_name,
-        c.icon as channel_currency_icon,
         b.bank_img as channel_img,
         b.issuer_id as issuer_id,
         ch.country as ch_country,
