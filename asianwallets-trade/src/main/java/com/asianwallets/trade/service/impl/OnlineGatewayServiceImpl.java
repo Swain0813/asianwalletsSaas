@@ -533,7 +533,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             log.info("--------------收银台订单不存在-------------- 订单号:{}", orderId);
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
-        OnlineMerchantVO onlineMerchantVO = merchantMapper.selectRelevantInfo(orders.getMerchantId(), null, TradeConstant.TRADE_ONLINE, language);
+        OnlineMerchantVO onlineMerchantVO = merchantMapper.selectRelevantInfoNoBank(orders.getMerchantId(), null, TradeConstant.TRADE_ONLINE, language);
         if (onlineMerchantVO == null) {
             log.info("-----------收银台商户CODE对应的产品通道信息不存在-----------订单id:{},orders:{},商户code:{}", orderId, JSON.toJSON(orders), orders.getMerchantId());
             throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_DOES_NOT_EXIST.getCode());//机构产品通道信息不存在
@@ -650,11 +650,11 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }
         //查询订单号是否重复
-        Orders oldOrder = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getOrderNo());
+      /*  Orders oldOrder = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getOrderNo());
         if (oldOrder != null) {
             log.info("-----------------【线上下单】下单信息记录-----------------订单号已存在");
             throw new BusinessException(EResultEnum.MERCHANT_ORDER_ID_EXIST.getCode());
-        }
+        }*/
         //检查币种默认值
         if (!commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount(), currency)) {
             log.info("-----------------【线上下单】下单信息记录--------------【订单金额不符合的当前币种默认值】");

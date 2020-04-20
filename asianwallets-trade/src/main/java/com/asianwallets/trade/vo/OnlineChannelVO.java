@@ -40,6 +40,9 @@ public class OnlineChannelVO {
     @ApiModelProperty(value = "不同币种的默认值")
     private String defaultValue;
 
+    @ApiModelProperty(value = "issuerId")
+    private String issuerId;
+
     @ApiModelProperty(value = "银行")
     private List<BankReleVantVO> bankReleVantVOList;
 }
