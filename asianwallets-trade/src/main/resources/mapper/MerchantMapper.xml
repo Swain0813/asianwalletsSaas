@@ -122,7 +122,7 @@
         <result column="channel_currency" property="channelCurrency" jdbcType="VARCHAR"/>
         <result column="channel_pay_type" property="channelPayType" jdbcType="VARCHAR"/>
         <result column="channel_pay_type_name" property="channelPayTypeName" jdbcType="VARCHAR"/>
-        <result column="channel_currency_icon" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
+        <result column="channel_img" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
         <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
         <result column="channel_cn_name" property="channelCnName" jdbcType="VARCHAR"/>
         <result column="channel_currency_icon" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
