@@ -131,7 +131,7 @@
         <result column="channel_currency" property="channelCurrency" jdbcType="VARCHAR"/>
         <result column="channel_pay_type" property="channelPayType" jdbcType="VARCHAR"/>
         <result column="channel_pay_type_name" property="channelPayTypeName" jdbcType="VARCHAR"/>
-        <result column="channel_img" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
+        <result column="channel_currency_icon" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
         <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
         <result column="channel_cn_name" property="channelCnName" jdbcType="VARCHAR"/>
         <result column="defaults" property="defaultValue" jdbcType="VARCHAR"/>
@@ -228,6 +228,7 @@
         ch.currency as channel_currency,
         ch.channel_code,
         ch.channel_cn_name,
+        c.icon as channel_currency_icon,
         b.bank_img as channel_img,
         b.issuer_id as issuer_id,
         ch.country as ch_country,
