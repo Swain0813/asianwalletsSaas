@@ -650,11 +650,11 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }
         //查询订单号是否重复
-      /*  Orders oldOrder = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getOrderNo());
+        Orders oldOrder = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getOrderNo());
         if (oldOrder != null) {
             log.info("-----------------【线上下单】下单信息记录-----------------订单号已存在");
             throw new BusinessException(EResultEnum.MERCHANT_ORDER_ID_EXIST.getCode());
-        }*/
+        }
         //检查币种默认值
         if (!commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount(), currency)) {
             log.info("-----------------【线上下单】下单信息记录--------------【订单金额不符合的当前币种默认值】");
