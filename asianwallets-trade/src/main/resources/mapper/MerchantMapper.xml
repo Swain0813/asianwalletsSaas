@@ -119,7 +119,7 @@
     </resultMap>
 
     <resultMap id="ChannelNoBankVOMap" type="com.asianwallets.trade.vo.OnlineChannelVO">
-        <id column="channel_id" property="channelId" jdbcType="VARCHAR"/>
+        <!--        <id column="channel_id" property="channelId" jdbcType="VARCHAR"/>-->
         <id column="product_id" property="channelProductId" jdbcType="VARCHAR"/>
         <result column="channel_currency" property="channelCurrency" jdbcType="VARCHAR"/>
         <result column="channel_pay_type" property="channelPayType" jdbcType="VARCHAR"/>
@@ -235,7 +235,6 @@
         ch.channel_code,
         ch.channel_cn_name,
         c.icon as channel_currency_icon,
-        b.id as bank_id,
         b.bank_img as channel_img,
         b.issuer_id as issuer_id,
         ch.country as ch_country,
