@@ -440,8 +440,13 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setAgentCode(merchant.getAgentId());
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.DIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
-        orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
-        orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
+        /*
+        判断GroupMasterAccount是否存在
+         */
+        if (!StringUtils.isEmpty(merchant.getGroupMasterAccount())) {
+            orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
+            orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
+        }
         //代理商
         if (!StringUtils.isEmpty(merchant.getAgentId())) {
             Merchant agentMerchant = commonRedisDataService.getMerchantById(merchant.getAgentId());
@@ -645,11 +650,11 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
         }
         //查询订单号是否重复
-        Orders oldOrder = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getOrderNo());
+      /*  Orders oldOrder = ordersMapper.selectByMerchantOrderId(onlineTradeDTO.getOrderNo());
         if (oldOrder != null) {
             log.info("-----------------【线上下单】下单信息记录-----------------订单号已存在");
             throw new BusinessException(EResultEnum.MERCHANT_ORDER_ID_EXIST.getCode());
-        }
+        }*/
         //检查币种默认值
         if (!commonBusinessService.checkOrderCurrency(onlineTradeDTO.getOrderCurrency(), onlineTradeDTO.getOrderAmount(), currency)) {
             log.info("-----------------【线上下单】下单信息记录--------------【订单金额不符合的当前币种默认值】");
