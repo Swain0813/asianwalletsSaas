@@ -95,7 +95,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
     public BaseResponse onlinePay(Orders orders, Channel channel) {
         BaseResponse response = new BaseResponse();
         if (orders.getTradeCurrency().equalsIgnoreCase("THB")) {//megaPay THB通道
-            MegaPayRequestDTO megaPayRequestDTO = new MegaPayRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/megaPayThbBrowserCallback"));
+            MegaPayRequestDTO megaPayRequestDTO = new MegaPayRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/megaPayThbBrowserCallback"));
             log.info("===============【MegaPay-THB网银收单】===============【调用Channels服务-请求参数】 megaPayRequestDTO: {}", JSON.toJSONString(megaPayRequestDTO));
             response = channelsFeign.megaPayTHB(megaPayRequestDTO);
             log.info("===============【MegaPay-THB网银收单】===============【调用Channels服务-响应参数】 response: {}", JSON.toJSONString(response));
@@ -111,7 +111,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
             RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(param));
             rabbitMQSender.send(AD3MQConstant.E_MQ_MEGAPAY_THB_CHECK_ORDER, JSON.toJSONString(rabbitMassage));
         } else if (orders.getTradeCurrency().equalsIgnoreCase("IDR")) {//megaPay IDR通道
-            MegaPayIDRRequestDTO megaPayIDRRequestDTO = new MegaPayIDRRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/megaPayIdrBrowserCallback"));
+            MegaPayIDRRequestDTO megaPayIDRRequestDTO = new MegaPayIDRRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/megaPayIdrBrowserCallback"));
             log.info("===============【MegaPay-IDR网银收单】===============【调用Channels服务-请求参数】 megaPayIDRRequestDTO: {}", JSON.toJSONString(megaPayIDRRequestDTO));
             response = channelsFeign.megaPayIDR(megaPayIDRRequestDTO);
             log.info("===============【MegaPay-IDR网银收单】===============【调用Channels服务-响应参数】 response: {}", JSON.toJSONString(response));

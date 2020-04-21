@@ -81,7 +81,7 @@ public class EGHLServiceImpl extends ChannelsAbstractAdapter implements EGHLServ
      */
     @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
-        EGHLRequestDTO eghlRequestDTO = new EGHLRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eghlBrowserCallback"), ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eghlServerCallback"));
+        EGHLRequestDTO eghlRequestDTO = new EGHLRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/eghlBrowserCallback"), ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eghlServerCallback"));
         log.info("----------------- EGHL收单方法 ----------------- eghlRequestDTO: {}", JSON.toJSONString(eghlRequestDTO));
         BaseResponse channelResponse = channelsFeign.eGHLPay(eghlRequestDTO);
         log.info("----------------- EGHL收单方法 返回----------------- response: {}", JSON.toJSONString(channelResponse));

@@ -79,7 +79,7 @@ public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help
      */
     @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
-        Help2PayRequestDTO help2PayRequestDTO = new Help2PayRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/help2PayBrowserCallback"), ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/help2PayServerCallback"), channel.getMd5KeyStr());
+        Help2PayRequestDTO help2PayRequestDTO = new Help2PayRequestDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/help2PayBrowserCallback"), ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/help2PayServerCallback"), channel.getMd5KeyStr());
         //生成签名
         help2PayRequestDTO.setKey(createHelp2PaySign(help2PayRequestDTO, channel.getMd5KeyStr()));
         //生成签名之后的时间格式要换掉
