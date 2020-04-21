@@ -440,8 +440,13 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setAgentCode(merchant.getAgentId());
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.DIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
-        orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
-        orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
+        /*
+        判断GroupMasterAccount是否存在
+         */
+        if (!StringUtils.isEmpty(merchant.getGroupMasterAccount())) {
+            orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
+            orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
+        }
         //代理商
         if (!StringUtils.isEmpty(merchant.getAgentId())) {
             Merchant agentMerchant = commonRedisDataService.getMerchantById(merchant.getAgentId());
@@ -528,7 +533,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             log.info("--------------收银台订单不存在-------------- 订单号:{}", orderId);
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
-        OnlineMerchantVO onlineMerchantVO = merchantMapper.selectRelevantInfo(orders.getMerchantId(), null, TradeConstant.TRADE_ONLINE, language);
+        OnlineMerchantVO onlineMerchantVO = merchantMapper.selectRelevantInfoNoBank(orders.getMerchantId(), null, TradeConstant.TRADE_ONLINE, language);
         if (onlineMerchantVO == null) {
             log.info("-----------收银台商户CODE对应的产品通道信息不存在-----------订单id:{},orders:{},商户code:{}", orderId, JSON.toJSON(orders), orders.getMerchantId());
             throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_DOES_NOT_EXIST.getCode());//机构产品通道信息不存在

@@ -102,6 +102,43 @@
         <result column="bank_img" property="bankImg" jdbcType="VARCHAR"/>
     </resultMap>
 
+
+    <resultMap id="OnlineMerchantNoBankVOMap" type="com.asianwallets.trade.vo.OnlineMerchantVO">
+        <id column="id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="cn_name" property="cnName" jdbcType="VARCHAR"/>
+        <collection javaType="list" property="productList" resultMap="ProductNoBankVOMap"/>
+    </resultMap>
+
+    <resultMap id="ProductNoBankVOMap" type="com.asianwallets.trade.vo.OnlineProductVO">
+        <id column="product_id" property="productId" jdbcType="VARCHAR"/>
+        <result column="product_code" property="productCode" jdbcType="INTEGER"/>
+        <result column="pay_type" property="payType" jdbcType="TINYINT"/>
+        <result column="product_pay_type_name" property="productPayTypeName" jdbcType="VARCHAR"/>
+        <result column="product_currency" property="productCurrency" jdbcType="VARCHAR"/>
+        <result column="rate" property="rate" jdbcType="DECIMAL"/>
+        <result column="ip_rate_type" property="rateType" jdbcType="VARCHAR"/>
+        <result column="ip_float_rate" property="ipFloatRate" jdbcType="DECIMAL"/>
+        <result column="ip_add_value" property="ipAddValue" jdbcType="DECIMAL"/>
+        <result column="ip_settle_cycle" property="settleCycle" jdbcType="VARCHAR"/>
+        <result column="limit_amount" property="limitAmount" jdbcType="DECIMAL"/>
+        <result column="daily_trading_count" property="dailyTradingCount" jdbcType="INTEGER"/>
+        <collection javaType="list" property="channelList" resultMap="ChannelNoBankVOMap"/>
+    </resultMap>
+
+    <resultMap id="ChannelNoBankVOMap" type="com.asianwallets.trade.vo.OnlineChannelVO">
+        <result column="channel_currency" property="channelCurrency" jdbcType="VARCHAR"/>
+        <result column="channel_pay_type" property="channelPayType" jdbcType="VARCHAR"/>
+        <result column="channel_pay_type_name" property="channelPayTypeName" jdbcType="VARCHAR"/>
+        <result column="channel_currency_icon" property="channelCurrencyIcon" jdbcType="VARCHAR"/>
+        <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="channel_cn_name" property="channelCnName" jdbcType="VARCHAR"/>
+        <result column="defaults" property="defaultValue" jdbcType="VARCHAR"/>
+        <result column="issuer_id" property="issuerId" jdbcType="VARCHAR"/>
+        <result column="channel_img" property="channelImg" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <select id="selectRelevantInfo" resultMap="OnlineMerchantVOMap">
         select
         m.id,
@@ -135,6 +172,67 @@
         ch.country as ch_country,
         ch.pay_type as channel_pay_type,
         b.issuer_id as channel_issuerId,
+        pp.name as channel_pay_type_name,
+        c.defaults
+        from merchant m ,merchant_product mp,product p,channel ch ,merchant_channel mc,
+        channel_bank cb,bank b,currency c,pay_type pp,pay_type ppp
+        where m.id = mp.merchant_id and mp.product_id = p.id and mp.id = mc.mer_pro_id and mc.cha_ban_id = cb.id
+        and cb.channel_id = ch.id
+        and cb.bank_id = b.id
+        and ch.pay_type= pp.extend1
+        and p.pay_type = ppp.extend1
+        and ch.currency = c.code
+        and p.enabled = 1
+        and ch.enabled = 1
+        and mc.enabled = 1
+        and c.enabled =1
+        and pp.enabled = 1
+        and ppp.enabled = 1
+        <if test="merchantId !=null and merchantId != ''">
+            and m.id = #{merchantId}
+        </if>
+        <if test="payType !=null and payType != ''">
+            and p.pay_type = #{payType}
+        </if>
+        <if test="tradeDirection !=null and tradeDirection != ''">
+            and p.trade_direction = #{tradeDirection}
+        </if>
+        <if test="language !=null and language != ''">
+            and pp.language = #{language}
+        </if>
+        <if test="language !=null and language != ''">
+            and ppp.language = #{language}
+        </if>
+    </select>
+
+    <select id="selectRelevantInfoNoBank" resultMap="OnlineMerchantNoBankVOMap">
+        select
+        m.id,
+        m.institution_id ,
+        m.enabled,
+        m.cn_name,
+        mp.product_id,
+        mp.rate,
+        mp.rate_type as ip_rate_type,
+        mp.float_rate as ip_float_rate,
+        mp.add_value as ip_add_value,
+        mp.fee_payer as ip_fee_payer,
+        mp.limit_amount,
+        mp.daily_trading_count,
+        p.currency as product_currency,
+        p.pay_type,
+        ppp.name as product_pay_type_name,
+        p.product_img,
+        p.product_code,
+        ch.id as channel_id,
+        ch.currency as channel_currency,
+        ch.channel_code,
+        ch.channel_cn_name,
+        c.icon as channel_currency_icon,
+        b.bank_img as channel_img,
+        b.issuer_id as issuer_id,
+        ch.country as ch_country,
+        ch.pay_type as channel_pay_type,
         pp.name as channel_pay_type_name,
         c.defaults
         from merchant m ,merchant_product mp,product p,channel ch ,merchant_channel mc,

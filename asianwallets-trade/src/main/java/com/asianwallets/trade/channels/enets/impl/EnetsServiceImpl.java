@@ -11,7 +11,6 @@ import com.asianwallets.common.dto.enets.EnetsSMRequestDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
 import com.asianwallets.common.entity.Orders;
-import com.asianwallets.common.entity.PayType;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -117,7 +116,6 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
      */
     @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
-        PayType payType = commonRedisDataService.getPayTypeByExtend1AndLanguage(orders.getPayMethod(), AsianWalletConstant.ZH_CN);
         String txnReq = null;
         String sign = null;
         if (channel.getServiceNameMark().split("_")[1].equals("QR")) {

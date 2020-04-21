@@ -20,4 +20,15 @@ public interface MerchantMapper extends BaseMapper<Merchant> {
      * @return
      */
     OnlineMerchantVO selectRelevantInfo(@Param("merchantId") String merchantId, @Param("payType") String payType, @Param("tradeDirection") Byte tradeDirection, @Param("language") String language);
+
+    /**
+     * 线上查询信息 无bank列表
+     *
+     * @param merchantId
+     * @param payType
+     * @param tradeDirection
+     * @param language
+     * @return
+     */
+    OnlineMerchantVO selectRelevantInfoNoBank(@Param("merchantId") String merchantId, @Param("payType") String payType, @Param("tradeDirection") Byte tradeDirection, @Param("language") String language);
 }
