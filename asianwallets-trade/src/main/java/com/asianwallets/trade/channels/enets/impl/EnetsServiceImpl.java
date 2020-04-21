@@ -131,8 +131,8 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
             }
             String txnAmount = Integer.toString(temamt); //交易金额
             String merchantTxnRef = orders.getId(); //商户交易订单流水号
-            String b2sTxnEndURL = ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsQrCodeBrowserCallback"); //浏览器地址
-            String s2sTxnEndURL = ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsQrCodeServerCallback"); //服务器地址
+            String b2sTxnEndURL = ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/eNetsQrCodeBrowserCallback"); //浏览器地址
+            String s2sTxnEndURL = ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/eNetsQrCodeServerCallback"); //服务器地址
             String merchantTxnDtm = DateToolUtils.getReqDateH(new Date()); //商户交易时间
             String submissionMode = "B"; //提交方式 B:浏览器 S:服务器
             String paymentType = "SALE"; //产品类型 :SALE
@@ -197,9 +197,9 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
             json.put("currencyCode", orders.getTradeCurrency());
             json.put("paymentMode", "DD");
             json.put("merchantTimeZone", "+8:00");
-            json.put("b2sTxnEndURL", ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsBankBrowserCallback"));
+            json.put("b2sTxnEndURL", ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/eNetsBankBrowserCallback"));
             json.put("b2sTxnEndURLParam", "");
-            json.put("s2sTxnEndURL", ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/eNetsBankServerCallback"));
+            json.put("s2sTxnEndURL", ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/eNetsBankServerCallback"));
             json.put("s2sTxnEndURLParam", "");
             json.put("clientType", "W");
             json.put("supMsg", "");
