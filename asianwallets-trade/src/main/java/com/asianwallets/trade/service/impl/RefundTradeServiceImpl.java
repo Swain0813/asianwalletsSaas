@@ -531,9 +531,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                     throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
                 }
                 //swiftCode
-                if (StringUtils.isBlank(refundDTO.getSwiftCode())) {
-                    throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-                }
+                //if (StringUtils.isBlank(refundDTO.getSwiftCode())) {
+                //    throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+                //}
             }
             return TradeConstant.RV;
         } else if (CTstatus == null && STstatus == null) {
