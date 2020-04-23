@@ -102,13 +102,13 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
         merchantAudit.setAuditStatus(TradeConstant.AUDIT_WAIT);
         merchantAudit.setEnabled(false);
 
-        if(StringUtils.isEmpty(merchantDTO.getAgentId())){
+        if(!StringUtils.isEmpty(merchantDTO.getAgentId())){
             Merchant m1 = merchantMapper.selectByPrimaryKey(merchantDTO.getAgentId());
             if(!m1.getInstitutionId().equals(merchantDTO.getInstitutionId())){
                 throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_INVALID.getCode());
             }
         }
-        if(StringUtils.isEmpty(merchantDTO.getParentId())){
+        if(!StringUtils.isEmpty(merchantDTO.getParentId())){
             Merchant m2 = merchantMapper.selectByPrimaryKey(merchantDTO.getParentId());
             if(!m2.getInstitutionId().equals(merchantDTO.getInstitutionId())){
                 throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_INVALID.getCode());
