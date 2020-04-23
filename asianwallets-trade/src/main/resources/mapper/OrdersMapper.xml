@@ -379,6 +379,7 @@
                 AND DATE_FORMAT(o.create_time,'%Y-%m-%d') &lt;= #{endDate}
             </if>
         </where>
+        order by create_time desc
     </select>
 
     <select id="selectByChannelNumber" resultMap="BaseResultMap">

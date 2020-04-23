@@ -1,7 +1,6 @@
 package com.asianwallets.common.dto;
 
 
-import com.asianwallets.common.base.BasePageHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,7 +12,7 @@ import lombok.Data;
  **/
 @Data
 @ApiModel(value = "订单输入实体", description = "订单输入实体")
-public class MockOrdersDTO extends BasePageHelper {
+public class MockOrdersDTO {
 
     @ApiModelProperty(value = "商户订单ID")
     private String merchantOrderId;
@@ -29,5 +28,13 @@ public class MockOrdersDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "交易结束时间")
     private String endDate;
+    /**
+     * 页码
+     */
+    public Integer pageNum;
 
+    /**
+     * 每页条数
+     */
+    public Integer pageSize;
 }
