@@ -871,6 +871,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                 throw new BusinessException(EResultEnum.QUERY_ORDER_ERROR.getCode());
             }
             AD3OnlineOrderQueryVO ad3OnlineOrderQueryVO = JSON.parseObject(httpResponse.getJsonObject().toJSONString(), AD3OnlineOrderQueryVO.class);
+            log.info("---------------上游返回的查询信息---------------AD3OnlineOrderQueryVO:{}", JSON.toJSONString(ad3OnlineOrderQueryVO));
             if (ad3OnlineOrderQueryVO == null || StringUtils.isEmpty(ad3OnlineOrderQueryVO.getState())) {
                 log.info("---------------上游返回的查询信息为空---------------");
                 response.setCode(EResultEnum.QUERY_ORDER_ERROR.getCode());
