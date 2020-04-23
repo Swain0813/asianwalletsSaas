@@ -279,6 +279,7 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
             }
         } else {
             log.info("================【NextPos回调】================【订单是其他状态】 orderId: {}", orders.getId());
+            return;
         }
         try {
             //商户服务器回调地址不为空,回调商户服务器

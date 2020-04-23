@@ -486,6 +486,7 @@ public class QfPayServiceImpl extends ChannelsAbstractAdapter implements QfPaySe
             }
         } else if ("1143".equals(qfPayCallbackDTO.getStatus())) {
             log.info("=================【QfPay服务器回调】=================【订单是交易中】 orderId: {}", orders.getId());
+            return "success";
         } else {
             log.info("=================【QfPay服务器回调】=================【订单已支付失败】 orderId: {}", orders.getId());
             orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
