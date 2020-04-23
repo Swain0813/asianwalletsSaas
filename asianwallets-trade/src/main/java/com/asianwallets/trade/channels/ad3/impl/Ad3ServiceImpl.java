@@ -120,6 +120,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
      * @param channel 通道
      * @return BaseResponse
      */
+    @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
         //封装参数
         AD3OnlineAcquireDTO ad3OnlineAcquireDTO = new AD3OnlineAcquireDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl() + "/onlineCallback/ad3OnlineServerCallback", ad3ParamsConfig.getChannelCallbackUrl() + "/onlineCallback/ad3OnlineBrowserCallback");
@@ -966,13 +967,15 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         for (String dtoKey : keySet) {
             map.put(dtoKey, String.valueOf(dtoMap.get(dtoKey)));
         }
-        byte[] msg = SignTools.getSignStr(map).getBytes();
+        String signStr = SignTools.getSignStr(map);
+        byte[] msg = signStr.getBytes();
         String signMsg = null;
+        String priKey = privateKey.replaceAll("\\s*", "");
         try {
             //签名
-            signMsg = RSAUtils.sign(msg, privateKey.replaceAll("\\s*", ""));
+            signMsg = RSAUtils.sign(msg, priKey);
         } catch (Exception e) {
-            log.info("----------------- 线上签名错误信息记录 ----------------签名原始明文:{},签名:{}", msg, signMsg);
+            log.info("----------------- 线上签名错误信息记录 ----------------签名原始明文:{},私钥:{},签名:{}", signStr, priKey, signMsg);
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         return signMsg;
