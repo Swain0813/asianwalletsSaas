@@ -843,11 +843,11 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     @Override
     public BaseResponse onlineOrderQuery(OnlineOrderQueryDTO onlineOrderQueryDTO) {
         log.info("-----------线上通道订单状态查询开始-----------onlineOrderQueryDTO:{}", JSON.toJSON(onlineOrderQueryDTO));
-        Orders orders = ordersMapper.selectByPrimaryKey(onlineOrderQueryDTO.getOrderNo());
+        Orders orders = ordersMapper.selectByMerchantOrderId(onlineOrderQueryDTO.getOrderNo());
         BaseResponse response = new BaseResponse();
         //订单不存在
         if (orders == null) {
-            log.info("-------------订单不存在------------ad3OnlineOrderQueryVO:{}", JSON.toJSON(onlineOrderQueryDTO));
+            log.info("-------------订单不存在------------onlineOrderQueryDTO:{}", JSON.toJSON(onlineOrderQueryDTO));
             response.setCode(EResultEnum.ORDER_NOT_EXIST.getCode());
             return response;
         }
@@ -862,7 +862,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
             return response;
         }
         //判断通道
-        if (channel.getServiceNameMark().equals(TradeConstant.AD3)) {
+        if (channel.getServiceNameMark().contains(TradeConstant.AD3)) {
             AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO = new AD3OnlineOrderQueryDTO(orders, channel.getChannelMerchantId());
             ad3OnlineOrderQueryDTO.setMerorderDatetime(DateUtil.format(orders.getReportChannelTime(), "yyyyMMddHHmmss"));
             HttpResponse httpResponse = ad3Service.ad3OnlineOrderQuery(ad3OnlineOrderQueryDTO, null, channel);
@@ -871,6 +871,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                 throw new BusinessException(EResultEnum.QUERY_ORDER_ERROR.getCode());
             }
             AD3OnlineOrderQueryVO ad3OnlineOrderQueryVO = JSON.parseObject(httpResponse.getJsonObject().toJSONString(), AD3OnlineOrderQueryVO.class);
+            log.info("---------------上游返回的查询信息---------------AD3OnlineOrderQueryVO:{}", JSON.toJSONString(ad3OnlineOrderQueryVO));
             if (ad3OnlineOrderQueryVO == null || StringUtils.isEmpty(ad3OnlineOrderQueryVO.getState())) {
                 log.info("---------------上游返回的查询信息为空---------------");
                 response.setCode(EResultEnum.QUERY_ORDER_ERROR.getCode());
