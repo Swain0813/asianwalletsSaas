@@ -292,6 +292,7 @@ public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help
             }
         } else {
             log.info("=================【help2Pay服务器回调接口信息记录】=================【订单是其他状态】 status: {}", status);
+            return;
         }
         try {
             //商户服务器回调地址不为空,回调商户服务器
