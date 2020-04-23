@@ -915,7 +915,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                         log.info("=================【线上通道订单状态查询】=================【上报清结算返回信息】 fundChangeResponse:{}", JSON.toJSONString(fundChangeResponse));
                         if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
                             log.info("=================【线上通道订单状态查询】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                            com.asianwallets.common.dto.RabbitMassage rabbitMassage = new com.asianwallets.common.dto.RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                             rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                         }
                     } catch (Exception e) {
