@@ -109,7 +109,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
     @Override
     public HttpResponse ad3OnlineOrderQuery(AD3OnlineOrderQueryDTO ad3OnlineOrderQueryDTO, Map<String, Object> headerMap, Channel channel) {
         //channel.getExtend2() ad3私钥
-        ad3OnlineOrderQueryDTO.setSignMsg(signMsg(ad3OnlineOrderQueryDTO, "2"));
+        ad3OnlineOrderQueryDTO.setSignMsg(signMsg(ad3OnlineOrderQueryDTO, channel.getMd5KeyStr()));
         return HttpClientUtils.reqPost(ad3ParamsConfig.getAd3Url() + "/v1/merQueryOneOrder.json", ad3OnlineOrderQueryDTO, headerMap);
     }
 
@@ -120,13 +120,14 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
      * @param channel 通道
      * @return BaseResponse
      */
+    @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
         //封装参数
         AD3OnlineAcquireDTO ad3OnlineAcquireDTO = new AD3OnlineAcquireDTO(orders, channel, ad3ParamsConfig.getChannelCallbackUrl() + "/onlineCallback/ad3OnlineServerCallback", ad3ParamsConfig.getChannelCallbackUrl() + "/onlineCallback/ad3OnlineBrowserCallback");
         String url = ad3OnlineAcquireDTO.getUrl();
         ad3OnlineAcquireDTO.setUrl(null);
         //channel.getExtend2() ad3私钥
-        ad3OnlineAcquireDTO.setSignMsg(signMsg(ad3OnlineAcquireDTO, "2"));
+        ad3OnlineAcquireDTO.setSignMsg(signMsg(ad3OnlineAcquireDTO, channel.getMd5KeyStr()));
         ad3OnlineAcquireDTO.setUrl(url);
         log.info("-------AD3线上收单参数-------AD3OnlineAcquireDTO:{}", JSON.toJSON(ad3OnlineAcquireDTO));
         //返回收款消息
@@ -968,13 +969,15 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         for (String dtoKey : keySet) {
             map.put(dtoKey, String.valueOf(dtoMap.get(dtoKey)));
         }
-        byte[] msg = SignTools.getSignStr(map).getBytes();
+        String signStr = SignTools.getSignStr(map);
+        byte[] msg = signStr.getBytes();
         String signMsg = null;
+        String priKey = privateKey.replaceAll("\\s*", "");
         try {
             //签名
-            signMsg = RSAUtils.sign(msg, privateKey.replaceAll("\\s*", ""));
+            signMsg = RSAUtils.sign(msg, priKey);
         } catch (Exception e) {
-            log.info("----------------- 线上签名错误信息记录 ----------------签名原始明文:{},签名:{}", msg, signMsg);
+            log.info("----------------- 线上签名错误信息记录 ----------------签名原始明文:{},私钥:{},签名:{}", signStr, priKey, signMsg);
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         return signMsg;
