@@ -912,9 +912,11 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                         FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
                         //上报清结算资金变动接口
                         BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
+                        log.info("=================【线上通道订单状态查询】=================【上报清结算返回信息】 BaseResponse:{}", JSON.toJSONString(fundChangeResponse));
                         if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
                             //请求成功
                             FundChangeVO fundChangeVO = (FundChangeVO) fundChangeResponse.getData();
+                            log.info("=================【线上通道订单状态查询】=================【上报清结算返回信息】 FundChangeVO:{}", JSON.toJSONString(fundChangeVO));
                             if (!fundChangeVO.getRespCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                                 //业务处理失败
                                 log.info("=================【线上通道订单状态查询】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
