@@ -275,6 +275,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             }
         } else {
             log.info("=================【AD3线上回调接口信息记录】=================【订单为其他状态】 orderId: {}", orders.getId());
+            return "success";
         }
         try {
             //商户服务器回调地址不为空,回调商户服务器
@@ -524,6 +525,7 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
             }
         } else {
             log.info("=================【AD3线下回调接口信息记录】=================【订单为其他状态】 orderId: {}", orders.getId());
+            return "success";
         }
         try {
             //商户服务器回调地址不为空,回调商户服务器
