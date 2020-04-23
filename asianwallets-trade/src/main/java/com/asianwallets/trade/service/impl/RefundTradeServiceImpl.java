@@ -508,7 +508,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 throw new BusinessException(EResultEnum.ORDER_NOT_SETTLE.getCode());
             }
             //撤销
-            if (newRefundAmount.compareTo(oldOrder.getTradeAmount()) == 1) {
+            if (newRefundAmount.compareTo(oldOrder.getOrderAmount()) == 1) {
                 log.info("----------------- 撤销时校验退款参数 退款金额不合法 -------------- merchantId:{},refundDTO:{},oldOrder:{}",refundDTO.getMerchantId(), JSON.toJSON(refundDTO),JSON.toJSON(oldOrder));
                 throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
             }
