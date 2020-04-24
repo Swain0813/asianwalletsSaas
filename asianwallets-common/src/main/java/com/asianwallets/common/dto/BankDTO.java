@@ -9,6 +9,9 @@ import lombok.Data;
 @ApiModel(value = "银行输入实体", description = "银行输入实体")
 public class BankDTO extends BasePageHelper {
 
+    @ApiModelProperty(value = "主键")
+    private String id;
+
     @ApiModelProperty(value = "银行名称")
     private String bankName;
 
