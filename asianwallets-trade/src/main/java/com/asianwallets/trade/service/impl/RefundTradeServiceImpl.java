@@ -494,6 +494,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         //验证原订单交易状态状态(只有交易状态为交易成功和退款)
         Integer CTstatus = tcsCtFlowMapper.getCTstatus(oldOrder.getId());
         Integer STstatus = tcsStFlowMapper.getSTstatus(oldOrder.getId());
+        log.info("-----------------验证原订单清结算状态 -------------- merchantId:{} oldOrder:{} ,CTstatus:{},STstatus:{}", refundDTO.getMerchantId(),oldOrder.getId(),CTstatus,STstatus);
         if (TradeConstant.ORDER_CLEAR_SUCCESS.equals(CTstatus) && TradeConstant.ORDER_SETTLE_SUCCESS.equals(STstatus)) {
             //退款
             if (newRefundAmount.compareTo(oldOrder.getOrderAmount()) == 1) {
@@ -531,9 +532,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                     throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
                 }
                 //swiftCode
-                if (StringUtils.isBlank(refundDTO.getSwiftCode())) {
-                    throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-                }
+                //if (StringUtils.isBlank(refundDTO.getSwiftCode())) {
+                //    throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+                //}
             }
             return TradeConstant.RV;
         } else if (CTstatus == null && STstatus == null) {
