@@ -1022,7 +1022,7 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
                 messageFeign.sendTemplateMail(orders.getPayerEmail(), orders.getLanguage(), Status._1, map);
             }
         } catch (Exception e) {
-            log.error("支付成功发送支付通知邮件失败: {}==={}", orders.getPayerEmail(), e.getMessage());
+            log.error("支付成功发送支付通知邮件失败: {}===订单号:{}=====异常:{}", orders.getPayerEmail(),orders.getId(),e.getMessage());
         }
         log.info("*********************支付成功发送支付通知邮件 End*************************************");
     }
