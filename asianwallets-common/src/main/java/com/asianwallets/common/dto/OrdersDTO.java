@@ -93,5 +93,5 @@ public class OrdersDTO extends BasePageHelper {
     private String productId;
 
     @ApiModelProperty(value = "发货状态 1-未发货 2-已发货")
-    private Boolean deliveryStatus;
+    private Byte deliveryStatus;
 }
