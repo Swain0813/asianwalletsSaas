@@ -527,7 +527,7 @@
         <include refid="Base_Column_List"/>
         FROM orders
         WHERE trade_status = 3
-        and DATE_FORMAT(create_time, '%Y-%m-%d') = #{yesterday}
+        and DATE_FORMAT(channel_callback_time, '%Y-%m-%d') = #{yesterday}
     </select>
 
     <select id="tradeAccountCheck" resultMap="CheckAccountVOMap">
