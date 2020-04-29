@@ -545,7 +545,7 @@
                NULL              AS refundFee
         FROM orders
         WHERE trade_status = 3
-          AND DATE_FORMAT(create_time, '%Y-%m-%d') = #{yesterday}
+          AND DATE_FORMAT(channel_callback_time, '%Y-%m-%d') = #{yesterday}
         GROUP BY order_currency, merchant_id
         UNION
         SELECT "2"               AS type,
@@ -561,7 +561,7 @@
                count(1)          AS refundCount,
                SUM(refund_fee)   AS refundFee
         FROM order_refund
-        WHERE DATE_FORMAT(create_time, '%Y-%m-%d') = #{yesterday}
+        WHERE DATE_FORMAT(update_time, '%Y-%m-%d') = #{yesterday}
         GROUP BY order_currency, merchant_id
     </select>
 
