@@ -394,10 +394,12 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
             log.info("-------------eNets网银浏览器回调接口信息记录------------回调订单信息不存在");
             return;
         }
-        if (orders.getTradeStatus().equals(TradeConstant.ORDER_PAY_SUCCESS)) {
+        if (enetsCallbackDTO.getNetsTxnStatus().equals("0") || orders.getTradeStatus().equals(TradeConstant.ORDER_PAY_SUCCESS)) {
             //支付成功
             if (!StringUtils.isEmpty(orders.getBrowserUrl())) {
                 log.info("-------------eNets网银浏览器回调接口信息记录------------开始回调商户");
+                //为了下游客户 浏览器和服务器的订单状态一致，这边做个特殊处理 设置订单状态为交易成功
+                orders.setTradeStatus(TradeConstant.ORDER_PAY_SUCCESS);
                 commonBusinessService.replyJumpUrl(orders, response);
             } else {
                 try {
