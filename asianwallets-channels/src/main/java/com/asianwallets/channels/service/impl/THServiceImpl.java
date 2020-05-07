@@ -1,7 +1,6 @@
 package com.asianwallets.channels.service.impl;
 
 import com.asianwallets.channels.service.THService;
-import com.asianwallets.common.dto.th.THRefundDTO;
 import com.asianwallets.common.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
