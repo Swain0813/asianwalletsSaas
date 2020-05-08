@@ -10,7 +10,7 @@ import lombok.Data;
  * @create: 2020-05-08 14:17
  **/
 @Data
-public class RefundDTO {
+public class THRefundDTO {
 
     /**
      * 数据类型
