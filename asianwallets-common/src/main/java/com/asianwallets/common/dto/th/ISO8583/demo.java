@@ -12,9 +12,9 @@ public class demo {
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0820");
-        iso8583DTO.setTransmissionDateAndTime7("0303145843");
-        iso8583DTO.setSystemTraceAuditNumber11("000042");
-        iso8583DTO.setAcquiringInstitutionDentificationCode32("03090000");
+        //iso8583DTO.setTransmissionDateAndTime7("0303145843");
+        //iso8583DTO.setSystemTraceAuditNumber11("000042");
+        //iso8583DTO.setAcquiringInstitutionDentificationCode32("03090000");
 
         String sendMsg;
         try {
