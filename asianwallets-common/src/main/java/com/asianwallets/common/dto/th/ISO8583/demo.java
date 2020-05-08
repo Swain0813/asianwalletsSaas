@@ -1,4 +1,4 @@
-package com.asianwallets.common.dto.th.demo1;
+package com.asianwallets.common.dto.th.ISO8583;
 
 /**
  * @description:
@@ -6,6 +6,7 @@ package com.asianwallets.common.dto.th.demo1;
  * @create: 2020-05-08 10:58
  **/
 public class demo {
+
 
     public static void main(String[] args) {
 

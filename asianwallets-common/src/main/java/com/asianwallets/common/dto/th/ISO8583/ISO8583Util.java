@@ -1,4 +1,4 @@
-package com.asianwallets.common.dto.th.demo1;
+package com.asianwallets.common.dto.th.ISO8583;
 
 /**
  * @description:
@@ -11,7 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.beans.PropertyDescriptor;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -69,10 +72,11 @@ public class ISO8583Util {
             throw new IncorrectMessageException("报文长度不匹配");
         }
         String messageType = receivedMsg.substring(4,8);
-        String hexBitMap = receivedMsg.substring(8,24);
-        String binaryBitMap = NumberStringUtil.hexToBinaryString(hexBitMap);
+        String hexBitMap = receivedMsg.substring(8,72);
+        //String binaryBitMap = NumberStringUtil.hexToBinaryString(hexBitMap);
+        String binaryBitMap = hexBitMap;
         String[] binaryBitMapArgs = binaryBitMap.split("");
-        String msg = receivedMsg.substring(24);
+        String msg = receivedMsg.substring(72);
 
         ISO8583DTO iso8583DTO128 = (ISO8583DTO) msgToObject(ISO8583DTO.class, binaryBitMapArgs, msg);
         iso8583DTO128.setMessageType(messageType);
@@ -118,7 +122,8 @@ public class ISO8583Util {
         }
 
         // 将128位2进制位图转换为32位16进制数据
-        String bitMapHexStr = NumberStringUtil.binaryToHexString(bitMap.toString());
+        //String bitMapHexStr = NumberStringUtil.binaryToHexString(bitMap.toString());
+        String bitMapHexStr = bitMap.toString();
         log.info("bitmap = "+ bitMapHexStr);
         StringBuffer bitMapAndMsg = new StringBuffer();
         // 位图在前，先拼接位图
@@ -279,6 +284,70 @@ public class ISO8583Util {
         }
 
         return bf;
+    }
+
+    /**
+     * 向服务器 发送8583报文
+     *
+     * @param send8583Str 发送给服务器的报文
+     *
+     * @param host 主机地址IP
+     *
+     * @param port 端口号
+     *
+     * @return 返回的数据
+     * */
+    public static String send8583(String send8583Str,String host,int port) throws Exception{
+        //客户端请求与本机在20011端口建立TCP连接
+        Socket client = new Socket(host, port);
+        client.setSoTimeout(70000);
+        //获取Socket的输出流，用来发送数据到服务端
+        PrintStream out = new PrintStream(client.getOutputStream());
+        //获取Socket的输入流，用来接收从服务端发送过来的数据
+        InputStream buf =  client.getInputStream();
+        String str = "mpos-"+send8583Str;
+        //发送数据到服务端
+        out.println(str);
+        try{
+            byte[] b = new byte[1024];
+            int rc=0;
+            int c = 0;
+            while( (rc = buf.read(b, c, 1024) )>=0){
+                c = buf.read(b, 0, rc);
+            }
+            String returnStr = byte2hex(b);
+            String string = returnStr;
+            String str16 = string.substring(0, 4);
+            int leng = Integer.parseInt(str16,16);
+            String result = string.substring(0, leng*2 + 4);
+            if (client!=null) {
+                client.close();
+            }
+            return result;
+        }catch(Exception e){
+            e.printStackTrace();
+            System.out.println("Time out, No response");
+        }
+        if (client!=null) {
+            client.close();
+        }
+        return null;
+    }
+    public static String byte2hex(byte[] b) // 二进制转字符串
+    {
+        String hs = "";
+        String stmp = "";
+        for (int n = 0; n < b.length; n++) {
+            stmp = (java.lang.Integer.toHexString(b[n] & 0XFF));
+
+            if (stmp.length() == 1){
+                hs = hs + "0" + stmp;
+            }
+            else{
+                hs = hs + stmp;
+            }
+        }
+        return hs;
     }
 
 }

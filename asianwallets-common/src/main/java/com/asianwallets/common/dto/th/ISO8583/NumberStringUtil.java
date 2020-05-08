@@ -1,10 +1,13 @@
-package com.asianwallets.common.dto.th.demo1;
+package com.asianwallets.common.dto.th.ISO8583;
 
 /**
  * @description:
  * @author: YangXu
  * @create: 2020-05-08 10:53
  **/
+
+import java.io.ByteArrayOutputStream;
+
 /**
  * 字符工具类
  */
@@ -88,6 +91,81 @@ public class NumberStringUtil {
             sb.append(c);
         }
         return sb.toString();
+    }
+
+    /**
+     * 将String转成BCD码
+     *
+     * @param s
+     * @return
+     */
+    public static byte[] StrToBCDBytes(String s) {
+
+        if (s.length() % 2 != 0) {
+            s = "0" + s;
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        char[] cs = s.toCharArray();
+        for (int i = 0; i < cs.length; i += 2) {
+            int high = cs[i] - 48;
+            int low = cs[i + 1] - 48;
+            baos.write(high << 4 | low);
+        }
+        return baos.toByteArray();
+    }
+
+    /**
+     * 将BCD码转成int
+     *
+     * @param b
+     * @return
+     */
+    public static int bcdToint(byte[] b) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < b.length; i++) {
+            int h = ((b[i] & 0xff) >> 4) + 48;
+            sb.append((char) h);
+            int l = (b[i] & 0x0f) + 48;
+            sb.append((char) l);
+        }
+        return Integer.parseInt(sb.toString());
+    }
+
+    /**
+     * 将ASCII码转成String
+     *
+     * @param
+     * @return
+     */
+    public static String asciiToString(String value)
+    {
+        StringBuffer sbu = new StringBuffer();
+        String[] chars = value.split(",");
+        for (int i = 0; i < chars.length; i++) {
+            sbu.append((char) Integer.parseInt(chars[i]));
+        }
+        return sbu.toString();
+    }
+    /**
+     * 将String码转成ASCII
+     *
+     * @param
+     * @return
+     */
+    public static String stringToAscii(String value)
+    {
+        StringBuffer sbu = new StringBuffer();
+        char[] chars = value.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if(i != chars.length - 1)
+            {
+                sbu.append((int)chars[i]).append(",");
+            }
+            else {
+                sbu.append((int)chars[i]);
+            }
+        }
+        return sbu.toString();
     }
 
 }
