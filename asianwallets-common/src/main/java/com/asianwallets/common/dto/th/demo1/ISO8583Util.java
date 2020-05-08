@@ -69,10 +69,11 @@ public class ISO8583Util {
             throw new IncorrectMessageException("报文长度不匹配");
         }
         String messageType = receivedMsg.substring(4,8);
-        String hexBitMap = receivedMsg.substring(8,24);
-        String binaryBitMap = NumberStringUtil.hexToBinaryString(hexBitMap);
+        String hexBitMap = receivedMsg.substring(8,72);
+        //String binaryBitMap = NumberStringUtil.hexToBinaryString(hexBitMap);
+        String binaryBitMap = hexBitMap;
         String[] binaryBitMapArgs = binaryBitMap.split("");
-        String msg = receivedMsg.substring(24);
+        String msg = receivedMsg.substring(72);
 
         ISO8583DTO iso8583DTO128 = (ISO8583DTO) msgToObject(ISO8583DTO.class, binaryBitMapArgs, msg);
         iso8583DTO128.setMessageType(messageType);
@@ -118,7 +119,8 @@ public class ISO8583Util {
         }
 
         // 将128位2进制位图转换为32位16进制数据
-        String bitMapHexStr = NumberStringUtil.binaryToHexString(bitMap.toString());
+        //String bitMapHexStr = NumberStringUtil.binaryToHexString(bitMap.toString());
+        String bitMapHexStr = bitMap.toString();
         log.info("bitmap = "+ bitMapHexStr);
         StringBuffer bitMapAndMsg = new StringBuffer();
         // 位图在前，先拼接位图
