@@ -5,8 +5,8 @@ import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 @Data
-@ApiModel(value = "通华主扫接口DTO", description = "通华主扫接口DTO")
-public class ISO8583PrimeScanDTO {
+@ApiModel(value = "通华被扫接口DTO", description = "通华被扫接口DTO")
+public class ISO8583ByScanDTO {
 
     /**
      * 消息类型
@@ -57,6 +57,15 @@ public class ISO8583PrimeScanDTO {
      */
     @ISO8583Annotation(fldIndex = 13, dataFldLength = 4, fldFlag = FldFlag.FIXED)
     private String DateOfLocalTransaction13;
+
+    /**
+     * 域15清算日期(Date Of Settlement)
+     * 变量属性
+     * N4，4个字节的定长数字字符域，压缩时用BCD码表示的2个字节的定长域。
+     * 格式：MMDD
+     */
+    @ISO8583Annotation(fldIndex = 15, dataFldLength = 4, fldFlag = FldFlag.FIXED)
+    private String DateOfSettlement15;
 
     /**
      * 域22服务点输入方式码(Point Of Service Entry Mode)
