@@ -12,7 +12,7 @@ import lombok.Data;
  * 报文交互DTO，128域
  */
 @Data
-public class ISO8583DTO128 {
+public class ISO8583DTO {
 
     /**
      * 数据类型
@@ -50,25 +50,25 @@ public class ISO8583DTO128 {
     )
     private String acquiringInstitutionDentificationCode32;
 
-    /**
-     * 域70网络管理信息码 (NETWORK-MANAGEMENT-INFORMATION-CODE)
-     * n3,3位定长数字字符；
-     * 网络业务管理功能码；
-     */
-    @ISO8583Annotation(
-            fldIndex = 70, dataFldLength = 3, fldFlag = FldFlag.FIXED
-    )
-    private String networkManagementInformationCode70;
-
-    /**
-     * 域100接收机构标识码(DESTINATION-INSTITUTION-IDENTIFICATION-CODE)
-     * n..12（LLVAR），2个字节的长度值＋最大12个字节（数字字符）的接收方标识码；
-     * 在消息中表示消息接收方机构的标识；
-     */
-    @ISO8583Annotation(
-            fldIndex = 100, dataFldLength = 12, fldFlag = FldFlag.UNFIXED_2
-    )
-    private String destinationInstitutionIdentificationCode100;
+    ///**
+    // * 域70网络管理信息码 (NETWORK-MANAGEMENT-INFORMATION-CODE)
+    // * n3,3位定长数字字符；
+    // * 网络业务管理功能码；
+    // */
+    //@ISO8583Annotation(
+    //        fldIndex = 70, dataFldLength = 3, fldFlag = FldFlag.FIXED
+    //)
+    //private String networkManagementInformationCode70;
+    //
+    ///**
+    // * 域100接收机构标识码(DESTINATION-INSTITUTION-IDENTIFICATION-CODE)
+    // * n..12（LLVAR），2个字节的长度值＋最大12个字节（数字字符）的接收方标识码；
+    // * 在消息中表示消息接收方机构的标识；
+    // */
+    //@ISO8583Annotation(
+    //        fldIndex = 100, dataFldLength = 12, fldFlag = FldFlag.UNFIXED_2
+    //)
+    //private String destinationInstitutionIdentificationCode100;
 
 }
 

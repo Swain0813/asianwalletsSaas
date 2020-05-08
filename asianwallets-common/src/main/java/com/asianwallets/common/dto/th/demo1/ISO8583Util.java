@@ -31,12 +31,12 @@ public class ISO8583Util {
      *                        4位报文长度 + 4位消息类型 + 32位BITMAP + 报文信息
      * @return
      */
-    public static String packISO8583DTO128(ISO8583DTO128 iso8583DTO128) throws IncorrectLengthException {
+    public static String packISO8583DTO(ISO8583DTO iso8583DTO128) throws IncorrectLengthException {
         StringBuilder sendMsg = new StringBuilder();
         // 先拼接消息类型
         sendMsg.append(iso8583DTO128.getMessageType());
         // 拼接BITMAP + 报文信息
-        sendMsg.append(getBitMapAndMsg(iso8583DTO128, 128));
+        sendMsg.append(getBitMapAndMsg(iso8583DTO128, 64));
         // 计算报文长度，长度占4个字节，不足4字节左补0
         int sendMsgLen = sendMsg.length();
         String sendMsgLenStr = Integer.toString(sendMsgLen);
@@ -54,7 +54,7 @@ public class ISO8583Util {
      * @return
      * @throws IncorrectMessageException
      */
-    public static ISO8583DTO128 unpackISO8583DTO128(String receivedMsg) throws IncorrectMessageException{
+    public static ISO8583DTO unpackISO8583DTO(String receivedMsg) throws IncorrectMessageException{
 
         if(null == receivedMsg){
             throw new IncorrectMessageException("报文为空");
@@ -69,12 +69,12 @@ public class ISO8583Util {
             throw new IncorrectMessageException("报文长度不匹配");
         }
         String messageType = receivedMsg.substring(4,8);
-        String hexBitMap = receivedMsg.substring(8,40);
+        String hexBitMap = receivedMsg.substring(8,24);
         String binaryBitMap = NumberStringUtil.hexToBinaryString(hexBitMap);
         String[] binaryBitMapArgs = binaryBitMap.split("");
-        String msg = receivedMsg.substring(40);
+        String msg = receivedMsg.substring(24);
 
-        ISO8583DTO128 iso8583DTO128 = (ISO8583DTO128) msgToObject(ISO8583DTO128.class, binaryBitMapArgs, msg);
+        ISO8583DTO iso8583DTO128 = (ISO8583DTO) msgToObject(ISO8583DTO.class, binaryBitMapArgs, msg);
         iso8583DTO128.setMessageType(messageType);
 
         return iso8583DTO128;
@@ -119,7 +119,7 @@ public class ISO8583Util {
 
         // 将128位2进制位图转换为32位16进制数据
         String bitMapHexStr = NumberStringUtil.binaryToHexString(bitMap.toString());
-
+        log.info("bitmap = "+ bitMapHexStr);
         StringBuffer bitMapAndMsg = new StringBuffer();
         // 位图在前，先拼接位图
         bitMapAndMsg.append(bitMapHexStr);
