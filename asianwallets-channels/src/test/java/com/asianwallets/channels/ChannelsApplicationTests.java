@@ -177,7 +177,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         //thRefundDTO.setRemark_63("cup");
         //thRefundDTO.setMac_64("");
 
-      
+
     }
 
 }
