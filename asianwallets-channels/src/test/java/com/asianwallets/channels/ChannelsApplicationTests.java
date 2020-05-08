@@ -155,27 +155,27 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
     **/
     @Test
     public void thTest() {
-        //THRefundDTO thRefundDTO = new THRefundDTO();
-        //thRefundDTO.setMessageType("0200");
-        //thRefundDTO.setTradeNo_3("200000");
-        //thRefundDTO.setRefundAmount_4("000000100002");
-        //thRefundDTO.setSysNo_11("111111");
-        //thRefundDTO.setSysTime_12("153344");
-        //thRefundDTO.setSysDate_13("0508");
-        //thRefundDTO.setClearDate_15("0508");
-        //thRefundDTO.setServiceInputNo_22("030");
-        //thRefundDTO.setServiceNo_25("00");
-        //thRefundDTO.setAcceptNo_32("11111111111");
-        ////thRefundDTO.setSysSerNo_37("123456789011");
-        ////thRefundDTO.setRepNo_39("");
-        //thRefundDTO.setAccCardTemNo_41("12345678");
-        //thRefundDTO.setAccCardNo_42("123456789012345");
-        ////thRefundDTO.setRemark_46();
-        ////thRefundDTO.setRemark_47();
-        //thRefundDTO.setRemark_49("156");
-        //thRefundDTO.setRemark_60("2500000000000");
-        //thRefundDTO.setRemark_63("cup");
-        //thRefundDTO.setMac_64("");
+        ISO8583DTO thRefundDTO = new ISO8583DTO();
+        thRefundDTO.setMessageType("0200");
+        thRefundDTO.setProcessingCode_3("200000");
+        thRefundDTO.setAmountOfTransactions_4("000000100002");
+        thRefundDTO.setSystemTraceAuditNumber_11("111111");
+        thRefundDTO.setTimeOfLocalTransaction_12("153344");
+        thRefundDTO.setDateOfLocalTransaction_13("0508");
+        thRefundDTO.setDateOfSettlement_15("0508");
+        thRefundDTO.setPointOfServiceEntryMode_22("030");
+        thRefundDTO.setPointOfServiceConditionMode_25("00");
+        thRefundDTO.setAcquiringInstitutionIdentificationCode_32("11111111111");
+        //thRefundDTO.setSysSerNo_37("123456789011");
+        //thRefundDTO.setRepNo_39("");
+        thRefundDTO.setCardAcceptorTerminalIdentification_41("12345678");
+        thRefundDTO.setCardAcceptorIdentificationCode_42("123456789012345");
+        //thRefundDTO.setRemark_46();
+        //thRefundDTO.setRemark_47();
+        thRefundDTO.setCurrencyCodeOfTransaction_49("156");
+        thRefundDTO.setReservedPrivate_60("2500000000000");
+        thRefundDTO.setReservedPrivate_63("cup");
+        thRefundDTO.setMessageAuthenticationCode_64("");
 
 
     }
