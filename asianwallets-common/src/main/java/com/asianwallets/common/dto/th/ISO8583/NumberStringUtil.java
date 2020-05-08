@@ -1,4 +1,4 @@
-package com.asianwallets.common.dto.th.demo1;
+package com.asianwallets.common.dto.th.ISO8583;
 
 /**
  * @description:

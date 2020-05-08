@@ -1,8 +1,4 @@
-package com.asianwallets.common.dto.th.demo1;
-
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.net.Socket;
+package com.asianwallets.common.dto.th.ISO8583;
 
 /**
  * @description:
