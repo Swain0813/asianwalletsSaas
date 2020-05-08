@@ -9,6 +9,8 @@ import com.asianwallets.common.dto.doku.DOKUReqDTO;
 import com.asianwallets.common.dto.doku.DOKURequestDTO;
 import com.asianwallets.common.dto.help2pay.Help2PayOutDTO;
 import com.asianwallets.common.dto.megapay.MegaPayQueryDTO;
+import com.asianwallets.common.dto.th.ISO8583.*;
+import com.asianwallets.common.dto.th.THRefundDTO;
 import com.asianwallets.common.dto.wechat.WechaRefundDTO;
 import com.asianwallets.common.dto.wechat.WechatQueryDTO;
 import com.asianwallets.common.response.BaseResponse;
@@ -144,5 +146,39 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         dokuService.payMent(dokuReqDTO);
 
     }
+
+   /**
+    * @Author YangXu
+    * @Date 2020/5/8
+    * @Descripate 通华
+    * @return
+    **/
+    @Test
+    public void thTest() {
+        //THRefundDTO thRefundDTO = new THRefundDTO();
+        //thRefundDTO.setMessageType("0200");
+        //thRefundDTO.setTradeNo_3("200000");
+        //thRefundDTO.setRefundAmount_4("000000100002");
+        //thRefundDTO.setSysNo_11("111111");
+        //thRefundDTO.setSysTime_12("153344");
+        //thRefundDTO.setSysDate_13("0508");
+        //thRefundDTO.setClearDate_15("0508");
+        //thRefundDTO.setServiceInputNo_22("030");
+        //thRefundDTO.setServiceNo_25("00");
+        //thRefundDTO.setAcceptNo_32("11111111111");
+        ////thRefundDTO.setSysSerNo_37("123456789011");
+        ////thRefundDTO.setRepNo_39("");
+        //thRefundDTO.setAccCardTemNo_41("12345678");
+        //thRefundDTO.setAccCardNo_42("123456789012345");
+        ////thRefundDTO.setRemark_46();
+        ////thRefundDTO.setRemark_47();
+        //thRefundDTO.setRemark_49("156");
+        //thRefundDTO.setRemark_60("2500000000000");
+        //thRefundDTO.setRemark_63("cup");
+        //thRefundDTO.setMac_64("");
+
+      
+    }
+
 }
 
