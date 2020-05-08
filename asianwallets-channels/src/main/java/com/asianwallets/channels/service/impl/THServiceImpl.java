@@ -1,7 +1,7 @@
 package com.asianwallets.channels.service.impl;
 
 import com.asianwallets.channels.service.THService;
-import com.asianwallets.common.dto.th.THRefundDTO;
+import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class THServiceImpl implements THService {
      * @return
      **/
     @Override
-    public BaseResponse thRefund(THRefundDTO thRefundDTO) {
+    public BaseResponse thRefund(ISO8583DTO thRefundDTO) {
 
         return null;
     }
