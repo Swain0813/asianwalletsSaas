@@ -10,7 +10,6 @@ import com.asianwallets.common.dto.doku.DOKURequestDTO;
 import com.asianwallets.common.dto.help2pay.Help2PayOutDTO;
 import com.asianwallets.common.dto.megapay.MegaPayQueryDTO;
 import com.asianwallets.common.dto.th.ISO8583.*;
-import com.asianwallets.common.dto.th.THRefundDTO;
 import com.asianwallets.common.dto.wechat.WechaRefundDTO;
 import com.asianwallets.common.dto.wechat.WechatQueryDTO;
 import com.asianwallets.common.response.BaseResponse;
