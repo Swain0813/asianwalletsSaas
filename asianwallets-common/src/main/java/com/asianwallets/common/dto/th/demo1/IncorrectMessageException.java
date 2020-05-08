@@ -5,5 +5,18 @@ package com.asianwallets.common.dto.th.demo1;
  * @author: YangXu
  * @create: 2020-05-08 10:54
  **/
-public class IncorrectMessageException {
+
+import lombok.Data;
+
+/**
+ * 报文格式不正确异常
+ */
+@Data
+public class IncorrectMessageException  extends Exception{
+    private String msg;
+
+    public IncorrectMessageException(String msg) {
+        this.msg = msg;
+    }
+
 }

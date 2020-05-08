@@ -5,5 +5,20 @@ package com.asianwallets.common.dto.th.demo1;
  * @author: YangXu
  * @create: 2020-05-08 10:54
  **/
-public class IncorrectLengthException {
+
+import lombok.Data;
+
+/**
+ * 长度不正确异常
+ */
+@Data
+public class IncorrectLengthException extends Exception{
+
+    private String msg;
+
+    public IncorrectLengthException(String msg) {
+        this.msg = msg;
+    }
+
 }
+
