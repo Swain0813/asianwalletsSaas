@@ -1,6 +1,8 @@
-package com.asianwallets.common.dto.th.ISO8583;
+package com.asianwallets.common.dto.th;
 
 
+import com.asianwallets.common.dto.th.ISO8583.FldFlag;
+import com.asianwallets.common.dto.th.ISO8583.ISO8583Annotation;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
