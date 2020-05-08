@@ -113,14 +113,14 @@ public class RefundDTO {
      * 自定义域
      */
     @ISO8583Annotation(
-            fldIndex = 46, dataFldLength = 8, fldFlag = FldFlag.UNFIXED
+            fldIndex = 46, dataFldLength = 8, fldFlag = FldFlag.UNFIXED_3
     )
     private String remark_46;
     /**
      * 自定义域
      */
     @ISO8583Annotation(
-            fldIndex = 47, dataFldLength = 8, fldFlag = FldFlag.UNFIXED
+            fldIndex = 47, dataFldLength = 8, fldFlag = FldFlag.UNFIXED_3
     )
     private String remark_47;
     /**
@@ -135,7 +135,7 @@ public class RefundDTO {
      * 交易类型码(2)+批次号(6)+网络管理信息码(3)+保留使用(1)+保留使用(1)
      */
     @ISO8583Annotation(
-            fldIndex = 60, dataFldLength = 3, fldFlag = FldFlag.UNFIXED
+            fldIndex = 60, dataFldLength = 3, fldFlag = FldFlag.UNFIXED_3
     )
     private String remark_60;
     /**
@@ -143,14 +143,14 @@ public class RefundDTO {
      * 国际信用卡公司代码(3)
      */
     @ISO8583Annotation(
-            fldIndex = 63, dataFldLength = 63, fldFlag = FldFlag.UNFIXED
+            fldIndex = 63, dataFldLength = 63, fldFlag = FldFlag.UNFIXED_3
     )
     private String remark_63;
     /**
      * MAC
      */
     @ISO8583Annotation(
-            fldIndex = 64, dataFldLength = 64, fldFlag = FldFlag.UNFIXED
+            fldIndex = 64, dataFldLength = 8, fldFlag = FldFlag.FIXED
     )
     private String mac_64;
 
