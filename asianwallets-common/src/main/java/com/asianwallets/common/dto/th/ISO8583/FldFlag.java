@@ -10,9 +10,6 @@ public enum FldFlag {
     /** 2位变长 */
     UNFIXED_2,
     /** 3位变长 */
-    UNFIXED_3,
-    /** 变长 */
-    UNFIXED
-
+    UNFIXED_3
 }
 
