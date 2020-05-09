@@ -182,4 +182,16 @@ public interface ChannelsFeign {
     @PostMapping("qfPay/qfPayRefundSearch")
     BaseResponse qfPayRefundSearch(QfPayDTO qfPayDTO);
 
+
+    @ApiOperation(value = "通华CSB收单接口")
+    @PostMapping("/th/thCSB")
+    BaseResponse thCSB(QfPayDTO qfPayDTO);
+
+    @ApiOperation(value = "通华BSC收单接口")
+    @PostMapping("/th/thBSC")
+    BaseResponse thBSC(QfPayDTO qfPayDTO);
+
+    @ApiOperation(value = "通华退款接口")
+    @PostMapping("/th/thRefund")
+    BaseResponse thRefund(QfPayDTO qfPayDTO);
 }

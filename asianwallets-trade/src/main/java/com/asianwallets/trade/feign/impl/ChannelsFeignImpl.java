@@ -216,6 +216,21 @@ public class ChannelsFeignImpl implements ChannelsFeign {
 
     @Override
     public BaseResponse qfPayRefundSearch(QfPayDTO qfPayDTO) {
-        return null;
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse thCSB(QfPayDTO qfPayDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse thBSC(QfPayDTO qfPayDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse thRefund(QfPayDTO qfPayDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

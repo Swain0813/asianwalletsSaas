@@ -15,6 +15,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class THServiceImpl implements THService {
 
+    /**
+     * 通华CSB
+     * @param iso8583DTO
+     * @return
+     */
+    @Override
+    public BaseResponse thCSB(ISO8583DTO iso8583DTO) {
+        return null;
+    }
+
+    /**
+     * 通华BSC
+     * @param iso8583DTO
+     * @return
+     */
+    @Override
+    public BaseResponse thBSC(ISO8583DTO iso8583DTO) {
+        return null;
+    }
 
     /**
      * @Author YangXu

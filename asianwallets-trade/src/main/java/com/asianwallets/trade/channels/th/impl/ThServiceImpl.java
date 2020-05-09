@@ -1,20 +1,28 @@
 package com.asianwallets.trade.channels.th.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
+import com.asianwallets.common.dto.th.ISO8583.ISO8583Util;
+import com.asianwallets.common.dto.th.ISO8583.IncorrectLengthException;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.th.ThService;
+import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @HandlerType(TradeConstant.TH)
 public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService {
+
+    @Autowired
+    private ChannelsFeign channelsFeign;
 
     /**
      * 通华主扫接口
@@ -47,6 +55,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setReservedPrivate_60("");
         iso8583DTO.setReservedPrivate_63("");
         iso8583DTO.setMessageAuthenticationCode_64("");
+        log.info("==================【通华线下CSB】==================【调用Channels服务】【请求参数】 iso8583DTO: {}", JSON.toJSONString(iso8583DTO));
+        try {
+            String param = ISO8583Util.packISO8583DTO(iso8583DTO);
+        } catch (IncorrectLengthException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }
