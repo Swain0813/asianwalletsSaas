@@ -14,6 +14,7 @@ import com.asianwallets.common.dto.help2pay.Help2PayRequestDTO;
 import com.asianwallets.common.dto.megapay.*;
 import com.asianwallets.common.dto.nganluong.NganLuongDTO;
 import com.asianwallets.common.dto.qfpay.QfPayDTO;
+import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.vtc.VTCRequestDTO;
 import com.asianwallets.common.dto.wechat.*;
 import com.asianwallets.common.dto.xendit.XenditDTO;
@@ -220,17 +221,17 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
-    public BaseResponse thCSB(QfPayDTO qfPayDTO) {
+    public BaseResponse thCSB(ISO8583DTO iso8583DTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse thBSC(QfPayDTO qfPayDTO) {
+    public BaseResponse thBSC(ISO8583DTO iso8583DTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse thRefund(QfPayDTO qfPayDTO) {
+    public BaseResponse thRefund(ISO8583DTO iso8583DTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

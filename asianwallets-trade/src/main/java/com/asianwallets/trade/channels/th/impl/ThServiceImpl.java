@@ -3,11 +3,11 @@ package com.asianwallets.trade.channels.th.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
-import com.asianwallets.common.dto.th.ISO8583.ISO8583Util;
-import com.asianwallets.common.dto.th.ISO8583.IncorrectLengthException;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.th.ThService;
 import com.asianwallets.trade.feign.ChannelsFeign;
@@ -56,11 +56,13 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setReservedPrivate_63("");
         iso8583DTO.setMessageAuthenticationCode_64("");
         log.info("==================【通华线下CSB】==================【调用Channels服务】【请求参数】 iso8583DTO: {}", JSON.toJSONString(iso8583DTO));
-        try {
-            String param = ISO8583Util.packISO8583DTO(iso8583DTO);
-        } catch (IncorrectLengthException e) {
-            e.printStackTrace();
+        BaseResponse channelResponse = channelsFeign.thCSB(iso8583DTO);
+        log.info("==================【通华线下CSB】==================【调用Channels服务】【通华-CSB接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            log.info("==================【通华线下CSB】==================【调用Channels服务】【通华-CSB接口】-【请求状态码异常】");
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
-        return null;
+        BaseResponse baseResponse = new BaseResponse();
+        return baseResponse;
     }
 }
