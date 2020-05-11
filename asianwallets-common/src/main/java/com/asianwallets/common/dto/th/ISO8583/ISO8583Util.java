@@ -44,6 +44,7 @@ public class ISO8583Util {
         int sendMsgLen = sendMsg.length();
         String sendMsgLenStr = Integer.toString(sendMsgLen);
         sendMsgLenStr = NumberStringUtil.addLeftChar(sendMsgLenStr, 8, '0');
+        System.out.println("报文长度 = "+ sendMsgLenStr);
         // 将4位报文长度插到最前边
         sendMsg.insert(0,sendMsgLenStr);
 
@@ -67,16 +68,16 @@ public class ISO8583Util {
             throw new IncorrectMessageException("报文格式不正确，报文长度最少为40");
         }
 
-        int msgLen = Integer.valueOf(receivedMsg.substring(0,4));
-        if(msgLen != totalLen - 4){
-            throw new IncorrectMessageException("报文长度不匹配");
-        }
-        String messageType = receivedMsg.substring(4,8);
-        String hexBitMap = receivedMsg.substring(8,72);
+        int msgLen = Integer.valueOf(receivedMsg.substring(83,91));
+        //if(msgLen != totalLen - 4){
+        //    throw new IncorrectMessageException("报文长度不匹配");
+        //}
+        String messageType = receivedMsg.substring(91,95);
+        String hexBitMap = receivedMsg.substring(95,159);
         //String binaryBitMap = NumberStringUtil.hexToBinaryString(hexBitMap);
         String binaryBitMap = hexBitMap;
         String[] binaryBitMapArgs = binaryBitMap.split("");
-        String msg = receivedMsg.substring(72);
+        String msg = receivedMsg.substring(159);
 
         ISO8583DTO iso8583DTO128 = (ISO8583DTO) msgToObject(ISO8583DTO.class, binaryBitMapArgs, msg);
         iso8583DTO128.setMessageType(messageType);

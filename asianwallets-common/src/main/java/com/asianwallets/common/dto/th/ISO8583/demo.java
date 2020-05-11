@@ -30,7 +30,7 @@ public class demo {
 
             System.out.println(" ====  result  ===   "+result);
             // 解包
-            ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
+            ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(sendMsg);
             System.out.println(iso8583DTO1281.toString());
         } catch (Exception e) {
             System.out.println(e);
