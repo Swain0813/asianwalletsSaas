@@ -23,7 +23,7 @@ public class demo {
         String sendMsg;
         try {
             // 组包
-            sendMsg = "60060900008001000000008529999581205010001864430000000000000000000000852999958120501"+ISO8583Util.packISO8583DTO(iso8583DTO);
+            sendMsg = "60060900008001000000008529999581205010001864400000000860000500000000852999958120501"+ISO8583Util.packISO8583DTO(iso8583DTO);
             System.out.println(" ===  sendMsg  ====   "+sendMsg);
 
             String result = ISO8583Util.send8583(sendMsg,"58.248.241.169",10089);
