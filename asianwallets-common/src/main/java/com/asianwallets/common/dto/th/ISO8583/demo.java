@@ -28,7 +28,7 @@ public class demo {
 
             String result = ISO8583Util.send8583(sendMsg,"58.248.241.169",10089);
 
-            System.out.println(" ====  result  ===   "+sendMsg);
+            System.out.println(" ====  result  ===   "+result);
             // 解包
             ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
             System.out.println(iso8583DTO1281.toString());
