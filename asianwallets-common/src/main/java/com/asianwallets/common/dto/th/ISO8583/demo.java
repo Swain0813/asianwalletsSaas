@@ -24,17 +24,23 @@ public class demo {
         try {
             // 组包
             sendMsg = "60060900008001000000008529999581205010001864400000000860000500000000852999958120501"+ISO8583Util.packISO8583DTO(iso8583DTO);
+            String strHex2 = String.format("%04x",sendMsg.length()/2);
+            sendMsg = strHex2 + sendMsg;
             System.out.println(" ===  sendMsg  ====   "+sendMsg);
+            //String result = ISO8583Util.send8583(sendMsg,"58.248.241.169",10089);
 
-            String result = ISO8583Util.send8583(sendMsg,"58.248.241.169",10089);
-
-            System.out.println(" ====  result  ===   "+result);
+            //System.out.println(" ====  result  ===   "+result);
             // 解包
             ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(sendMsg);
             System.out.println(iso8583DTO1281.toString());
         } catch (Exception e) {
             System.out.println(e);
         }
+
+        //String s = "600002000080010000000038353239393939353831323030353030303030323735333330303030303030303030303030333030303030303031383532393939393538313230303530303030303030353408000020000100C000121981240852000001303030303237353338353239393939353831323030353000115000000100300003303031";
+        //System.out.println(s.length()/2);
+        //String strHex2 = String.format("%04x",s.length()/2);
+        //System.out.println(strHex2);
 
     }
 }
