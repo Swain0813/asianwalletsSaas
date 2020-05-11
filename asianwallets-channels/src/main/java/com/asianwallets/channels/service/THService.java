@@ -13,4 +13,18 @@ public interface THService {
      * @return
      **/
     BaseResponse thRefund(ISO8583DTO thRefundDTO);
+
+    /**
+     * 通华CSB
+     * @param iso8583DTO
+     * @return
+     */
+    BaseResponse thCSB(ISO8583DTO iso8583DTO);
+
+    /**
+     * 通华BSC
+     * @param iso8583DTO
+     * @return
+     */
+    BaseResponse thBSC(ISO8583DTO iso8583DTO);
 }

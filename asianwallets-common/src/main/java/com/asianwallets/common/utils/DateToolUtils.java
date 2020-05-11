@@ -58,6 +58,8 @@ public class DateToolUtils extends DateUtils {
     public static final SimpleDateFormat LONGDATEFORMAT_SSS = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
     public static final SimpleDateFormat LONGDATEFORMAT_SSZ = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     public static final SimpleDateFormat HMS_FORMAT = new SimpleDateFormat("HH:mm:ss");
+    public static final SimpleDateFormat HMS_FORMAT_T = new SimpleDateFormat("HHmmss");
+    public static final SimpleDateFormat SHORT_DATE_FORMAT_T = new SimpleDateFormat("MMdd");
     public static final SimpleDateFormat LONG_DATE_FORMAT_AA = new SimpleDateFormat("yyyy-MM-dd hh:mm:ssaa", Locale.ENGLISH);
 
 
@@ -287,6 +289,24 @@ public class DateToolUtils extends DateUtils {
      */
     public static String getReqTime() {
         return HMS_FORMAT.format(new Date());
+    }
+
+    /**
+     * HHmmss 当前时间
+     *
+     * @return
+     */
+    public static String getReqTimeHHmmss() {
+        return HMS_FORMAT_T.format(new Date());
+    }
+
+    /**
+     * MMdd 当前时间
+     *
+     * @return
+     */
+    public static String getReqTimeMMdd() {
+        return SHORT_DATE_FORMAT_T.format(new Date());
     }
 
     /**
