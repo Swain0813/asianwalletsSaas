@@ -23,7 +23,8 @@ public class demo {
         String sendMsg;
         try {
             // 组包
-            sendMsg = "60060900008001000000008529999581205010001864400000000860000500000000852999958120501"+ISO8583Util.packISO8583DTO(iso8583DTO);
+            sendMsg = "6006090000"+"800100000000"+NumberStringUtil.stringToAscii("85299995812050100018644000000008600005")
+                    +"00000000"+NumberStringUtil.stringToAscii("852999958120501")+ISO8583Util.packISO8583DTO(iso8583DTO);
             String strHex2 = String.format("%04x",sendMsg.length()/2);
             sendMsg = strHex2 + sendMsg;
             System.out.println(" ===  sendMsg  ====   "+sendMsg);
