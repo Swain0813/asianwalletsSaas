@@ -23,7 +23,7 @@ public class ISO8583DTO {
      * 域3 交易处理码(Processing Code)
      * N6，6个字节的定长数字字符域，压缩时用BCD码表示的3个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 3, dataFldLength = 6,type = "BCD", fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 3, dataFldLength = 6, type = "BCD", fldFlag = FldFlag.FIXED)
     private String processingCode_3;
 
     /**
@@ -31,14 +31,14 @@ public class ISO8583DTO {
      * 不管是账户资金交易还是积分交易，此域的金额将用于受理方、收单机构之间的结算。变量属性
      * N12，12个字节的定长数字字符域，压缩时用BCD码表示的6个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 4, dataFldLength = 12, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 4, dataFldLength = 12, type = "BCD", fldFlag = FldFlag.FIXED)
     private String AmountOfTransactions_4;
 
     /**
      * 域5 小费金额(Amount Of Tips)
      * 该域在消费交易，预授权完成交易，若出现小费，则必须上送。
      */
-    @ISO8583Annotation(fldIndex = 5, dataFldLength = 12, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 5, dataFldLength = 12, type = "BCD", fldFlag = FldFlag.FIXED)
     private String AmountOfTips_5;
 
     /**
@@ -46,7 +46,7 @@ public class ISO8583DTO {
      * 变量属性
      * N12，12个字节的定长数字字符域，压缩时用BCD码表示的6个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 6, dataFldLength = 12, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 6, dataFldLength = 12, type = "BCD", fldFlag = FldFlag.FIXED)
     private String AmountOfCardholderBilling_6;
 
     /**
@@ -55,7 +55,7 @@ public class ISO8583DTO {
      * 格式：MMDDhhmmss
      * 交易发起方的系统工作日日期和时间。
      */
-    @ISO8583Annotation(fldIndex = 7, dataFldLength = 10, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 7, dataFldLength = 10, type = "BCD", fldFlag = FldFlag.FIXED)
     private String transmissionDateAndTime_7;
 
     /**
@@ -63,14 +63,14 @@ public class ISO8583DTO {
      * 变量属性
      * N8，8个字节的定长数字字符域，压缩时用BCD码表示的4个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 10, dataFldLength = 8, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 10, dataFldLength = 8, type = "BCD", fldFlag = FldFlag.FIXED)
     private String ConversionRate_10;
 
     /**
      * 域11 受卡方系统跟踪号(System Trace Audit Number)
      * N6，6个字节的定长数字字符域，压缩时用BCD码表示的3个字节的定长域
      */
-    @ISO8583Annotation(fldIndex = 11, dataFldLength = 6, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 11, dataFldLength = 6, type = "BCD", fldFlag = FldFlag.FIXED)
     private String SystemTraceAuditNumber_11;
 
     /**
@@ -78,7 +78,7 @@ public class ISO8583DTO {
      * N6，6个字节的定长数字字符域，压缩时用BCD码表示的3个字节的定长域。
      * 格式：hhmmss
      */
-    @ISO8583Annotation(fldIndex = 12, dataFldLength = 6, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 12, dataFldLength = 6, type = "BCD", fldFlag = FldFlag.FIXED)
     private String TimeOfLocalTransaction_12;
 
     /**
@@ -86,7 +86,7 @@ public class ISO8583DTO {
      * N4，4个字节的定长数字字符域，压缩时用BCD码表示的2个字节的定长域。
      * 格式：MMDD
      */
-    @ISO8583Annotation(fldIndex = 13, dataFldLength = 4, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 13, dataFldLength = 4, type = "BCD", fldFlag = FldFlag.FIXED)
     private String DateOfLocalTransaction_13;
 
     /**
@@ -95,7 +95,7 @@ public class ISO8583DTO {
      * N4，4个字节的定长数字字符域，压缩时用BCD码表示的2个字节的定长域。
      * 格式：YYMM
      */
-    @ISO8583Annotation(fldIndex = 14, dataFldLength = 4, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 14, dataFldLength = 4, type = "BCD", fldFlag = FldFlag.FIXED)
     private String DateOfExpired_14;
 
     /**
@@ -104,7 +104,7 @@ public class ISO8583DTO {
      * N4，4个字节的定长数字字符域，压缩时用BCD码表示的2个字节的定长域。
      * 格式：MMDD
      */
-    @ISO8583Annotation(fldIndex = 15, dataFldLength = 4, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 15, dataFldLength = 4, type = "BCD", fldFlag = FldFlag.FIXED)
     private String DateOfSettlement_15;
 
     /**
@@ -112,7 +112,7 @@ public class ISO8583DTO {
      * 变量属性
      * N3，3个字节的定长数字字符域，压缩时用左靠BCD码表示的2个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 22, dataFldLength = 3, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 22, dataFldLength = 3, type = "BCD", fldFlag = FldFlag.FIXED)
     private String PointOfServiceEntryMode_22;
 
     /**
@@ -120,7 +120,7 @@ public class ISO8583DTO {
      * 变量属性
      * N3，3个字节的定长数字字符域，压缩时用右靠BCD码表示的2个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 23, dataFldLength = 3, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 23, dataFldLength = 3, type = "BCD", fldFlag = FldFlag.FIXED)
     private String CardSequenceNumber_23;
 
     /**
@@ -128,7 +128,7 @@ public class ISO8583DTO {
      * 变量属性
      * N2，2个字节的定长数字字符域，压缩时用左靠BCD码表示的1个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 25, dataFldLength = 2, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 25, dataFldLength = 2, type = "BCD", fldFlag = FldFlag.FIXED)
     private String PointOfServiceConditionMode_25;
 
     /**
@@ -136,7 +136,7 @@ public class ISO8583DTO {
      * 变量属性
      * N2，2个字节的定长数字字符域，压缩时用BCD码表示的1个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 26, dataFldLength = 2, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 26, dataFldLength = 2, type = "BCD", fldFlag = FldFlag.FIXED)
     private String PointOfServicePINCaptureCode_26;
 
     /**
@@ -145,7 +145,7 @@ public class ISO8583DTO {
      * N..11(LLVAR)，2个字节的长度值＋最大11个字节的受理方标识码，
      * 压缩时用BCD码表示的1个字节的长度值＋用左靠BCD码表示的最大6个字节的受理方标识码。
      */
-    @ISO8583Annotation(fldIndex = 32, dataFldLength = 11, fldFlag = FldFlag.UNFIXED_2)
+    @ISO8583Annotation(fldIndex = 32, dataFldLength = 11, type = "BCD", fldFlag = FldFlag.UNFIXED_2)
     private String AcquiringInstitutionIdentificationCode_32;
 
     /**
@@ -153,7 +153,7 @@ public class ISO8583DTO {
      * 变量属性
      * B..24(LLVAR)，1个字节的BCD格式长度值＋用TRK加密的含第二磁道长度的第二磁道数据。
      */
-    @ISO8583Annotation(fldIndex = 35, dataFldLength = 24, fldFlag = FldFlag.UNFIXED_2)
+    @ISO8583Annotation(fldIndex = 35, dataFldLength = 24, type = "BCD", fldFlag = FldFlag.UNFIXED_2)
     private String Track2Data_35;
 
     /**
@@ -161,7 +161,7 @@ public class ISO8583DTO {
      * 变量属性
      * B...56(LLLVAR)，2个字节的BCD格式长度值＋用TRK加密的含第三磁道长度的第三磁道数据。
      */
-    @ISO8583Annotation(fldIndex = 36, dataFldLength = 56, fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 36, dataFldLength = 56, type = "BCD", fldFlag = FldFlag.UNFIXED_3)
     private String Track3Data_36;
 
     /**
@@ -169,7 +169,7 @@ public class ISO8583DTO {
      * 变量属性
      * AN12，12个字节的定长字符域。
      */
-    @ISO8583Annotation(fldIndex = 37, dataFldLength = 12, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 37, dataFldLength = 12, type = "ASC", fldFlag = FldFlag.FIXED)
     private String RetrievalReferenceNumber_37;
 
     /**
@@ -177,7 +177,7 @@ public class ISO8583DTO {
      * 变量属性
      * AN6，6个字节的定长字符域。
      */
-    @ISO8583Annotation(fldIndex = 38, dataFldLength = 6, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 38, dataFldLength = 6, type = "ASC", fldFlag = FldFlag.FIXED)
     private String AuthorizationIdentificationResponse_38;
 
     /**
@@ -185,7 +185,7 @@ public class ISO8583DTO {
      * 变量属性
      * AN2，2个字节的定长字符域。
      */
-    @ISO8583Annotation(fldIndex = 39, dataFldLength = 2, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 39, dataFldLength = 2, type = "ASC", fldFlag = FldFlag.FIXED)
     private String ResponseCode_39;
 
     /**
@@ -193,7 +193,7 @@ public class ISO8583DTO {
      * 变量属性
      * ANS8，8个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 41, dataFldLength = 8, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 41, dataFldLength = 8, type = "ASC", fldFlag = FldFlag.FIXED)
     private String CardAcceptorTerminalIdentification_41;
 
     /**
@@ -201,7 +201,7 @@ public class ISO8583DTO {
      * 变量属性
      * ANS15，15个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 42, dataFldLength = 15, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 42, dataFldLength = 15, type = "ASC", fldFlag = FldFlag.FIXED)
     private String CardAcceptorIdentificationCode_42;
 
     /**
@@ -210,7 +210,7 @@ public class ISO8583DTO {
      * AN..25，2个字节长度+ 最大25个字节的数据。
      * 压缩时用右靠BCD码表示的1个字节的长度值＋用ASCII码表示的最大25个字节的数据。
      */
-    @ISO8583Annotation(fldIndex = 44, dataFldLength = 25, fldFlag = FldFlag.UNFIXED_2)
+    @ISO8583Annotation(fldIndex = 44, dataFldLength = 25, type = "ASC", fldFlag = FldFlag.UNFIXED_2)
     private String AdditionalResponseData_44;
 
     /**
@@ -220,7 +220,7 @@ public class ISO8583DTO {
      * 压缩时用右靠BCD码表示的2个字节的长度值＋TAG的ASCII数据。
      * 本域采用TLV格式，所有的TLV总长度不能超过999字节。
      */
-    @ISO8583Annotation(fldIndex = 46, dataFldLength = 999, fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 46, dataFldLength = 999, type = "ASC", fldFlag = FldFlag.UNFIXED_3)
     private String AdditionalData_46;
 
     /**
@@ -230,7 +230,7 @@ public class ISO8583DTO {
      * 压缩时用右靠BCD码表示的2个字节的长度值＋实际数据。
      * 实际数据采用TLV格式，所有的TLV总长度不能超过999字节。
      */
-    @ISO8583Annotation(fldIndex = 47, dataFldLength = 999, fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 47, dataFldLength = 999, type = "ASC", fldFlag = FldFlag.UNFIXED_3)
     private String AdditionalDataPrivate_47;
 
     /**
@@ -239,7 +239,7 @@ public class ISO8583DTO {
      * N...322(LLLVAR)，3个字节长度+ 最大322个字节的数据。
      * 压缩时用右靠BCD码表示的2个字节的长度值＋用左靠BCD码表示的最大161个字节的数据。
      */
-    @ISO8583Annotation(fldIndex = 48, dataFldLength = 322, fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 48, dataFldLength = 322, type = "BCD", fldFlag = FldFlag.UNFIXED_3)
     private String AdditionalDataPrivate_48;
 
     /**
@@ -247,7 +247,7 @@ public class ISO8583DTO {
      * 变量属性
      * AN3，3个字节的定长字符域。
      */
-    @ISO8583Annotation(fldIndex = 49, dataFldLength = 3, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 49, dataFldLength = 3, type = "ASC", fldFlag = FldFlag.FIXED)
     private String CurrencyCodeOfTransaction_49;
 
     /**
@@ -255,7 +255,7 @@ public class ISO8583DTO {
      * 变量属性
      * AN3，3个字节的定长字符域。
      */
-    @ISO8583Annotation(fldIndex = 51, dataFldLength = 3, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 51, dataFldLength = 3, type = "ASC", fldFlag = FldFlag.FIXED)
     private String CurrencyCodeOfCardholderBilling_51;
 
     /**
@@ -263,7 +263,7 @@ public class ISO8583DTO {
      * 变量属性
      * B64，8个字节的定长二进制数域。
      */
-    @ISO8583Annotation(fldIndex = 52, dataFldLength = 8, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 52, dataFldLength = 8, type = "BINARY", fldFlag = FldFlag.FIXED)
     private String PINData_52;
 
     /**
@@ -272,7 +272,7 @@ public class ISO8583DTO {
      * n16，16个字节的定长数字字符域。
      * 压缩时用BCD码表示的8个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 53, dataFldLength = 16, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 53, dataFldLength = 16, type = "BCD", fldFlag = FldFlag.FIXED)
     private String SecurityRelatedControlInformation_53;
 
     /**
@@ -281,7 +281,7 @@ public class ISO8583DTO {
      * AN...020(LLLVAR)，3个字节的长度值＋最大20个字节的数据。
      * 压缩时用右靠BCD码表示的2个字节的长度值＋用ASCII码表示的最大20个字节的数据。
      */
-    @ISO8583Annotation(fldIndex = 54, dataFldLength = 20, fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 54, dataFldLength = 20, type = "ASC", fldFlag = FldFlag.UNFIXED_3)
     private String BalanceAmount_54;
 
     /**
@@ -295,13 +295,13 @@ public class ISO8583DTO {
      * An	每个字节包含一个字符字母数字型数据元（A-Z，a-z，0-9）。
      * var. up to N 	变长数据，最大长度可为N。
      */
-    @ISO8583Annotation(fldIndex = 55, dataFldLength = 255, fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 55, dataFldLength = 255, type = "BCD", fldFlag = FldFlag.UNFIXED_3)
     private String IntergratedCircuitCardSystemRelatedData_55;
 
     /**
      * 域59自定义域（Reserved Private）
      */
-    @ISO8583Annotation(fldIndex = 59, dataFldLength = 999, fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 59, dataFldLength = 999, type = "BCD", fldFlag = FldFlag.UNFIXED_3)
     private String ReservedPrivate_59;
 
     /**
@@ -312,7 +312,7 @@ public class ISO8583DTO {
      * N...019(LLLVAR)，3个字节的长度值＋最大19个字节的数字字符域。
      * 压缩时用右靠BCD码表示的2个字节的长度值＋用左靠BCD码表示的最大10个字节的数据。
      */
-    @ISO8583Annotation(fldIndex = 60, dataFldLength = 19, fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 60, dataFldLength = 19, type = "BCD", fldFlag = FldFlag.UNFIXED_3)
     private String ReservedPrivate_60;
 
     /**
@@ -321,7 +321,7 @@ public class ISO8583DTO {
      * N...029(LLLVAR)，3个字节的长度值＋最大29个字节的数字字符域，
      * 压缩时用右靠BCD码表示的2个字节的长度值＋用左靠BCD码表示的最大15个字节的数据。
      */
-    @ISO8583Annotation(fldIndex = 61, dataFldLength = 29, fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 61, dataFldLength = 29, type = "BCD", fldFlag = FldFlag.UNFIXED_3)
     private String OriginalMessage_61;
 
     /**
@@ -330,7 +330,7 @@ public class ISO8583DTO {
      * ANS...512(LLLVAR)，3个字节的长度值＋最大512个字节的数据域。
      * 压缩时用右靠BCD码表示的2个字节的长度值＋用ASCII码表示的最大512个字节的数据。
      */
-    @ISO8583Annotation(fldIndex = 62, dataFldLength = 512, fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 62, dataFldLength = 512,type = "ASC", fldFlag = FldFlag.UNFIXED_3)
     private String ReservedPrivate_62;
 
     /**
@@ -339,7 +339,7 @@ public class ISO8583DTO {
      * ANS...163(LLLVAR)，3个字节的长度值＋最大163个字节的数据。
      * 压缩时用右靠BCD码表示的2个字节的长度值＋用ASCII码表示的最大163个字节的数据。
      */
-    @ISO8583Annotation(fldIndex = 63, dataFldLength = 163, fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 63, dataFldLength = 163,type = "ASC", fldFlag = FldFlag.UNFIXED_3)
     private String ReservedPrivate_63;
 
     /**
@@ -347,7 +347,7 @@ public class ISO8583DTO {
      * 变量属性
      * B64，8个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 64, dataFldLength = 8, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 64, dataFldLength = 8, type = "BINARY",fldFlag = FldFlag.FIXED)
     private String MessageAuthenticationCode_64;
 
 }

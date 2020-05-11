@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
+import com.asianwallets.common.dto.th.ISO8583.ISO8583Util;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
-import com.asianwallets.common.entity.Currency;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -92,22 +92,21 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setPointOfServiceEntryMode_22("021");
         //服务点条件码 TODO
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        //受理方标识码 TODO
-        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("");
+        //受理方标识码 (机构号)
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
         //iso8583DTO.setRetrievalReferenceNumber_37("");
         //iso8583DTO.setResponseCode_39("");
-        //受卡机终端标识码 TODO
-        iso8583DTO.setCardAcceptorTerminalIdentification_41("");
-        //受卡方标识码 (受卡方的标识码，即商户代码)
-        iso8583DTO.setCardAcceptorIdentificationCode_42("");
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
         //iso8583DTO.setAdditionalData_46("");
         //iso8583DTO.setAdditionalDataPrivate_47("");
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("156");
         //自定义域
         iso8583DTO.setReservedPrivate_60("");
-        //自定义域
-        iso8583DTO.setReservedPrivate_63("");
+        //iso8583DTO.setReservedPrivate_63("");
         //报文鉴别码
         iso8583DTO.setMessageAuthenticationCode_64("");
         log.info("==================【通华线下CSB】==================【调用Channels服务】【请求参数】 iso8583DTO: {}", JSON.toJSONString(iso8583DTO));
@@ -121,29 +120,22 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         return baseResponse;
     }
 
-    public static void main(String[] args) {
-
-
-        Orders orders = new Orders();
-        orders.setTradeAmount(new BigDecimal("1000.201"));
-        Currency currency = new Currency();
-        int tradeAmount = 0;
-        //交易金额
-        if (new BigDecimal(orders.getTradeAmount().intValue()).compareTo(orders.getTradeAmount()) == 0) {
-            //整数
-            tradeAmount = orders.getTradeAmount().intValue();
-        } else {
-            //小数
-            tradeAmount = orders.getTradeAmount().movePointRight(2).intValue();
-        }
-        System.out.println(tradeAmount);
-
-        String format = String.format("%012d", tradeAmount);
-        System.out.println(format);
-
-        String ssss = "12.01100";
-        int bitPos = ssss.indexOf(".");
-        int numOfBits = ssss.length() - bitPos - 1;
-        System.out.println(numOfBits);
+    public static void main(String[] args) throws Exception {
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("6006090000800100000000852999958120501000186440000000086000050000000085299995812050100000059");
+        iso8583DTO.setSystemTraceAuditNumber_11("198124");
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("52000001");
+        iso8583DTO.setCardAcceptorTerminalIdentification_41("00002753");
+        iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120050");
+        iso8583DTO.setReservedPrivate_60("50000001003");
+        iso8583DTO.setReservedPrivate_63("001");
+        String sendMsg = ISO8583Util.packISO8583DTO(iso8583DTO);
+        System.out.println("发送报文: " + sendMsg);
+        String receiveMsg = ISO8583Util.send8583("0086600609000080010000000038353239393939353831323030353030303030323735333330303030303030303030303030333030303030303031383532393939393538313230303530303030303030353408000020000100C000121981240852000001303030303237353338353239393939353831323030353000115000000100300003303031",
+                "58.248.241.169", 10089);
+        System.out.println("接收报文: " + receiveMsg);
+        //ISO8583DTO iso8583DTO1 = ISO8583Util.unpackISO8583DTO(s1);
+        //System.out.println(JSON.toJSON(iso8583DTO1));
     }
+
 }
