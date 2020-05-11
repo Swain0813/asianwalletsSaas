@@ -23,7 +23,7 @@ public class ISO8583DTO {
      * 域3 交易处理码(Processing Code)
      * N6，6个字节的定长数字字符域，压缩时用BCD码表示的3个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 3, dataFldLength = 6,type = FldFlag.ASC, fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 3, dataFldLength = 6,type = "BCD", fldFlag = FldFlag.FIXED)
     private String processingCode_3;
 
     /**
