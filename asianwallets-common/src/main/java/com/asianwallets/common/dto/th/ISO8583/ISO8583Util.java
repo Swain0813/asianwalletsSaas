@@ -43,7 +43,7 @@ public class ISO8583Util {
         // 计算报文长度，长度占4个字节，不足4字节左补0
         int sendMsgLen = sendMsg.length();
         String sendMsgLenStr = Integer.toString(sendMsgLen);
-        sendMsgLenStr = NumberStringUtil.addLeftChar(sendMsgLenStr, 4, '0');
+        sendMsgLenStr = NumberStringUtil.addLeftChar(sendMsgLenStr, 8, '0');
         // 将4位报文长度插到最前边
         sendMsg.insert(0,sendMsgLenStr);
 
