@@ -27,9 +27,9 @@ public class demo {
             String strHex2 = String.format("%04x",sendMsg.length()/2);
             sendMsg = strHex2 + sendMsg;
             System.out.println(" ===  sendMsg  ====   "+sendMsg);
-            String result = ISO8583Util.send8583(sendMsg,"58.248.241.169",10089);
+            //String result = ISO8583Util.send8583(sendMsg,"58.248.241.169",10089);
 
-            System.out.println(" ====  result  ===   "+result);
+            //System.out.println(" ====  result  ===   "+result);
             // 解包
             ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(sendMsg);
             System.out.println(iso8583DTO1281.toString());
@@ -42,5 +42,6 @@ public class demo {
         //String strHex2 = String.format("%04x",s.length()/2);
         //System.out.println(strHex2);
 
+        //System.out.println(NumberStringUtil.hexToBinaryString("0333030303030303031383532393939393538313230303530303030303030353"));
     }
 }
