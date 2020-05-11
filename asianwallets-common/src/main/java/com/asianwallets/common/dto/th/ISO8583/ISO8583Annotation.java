@@ -26,4 +26,10 @@ public @interface ISO8583Annotation {
      * */
     int dataFldLength();
 
+    /**
+     * 类型
+     * BCD,ASC,BINERY
+     * */
+    String type();
+
 }
