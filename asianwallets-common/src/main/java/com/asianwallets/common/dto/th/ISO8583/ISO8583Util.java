@@ -227,6 +227,7 @@ public class ISO8583Util {
         ISO8583Annotation iso8583Annotation = field.getAnnotation(ISO8583Annotation.class);
         FldFlag fldFlag = iso8583Annotation.fldFlag();
         int expectLen = iso8583Annotation.dataFldLength();
+        String type = iso8583Annotation.type();
         int actualLen = fldValue.length();
 
         // 固定长度，则校验一下长度是否一致
@@ -235,6 +236,9 @@ public class ISO8583Util {
                 String msg = String.format("%s长度不正确，期望长度为[%d]，实际长度为[%d]。"
                         ,field.getName(),expectLen,actualLen);
                 throw new IncorrectLengthException(msg);
+            }
+            if(type.equals("ASC")){
+                fldValue=NumberStringUtil.stringToAscii(fldValue);
             }
             return fldValue;
         }
@@ -253,9 +257,14 @@ public class ISO8583Util {
             }
             // 在报文前边拼接长度
             fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen),len, '0') + fldValue;
+            if(type.equals("ASC")){
+                fldValue=NumberStringUtil.stringToAscii(fldValue);
+            }
             return fldValue;
         }
-
+        if(type.equals("ASC")){
+            fldValue=NumberStringUtil.stringToAscii(fldValue);
+        }
         return fldValue;
     }
 
