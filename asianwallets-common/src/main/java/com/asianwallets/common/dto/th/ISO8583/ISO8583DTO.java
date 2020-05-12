@@ -318,10 +318,10 @@ public class ISO8583DTO {
     /**
      * 域61原始信息域(Original Message)
      * 变量属性
-     * N...029(LLLVAR)，3个字节的长度值＋最大29个字节的数字字符域，
+     * N...029(LLLVAR)，3个字节的长度值＋最大19个字节的数字字符域，
      * 压缩时用右靠BCD码表示的2个字节的长度值＋用左靠BCD码表示的最大15个字节的数据。
      */
-    @ISO8583Annotation(fldIndex = 61, dataFldLength = 29, type = "BCD", fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 61, dataFldLength = 22, type = "BCD", fldFlag = FldFlag.UNFIXED_3)
     private String OriginalMessage_61;
 
     /**
