@@ -69,16 +69,16 @@ public class ISO8583Util {
             throw new IncorrectMessageException("报文格式不正确，报文长度最少为40");
         }
 
-        int msgLen = Integer.valueOf(NumberStringUtil.hexStr2Str(receivedMsg.substring(139,155)));
+        int msgLen = Integer.valueOf(NumberStringUtil.hexStr2Str(receivedMsg.substring(0,16)));
         //if(msgLen != totalLen - 4){
         //    throw new IncorrectMessageException("报文长度不匹配");
         //}
-        String messageType = receivedMsg.substring(155,159);
-        String hexBitMap = receivedMsg.substring(159,165);
+        String messageType = receivedMsg.substring(16,20);
+        String hexBitMap = receivedMsg.substring(20,36);
         String binaryBitMap = NumberStringUtil.hexToBinaryString(hexBitMap);
         //String binaryBitMap = hexBitMap;
         String[] binaryBitMapArgs = binaryBitMap.split("");
-        String msg = receivedMsg.substring(165);
+        String msg = receivedMsg.substring(36);
 
         ISO8583DTO iso8583DTO128 = (ISO8583DTO) msgToObject(ISO8583DTO.class, binaryBitMapArgs, msg);
         iso8583DTO128.setMessageType(messageType);
@@ -197,7 +197,9 @@ public class ISO8583Util {
                     //未知类型，不做处理
                     continue;
                 }
-
+                if(type.equals("ASC")){
+                    dataLength = dataLength*2;
+                }
                 fldValue = msg.substring(indexFlag,indexFlag+dataLength);
                 indexFlag += dataLength;
                 field.setAccessible(true);
