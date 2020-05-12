@@ -69,16 +69,16 @@ public class ISO8583Util {
             throw new IncorrectMessageException("报文格式不正确，报文长度最少为40");
         }
 
-        int msgLen = Integer.valueOf(receivedMsg.substring(87,95));
+        int msgLen = Integer.valueOf(NumberStringUtil.hexStr2Str(receivedMsg.substring(139,155)));
         //if(msgLen != totalLen - 4){
         //    throw new IncorrectMessageException("报文长度不匹配");
         //}
-        String messageType = receivedMsg.substring(95,99);
-        String hexBitMap = receivedMsg.substring(99,115);
+        String messageType = receivedMsg.substring(155,159);
+        String hexBitMap = receivedMsg.substring(159,165);
         String binaryBitMap = NumberStringUtil.hexToBinaryString(hexBitMap);
         //String binaryBitMap = hexBitMap;
         String[] binaryBitMapArgs = binaryBitMap.split("");
-        String msg = receivedMsg.substring(115);
+        String msg = receivedMsg.substring(165);
 
         ISO8583DTO iso8583DTO128 = (ISO8583DTO) msgToObject(ISO8583DTO.class, binaryBitMapArgs, msg);
         iso8583DTO128.setMessageType(messageType);
