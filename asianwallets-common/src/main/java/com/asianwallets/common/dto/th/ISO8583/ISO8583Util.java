@@ -202,7 +202,7 @@ public class ISO8583Util {
                 indexFlag += dataLength;
                 field.setAccessible(true);
                 if(type.equals("ASC")){
-                    fldValue = NumberStringUtil.asciiToString(fldValue);
+                    fldValue = NumberStringUtil.hexStr2Str(fldValue);
                 }
                 field.set(retObject,fldValue);
             }
@@ -244,7 +244,7 @@ public class ISO8583Util {
                 throw new IncorrectLengthException(msg);
             }
             if(type.equals("ASC")){
-                fldValue=NumberStringUtil.stringToAscii(fldValue);
+                fldValue=NumberStringUtil.str2HexStr(fldValue);
             }
             return fldValue;
         }
@@ -264,12 +264,12 @@ public class ISO8583Util {
             // 在报文前边拼接长度
             fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen),len, '0') + fldValue;
             if(type.equals("ASC")){
-                fldValue=NumberStringUtil.stringToAscii(fldValue);
+                fldValue=NumberStringUtil.str2HexStr(fldValue);
             }
             return fldValue;
         }
         if(type.equals("ASC")){
-            fldValue=NumberStringUtil.stringToAscii(fldValue);
+            fldValue=NumberStringUtil.str2HexStr(fldValue);
         }
         return fldValue;
     }
