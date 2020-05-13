@@ -23,7 +23,7 @@ public class ISO8583DTO {
      * 域2 交易处理码(Processing Code)
      * N6，6个字节的定长数字字符域，压缩时用BCD码表示的3个字节的定长域。
      */
-    @ISO8583Annotation(fldIndex = 2, dataFldLength = 19, type = "BCD", fldFlag = FldFlag.UNFIXED_2)
+    @ISO8583Annotation(fldIndex = 2, dataFldLength = 19, type = "BINARY", fldFlag = FldFlag.UNFIXED_2)
     private String processingCode_2;
 
     /**
@@ -160,7 +160,7 @@ public class ISO8583DTO {
      * 变量属性
      * B..24(LLVAR)，1个字节的BCD格式长度值＋用TRK加密的含第二磁道长度的第二磁道数据。
      */
-    @ISO8583Annotation(fldIndex = 35, dataFldLength = 24, type = "BCD", fldFlag = FldFlag.UNFIXED_2)
+    @ISO8583Annotation(fldIndex = 35, dataFldLength = 24, type = "BINARY", fldFlag = FldFlag.UNFIXED_2)
     private String Track2Data_35;
 
     /**
@@ -168,7 +168,7 @@ public class ISO8583DTO {
      * 变量属性
      * B...56(LLLVAR)，2个字节的BCD格式长度值＋用TRK加密的含第三磁道长度的第三磁道数据。
      */
-    @ISO8583Annotation(fldIndex = 36, dataFldLength = 56, type = "BCD", fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 36, dataFldLength = 56, type = "BINARY", fldFlag = FldFlag.UNFIXED_3)
     private String Track3Data_36;
 
     /**
