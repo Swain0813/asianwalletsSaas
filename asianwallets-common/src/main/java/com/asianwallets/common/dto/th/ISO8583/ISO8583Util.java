@@ -192,7 +192,7 @@ public class ISO8583Util {
                 }else if(Objects.equals(FldFlag.UNFIXED_2, fldFlag)){
                     dataLength = Integer.valueOf(msg.substring(indexFlag, indexFlag=indexFlag+2));
                 }else if(Objects.equals(FldFlag.UNFIXED_3, fldFlag)){
-                    dataLength = Integer.valueOf(msg.substring(indexFlag, indexFlag=indexFlag+3));
+                    dataLength = Integer.valueOf(msg.substring(indexFlag, indexFlag=indexFlag+4));
                 }else{
                     //未知类型，不做处理
                     continue;
@@ -201,6 +201,9 @@ public class ISO8583Util {
                     dataLength = dataLength*2;
                 }
                 fldValue = msg.substring(indexFlag,indexFlag+dataLength);
+                if(dataLength%2 != 0){
+                    dataLength = dataLength+1;
+                }
                 indexFlag += dataLength;
                 field.setAccessible(true);
                 if(type.equals("ASC")){
