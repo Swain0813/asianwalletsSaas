@@ -270,7 +270,10 @@ public class ISO8583Util {
             if(type.equals("ASC")){
                 fldValue=NumberStringUtil.str2HexStr(fldValue);
             }
-            fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen),len, '0') + fldValue;
+            fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen),(len-1)*2, '0') + fldValue;
+            if(actualLen%2 != 0){
+                fldValue=NumberStringUtil.addRightChar(fldValue,1,'0');
+            }
             return fldValue;
         }
         return fldValue;
