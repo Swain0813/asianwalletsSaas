@@ -197,7 +197,7 @@ public class ISO8583Util {
                     //未知类型，不做处理
                     continue;
                 }
-                if(type.equals("ASC") && type.equals("BINARY")){
+                if(type.equals("ASC") || type.equals("BINARY")){
                     dataLength = dataLength*2;
                 }
                 fldValue = msg.substring(indexFlag,indexFlag+dataLength);
