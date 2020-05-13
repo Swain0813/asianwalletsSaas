@@ -1,5 +1,4 @@
 package com.asianwallets.common.vo;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -16,6 +15,16 @@ public class ExportOrdersVO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date createTime;
 
+    @ApiModelProperty(value = "支付完成时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date channelCallbackTime;
+
+    @ApiModelProperty(value = "交易流水号")
+    private String orderId;
+
+    @ApiModelProperty(value = "商户订单号")
+    private String merchantOrderId;
+
     @ApiModelProperty(value = "机构编号")
     private String institutionId;
 
@@ -31,11 +40,11 @@ public class ExportOrdersVO {
     @ApiModelProperty(value = "产品名称")
     private String productName;
 
-    @ApiModelProperty(value = "商户订单号")
-    private String merchantOrderId;
+    @ApiModelProperty(value = "通道名称")
+    private String channelName;
 
-    @ApiModelProperty(value = "交易流水号")
-    private String orderId;
+    @ApiModelProperty(value = "银行名称")
+    private String bankName;
 
     @ApiModelProperty(value = "订单币种")
     private String orderCurrency;
@@ -43,32 +52,26 @@ public class ExportOrdersVO {
     @ApiModelProperty(value = "订单金额")
     private BigDecimal orderAmount;
 
-    @ApiModelProperty(value = "交易币种")
-    private String tradeCurrency;
+    @ApiModelProperty(value = "手续费")
+    private BigDecimal fee;
 
     @ApiModelProperty(value = "换汇汇率")
     private BigDecimal exchangeRate;
 
+    @ApiModelProperty(value = "交易币种")
+    private String tradeCurrency;
+
     @ApiModelProperty(value = "交易金额")
     private BigDecimal tradeAmount;
 
-    @ApiModelProperty(value = "手续费")
-    private BigDecimal fee;
-
-    @ApiModelProperty(value = "通道名称")
-    private String channelName;
-
-    @ApiModelProperty(value = "银行名称")
-    private String bankName;
-
-    @ApiModelProperty(value = "通道流水号")
-    private String channelNumber;
+    @ApiModelProperty(value = "交易状态")//交易状态:1-待支付 2-交易中 3-交易成功 4-交易失败 5-已过期
+    private Byte tradeStatus;
 
     @ApiModelProperty(value = "通道手续费")
     private BigDecimal channelFee;
 
-    @ApiModelProperty(value = "交易状态")//交易状态:1-待支付 2-交易中 3-交易成功 4-交易失败 5-已过期
-    private Byte tradeStatus;
+    @ApiModelProperty(value = "通道流水号")
+    private String channelNumber;
 
     @ApiModelProperty(value = "撤销状态")//撤销状态：1-撤销中 2-撤销成功 3-撤销失败
     private Byte cancelStatus;
@@ -84,10 +87,6 @@ public class ExportOrdersVO {
 
     @ApiModelProperty(value = "设备编号")
     private String imei;
-
-    @ApiModelProperty(value = "支付完成时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date channelCallbackTime;
 
     @ApiModelProperty(value = "商品名称")
     private String goodsName;
