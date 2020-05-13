@@ -264,10 +264,10 @@ public class ISO8583Util {
                 len = 3;
             }
             // 在报文前边拼接长度
-            fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen),len, '0') + fldValue;
             if(type.equals("ASC")){
                 fldValue=NumberStringUtil.str2HexStr(fldValue);
             }
+            fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen),len, '0') + fldValue;
             return fldValue;
         }
         return fldValue;
