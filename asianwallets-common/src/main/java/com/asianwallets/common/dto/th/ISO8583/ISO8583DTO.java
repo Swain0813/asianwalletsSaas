@@ -20,6 +20,13 @@ public class ISO8583DTO {
     private String messageType;
 
     /**
+     * 域2 交易处理码(Processing Code)
+     * N6，6个字节的定长数字字符域，压缩时用BCD码表示的3个字节的定长域。
+     */
+    @ISO8583Annotation(fldIndex = 2, dataFldLength = 1, type = "BCD", fldFlag = FldFlag.FIXED)
+    private String processingCode_2;
+
+    /**
      * 域3 交易处理码(Processing Code)
      * N6，6个字节的定长数字字符域，压缩时用BCD码表示的3个字节的定长域。
      */
