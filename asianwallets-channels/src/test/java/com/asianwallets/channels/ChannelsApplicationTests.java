@@ -1,10 +1,7 @@
 package com.asianwallets.channels;
 
 import com.alibaba.fastjson.JSON;
-import com.asianwallets.channels.service.DokuService;
-import com.asianwallets.channels.service.Help2PayService;
-import com.asianwallets.channels.service.MegaPayService;
-import com.asianwallets.channels.service.WechatService;
+import com.asianwallets.channels.service.*;
 import com.asianwallets.common.dto.doku.DOKUReqDTO;
 import com.asianwallets.common.dto.doku.DOKURequestDTO;
 import com.asianwallets.common.dto.help2pay.Help2PayOutDTO;
@@ -41,6 +38,9 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
 
     @Autowired
     private DokuService dokuService;
+
+    @Autowired
+    private THService thService;
 
 
     @Test
@@ -146,51 +146,24 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
 
     }
 
-   /**
-    * @Author YangXu
-    * @Date 2020/5/8
-    * @Descripate 通华
-    * @return
-    **/
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2020/5/8
+     * @Descripate 通华
+     **/
     @Test
     public void thTest() {
-        ISO8583DTO thRefundDTO = new ISO8583DTO();
-        thRefundDTO.setMessageType("0200");
-        thRefundDTO.setProcessingCode_3("200000");
-        thRefundDTO.setAmountOfTransactions_4("000000100002");
-        thRefundDTO.setSystemTraceAuditNumber_11("111111");
-        thRefundDTO.setTimeOfLocalTransaction_12("153344");
-        thRefundDTO.setDateOfLocalTransaction_13("0508");
-        thRefundDTO.setDateOfSettlement_15("0508");
-        thRefundDTO.setPointOfServiceEntryMode_22("030");
-        thRefundDTO.setPointOfServiceConditionMode_25("00");
-        thRefundDTO.setAcquiringInstitutionIdentificationCode_32("11111111111");
-        //thRefundDTO.setSysSerNo_37("123456789011");
-        //thRefundDTO.setRepNo_39("");
-        thRefundDTO.setCardAcceptorTerminalIdentification_41("12345678");
-        thRefundDTO.setCardAcceptorIdentificationCode_42("123456789012345");
-        //thRefundDTO.setRemark_46();
-        //thRefundDTO.setRemark_47();
-        thRefundDTO.setCurrencyCodeOfTransaction_49("156");
-        thRefundDTO.setReservedPrivate_60("2500000000000");
-        thRefundDTO.setReservedPrivate_63("cup");
-        thRefundDTO.setMessageAuthenticationCode_64("");
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0800");
+        iso8583DTO.setSystemTraceAuditNumber_11("198124");
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("00008600005");
+        iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
+        iso8583DTO.setReservedPrivate_60("50000001003");
+        iso8583DTO.setReservedPrivate_63("001");
 
-
-        String sendMsg;
-        try {
-            // 组包
-            sendMsg = ISO8583Util.packISO8583DTO(thRefundDTO);
-            System.out.println(sendMsg);
-
-            // 解包
-            ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(sendMsg);
-            System.out.println(iso8583DTO1281.toString());
-        } catch (IncorrectLengthException e) {
-            System.out.println(e.getMsg());
-        } catch (IncorrectMessageException e) {
-            System.out.println(e.getMsg());
-        }
+        thService.thRefund(iso8583DTO);
 
     }
 
