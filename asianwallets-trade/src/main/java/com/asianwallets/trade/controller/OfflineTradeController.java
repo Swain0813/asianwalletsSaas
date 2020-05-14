@@ -72,7 +72,7 @@ public class OfflineTradeController extends BaseController {
      * @param posQueryOrderListDTO
      * @return
      */
-    @ApiOperation(value = "pos机查询订单详情")
+    @ApiOperation(value = "pos机查询订单详情打印用")
     @PostMapping("posQueryOrderDetail")
     public BaseResponse posQueryOrderDetail(@RequestBody @ApiParam @Valid PosQueryOrderListDTO posQueryOrderListDTO) {
         return ResultUtil.success(offlineTradeService.posQueryOrderDetail(posQueryOrderListDTO));
