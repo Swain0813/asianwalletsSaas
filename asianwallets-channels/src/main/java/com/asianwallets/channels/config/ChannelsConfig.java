@@ -173,5 +173,21 @@ public class ChannelsConfig {
     @ApiModelProperty("AD3线下退款")
     @Value("${custom.ad3.offlineRefund}")
     private String offlineRefund;
+
+    @ApiModelProperty("通华TDPU")
+    @Value("${custom.th.tdpu}")
+    private String thTDPU;
+
+    @ApiModelProperty("通华header")
+    @Value("${custom.th.header}")
+    private String thHeader;
+
+    @ApiModelProperty("通华ip")
+    @Value("${custom.th.ip}")
+    private String thIp;
+
+    @ApiModelProperty("通华PORT")
+    @Value("${custom.th.port}")
+    private String thPort;
 }
 
