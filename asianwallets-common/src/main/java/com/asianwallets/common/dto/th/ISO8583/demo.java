@@ -1,5 +1,9 @@
 package com.asianwallets.common.dto.th.ISO8583;
 
+import jdk.nashorn.internal.objects.NativeUint8Array;
+
+import java.util.Map;
+
 /**
  * @description:
  * @author: YangXu
@@ -10,6 +14,9 @@ public class demo {
 
     public static void main(String[] args) {
 
+        String IP = "58.248.241.169";
+        String port = "10089";
+        String reqCharset = "UTF-8";
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0800");
         iso8583DTO.setSystemTraceAuditNumber_11("198124");
@@ -28,8 +35,8 @@ public class demo {
             String strHex2 = String.format("%04x",sendMsg.length()/2);
             sendMsg = strHex2 + sendMsg;
             System.out.println(" ===  sendMsg  ====   "+sendMsg);
-            String result = ISO8583Util.send8583(sendMsg,"58.248.241.169",10089);
-
+            Map<String, String> respMap = ISO8583Util.sendTCPRequest(IP, port, NumberStringUtil.str2Bcd(sendMsg), reqCharset);
+            String result = respMap.get("respData");
             System.out.println(" ====  result  ===   "+result);
              //解包
             ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
