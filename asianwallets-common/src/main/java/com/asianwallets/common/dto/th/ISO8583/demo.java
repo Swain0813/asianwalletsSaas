@@ -35,11 +35,11 @@ public class demo {
             String strHex2 = String.format("%04x",sendMsg.length()/2);
             sendMsg = strHex2 + sendMsg;
             System.out.println(" ===  sendMsg  ====   "+sendMsg);
-            Map<String, String> respMap = ISO8583Util.sendTCPRequest(IP, port, NumberStringUtil.str2Bcd(sendMsg), reqCharset);
-            String result = respMap.get("respData");
-            System.out.println(" ====  result  ===   "+result);
+            //Map<String, String> respMap = ISO8583Util.sendTCPRequest(IP, port, NumberStringUtil.str2Bcd(sendMsg), reqCharset);
+            //String result = respMap.get("respData");
+            //System.out.println(" ====  result  ===   "+result);
              //解包
-            ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
+            ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO("00E660000000028001000000003835323939393935383132303035303030303032373533333030303030303030303030303033303030303030303138353239393939353831323030353030303030303131350210703800810EC48011163437363133343030303030303030313900900000000000010819808214594105130008085200013130313130303034323735303036323734333030303030303237353338353239393939353831323030353000355F5109BDBBD2D7B3C9B9A6025F551430303030303202313938303832023035313302023334340014220000020006003044364532343830");
             System.out.println(iso8583DTO1281.toString());
         } catch (Exception e) {
             System.out.println(e);

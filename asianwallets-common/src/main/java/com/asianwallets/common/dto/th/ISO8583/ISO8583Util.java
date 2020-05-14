@@ -213,7 +213,11 @@ public class ISO8583Util {
                 }
                 indexFlag += dataLength;
                 field.setAccessible(true);
-                if (type.equals("ASC")) {
+                if (type.equals("ASC")
+                        && fldAnnotation.fldIndex() != 35
+                        && fldAnnotation.fldIndex() != 46
+                        && fldAnnotation.fldIndex() != 47
+                        && fldAnnotation.fldIndex() != 62) {
                     fldValue = NumberStringUtil.hexStr2Str(fldValue);
                 }
                 field.set(retObject, fldValue);
@@ -325,7 +329,7 @@ public class ISO8583Util {
      * @param port        端口号
      * @return 返回的数据
      */
-    public static Map<String, String> sendTCPRequest(String IP, String port, byte[] reqData, String reqCharset){
+    public static Map<String, String> sendTCPRequest(String IP, String port, byte[] reqData, String reqCharset) {
         Map<String, String> respMap = new HashMap<String, String>();
         OutputStream out = null;      //写
         InputStream in = null;        //读
@@ -355,7 +359,7 @@ public class ISO8583Util {
             ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
             byte[] buffer = new byte[512];
             int len = -1;
-            while((len=in.read(buffer)) != -1){
+            while ((len = in.read(buffer)) != -1) {
                 bytesOut.write(buffer, 0, len);
             }
             /**
@@ -367,7 +371,7 @@ public class ISO8583Util {
             System.out.println("与[" + IP + ":" + port + "]通信遇到异常,堆栈信息如下");
             e.printStackTrace();
         } finally {
-            if (null!=socket && socket.isConnected() && !socket.isClosed()) {
+            if (null != socket && socket.isConnected() && !socket.isClosed()) {
                 try {
                     socket.close();
                 } catch (IOException e) {
