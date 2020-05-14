@@ -1,12 +1,15 @@
 server:
-  port: 9008
+  port: 5008
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://192.168.15.92:8761/eureka/
+      defaultZone: http://localhost:5000/eureka/
     registerWithEureka: true
     fetchRegistry: true
+  instance:
+    instance-id: asianwallets-clearing5008
+    prefer-ip-address: true
 
 ribbon:
   ReadTimeout: 10000
@@ -24,7 +27,7 @@ hystrix:
 spring:
   # 数据库配置
   datasource:
-    url: jdbc:mysql://db.asia:3306/asianwallet_institution?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://db.asia:3306/asianwallets_saas?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: asianwallets
     password: QJI1Zh((FSFAyAAf
     # 使用druid数据源

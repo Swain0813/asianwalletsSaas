@@ -71,7 +71,7 @@ custom:
     offlineQuery: https://pgw.alldebitpay.com/terminalQueryOrder.json
     offlineRefund: https://pgw.alldebitpay.com/posRefund.json
   local:
-    eNets-jumpurl: https://test.asianwallets.com/cha/enets/sendToeNetsDebitPay/
+    eNets-jumpurl: https://testsaas.asianwallets.com/cha/enets/sendToeNetsDebitPay/
   eghl:
     pay-url: https://securepay.e-ghl.com/IPG/Payment.aspx
   megaPay:
@@ -86,7 +86,6 @@ custom:
     eNetsDebit: https://www2.enets.sg/
     eNetsSM: https://api.nets.com.sg/GW2/TxnReqListener
     eNetsPOS: https://uat-api.nets.com.sg:9065/uat/merchantservices/qr/dynamic/v1/order/request
-    #    eNetsPOS: https://api.nets.com.sg/merchantservices/qr/dynamic/v1/order/request
   help2Pay:
     help2PayUrl: https://api.racethewind.net/MerchantTransfer
     help2PayOutUrl: https://api.racethewind.net/MerchantPayout/M0285

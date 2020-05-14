@@ -8,7 +8,7 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
   instance:
-    instance-id: asianwallets-base5001
+    instance-id: asianwallets-channels5005
     prefer-ip-address: true
 
 ribbon:
@@ -27,7 +27,7 @@ hystrix:
 spring:
   # 数据库配置
   datasource:
-    url: jdbc:mysql://db.asia:3306/asianwallet_institution?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://db.asia:3306/asianwallets_saas?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: asianwallets
     password: QJI1Zh((FSFAyAAf
     # 使用druid数据源
@@ -71,7 +71,7 @@ custom:
     offlineQuery: https://pgw.alldebitpay.com/terminalQueryOrder.json
     offlineRefund: https://pgw.alldebitpay.com/posRefund.json
   local:
-    eNets-jumpurl: https://pag.asianwallets.com/cha/enets/sendToeNetsDebitPay/
+    eNets-jumpurl: https://psg.asianwallets.com/cha/enets/sendToeNetsDebitPay/
   eghl:
     pay-url: https://securepay.e-ghl.com/IPG/Payment.aspx
   megaPay:

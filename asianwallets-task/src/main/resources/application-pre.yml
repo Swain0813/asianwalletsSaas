@@ -71,10 +71,6 @@ custom:
   warning:
     email: shenxinr@qq.com
     mobile: 18505513542
-  #XE汇率API
-  xe:
-    accountId: personaltestuse17617711
-    apiKey: cejpv7epaok9pqbtrne0pvtuml
   #Open汇率API
   open:
     appId: d69d8cb6dd6f45a6bb569c6279dce5b2

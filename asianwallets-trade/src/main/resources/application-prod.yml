@@ -1,12 +1,15 @@
 server:
-  port: 9004
+  port: 5010
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:5000/eureka/
     registerWithEureka: true
     fetchRegistry: true
+  instance:
+    instance-id: asianwallets-trade5010
+    prefer-ip-address: true
 
 ribbon:
   ReadTimeout: 10000
@@ -52,7 +55,7 @@ spring:
 
 # redis 配置
 redis:
-  database: 1
+  database: 0
   password: Uj7cELl8emRBqPEE
   host: redis.asia
   port: 6379
