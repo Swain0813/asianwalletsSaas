@@ -138,6 +138,9 @@
             <if test="merchantId!=null and merchantId != ''">
                 and mp.merchant_id=#{merchantId}
             </if>
+            <if test="merProId!=null and merProId != ''">
+                and mp.product_id=#{merProId}
+            </if>
             <if test="institutionId!=null and institutionId != ''">
                 and i.id=#{institutionId}
             </if>
