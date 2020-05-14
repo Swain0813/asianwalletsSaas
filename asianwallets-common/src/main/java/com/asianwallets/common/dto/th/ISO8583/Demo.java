@@ -14,7 +14,7 @@ public class Demo {
 
     private static String ip = "58.248.241.169";
     private static String port = "10089";
-    private static String institutionId = "000008600005";
+    private static String institutionId = "00008600005";
     private static String merchantId = "852999958120501";
     private static String terminalId = "00018644";
     private static String key = "38D57B7C1979CF7910677DE5BB6A56DF";
