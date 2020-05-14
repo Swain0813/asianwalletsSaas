@@ -57,7 +57,6 @@
 		p.daily_trading_count as dailyTradingCount,p.daily_total_amount as dailyTotalAmount
 		from product p left join pay_type pt on p.pay_type = pt.extend1 and pt.language = #{language}
 		<where>
-
 			<if test="payType!=null and payType != ''">
 				and p.pay_type=#{payType}
 			</if>
@@ -67,9 +66,6 @@
 			<if test="tradeDirection != null and tradeDirection != ''">
 				and p.trade_direction =#{tradeDirection}
 			</if>
-			<!--<if test="language != null and language != ''">-->
-				<!--and p.language =#{language}-->
-			<!--</if>-->
 		</where>
 	</select>
 

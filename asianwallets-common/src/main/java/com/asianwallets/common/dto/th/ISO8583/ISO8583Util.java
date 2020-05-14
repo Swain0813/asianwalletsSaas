@@ -11,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.beans.PropertyDescriptor;
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -213,7 +213,11 @@ public class ISO8583Util {
                 }
                 indexFlag += dataLength;
                 field.setAccessible(true);
-                if (type.equals("ASC")) {
+                if (type.equals("ASC")
+                        && fldAnnotation.fldIndex() != 35
+                        && fldAnnotation.fldIndex() != 46
+                        && fldAnnotation.fldIndex() != 47
+                        && fldAnnotation.fldIndex() != 62) {
                     fldValue = NumberStringUtil.hexStr2Str(fldValue);
                 }
                 field.set(retObject, fldValue);
@@ -279,8 +283,8 @@ public class ISO8583Util {
                 fldValue = NumberStringUtil.str2HexStr(fldValue);
             }
             fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen), (len - 1) * 2, '0') + fldValue;
-            if (actualLen % 2 != 0) {
-                fldValue = NumberStringUtil.addRightChar(fldValue, 1, '0');
+            if (actualLen % 2 != 0 && type.equals("BCD")) {
+                fldValue = fldValue+"0";
                 actualLen = actualLen + 1;
             }
             return new Object[]{fldValue, actualLen};
@@ -325,41 +329,62 @@ public class ISO8583Util {
      * @param port        端口号
      * @return 返回的数据
      */
-    public static String send8583(String send8583Str, String host, int port) throws Exception {
-        //客户端请求与本机在20011端口建立TCP连接
-        Socket client = new Socket(host, port);
-        client.setSoTimeout(700000);
-        //获取Socket的输出流，用来发送数据到服务端
-        PrintStream out = new PrintStream(client.getOutputStream());
-        //获取Socket的输入流，用来接收从服务端发送过来的数据
-        InputStream buf = client.getInputStream();
-        String str = send8583Str;
-        //发送数据到服务端
-        out.println(str);
+    public static Map<String, String> sendTCPRequest(String IP, String port, byte[] reqData, String reqCharset) {
+        Map<String, String> respMap = new HashMap<String, String>();
+        OutputStream out = null;      //写
+        InputStream in = null;        //读
+        String localPort = null;      //本地绑定的端口(java socket, client, /127.0.0.1:50804 => /127.0.0.1:9901)
+        String respData = null;       //响应报文
+        String respDataHex = null;    //远程主机响应的原始字节的十六进制表示
+        Socket socket = new Socket(); //客户机
         try {
-            byte[] b = new byte[1024];
-            int rc = 0;
-            int c = 0;
-            while ((rc = buf.read(b, c, 1024)) >= 0) {
-                c = buf.read(b, 0, rc);
+            socket.setTcpNoDelay(true);
+            socket.setReuseAddress(true);
+            socket.setSoTimeout(300000);
+            socket.setSoLinger(true, 5);
+            socket.setSendBufferSize(1024);
+            socket.setReceiveBufferSize(1024);
+            socket.setKeepAlive(true);
+            socket.connect(new InetSocketAddress(IP, Integer.parseInt(port)), 300000);
+            localPort = String.valueOf(socket.getLocalPort());
+            /**
+             * 发送TCP请求
+             */
+            out = socket.getOutputStream();
+            out.write(reqData);
+            /**
+             * 接收TCP响应
+             */
+            in = socket.getInputStream();
+            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+            byte[] buffer = new byte[512];
+            int len = -1;
+            while ((len = in.read(buffer)) != -1) {
+                bytesOut.write(buffer, 0, len);
             }
-            String returnStr = byte2hex(b);
-            String string = returnStr;
-            String str16 = string.substring(0, 4);
-            int leng = Integer.parseInt(str16, 16);
-            String result = string.substring(0, leng * 2 + 4);
-            if (client != null) {
-                client.close();
-            }
-            return result;
+            /**
+             * 解码TCP响应的完整报文
+             */
+            byte[] bytes = bytesOut.toByteArray();
+            respData = NumberStringUtil.bcd2Str(bytes);
         } catch (Exception e) {
+            System.out.println("与[" + IP + ":" + port + "]通信遇到异常,堆栈信息如下");
             e.printStackTrace();
-            System.out.println("Time out, No response");
+        } finally {
+            if (null != socket && socket.isConnected() && !socket.isClosed()) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    System.out.println("关闭客户机Socket时发生异常,堆栈信息如下");
+                    e.printStackTrace();
+                }
+            }
         }
-        if (client != null) {
-            client.close();
-        }
-        return null;
+        respMap.put("localPort", localPort);
+        respMap.put("reqData", new String(reqData));
+        respMap.put("respData", respData);
+        respMap.put("respDataHex", respDataHex);
+        return respMap;
     }
 
     public static String byte2hex(byte[] b) // 二进制转字符串
