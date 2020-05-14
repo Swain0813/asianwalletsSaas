@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
+import com.asianwallets.common.dto.PosSearchDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.*;
+import com.asianwallets.common.vo.PosSearchVO;
 import com.asianwallets.common.vo.RedisSysUserVO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.*;
@@ -734,6 +736,16 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             }
         }
         return posQueryOrderListVO;
+    }
+
+    /**
+     * pos机查询订单打印用
+     * @param posSearchDTO
+     * @return
+     */
+    @Override
+    public List<PosSearchVO> posGetOrders(PosSearchDTO posSearchDTO) {
+        return ordersMapper.posGetOrders(posSearchDTO);
     }
 
 }

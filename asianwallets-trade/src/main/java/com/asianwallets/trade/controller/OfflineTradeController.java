@@ -2,6 +2,7 @@ package com.asianwallets.trade.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
+import com.asianwallets.common.dto.PosSearchDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
@@ -75,6 +76,13 @@ public class OfflineTradeController extends BaseController {
     @PostMapping("posQueryOrderDetail")
     public BaseResponse posQueryOrderDetail(@RequestBody @ApiParam @Valid PosQueryOrderListDTO posQueryOrderListDTO) {
         return ResultUtil.success(offlineTradeService.posQueryOrderDetail(posQueryOrderListDTO));
+    }
+
+    @ApiOperation(value = "pos机查询订单打印用")
+    @PostMapping("posGetOrders")
+    public BaseResponse posGetOrders(@RequestBody @ApiParam PosSearchDTO posSearchDTO) {
+        posSearchDTO.setLanguage(this.getLanguage());
+        return ResultUtil.success(offlineTradeService.posGetOrders(posSearchDTO));
     }
 
 }

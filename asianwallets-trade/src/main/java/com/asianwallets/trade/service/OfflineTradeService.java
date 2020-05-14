@@ -1,5 +1,7 @@
 package com.asianwallets.trade.service;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
+import com.asianwallets.common.dto.PosSearchDTO;
+import com.asianwallets.common.vo.PosSearchVO;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OfflineLoginDTO;
 import com.asianwallets.trade.dto.OfflineTradeDTO;
@@ -65,4 +67,11 @@ public interface OfflineTradeService {
      * @return 订单
      */
     PosQueryOrderListVO posQueryOrderDetail(PosQueryOrderListDTO posQueryOrderListDTO);
+
+    /**
+     *pos机查询订单打印用
+     * @param posSearchDTO
+     * @return
+     */
+    List<PosSearchVO> posGetOrders(PosSearchDTO posSearchDTO);
 }

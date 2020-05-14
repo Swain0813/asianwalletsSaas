@@ -387,4 +387,80 @@
         <include refid="Base_Column_List"/>
         from orders where channel_number = #{orderNum}
     </select>
+
+
+    <resultMap id="PosSearchLogVOMap" type="com.asianwallets.common.vo.PosSearchLogVO">
+        <result column="payMethod" property="payMethod" jdbcType="VARCHAR"/>
+        <collection javaType="list" property="posSearchVO" resultMap="PosSearchVOMap"/>
+    </resultMap>
+
+    <resultMap id="PosSearchVOMap" type="com.asianwallets.common.vo.PosSearchVO">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <id column="merchantOrderId" property="merchantOrderId" jdbcType="VARCHAR"/>
+        <result column="merchantId" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="imei" property="imei" jdbcType="VARCHAR"/>
+        <result column="operatorId" property="operatorId" jdbcType="VARCHAR"/>
+        <result column="tradeType" property="tradeType" jdbcType="VARCHAR"/>
+        <result column="payMethod" property="payMethod" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="orderCurrency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="posGetOrders" resultMap="PosSearchLogVOMap">
+        select
+        p.merchantId,p.imei,p.operatorId,p.tradeType,p.payMethod,sum(p.amount) as
+        amount,count(p.orderCurrency) as count,p.orderCurrency
+        from
+        ( SELECT o.merchant_order_id as id ,o.merchant_id as merchantId ,o.imei as
+        imei,o.operator_id as operatorId,o.create_time as createTime,
+        "1" as tradeType, c.issuer_id as payMethod ,o.amount as amount, o.order_currency as orderCurrency
+        from orders o,channel c
+        where o.trade_direction = 2 and o.channel_code = c.channel_code and o.trade_status = 3
+        <if test="merchantId != null and merchantId != ''">
+            AND o.merchant_id = #{merchantId}
+        </if>
+        <if test="imei != null and imei != ''">
+            AND o.imei = #{imei}
+        </if>
+        <if test="operatorId != null and operatorId != ''">
+            AND o.operator_id = #{operatorId}
+        </if>
+        <if test="orderCurrency != null and orderCurrency != ''">
+            AND o.order_currency = #{orderCurrency}
+        </if>
+        union
+        SELECT r.merchant_order_id as id ,r.merchant_id as merchantId,r.imei as
+        imei,r.operator_id as operatorId,r.create_time as createTime,
+        "2" as tradeType,c.issuer_id as payMethod ,r.amount as amount, r.order_currency as orderCurrency
+        from order_refund r ,channel c
+        where r.trade_direction = 2 and r.channel_code = c.channel_code and r.refund_status = 2
+        <if test="merchantId != null and merchantId != ''">
+            AND r.merchant_id = #{merchantId}
+        </if>
+        <if test="imei != null and imei != ''">
+            AND r.imei = #{imei}
+        </if>
+        <if test="operatorId != null and operatorId != ''">
+            AND r.operator_id = #{operatorId}
+        </if>
+        <if test="orderCurrency != null and orderCurrency != ''">
+            AND r.order_currency = #{orderCurrency}
+        </if>
+        ) as p
+        <where>
+            <if test="type != null and type != ''">
+                AND p.tradeType = #{type}
+            </if>
+            <if test="startTime != null ">
+                AND p.createTime >= #{startTime}
+            </if>
+            <if test="endTime != null ">
+                AND #{endTime} >= p.createTime
+            </if>
+        </where>
+        group by p.payMethod,p.orderCurrency,p.tradeType,p.merchantId,p.imei,p.operatorId
+    </select>
+
 </mapper>

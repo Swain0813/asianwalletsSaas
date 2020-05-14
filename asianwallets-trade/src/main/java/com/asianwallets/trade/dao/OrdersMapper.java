@@ -3,7 +3,9 @@ package com.asianwallets.trade.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.MockOrdersDTO;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
+import com.asianwallets.common.dto.PosSearchDTO;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.vo.PosSearchVO;
 import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OnlineCheckOrdersDTO;
 import com.asianwallets.trade.vo.MockOrdersVO;
@@ -112,4 +114,11 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @return
      */
     Orders selectByChannelNumber(String orderNum);
+
+    /**
+     *pos机查询订单打印用
+     * @param posSearchDTO
+     * @return
+     */
+    List<PosSearchVO> posGetOrders(PosSearchDTO posSearchDTO);
 }
