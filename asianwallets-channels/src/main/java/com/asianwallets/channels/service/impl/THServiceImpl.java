@@ -67,9 +67,11 @@ public class THServiceImpl implements THService {
         String institutionNum = "000000008600005";
         //业务类型
         String businessTypes = "00000000";
+        //加密key
+        String key = "38D57B7C1979CF7910677DE5BB6A56DF";
         try {
             String sendMsg = tdpu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
-                    + ISO8583Util.packISO8583DTO(iso8583DTO);
+                    + ISO8583Util.packISO8583DTO(iso8583DTO,key);
             //计算报文长度
             String strHex2 = String.format("%04x",sendMsg.length()/2);
             sendMsg = strHex2 + sendMsg;
