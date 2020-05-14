@@ -35,11 +35,11 @@ public class demo {
             String strHex2 = String.format("%04x",sendMsg.length()/2);
             sendMsg = strHex2 + sendMsg;
             System.out.println(" ===  sendMsg  ====   "+sendMsg);
-            //Map<String, String> respMap = ISO8583Util.sendTCPRequest(IP, port, NumberStringUtil.str2Bcd(sendMsg), reqCharset);
-            //String result = respMap.get("respData");
-            //System.out.println(" ====  result  ===   "+result);
+            Map<String, String> respMap = ISO8583Util.sendTCPRequest(IP, port, NumberStringUtil.str2Bcd(sendMsg), reqCharset);
+            String result = respMap.get("respData");
+            System.out.println(" ====  result  ===   "+result);
              //解包
-            ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO("00E660000000028001000000003835323939393935383132303035303030303032373533333030303030303030303030303033303030303030303138353239393939353831323030353030303030303131350210703800810EC48011163437363133343030303030303030313900900000000000010819808214594105130008085200013130313130303034323735303036323734333030303030303237353338353239393939353831323030353000355F5109BDBBD2D7B3C9B9A6025F551430303030303202313938303832023035313302023334340014220000020006003044364532343830");
+            ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
             System.out.println(iso8583DTO1281.toString());
         } catch (Exception e) {
             System.out.println(e);
@@ -48,17 +48,9 @@ public class demo {
     }
 
 
-    //public static void main(String[] args) {
+    //public static void main(String[] args) throws Exception {
     //
-    //    byte[] n = NumberStringUtil.str2Bcd("9");
-    //    for (byte c :n ) {
-    //        System.out.println(c);
-    //    }
-    //    //System.out.println(  NumberStringUtil.hexToBinaryString("0020000100C00012"));
-    //
-    //String s = "600002000080010000000038353239393939353831323030353030303030323735333330303030303030303030303030333030303030303031383532393939393538313230303530303030303030353408000020000100C000121981240852000001303030303237353338353239393939353831323030353000115000000100300003303031";
-    //    System.out.println(s.length()/2);
-    //String strHex2 = String.format("%04x",s.length()/2);
-    //    System.out.println(strHex2);
+    //    ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO("0087600609000080010000000038353239393939353831323035303130303031383634343030303030303030383630303030353030303030303030383532393939393538313230353031303030303030353708000020000100c00012198124110000860000530303031383634343835323939393935383132303530310011500000010030003303031");
+    //    System.out.println(iso8583DTO1281.toString());
     //}
 }

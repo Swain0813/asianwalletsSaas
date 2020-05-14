@@ -283,8 +283,8 @@ public class ISO8583Util {
                 fldValue = NumberStringUtil.str2HexStr(fldValue);
             }
             fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen), (len - 1) * 2, '0') + fldValue;
-            if (actualLen % 2 != 0) {
-                fldValue = NumberStringUtil.addRightChar(fldValue, 1, '0');
+            if (actualLen % 2 != 0 && type.equals("BCD")) {
+                fldValue = fldValue+"0";
                 actualLen = actualLen + 1;
             }
             return new Object[]{fldValue, actualLen};
