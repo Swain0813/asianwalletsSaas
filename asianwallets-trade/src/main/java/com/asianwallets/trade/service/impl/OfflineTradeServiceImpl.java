@@ -745,7 +745,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      */
     @Override
     public List<PosSearchVO> posGetOrdersDetail(PosSearchDTO posSearchDTO) {
-        return ordersMapper.posGetOrdersDetail(posSearchDTO);
+        return ordersMapper.posPrintGetOrdersDetail(posSearchDTO);
     }
 
     /**
