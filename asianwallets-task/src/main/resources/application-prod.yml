@@ -1,12 +1,15 @@
 server:
-  port: 9006
+  port: 5003
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:5000/eureka/
     registerWithEureka: true
     fetchRegistry: true
+  instance:
+    instance-id: asianwallets-task5003
+    prefer-ip-address: true
 
 ribbon:
   ReadTimeout: 10000
@@ -24,7 +27,7 @@ hystrix:
 spring:
   # 数据库配置
   datasource:
-    url: jdbc:mysql://db.asia:3306/asianwallet_institution?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://db.asia:3306/asianwallets_saas?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: asianwallets
     password: QJI1Zh((FSFAyAAf
     # 使用druid数据源
@@ -66,12 +69,8 @@ redis:
 #项目自定义配置
 custom:
   warning:
-    email: 842505302@qq.com,mandymiao@asianwallets.com,kexz@asianwallets.com
-    mobile: 18800330943
-  #XE汇率API
-  xe:
-    accountId: personaltestuse17617711
-    apiKey: cejpv7epaok9pqbtrne0pvtuml
+    email: shenxinr@qq.com
+    mobile: 18505513542
   #Open汇率API
   open:
     appId: d69d8cb6dd6f45a6bb569c6279dce5b2

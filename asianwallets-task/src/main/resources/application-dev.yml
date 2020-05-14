@@ -68,10 +68,6 @@ custom:
   warning:
     email: 562988147@qq.com,mandymiao@asianwallets.com,kexz@asianwallets.com
     mobile: 18270654875
-  #XE汇率API
-  xe:
-    accountId: personaltestuse17617711
-    apiKey: cejpv7epaok9pqbtrne0pvtuml
   #Open汇率API
   open:
     appId: d69d8cb6dd6f45a6bb569c6279dce5b2
