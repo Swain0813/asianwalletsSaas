@@ -411,7 +411,7 @@
     <select id="posGetOrders" resultMap="PosSearchLogVOMap">
         select
         p.merchantId,p.imei,p.operatorId,p.tradeType,p.payMethod,sum(p.orderAmount) as
-        amount,count(p.orderCurrency) as count,p.orderCurrency
+        orderAmount,count(p.orderCurrency) as count,p.orderCurrency
         from
         ( SELECT o.merchant_order_id as id ,o.merchant_id as merchantId ,o.imei as
         imei,o.operator_id as operatorId,o.create_time as createTime,
