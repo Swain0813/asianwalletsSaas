@@ -55,6 +55,35 @@ public class ISO8583Util {
     }
 
     /**
+     * 128域组包
+     *
+     * @param iso8583DTO128 报文交互DTO，128域
+     *                      4位报文长度 + 4位消息类型 + 32位BITMAP + 报文信息
+     * @return
+     */
+    public static String packISO8583DTO(ISO8583DTO iso8583DTO128, String key) throws IncorrectLengthException {
+        StringBuilder sendMsg = new StringBuilder();
+        // 先拼接消息类型
+        sendMsg.append(iso8583DTO128.getMessageType());
+        // 拼接BITMAP + 报文信息
+        Object[] o = getBitMapAndMsg(iso8583DTO128, 64);
+        sendMsg.append(o[0]);
+        //计算MAC值
+        String mac = new String(MacEcbUtils.getMac(key.getBytes(), sendMsg.toString().getBytes()));
+        sendMsg.append(mac);
+        // 计算报文长度，长度占4个字节，不足4字节左补0
+        int sendMsgLen = (int) o[1];
+        String sendMsgLenStr = Integer.toString(sendMsgLen);
+        sendMsgLenStr = NumberStringUtil.addLeftChar(sendMsgLenStr, 8, '0');
+        sendMsgLenStr = NumberStringUtil.str2HexStr(sendMsgLenStr);
+        System.out.println("报文长度 = " + sendMsgLenStr);
+        // 将4位报文长度插到最前边
+        sendMsg.insert(0, sendMsgLenStr);
+
+        return sendMsg.toString();
+    }
+
+    /**
      * 128域解包
      *
      * @param receivedMsg 收到的报文消息
@@ -284,7 +313,7 @@ public class ISO8583Util {
             }
             fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen), (len - 1) * 2, '0') + fldValue;
             if (actualLen % 2 != 0 && type.equals("BCD")) {
-                fldValue = fldValue+"0";
+                fldValue = fldValue + "0";
                 actualLen = actualLen + 1;
             }
             return new Object[]{fldValue, actualLen};
@@ -324,12 +353,12 @@ public class ISO8583Util {
     /**
      * 向服务器 发送8583报文
      *
-     * @param send8583Str 发送给服务器的报文
-     * @param host        主机地址IP
-     * @param port        端口号
+     * @param ip      主机地址IP
+     * @param port    端口号
+     * @param reqData 发送给服务器的报文
      * @return 返回的数据
      */
-    public static Map<String, String> sendTCPRequest(String IP, String port, byte[] reqData, String reqCharset) {
+    public static Map<String, String> sendTCPRequest(String ip, String port, byte[] reqData) {
         Map<String, String> respMap = new HashMap<String, String>();
         OutputStream out = null;      //写
         InputStream in = null;        //读
@@ -345,7 +374,7 @@ public class ISO8583Util {
             socket.setSendBufferSize(1024);
             socket.setReceiveBufferSize(1024);
             socket.setKeepAlive(true);
-            socket.connect(new InetSocketAddress(IP, Integer.parseInt(port)), 300000);
+            socket.connect(new InetSocketAddress(ip, Integer.parseInt(port)), 300000);
             localPort = String.valueOf(socket.getLocalPort());
             /**
              * 发送TCP请求
@@ -368,7 +397,7 @@ public class ISO8583Util {
             byte[] bytes = bytesOut.toByteArray();
             respData = NumberStringUtil.bcd2Str(bytes);
         } catch (Exception e) {
-            System.out.println("与[" + IP + ":" + port + "]通信遇到异常,堆栈信息如下");
+            System.out.println("与[" + ip + ":" + port + "]通信遇到异常,堆栈信息如下");
             e.printStackTrace();
         } finally {
             if (null != socket && socket.isConnected() && !socket.isClosed()) {
