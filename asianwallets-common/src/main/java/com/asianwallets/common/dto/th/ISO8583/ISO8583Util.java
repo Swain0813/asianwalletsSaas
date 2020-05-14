@@ -333,7 +333,7 @@ public class ISO8583Util {
         PrintStream out = new PrintStream(client.getOutputStream());
         //获取Socket的输入流，用来接收从服务端发送过来的数据
         InputStream buf = client.getInputStream();
-        String str = "mpos-" + send8583Str;
+        String str = send8583Str;
         //发送数据到服务端
         out.println(str);
         try {
