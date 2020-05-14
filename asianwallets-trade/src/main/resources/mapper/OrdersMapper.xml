@@ -538,7 +538,6 @@
         dictionary di
         WHERE
         r.trade_direction = 2
-        AND r.channel_code = c.channel_code
         AND di. CODE = 'dic_11_3'
         AND r.refund_status = 2
         AND di.`language` = #{language}
