@@ -37,7 +37,7 @@ public class PosSearchVO {
     private String payMethod;
 
     @ApiModelProperty(value = "订单金额")
-    private BigDecimal amount;
+    private BigDecimal orderAmount;
 
     @ApiModelProperty(value = "订单币种")
     private String orderCurrency;

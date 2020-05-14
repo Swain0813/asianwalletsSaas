@@ -402,7 +402,7 @@
         <result column="operatorId" property="operatorId" jdbcType="VARCHAR"/>
         <result column="tradeType" property="tradeType" jdbcType="VARCHAR"/>
         <result column="payMethod" property="payMethod" jdbcType="VARCHAR"/>
-        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="orderAmount" property="orderAmount" jdbcType="DECIMAL"/>
         <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="orderCurrency" property="orderCurrency" jdbcType="VARCHAR"/>
         <result column="count" property="count" jdbcType="INTEGER"/>
@@ -410,12 +410,12 @@
 
     <select id="posGetOrders" resultMap="PosSearchLogVOMap">
         select
-        p.merchantId,p.imei,p.operatorId,p.tradeType,p.payMethod,sum(p.amount) as
+        p.merchantId,p.imei,p.operatorId,p.tradeType,p.payMethod,sum(p.orderAmount) as
         amount,count(p.orderCurrency) as count,p.orderCurrency
         from
         ( SELECT o.merchant_order_id as id ,o.merchant_id as merchantId ,o.imei as
         imei,o.operator_id as operatorId,o.create_time as createTime,
-        "1" as tradeType, c.issuer_id as payMethod ,o.amount as amount, o.order_currency as orderCurrency
+        "1" as tradeType, c.issuer_id as payMethod ,o.order_amount as orderAmount, o.order_currency as orderCurrency
         from orders o,channel c
         where o.trade_direction = 2 and o.channel_code = c.channel_code and o.trade_status = 3
         <if test="merchantId != null and merchantId != ''">
@@ -433,7 +433,7 @@
         union
         SELECT r.merchant_order_id as id ,r.merchant_id as merchantId,r.imei as
         imei,r.operator_id as operatorId,r.create_time as createTime,
-        "2" as tradeType,c.issuer_id as payMethod ,r.amount as amount, r.order_currency as orderCurrency
+        "2" as tradeType,c.issuer_id as payMethod ,r.order_amount as orderAmount, r.order_currency as orderCurrency
         from order_refund r ,channel c
         where r.trade_direction = 2 and r.channel_code = c.channel_code and r.refund_status = 2
         <if test="merchantId != null and merchantId != ''">
