@@ -120,7 +120,7 @@ custom:
     refundUrl: http://testapi.qfpay.info/8081/api/v3/refund
     refundSearchUrl: http://testapi.qfpay.info/8081/api/v3/refundHistory
   th:
-    tdpu: 6006090000
-    header: 800100000000
     ip: 58.248.241.169
     port: 10089
+    tdpu: 6006090000
+    header: 800100000000
