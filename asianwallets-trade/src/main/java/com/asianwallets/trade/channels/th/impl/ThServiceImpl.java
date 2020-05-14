@@ -121,7 +121,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     public static void main(String[] args) throws Exception {
-        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        /*ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("6006090000800100000000852999958120501000186440000000086000050000000085299995812050100000059");
         iso8583DTO.setSystemTraceAuditNumber_11("198124");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32("52000001");
@@ -131,11 +131,29 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setReservedPrivate_63("001");
         String sendMsg = ISO8583Util.packISO8583DTO(iso8583DTO);
         System.out.println("发送报文: " + sendMsg);
-        String receiveMsg = ISO8583Util.send8583("0086600609000080010000000038353239393939353831323030353030303030323735333330303030303030303030303030333030303030303031383532393939393538313230303530303030303030353408000020000100C000121981240852000001303030303237353338353239393939353831323030353000115000000100300003303031",
+        String receiveMsg = ISO8583Util.send8583(sendMsg,
                 "58.248.241.169", 10089);
-        System.out.println("接收报文: " + receiveMsg);
+        System.out.println("接收报文: " + receiveMsg);*/
         //ISO8583DTO iso8583DTO1 = ISO8583Util.unpackISO8583DTO(s1);
         //System.out.println(JSON.toJSON(iso8583DTO1));
+
+
+//        ISOMsg isoMsg = new ISOMsg();
+//        isoMsg.setPackager(new ISO87APackager());
+//        isoMsg.setMTI("0200");
+//        isoMsg.set(11, "198124");
+//        isoMsg.set(32, "52000001");
+//        isoMsg.set(41, "00002753");
+//        isoMsg.set(42, "852999958120050");
+//        isoMsg.set(60, "50000001003");
+//        isoMsg.set(63, "001");
+//        byte[] data = isoMsg.pack();
+//        System.out.println(new String(data));
+//        String receiveMsg = ISO8583Util.send8583(new String(data),
+//                "58.248.241.169", 10089);v
+
+        ISO8583DTO iso8583DTO1 = ISO8583Util.unpackISO8583DTO("00FC608098061390200000000038353239393939353831323034353230303030383535313330303030303030303030303030333030303030303030383532393939393538313230343532303030303033313508300000000002C00014303030303030383535313835323939393935383132303435320012020000013620012730313130323130333130343130353131313630313236353133333134383133342020202020202020202031353831333420202020202020202020313638313334202020202020202020203137303030303030303030303030303031383131393230323031323131323333323530323731303531303030303030303030303030");
+        System.out.println(JSON.toJSONString(iso8583DTO1));
     }
 
 }

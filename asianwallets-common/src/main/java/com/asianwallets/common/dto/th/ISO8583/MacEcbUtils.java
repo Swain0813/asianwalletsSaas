@@ -12,6 +12,10 @@ public class MacEcbUtils {
         byte[] key = new byte[]{0x5C, (byte) 0xBE, 0x7E, 0x38, (byte) 0xA1, 0x46, (byte) 0xFD, 0x5C};
         byte[] input = new byte[]{0x01, 0x02, 0x03};
         System.out.println(NumberStringUtil.bcd2Str(getMac(key, input)));
+
+        String req = "0086600002000080010000000038353239393939353831323030353030303030323735333330303030303030303030303030333030303030303031383532393939393538313230303530303030303030353408000020000100C000121981240852000001303030303237353338353239393939353831323030353000115000000100300003303031";
+        String key2= "38D57B7C1979CF7910677DE5BB6A56DF";
+        System.out.println(new String(getMac(key2.getBytes(),req.getBytes())));
     }
 
     /**
