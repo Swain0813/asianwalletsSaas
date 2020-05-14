@@ -116,6 +116,13 @@ public interface OrdersMapper extends BaseMapper<Orders> {
     Orders selectByChannelNumber(String orderNum);
 
     /**
+     *
+     * @param posSearchDTO
+     * @return
+     */
+    List<PosSearchVO> posPrintGetOrdersDetail(PosSearchDTO posSearchDTO);
+
+    /**
      *pos机查询订单打印用
      * @param posSearchDTO
      * @return

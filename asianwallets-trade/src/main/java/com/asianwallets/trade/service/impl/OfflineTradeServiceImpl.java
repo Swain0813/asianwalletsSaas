@@ -739,6 +739,16 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     }
 
     /**
+     * pos机查询订单详情打印用
+     * @param posSearchDTO
+     * @return
+     */
+    @Override
+    public List<PosSearchVO> posGetOrdersDetail(PosSearchDTO posSearchDTO) {
+        return ordersMapper.posGetOrdersDetail(posSearchDTO);
+    }
+
+    /**
      * pos机查询订单打印用
      * @param posSearchDTO
      * @return
