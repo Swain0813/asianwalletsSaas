@@ -328,7 +328,7 @@ public class ISO8583Util {
     public static String send8583(String send8583Str, String host, int port) throws Exception {
         //客户端请求与本机在20011端口建立TCP连接
         Socket client = new Socket(host, port);
-        client.setSoTimeout(70000);
+        client.setSoTimeout(700000);
         //获取Socket的输出流，用来发送数据到服务端
         PrintStream out = new PrintStream(client.getOutputStream());
         //获取Socket的输入流，用来接收从服务端发送过来的数据
