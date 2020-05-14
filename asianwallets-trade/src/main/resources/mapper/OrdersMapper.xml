@@ -413,11 +413,21 @@
         p.merchantId,p.imei,p.operatorId,p.tradeType,p.payMethod,sum(p.orderAmount) as
         orderAmount,count(p.orderCurrency) as count,p.orderCurrency
         from
-        ( SELECT o.merchant_order_id as id ,o.merchant_id as merchantId ,o.imei as
-        imei,o.operator_id as operatorId,o.create_time as createTime,
-        "1" as tradeType, c.issuer_id as payMethod ,o.order_amount as orderAmount, o.order_currency as orderCurrency
-        from orders o,channel c
-        where o.trade_direction = 2 and o.channel_code = c.channel_code and o.trade_status = 3
+        ( SELECT
+        o.merchant_order_id AS id,
+        o.merchant_id AS merchantId,
+        o.imei AS imei,
+        o.operator_id AS operatorId,
+        o.create_time AS createTime,
+        "1" AS tradeType,
+        o.issuer_id AS payMethod,
+        o.order_amount AS orderAmount,
+        o.order_currency AS orderCurrency
+        FROM
+        orders o
+        WHERE
+        o.trade_direction = 2
+        AND o.trade_status = 3
         <if test="merchantId != null and merchantId != ''">
             AND o.merchant_id = #{merchantId}
         </if>
@@ -431,11 +441,21 @@
             AND o.order_currency = #{orderCurrency}
         </if>
         union
-        SELECT r.merchant_order_id as id ,r.merchant_id as merchantId,r.imei as
-        imei,r.operator_id as operatorId,r.create_time as createTime,
-        "2" as tradeType,c.issuer_id as payMethod ,r.order_amount as orderAmount, r.order_currency as orderCurrency
-        from order_refund r ,channel c
-        where r.trade_direction = 2 and r.channel_code = c.channel_code and r.refund_status = 2
+        SELECT
+        r.merchant_order_id AS id,
+        r.merchant_id AS merchantId,
+        r.imei AS imei,
+        r.operator_id AS operatorId,
+        r.create_time AS createTime,
+        "2" AS tradeType,
+        r.issuer_id AS payMethod,
+        r.order_amount AS orderAmount,
+        r.order_currency AS orderCurrency
+        FROM
+        order_refund r
+        WHERE
+        r.trade_direction = 2
+        AND r.refund_status = 2
         <if test="merchantId != null and merchantId != ''">
             AND r.merchant_id = #{merchantId}
         </if>
@@ -463,4 +483,81 @@
         group by p.payMethod,p.orderCurrency,p.tradeType,p.merchantId,p.imei,p.operatorId
     </select>
 
+
+
+    <select id="posPrintGetOrdersDetail" resultMap="PosSearchVOMap">
+        SELECT
+        o.merchant_order_id AS id,
+        o.merchant_id AS merchantId,
+        o.imei AS imei,
+        o.operator_id AS operatorId,
+        o.create_time AS createTime,
+        di. NAME AS tradeType,
+        o.issuer_id AS payMethod,
+        o.order_amount AS orderAmount,
+        o.order_currency AS orderCurrency
+        FROM
+        orders o,
+        dictionary di
+        WHERE
+        o.trade_direction = 2
+        AND di. CODE = 'dic_11_1'
+        AND o.trade_status = 3
+        AND di.`language` = #{language}
+        <if test="merchantId != null and merchantId != ''">
+            AND o.merchant_id = #{merchantId}
+        </if>
+        <if test="operatorId != null and operatorId != ''">
+            AND o.operator_id = #{operatorId}
+        </if>
+        <if test="imei != null and imei != ''">
+            AND o.imei = #{imei}
+        </if>
+        <if test="startTime != null ">
+            AND o.create_time >= #{startTime}
+        </if>
+        <if test="endTime != null ">
+            AND #{endTime} >= o.create_time
+        </if>
+        <if test="orderCurrency != null and orderCurrency != ''">
+            AND o.order_currency = #{orderCurrency}
+        </if>
+        union
+        SELECT
+        r.merchant_order_id AS id,
+        r.merchant_id AS merchantId,
+        r.imei AS imei,
+        r.operator_id AS operatorId,
+        r.create_time AS createTime,
+        di. NAME AS tradeType,
+        r.issuer_id AS payMethod,
+        r.order_amount AS orderAmount,
+        r.order_currency AS orderCurrency
+        FROM
+        order_refund r,
+        dictionary di
+        WHERE
+        r.trade_direction = 2
+        AND di. CODE = 'dic_11_3'
+        AND r.refund_status = 2
+        AND di.`language` = #{language}
+        <if test="merchantId != null and merchantId != ''">
+            AND r.merchant_id = #{merchantId}
+        </if>
+        <if test="operatorId != null and operatorId != ''">
+            AND r.operator_id = #{operatorId}
+        </if>
+        <if test="imei != null and imei != ''">
+            AND r.imei = #{imei}
+        </if>
+        <if test="startTime != null ">
+            AND r.create_time >= #{startTime}
+        </if>
+        <if test="endTime != null ">
+            AND #{endTime} >= r.create_time
+        </if>
+        <if test="orderCurrency != null and orderCurrency != ''">
+            AND r.order_currency = #{orderCurrency}
+        </if>
+    </select>
 </mapper>

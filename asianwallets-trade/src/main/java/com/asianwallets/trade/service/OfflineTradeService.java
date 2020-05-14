@@ -68,6 +68,14 @@ public interface OfflineTradeService {
      */
     PosQueryOrderListVO posQueryOrderDetail(PosQueryOrderListDTO posQueryOrderListDTO);
 
+
+    /**
+     * pos机查询订单详情打印用
+     * @param posSearchDTO
+     * @return
+     */
+    List<PosSearchVO> posGetOrdersDetail(PosSearchDTO posSearchDTO);
+
     /**
      *pos机查询订单打印用
      * @param posSearchDTO

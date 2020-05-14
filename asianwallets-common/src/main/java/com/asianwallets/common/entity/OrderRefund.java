@@ -284,6 +284,10 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "refund_max_tate")
     private BigDecimal refundMaxTate;
 
+    @ApiModelProperty(value = "银行机构号")
+    @Column(name = "issuer_id")
+    private String issuerId;
+
     @ApiModelProperty(value = "备注1")
     @Column(name = "remark1")
     private String remark1;
