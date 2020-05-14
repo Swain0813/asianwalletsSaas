@@ -35,7 +35,7 @@ public class demo {
             String strHex2 = String.format("%04x",sendMsg.length()/2);
             sendMsg = strHex2 + sendMsg;
             System.out.println(" ===  sendMsg  ====   "+sendMsg);
-            Map<String, String> respMap = ISO8583Util.sendTCPRequest(IP, port, NumberStringUtil.str2Bcd(sendMsg), reqCharset);
+            Map<String, String> respMap = ISO8583Util.sendTCPRequest(IP, port, NumberStringUtil.str2Bcd(sendMsg));
             String result = respMap.get("respData");
             System.out.println(" ====  result  ===   "+result);
              //解包

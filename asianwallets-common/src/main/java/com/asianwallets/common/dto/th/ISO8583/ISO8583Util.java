@@ -329,7 +329,7 @@ public class ISO8583Util {
      * @param port        端口号
      * @return 返回的数据
      */
-    public static Map<String, String> sendTCPRequest(String IP, String port, byte[] reqData, String reqCharset) {
+    public static Map<String, String> sendTCPRequest(String IP, String port, byte[] reqData) {
         Map<String, String> respMap = new HashMap<String, String>();
         OutputStream out = null;      //写
         InputStream in = null;        //读
