@@ -125,6 +125,7 @@ public class THServiceImpl implements THService {
             //请求失败
             response.setCode("300");
             response.setMsg("fail");
+            return response;
         }
         return response;
     }
