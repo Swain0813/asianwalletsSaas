@@ -13,6 +13,13 @@ public interface THService {
      * @return
      **/
     BaseResponse thRefund(ISO8583DTO thRefundDTO);
+    /**
+     * @Author YangXu
+     * @Date 2020/5/7
+     * @Descripate 通华查询
+     * @return
+     **/
+    BaseResponse thQuerry(ISO8583DTO thRefundDTO);
 
     /**
      * 通华CSB

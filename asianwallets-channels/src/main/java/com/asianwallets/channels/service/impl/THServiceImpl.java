@@ -131,4 +131,60 @@ public class THServiceImpl implements THService {
         }
         return response;
     }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/5/15
+     * @Descripate 通华查询接口
+     * @return
+     **/
+    @Override
+    public BaseResponse thQuerry(ISO8583DTO iso8583DTO) {
+        BaseResponse response = new BaseResponse();
+        log.info("===============【通华退款接口】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(iso8583DTO));
+        String tdpu = channelsConfig.getThTDPU();
+        String header = channelsConfig.getThHeader();
+        //商户号
+        String merchNum = "852999958120501";
+        //终端号
+        String terminalNum = "00018644";
+        //机构号
+        String institutionNum = "000000008600005";
+        //业务类型
+        String businessTypes = "00000000";
+        //加密key
+        String key = "38D57B7C1979CF7910677DE5BB6A56DF";
+        try {
+            String sendMsg = tdpu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
+                    + ISO8583Util.packISO8583DTO(iso8583DTO, key);
+            //计算报文长度
+            String strHex2 = String.format("%04x", sendMsg.length() / 2);
+            sendMsg = strHex2 + sendMsg;
+            log.info("===============【通华查询接口】===============【请求报文参数】 sendMsg:{}", sendMsg);
+            Map<String, String> respMap = ISO8583Util.sendTCPRequest(channelsConfig.getThIp(), channelsConfig.getThPort(), NumberStringUtil.str2Bcd(sendMsg));
+            String result = respMap.get("respData");
+            log.info("===============【通华查询接口】===============【返回报文参数】 result:{}", result);
+            //解包
+            ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
+            log.info("===============【通华查询接口】===============【返回参数】 iso8583DTO1281:{}", JSON.toJSONString(iso8583DTO1281));
+
+            if (iso8583DTO1281.getResponseCode_39().equals("00")) {
+                //查询成功
+                response.setCode("200");
+                response.setData(iso8583DTO1281);
+                response.setMsg("success");
+            } else {
+                //查询失败
+                response.setCode("300");
+                response.setMsg("fail");
+            }
+        } catch (Exception e) {
+            log.info("===============【通华查询接口】===============【异常】 e:{}", e);
+            //请求失败
+            response.setCode("300");
+            response.setMsg("fail");
+            return response;
+        }
+        return response;
+    }
 }
