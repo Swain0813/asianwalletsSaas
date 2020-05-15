@@ -185,7 +185,6 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
         stringBuffer.append("</form>\n");
         stringBuffer.append("</body>\n");
         stringBuffer.append("</html>");
-
         baseResponse.setData(stringBuffer.toString());
         log.info("-----------------eNets网银收单接口信息记录-----------------enetsBankRequestDTO:{}", stringBuffer.toString());
         return baseResponse;

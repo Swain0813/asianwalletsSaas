@@ -37,6 +37,7 @@ public class BaseApplication extends SpringBootServletInitializer {
         msc.setBasePackage("com.asianwallets.base.dao");
         return msc;
     }
+
     public static void main(String[] args) {
         SpringApplication.run(BaseApplication.class, args);
     }
