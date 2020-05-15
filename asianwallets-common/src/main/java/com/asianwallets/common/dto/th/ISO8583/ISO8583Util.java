@@ -310,6 +310,10 @@ public class ISO8583Util {
             if (type.equals("ASC")) {
                 fldValue = NumberStringUtil.str2HexStr(fldValue);
             }
+            if (actualLen % 2 != 0 && type.equals("BCD")) {
+                fldValue = fldValue + "0";
+                actualLen = actualLen + 1;
+            }
             return new Object[]{fldValue, actualLen};
         }
 
