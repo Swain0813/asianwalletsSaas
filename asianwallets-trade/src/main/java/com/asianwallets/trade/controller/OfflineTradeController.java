@@ -67,15 +67,18 @@ public class OfflineTradeController extends BaseController {
         return ResultUtil.success(offlineTradeService.posQueryOrderList(posQueryOrderListDTO));
     }
 
-    /**
-     * pos机查询订单详情打印用
-     * @param posQueryOrderListDTO
-     * @return
-     */
-    @ApiOperation(value = "pos机查询订单详情打印用")
+
+    @ApiOperation(value = "pos机查询订单详情")
     @PostMapping("posQueryOrderDetail")
     public BaseResponse posQueryOrderDetail(@RequestBody @ApiParam @Valid PosQueryOrderListDTO posQueryOrderListDTO) {
         return ResultUtil.success(offlineTradeService.posQueryOrderDetail(posQueryOrderListDTO));
+    }
+
+    @ApiOperation(value = "pos机查询订单详情打印用")
+    @PostMapping("posGetOrdersDetail")
+    public BaseResponse posGetOrdersDetail(@RequestBody @ApiParam PosSearchDTO posSearchDTO) {
+        posSearchDTO.setLanguage(this.getLanguage());
+        return ResultUtil.success(offlineTradeService.posGetOrdersDetail(posSearchDTO));
     }
 
     @ApiOperation(value = "pos机查询订单打印用")

@@ -28,6 +28,32 @@ public class ISO8583Util {
     private ISO8583Util() {
     }
 
+    ///**
+    // * 128域组包
+    // *
+    // * @param iso8583DTO128 报文交互DTO，128域
+    // *                      4位报文长度 + 4位消息类型 + 32位BITMAP + 报文信息
+    // * @return
+    // */
+    //public static String packISO8583DTO(ISO8583DTO iso8583DTO128) throws IncorrectLengthException {
+    //    StringBuilder sendMsg = new StringBuilder();
+    //    // 先拼接消息类型
+    //    sendMsg.append(iso8583DTO128.getMessageType());
+    //    // 拼接BITMAP + 报文信息
+    //    Object[] o = getBitMapAndMsg(iso8583DTO128, 64);
+    //    sendMsg.append(o[0]);
+    //    // 计算报文长度，长度占4个字节，不足4字节左补0
+    //    int sendMsgLen = (int) o[1];
+    //    String sendMsgLenStr = Integer.toString(sendMsgLen);
+    //    sendMsgLenStr = NumberStringUtil.addLeftChar(sendMsgLenStr, 8, '0');
+    //    sendMsgLenStr = NumberStringUtil.str2HexStr(sendMsgLenStr);
+    //    System.out.println("报文长度 = " + sendMsgLenStr);
+    //    // 将4位报文长度插到最前边
+    //    sendMsg.insert(0, sendMsgLenStr);
+    //
+    //    return sendMsg.toString();
+    //}
+
     /**
      * 128域组包
      *
@@ -35,13 +61,15 @@ public class ISO8583Util {
      *                      4位报文长度 + 4位消息类型 + 32位BITMAP + 报文信息
      * @return
      */
-    public static String packISO8583DTO(ISO8583DTO iso8583DTO128) throws IncorrectLengthException {
+    public static String packISO8583DTO(ISO8583DTO iso8583DTO128, String key) throws IncorrectLengthException {
         StringBuilder sendMsg = new StringBuilder();
         // 先拼接消息类型
         sendMsg.append(iso8583DTO128.getMessageType());
         // 拼接BITMAP + 报文信息
-        Object[] o = getBitMapAndMsg(iso8583DTO128, 64);
+        Object[] o = getBitMapAndMsg(iso8583DTO128, 64,key);
         sendMsg.append(o[0]);
+        //计算MAC值
+        sendMsg.append(NumberStringUtil.bcd2Str(MacEcbUtils.getMac(key.getBytes(), sendMsg.toString().getBytes())));
         // 计算报文长度，长度占4个字节，不足4字节左补0
         int sendMsgLen = (int) o[1];
         String sendMsgLenStr = Integer.toString(sendMsgLen);
@@ -52,6 +80,22 @@ public class ISO8583Util {
         sendMsg.insert(0, sendMsgLenStr);
 
         return sendMsg.toString();
+    }
+
+    /**
+     * 字符串转化成为16进制字符串
+     *
+     * @param s
+     * @return
+     */
+    public static String strTo16(String s) {
+        String str = "";
+        for (int i = 0; i < s.length(); i++) {
+            int ch = (int) s.charAt(i);
+            String s4 = Integer.toHexString(ch);
+            str = str + s4;
+        }
+        return str;
     }
 
     /**
@@ -89,7 +133,7 @@ public class ISO8583Util {
         return iso8583DTO128;
     }
 
-    private static Object[] getBitMapAndMsg(Object iso8583DTO, int bitLen) throws IncorrectLengthException {
+    private static Object[] getBitMapAndMsg(Object iso8583DTO, int bitLen,String key) throws IncorrectLengthException {
         // 获取ISO8583DTO类的属性，key为fldIndex域序号，value为属性名
         Map<Integer, String> iso8583DTOFldMap = getISO8583DTOFldMap(iso8583DTO.getClass());
         // 初始化域位图
@@ -130,6 +174,9 @@ public class ISO8583Util {
         }
 
         // 将128位2进制位图转换为32位16进制数据
+        if(StringUtils.isNotEmpty(key)){
+            bitMap = bitMap.replace(63, 64, "1");
+        }
         String bitMapHexStr = NumberStringUtil.binaryToHexString(bitMap.toString());
         //String bitMapHexStr = bitMap.toString();
         log.info("bitmap = " + bitMapHexStr);
@@ -283,8 +330,8 @@ public class ISO8583Util {
                 fldValue = NumberStringUtil.str2HexStr(fldValue);
             }
             fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen), (len - 1) * 2, '0') + fldValue;
-            if (actualLen % 2 != 0) {
-                fldValue = NumberStringUtil.addRightChar(fldValue, 1, '0');
+            if (actualLen % 2 != 0 && type.equals("BCD")) {
+                fldValue = fldValue + "0";
                 actualLen = actualLen + 1;
             }
             return new Object[]{fldValue, actualLen};
@@ -324,12 +371,12 @@ public class ISO8583Util {
     /**
      * 向服务器 发送8583报文
      *
-     * @param send8583Str 发送给服务器的报文
-     * @param host        主机地址IP
-     * @param port        端口号
+     * @param ip      主机地址IP
+     * @param port    端口号
+     * @param reqData 发送给服务器的报文
      * @return 返回的数据
      */
-    public static Map<String, String> sendTCPRequest(String IP, String port, byte[] reqData, String reqCharset) {
+    public static Map<String, String> sendTCPRequest(String ip, String port, byte[] reqData) {
         Map<String, String> respMap = new HashMap<String, String>();
         OutputStream out = null;      //写
         InputStream in = null;        //读
@@ -345,7 +392,7 @@ public class ISO8583Util {
             socket.setSendBufferSize(1024);
             socket.setReceiveBufferSize(1024);
             socket.setKeepAlive(true);
-            socket.connect(new InetSocketAddress(IP, Integer.parseInt(port)), 300000);
+            socket.connect(new InetSocketAddress(ip, Integer.parseInt(port)), 300000);
             localPort = String.valueOf(socket.getLocalPort());
             /**
              * 发送TCP请求
@@ -368,7 +415,7 @@ public class ISO8583Util {
             byte[] bytes = bytesOut.toByteArray();
             respData = NumberStringUtil.bcd2Str(bytes);
         } catch (Exception e) {
-            System.out.println("与[" + IP + ":" + port + "]通信遇到异常,堆栈信息如下");
+            System.out.println("与[" + ip + ":" + port + "]通信遇到异常,堆栈信息如下");
             e.printStackTrace();
         } finally {
             if (null != socket && socket.isConnected() && !socket.isClosed()) {
