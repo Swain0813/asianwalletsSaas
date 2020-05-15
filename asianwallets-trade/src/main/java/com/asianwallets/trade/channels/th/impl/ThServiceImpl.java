@@ -6,6 +6,8 @@ import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
+import com.asianwallets.common.dto.qfpay.QfPayDTO;
+import com.asianwallets.common.dto.qfpay.QfPayRefundDTO;
 import com.asianwallets.common.dto.qfpay.QfResDTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583Util;
@@ -19,6 +21,7 @@ import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.th.ThService;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
+import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.ReconciliationMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
@@ -58,6 +61,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
     @Autowired
     private ClearingService clearingService;
+
+    @Autowired
+    private OrdersMapper ordersMapper;
+
     /**
      * 通华主扫接口
      *
@@ -162,7 +169,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             JSONObject jsonObject = JSONObject.fromObject(response.getData());
             ISO8583DTO thResDTO = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);
             //请求成功
-            if(response.getMsg().equals("success")){
+            if (response.getMsg().equals("success")) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 log.info("=================【TH退款】=================【退款成功】 response: {} ", JSON.toJSONString(response));
                 //退款成功
@@ -171,7 +178,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
                 //退还分润
                 commonBusinessService.refundShareBinifit(orderRefund);
-            }else{
+            } else {
                 //退款失败
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=================【TH退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
@@ -212,10 +219,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/5/15
      * @Descripate 通华撤销
-     * @return
      **/
     @Override
     public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
@@ -226,23 +233,82 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         BaseResponse baseResponse = new BaseResponse();
         ISO8583DTO iso8583DTO = new ISO8583DTO();
 
-        log.info("=================【TH撤销】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
+        log.info("=================【TH撤销 cancel】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thQuerry(iso8583DTO);
-        log.info("=================【TH撤销】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+        log.info("=================【TH撤销 cancel】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             //请求成功
             //请求成功
             JSONObject jsonObject = JSONObject.fromObject(response.getData());
             ISO8583DTO iso8583DTO1 = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);
-            if(iso8583DTO1.getAdditionalData_46().equals("1")){
-
+            if (iso8583DTO1.getAdditionalData_46().equals("1")) {
+                //交易成功
+                //更新订单状态
+                if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS, iso8583DTO1.getRetrievalReferenceNumber_37(), new Date()) == 1) {
+                    //更新成功
+                    baseResponse = this.cancelPaying(channel, orderRefund, null);
+                } else {
+                    baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+                    //更新失败后去查询订单信息
+                    rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                }
+            } else if (iso8583DTO1.getAdditionalData_46().equals("3")) {
+                //交易中
+                baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+                log.info("=================【TH撤销 cancel】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
+                rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
+            } else {
+                //交易失败
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
+                log.info("=================【TH撤销 cancel】================= 【交易失败】orderId : {}", orderRefund.getOrderId());
+                ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_FAILD, iso8583DTO1.getRetrievalReferenceNumber_37(), new Date());
             }
 
-        }else{
+        } else {
             //请求失败
-            response.setCode(EResultEnum.REFUNDING.getCode());
-            log.info("=================【NextPos撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+            log.info("=================【TH撤销 cancel】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
             rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
+        }
+        return baseResponse;
+    }
+
+
+    @Override
+    public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        BaseResponse baseResponse = new BaseResponse();
+        Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+
+
+        log.info("=================【TH撤销 cancelPaying】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
+        BaseResponse response = channelsFeign.thRefund(iso8583DTO);
+        log.info("=================【TH撤销 cancelPaying】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+
+        if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            JSONObject jsonObject = JSONObject.fromObject(response.getData());
+            ISO8583DTO thResDTO = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);
+            //请求成功
+            if (response.getMsg().equals("success")) {
+                //退款成功
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+                log.info("=================【TH撤销 cancelPaying】=================【撤销成功】orderId : {}", orders.getId());
+                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
+            } else {
+                //退款失败
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
+                log.info("=================【TH撤销 cancelPaying】=================【撤销失败】orderId : {}", orders.getId());
+                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
+            }
+        } else {
+            //请求失败
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+            log.info("=================【TH撤销 cancelPaying】=================【请求失败】orderId : {}", orders.getId());
+            if (rabbitMassage == null) {
+                rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+            }
+            log.info("=================【TH撤销 cancelPaying】=================【上报通道】rabbitMassage: {} ", JSON.toJSON(rabbitMassage));
+            rabbitMQSender.send(AD3MQConstant.CX_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return baseResponse;
     }
