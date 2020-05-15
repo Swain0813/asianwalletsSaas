@@ -115,9 +115,11 @@ public class THServiceImpl implements THService {
 
             if (iso8583DTO1281.getResponseCode_39().equals("00")) {
                 response.setCode("200");
+                response.setData(iso8583DTO1281);
                 response.setMsg("success");
             } else {
                 response.setCode("200");
+                response.setData(iso8583DTO1281);
                 response.setMsg("fail");
             }
         } catch (Exception e) {
