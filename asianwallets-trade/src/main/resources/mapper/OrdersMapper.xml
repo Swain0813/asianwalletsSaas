@@ -487,6 +487,17 @@
 
     <select id="posPrintGetOrdersDetail" resultMap="PosSearchVOMap">
         SELECT
+        p.id,
+        p.institutionCode,
+        p.deviceCode,
+        p.deviceOperator,
+        p.createTime,
+        p.tradeType,
+        p.payMethod,
+        p.amount,
+        p.orderCurrency
+        FROM
+        ( SELECT
         o.merchant_order_id AS id,
         o.merchant_id AS merchantId,
         o.imei AS imei,
@@ -559,5 +570,6 @@
         <if test="orderCurrency != null and orderCurrency != ''">
             AND r.order_currency = #{orderCurrency}
         </if>
+        ) AS p GROUP BY p.id,p.tradeType ORDER BY p.createTime
     </select>
 </mapper>
