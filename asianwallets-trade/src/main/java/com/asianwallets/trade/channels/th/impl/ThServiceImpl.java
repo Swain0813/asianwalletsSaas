@@ -227,7 +227,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
 
         log.info("=================【TH撤销】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
-        BaseResponse response = channelsFeign.thRefund(iso8583DTO);
+        BaseResponse response = channelsFeign.thQuerry(iso8583DTO);
         log.info("=================【TH撤销】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             //请求成功
