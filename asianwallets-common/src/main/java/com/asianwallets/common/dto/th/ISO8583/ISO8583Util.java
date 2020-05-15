@@ -66,7 +66,7 @@ public class ISO8583Util {
         // 先拼接消息类型
         sendMsg.append(iso8583DTO128.getMessageType());
         // 拼接BITMAP + 报文信息
-        Object[] o = getBitMapAndMsg(iso8583DTO128, 64,key);
+        Object[] o = getBitMapAndMsg(iso8583DTO128, 64, key);
         sendMsg.append(o[0]);
         //计算MAC值
         sendMsg.append(NumberStringUtil.bcd2Str(MacEcbUtils.getMac(key.getBytes(), sendMsg.toString().getBytes())));
@@ -133,7 +133,7 @@ public class ISO8583Util {
         return iso8583DTO128;
     }
 
-    private static Object[] getBitMapAndMsg(Object iso8583DTO, int bitLen,String key) throws IncorrectLengthException {
+    private static Object[] getBitMapAndMsg(Object iso8583DTO, int bitLen, String key) throws IncorrectLengthException {
         // 获取ISO8583DTO类的属性，key为fldIndex域序号，value为属性名
         Map<Integer, String> iso8583DTOFldMap = getISO8583DTOFldMap(iso8583DTO.getClass());
         // 初始化域位图
@@ -174,7 +174,7 @@ public class ISO8583Util {
         }
 
         // 将128位2进制位图转换为32位16进制数据
-        if(StringUtils.isNotEmpty(key)){
+        if (StringUtils.isNotEmpty(key)) {
             bitMap = bitMap.replace(63, 64, "1");
         }
         String bitMapHexStr = NumberStringUtil.binaryToHexString(bitMap.toString());
@@ -330,7 +330,12 @@ public class ISO8583Util {
                 len = 3;
             }
             // 在报文前边拼接长度
-            if (type.equals("ASC")) {
+
+            if (type.equals("ASC")
+                    && iso8583Annotation.fldIndex() != 35
+                    && iso8583Annotation.fldIndex() != 46
+                    && iso8583Annotation.fldIndex() != 47
+                    && iso8583Annotation.fldIndex() != 62) {
                 fldValue = NumberStringUtil.str2HexStr(fldValue);
             }
             fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen), (len - 1) * 2, '0') + fldValue;
