@@ -14,7 +14,7 @@ public class Demo {
 
     private static String ip = "58.248.241.169";
     private static String port = "10089";
-    private static String institutionId = "00008600005";
+    private static String institutionId = "000000008600005";
     private static String merchantId = "852999958120501";
     private static String terminalId = "00018644";
     private static String key = "38D57B7C1979CF7910677DE5BB6A56DF";
@@ -22,7 +22,7 @@ public class Demo {
     public static void main(String[] args) throws Exception {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
-        iso8583DTO.setProcessingCode_3("009000");
+        iso8583DTO.setProcessingCode_3("700200");
         //交易金额
         iso8583DTO.setAmountOfTransactions_4("000000000108");
         //受卡方系统跟踪号
@@ -32,11 +32,11 @@ public class Demo {
         //受卡方所在地日期MMdd
         iso8583DTO.setDateOfLocalTransaction_13(DateToolUtils.getReqTimeMMdd());
         //服务点输入方式码
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        iso8583DTO.setPointOfServiceEntryMode_22("030");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         //受理方标识码 (机构号)
-        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(institutionId);
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
         //受卡方标识码 (商户号)
