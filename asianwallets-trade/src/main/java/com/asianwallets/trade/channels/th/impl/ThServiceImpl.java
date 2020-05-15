@@ -231,7 +231,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         log.info("=================【TH撤销】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             //请求成功
+            //请求成功
+            JSONObject jsonObject = JSONObject.fromObject(response.getData());
+            ISO8583DTO iso8583DTO1 = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);
+            if(iso8583DTO1.getAdditionalData_46().equals("1")){
 
+            }
 
         }else{
             //请求失败
