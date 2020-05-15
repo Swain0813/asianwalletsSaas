@@ -157,7 +157,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0800");
         iso8583DTO.setSystemTraceAuditNumber_11("198124");
-        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("00008600005");
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
         iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
         iso8583DTO.setReservedPrivate_60("50000001003");
