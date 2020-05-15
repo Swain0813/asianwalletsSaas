@@ -488,13 +488,13 @@
     <select id="posPrintGetOrdersDetail" resultMap="PosSearchVOMap">
         SELECT
         p.id,
-        p.institutionCode,
-        p.deviceCode,
-        p.deviceOperator,
+        p.merchantId,
+        p.imei,
+        p.operatorId,
         p.createTime,
         p.tradeType,
         p.payMethod,
-        p.amount,
+        p.orderAmount,
         p.orderCurrency
         FROM
         ( SELECT
