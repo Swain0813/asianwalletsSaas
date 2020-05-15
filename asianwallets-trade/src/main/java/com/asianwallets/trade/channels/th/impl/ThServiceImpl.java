@@ -207,7 +207,38 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             log.info("===============【TH退款】===============【请求失败 上报队列 TK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
             rabbitMQSender.send(AD3MQConstant.TK_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
-        return response;
+        return baseResponse;
 
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/5/15
+     * @Descripate 通华撤销
+     * @return
+     **/
+    @Override
+    public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+        if (rabbitMassage == null) {
+            rabbitMassage = rabbitOrderMsg;
+        }
+        BaseResponse baseResponse = new BaseResponse();
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+
+        log.info("=================【TH撤销】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
+        BaseResponse response = channelsFeign.thRefund(iso8583DTO);
+        log.info("=================【TH撤销】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+        if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            //请求成功
+
+
+        }else{
+            //请求失败
+            response.setCode(EResultEnum.REFUNDING.getCode());
+            log.info("=================【NextPos撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
+            rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
+        }
+        return baseResponse;
     }
 }
