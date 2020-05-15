@@ -30,7 +30,7 @@ public class CountryRedisService {
      *
      * @return
      */
-    public Country getCountryLists(String id) {
+    public Country getCountry(String id) {
         try {
             String key = id;
             return iCourierLists.get(key, () -> countryMapper.inquireCountry(id));
