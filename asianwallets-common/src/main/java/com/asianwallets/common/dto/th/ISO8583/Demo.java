@@ -28,9 +28,9 @@ public class Demo {
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(IDS.uniqueID().toString().substring(0, 6));
         //受卡方所在地时间HHmmss
-        iso8583DTO.setTimeOfLocalTransaction_12(DateToolUtils.getReqTimeHHmmss());
-        //受卡方所在地日期MMdd
-        iso8583DTO.setDateOfLocalTransaction_13(DateToolUtils.getReqTimeMMdd());
+        //iso8583DTO.setTimeOfLocalTransaction_12(DateToolUtils.getReqTimeHHmmss());
+        ////受卡方所在地日期MMdd
+        //iso8583DTO.setDateOfLocalTransaction_13(DateToolUtils.getReqTimeMMdd());
         //服务点输入方式码
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         //服务点条件码
