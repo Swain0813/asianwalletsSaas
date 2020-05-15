@@ -28,31 +28,31 @@ public class ISO8583Util {
     private ISO8583Util() {
     }
 
-    /**
-     * 128域组包
-     *
-     * @param iso8583DTO128 报文交互DTO，128域
-     *                      4位报文长度 + 4位消息类型 + 32位BITMAP + 报文信息
-     * @return
-     */
-    public static String packISO8583DTO(ISO8583DTO iso8583DTO128) throws IncorrectLengthException {
-        StringBuilder sendMsg = new StringBuilder();
-        // 先拼接消息类型
-        sendMsg.append(iso8583DTO128.getMessageType());
-        // 拼接BITMAP + 报文信息
-        Object[] o = getBitMapAndMsg(iso8583DTO128, 64);
-        sendMsg.append(o[0]);
-        // 计算报文长度，长度占4个字节，不足4字节左补0
-        int sendMsgLen = (int) o[1];
-        String sendMsgLenStr = Integer.toString(sendMsgLen);
-        sendMsgLenStr = NumberStringUtil.addLeftChar(sendMsgLenStr, 8, '0');
-        sendMsgLenStr = NumberStringUtil.str2HexStr(sendMsgLenStr);
-        System.out.println("报文长度 = " + sendMsgLenStr);
-        // 将4位报文长度插到最前边
-        sendMsg.insert(0, sendMsgLenStr);
-
-        return sendMsg.toString();
-    }
+    ///**
+    // * 128域组包
+    // *
+    // * @param iso8583DTO128 报文交互DTO，128域
+    // *                      4位报文长度 + 4位消息类型 + 32位BITMAP + 报文信息
+    // * @return
+    // */
+    //public static String packISO8583DTO(ISO8583DTO iso8583DTO128) throws IncorrectLengthException {
+    //    StringBuilder sendMsg = new StringBuilder();
+    //    // 先拼接消息类型
+    //    sendMsg.append(iso8583DTO128.getMessageType());
+    //    // 拼接BITMAP + 报文信息
+    //    Object[] o = getBitMapAndMsg(iso8583DTO128, 64);
+    //    sendMsg.append(o[0]);
+    //    // 计算报文长度，长度占4个字节，不足4字节左补0
+    //    int sendMsgLen = (int) o[1];
+    //    String sendMsgLenStr = Integer.toString(sendMsgLen);
+    //    sendMsgLenStr = NumberStringUtil.addLeftChar(sendMsgLenStr, 8, '0');
+    //    sendMsgLenStr = NumberStringUtil.str2HexStr(sendMsgLenStr);
+    //    System.out.println("报文长度 = " + sendMsgLenStr);
+    //    // 将4位报文长度插到最前边
+    //    sendMsg.insert(0, sendMsgLenStr);
+    //
+    //    return sendMsg.toString();
+    //}
 
     /**
      * 128域组包
@@ -66,7 +66,7 @@ public class ISO8583Util {
         // 先拼接消息类型
         sendMsg.append(iso8583DTO128.getMessageType());
         // 拼接BITMAP + 报文信息
-        Object[] o = getBitMapAndMsg(iso8583DTO128, 64);
+        Object[] o = getBitMapAndMsg(iso8583DTO128, 64,key);
         sendMsg.append(o[0]);
         //计算MAC值
         sendMsg.append(NumberStringUtil.bcd2Str(MacEcbUtils.getMac(key.getBytes(), sendMsg.toString().getBytes())));
@@ -133,7 +133,7 @@ public class ISO8583Util {
         return iso8583DTO128;
     }
 
-    private static Object[] getBitMapAndMsg(Object iso8583DTO, int bitLen) throws IncorrectLengthException {
+    private static Object[] getBitMapAndMsg(Object iso8583DTO, int bitLen,String key) throws IncorrectLengthException {
         // 获取ISO8583DTO类的属性，key为fldIndex域序号，value为属性名
         Map<Integer, String> iso8583DTOFldMap = getISO8583DTOFldMap(iso8583DTO.getClass());
         // 初始化域位图
@@ -174,6 +174,9 @@ public class ISO8583Util {
         }
 
         // 将128位2进制位图转换为32位16进制数据
+        if(StringUtils.isNotEmpty(key)){
+            bitMap = bitMap.replace(63, 64, "1");
+        }
         String bitMapHexStr = NumberStringUtil.binaryToHexString(bitMap.toString());
         //String bitMapHexStr = bitMap.toString();
         log.info("bitmap = " + bitMapHexStr);
