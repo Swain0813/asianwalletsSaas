@@ -257,4 +257,11 @@ public class TradeConstant {
     public static final String EGHL = "EGHL"; //云闪付
     public static final String DOKU = "DOKU"; //DOKU
     public static final String QFPAY = "QFPAY"; //QFPAY
+
+    //为了保证分润插入发生异常或者产品信息不完整 或者 代理商产品算费失败 邮件只发一次
+    public static final String MERCHANT_CHARGE_FAIL = "MERCHANT_CHARGE_FAIL";
+
+    public static final String AGENCY_CHARGE_FAIL = "AGENCY_CHARGE_FAIL";
+
+    public static final String FR_INSERT_EXCEPTION = "FR_INSERT_EXCEPTION";
 }

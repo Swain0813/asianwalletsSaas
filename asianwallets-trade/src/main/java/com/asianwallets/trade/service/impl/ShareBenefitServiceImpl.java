@@ -5,6 +5,7 @@ import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
+import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
 import com.asianwallets.trade.dao.OrdersMapper;
@@ -56,6 +57,9 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
     @Autowired
     private RabbitMQSender rabbitMQSender;
 
+    @Autowired
+    private RedisService redisService;
+
 
     /**
      * @return
@@ -98,6 +102,7 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
             }
 
             /********************************************* 商户代理分润 ****************************************/
+            //代理商类型 1-渠道代理 2-商户代理
             int count = shareBenefitLogsMapper.selectCountByOrderId(orderId, "2");
             log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 商户代理分润 count: 【{}】,merchantAgencyCode:【{}】", count, merchantAgencyCode);
             if (count == 0 && StringUtils.isNotEmpty(merchantAgencyCode)) {
@@ -108,7 +113,11 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
                 //计算分润
                 CalcFeeVO calcFeeVO = this.calculateShareBenefit(type,"2", orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
                 if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
-                    messageFeign.sendSimpleMail(developerEmail, "SAAS-代理商产品算费失败 预警", "代理商商户号 ：{ " + merchantAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
+                    if(redisService.get(TradeConstant.MERCHANT_CHARGE_FAIL.concat("_").concat(orderId))==null){
+                        redisService.set(TradeConstant.MERCHANT_CHARGE_FAIL.concat("_").concat(orderId),"true",24 * 60 * 60);
+                        messageFeign.sendSimple(mobile, "SAAS-商户代理分润算费失败");//短信通知
+                        messageFeign.sendSimpleMail(developerEmail, "SAAS-商户代理分润算费失败 预警", "代理商商户号 ：{ " + merchantAgencyCode + " } ，订单号 ：{ " + orderId + " } 商户代理分润算费失败");
+                    }
                     throw new BusinessException(EResultEnum.ERROR.getCode());
                 }
                 //分润金额
@@ -127,8 +136,11 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
                 //计算分润
                 CalcFeeVO calcFeeVO = this.calculateShareBenefit(type,"1" ,orders, null, basicInfoVO.getMerchantProduct(), shareBenefitLogs);
                 if (calcFeeVO.getChargeStatus().equals(TradeConstant.CHARGE_STATUS_FALID)) {
-                    messageFeign.sendSimple(mobile, "SAAS-代理商产品算费失败");//短信通知
-                    messageFeign.sendSimpleMail(developerEmail, "saas-代理商产品算费失败 预警", "代理商商户号 ：{ " + channelAgencyCode + " } ，订单号 ：{ " + orderId + " } 代理商产品算费失败");
+                    if(redisService.get(TradeConstant.AGENCY_CHARGE_FAIL.concat("_").concat(orderId))==null){
+                        redisService.set(TradeConstant.AGENCY_CHARGE_FAIL.concat("_").concat(orderId),"true",24 * 60 * 60);
+                        messageFeign.sendSimple(mobile, "SAAS-渠道代理分润算费失败");//短信通知
+                        messageFeign.sendSimpleMail(developerEmail, "SAAS-渠道代理分润算费失败 预警", "代理商商户号 ：{ " + channelAgencyCode + " } ，订单号 ：{ " + orderId + " } 渠道代理分润算费失败");
+                    }
                     throw new BusinessException(EResultEnum.ERROR.getCode());
                 }
                 //分润金额
@@ -138,8 +150,12 @@ public class ShareBenefitServiceImpl implements ShareBenefitService {
 
         } catch (Exception e) {
             log.error("================== 【insertShareBenefitLogs 插入分润流水】=================== 【异常】 orderId: 【{}】,Exception :【{}】", orderId, e);
-            messageFeign.sendSimple(mobile, "SAAS-插入分润流水发生异常");//短信通知
             rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orderId);
+            if(redisService.get(TradeConstant.FR_INSERT_EXCEPTION.concat("_").concat(orderId))==null){
+                redisService.set(TradeConstant.FR_INSERT_EXCEPTION.concat("_").concat(orderId),"true",24 * 60 * 60);
+                messageFeign.sendSimple(mobile, "SAAS-插入分润流水异常");//短信通知
+                messageFeign.sendSimpleMail(developerEmail, "SAAS-插入分润流水异常 预警",  "订单号 ：{ " + orderId + " } 插入分润流水异常");//邮件通知
+            }
             //回滚
             throw new BusinessException(EResultEnum.ERROR.getCode());
         }
