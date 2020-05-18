@@ -338,6 +338,12 @@ public class ISO8583Util {
                     && iso8583Annotation.fldIndex() != 62) {
                 fldValue = NumberStringUtil.str2HexStr(fldValue);
             }
+            if(iso8583Annotation.fldIndex() == 35
+            ||iso8583Annotation.fldIndex() == 46
+            ||iso8583Annotation.fldIndex() == 47
+            ||iso8583Annotation.fldIndex() == 62){
+                actualLen = actualLen/2;
+            }
             fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen), (len - 1) * 2, '0') + fldValue;
             if (actualLen % 2 != 0 && type.equals("BCD")) {
                 fldValue = fldValue + "0";
