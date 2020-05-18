@@ -1,5 +1,4 @@
 package com.asianwallets.base.controller;
-
 import com.asianwallets.base.service.InstitutionProductChannelService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.InstitutionChannelQueryDTO;
@@ -13,7 +12,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 
