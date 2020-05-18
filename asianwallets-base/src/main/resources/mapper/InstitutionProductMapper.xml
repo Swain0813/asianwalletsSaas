@@ -7,6 +7,7 @@
         <result column="product_id" property="productId" jdbcType="VARCHAR"/>
         <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
         <result column="product_abbrev" property="productAbbrev" jdbcType="VARCHAR"/>
+        <result column="product_img" property="productImg" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="creator" property="creator" jdbcType="VARCHAR"/>
@@ -15,7 +16,7 @@
     </resultMap>
 
     <sql id="baseSql">
-		institution_id, product_id, institution_name ,product_abbrev,
+		institution_id, product_id, institution_name ,product_abbrev,product_img,
 		id,create_time, update_time ,creator ,modifier, remark
 	</sql>
 
@@ -42,6 +43,7 @@
         <result column="productId" property="productId" jdbcType="VARCHAR"/>
         <result column="institutionName" property="institutionName" jdbcType="VARCHAR"/>
         <result column="productAbbrev" property="productAbbrev" jdbcType="VARCHAR"/>
+        <result column="product_img" property="productImg" jdbcType="VARCHAR"/>
         <result column="productName" property="productName" jdbcType="VARCHAR"/>
         <result column="payType" property="payType" jdbcType="VARCHAR"/>
         <result column="payTypeId" property="payTypeId" jdbcType="VARCHAR"/>
@@ -64,6 +66,7 @@
         ip.institution_name AS institutionName,
         ip.product_id AS productId,
         ip.product_abbrev AS productAbbrev,
+        ip.product_img AS productImg,
         ic.channel_id AS channelId,
         ic.ins_pro_id AS insProId,
         ic.create_time AS createTime,
@@ -122,6 +125,7 @@
         ip.institution_name AS institutionName,
         ip.product_id AS productId,
         ip.product_abbrev AS productAbbrev,
+        ip.product_img AS productImg,
         ip.create_time AS createTime,
         ip.update_time AS updateTime,
         ip.creator AS creator,

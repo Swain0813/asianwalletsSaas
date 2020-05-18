@@ -23,6 +23,9 @@ public class InstitutionProductChannelVO {
     @ApiModelProperty(value = "产品简称")
     private String productAbbrev;
 
+    @ApiModelProperty(value = "产品图片")
+    private String productImg;
+
     @ApiModelProperty(value = "支付方式")
     private String payType;
 

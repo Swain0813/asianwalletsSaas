@@ -27,4 +27,7 @@ public class InstitutionProductChannelDTO {
     @ApiModelProperty(value = "产品简称")
     private String productAbbrev;
 
+    @ApiModelProperty(value = "产品图片")
+    private String productImg;
+
 }
