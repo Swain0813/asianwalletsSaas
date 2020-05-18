@@ -11,6 +11,7 @@ import com.asianwallets.common.dto.qfpay.QfPayRefundDTO;
 import com.asianwallets.common.dto.qfpay.QfResDTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583Util;
+import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -159,7 +160,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     @Override
     public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
-        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel,orderRefund);
 
         log.info("=================【TH退款】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thRefund(iso8583DTO);
@@ -218,6 +219,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
     }
 
+
     /**
      * @return
      * @Author YangXu
@@ -231,7 +233,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             rabbitMassage = rabbitOrderMsg;
         }
         BaseResponse baseResponse = new BaseResponse();
-        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel,orderRefund);
 
         log.info("=================【TH撤销 cancel】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thQuerry(iso8583DTO);
@@ -278,8 +280,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
-        ISO8583DTO iso8583DTO = new ISO8583DTO();
-
+        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel,orderRefund);
 
         log.info("=================【TH撤销 cancelPaying】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thRefund(iso8583DTO);
@@ -311,5 +312,31 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             rabbitMQSender.send(AD3MQConstant.CX_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return baseResponse;
+    }
+
+
+    /**
+     * @Author YangXu
+     * @Date 2020/5/18
+     * @Descripate 创建退款DTO
+     * @return
+     **/
+    private ISO8583DTO creatISO8583DTO(Channel channel, OrderRefund orderRefund) {
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        iso8583DTO.setProcessingCode_3("400100");
+        iso8583DTO.setAmountOfTransactions_4(NumberStringUtil.addLeftChar(orderRefund.getTradeAmount().toString().replace(".",""),12,'0'));
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getOrderId().substring(0,6));
+        iso8583DTO.setPointOfServiceEntryMode_22("030");
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
+        //iso8583DTO.setAcquiringInstitutionIdentificationCode_32(); 机构号
+        //iso8583DTO.setCardAcceptorTerminalIdentification_41();      //卡机终端标识码
+        //iso8583DTO.setCardAcceptorIdentificationCode_42();          //受卡方标识码
+        iso8583DTO.setAdditionalData_46("5F5229"+"303002020202"+orderRefund.getChannelNumber()+"02");
+        //iso8583DTO.setCurrencyCodeOfTransaction_49();       //交易代码
+        iso8583DTO.setReservedPrivate_60("01000004000000");
+
+
+        return iso8583DTO;
     }
 }
