@@ -357,5 +357,10 @@ public class ISO8583DTO {
     @ISO8583Annotation(fldIndex = 64, dataFldLength = 8, type = "BINARY",fldFlag = FldFlag.FIXED)
     private String MessageAuthenticationCode_64;
 
+    public static void main(String[] args) {
+        String key = "B66CC3219FED1938240A81BA218A6BE072A224E1C2CF49CF9D4EA5920000000000000000BF74CDFBB18E3F4E347B3B5F3414079A1D66891F87F2BE4F";
+        String substring = key.substring(40, 80);
+        System.out.println(substring);
+    }
 }
 

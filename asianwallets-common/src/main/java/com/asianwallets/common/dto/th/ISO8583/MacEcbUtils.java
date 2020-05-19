@@ -14,8 +14,8 @@ public class MacEcbUtils {
         System.out.println(NumberStringUtil.bcd2Str(getMac(key, input)));
 
         String req = "0086600002000080010000000038353239393939353831323030353030303030323735333330303030303030303030303030333030303030303031383532393939393538313230303530303030303030353408000020000100C000121981240852000001303030303237353338353239393939353831323030353000115000000100300003303031";
-        String key2= "38D57B7C1979CF7910677DE5BB6A56DF";
-        System.out.println(new String(getMac(key2.getBytes(),req.getBytes())));
+        String key2 = "38D57B7C1979CF7910677DE5BB6A56DF";
+        System.out.println(new String(getMac(key2.getBytes(), req.getBytes())));
     }
 
     /**
@@ -62,6 +62,7 @@ public class MacEcbUtils {
         byte[] buff = DesUtils.encrypt(resultXOR, key);
         // 将运算后的结果（ENC BLOCK2）转换成16 个HEXDECIMAL asc
         byte[] retBuf = new byte[8];
+        System.out.println("MAC明文:" + bytesToHexString(buff));
         // 取8个长度字节就是mac值
         System.arraycopy(bytesToHexString(buff).getBytes(), 0, retBuf, 0, 8);
         return retBuf;

@@ -6,14 +6,15 @@ package com.asianwallets.common.dto.th.ISO8583;
  * @create: 2020-05-08 16:54
  **/
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 /**
  * DES 加解密
@@ -78,4 +79,8 @@ public class DesUtils {
         return null;
     }
 
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        byte[] decrypt = decrypt("43FA3050936615D4".getBytes(), "38D57B7C1979CF7910677DE5BB6A56DF".getBytes());
+        System.out.println(NumberStringUtil.bcd2Str(decrypt));
+    }
 }

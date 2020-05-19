@@ -68,8 +68,9 @@ public class ISO8583Util {
         // 拼接BITMAP + 报文信息
         Object[] o = getBitMapAndMsg(iso8583DTO128, 64, key);
         sendMsg.append(o[0]);
+        System.out.println("mac block:" + sendMsg.toString());
         //计算MAC值
-        if(!StringUtils.isEmpty(key)) {
+        if (!StringUtils.isEmpty(key)) {
             sendMsg.append(NumberStringUtil.bcd2Str(MacEcbUtils.getMac(key.getBytes(), sendMsg.toString().getBytes())));
         }
         // 计算报文长度，长度占4个字节，不足4字节左补0
@@ -340,11 +341,11 @@ public class ISO8583Util {
                     && iso8583Annotation.fldIndex() != 62) {
                 fldValue = NumberStringUtil.str2HexStr(fldValue);
             }
-            if(iso8583Annotation.fldIndex() == 35
-            ||iso8583Annotation.fldIndex() == 46
-            ||iso8583Annotation.fldIndex() == 47
-            ||iso8583Annotation.fldIndex() == 62){
-                actualLen = actualLen/2;
+            if (iso8583Annotation.fldIndex() == 35
+                    || iso8583Annotation.fldIndex() == 46
+                    || iso8583Annotation.fldIndex() == 47
+                    || iso8583Annotation.fldIndex() == 62) {
+                actualLen = actualLen / 2;
             }
             fldValue = NumberStringUtil.addLeftChar(String.valueOf(actualLen), (len - 1) * 2, '0') + fldValue;
             if (actualLen % 2 != 0 && type.equals("BCD")) {
