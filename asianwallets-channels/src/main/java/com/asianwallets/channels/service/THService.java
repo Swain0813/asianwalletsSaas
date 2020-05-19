@@ -13,6 +13,7 @@ public interface THService {
      * @return
      **/
     BaseResponse thRefund(ISO8583DTO thRefundDTO);
+
     /**
      * @Author YangXu
      * @Date 2020/5/7
