@@ -33,6 +33,14 @@ public class InstitutionProduct extends BaseEntity {
     @Column(name = "product_abbrev")
     private String productAbbrev;
 
+    @ApiModelProperty(value = "产品详情logo")
+    @Column(name ="product_details_logo")
+    private String productDetailsLogo;
+
+    @ApiModelProperty(value = "产品打印logo")
+    @Column(name ="product_print_logo")
+    private String productPrintLogo;
+
     @ApiModelProperty(value = "产品图片")
     @Column(name = "product_img")
     private String productImg;

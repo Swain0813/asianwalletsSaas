@@ -23,6 +23,12 @@ public class InstitutionProductChannelVO {
     @ApiModelProperty(value = "产品简称")
     private String productAbbrev;
 
+    @ApiModelProperty(value = "产品详情logo")
+    private String productDetailsLogo;
+
+    @ApiModelProperty(value = "产品打印logo")
+    private String productPrintLogo;
+
     @ApiModelProperty(value = "产品图片")
     private String productImg;
 
