@@ -61,7 +61,7 @@ public class ISO8583Util {
      *                      4位报文长度 + 4位消息类型 + 32位BITMAP + 报文信息
      * @return
      */
-    public static String packISO8583DTO(ISO8583DTO iso8583DTO128, String key) throws IncorrectLengthException {
+    public static String packISO8583DTO(ISO8583DTO iso8583DTO128, String key) throws Exception {
         StringBuilder sendMsg = new StringBuilder();
         // 先拼接消息类型
         sendMsg.append(iso8583DTO128.getMessageType());
@@ -71,7 +71,7 @@ public class ISO8583Util {
         System.out.println("mac block:" + sendMsg.toString());
         //计算MAC值
         if (!StringUtils.isEmpty(key)) {
-            sendMsg.append(NumberStringUtil.bcd2Str(MacEcbUtils.getMac(key.getBytes(), sendMsg.toString().getBytes())));
+            sendMsg.append(MACUtil.getCupEcbMac(key, sendMsg.toString()));
         }
         // 计算报文长度，长度占4个字节，不足4字节左补0
         int sendMsgLen = (int) o[1];
