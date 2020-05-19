@@ -7,6 +7,8 @@
         <result column="product_id" property="productId" jdbcType="VARCHAR"/>
         <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
         <result column="product_abbrev" property="productAbbrev" jdbcType="VARCHAR"/>
+        <result column="product_details_logo" property="productDetailsLogo" jdbcType="VARCHAR"/>
+        <result column="product_print_logo" property="productPrintLogo" jdbcType="VARCHAR"/>
         <result column="product_img" property="productImg" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
@@ -17,7 +19,8 @@
 
     <sql id="baseSql">
 		institution_id, product_id, institution_name ,product_abbrev,product_img,
-		id,create_time, update_time ,creator ,modifier, remark
+		id,create_time, update_time ,creator ,modifier, remark,product_details_logo,
+		product_print_logo
 	</sql>
 
     <select id="selectByInstitutionId" resultMap="BaseResultMap">
@@ -43,7 +46,9 @@
         <result column="productId" property="productId" jdbcType="VARCHAR"/>
         <result column="institutionName" property="institutionName" jdbcType="VARCHAR"/>
         <result column="productAbbrev" property="productAbbrev" jdbcType="VARCHAR"/>
-        <result column="product_img" property="productImg" jdbcType="VARCHAR"/>
+        <result column="productDetailsLogo" property="productDetailsLogo" jdbcType="VARCHAR"/>
+        <result column="productPrintLogo" property="productPrintLogo" jdbcType="VARCHAR"/>
+        <result column="productImg" property="productImg" jdbcType="VARCHAR"/>
         <result column="productName" property="productName" jdbcType="VARCHAR"/>
         <result column="payType" property="payType" jdbcType="VARCHAR"/>
         <result column="payTypeId" property="payTypeId" jdbcType="VARCHAR"/>
@@ -66,6 +71,8 @@
         ip.institution_name AS institutionName,
         ip.product_id AS productId,
         ip.product_abbrev AS productAbbrev,
+        ip.product_details_logo AS productDetailsLogo,
+        ip.product_print_logo AS productPrintLogo,
         ip.product_img AS productImg,
         ic.channel_id AS channelId,
         ic.ins_pro_id AS insProId,
@@ -125,6 +132,8 @@
         ip.institution_name AS institutionName,
         ip.product_id AS productId,
         ip.product_abbrev AS productAbbrev,
+        ip.product_details_logo AS productDetailsLogo,
+        ip.product_print_logo AS productPrintLogo,
         ip.product_img AS productImg,
         ip.create_time AS createTime,
         ip.update_time AS updateTime,
