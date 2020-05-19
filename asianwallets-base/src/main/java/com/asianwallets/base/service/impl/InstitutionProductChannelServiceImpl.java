@@ -73,6 +73,8 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
             institutionProduct.setInstitutionName(institutionProductChannelDTO.getInstitutionName());
             institutionProduct.setProductAbbrev(institutionProductChannelDTO.getProductAbbrev());
             institutionProduct.setProductImg(institutionProductChannelDTO.getProductImg());
+            institutionProduct.setProductDetailsLogo(institutionProductChannelDTO.getProductDetailsLogo());
+            institutionProduct.setProductPrintLogo(institutionProductChannelDTO.getProductPrintLogo());
             institutionProduct.setCreateTime(new Date());
             institutionProduct.setCreator(username);
             institutionProductMapper.insert(institutionProduct);
@@ -126,6 +128,8 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
             institutionProduct.setInstitutionName(institutionProductChannelDTO.getInstitutionName());
             institutionProduct.setProductAbbrev(institutionProductChannelDTO.getProductAbbrev());
             institutionProduct.setProductImg(institutionProductChannelDTO.getProductImg());
+            institutionProduct.setProductDetailsLogo(institutionProductChannelDTO.getProductDetailsLogo());
+            institutionProduct.setProductPrintLogo(institutionProductChannelDTO.getProductPrintLogo());
             institutionProduct.setCreateTime(new Date());
             institutionProduct.setUpdateTime(new Date());
             institutionProduct.setCreator(username);
