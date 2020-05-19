@@ -69,7 +69,9 @@ public class ISO8583Util {
         Object[] o = getBitMapAndMsg(iso8583DTO128, 64, key);
         sendMsg.append(o[0]);
         //计算MAC值
-        sendMsg.append(NumberStringUtil.bcd2Str(MacEcbUtils.getMac(key.getBytes(), sendMsg.toString().getBytes())));
+        if(!StringUtils.isEmpty(key)) {
+            sendMsg.append(NumberStringUtil.bcd2Str(MacEcbUtils.getMac(key.getBytes(), sendMsg.toString().getBytes())));
+        }
         // 计算报文长度，长度占4个字节，不足4字节左补0
         int sendMsgLen = (int) o[1];
         String sendMsgLenStr = Integer.toString(sendMsgLen);
@@ -190,7 +192,7 @@ public class ISO8583Util {
             }
         }
 
-        return new Object[]{bitMapAndMsg.toString(), len};
+        return new Object[]{bitMapAndMsg.toString().toUpperCase(), len};
     }
 
     /**
