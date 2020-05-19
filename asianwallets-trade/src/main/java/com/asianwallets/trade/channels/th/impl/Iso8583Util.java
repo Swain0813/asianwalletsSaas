@@ -209,13 +209,13 @@ public class Iso8583Util {
         System.out.println("64位图初始:" + initBitMap(64));
         System.out.println("128位图初始:" + initBitMap(128));
         //假设要在12467域填充数据
-        int[] l = {11, 32, 41, 42, 60, 63};
+        int[] l = {3, 4, 11, 22, 25, 32, 41, 42, 46, 49, 60, 64};
         System.out.println("生成64域位图：" + bitMapFormat(l));
         //如果某个域大于64会生成16字节的位图
         int[] l2 = {1, 2, 4, 6, 7, 76, 87};
         System.out.println("生成128域位图：" + bitMapFormat(l2));
 
-        String btm = "0020000100C00012";
+        String btm = "3020048100C48011";
         System.out.println("解析64域图：" + getBitMapNum(btm));
 
         String btm2 = "D6000000000000000010420200001521";
