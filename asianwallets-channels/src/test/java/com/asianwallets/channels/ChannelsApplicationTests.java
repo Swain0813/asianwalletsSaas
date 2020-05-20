@@ -165,7 +165,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
         iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
-        iso8583DTO.setAdditionalData_46("5F522130300202020202");
+        iso8583DTO.setAdditionalData_46("5F526130300202343230303030303532353230323030353139313137303539373939390232303230303531393030303030313130363230303137383430330202");
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         iso8583DTO.setReservedPrivate_60("55000031000000");
 
