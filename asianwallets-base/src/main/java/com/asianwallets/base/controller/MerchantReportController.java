@@ -39,7 +39,7 @@ public class MerchantReportController extends BaseController {
         return ResultUtil.success(merchantReportService.addReport(merchantReportDTO));
     }
 
-    @ApiOperation(value = "查询报备信息")
+    @ApiOperation(value = "分页查询报备信息")
     @PostMapping("pageReport")
     public BaseResponse pageReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
         return ResultUtil.success(merchantReportService.pageReport(merchantReportDTO));

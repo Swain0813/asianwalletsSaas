@@ -26,11 +26,15 @@
         <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
         <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
         <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
+        <result column="channel_mcc" property="channelMcc" jdbcType="VARCHAR"/>
+        <result column="site_type" property="siteType" jdbcType="VARCHAR"/>
+        <result column="site_url" property="siteUrl" jdbcType="VARCHAR"/>
+        <result column="country_code" property="countryCode" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
         id, merchant_id, channel_code, institution_id, institution_name, merchant_name, channel_name,
     sub_merchant_code, sub_merchant_name,shop_code,shop_name,sub_appid, enabled, create_time, update_time, creator,
-    modifier, remark, extend1, extend2, extend3, extend4, extend5, extend6
+    modifier, remark, extend1, extend2, extend3, extend4, extend5, extend6,channel_mcc,site_type,site_url,country_code
     </sql>
 
     <update id="banReport">
@@ -54,6 +58,10 @@
         institution_id as institutionId,
         institution_name as institutionName,
         merchant_name as merchantName,
+        country_code as countryCode,
+        channel_mcc as channelMcc,
+        site_type as siteType,
+        site_url as siteUrl,
         channel_name as channelName,
         sub_merchant_code as subMerchantCode,
         sub_merchant_name as subMerchantName,
@@ -74,6 +82,9 @@
         <where>
             <if test="id != null and id !=''">
                 AND id = #{id}
+            </if>
+            <if test="channelCode != null and channelCode !=''">
+                AND channel_code = #{channelCode}
             </if>
             <if test="startTime != null and startTime != ''">
                 AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
@@ -98,6 +109,8 @@
             </if>
         </where>
     </select>
+
+
     <select id="selectByChannelCodeAndMerchantId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

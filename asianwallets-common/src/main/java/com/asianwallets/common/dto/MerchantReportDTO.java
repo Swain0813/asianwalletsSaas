@@ -1,5 +1,4 @@
 package com.asianwallets.common.dto;
-
 import com.asianwallets.common.base.BasePageHelper;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -15,20 +14,26 @@ public class MerchantReportDTO extends BasePageHelper {
     @ApiModelProperty(value = "ID")
     private String id;
 
-    @ApiModelProperty(value = "商户ID")
-    private String merchantId;
-
-    @ApiModelProperty(value = "通道Code")
-    private String channelCode;
-
-    @ApiModelProperty(value = "机构ID")
+    @ApiModelProperty(value = "机构编号")
     private String institutionId;
+
+    @ApiModelProperty(value = "机构名")
+    private String institutionName;
+
+    @ApiModelProperty(value = "商户编号")
+    private String merchantId;
 
     @ApiModelProperty(value = "商户名")
     private String merchantName;
 
-    @ApiModelProperty(value = "机构名")
-    private String institutionName;
+    @ApiModelProperty(value = "国家代码")
+    private String countryCode;
+
+    @ApiModelProperty(value = "通道编号")
+    private String channelCode;
+
+    @ApiModelProperty(value = "通道MCC编码")
+    private String channelMcc;
 
     @ApiModelProperty(value = "通道子商户编号")
     private String subMerchantCode;
@@ -45,7 +50,13 @@ public class MerchantReportDTO extends BasePageHelper {
     @ApiModelProperty(value = "SubAPPID")
     private String subAppid;
 
-    @ApiModelProperty(value = "启用禁用")
+    @ApiModelProperty(value = "网站类型")//APP WEB
+    private String siteType;
+
+    @ApiModelProperty(value = "网站url")
+    private String siteUrl;
+
+    @ApiModelProperty(value = "报备状态")
     private Boolean enabled;
 
     @ApiModelProperty(value = "创建时间")
@@ -67,6 +78,9 @@ public class MerchantReportDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "更改者")
     private String modifier;
+
+    @ApiModelProperty(value = "备注")
+    private String remark;
 
     @ApiModelProperty(value = "备注1")
     private String extend1;
