@@ -155,13 +155,19 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
     @Test
     public void thTest() {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
-        iso8583DTO.setMessageType("0800");
-        iso8583DTO.setSystemTraceAuditNumber_11("198124");
+        /************************************************ 退款 ***************************************************/
+        iso8583DTO.setMessageType("0200");
+        iso8583DTO.setProcessingCode_3("400100");
+        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        iso8583DTO.setSystemTraceAuditNumber_11("102994");
+        iso8583DTO.setPointOfServiceEntryMode_22("030");
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
         iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
-        iso8583DTO.setReservedPrivate_60("50000001003");
-        iso8583DTO.setReservedPrivate_63("001");
+        iso8583DTO.setAdditionalData_46("5F522130300202020202");
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        iso8583DTO.setReservedPrivate_60("55000031000000");
 
         thService.thRefund(iso8583DTO);
 
