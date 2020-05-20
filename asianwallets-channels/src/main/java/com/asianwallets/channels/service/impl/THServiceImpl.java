@@ -8,6 +8,7 @@ import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583Util;
 import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
+import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,20 +85,20 @@ public class THServiceImpl implements THService {
     /**
      * 通华CSB
      *
-     * @param iso8583DTO
+     * @param thDTO 通华DTO
      * @return
      */
     @Override
-    public BaseResponse thCSB(ISO8583DTO iso8583DTO) {
-        log.info("===============【通华CSB】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(iso8583DTO));
+    public BaseResponse thCSB(ThDTO thDTO) {
+        log.info("===============【通华CSB】===============【请求参数】 thDTO:{}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
         //商户号
-        String merchNum = "852999958120501";
+        String merchNum = thDTO.getChannel().getChannelMerchantId();
         //终端号
-        String terminalNum = "00018644";
+        String terminalNum = thDTO.getChannel().getExtend1();
         //机构号
-        String institutionNum = "000000008600005";
+        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
         //业务类型
         String businessTypes = "00000001";
         //加密key
@@ -105,7 +106,7 @@ public class THServiceImpl implements THService {
         BaseResponse baseResponse = new BaseResponse();
         try {
             String sendMsg = tpdu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
-                    + ISO8583Util.packISO8583DTO(iso8583DTO, key);
+                    + ISO8583Util.packISO8583DTO(thDTO.getIso8583DTO(), key);
             //计算报文长度
             String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
             sendMsg = strHex2 + sendMsg;
@@ -140,20 +141,20 @@ public class THServiceImpl implements THService {
     /**
      * 通华BSC
      *
-     * @param iso8583DTO
+     * @param thDTO 通华DTO
      * @return
      */
     @Override
-    public BaseResponse thBSC(ISO8583DTO iso8583DTO) {
-        log.info("===============【通华BSC】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(iso8583DTO));
+    public BaseResponse thBSC(ThDTO thDTO) {
+        log.info("===============【通华BSC】===============【请求参数】 thDTO:{}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
         //商户号
-        String merchNum = "852999958120501";
+        String merchNum = thDTO.getChannel().getChannelMerchantId();
         //终端号
-        String terminalNum = "00018644";
+        String terminalNum = thDTO.getChannel().getExtend1();
         //机构号
-        String institutionNum = "000000008600005";
+        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
         //业务类型
         String businessTypes = "00000001";
         //加密key
@@ -161,7 +162,7 @@ public class THServiceImpl implements THService {
         BaseResponse baseResponse = new BaseResponse();
         try {
             String sendMsg = tpdu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
-                    + ISO8583Util.packISO8583DTO(iso8583DTO, key);
+                    + ISO8583Util.packISO8583DTO(thDTO.getIso8583DTO(), key);
             //计算报文长度
             String strHex2 = String.format("%04x", sendMsg.length() / 2);
             sendMsg = strHex2 + sendMsg;

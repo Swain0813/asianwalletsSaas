@@ -258,4 +258,10 @@ public class NumberStringUtil {
         }
         return new String(bytes);
     }
+
+    public static void main(String[] args) {
+        String s = "5F510BB6A9B5A5B4A6C0EDD6D0025F55523035323002393136313531023135383939350232303230303532303030303030313130363130303137383434350277656978696E3A2F2F77787061792F62697A70617975726C3F70723D65614646764F7502";
+        String[] split = s.split("02");
+        System.out.println(split);
+    }
 }

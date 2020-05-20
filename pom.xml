@@ -186,12 +186,12 @@
             <artifactId>commons-beanutils</artifactId>
             <version>1.9.4</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.jpos/jpos -->
-        <dependency>
-            <groupId>org.jpos</groupId>
-            <artifactId>jpos</artifactId>
-            <version>2.1.1</version>
-        </dependency>
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.jpos/jpos &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.jpos</groupId>-->
+<!--            <artifactId>jpos</artifactId>-->
+<!--            <version>2.1.1</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <dependencyManagement>

@@ -8,8 +8,10 @@ import com.asianwallets.common.dto.help2pay.Help2PayOutDTO;
 import com.asianwallets.common.dto.megapay.MegaPayQueryDTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
+import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.dto.wechat.WechaRefundDTO;
 import com.asianwallets.common.dto.wechat.WechatQueryDTO;
+import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
@@ -200,14 +202,21 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         0x31:支付宝
         0x32:银联云闪付
          */
-        String payCode = "31";
+        String payCode = "30";
         //附加信息-主扫
         iso8583DTO.setAdditionalData_46("5F5206303002" + payCode + "0202");
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
         iso8583DTO.setReservedPrivate_60("01" + timeStamp.substring(6, 12));
-        thService.thCSB(iso8583DTO);
+        ThDTO thDTO = new ThDTO();
+        Channel channel = new Channel();
+        channel.setExtend1("00018644");
+        channel.setExtend2("08600005");
+        channel.setChannelMerchantId("852999958120501");
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
+        thService.thCSB(thDTO);
     }
 
     @Test
@@ -244,7 +253,14 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
         iso8583DTO.setReservedPrivate_60("01" + timeStamp.substring(6, 12));
-        thService.thBSC(iso8583DTO);
+        ThDTO thDTO = new ThDTO();
+        Channel channel = new Channel();
+        channel.setExtend1("00018644");
+        channel.setExtend2("08600005");
+        channel.setChannelMerchantId("852999958120501");
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
+        thService.thBSC(thDTO);
     }
 
     @Test
