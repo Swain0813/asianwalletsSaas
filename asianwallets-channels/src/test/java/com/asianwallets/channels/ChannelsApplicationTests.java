@@ -6,7 +6,8 @@ import com.asianwallets.common.dto.doku.DOKUReqDTO;
 import com.asianwallets.common.dto.doku.DOKURequestDTO;
 import com.asianwallets.common.dto.help2pay.Help2PayOutDTO;
 import com.asianwallets.common.dto.megapay.MegaPayQueryDTO;
-import com.asianwallets.common.dto.th.ISO8583.*;
+import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
+import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
 import com.asianwallets.common.dto.wechat.WechaRefundDTO;
 import com.asianwallets.common.dto.wechat.WechatQueryDTO;
 import com.asianwallets.common.response.BaseResponse;
@@ -165,7 +166,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
         iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
-        iso8583DTO.setAdditionalData_46("5F522130300202020202");
+        iso8583DTO.setAdditionalData_46("5F526130300202343230303030303532353230323030353139313137303539373939390232303230303531393030303030313130363230303137383430330202");
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         iso8583DTO.setReservedPrivate_60("55000031000000");
 
@@ -173,5 +174,90 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
 
     }
 
+    @Test
+    public void thCSB() {
+        String timeStamp = System.currentTimeMillis() + "";
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        //主扫
+        iso8583DTO.setProcessingCode_3("700200");
+        //交易金额
+        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        //受卡方系统跟踪号
+        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
+        //服务点输入方式码
+        iso8583DTO.setPointOfServiceEntryMode_22("030");
+        //服务点条件码
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
+        //受理方标识码 (机构号)
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
+        /*
+        0x30 微信
+        0x31:支付宝
+        0x32:银联云闪付
+         */
+        String payCode = "31";
+        //附加信息-主扫
+        iso8583DTO.setAdditionalData_46("5F5206303002" + payCode + "0202");
+        //交易货币代码
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        //自定义域
+        iso8583DTO.setReservedPrivate_60("01" + timeStamp.substring(6, 12));
+        thService.thCSB(iso8583DTO);
+    }
+
+    @Test
+    public void thBSC() {
+        String timeStamp = System.currentTimeMillis() + "";
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        //被扫
+        iso8583DTO.setProcessingCode_3("400101");
+        //交易金额
+        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        //受卡方系统跟踪号
+        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
+        //服务点输入方式码
+        iso8583DTO.setPointOfServiceEntryMode_22("030");
+        //服务点条件码
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
+        //受理方标识码 (机构号)
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
+        /*
+        0x30 微信
+        0x31:支付宝
+        0x32:银联云闪付
+         */
+        String payCode = "31";
+        String scanCode = "286020382107217225";
+        //附加信息-被扫
+        iso8583DTO.setAdditionalData_46("5F5219303002" + payCode + "02" + NumberStringUtil.str2HexStr(scanCode) + "0202");
+        //交易货币代码
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        //自定义域
+        iso8583DTO.setReservedPrivate_60("01" + timeStamp.substring(6, 12));
+        thService.thBSC(iso8583DTO);
+    }
+
+    @Test
+    public void thSignIn() {
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0800");
+        iso8583DTO.setSystemTraceAuditNumber_11("198124");
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
+        iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
+        iso8583DTO.setReservedPrivate_60("50000001003");
+        iso8583DTO.setReservedPrivate_63("001");
+        thService.thRefund(iso8583DTO);
+    }
 }
 

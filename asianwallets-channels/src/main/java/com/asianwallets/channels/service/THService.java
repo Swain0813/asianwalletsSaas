@@ -23,6 +23,12 @@ public interface THService {
     BaseResponse thQuerry(ISO8583DTO thRefundDTO);
 
     /**
+     * 通华签到
+     * @return
+     */
+    BaseResponse thSignIn(ISO8583DTO iso8583DTO);
+
+    /**
      * 通华CSB
      * @param iso8583DTO
      * @return
