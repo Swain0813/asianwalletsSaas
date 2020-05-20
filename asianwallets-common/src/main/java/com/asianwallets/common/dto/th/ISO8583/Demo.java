@@ -34,8 +34,8 @@ public class Demo {
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
-        //iso8583DTO.setProcessingCode_3("700200");//主扫
-        iso8583DTO.setProcessingCode_3("400101");//被扫
+        iso8583DTO.setProcessingCode_3("700200");//主扫
+//        iso8583DTO.setProcessingCode_3("400101");//被扫
         //交易金额
         iso8583DTO.setAmountOfTransactions_4("000000000100");
         //受卡方系统跟踪号
@@ -54,13 +54,13 @@ public class Demo {
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
-        //iso8583DTO.setAdditionalData_46("5F5219303002300202");//主扫
-        String scanCode = "134750495118463486";
-        iso8583DTO.setAdditionalData_46("5F52193030023002" + NumberStringUtil.str2HexStr(scanCode) + "0202");//被扫
+        iso8583DTO.setAdditionalData_46("5F5206303002300202");//主扫
+//        String scanCode = "134750495118463486";
+//        iso8583DTO.setAdditionalData_46("5F52193030023002" + NumberStringUtil.str2HexStr(scanCode) + "0202");//被扫
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
-        iso8583DTO.setReservedPrivate_60("0100003A");//01000001000000000
+        iso8583DTO.setReservedPrivate_60("0100005A");//01000001000000000
         //签到组包
 //        String sendMsg1 = "6006090000"
 //                + "800100000000"
@@ -93,11 +93,4 @@ public class Demo {
         System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
 
     }
-
-
-    //public static void main(String[] args) throws Exception {
-    //
-    //    ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO("0087600609000080010000000038353239393939353831323035303130303031383634343030303030303030383630303030353030303030303030383532393939393538313230353031303030303030353708000020000100c00012198124110000860000530303031383634343835323939393935383132303530310011500000010030003303031");
-    //    System.out.println(iso8583DTO1281.toString());
-    //}
 }
