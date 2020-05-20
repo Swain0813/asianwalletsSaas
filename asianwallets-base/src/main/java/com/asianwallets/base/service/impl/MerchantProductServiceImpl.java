@@ -509,7 +509,6 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                         log.error("审核通过后将新增和修改的机构产品信息添加的redis里：" + e.getMessage());
                         throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
                     }
-                    //追加产品是支付宝或者是alipay的商户产品自动去通道商户报备
                 } else {
                     //初次添加审核不通过
                     MerchantProduct merchantProduct = new MerchantProduct();
