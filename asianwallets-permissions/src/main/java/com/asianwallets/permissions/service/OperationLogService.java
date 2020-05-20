@@ -1,6 +1,7 @@
 package com.asianwallets.permissions.service;
 
 import com.asianwallets.common.dto.OperationLogDTO;
+import com.asianwallets.common.entity.Country;
 import com.asianwallets.common.entity.OperationLog;
 import com.github.pagehelper.PageInfo;
 
@@ -24,4 +25,11 @@ public interface OperationLogService {
      * @return
      */
     PageInfo<OperationLog> pageOperationLog(OperationLogDTO operationLogDTO);
+
+    /**
+     * 根据商户编号获取商户的国家代码
+     * @param merchantId
+     * @return
+     */
+    Country getMerchantCountryCode(String merchantId);
 }

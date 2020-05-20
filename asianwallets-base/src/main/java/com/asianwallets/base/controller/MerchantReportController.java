@@ -3,6 +3,7 @@ package com.asianwallets.base.controller;
 import com.asianwallets.base.service.MerchantReportService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.MerchantReportDTO;
+import com.asianwallets.common.entity.MerchantReport;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.MerchantReportVO;
@@ -32,14 +33,14 @@ public class MerchantReportController extends BaseController {
     @Autowired
     private MerchantReportService merchantReportService;
 
-    @ApiOperation(value = "新增报备信息")
+    @ApiOperation(value = "新增商户报备信息")
     @PostMapping("addReport")
     public BaseResponse addReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
         merchantReportDTO.setCreator(this.getSysUserVO().getUsername());
         return ResultUtil.success(merchantReportService.addReport(merchantReportDTO));
     }
 
-    @ApiOperation(value = "分页查询报备信息")
+    @ApiOperation(value = "分页查询商户报备信息")
     @PostMapping("pageReport")
     public BaseResponse pageReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
         return ResultUtil.success(merchantReportService.pageReport(merchantReportDTO));
@@ -59,9 +60,15 @@ public class MerchantReportController extends BaseController {
         return ResultUtil.success(merchantReportService.banReport(merchantReportDTO));
     }
 
-    @ApiOperation(value = "导出Report")
+    @ApiOperation(value = "导出商户报备信息")
     @PostMapping("exportReport")
     public List<MerchantReportVO> exportReport(@RequestBody @ApiParam MerchantReportDTO merchantReportDTO) {
         return merchantReportService.exportReport(merchantReportDTO);
+    }
+
+    @ApiOperation(value = "导入商户报备信息")
+    @PostMapping("importMerchantReport")
+    public BaseResponse importMerchantReport(@RequestBody @ApiParam List<MerchantReport> merchantReportList) {
+        return ResultUtil.success(merchantReportService.importMerchantReport(merchantReportList));
     }
 }

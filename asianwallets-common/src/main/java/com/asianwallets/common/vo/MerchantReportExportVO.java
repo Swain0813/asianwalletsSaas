@@ -46,4 +46,7 @@ public class MerchantReportExportVO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date completeTime;
 
+    @ApiModelProperty(value = "报备状态")
+    private String enabledStr;
+
 }
