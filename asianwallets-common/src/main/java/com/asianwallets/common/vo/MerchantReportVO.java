@@ -21,20 +21,26 @@ public class MerchantReportVO {
     @ApiModelProperty(value = "商户编号")
     private String merchantId;
 
-    @ApiModelProperty(value = "商户名")
+    @ApiModelProperty(value = "商户名称")
     private String merchantName;
+
+    @ApiModelProperty(value = "国家代码")
+    private String countryCode;
 
     @ApiModelProperty(value = "机构编号")
     private String institutionId;
 
-    @ApiModelProperty(value = "机构名")
+    @ApiModelProperty(value = "机构名称")
     private String institutionName;
 
     @ApiModelProperty(value = "通道名称")
     private String channelName;
 
-    @ApiModelProperty(value = "通道Code")
+    @ApiModelProperty(value = "通道编号")
     private String channelCode;
+
+    @ApiModelProperty(value = "通道MCC编码")
+    private String channelMcc;
 
     @ApiModelProperty(value = "通道子商户号")
     private String subMerchantCode;
@@ -51,14 +57,20 @@ public class MerchantReportVO {
     @ApiModelProperty(value = "SubAPPID")
     private String subAppid;
 
+    @ApiModelProperty(value = "网站类型")//APP WEB
+    private String siteType;
+
+    @ApiModelProperty(value = "网站url")
+    private String siteUrl;
+
     @ApiModelProperty(value = "报备完成时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date completeTime;
 
-    @ApiModelProperty(value = "启用禁用")
+    @ApiModelProperty(value = "报备状态")
     private Boolean enabled;
 
-    @ApiModelProperty(value = "启用禁用 导出用")
+    @ApiModelProperty(value = "报备状态 导出用")
     private String enabledStr;
 
     @ApiModelProperty(value = "修改时间")
@@ -70,6 +82,9 @@ public class MerchantReportVO {
 
     @ApiModelProperty(value = "更改者")
     private String modifier;
+
+    @ApiModelProperty(value = "备注")
+    private String remark;
 
     @ApiModelProperty(value = "备注1")
     private String extend1;

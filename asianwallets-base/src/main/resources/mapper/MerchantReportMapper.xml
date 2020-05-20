@@ -58,6 +58,10 @@
         institution_id as institutionId,
         institution_name as institutionName,
         merchant_name as merchantName,
+        country_code as countryCode,
+        channel_mcc as channelMcc,
+        site_type as siteType,
+        site_url as siteUrl,
         channel_name as channelName,
         sub_merchant_code as subMerchantCode,
         sub_merchant_name as subMerchantName,
@@ -78,6 +82,9 @@
         <where>
             <if test="id != null and id !=''">
                 AND id = #{id}
+            </if>
+            <if test="channelCode != null and channelCode !=''">
+                AND channel_code = #{channelCode}
             </if>
             <if test="startTime != null and startTime != ''">
                 AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
@@ -102,6 +109,8 @@
             </if>
         </where>
     </select>
+
+
     <select id="selectByChannelCodeAndMerchantId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

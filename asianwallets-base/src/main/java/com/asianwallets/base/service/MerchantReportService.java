@@ -44,7 +44,7 @@ public interface MerchantReportService {
     int banReport(MerchantReportDTO merchantReportDTO);
 
     /**
-     * Export data information
+     * 导出查询用
      *
      * @param merchantReportDTO
      * @return
