@@ -283,8 +283,8 @@ public class ImportServiceImpl implements ImportService {
         for (int i = 1; i < read.size(); i++) {
             if (StringUtils.isEmpty(read.get(i).get(0)) || StringUtils.isEmpty(read.get(i).get(1)) ||
                     StringUtils.isEmpty(read.get(i).get(2)) ||StringUtils.isEmpty(read.get(i).get(3))
-                    || StringUtils.isEmpty(read.get(i).get(4))
-                    ||StringUtils.isEmpty(read.get(i).get(5)) || read.get(i).size() != 5) {
+                    || StringUtils.isEmpty(read.get(i).get(8))
+                    ||StringUtils.isEmpty(read.get(i).get(9))) {
                 log.info("==========【导入商户报备信息】==========【Excel文件内格式不正确】");
                 throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
             }
@@ -315,6 +315,29 @@ public class ImportServiceImpl implements ImportService {
                 merchantReport.setChannelMcc(channelMcc);
                 merchantReport.setSiteType(siteType);
                 merchantReport.setSiteUrl(siteUrl);
+
+                if(objects.get(4)!=null){
+                    merchantReport.setSubMerchantName(objects.get(4).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(5)!=null){
+                    merchantReport.setSubMerchantCode(objects.get(5).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(6)!=null){
+                    merchantReport.setShopName(objects.get(6).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(7)!=null){
+                    merchantReport.setShopCode(objects.get(7).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(10)!=null){
+                    merchantReport.setSubAppid(objects.get(10).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(11)!=null){
+                    merchantReport.setExtend1(objects.get(11).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(12)!=null){
+                    merchantReport.setExtend2(objects.get(12).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+
                 merchantReport.setCreator(username);
                 merchantReport.setCreateTime(new Date());
                 merchantReportList.add(merchantReport);
