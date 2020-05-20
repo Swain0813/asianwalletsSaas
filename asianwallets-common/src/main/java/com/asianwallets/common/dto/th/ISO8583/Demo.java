@@ -37,7 +37,7 @@ public class Demo {
         //iso8583DTO.setProcessingCode_3("700200");//主扫
         iso8583DTO.setProcessingCode_3("400101");//被扫
         //交易金额
-        iso8583DTO.setAmountOfTransactions_4("000000000010");
+        iso8583DTO.setAmountOfTransactions_4("000000000100");
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         //受卡方所在地时间HHmmss
@@ -55,12 +55,12 @@ public class Demo {
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         //iso8583DTO.setAdditionalData_46("5F5219303002300202");//主扫
-        String scanCode = "134748936718815739";
+        String scanCode = "134750495118463486";
         iso8583DTO.setAdditionalData_46("5F52193030023002" + NumberStringUtil.str2HexStr(scanCode) + "0202");//被扫
         //交易货币代码
-        iso8583DTO.setCurrencyCodeOfTransaction_49("840");
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
-        iso8583DTO.setReservedPrivate_60("01000001");//01000001000000000
+        iso8583DTO.setReservedPrivate_60("0100003A");//01000001000000000
         //签到组包
 //        String sendMsg1 = "6006090000"
 //                + "800100000000"
