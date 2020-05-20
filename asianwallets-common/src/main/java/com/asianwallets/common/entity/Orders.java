@@ -143,7 +143,7 @@ public class Orders extends BaseEntity {
     @Column(name = "trade_amount")
     private BigDecimal tradeAmount = BigDecimal.ZERO;
 
-    @ApiModelProperty(value = "交易状态")//1-待付款 2-付款中 3-付款成功 4-付款失败 5-已过期
+    @ApiModelProperty(value = "交易状态")//1-待付款 2-付款中 3-付款成功 4-付款失败 5-已过期 6-冲正成功 7-冲正失败
     @Column(name = "trade_status")
     private Byte tradeStatus;
 
@@ -387,4 +387,25 @@ public class Orders extends BaseEntity {
     @ApiModelProperty(value = "remark8(通道代理商ID)")
     @Column(name = "remark8")
     private String remark8;
+
+    @ApiModelProperty(value = "银行卡号")
+    @Column(name = "user_bank_card_no")
+    private String userBankCardNo;
+
+    @ApiModelProperty(value = "CVV2")
+    @Column(name = "cvv")
+    private String cvv;
+
+    @ApiModelProperty(value = "卡有效期 MMYY")
+    @Column(name = "valid")
+    private String valid;
+
+    @ApiModelProperty(value = "磁道信息")
+    @Column(name = "track_data")
+    private String trackData;
+
+    @ApiModelProperty(value = "商户报备商户MCC")
+    @Column(name = "merchant_industry")
+    private String merchantIndustry;
+
 }
