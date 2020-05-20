@@ -1,5 +1,4 @@
 package com.asianwallets.permissions.service.impl;
-
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -11,9 +10,11 @@ import com.asianwallets.common.entity.MerchantReport;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.permissions.cache.CountryCodeRedisService;
 import com.asianwallets.permissions.feign.base.BankFeign;
 import com.asianwallets.permissions.feign.base.BankIssuerIdFeign;
 import com.asianwallets.permissions.feign.base.ChannelFeign;
+import com.asianwallets.permissions.service.CommonService;
 import com.asianwallets.permissions.service.ImportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -41,6 +41,12 @@ public class ImportServiceImpl implements ImportService {
 
     @Autowired
     private BankIssuerIdFeign bankIssuerIdFeign;
+
+    @Autowired
+    private CommonService commonService;
+
+    @Autowired
+    private CountryCodeRedisService countryCodeRedisService;
 
     @Value("${file.tmpfile}")
     private String tmpFile;
@@ -275,12 +281,11 @@ public class ImportServiceImpl implements ImportService {
         }
         //判断传入的excel的格式是否符合约定
         for (int i = 1; i < read.size(); i++) {
-            if (StringUtils.isEmpty(read.get(i).get(0)) || StringUtils.isEmpty(read.get(i).get(2)) ||
-                    StringUtils.isEmpty(read.get(i).get(4)) ||StringUtils.isEmpty(read.get(i).get(5))
-                    || StringUtils.isEmpty(read.get(i).get(7))
-                    ||StringUtils.isEmpty(read.get(i).get(12))
-                    || StringUtils.isEmpty(read.get(i).get(13))
-                    || read.get(i).size() != 17) {
+            if (StringUtils.isEmpty(read.get(i).get(0)) || StringUtils.isEmpty(read.get(i).get(1)) ||
+                    StringUtils.isEmpty(read.get(i).get(2)) ||StringUtils.isEmpty(read.get(i).get(3))
+                    || StringUtils.isEmpty(read.get(i).get(8))
+                    ||StringUtils.isEmpty(read.get(i).get(9))
+                    || read.get(i).size() != 13) {
                 log.info("==========【导入商户报备信息】==========【Excel文件内格式不正确】");
                 throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
             }
@@ -289,30 +294,64 @@ public class ImportServiceImpl implements ImportService {
         for (int i = 1; i < read.size(); i++) {
             try {
                 List<Object> objects = read.get(i);
-                String institutionId = objects.get(0).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
-                String institutionName = objects.get(1).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                String merchantId = objects.get(0).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                String merchantName = objects.get(1).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                String institutionId =commonService.getMerchant(merchantId).getInstitutionId();
+                String institutionName = commonService.getInstitutionInfo(institutionId).getCnName();
+                String countryCode =countryCodeRedisService.getCountry(commonService.getMerchant(merchantId).getCountry()).getExtend2();
                 String channelCode = objects.get(2).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
-                String issuerId = objects.get(3).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
-//                BankIssuerIdDTO bankIssuerIdDTO = new BankIssuerIdDTO(bankName, currency, channelCode, issuerId);
-//                if (bankIssuerIdFeign.getByTerm(bankIssuerIdDTO) != null) {
-//                    continue;
-//                }
-                MerchantReport bankIssuerId = new MerchantReport();
-                bankIssuerId.setId(IDS.uuid2());
-//                bankIssuerId.setBankName(bankName);
-                bankIssuerId.setChannelCode(channelCode);
-//                bankIssuerId.setCurrency(currency);
-//                bankIssuerId.setIssuerId(issuerId);
-                bankIssuerId.setCreator(username);
-                bankIssuerId.setCreateTime(new Date());
-                bankIssuerId.setEnabled(true);
-                merchantReportList.add(bankIssuerId);
+                String channelName = commonService.getChannelByChannelCode(channelCode).getChannelCnName();
+                String channelMcc = objects.get(3).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                String siteType =objects.get(8).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                String siteUrl =objects.get(9).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                MerchantReport merchantReport = new MerchantReport();
+                merchantReport.setId(IDS.uuid2());
+                merchantReport.setMerchantId(merchantId);
+                merchantReport.setMerchantName(merchantName);
+                merchantReport.setInstitutionId(institutionId);
+                merchantReport.setInstitutionName(institutionName);
+                merchantReport.setCountryCode(countryCode);
+                merchantReport.setChannelCode(channelCode);
+                merchantReport.setChannelName(channelName);
+                merchantReport.setChannelMcc(channelMcc);
+                merchantReport.setSiteType(siteType);
+                merchantReport.setSiteUrl(siteUrl);
+                if(objects.get(4).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "")!=null){
+                    merchantReport.setSubMerchantName(objects.get(4).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(5).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "")!=null){
+                    merchantReport.setSubMerchantCode(objects.get(5).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(6).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "")!=null){
+                    merchantReport.setShopName(objects.get(6).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(7).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "")!=null){
+                    merchantReport.setShopCode(objects.get(7).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(10).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "")!=null){
+                    merchantReport.setSubAppid(objects.get(10).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(11).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "")!=null){
+                    merchantReport.setExtend1(objects.get(11).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                if(objects.get(12).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "")!=null){
+                    merchantReport.setExtend2(objects.get(12).toString().replaceAll("/(^\\s*)|(\\s*$)/g", ""));
+                }
+                merchantReport.setCreator(username);
+                merchantReport.setCreateTime(new Date());
+                merchantReportList.add(merchantReport);
             } catch (Exception e) {
-                log.info("==========【导入银行机构映射信息】==========【解析异常】", e);
+                log.info("==========【导入商户报备信息】==========【解析异常】", e);
                 throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
             }
         }
-        return merchantReportList;
+        //去除相同信息的数据
+        List<MerchantReport>  merchantReports = merchantReportList.stream().filter(distinctByKey(b -> b.getMerchantId() + b.getChannelCode() )).collect(Collectors.toList());
+        if (merchantReports.size() == 0) {
+            log.info("==========【导入商户报备信息】==========【导入信息重复】");
+            throw new BusinessException(EResultEnum.IMPORT_REPEAT_ERROR.getCode());
+        }
+        return merchantReports;
     }
 
 
