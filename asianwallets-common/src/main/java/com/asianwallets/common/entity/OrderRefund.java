@@ -320,4 +320,19 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "remark8")
     private String remark8;
 
+    @ApiModelProperty(value = "银行卡号")
+    @Column(name = "user_bank_card_no")
+    private String userBankCardNo;
+
+    @ApiModelProperty(value = "CVV2")
+    @Column(name = "cvv")
+    private String cvv;
+
+    @ApiModelProperty(value = "卡有效期")
+    @Column(name = "valid")
+    private String valid;
+
+    @ApiModelProperty(value = "磁道信息")
+    @Column(name = "track_data")
+    private String trackData;
 }
