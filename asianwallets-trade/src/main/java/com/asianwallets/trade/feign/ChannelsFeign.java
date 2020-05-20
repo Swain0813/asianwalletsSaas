@@ -15,6 +15,7 @@ import com.asianwallets.common.dto.megapay.*;
 import com.asianwallets.common.dto.nganluong.NganLuongDTO;
 import com.asianwallets.common.dto.qfpay.QfPayDTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
+import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.dto.vtc.VTCRequestDTO;
 import com.asianwallets.common.dto.wechat.*;
 import com.asianwallets.common.dto.xendit.XenditDTO;
@@ -186,11 +187,11 @@ public interface ChannelsFeign {
 
     @ApiOperation(value = "通华CSB收单接口")
     @PostMapping("/th/thCSB")
-    BaseResponse thCSB(ISO8583DTO iso8583DTO);
+    BaseResponse thCSB(ThDTO thDTO);
 
     @ApiOperation(value = "通华BSC收单接口")
     @PostMapping("/th/thBSC")
-    BaseResponse thBSC(ISO8583DTO iso8583DTO);
+    BaseResponse thBSC(ThDTO thDTO);
 
     @ApiOperation(value = "通华退款接口")
     @PostMapping("/th/thRefund")

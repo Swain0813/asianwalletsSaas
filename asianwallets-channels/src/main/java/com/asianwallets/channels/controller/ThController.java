@@ -3,6 +3,7 @@ package com.asianwallets.channels.controller;
 import com.asianwallets.channels.service.THService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
+import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.response.BaseResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,14 +24,14 @@ public class ThController extends BaseController {
 
     @ApiOperation("thCSB")
     @PostMapping("/thCSB")
-    public BaseResponse thCSB(@RequestBody @ApiParam ISO8583DTO iso8583DTO) {
-        return thService.thCSB(iso8583DTO);
+    public BaseResponse thCSB(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.thCSB(thDTO);
     }
 
     @ApiOperation("thBSC")
     @PostMapping("/thBSC")
-    public BaseResponse thBSC(@RequestBody @ApiParam ISO8583DTO iso8583DTO) {
-        return thService.thBSC(iso8583DTO);
+    public BaseResponse thBSC(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.thBSC(thDTO);
     }
 
     @ApiOperation("thRefund")

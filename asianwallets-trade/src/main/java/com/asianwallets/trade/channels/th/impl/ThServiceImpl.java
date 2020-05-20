@@ -6,17 +6,13 @@ import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
-import com.asianwallets.common.dto.qfpay.QfPayDTO;
-import com.asianwallets.common.dto.qfpay.QfPayRefundDTO;
-import com.asianwallets.common.dto.qfpay.QfResDTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
-import com.asianwallets.common.dto.th.ISO8583.ISO8583Util;
 import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
+import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
-import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.th.ThService;
@@ -95,8 +91,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         channelsOrderMapper.insert(channelsOrder);
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
+        //消息类型
+        iso8583DTO.setMessageType("0200");
         //交易处理码
-        iso8583DTO.setProcessingCode_3("000000");
+        iso8583DTO.setProcessingCode_3("700200");
         String tradeAmountStr = String.valueOf(orders.getTradeAmount());
         int tradeAmount = 0;
         if (new BigDecimal(orders.getTradeAmount().intValue()).compareTo(orders.getTradeAmount()) == 0) {
@@ -112,36 +110,27 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         String formatAmount = String.format("%012d", tradeAmount);
         //交易金额
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
-        //iso8583DTO.setAmountOfTips_5(""); TODO
-        //受卡方系统跟踪号 TODO
-        iso8583DTO.setSystemTraceAuditNumber_11("");
-        //受卡方所在地时间HHmmss
-        iso8583DTO.setTimeOfLocalTransaction_12(DateToolUtils.getReqTimeHHmmss());
-        //受卡方所在地日期MMdd
-        iso8583DTO.setDateOfLocalTransaction_13(DateToolUtils.getReqTimeMMdd());
-        //服务点输入方式码 TODO
-        iso8583DTO.setPointOfServiceEntryMode_22("021");
-        //服务点条件码 TODO
+        //当前时间戳
+        String timeStamp = System.currentTimeMillis() + "";
+        //受卡方系统跟踪号
+        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
+        //服务点输入方式码
+        iso8583DTO.setPointOfServiceEntryMode_22("030");
+        //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         //受理方标识码 (机构号)
-        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
-        //iso8583DTO.setRetrievalReferenceNumber_37("");
-        //iso8583DTO.setResponseCode_39("");
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
         //受卡机终端标识码 (设备号)
-        iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
-        //iso8583DTO.setAdditionalData_46("");
-        //iso8583DTO.setAdditionalDataPrivate_47("");
+        iso8583DTO.setAdditionalData_46("5F5206303002" + channel.getPayCode() + "0202");
         //交易货币代码
-        iso8583DTO.setCurrencyCodeOfTransaction_49("156");
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
-        iso8583DTO.setReservedPrivate_60("");
-        //iso8583DTO.setReservedPrivate_63("");
-        //报文鉴别码
-        iso8583DTO.setMessageAuthenticationCode_64("");
+        iso8583DTO.setReservedPrivate_60("01" + timeStamp.substring(6, 12));
         log.info("==================【通华线下CSB】==================【调用Channels服务】【请求参数】 iso8583DTO: {}", JSON.toJSONString(iso8583DTO));
-        BaseResponse channelResponse = channelsFeign.thCSB(iso8583DTO);
+        BaseResponse channelResponse = channelsFeign.thCSB(new ThDTO(iso8583DTO, channel));
         log.info("==================【通华线下CSB】==================【调用Channels服务】【通华-CSB接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             log.info("==================【通华线下CSB】==================【调用Channels服务】【通华-CSB接口】-【请求状态码异常】");
@@ -160,7 +149,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     @Override
     public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
-        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel,orderRefund);
+        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel, orderRefund);
 
         log.info("=================【TH退款】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thRefund(iso8583DTO);
@@ -233,7 +222,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             rabbitMassage = rabbitOrderMsg;
         }
         BaseResponse baseResponse = new BaseResponse();
-        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel,orderRefund);
+        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel, orderRefund);
 
         log.info("=================【TH撤销 cancel】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thQuerry(iso8583DTO);
@@ -280,7 +269,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
-        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel,orderRefund);
+        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel, orderRefund);
 
         log.info("=================【TH撤销 cancelPaying】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thRefund(iso8583DTO);
@@ -316,23 +305,23 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/5/18
      * @Descripate 创建退款DTO
-     * @return
      **/
     private ISO8583DTO creatISO8583DTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("400100");
-        iso8583DTO.setAmountOfTransactions_4(NumberStringUtil.addLeftChar(orderRefund.getTradeAmount().toString().replace(".",""),12,'0'));
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getOrderId().substring(0,6));
+        iso8583DTO.setAmountOfTransactions_4(NumberStringUtil.addLeftChar(orderRefund.getTradeAmount().toString().replace(".", ""), 12, '0'));
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getOrderId().substring(0, 6));
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         //iso8583DTO.setAcquiringInstitutionIdentificationCode_32(); 机构号
         //iso8583DTO.setCardAcceptorTerminalIdentification_41();      //卡机终端标识码
         //iso8583DTO.setCardAcceptorIdentificationCode_42();          //受卡方标识码
-        iso8583DTO.setAdditionalData_46("5F5229"+"303002020202"+orderRefund.getChannelNumber()+"02");
+        iso8583DTO.setAdditionalData_46("5F5229" + "303002020202" + orderRefund.getChannelNumber() + "02");
         //iso8583DTO.setCurrencyCodeOfTransaction_49();       //交易代码
         iso8583DTO.setReservedPrivate_60("01000004000000");
 
