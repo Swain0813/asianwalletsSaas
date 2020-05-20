@@ -22,7 +22,7 @@ public class MerchantReport extends BaseEntity {
     private String merchantName;
 
     @ApiModelProperty(value = "国家代码")
-    @Column(name = "country code")
+    @Column(name = "country_code")
     private String countryCode;
 
     @ApiModelProperty(value = "机构编号")

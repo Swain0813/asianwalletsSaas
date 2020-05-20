@@ -26,11 +26,15 @@
         <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
         <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
         <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
+        <result column="channel_mcc" property="channelMcc" jdbcType="VARCHAR"/>
+        <result column="site_type" property="siteType" jdbcType="VARCHAR"/>
+        <result column="site_url" property="siteUrl" jdbcType="VARCHAR"/>
+        <result column="country_code" property="countryCode" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
         id, merchant_id, channel_code, institution_id, institution_name, merchant_name, channel_name,
     sub_merchant_code, sub_merchant_name,shop_code,shop_name,sub_appid, enabled, create_time, update_time, creator,
-    modifier, remark, extend1, extend2, extend3, extend4, extend5, extend6
+    modifier, remark, extend1, extend2, extend3, extend4, extend5, extend6,channel_mcc,site_type,site_url,country_code
     </sql>
 
     <update id="banReport">
