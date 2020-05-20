@@ -30,7 +30,7 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 
 @Slf4j
@@ -95,14 +95,13 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setMessageType("0200");
         //交易处理码
         iso8583DTO.setProcessingCode_3("700200");
-        String tradeAmountStr = String.valueOf(orders.getTradeAmount());
+        //获取交易金额的小数位数
+        int numOfBits = String.valueOf(orders.getTradeAmount()).length() - String.valueOf(orders.getTradeAmount()).indexOf(".") - 1;
         int tradeAmount = 0;
-        if (new BigDecimal(orders.getTradeAmount().intValue()).compareTo(orders.getTradeAmount()) == 0) {
+        if (numOfBits == 0) {
             //整数
             tradeAmount = orders.getTradeAmount().intValue();
         } else {
-            //小数位数
-            int numOfBits = tradeAmountStr.length() - tradeAmountStr.indexOf(".") - 1;
             //小数,扩大对应小数位数
             tradeAmount = orders.getTradeAmount().movePointRight(numOfBits).intValue();
         }
@@ -136,7 +135,16 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             log.info("==================【通华线下CSB】==================【调用Channels服务】【通华-CSB接口】-【请求状态码异常】");
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
+        ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
+        log.info("==================【通华线下CSB】==================【调用Channels服务】【通华-CSB接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
+        //将46域信息按02分割
+        String[] domain46 = iso8583VO.getAdditionalData_46().split("02");
+        log.info("===============【通华线下CSB】===============【46域信息】 domain46: {}", Arrays.toString(domain46));
+        //索引第5位 : 二维码URL
+        String codeUrl = NumberStringUtil.hexStr2Str(domain46[5]);
+        log.info("===============【通华线下CSB】===============【解析二维码URL】 codeUrl: {}", codeUrl);
         BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setData(codeUrl);
         return baseResponse;
     }
 
