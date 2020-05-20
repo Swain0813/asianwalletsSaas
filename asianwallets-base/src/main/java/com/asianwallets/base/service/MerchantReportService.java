@@ -1,9 +1,8 @@
 package com.asianwallets.base.service;
-
 import com.asianwallets.common.dto.MerchantReportDTO;
+import com.asianwallets.common.entity.MerchantReport;
 import com.asianwallets.common.vo.MerchantReportVO;
 import com.github.pagehelper.PageInfo;
-
 import java.util.List;
 
 /**
@@ -44,10 +43,17 @@ public interface MerchantReportService {
     int banReport(MerchantReportDTO merchantReportDTO);
 
     /**
-     * 导出查询用
+     * 导出商户报备信息查询用
      *
      * @param merchantReportDTO
      * @return
      */
     List<MerchantReportVO> exportReport(MerchantReportDTO merchantReportDTO);
+
+    /**
+     * 导入商户报备信息
+     * @param merchantReportList
+     * @return
+     */
+    int importMerchantReport(List<MerchantReport> merchantReportList);
 }

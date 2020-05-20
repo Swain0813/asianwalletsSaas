@@ -7,6 +7,7 @@ import com.asianwallets.common.dto.BankDTO;
 import com.asianwallets.common.dto.BankIssuerIdDTO;
 import com.asianwallets.common.entity.Bank;
 import com.asianwallets.common.entity.BankIssuerId;
+import com.asianwallets.common.entity.MerchantReport;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.IDS;
@@ -44,6 +45,12 @@ public class ImportServiceImpl implements ImportService {
     @Value("${file.tmpfile}")
     private String tmpFile;
 
+    /**
+     * 去除相同信息的数据
+     * @param keyExtractor
+     * @param <T>
+     * @return
+     */
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Map<Object, Boolean> seen = new ConcurrentHashMap<>();
         return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
@@ -228,4 +235,85 @@ public class ImportServiceImpl implements ImportService {
         }
         return bankIssuerIds;
     }
+
+    /**
+     * 导入商户报备信息
+     * @param username
+     * @param file
+     * @return
+     */
+    @Override
+    public List<MerchantReport> importMerchantReport(String username, MultipartFile file) {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        //指定临时文件路径,这个路径可以随便写
+        factory.setLocation(tmpFile);
+        factory.createMultipartConfig();
+        String fileName = file.getOriginalFilename();
+        if (StringUtils.isEmpty(fileName)) {
+            log.info("==========【导入商户报备信息】==========【文件名为空】");
+            throw new BusinessException(EResultEnum.NAME_ERROR.getCode());
+        }
+        if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
+            log.info("==========【导入商户报备信息】==========【文件名不正确】");
+            throw new BusinessException(EResultEnum.FILE_FORMAT_ERROR.getCode());
+        }
+        ExcelReader reader;
+        try {
+            reader = ExcelUtil.getReader(file.getInputStream());
+        } catch (Exception e) {
+            log.info("==========【导入商户报备信息】==========【Excel读取异常】", e);
+            throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
+        }
+        List<List<Object>> read = reader.read();
+        if (read.size() == 0) {
+            log.info("==========【导入商户报备信息】==========【Excel文件内容为空】");
+            throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
+        }
+        if (read.size() - 1 > AsianWalletConstant.UPLOAD_LIMIT) {
+            log.info("==========【导入商户报备信息】==========【超过最大导入条数300】");
+            throw new BusinessException(EResultEnum.EXCEEDING_UPLOAD_LIMIT.getCode());
+        }
+        //判断传入的excel的格式是否符合约定
+        for (int i = 1; i < read.size(); i++) {
+            if (StringUtils.isEmpty(read.get(i).get(0)) || StringUtils.isEmpty(read.get(i).get(2)) ||
+                    StringUtils.isEmpty(read.get(i).get(4)) ||StringUtils.isEmpty(read.get(i).get(5))
+                    || StringUtils.isEmpty(read.get(i).get(7))
+                    ||StringUtils.isEmpty(read.get(i).get(12))
+                    || StringUtils.isEmpty(read.get(i).get(13))
+                    || read.get(i).size() != 17) {
+                log.info("==========【导入商户报备信息】==========【Excel文件内格式不正确】");
+                throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
+            }
+        }
+        List<MerchantReport> merchantReportList = new ArrayList<>();
+        for (int i = 1; i < read.size(); i++) {
+            try {
+                List<Object> objects = read.get(i);
+                String institutionId = objects.get(0).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                String institutionName = objects.get(1).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                String channelCode = objects.get(2).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+                String issuerId = objects.get(3).toString().replaceAll("/(^\\s*)|(\\s*$)/g", "");
+//                BankIssuerIdDTO bankIssuerIdDTO = new BankIssuerIdDTO(bankName, currency, channelCode, issuerId);
+//                if (bankIssuerIdFeign.getByTerm(bankIssuerIdDTO) != null) {
+//                    continue;
+//                }
+                MerchantReport bankIssuerId = new MerchantReport();
+                bankIssuerId.setId(IDS.uuid2());
+//                bankIssuerId.setBankName(bankName);
+                bankIssuerId.setChannelCode(channelCode);
+//                bankIssuerId.setCurrency(currency);
+//                bankIssuerId.setIssuerId(issuerId);
+                bankIssuerId.setCreator(username);
+                bankIssuerId.setCreateTime(new Date());
+                bankIssuerId.setEnabled(true);
+                merchantReportList.add(bankIssuerId);
+            } catch (Exception e) {
+                log.info("==========【导入银行机构映射信息】==========【解析异常】", e);
+                throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
+            }
+        }
+        return merchantReportList;
+    }
+
+
 }

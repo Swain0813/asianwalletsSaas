@@ -1,5 +1,4 @@
 package com.asianwallets.base.service.impl;
-
 import com.asianwallets.base.dao.ChannelMapper;
 import com.asianwallets.base.dao.InstitutionMapper;
 import com.asianwallets.base.dao.MerchantMapper;
@@ -20,7 +19,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -152,7 +150,7 @@ public class MerchantReportServiceImpl implements MerchantReportService {
     }
 
     /**
-     * 导出查询
+     * 导出商户报备信息查询
      *
      * @param merchantReportDTO
      * @return
@@ -170,4 +168,16 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         }
         return collect;
     }
+
+    /**
+     *导入商户报备信息
+     * @param merchantReportList
+     * @return
+     */
+    @Override
+    public int importMerchantReport(List<MerchantReport> merchantReportList) {
+        return merchantReportMapper.insertList(merchantReportList);
+    }
+
+
 }
