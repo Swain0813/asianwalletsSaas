@@ -1,5 +1,4 @@
 package com.asianwallets.base.job;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.MerchantProductAuditMapper;
 import com.asianwallets.base.dao.MerchantProductHistoryMapper;
@@ -14,7 +13,6 @@ import org.quartz.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Date;
 
 /**
@@ -79,7 +77,6 @@ public class ProductInfoJob implements BaseJob {
         } catch (Exception e) {
             log.error("审核通过后将新增和修改的机构产品信息添加的redis里：" + e.getMessage());
         }
-
-
+        //追加产品是支付宝或者是alipay的商户产品自动去通道商户报备
     }
 }

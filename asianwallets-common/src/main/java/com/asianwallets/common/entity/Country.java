@@ -41,15 +41,15 @@ public class Country extends BaseEntity {
     @Column(name = "extend1")
     private String extend1;
 
-    @ApiModelProperty(value = "二位字母")
+    @ApiModelProperty(value = "二位代码")
     @Column(name = "extend2")
     private String extend2;
 
-    @ApiModelProperty(value = "三位字母")
+    @ApiModelProperty(value = "三位代码")
     @Column(name = "extend3")
     private String extend3;
 
-    @ApiModelProperty(value = "数字")
+    @ApiModelProperty(value = "数字代码")
     @Column(name = "extend4")
     private String extend4;
 

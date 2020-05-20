@@ -21,7 +21,7 @@ public interface MerchantReportMapper extends BaseMapper<MerchantReport> {
     MerchantReport selectByShopCode(@Param("shopCode") String shopCode);
 
     /**
-     * 分页
+     * 分页查询商户报备信息
      *
      * @param merchantReportDTO
      * @return

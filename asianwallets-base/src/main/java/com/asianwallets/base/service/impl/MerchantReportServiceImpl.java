@@ -1,5 +1,4 @@
 package com.asianwallets.base.service.impl;
-
 import com.asianwallets.base.dao.ChannelMapper;
 import com.asianwallets.base.dao.InstitutionMapper;
 import com.asianwallets.base.dao.MerchantMapper;
@@ -20,7 +19,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -95,10 +93,13 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         merchantReport.setShopName(merchantReportDTO.getShopName());
         merchantReport.setShopCode(merchantReportDTO.getShopCode());
         merchantReport.setSubAppid(merchantReportDTO.getSubAppid());
-        merchantReport.setEnabled(true);
         merchantReport.setExtend1(merchantReportDTO.getExtend1());
         merchantReport.setExtend2(merchantReportDTO.getExtend2());
         merchantReport.setId(IDS.uniqueID().toString());
+        merchantReport.setCountryCode(merchantReportDTO.getCountryCode());
+        merchantReport.setChannelMcc(merchantReportDTO.getChannelMcc());
+        merchantReport.setSiteType(merchantReportDTO.getSiteType());
+        merchantReport.setSiteUrl(merchantReportDTO.getSiteUrl());
         merchantReport.setCreateTime(new Date());
         merchantReport.setCreator(merchantReportDTO.getCreator());
         return merchantReportMapper.insert(merchantReport);
@@ -149,7 +150,7 @@ public class MerchantReportServiceImpl implements MerchantReportService {
     }
 
     /**
-     * Export data information
+     * 导出商户报备信息查询
      *
      * @param merchantReportDTO
      * @return
@@ -160,11 +161,23 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         List<MerchantReportVO> collect = merchantReportVOS.parallelStream().sorted(Comparator.comparing(MerchantReportVO::getCreateTime).reversed()).collect(Collectors.toList());
         for (MerchantReportVO merchantReportVO : collect) {
             if (merchantReportVO.getEnabled()) {
-                merchantReportVO.setEnabledStr("启用");
+                merchantReportVO.setEnabledStr("报备成功");
             } else {
-                merchantReportVO.setEnabledStr("禁用");
+                merchantReportVO.setEnabledStr("报备失败");
             }
         }
         return collect;
     }
+
+    /**
+     *导入商户报备信息
+     * @param merchantReportList
+     * @return
+     */
+    @Override
+    public int importMerchantReport(List<MerchantReport> merchantReportList) {
+        return merchantReportMapper.insertList(merchantReportList);
+    }
+
+
 }

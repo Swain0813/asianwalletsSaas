@@ -790,7 +790,7 @@ public class AliPayServiceImpl implements AliPayService {
         stringBuffer.append("</html>");
 
         baseResponse.setData(stringBuffer.toString());
-        log.info("-----------------eNets网银收单接口信息记录-----------------enetsBankRequestDTO:{}", stringBuffer.toString());
+        log.info("-----------------aliPayWebsite收单接口信息记录-----------------enetsBankRequestDTO:{}", stringBuffer.toString());
         return baseResponse;
     }
 

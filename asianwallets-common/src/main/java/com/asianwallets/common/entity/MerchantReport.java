@@ -13,15 +13,19 @@ import javax.persistence.Table;
 @ApiModel(value = "商户报备", description = "商户报备")
 public class MerchantReport extends BaseEntity {
 
-    @ApiModelProperty(value = "商户ID")
+    @ApiModelProperty(value = "商户编号")
     @Column(name = "merchant_id")
     private String merchantId;
 
-    @ApiModelProperty(value = "通道Code")
-    @Column(name = "channel_code")
-    private String channelCode;
+    @ApiModelProperty(value = "商户名")
+    @Column(name = "merchant_name")
+    private String merchantName;
 
-    @ApiModelProperty(value = "机构ID")
+    @ApiModelProperty(value = "国家代码")
+    @Column(name = "country_code")
+    private String countryCode;
+
+    @ApiModelProperty(value = "机构编号")
     @Column(name = "institution_id")
     private String institutionId;
 
@@ -29,13 +33,17 @@ public class MerchantReport extends BaseEntity {
     @Column(name = "institution_name")
     private String institutionName;
 
-    @ApiModelProperty(value = "商户名")
-    @Column(name = "merchant_name")
-    private String merchantName;
+    @ApiModelProperty(value = "通道编号")
+    @Column(name = "channel_code")
+    private String channelCode;
 
     @ApiModelProperty(value = "通道名")
     @Column(name = "channel_name")
     private String channelName;
+
+    @ApiModelProperty(value = "通道MCC编码")
+    @Column(name = "channel_mcc")
+    private String channelMcc;
 
     @ApiModelProperty(value = "通道子商户编号")
     @Column(name = "sub_merchant_code")
@@ -57,7 +65,15 @@ public class MerchantReport extends BaseEntity {
     @Column(name = "sub_appid")
     private String subAppid;
 
-    @ApiModelProperty(value = "启用禁用")
+    @ApiModelProperty(value = "网站类型")
+    @Column(name = "site_type")//APP WEB
+    private String siteType;
+
+    @ApiModelProperty(value = "网站url")
+    @Column(name = "site_url")
+    private String siteUrl;
+
+    @ApiModelProperty(value = "报备状态")
     @Column(name = "enabled")
     private Boolean enabled;
 
