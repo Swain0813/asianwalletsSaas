@@ -284,7 +284,7 @@ public class ImportServiceImpl implements ImportService {
             if (StringUtils.isEmpty(read.get(i).get(0)) || StringUtils.isEmpty(read.get(i).get(1)) ||
                     StringUtils.isEmpty(read.get(i).get(2)) ||StringUtils.isEmpty(read.get(i).get(3))
                     || StringUtils.isEmpty(read.get(i).get(4))
-                    ||StringUtils.isEmpty(read.get(i).get(5)) || read.get(i).size() != 5) {
+                    ||StringUtils.isEmpty(read.get(i).get(5)) || read.get(i).size() != 6) {
                 log.info("==========【导入商户报备信息】==========【Excel文件内格式不正确】");
                 throw new BusinessException(EResultEnum.EXCEL_FORMAT_INCORRECT.getCode());
             }
