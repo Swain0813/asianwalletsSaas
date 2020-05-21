@@ -9,6 +9,7 @@ import com.asianwallets.common.dto.megapay.MegaPayQueryDTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
+import com.asianwallets.common.dto.th.ISO8583.TlvUtil;
 import com.asianwallets.common.dto.wechat.WechaRefundDTO;
 import com.asianwallets.common.dto.wechat.WechatQueryDTO;
 import com.asianwallets.common.entity.Channel;
@@ -202,9 +203,10 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         0x31:支付宝
         0x32:银联云闪付
          */
-        String payCode = "31";
+        String payCode = "30";
         //附加信息-主扫
-        iso8583DTO.setAdditionalData_46("5F5206303002" + payCode + "0202");
+        String domain46 = "303002" + payCode + "0202";
+        iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52(domain46));
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
@@ -247,8 +249,9 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
          */
         String payCode = "31";
         String scanCode = "286020382107217225";
+        String domain46 = "303002" + payCode + "02"+ NumberStringUtil.str2HexStr(scanCode) + "0202";
         //附加信息-被扫
-        iso8583DTO.setAdditionalData_46("5F5219303002" + payCode + "02" + NumberStringUtil.str2HexStr(scanCode) + "0202");
+        iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52(domain46));
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
@@ -286,7 +289,8 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
         //附加信息
         String merchantOrderId = "3230323030353230303030303031313036313030313738343635";
-        iso8583DTO.setAdditionalData_46("5F52213030020202" + merchantOrderId + "0202");
+        String domain46 = "3030020202" + merchantOrderId + "0202";
+        iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52(domain46));
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
