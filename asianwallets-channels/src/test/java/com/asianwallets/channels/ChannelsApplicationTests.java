@@ -274,14 +274,14 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         String timeStamp = System.currentTimeMillis() + "";
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
-        //被扫
+        //查询
         iso8583DTO.setProcessingCode_3("700206");
         //交易金额
         iso8583DTO.setAmountOfTransactions_4("000000000100");
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
         //服务点输入方式码
-        iso8583DTO.setPointOfServiceEntryMode_22("030");
+        iso8583DTO.setPointOfServiceEntryMode_22("000");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         //受理方标识码 (机构号)

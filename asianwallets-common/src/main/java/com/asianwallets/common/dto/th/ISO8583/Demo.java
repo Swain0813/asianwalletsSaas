@@ -18,7 +18,7 @@ public class Demo {
     private static String institutionId = "000000008600005";
     private static String merchantId = "852999958120501";
     private static String terminalId = "00018644";
-    private static String key = "1310DAC4FA530D4E";
+    private static String key = "861B7FBD78A6E196";
     private static String checkValue = "58B815045DC19B19";
 
     public static void main(String[] args) throws Exception {

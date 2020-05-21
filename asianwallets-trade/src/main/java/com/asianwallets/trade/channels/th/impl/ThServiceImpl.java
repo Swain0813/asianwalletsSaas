@@ -21,6 +21,7 @@ import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.ReconciliationMapper;
+import com.asianwallets.trade.dto.ThCheckOrderQueueDTO;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
@@ -154,6 +155,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         String codeUrl = NumberStringUtil.hexStr2Str(domain46[5]);
         log.info("===============【通华线下CSB】===============【解析二维码URL】 codeUrl: {}", codeUrl);
         BaseResponse baseResponse = new BaseResponse();
+        log.info("===============【通华线下CSB】===============【上报通华查询队列】 【E_MQ_TH_CHECK_ORDER】");
+        ThCheckOrderQueueDTO thCheckOrderQueueDTO = new ThCheckOrderQueueDTO(orders, channel, iso8583DTO);
+        RabbitMassage rabbitMassage = new RabbitMassage(120, JSON.toJSONString(thCheckOrderQueueDTO));
+        rabbitMQSender.send(AD3MQConstant.E_MQ_TH_CHECK_ORDER, JSON.toJSONString(rabbitMassage));
         baseResponse.setData(codeUrl);
         return baseResponse;
     }
@@ -350,18 +355,19 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         String s46 = "303002020202" + orderRefund.getChannelNumber() + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
         //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
-        berTlvBuilder.addHex(new BerTag(0x5F52),s46);
+        berTlvBuilder.addHex(new BerTag(0x5F52), s46);
         byte[] bytes = berTlvBuilder.buildArray();
         ////转成Hex码来传输
         String hexString = HexUtil.toHexString(bytes);
         iso8583DTO.setAdditionalData_46("5F" + hexString);
 
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-        iso8583DTO.setReservedPrivate_60("55"+"");//批次号
+        iso8583DTO.setReservedPrivate_60("55" + "");//批次号
 
 
         return iso8583DTO;
     }
+
     /**
      * @return
      * @Author YangXu
@@ -391,7 +397,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         String s46 = "303002020202" + orderRefund.getChannelNumber() + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
         //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
-        berTlvBuilder.addHex(new BerTag(0x5F52),s46);
+        berTlvBuilder.addHex(new BerTag(0x5F52), s46);
         byte[] bytes = berTlvBuilder.buildArray();
         ////转成Hex码来传输
         String hexString = HexUtil.toHexString(bytes);
