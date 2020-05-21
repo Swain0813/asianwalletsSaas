@@ -326,7 +326,7 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
             }
             //更新订单信息
             if (ordersMapper.updateByPrimaryKeySelective(orders) == 1) {
-                log.info("=================【线下BSC动态扫码】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
+                log.info("=======——————==========【线下BSC动态扫码】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
                 //计算支付成功时的通道网关手续费
                 commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
                 //TODO 添加日交易限额与日交易笔数
@@ -336,7 +336,7 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
                 try {
                     //账户信息不存在的场合创建对应的账户信息
                     if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
-                        log.info("=================【线下BSC动态扫码】=================【上报清结算前线下下单创建账户信息】");
+                        log.info("======——————===========【线下BSC动态扫码】=================【上报清结算前线下下单创建账户信息】");
                         commonBusinessService.createAccount(orders);
                     }
                     //分润
