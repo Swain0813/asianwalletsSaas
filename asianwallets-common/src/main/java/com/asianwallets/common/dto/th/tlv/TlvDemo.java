@@ -33,10 +33,10 @@ public class TlvDemo {
         System.out.println("----------------------------- 组码 ------------------------------------------------");
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
         //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
-        //berTlvBuilder.addText(new BerTag(0x5F52), "00\u0002\u0002\u000220190613000001105200052801\u0002\u0002");
-        //berTlvBuilder.addText(new BerTag(0x5F52), "303002020232303139303631333030303030313130353230303035323830310202");
-        berTlvBuilder.addBytes(new BerTag(0x5F52),"303002020232303139303631333030303030313130353230303035323830310202".getBytes());
-        //berTlvBuilder.addText(new BerTag(0x2), "3213");
+        berTlvBuilder.addHex(new BerTag(0x5F52),"303002020232303139303631333030303030313130353230303035323830310202");
+        //5F5109BDBBD2D7B3C9B9A6025F55143030303030320231393831303002303531330202
+        //berTlvBuilder.addHex(new BerTag(0x51),"BDBBD2D7B3C9B9A602");
+        //berTlvBuilder.addHex(new BerTag(0x55),"3030303030320231393831303002303531330202");
         ////add value的时候可以选择是text格式或者是data byte[]等等其他都可以
         //berTlvBuilder.addDate(new BerTag(0x3), new Date());
         ////默认是不支持汉字的，所以我们要把他转成字节
@@ -50,7 +50,7 @@ public class TlvDemo {
 
         System.out.println("----------------------------- 解码 ------------------------------------------------");
         //将hex码转成byte字节
-        byte[] bytes2 = HexUtil.parseHex("5F5221303002020232303139303631333030303030313130353230303035323830310202");
+        byte[] bytes2 = HexUtil.parseHex("5F5109BDBBD2D7B3C9B9A6025F55143030303030320231393831303002303531330202");
         BerTlvParser parser = new BerTlvParser();
         BerTlvs tlvs = parser.parse(bytes2, 0, bytes2.length);
 
