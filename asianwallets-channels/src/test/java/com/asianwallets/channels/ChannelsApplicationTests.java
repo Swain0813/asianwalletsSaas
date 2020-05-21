@@ -158,6 +158,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
      **/
     @Test
     public void thTest() {
+        ThDTO thDTO = new ThDTO();
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         /************************************************ 退款 ***************************************************/
         iso8583DTO.setMessageType("0200");
@@ -172,8 +173,8 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setAdditionalData_46("5F5221303002020232303230303531393030303030313130363230303137383430330202");
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         iso8583DTO.setReservedPrivate_60("55000031");
-
-        thService.thRefund(iso8583DTO);
+        thDTO.setIso8583DTO(iso8583DTO);
+        thService.thRefund(thDTO);
 
     }
 
@@ -268,6 +269,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
 
     @Test
     public void thQuery() {
+        ThDTO thDTO = new ThDTO();
         String timeStamp = System.currentTimeMillis() + "";
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
@@ -302,11 +304,14 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
 //        channel.setChannelMerchantId("852999958120501");
 //        thDTO.setChannel(channel);
 //        thDTO.setIso8583DTO(iso8583DTO);
-        thService.thQuery(iso8583DTO);
+
+        thDTO.setIso8583DTO(iso8583DTO);
+        thService.thQuery(thDTO);
     }
 
     @Test
     public void thSignIn() {
+        ThDTO thDTO = new ThDTO();
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0800");
         iso8583DTO.setSystemTraceAuditNumber_11("198124");
@@ -315,7 +320,8 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
         iso8583DTO.setReservedPrivate_60("50000001003");
         iso8583DTO.setReservedPrivate_63("001");
-        thService.thRefund(iso8583DTO);
+        thDTO.setIso8583DTO(iso8583DTO);
+        thService.thRefund(thDTO);
     }
 }
 

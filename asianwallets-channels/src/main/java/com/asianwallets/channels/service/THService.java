@@ -13,7 +13,7 @@ public interface THService {
      * @Date 2020/5/7
      * @Descripate 通华退款
      **/
-    BaseResponse thRefund(ISO8583DTO thRefundDTO);
+    BaseResponse thRefund(ThDTO thDTO);
 
     /**
      * @return
@@ -21,14 +21,14 @@ public interface THService {
      * @Date 2020/5/7
      * @Descripate 通华查询
      **/
-    BaseResponse thQuery(ISO8583DTO thRefundDTO);
+    BaseResponse thQuery(ThDTO thDTO);
 
     /**
      * 通华签到
      *
      * @return
      */
-    BaseResponse thSignIn(ISO8583DTO iso8583DTO);
+    BaseResponse thSignIn(ThDTO thDTO);
 
     /**
      * 通华CSB
