@@ -21,7 +21,7 @@ public interface THService {
      * @Date 2020/5/7
      * @Descripate 通华查询
      **/
-    BaseResponse thQuerry(ISO8583DTO thRefundDTO);
+    BaseResponse thQuery(ISO8583DTO thRefundDTO);
 
     /**
      * 通华签到

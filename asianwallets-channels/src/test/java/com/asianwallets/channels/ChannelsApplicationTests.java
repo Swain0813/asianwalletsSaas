@@ -264,6 +264,44 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
     }
 
     @Test
+    public void thQuery() {
+        String timeStamp = System.currentTimeMillis() + "";
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        //被扫
+        iso8583DTO.setProcessingCode_3("700206");
+        //交易金额
+        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        //受卡方系统跟踪号
+        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
+        //服务点输入方式码
+        iso8583DTO.setPointOfServiceEntryMode_22("030");
+        //服务点条件码
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
+        //受理方标识码 (机构号)
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
+        //附加信息
+        String merchantOrderId = "3230323030353230303030303031313036313030313738343635";
+        iso8583DTO.setAdditionalData_46("5F52213030020202" + merchantOrderId + "0202");
+        //交易货币代码
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        //自定义域
+        iso8583DTO.setReservedPrivate_60("01" + timeStamp.substring(6, 12));
+//        ThDTO thDTO = new ThDTO();
+//        Channel channel = new Channel();
+//        channel.setExtend1("00018644");
+//        channel.setExtend2("08600005");
+//        channel.setChannelMerchantId("852999958120501");
+//        thDTO.setChannel(channel);
+//        thDTO.setIso8583DTO(iso8583DTO);
+        thService.thQuery(iso8583DTO);
+    }
+
+    @Test
     public void thSignIn() {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0800");

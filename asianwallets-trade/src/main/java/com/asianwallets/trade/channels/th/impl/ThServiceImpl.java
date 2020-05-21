@@ -111,8 +111,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         //当前时间戳
         String timeStamp = System.currentTimeMillis() + "";
+        String domain11 = timeStamp.substring(0, 6);
+        String domain60_2 = timeStamp.substring(6, 12);
         //受卡方系统跟踪号
-        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
+        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         //服务点输入方式码
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         //服务点条件码
@@ -127,7 +129,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
-        iso8583DTO.setReservedPrivate_60("01" + timeStamp.substring(6, 12));
+        iso8583DTO.setReservedPrivate_60("01" + domain60_2);
         log.info("==================【通华线下CSB】==================【调用Channels服务】【请求参数】 iso8583DTO: {}", JSON.toJSONString(iso8583DTO));
         BaseResponse channelResponse = channelsFeign.thCSB(new ThDTO(iso8583DTO, channel));
         log.info("==================【通华线下CSB】==================【调用Channels服务】【通华-CSB接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -140,6 +142,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //将46域信息按02分割
         String[] domain46 = iso8583VO.getAdditionalData_46().split("02");
         log.info("===============【通华线下CSB】===============【46域信息】 domain46: {}", Arrays.toString(domain46));
+        //索引第4位 : 通华返回的商户订单号
+        orders.setChannelNumber(domain46[4]);
+        orders.setReportNumber(domain11 + domain60_2);
+        ordersMapper.updateByPrimaryKeySelective(orders);
         //索引第5位 : 二维码URL
         String codeUrl = NumberStringUtil.hexStr2Str(domain46[5]);
         log.info("===============【通华线下CSB】===============【解析二维码URL】 codeUrl: {}", codeUrl);
@@ -233,7 +239,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel, orderRefund);
 
         log.info("=================【TH撤销 cancel】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
-        BaseResponse response = channelsFeign.thQuerry(iso8583DTO);
+        BaseResponse response = channelsFeign.thQuery(iso8583DTO);
         log.info("=================【TH撤销 cancel】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             //请求成功

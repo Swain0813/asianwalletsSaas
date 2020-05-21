@@ -273,9 +273,9 @@ public class THServiceImpl implements THService {
      * @Descripate 通华查询接口
      **/
     @Override
-    public BaseResponse thQuerry(ISO8583DTO iso8583DTO) {
+    public BaseResponse thQuery(ISO8583DTO iso8583DTO) {
         BaseResponse response = new BaseResponse();
-        log.info("===============【通华退款接口】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(iso8583DTO));
+        log.info("===============【通华查询接口】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(iso8583DTO));
         String tdpu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
         //商户号

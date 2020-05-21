@@ -232,7 +232,7 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
-    public BaseResponse thQuerry(ISO8583DTO iso8583DTO) {
+    public BaseResponse thQuery(ISO8583DTO iso8583DTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 

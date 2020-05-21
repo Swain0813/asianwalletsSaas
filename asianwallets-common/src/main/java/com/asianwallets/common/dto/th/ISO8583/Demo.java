@@ -3,6 +3,7 @@ package com.asianwallets.common.dto.th.ISO8583;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.utils.IDS;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -38,13 +39,9 @@ public class Demo {
 //        iso8583DTO.setProcessingCode_3("700200");//主扫
 //        iso8583DTO.setProcessingCode_3("400101");//被扫
         //交易金额
-        iso8583DTO.setAmountOfTransactions_4("000000000011");
+        iso8583DTO.setAmountOfTransactions_4("000000000100");
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
-        //受卡方所在地时间HHmmss
-//        iso8583DTO.setTimeOfLocalTransaction_12(DateToolUtils.getReqTimeHHmmss());
-//        //受卡方所在地日期MMdd
-//        iso8583DTO.setDateOfLocalTransaction_13(DateToolUtils.getReqTimeMMdd());
         //服务点输入方式码
         iso8583DTO.setPointOfServiceEntryMode_22("000");
         //服务点条件码
@@ -93,6 +90,7 @@ public class Demo {
         //解包
         ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
         System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
-
+        String[] split = iso8583DTO1281.getAdditionalData_46().split("02");
+        System.out.println(Arrays.toString(split));
     }
 }

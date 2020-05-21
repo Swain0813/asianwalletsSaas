@@ -198,6 +198,6 @@ public interface ChannelsFeign {
     BaseResponse thRefund(ISO8583DTO iso8583DTO);
 
     @ApiOperation(value = "通华查询接口")
-    @PostMapping("/th/thQuerry")
-    BaseResponse thQuerry(ISO8583DTO iso8583DTO);
+    @PostMapping("/th/thQuery")
+    BaseResponse thQuery(ISO8583DTO iso8583DTO);
 }
