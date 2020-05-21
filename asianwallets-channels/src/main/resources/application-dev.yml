@@ -95,6 +95,7 @@ custom:
     offlineBSC: https://intlmapi.alipay.com/gateway.do?
     CSB: https://intlmapi.alipay.com/gateway.do?
     refundUrl: https://intlmapi.alipay.com/gateway.do?
+    onlineUrl: https://intlmapi.alipay.com/gateway.do?
   NganLuong:
     #    payUrl: https://sandbox.nganluong.vn:8088/nl35/checkout.api.nganluong.post.php
     payUrl: https://www.nganluong.vn/checkout.api.nganluong.post.php

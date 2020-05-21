@@ -1,7 +1,5 @@
 package com.asianwallets.trade.channels.alipay.impl;
-
 import com.alibaba.fastjson.JSON;
-import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
@@ -20,6 +18,8 @@ import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.ReconciliationMapper;
+import com.asianwallets.trade.dto.AplipayBrowserCallbackDTO;
+import com.asianwallets.trade.dto.AplipayServerCallbackDTO;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
@@ -35,10 +35,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,105 +86,12 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
 
     @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
+        AliPayWebDTO aliPayWebDTO = new AliPayWebDTO(orders, channel,ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/alipayBrowserCallback"), ad3ParamsConfig.getChannelCallbackUrl().concat("/onlinecallback/alipayServerCallback"));
+        log.info("-----------------aliPayWebsite 支付宝线上下单 onlinePay-----------------请求实体 aliPayCSBDTO:{}", JSON.toJSONString(aliPayWebDTO));
+        BaseResponse channelResponse = channelsFeign.aliPayWebsite(aliPayWebDTO);
+        log.info("------------------aliPayWebsite 支付宝线上下单 onlinePay-----------------返回的参数 channelResponse:{}", JSON.toJSONString(channelResponse));
         BaseResponse baseResponse = new BaseResponse();
-        AliPayWebDTO aliPayWebDTO = new AliPayWebDTO(orders, channel);
-        log.info("-----------------aliPayWebsite aliPayw网站支付实体-----------------请求实体 aliPayCSBDTO:{}", JSON.toJSONString(aliPayWebDTO));
-        int num = channelsOrderMapper.selectCountById(aliPayWebDTO.getOut_trade_no());
-        ChannelsOrder co;
-        if (num > 0) {
-            co = channelsOrderMapper.selectByPrimaryKey(aliPayWebDTO.getOut_trade_no());
-        } else {
-            co = new ChannelsOrder();
-        }
-        co.setMerchantOrderId(aliPayWebDTO.getInstitution_order_id());
-        co.setTradeCurrency(aliPayWebDTO.getTrans_currency());
-        co.setTradeAmount(new BigDecimal(aliPayWebDTO.getAmt()));
-        co.setReqIp(aliPayWebDTO.getReqIp());
-        //co.setDraweeName(eghlRequestDTO.getCustName());
-        //co.setDraweeEmail(eghlRequestDTO.getCustEmail());
-        co.setBrowserUrl(null);
-        co.setServerUrl(aliPayWebDTO.getNotify_url());
-        //co.setDraweePhone(eghlRequestDTO.getCustPhone());
-        co.setTradeStatus(TradeConstant.TRADE_WAIT);
-        //co.setIssuerId(enetsBankRequestDTO.getTxnReq().getMsg().getIssuingBank());
-        co.setMd5KeyStr(aliPayWebDTO.getMd5KeyStr());
-        co.setId(aliPayWebDTO.getOut_trade_no());
-        co.setOrderType(AD3Constant.TRADE_ORDER);
-        if (num > 0) {
-            co.setUpdateTime(new Date());
-            channelsOrderMapper.updateByPrimaryKeySelective(co);
-        } else {
-            co.setCreateTime(new Date());
-            channelsOrderMapper.insert(co);
-        }
-
-        String total_fee = null;
-        String rmb_fee = null;
-        if (aliPayWebDTO.getCurrency().equals("CNY")) {
-            total_fee = "";
-            rmb_fee = aliPayWebDTO.getAmt();
-        } else {
-            rmb_fee = "";
-            total_fee = aliPayWebDTO.getAmt();
-        }
-
-        Map<String, String> sParaTemp = new HashMap<String, String>();
-        sParaTemp.put("service", aliPayWebDTO.getService());//网站支付接口
-        sParaTemp.put("partner", aliPayWebDTO.getPartner());//境外商户在支付宝的用户ID. 2088开头的16位数字
-        sParaTemp.put("_input_charset", aliPayWebDTO.get_input_charset());//请求数据的编码集
-        sParaTemp.put("notify_url", aliPayWebDTO.getNotify_url());//通知接收URL
-        sParaTemp.put("return_url", aliPayWebDTO.getReturn_url());//交易付款成功之后，返回到商家网站的URL
-        sParaTemp.put("out_trade_no", aliPayWebDTO.getOut_trade_no()); //境外商户交易号（确保在境外商户系统中唯一）
-        sParaTemp.put("subject", aliPayWebDTO.getSubject());//商品标题
-        if (aliPayWebDTO.getCurrency().equals("CNY")) {
-            sParaTemp.put("rmb_fee", aliPayWebDTO.getAmt());
-            sParaTemp.put("total_fee", "");
-        } else {
-            sParaTemp.put("rmb_fee", "");
-            sParaTemp.put("total_fee", aliPayWebDTO.getAmt());
-        }
-        sParaTemp.put("body", aliPayWebDTO.getBody());//商品描述
-        sParaTemp.put("currency", aliPayWebDTO.getCurrency()); //结算币种
-        sParaTemp.put("timeout_rule", aliPayWebDTO.getTimeout_rule()); //有效时间
-        //sParaTemp.put("product_code", product_code); //使用新接口需要加这个支付宝产品code
-        sParaTemp.put("secondary_merchant_id", aliPayWebDTO.getSecondary_merchant_id()); //
-        sParaTemp.put("secondary_merchant_name", aliPayWebDTO.getSecondary_merchant_name()); //
-        sParaTemp.put("secondary_merchant_industry", aliPayWebDTO.getSecondary_merchant_industry()); //有效时间
-        //sParaTemp.put("refer_url", refer_url); //二级商户网址
-        log.info("-----------------aliPayWebsite 调用alipay的参数-----------------" + sParaTemp);
-        Map<String, String> sPara = AlipayCore.buildRequestPara(sParaTemp, aliPayWebDTO.getMd5KeyStr());
-
-
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("<!DOCTYPE html>\n");
-        stringBuffer.append("<html>\n");
-        stringBuffer.append("<head>\n");
-        stringBuffer.append("<title>ASIAN WALLET</title>\n");
-        stringBuffer.append("</head>\n");
-        stringBuffer.append("<body>\n");
-        //stringBuffer.append("<form method=\"post\" name=\"SendForm\" action=\"" + channel.getPayUrl() + "\">\n");
-        stringBuffer.append("<input type='hidden' name='service' value='" + aliPayWebDTO.getService() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='partner' value='" + aliPayWebDTO.getPartner() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='_input_charset' value='" + aliPayWebDTO.get_input_charset() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='notify_url' value='" + aliPayWebDTO.getNotify_url() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='return_url' value='" + aliPayWebDTO.getReturn_url() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='out_trade_no' value='" + aliPayWebDTO.getOut_trade_no() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='subject' value='" + aliPayWebDTO.getSubject() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='total_fee' value='" + total_fee + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='rmb_fee' value='" + rmb_fee + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='body' value='" + aliPayWebDTO.getBody() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='currency' value='" + aliPayWebDTO.getCurrency() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='timeout_rule' value='" + aliPayWebDTO.getTimeout_rule() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='secondary_merchant_id' value='" + aliPayWebDTO.getSecondary_merchant_id() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='secondary_merchant_name' value='" + aliPayWebDTO.getSecondary_merchant_name() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='secondary_merchant_industry' value='" + aliPayWebDTO.getSecondary_merchant_industry() + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='sign' value='" + sPara.get("sign") + "'/>\n");
-        stringBuffer.append("<input type='hidden' name='sign_type' value='" + sPara.get("sign_type") + "'/>\n");
-        stringBuffer.append("</form>\n");
-        stringBuffer.append("</body>\n");
-        stringBuffer.append("</html>");
-        baseResponse.setData(stringBuffer.toString());
-        log.info("-----------------eNets网银收单接口信息记录-----------------enetsBankRequestDTO:{}", stringBuffer.toString());
+        baseResponse.setData(channelResponse.getData());
         return baseResponse;
     }
 
@@ -625,5 +530,217 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
         log.info("=================【aliPay支付CSB扫码回调】=================【签名前的明文】 clearText: {}", clearText);
         String mySign = DigestUtils.md5Hex(clearText.getBytes(StandardCharsets.UTF_8));
         return mySign.equals(sign);
+    }
+
+    /**
+     * apipay线上服务器回调
+     * @param aplipayServerCallbackDTO
+     * @param map
+     */
+    @Override
+    public void aplipayServerCallback(AplipayServerCallbackDTO aplipayServerCallbackDTO,Map<String, String> map) {
+        //校验参数
+        if (StringUtils.isEmpty(aplipayServerCallbackDTO.getSign())) {
+            log.info("==============【apipay线上服务器回调】==============【签名方式为空】");
+            return;
+        }
+        if (StringUtils.isEmpty(aplipayServerCallbackDTO.getSign_type())) {
+            log.info("==============【apipay线上服务器回调】==============【签名为空】");
+            return;
+        }
+        if (StringUtils.isEmpty(aplipayServerCallbackDTO.getOut_trade_no())) {
+            log.info("==============【apipay线上服务器回调】==============【商户订单号为空】");
+            return;
+        }
+        if (StringUtils.isEmpty(aplipayServerCallbackDTO.getTrade_no())) {
+            log.info("==============【apipay线上服务器回调】==============【支付宝交易号为空】");
+            return;
+        }
+        if (StringUtils.isEmpty(aplipayServerCallbackDTO.getTrade_status())) {
+            log.info("==============【apipay线上服务器回调】==============【交易状态为空】");
+            return;
+        }
+        //校验原订单
+        Orders orders = ordersMapper.selectByPrimaryKey(aplipayServerCallbackDTO.getOut_trade_no());
+        if (orders == null) {
+            log.info("==============【apipay线上服务器回调】==============【原订单不存在】");
+            return;
+        }
+        //查询通道信息
+        Channel channel = commonRedisDataService.getChannelByChannelCode(orders.getChannelCode());
+        if(!verify(map,channel.getMd5KeyStr())){
+            log.info("==============【apipay线上服务器回调】==============【签名不匹配】");
+            return;
+        }
+        //通道回调时间
+        orders.setChannelCallbackTime(new Date());
+        //通道流水号
+        orders.setChannelNumber(aplipayServerCallbackDTO.getTrade_no());
+        //修改时间
+        orders.setUpdateTime(new Date());
+        Example example = new Example(Orders.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("tradeStatus", "2");
+        criteria.andEqualTo("id", orders.getId());
+        //状态为交易完成
+        if(aplipayServerCallbackDTO.getTrade_status().equals("TRADE_FINISHED")||aplipayServerCallbackDTO.getTrade_status().equals("TRADE_SUCCESS")){
+            log.info("=================【apipay线上服务器回调】=================【订单已支付成功】 orderId:{}", orders.getId());
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_SUCCESS);
+            //未发货
+            orders.setDeliveryStatus(TradeConstant.UNSHIPPED);
+            //未签收
+            orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
+            orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
+            //更改channelsOrders状态
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), aplipayServerCallbackDTO.getTrade_no(), TradeConstant.TRADE_SUCCESS);
+            } catch (Exception e) {
+                log.error("=================【apipay线上服务器回调】=================【更新通道订单异常】", e);
+            }
+
+            //修改订单状态
+            int i = ordersMapper.updateByExampleSelective(orders, example);
+            if (i > 0) {
+                log.info("=================【apipay线上服务器回调】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
+                //计算支付成功时的通道网关手续费
+                commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
+                //TODO 添加日交易限额与日交易笔数
+                //commonBusinessService.quota(orders.getMerchantId(), orders.getProductCode(), orders.getTradeAmount());
+                //支付成功后向用户发送邮件
+                commonBusinessService.sendEmail(orders);
+                try {
+                    //账户信息不存在的场合创建对应的账户信息
+                    if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
+                        log.info("=================【apipay线上服务器回调】=================【上报清结算前线下下单创建账户信息】");
+                        commonBusinessService.createAccount(orders);
+                    }
+                    //分润
+                    if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
+                        rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
+                    }
+                    //更新成功,上报清结算
+                    //上报清结算资金变动接口
+                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
+                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
+                    //请求成功
+                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
+                        //业务处理失败
+                        log.info("=================【apipay线上服务器回调】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                    } else {
+                        log.info("=================【apipay线上服务器回调】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                    }
+                } catch (Exception e) {
+                    log.error("=================【apipay线上服务器回调】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                    rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                }
+            } else {
+                log.info("=================【apipay线上服务器回调】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        }else {
+            log.info("=================【apipay线上服务器回调】=================【订单已支付失败】 orderId:{}", orders.getId());
+            //支付失败
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+            //上游返回的错误code
+            orders.setRemark5("fail");
+            //更改channelsOrders状态
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), aplipayServerCallbackDTO.getTrade_no(), TradeConstant.TRADE_FALID);
+            } catch (Exception e) {
+                log.info("=================【apipay线上服务器回调】=================【更新通道订单异常】", e);
+            }
+            //计算支付失败时通道网关手续费
+            commonBusinessService.calcCallBackGatewayFeeFailed(orders);
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                log.info("=================【apipay线上服务器回调】=================【订单支付失败后更新数据库成功】 orderId: {}", orders.getId());
+            } else {
+                log.info("=================【apipay线上服务器回调】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        }
+
+        //商户服务器回调地址不为空,回调商户服务器
+        try {
+            if (!StringUtils.isEmpty(orders.getServerUrl())) {
+                commonBusinessService.replyReturnUrl(orders);
+            }
+        } catch (Exception e) {
+            log.error("=================【apipay线上服务器回调】=================【回调商户服务器异常】", e);
+        }
+    }
+
+    /**
+     * 验证消息是否是支付宝发出的合法消息
+     * @param params 通知返回来的参数数组
+     * @return 验证结果
+     */
+    public static boolean verify(Map<String, String> params,String md5KeyStr) {
+        //判断responsetTxt是否为true，isSign是否为true
+        String responseTxt = "true";
+        String sign = "";
+        if(params.get("sign") != null) {sign = params.get("sign");}
+        boolean isSign = getSignVeryfy(params, sign, md5KeyStr);
+        if (isSign && responseTxt.equals("true")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 根据反馈回来的信息，生成签名结果
+     * @param Params 通知返回来的参数数组
+     * @param sign 比对的签名结果
+     * @return 生成的签名结果
+     */
+    private static boolean getSignVeryfy(Map<String, String> Params, String sign, String md5KeyStr) {
+        //过滤空值、sign与sign_type参数
+        Map<String, String> sParaNew = AlipayCore.paraFilter(Params);
+        //获取待签名字符串
+        String preSignStr = AlipayCore.createLinkString(sParaNew);
+        //获得签名验证结果
+        boolean isSign = false;
+        isSign = verifyCheck(preSignStr, sign, md5KeyStr, "utf-8");
+        return isSign;
+    }
+
+    /**
+     * 签名字符串
+     * @param text 需要签名的字符串
+     * @param sign 签名结果
+     * @param key 密钥
+     * @param input_charset 编码格式
+     * @return 签名结果
+     */
+    private static boolean verifyCheck(String text, String sign, String key, String input_charset) {
+        text = text + key;
+        String mysign = DigestUtils.md5Hex(getContentBytes(text, input_charset));
+        if(mysign.equals(sign)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    private static byte[] getContentBytes(String content, String charset) {
+        if (charset == null || "".equals(charset)) {
+            return content.getBytes();
+        }
+        try {
+            return content.getBytes(charset);
+        } catch (Exception e) {
+            throw new RuntimeException("支付宝线上下单---MD5签名过程中出现错误,指定的编码集不对,您目前指定的编码集是:" + charset);
+        }
+    }
+
+
+
+    @Override
+    public void aplipayBrowserCallback(AplipayBrowserCallbackDTO aplipayBrowserCallbackDTO, HttpServletResponse response) {
+
     }
 }

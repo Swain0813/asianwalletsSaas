@@ -192,7 +192,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         //主扫
         iso8583DTO.setProcessingCode_3("700200");
         //交易金额
-        iso8583DTO.setAmountOfTransactions_4("000000001000");
+        iso8583DTO.setAmountOfTransactions_4("000000000009");
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
         //服务点输入方式码
@@ -283,7 +283,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         //查询
         iso8583DTO.setProcessingCode_3("700206");
         //交易金额
-        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        iso8583DTO.setAmountOfTransactions_4("000000000009");
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
         //服务点输入方式码
@@ -297,7 +297,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
         //附加信息
-        String merchantOrderId = "3230323030353139303030303031313036323030313738343033";
+        String merchantOrderId = "3230323030353231303030303031313036313030313738353136";
         String domain46 = "3030020202" + merchantOrderId + "0202";
         iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52(domain46));
         //交易货币代码
