@@ -166,10 +166,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     @Override
     public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
+        ThDTO thDTO = new ThDTO();
         ISO8583DTO iso8583DTO = this.creatRefundISO8583DTO(channel, orderRefund);
-
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
         log.info("=================【TH退款】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
-        BaseResponse response = channelsFeign.thRefund(iso8583DTO);
+        BaseResponse response = channelsFeign.thRefund(thDTO);
         log.info("=================【TH退款】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
 
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
@@ -180,7 +182,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 log.info("=================【TH退款】=================【退款成功】 response: {} ", JSON.toJSONString(response));
                 //退款成功
-                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, thResDTO.getRetrievalReferenceNumber_37(), null);
+                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, thResDTO.getRetrievalReferenceNumber_37(), thResDTO.getResponseCode_39());
                 //改原订单状态
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
                 //退还分润
@@ -200,7 +202,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                     //调账成功
                     log.info("=================【TH退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
+                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, thResDTO.getResponseCode_39());
                     reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
                     //改原订单状态
                     commonBusinessService.updateOrderRefundFail(orderRefund);
@@ -239,10 +241,13 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             rabbitMassage = rabbitOrderMsg;
         }
         BaseResponse baseResponse = new BaseResponse();
+        ThDTO thDTO = new ThDTO();
         ISO8583DTO iso8583DTO = this.creatQuerryISO8583DTO(channel, orderRefund);
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
 
         log.info("=================【TH撤销 cancel】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
-        BaseResponse response = channelsFeign.thQuery(iso8583DTO);
+        BaseResponse response = channelsFeign.thQuery(thDTO);
         log.info("=================【TH撤销 cancel】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             //请求成功
@@ -286,10 +291,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
+        ThDTO thDTO = new ThDTO();
         ISO8583DTO iso8583DTO = this.creatRefundISO8583DTO(channel, orderRefund);
-
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
         log.info("=================【TH撤销 cancelPaying】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
-        BaseResponse response = channelsFeign.thRefund(iso8583DTO);
+        BaseResponse response = channelsFeign.thRefund(thDTO);
         log.info("=================【TH撤销 cancelPaying】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
 
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {

@@ -37,8 +37,8 @@ public class THServiceImpl implements THService {
      * @return
      */
     @Override
-    public BaseResponse thSignIn(ISO8583DTO iso8583DTO) {
-        log.info("===============【通华签到】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(iso8583DTO));
+    public BaseResponse thSignIn(ThDTO thDTO) {
+        log.info("===============【通华签到】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(thDTO.getIso8583DTO()));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
         //商户号
@@ -54,7 +54,7 @@ public class THServiceImpl implements THService {
         BaseResponse baseResponse = new BaseResponse();
         try {
             String sendMsg = tpdu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
-                    + ISO8583Util.packISO8583DTO(iso8583DTO, key);
+                    + ISO8583Util.packISO8583DTO(thDTO.getIso8583DTO(), key);
             //计算报文长度
             String strHex2 = String.format("%04x", sendMsg.length() / 2);
             sendMsg = strHex2 + sendMsg;
@@ -197,7 +197,7 @@ public class THServiceImpl implements THService {
      * @Descripate 通华退款
      **/
     @Override
-    public BaseResponse thRefund(ISO8583DTO iso8583DTO) {
+    public BaseResponse thRefund(ThDTO thDTO) {
 
 
         //ChannelsOrder co = new ChannelsOrder();
@@ -220,7 +220,7 @@ public class THServiceImpl implements THService {
 
 
         BaseResponse response = new BaseResponse();
-        log.info("===============【通华退款接口】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(iso8583DTO));
+        log.info("===============【通华退款接口】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(thDTO.getIso8583DTO()));
         String tdpu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
         //商户号
@@ -235,7 +235,7 @@ public class THServiceImpl implements THService {
         String key = "1310DAC4FA530D4E";
         try {
             String sendMsg = tdpu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
-                    + ISO8583Util.packISO8583DTO(iso8583DTO, key);
+                    + ISO8583Util.packISO8583DTO(thDTO.getIso8583DTO(), key);
             //计算报文长度
             String strHex2 = String.format("%04x", sendMsg.length() / 2);
             sendMsg = strHex2 + sendMsg;
@@ -273,9 +273,9 @@ public class THServiceImpl implements THService {
      * @Descripate 通华查询接口
      **/
     @Override
-    public BaseResponse thQuery(ISO8583DTO iso8583DTO) {
+    public BaseResponse thQuery(ThDTO thDTO) {
         BaseResponse response = new BaseResponse();
-        log.info("===============【通华查询接口】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(iso8583DTO));
+        log.info("===============【通华查询接口】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(thDTO.getIso8583DTO()));
         String tdpu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
         //商户号
@@ -290,7 +290,7 @@ public class THServiceImpl implements THService {
         String key = "1310DAC4FA530D4E";
         try {
             String sendMsg = tdpu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
-                    + ISO8583Util.packISO8583DTO(iso8583DTO, key);
+                    + ISO8583Util.packISO8583DTO(thDTO.getIso8583DTO(), key);
             //计算报文长度
             String strHex2 = String.format("%04x", sendMsg.length() / 2);
             sendMsg = strHex2 + sendMsg;
