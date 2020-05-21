@@ -174,6 +174,12 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         iso8583DTO.setReservedPrivate_60("55000031");
         thDTO.setIso8583DTO(iso8583DTO);
+        Channel channel = new Channel();
+        channel.setExtend1("00018644");
+        channel.setExtend2("08600005");
+        channel.setChannelMerchantId("852999958120501");
+        channel.setMd5KeyStr("861B7FBD78A6E196");
+        thDTO.setChannel(channel);
         thService.thRefund(thDTO);
 
     }
