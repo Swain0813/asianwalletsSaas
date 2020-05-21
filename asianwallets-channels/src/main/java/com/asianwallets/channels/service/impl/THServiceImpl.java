@@ -285,9 +285,9 @@ public class THServiceImpl implements THService {
         //机构号
         String institutionNum = "000000008600005";
         //业务类型
-        String businessTypes = "00000000";
+        String businessTypes = "00000001";
         //加密key
-        String key = "38D57B7C1979CF7910677DE5BB6A56DF";
+        String key = "1310DAC4FA530D4E";
         try {
             String sendMsg = tdpu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
                     + ISO8583Util.packISO8583DTO(iso8583DTO, key);
