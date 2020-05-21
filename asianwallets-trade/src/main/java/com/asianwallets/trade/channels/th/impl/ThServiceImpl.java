@@ -25,6 +25,9 @@ import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.utils.HandlerType;
+import com.payneteasy.tlv.BerTag;
+import com.payneteasy.tlv.BerTlvBuilder;
+import com.payneteasy.tlv.HexUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,7 +166,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     @Override
     public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
-        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel, orderRefund);
+        ISO8583DTO iso8583DTO = this.creatRefundISO8583DTO(channel, orderRefund);
 
         log.info("=================【TH退款】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thRefund(iso8583DTO);
@@ -236,7 +239,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             rabbitMassage = rabbitOrderMsg;
         }
         BaseResponse baseResponse = new BaseResponse();
-        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel, orderRefund);
+        ISO8583DTO iso8583DTO = this.creatQuerryISO8583DTO(channel, orderRefund);
 
         log.info("=================【TH撤销 cancel】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thQuery(iso8583DTO);
@@ -283,7 +286,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
-        ISO8583DTO iso8583DTO = this.creatISO8583DTO(channel, orderRefund);
+        ISO8583DTO iso8583DTO = this.creatRefundISO8583DTO(channel, orderRefund);
 
         log.info("=================【TH撤销 cancelPaying】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thRefund(iso8583DTO);
@@ -324,7 +327,40 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      * @Date 2020/5/18
      * @Descripate 创建退款DTO
      **/
-    private ISO8583DTO creatISO8583DTO(Channel channel, OrderRefund orderRefund) {
+    private ISO8583DTO creatRefundISO8583DTO(Channel channel, OrderRefund orderRefund) {
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        iso8583DTO.setProcessingCode_3("400100");
+        iso8583DTO.setAmountOfTransactions_4(NumberStringUtil.addLeftChar(orderRefund.getTradeAmount().toString().replace(".", ""), 12, '0'));
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getOrderId().substring(0, 6));
+        iso8583DTO.setPointOfServiceEntryMode_22("030");
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
+        //iso8583DTO.setAcquiringInstitutionIdentificationCode_32(); 机构号
+        //iso8583DTO.setCardAcceptorTerminalIdentification_41();      //卡机终端标识码
+        //iso8583DTO.setCardAcceptorIdentificationCode_42();          //受卡方标识码
+
+        String s46 = "303002020202" + orderRefund.getChannelNumber() + "0202";
+        BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
+        //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
+        berTlvBuilder.addHex(new BerTag(0x5F52),s46);
+        byte[] bytes = berTlvBuilder.buildArray();
+        ////转成Hex码来传输
+        String hexString = HexUtil.toHexString(bytes);
+        iso8583DTO.setAdditionalData_46("5F" + hexString);
+
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        iso8583DTO.setReservedPrivate_60("55"+"");//批次号
+
+
+        return iso8583DTO;
+    }
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2020/5/18
+     * @Descripate 创建查询DTO
+     **/
+    private ISO8583DTO creatQuerryISO8583DTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("400100");
