@@ -56,7 +56,7 @@ public class ThCheckOrderMQRecive {
     @Autowired
     private CommonRedisDataService commonRedisDataService;
 
-    @RabbitListener(queues = "MQ_TH_CSB_CHECK_ORDER")
+    @RabbitListener(queues = "MQ_TH_CHECK_ORDER")
     public void thCheckOrderMQ(String value) {
         RabbitMassage message = JSON.parseObject(value, RabbitMassage.class);
         if (message.getCount() > 0) {
