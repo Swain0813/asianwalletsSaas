@@ -116,21 +116,24 @@ public class AliPayWebDTO {
     public AliPayWebDTO() {
     }
 
-    public AliPayWebDTO(Orders orders, Channel channel) {
+    public AliPayWebDTO(Orders orders, Channel channel,String returnUrl,String notifyUrl) {
         this.service = "create_forex_trade";
         this.partner = channel.getChannelMerchantId();
         this._input_charset = "UTF-8";
         this.subject = orders.getProductName();
         this.md5KeyStr = channel.getMd5KeyStr();
-        //this.notify_url = notifyUrl;//后台回调地址
-        //this.return_url = returnUrl;//浏览器回调地址
+        this.notify_url = notifyUrl;//后台回调地址
+        this.return_url = returnUrl;//浏览器回调地址
         this.out_trade_no = orders.getId();
         this.currency = orders.getTradeCurrency();
-        this.body = null;
+        this.body = orders.getProductDescription();
         this.timeout_rule = "12h";
-        this.secondary_merchant_industry = "5812";
-        this.secondary_merchant_id = "20170828500054";
-        this.secondary_merchant_name = "zhtest";
+//        this.secondary_merchant_industry = "5812";
+//        this.secondary_merchant_id = "20170828500054";
+//        this.secondary_merchant_name = "zhtest";
+        this.secondary_merchant_industry = orders.getMerchantIndustry();
+        this.secondary_merchant_id = orders.getMerchantId();
+        this.secondary_merchant_name = orders.getMerchantName();
         DecimalFormat decimalFormat = new DecimalFormat("###0.00");//格式化设置
         this.amt = decimalFormat.format(orders.getChannelAmount());
         this.channel = channel;

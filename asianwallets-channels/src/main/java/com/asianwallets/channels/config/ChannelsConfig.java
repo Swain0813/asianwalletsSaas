@@ -76,6 +76,10 @@ public class ChannelsConfig {
     @Value("${custom.aliPay.refundUrl}")
     private String aliPayRefundUrl;
 
+    @ApiModelProperty("aliPay系统的线上地址")
+    @Value("${custom.aliPay.onlineUrl}")
+    private String aliPayOnlineUrl;
+
     @ApiModelProperty("NganLuong系统的pay地址")
     @Value("${custom.NganLuong.payUrl}")
     private String nganLuongPayUrl;
