@@ -396,7 +396,7 @@ public class RabbitMQConfig {
     @Bean
     public Queue configThCheckOrderMQ() {
         Map<String, Object> args = new HashMap<>();
-        args.put("x-message-ttl", 1000);
+        args.put("x-message-ttl", 1000 * 3);
         args.put("x-dead-letter-exchange", MQ_TH_CHECK_ORDER_EXCHANGE);
         args.put("x-dead-letter-routing-key", MQ_TH_CHECK_ORDER_KEY);
         return new Queue(E_MQ_TH_CHECK_ORDER, true, false, false, args);
