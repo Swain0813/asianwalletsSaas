@@ -27,6 +27,7 @@ public class RabbitMQConfig {
     public Queue SAAS_FR_DL() {
         return new Queue(RabbitMQConfig.SAAS_FR_DL);
     }
+
     /********************************************************  退款接口相关队列 **********************************************************************/
     //RF or RV请求失败
     public final static String RV_RF_FAIL_DL = AD3MQConstant.RV_RF_FAIL_DL;
@@ -176,6 +177,7 @@ public class RabbitMQConfig {
         args.put("x-dead-letter-routing-key", MQ_NGANLUONG_CHECK_ORDER_DL_KEY);
         return new Queue(E_MQ_NGANLUONG_CHECK_ORDER_DL, true, false, false, args);
     }
+
     /* ===========================================      NganLuong查询队列2      =============================================== */
     public static final String MQ_NGANLUONG_CHECK_ORDER_DL2 = AD3MQConstant.MQ_NGANLUONG_CHECK_ORDER_DL2;//NganLuong查询订单状态队列2
     public static final String E_MQ_NGANLUONG_CHECK_ORDER_DL2 = AD3MQConstant.E_MQ_NGANLUONG_CHECK_ORDER_DL2;//NganLuong查询订单死信队列
@@ -242,6 +244,7 @@ public class RabbitMQConfig {
         args.put("x-dead-letter-routing-key", MQ_MEGAPAY_THB_CHECK_ORDER_KEY);
         return new Queue(E_MQ_MEGAPAY_THB_CHECK_ORDER, true, false, false, args);
     }
+
     /* ===========================================      MegaPay-THB查询队列2      =============================================== */
     public static final String MQ_MEGAPAY_THB_CHECK_ORDER2 = AD3MQConstant.MQ_MEGAPAY_THB_CHECK_ORDER2;//MegaPay-THB查询队列2
     public static final String E_MQ_MEGAPAY_THB_CHECK_ORDER2 = AD3MQConstant.E_MQ_MEGAPAY_THB_CHECK_ORDER2;//MegaPay-THB查询死信队列2
@@ -307,6 +310,7 @@ public class RabbitMQConfig {
         args.put("x-dead-letter-routing-key", MQ_QFPAY_REFUND_SEARCH_KEY);
         return new Queue(E_MQ_QFPAY_REFUND_SEARCH, true, false, false, args);
     }
+
     /* ===========================================     Qfpay Canneling 查询队列      =============================================== */
     public static final String MQ_QFPAY_CANNEL_SEARCH = AD3MQConstant.MQ_QFPAY_CANNEL_SEARCH;//MegaPay-THB查询队列2
     public static final String E_MQ_QFPAY_CANNEL_SEARCH = AD3MQConstant.E_MQ_QFPAY_CANNEL_SEARCH;//MegaPay-THB查询死信队列2
@@ -336,8 +340,6 @@ public class RabbitMQConfig {
         args.put("x-dead-letter-routing-key", MQ_QFPAY_CANNEL_SEARCH_KEY);
         return new Queue(E_MQ_QFPAY_CANNEL_SEARCH, true, false, false, args);
     }
-
-
 
 
     /* ===========================================     QfPay-CSB查询队列      =============================================== */
@@ -370,4 +372,33 @@ public class RabbitMQConfig {
         return new Queue(E_MQ_QFPAY_CSB_CHECK_ORDER, true, false, false, args);
     }
 
+    /* ===========================================     通华查询队列      =============================================== */
+    public static final String MQ_TH_CHECK_ORDER = AD3MQConstant.MQ_TH_CHECK_ORDER;//TH查询队列
+    public static final String E_MQ_TH_CHECK_ORDER = AD3MQConstant.E_MQ_TH_CHECK_ORDER;//TH查询死信队列
+    public static final String MQ_TH_CHECK_ORDER_KEY = AD3MQConstant.MQ_TH_CHECK_ORDER_KEY;//TH查询死信队列路由
+    public static final String MQ_TH_CHECK_ORDER_EXCHANGE = AD3MQConstant.MQ_TH_CHECK_ORDER_EXCHANGE;//TH查询死信队列交换机
+
+    @Bean
+    public Queue thCheckOrderMQ() {
+        return new Queue(RabbitMQConfig.MQ_TH_CHECK_ORDER, true, false, false);
+    }
+
+    @Bean
+    public DirectExchange thCheckOrderMQExchange() {
+        return new DirectExchange(MQ_TH_CHECK_ORDER_EXCHANGE);
+    }
+
+    @Bean
+    public Binding bindThCheckOrderMQToExchange() {
+        return BindingBuilder.bind(thCheckOrderMQ()).to(thCheckOrderMQExchange()).with(MQ_TH_CHECK_ORDER_KEY);
+    }
+
+    @Bean
+    public Queue configThCheckOrderMQ() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-message-ttl", 1000);
+        args.put("x-dead-letter-exchange", MQ_TH_CHECK_ORDER_EXCHANGE);
+        args.put("x-dead-letter-routing-key", MQ_TH_CHECK_ORDER_KEY);
+        return new Queue(E_MQ_TH_CHECK_ORDER, true, false, false, args);
+    }
 }

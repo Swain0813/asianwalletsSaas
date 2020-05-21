@@ -9,6 +9,7 @@ import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
+import com.asianwallets.common.dto.th.ISO8583.TlvUtil;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -20,6 +21,7 @@ import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dao.ReconciliationMapper;
+import com.asianwallets.trade.dto.ThCheckOrderQueueDTO;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
@@ -128,7 +130,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
-        iso8583DTO.setAdditionalData_46("5F5206303002" + channel.getPayCode() + "0202");
+        iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52("303002" + channel.getPayCode() + "0202"));
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
@@ -153,6 +155,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         String codeUrl = NumberStringUtil.hexStr2Str(domain46[5]);
         log.info("===============【通华线下CSB】===============【解析二维码URL】 codeUrl: {}", codeUrl);
         BaseResponse baseResponse = new BaseResponse();
+        log.info("===============【通华线下CSB】===============【上报通华查询队列】 【E_MQ_TH_CHECK_ORDER】");
+        ThCheckOrderQueueDTO thCheckOrderQueueDTO = new ThCheckOrderQueueDTO(orders, channel, iso8583DTO);
+        RabbitMassage rabbitMassage = new RabbitMassage(120, JSON.toJSONString(thCheckOrderQueueDTO));
+        rabbitMQSender.send(AD3MQConstant.E_MQ_TH_CHECK_ORDER, JSON.toJSONString(rabbitMassage));
         baseResponse.setData(codeUrl);
         return baseResponse;
     }
@@ -166,10 +172,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     @Override
     public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
+        ThDTO thDTO = new ThDTO();
         ISO8583DTO iso8583DTO = this.creatRefundISO8583DTO(channel, orderRefund);
-
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
         log.info("=================【TH退款】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
-        BaseResponse response = channelsFeign.thRefund(iso8583DTO);
+        BaseResponse response = channelsFeign.thRefund(thDTO);
         log.info("=================【TH退款】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
 
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
@@ -180,7 +188,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 log.info("=================【TH退款】=================【退款成功】 response: {} ", JSON.toJSONString(response));
                 //退款成功
-                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, thResDTO.getRetrievalReferenceNumber_37(), null);
+                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, thResDTO.getRetrievalReferenceNumber_37(), thResDTO.getResponseCode_39());
                 //改原订单状态
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
                 //退还分润
@@ -200,7 +208,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                     //调账成功
                     log.info("=================【TH退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
+                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, thResDTO.getResponseCode_39());
                     reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
                     //改原订单状态
                     commonBusinessService.updateOrderRefundFail(orderRefund);
@@ -239,10 +247,13 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             rabbitMassage = rabbitOrderMsg;
         }
         BaseResponse baseResponse = new BaseResponse();
+        ThDTO thDTO = new ThDTO();
         ISO8583DTO iso8583DTO = this.creatQuerryISO8583DTO(channel, orderRefund);
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
 
         log.info("=================【TH撤销 cancel】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
-        BaseResponse response = channelsFeign.thQuery(iso8583DTO);
+        BaseResponse response = channelsFeign.thQuery(thDTO);
         log.info("=================【TH撤销 cancel】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             //请求成功
@@ -286,10 +297,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
+        ThDTO thDTO = new ThDTO();
         ISO8583DTO iso8583DTO = this.creatRefundISO8583DTO(channel, orderRefund);
-
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
         log.info("=================【TH撤销 cancelPaying】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
-        BaseResponse response = channelsFeign.thRefund(iso8583DTO);
+        BaseResponse response = channelsFeign.thRefund(thDTO);
         log.info("=================【TH撤销 cancelPaying】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
 
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
@@ -342,18 +355,19 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         String s46 = "303002020202" + orderRefund.getChannelNumber() + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
         //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
-        berTlvBuilder.addHex(new BerTag(0x5F52),s46);
+        berTlvBuilder.addHex(new BerTag(0x5F52), s46);
         byte[] bytes = berTlvBuilder.buildArray();
         ////转成Hex码来传输
         String hexString = HexUtil.toHexString(bytes);
         iso8583DTO.setAdditionalData_46("5F" + hexString);
 
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-        iso8583DTO.setReservedPrivate_60("55"+"");//批次号
+        iso8583DTO.setReservedPrivate_60("55" + "");//批次号
 
 
         return iso8583DTO;
     }
+
     /**
      * @return
      * @Author YangXu
@@ -362,18 +376,37 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      **/
     private ISO8583DTO creatQuerryISO8583DTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
+        String timeStamp = System.currentTimeMillis() + "";
         iso8583DTO.setMessageType("0200");
-        iso8583DTO.setProcessingCode_3("400100");
+        iso8583DTO.setProcessingCode_3("700206");
         iso8583DTO.setAmountOfTransactions_4(NumberStringUtil.addLeftChar(orderRefund.getTradeAmount().toString().replace(".", ""), 12, '0'));
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getOrderId().substring(0, 6));
+        //受卡方系统跟踪号
+        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
+        //服务点输入方式码
         iso8583DTO.setPointOfServiceEntryMode_22("030");
+        //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        //iso8583DTO.setAcquiringInstitutionIdentificationCode_32(); 机构号
-        //iso8583DTO.setCardAcceptorTerminalIdentification_41();      //卡机终端标识码
-        //iso8583DTO.setCardAcceptorIdentificationCode_42();          //受卡方标识码
-        iso8583DTO.setAdditionalData_46("5F5229" + "303002020202" + orderRefund.getChannelNumber() + "02");
-        //iso8583DTO.setCurrencyCodeOfTransaction_49();       //交易代码
-        iso8583DTO.setReservedPrivate_60("01000004000000");
+        //受理方标识码 (机构号)
+        //iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
+        ////受卡机终端标识码 (设备号)
+        //iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        ////受卡方标识码 (商户号)
+        //iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
+
+        //附加信息
+        String s46 = "303002020202" + orderRefund.getChannelNumber() + "0202";
+        BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
+        //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
+        berTlvBuilder.addHex(new BerTag(0x5F52), s46);
+        byte[] bytes = berTlvBuilder.buildArray();
+        ////转成Hex码来传输
+        String hexString = HexUtil.toHexString(bytes);
+        iso8583DTO.setAdditionalData_46("5F" + hexString);
+
+        //交易货币代码
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        //自定义域
+        iso8583DTO.setReservedPrivate_60("01" + timeStamp.substring(6, 12));
 
 
         return iso8583DTO;

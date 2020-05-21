@@ -266,5 +266,6 @@ public class NumberStringUtil {
         String[] split = s.split("02");
         System.out.println(Arrays.toString(split));
         System.out.println(NumberStringUtil.hexStr2Str("68747470733A2F2F71722E616C697061792E636F6D2F6261783031373539626E6565653863626D70636A30306635"));
+        System.out.println(NumberStringUtil.hexStr2Str("33"));
     }
 }

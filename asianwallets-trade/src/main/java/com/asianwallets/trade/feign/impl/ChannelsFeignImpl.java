@@ -241,12 +241,12 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
-    public BaseResponse thQuery(ISO8583DTO iso8583DTO) {
+    public BaseResponse thQuery(ThDTO thDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse thRefund(ISO8583DTO iso8583DTO) {
+    public BaseResponse thRefund(ThDTO thDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }
