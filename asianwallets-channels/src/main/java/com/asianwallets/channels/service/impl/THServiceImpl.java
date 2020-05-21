@@ -225,15 +225,16 @@ public class THServiceImpl implements THService {
         String tdpu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
         //商户号
-        String merchNum = "852999958120501";
+        String merchNum = thDTO.getChannel().getChannelMerchantId();
         //终端号
-        String terminalNum = "00018644";
+        String terminalNum = thDTO.getChannel().getExtend1();
         //机构号
-        String institutionNum = "000000008600005";
+        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        //加密key
+        String key = thDTO.getChannel().getMd5KeyStr();
         //业务类型
         String businessTypes = "00000000";
         //加密key
-        String key = "1310DAC4FA530D4E";
         try {
             String sendMsg = tdpu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
                     + ISO8583Util.packISO8583DTO(thDTO.getIso8583DTO(), key);
