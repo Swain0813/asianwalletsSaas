@@ -37,6 +37,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
@@ -737,10 +738,50 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
         }
     }
 
-
-
+    /**
+     * 支付宝线上下单浏览器回调
+     * @param aplipayBrowserCallbackDTO
+     * @param response
+     */
     @Override
     public void aplipayBrowserCallback(AplipayBrowserCallbackDTO aplipayBrowserCallbackDTO, HttpServletResponse response) {
-
+        //校验参数
+        if (StringUtils.isEmpty(aplipayBrowserCallbackDTO.getOut_trade_no())) {
+            log.info("==============【支付宝线上下单浏览器回调接口】==============【订单流水号为空】");
+            return;
+        }
+        //查询原订单信息
+        Orders orders = ordersMapper.selectByPrimaryKey(aplipayBrowserCallbackDTO.getOut_trade_no());
+        if (orders == null) {
+            log.info("==============【支付宝线上下单浏览器回调接口】==============【回调订单信息不存在】");
+            return;
+        }
+        if (orders.getTradeStatus().equals(TradeConstant.ORDER_PAY_SUCCESS)) {
+            //支付成功
+            if (!StringUtils.isEmpty(orders.getBrowserUrl())) {
+                log.info("==============【支付宝线上下单浏览器回调接口】==============【开始回调商户】");
+                commonBusinessService.replyJumpUrl(orders, response);
+            } else {
+                try {
+                    //返回支付成功页面
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_SUCCESS);
+                } catch (IOException e) {
+                    log.error("==============【支付宝线上下单浏览器回调接口】==============【调用AW支付成功页面失败】", e);
+                }
+            }
+        } else {
+            //其他情况
+            if (!StringUtils.isEmpty(orders.getBrowserUrl())) {
+                log.info("==============【支付宝线上下单浏览器回调接口】==============【开始回调商户】");
+                commonBusinessService.replyJumpUrl(orders, response);
+            } else {
+                try {
+                    //返回支付中页面
+                    response.sendRedirect(ad3ParamsConfig.getPaySuccessUrl() + "?page=" + TradeConstant.PAGE_PROCESSING);
+                } catch (IOException e) {
+                    log.error("==============【支付宝线上下单浏览器回调接口】==============【调用AW支付中页面失败】", e);
+                }
+            }
+        }
     }
 }
