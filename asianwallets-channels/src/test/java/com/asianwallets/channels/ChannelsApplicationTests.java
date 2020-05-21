@@ -9,6 +9,7 @@ import com.asianwallets.common.dto.megapay.MegaPayQueryDTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
+import com.asianwallets.common.dto.th.ISO8583.TlvUtil;
 import com.asianwallets.common.dto.wechat.WechaRefundDTO;
 import com.asianwallets.common.dto.wechat.WechatQueryDTO;
 import com.asianwallets.common.entity.Channel;
@@ -203,9 +204,10 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         0x31:支付宝
         0x32:银联云闪付
          */
-        String payCode = "31";
+        String payCode = "30";
         //附加信息-主扫
-        iso8583DTO.setAdditionalData_46("5F5206303002" + payCode + "0202");
+        String domain46 = "303002" + payCode + "0202";
+        iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52(domain46));
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
@@ -215,6 +217,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend1("00018644");
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
+        channel.setMd5KeyStr("861B7FBD78A6E196");
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         thService.thCSB(thDTO);
@@ -248,8 +251,9 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
          */
         String payCode = "31";
         String scanCode = "286020382107217225";
+        String domain46 = "303002" + payCode + "02" + NumberStringUtil.str2HexStr(scanCode) + "0202";
         //附加信息-被扫
-        iso8583DTO.setAdditionalData_46("5F5219303002" + payCode + "02" + NumberStringUtil.str2HexStr(scanCode) + "0202");
+        iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52(domain46));
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
@@ -259,6 +263,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend1("00018644");
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
+        channel.setMd5KeyStr("861B7FBD78A6E196");
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         thService.thBSC(thDTO);
@@ -266,7 +271,6 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
 
     @Test
     public void thQuery() {
-        ThDTO thDTO = new ThDTO();
         String timeStamp = System.currentTimeMillis() + "";
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
@@ -288,36 +292,35 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
         //附加信息
         String merchantOrderId = "3230323030353230303030303031313036313030313738343635";
-        iso8583DTO.setAdditionalData_46("5F52213030020202" + merchantOrderId + "0202");
+        String domain46 = "3030020202" + merchantOrderId + "0202";
+        iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52(domain46));
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
         iso8583DTO.setReservedPrivate_60("01" + timeStamp.substring(6, 12));
-//        ThDTO thDTO = new ThDTO();
-//        Channel channel = new Channel();
-//        channel.setExtend1("00018644");
-//        channel.setExtend2("08600005");
-//        channel.setChannelMerchantId("852999958120501");
-//        thDTO.setChannel(channel);
-//        thDTO.setIso8583DTO(iso8583DTO);
-
+        ThDTO thDTO = new ThDTO();
+        Channel channel = new Channel();
+        channel.setExtend1("00018644");
+        channel.setExtend2("08600005");
+        channel.setChannelMerchantId("852999958120501");
+        channel.setMd5KeyStr("861B7FBD78A6E196");
+        thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         thService.thQuery(thDTO);
     }
 
     @Test
     public void thSignIn() {
-        ThDTO thDTO = new ThDTO();
+        String timeStamp = System.currentTimeMillis() + "";
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0800");
-        iso8583DTO.setSystemTraceAuditNumber_11("198124");
+        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
         iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
-        iso8583DTO.setReservedPrivate_60("50000001003");
+        iso8583DTO.setReservedPrivate_60("50" + timeStamp.substring(6, 12) + "003");
         iso8583DTO.setReservedPrivate_63("001");
-        thDTO.setIso8583DTO(iso8583DTO);
-        thService.thRefund(thDTO);
+        thService.thSignIn(iso8583DTO);
     }
 }
 

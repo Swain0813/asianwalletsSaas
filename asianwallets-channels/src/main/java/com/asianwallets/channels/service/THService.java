@@ -28,7 +28,7 @@ public interface THService {
      *
      * @return
      */
-    BaseResponse thSignIn(ThDTO thDTO);
+    BaseResponse thSignIn(ISO8583DTO iso8583DTO);
 
     /**
      * 通华CSB
