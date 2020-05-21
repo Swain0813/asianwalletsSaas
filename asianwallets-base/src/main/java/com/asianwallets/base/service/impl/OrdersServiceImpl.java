@@ -77,6 +77,7 @@ public class OrdersServiceImpl implements OrdersService {
         List<OrdersDetailRefundVO> ordersDetailRefundVOS = ordersDetailVO.getOrdersDetailRefundVOS();
         List<OrdersDetailRefundVO> collect = ordersDetailRefundVOS.stream().sorted(Comparator.comparing(OrdersDetailRefundVO::getOrderRefundCreateTime).reversed()).collect(Collectors.toList());
         ordersDetailVO.setOrdersDetailRefundVOS(collect);
+        ordersDetailVO.setChannelNumber(NumberStringUtil.hexStr2Str(ordersDetailVO.getChannelNumber()));
         return ordersDetailVO;
     }
 
