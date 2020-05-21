@@ -362,18 +362,37 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      **/
     private ISO8583DTO creatQuerryISO8583DTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
+        String timeStamp = System.currentTimeMillis() + "";
         iso8583DTO.setMessageType("0200");
-        iso8583DTO.setProcessingCode_3("400100");
+        iso8583DTO.setProcessingCode_3("700206");
         iso8583DTO.setAmountOfTransactions_4(NumberStringUtil.addLeftChar(orderRefund.getTradeAmount().toString().replace(".", ""), 12, '0'));
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getOrderId().substring(0, 6));
+        //受卡方系统跟踪号
+        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
+        //服务点输入方式码
         iso8583DTO.setPointOfServiceEntryMode_22("030");
+        //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        //iso8583DTO.setAcquiringInstitutionIdentificationCode_32(); 机构号
-        //iso8583DTO.setCardAcceptorTerminalIdentification_41();      //卡机终端标识码
-        //iso8583DTO.setCardAcceptorIdentificationCode_42();          //受卡方标识码
-        iso8583DTO.setAdditionalData_46("5F5229" + "303002020202" + orderRefund.getChannelNumber() + "02");
-        //iso8583DTO.setCurrencyCodeOfTransaction_49();       //交易代码
-        iso8583DTO.setReservedPrivate_60("01000004000000");
+        //受理方标识码 (机构号)
+        //iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
+        ////受卡机终端标识码 (设备号)
+        //iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        ////受卡方标识码 (商户号)
+        //iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
+
+        //附加信息
+        String s46 = "303002020202" + orderRefund.getChannelNumber() + "0202";
+        BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
+        //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
+        berTlvBuilder.addHex(new BerTag(0x5F52),s46);
+        byte[] bytes = berTlvBuilder.buildArray();
+        ////转成Hex码来传输
+        String hexString = HexUtil.toHexString(bytes);
+        iso8583DTO.setAdditionalData_46("5F" + hexString);
+
+        //交易货币代码
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        //自定义域
+        iso8583DTO.setReservedPrivate_60("01" + timeStamp.substring(6, 12));
 
 
         return iso8583DTO;
