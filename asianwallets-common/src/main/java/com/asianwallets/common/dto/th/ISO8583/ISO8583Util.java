@@ -68,7 +68,7 @@ public class ISO8583Util {
         // 拼接BITMAP + 报文信息
         Object[] o = getBitMapAndMsg(iso8583DTO128, 64, key);
         sendMsg.append(o[0]);
-        System.out.println("mac block:" + sendMsg.toString());
+        log.info("==========【ISO8583Util】========== Mac Block :{}", sendMsg.toString());
         //计算MAC值
         if (!StringUtils.isEmpty(key)) {
             sendMsg.append(MACUtil.getCupEcbMac(key, sendMsg.toString()));
@@ -78,7 +78,7 @@ public class ISO8583Util {
         String sendMsgLenStr = Integer.toString(sendMsgLen);
         sendMsgLenStr = NumberStringUtil.addLeftChar(sendMsgLenStr, 8, '0');
         sendMsgLenStr = NumberStringUtil.str2HexStr(sendMsgLenStr);
-        System.out.println("报文长度 = " + sendMsgLenStr);
+        log.info("==========【ISO8583Util】========== 报文长度 :{}", sendMsgLenStr);
         // 将4位报文长度插到最前边
         sendMsg.insert(0, sendMsgLenStr);
 
@@ -405,12 +405,12 @@ public class ISO8583Util {
         try {
             socket.setTcpNoDelay(true);
             socket.setReuseAddress(true);
-            socket.setSoTimeout(300000);
+            socket.setSoTimeout(30000);
             socket.setSoLinger(true, 5);
             socket.setSendBufferSize(1024);
             socket.setReceiveBufferSize(1024);
             socket.setKeepAlive(true);
-            socket.connect(new InetSocketAddress(ip, Integer.parseInt(port)), 300000);
+            socket.connect(new InetSocketAddress(ip, Integer.parseInt(port)), 30000);
             localPort = String.valueOf(socket.getLocalPort());
             /**
              * 发送TCP请求

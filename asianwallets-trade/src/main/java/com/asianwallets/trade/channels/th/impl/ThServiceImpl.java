@@ -9,6 +9,7 @@ import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
+import com.asianwallets.common.dto.th.ISO8583.TlvUtil;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -128,7 +129,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
-        iso8583DTO.setAdditionalData_46("5F5206303002" + channel.getPayCode() + "0202");
+        iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52("303002" + channel.getPayCode() + "0202"));
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
