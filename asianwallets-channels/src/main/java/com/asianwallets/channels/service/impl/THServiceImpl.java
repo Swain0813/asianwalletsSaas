@@ -304,9 +304,11 @@ public class THServiceImpl implements THService {
             log.info("===============【通华查询接口】===============【返回参数】 iso8583VO: {}", JSON.toJSONString(iso8583VO));
             if ("00".equals(iso8583VO.getResponseCode_39())) {
                 //查询成功
+                String[] domain46Query = iso8583VO.getAdditionalData_46().split("02");
+                iso8583VO.setAdditionalData_46(domain46Query[4].replace("3",""));
+                response.setData(iso8583VO);
                 response.setCode(TradeConstant.HTTP_SUCCESS);
                 response.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
-                response.setData(iso8583VO);
             } else {
                 //查询失败
                 response.setCode("300");
