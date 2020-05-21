@@ -168,9 +168,9 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
         iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
-        iso8583DTO.setAdditionalData_46("5F526130300202343230303030303532353230323030353139313137303539373939390232303230303531393030303030313130363230303137383430330202");
+        iso8583DTO.setAdditionalData_46("5F5221303002020232303230303531393030303030313130363230303137383430330202");
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-        iso8583DTO.setReservedPrivate_60("55000031000000");
+        iso8583DTO.setReservedPrivate_60("55000031");
 
         thService.thRefund(iso8583DTO);
 
@@ -184,7 +184,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         //主扫
         iso8583DTO.setProcessingCode_3("700200");
         //交易金额
-        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        iso8583DTO.setAmountOfTransactions_4("000000001000");
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
         //服务点输入方式码
@@ -202,7 +202,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         0x31:支付宝
         0x32:银联云闪付
          */
-        String payCode = "30";
+        String payCode = "31";
         //附加信息-主扫
         iso8583DTO.setAdditionalData_46("5F5206303002" + payCode + "0202");
         //交易货币代码

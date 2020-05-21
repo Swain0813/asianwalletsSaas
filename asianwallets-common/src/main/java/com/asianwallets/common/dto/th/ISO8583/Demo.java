@@ -34,10 +34,11 @@ public class Demo {
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
-        iso8583DTO.setProcessingCode_3("700200");//主扫
+        iso8583DTO.setProcessingCode_3("700206");//查询
+//        iso8583DTO.setProcessingCode_3("700200");//主扫
 //        iso8583DTO.setProcessingCode_3("400101");//被扫
         //交易金额
-        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        iso8583DTO.setAmountOfTransactions_4("000000000011");
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         //受卡方所在地时间HHmmss
@@ -45,7 +46,7 @@ public class Demo {
 //        //受卡方所在地日期MMdd
 //        iso8583DTO.setDateOfLocalTransaction_13(DateToolUtils.getReqTimeMMdd());
         //服务点输入方式码
-        iso8583DTO.setPointOfServiceEntryMode_22("030");
+        iso8583DTO.setPointOfServiceEntryMode_22("000");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         //受理方标识码 (机构号)
@@ -54,7 +55,8 @@ public class Demo {
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
-        iso8583DTO.setAdditionalData_46("5F5206303002300202");//主扫
+       // iso8583DTO.setAdditionalData_46("5F5206303002300202");//主扫
+        iso8583DTO.setAdditionalData_46("5F5221303002020232303230303532303030303030313130363130303137383436350202");//查询
 //        String scanCode = "134750495118463486";
 //        iso8583DTO.setAdditionalData_46("5F52193030023002" + NumberStringUtil.str2HexStr(scanCode) + "0202");//被扫
         //交易货币代码
