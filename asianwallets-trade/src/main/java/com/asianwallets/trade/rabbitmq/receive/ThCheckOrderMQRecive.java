@@ -76,8 +76,7 @@ public class ThCheckOrderMQRecive {
             BaseResponse channelResponse = channelsFeign.thQuery(thDTO);
             log.info("==============【Th查询订单队列】============== 【查询响应参数】 response: {}", JSON.toJSONString(channelResponse));
             if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
-                log.info("==============【Th查询订单队列】==============【订单查询异常,上报队列】【E_MQ_TH_CHECK_ORDER】");
-                rabbitMQSender.send(AD3MQConstant.E_MQ_TH_CHECK_ORDER, JSON.toJSONString(message));
+                log.info("==============【Th查询订单队列】==============【订单查询异常】");
                 return;
             }
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
