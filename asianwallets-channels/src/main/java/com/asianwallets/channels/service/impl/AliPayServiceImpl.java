@@ -1,5 +1,4 @@
 package com.asianwallets.channels.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.dao.ChannelsOrderMapper;
@@ -22,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -690,10 +688,8 @@ public class AliPayServiceImpl implements AliPayService {
      */
     @Override
     public BaseResponse aliPayWebsite(AliPayWebDTO aliPayWebDTO) {
-
         BaseResponse baseResponse = new BaseResponse();
         log.info("-----------------aliPayWebsite aliPayw网站支付实体-----------------请求实体 aliPayCSBDTO:{}", JSON.toJSONString(aliPayWebDTO));
-
         int num = channelsOrderMapper.selectCountById(aliPayWebDTO.getOut_trade_no());
         ChannelsOrder co;
         if (num > 0) {
@@ -722,7 +718,6 @@ public class AliPayServiceImpl implements AliPayService {
             co.setCreateTime(new Date());
             channelsOrderMapper.insert(co);
         }
-
         String total_fee = null;
         String rmb_fee = null;
         if (aliPayWebDTO.getCurrency().equals("CNY")) {
@@ -732,7 +727,6 @@ public class AliPayServiceImpl implements AliPayService {
             rmb_fee = "";
             total_fee = aliPayWebDTO.getAmt();
         }
-
         Map<String, String> sParaTemp = new HashMap<String, String>();
         sParaTemp.put("service", aliPayWebDTO.getService());//网站支付接口
         sParaTemp.put("partner", aliPayWebDTO.getPartner());//境外商户在支付宝的用户ID. 2088开头的16位数字
@@ -759,7 +753,6 @@ public class AliPayServiceImpl implements AliPayService {
         log.info("-----------------aliPayWebsite 调用alipay的参数-----------------" + sParaTemp);
         Map<String, String> sPara = AlipayCore.buildRequestPara(sParaTemp, aliPayWebDTO.getMd5KeyStr());
 
-
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("<!DOCTYPE html>\n");
         stringBuffer.append("<html>\n");
@@ -767,7 +760,7 @@ public class AliPayServiceImpl implements AliPayService {
         stringBuffer.append("<title>ASIAN WALLET</title>\n");
         stringBuffer.append("</head>\n");
         stringBuffer.append("<body>\n");
-        stringBuffer.append("<form method=\"post\" name=\"SendForm\" action=\"" + channelsConfig.getENetsJumpUrl() + "\">\n");
+        stringBuffer.append("<form method=\"post\" name=\"SendForm\" action=\"" + channelsConfig.getAliPayOnlineUrl() + "\">\n");
         stringBuffer.append("<input type='hidden' name='service' value='" + aliPayWebDTO.getService() + "'/>\n");
         stringBuffer.append("<input type='hidden' name='partner' value='" + aliPayWebDTO.getPartner() + "'/>\n");
         stringBuffer.append("<input type='hidden' name='_input_charset' value='" + aliPayWebDTO.get_input_charset() + "'/>\n");
@@ -788,7 +781,6 @@ public class AliPayServiceImpl implements AliPayService {
         stringBuffer.append("</form>\n");
         stringBuffer.append("</body>\n");
         stringBuffer.append("</html>");
-
         baseResponse.setData(stringBuffer.toString());
         log.info("-----------------aliPayWebsite收单接口信息记录-----------------enetsBankRequestDTO:{}", stringBuffer.toString());
         return baseResponse;

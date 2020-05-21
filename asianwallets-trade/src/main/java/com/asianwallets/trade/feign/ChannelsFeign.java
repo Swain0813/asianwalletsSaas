@@ -1,5 +1,4 @@
 package com.asianwallets.trade.feign;
-
 import com.asianwallets.common.dto.ad3.AD3BSCScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3ONOFFRefundDTO;
@@ -26,11 +25,14 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import javax.validation.Valid;
 
 @FeignClient(value = "asianwallets-channels", fallback = ChannelsFeignImpl.class)
 public interface ChannelsFeign {
+
+    @ApiOperation(value = "支付宝线上下单接口")
+    @PostMapping("aliPayWebsite")
+    BaseResponse aliPayWebsite(@RequestBody @ApiParam @Valid AliPayWebDTO aliPayWebDTO);
 
     @ApiOperation(value = "支付宝线下BSC接口")
     @PostMapping("/aliPay/aliPayOfflineBSC")

@@ -27,9 +27,13 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
+
 
 @Component
 public class ChannelsFeignImpl implements ChannelsFeign {
+
+
 
     @Override
     public BaseResponse eGHLPay(EGHLRequestDTO eghlRequestDTO) {
@@ -73,6 +77,11 @@ public class ChannelsFeignImpl implements ChannelsFeign {
 
     @Override
     public BaseResponse eNetsPosCSBPay(EnetsOffLineRequestDTO enetsOffLineRequestDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse aliPayWebsite(@Valid AliPayWebDTO aliPayWebDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 

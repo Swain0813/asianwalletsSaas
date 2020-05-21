@@ -320,7 +320,7 @@ public class DokuServiceImpl extends ChannelsAbstractAdapter implements DokuServ
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), dokuServerCallbackDTO.getAPPROVALCODE(), TradeConstant.TRADE_SUCCESS);
             } catch (Exception e) {
-                log.error("=================【eNets网银服务器回调接口信息记录】=================【更新通道订单异常】", e);
+                log.error("=================【DOKU服务器回调接口】=================【更新通道订单异常】", e);
             }
             //修改订单状态
             int i = ordersMapper.updateByExampleSelective(orders, example);
