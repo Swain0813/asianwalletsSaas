@@ -306,7 +306,7 @@ public class THServiceImpl implements THService {
             if ("00".equals(iso8583VO.getResponseCode_39())) {
                 //查询成功
                 String[] domain46Query = iso8583VO.getAdditionalData_46().split("02");
-                iso8583VO.setAdditionalData_46(domain46Query[4].replace("3",""));
+                iso8583VO.setAdditionalData_46(NumberStringUtil.hexStr2Str(domain46Query[4]));
                 response.setData(iso8583VO);
                 response.setCode(TradeConstant.HTTP_SUCCESS);
                 response.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
