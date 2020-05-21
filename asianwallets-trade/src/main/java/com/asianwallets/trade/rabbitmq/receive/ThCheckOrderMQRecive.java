@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -87,18 +86,13 @@ public class ThCheckOrderMQRecive {
                 log.info("==============【Th查询订单队列】==============【查询接口返回异常】");
                 return;
             }
-            //将46域信息按02分割
-            String[] domain46Query = iso8583VO.getAdditionalData_46().split("02");
-            log.info("===============【Th查询订单队列】===============【46域信息】 domain46Query: {}", Arrays.toString(domain46Query));
-
-            String status = "";
             orders.setChannelCallbackTime(new Date());
             orders.setUpdateTime(new Date());
             Example example = new Example(Orders.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("tradeStatus", "2");
             criteria.andEqualTo("id", orders.getId());
-            if ("1".equals(status)) {
+            if ("1".equals(iso8583VO.getAdditionalData_46())) {
                 log.info("=================【Th查询订单队列】=================【订单已支付成功】 orderId: {}", orders.getId());
                 //未发货
                 orders.setDeliveryStatus(TradeConstant.UNSHIPPED);
@@ -145,10 +139,10 @@ public class ThCheckOrderMQRecive {
                 } else {
                     log.info("=================【Th查询订单队列】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
                 }
-            } else if ("5".equals(status) || "4".equals(status)) {
+            } else if ("5".equals(iso8583VO.getAdditionalData_46()) || "4".equals(iso8583VO.getAdditionalData_46())) {
                 log.info("=================【Th查询订单队列】=================【订单已支付失败】 orderId: {}", orders.getId());
                 orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
-                orders.setRemark5(status);
+                orders.setRemark5(iso8583VO.getAdditionalData_46());
                 try {
                     channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_FALID);
                 } catch (Exception e) {
@@ -161,7 +155,7 @@ public class ThCheckOrderMQRecive {
                 } else {
                     log.info("=================【Th查询订单队列】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
                 }
-            } else if ("2".equals(status)) {
+            } else if ("2".equals(iso8583VO.getAdditionalData_46())) {
                 log.info("==============【Th查询订单队列】============== 【订单状态为2,转入退款或者已撤销或者交易超时】 orderID : {}", orders.getId());
                 return;
             } else {
