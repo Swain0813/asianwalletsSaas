@@ -1,5 +1,4 @@
 package com.asianwallets.trade.rabbitmq;
-
 import com.asianwallets.common.constant.AD3MQConstant;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -7,7 +6,6 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,6 +79,7 @@ public class RabbitMQConfig {
     @Bean
     public Queue deadLetterQueueCX_GX_FAIL_DL() {
         Map<String, Object> args = new HashMap<>();
+        //延迟5分钟
         args.put("x-message-ttl", 1000 * 60 * 5);
         args.put("x-dead-letter-exchange", CX_GX_FAIL_DL_EXCHANGE);
         args.put("x-dead-letter-routing-key", CX_GX_FAIL_DL_KEY);
@@ -172,7 +171,8 @@ public class RabbitMQConfig {
     @Bean
     public Queue deadLetterQueueNGANLUONGuery() {
         Map<String, Object> args = new HashMap<>();
-        args.put("x-message-ttl", 1000 * 60 * 5);//延迟队列5分钟
+        //延迟队列5分钟
+        args.put("x-message-ttl", 1000 * 60 * 5);
         args.put("x-dead-letter-exchange", MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE);
         args.put("x-dead-letter-routing-key", MQ_NGANLUONG_CHECK_ORDER_DL_KEY);
         return new Queue(E_MQ_NGANLUONG_CHECK_ORDER_DL, true, false, false, args);
@@ -205,7 +205,8 @@ public class RabbitMQConfig {
     @Bean
     public Queue deadLetterQueueNGANLUONGuery2() {
         Map<String, Object> args = new HashMap<>();
-        args.put("x-message-ttl", 1000 * 60 * 30);//延迟队列5分钟
+        //延迟队列30分钟
+        args.put("x-message-ttl", 1000 * 60 * 30);
         args.put("x-dead-letter-exchange", MQ_NGANLUONG_CHECK_ORDER_DL_EXCHANGE2);
         args.put("x-dead-letter-routing-key", MQ_NGANLUONG_CHECK_ORDER_DL_KEY2);
         return new Queue(E_MQ_NGANLUONG_CHECK_ORDER_DL2, true, false, false, args);
@@ -239,7 +240,8 @@ public class RabbitMQConfig {
     @Bean
     public Queue deadLetterQueueMegaPayTHBQuery() {
         Map<String, Object> args = new HashMap<>();
-        args.put("x-message-ttl", 1000 * 60 * 5);//延迟队列5分钟
+        //延迟队列5分钟
+        args.put("x-message-ttl", 1000 * 60 * 5);
         args.put("x-dead-letter-exchange", MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE);
         args.put("x-dead-letter-routing-key", MQ_MEGAPAY_THB_CHECK_ORDER_KEY);
         return new Queue(E_MQ_MEGAPAY_THB_CHECK_ORDER, true, false, false, args);
@@ -273,7 +275,8 @@ public class RabbitMQConfig {
     @Bean
     public Queue deadLetterQueueMegaPayTHBQuery2() {
         Map<String, Object> args = new HashMap<>();
-        args.put("x-message-ttl", 1000 * 60 * 30);//延迟队列5分钟
+        //延迟队列30分钟
+        args.put("x-message-ttl", 1000 * 60 * 30);
         args.put("x-dead-letter-exchange", MQ_MEGAPAY_THB_CHECK_ORDER_EXCHANGE2);
         args.put("x-dead-letter-routing-key", MQ_MEGAPAY_THB_CHECK_ORDER_KEY2);
         return new Queue(E_MQ_MEGAPAY_THB_CHECK_ORDER2, true, false, false, args);
@@ -305,7 +308,8 @@ public class RabbitMQConfig {
     @Bean
     public Queue deadLetterQueueMQ_QFPAY_REFUND_SEARCH() {
         Map<String, Object> args = new HashMap<>();
-        args.put("x-message-ttl", 1000 * 60 * 30);//延迟队列5分钟
+        //延迟队列30分钟
+        args.put("x-message-ttl", 1000 * 60 * 30);
         args.put("x-dead-letter-exchange", MQ_QFPAY_REFUND_SEARCH_EXCHANGE);
         args.put("x-dead-letter-routing-key", MQ_QFPAY_REFUND_SEARCH_KEY);
         return new Queue(E_MQ_QFPAY_REFUND_SEARCH, true, false, false, args);
@@ -335,7 +339,8 @@ public class RabbitMQConfig {
     @Bean
     public Queue deadLetterQueueMQ_QFPAY_CANNEL_SEARCH() {
         Map<String, Object> args = new HashMap<>();
-        args.put("x-message-ttl", 1000 * 60 * 30);//延迟队列5分钟
+        //延迟队列30分钟
+        args.put("x-message-ttl", 1000 * 60 * 30);
         args.put("x-dead-letter-exchange", MQ_QFPAY_CANNEL_SEARCH_EXCHANGE);
         args.put("x-dead-letter-routing-key", MQ_QFPAY_CANNEL_SEARCH_KEY);
         return new Queue(E_MQ_QFPAY_CANNEL_SEARCH, true, false, false, args);
@@ -366,6 +371,7 @@ public class RabbitMQConfig {
     @Bean
     public Queue configQfPayCsbCheckOrderMQ() {
         Map<String, Object> args = new HashMap<>();
+        //延迟30秒
         args.put("x-message-ttl", 1000 * 30);
         args.put("x-dead-letter-exchange", MQ_QFPAY_CSB_CHECK_ORDER_EXCHANGE);
         args.put("x-dead-letter-routing-key", MQ_QFPAY_CSB_CHECK_ORDER_KEY);
@@ -396,6 +402,7 @@ public class RabbitMQConfig {
     @Bean
     public Queue configThCheckOrderMQ() {
         Map<String, Object> args = new HashMap<>();
+        //延迟3秒
         args.put("x-message-ttl", 1000 * 3);
         args.put("x-dead-letter-exchange", MQ_TH_CHECK_ORDER_EXCHANGE);
         args.put("x-dead-letter-routing-key", MQ_TH_CHECK_ORDER_KEY);
