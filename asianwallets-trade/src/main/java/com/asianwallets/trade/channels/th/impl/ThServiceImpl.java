@@ -342,11 +342,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      **/
     private ISO8583DTO creatRefundISO8583DTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
-        String timeStamp = System.currentTimeMillis() + "";
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("400100");
         iso8583DTO.setAmountOfTransactions_4(NumberStringUtil.addLeftChar(orderRefund.getTradeAmount().toString().replace(".", ""), 12, '0'));
-        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(6, 12));
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32( channel.getExtend2()); //机构号
@@ -363,7 +362,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setAdditionalData_46("5F" + hexString);
 
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-        iso8583DTO.setReservedPrivate_60("55" +  timeStamp.substring(6, 12));//批次号
+        iso8583DTO.setReservedPrivate_60("55" +  orderRefund.getReportNumber().substring(6, 12));//批次号
 
 
         return iso8583DTO;
@@ -377,12 +376,11 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      **/
     private ISO8583DTO creatQuerryISO8583DTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
-        String timeStamp = System.currentTimeMillis() + "";
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("700206");
         iso8583DTO.setAmountOfTransactions_4(NumberStringUtil.addLeftChar(orderRefund.getTradeAmount().toString().replace(".", ""), 12, '0'));
         //受卡方系统跟踪号
-        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
         //服务点输入方式码
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         //服务点条件码
@@ -403,7 +401,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
-        iso8583DTO.setReservedPrivate_60("01" + timeStamp.substring(6, 12));
+        iso8583DTO.setReservedPrivate_60("01" + orderRefund.getReportNumber().substring(6, 12));
 
 
         return iso8583DTO;
