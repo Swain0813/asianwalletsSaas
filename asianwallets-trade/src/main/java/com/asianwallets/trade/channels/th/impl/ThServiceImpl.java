@@ -213,21 +213,21 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         }
         ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
         log.info("==================【通华线下BSC】==================【调用Channels服务】【通华-BSC接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
-        BaseResponse baseResponse = new BaseResponse();
-        if ("AS".equals(iso8583VO.getResponseCode_39())) {
-            //当39域等于AS: 该响应表示该交易已受理,未承兑
-            log.info("===============【通华线下BSC】===============【上报通华查询队列】 【E_MQ_TH_CHECK_ORDER】");
-            ThCheckOrderQueueDTO thCheckOrderQueueDTO = new ThCheckOrderQueueDTO(orders, channel, iso8583DTO);
-            RabbitMassage rabbitMassage = new RabbitMassage(20, JSON.toJSONString(thCheckOrderQueueDTO));
-            rabbitMQSender.send(AD3MQConstant.E_MQ_TH_CHECK_ORDER, JSON.toJSONString(rabbitMassage));
-            return baseResponse;
-        }
         //将46域信息按02分割
         String[] domain46 = iso8583VO.getAdditionalData_46().split("02");
         log.info("===============【通华线下BSC】===============【46域信息】 domain46: {}", Arrays.toString(domain46));
         //索引第4位 : 通华返回的商户订单号
         orders.setChannelNumber(domain46[4]);
-        ordersMapper.updateByPrimaryKeySelective(orders);
+        BaseResponse baseResponse = new BaseResponse();
+        if ("AS".equals(iso8583VO.getResponseCode_39())) {
+            //当39域等于AS: 该响应表示该交易已受理,未承兑
+            log.info("===============【通华线下BSC】===============【39域返回AS,上报通华查询队列】 【E_MQ_TH_CHECK_ORDER】");
+            ordersMapper.updateByPrimaryKeySelective(orders);
+            ThCheckOrderQueueDTO thCheckOrderQueueDTO = new ThCheckOrderQueueDTO(orders, channel, iso8583DTO);
+            RabbitMassage rabbitMassage = new RabbitMassage(20, JSON.toJSONString(thCheckOrderQueueDTO));
+            rabbitMQSender.send(AD3MQConstant.E_MQ_TH_CHECK_ORDER, JSON.toJSONString(rabbitMassage));
+            return baseResponse;
+        }
         orders.setChannelCallbackTime(new Date());
         orders.setUpdateTime(new Date());
         Example example = new Example(Orders.class);
@@ -270,7 +270,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
                     if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
                         log.info("=================【通华线下BSC】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        com.asianwallets.common.entity.RabbitMassage rabbitMassage = new com.asianwallets.common.entity.RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                         rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                     }
                 } catch (Exception e) {

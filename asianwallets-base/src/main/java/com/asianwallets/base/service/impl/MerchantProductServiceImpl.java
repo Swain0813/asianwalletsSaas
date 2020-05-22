@@ -144,6 +144,9 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             String id = IDS.uuid2();
             MerchantProduct merchantProduct = new MerchantProduct();
             BeanUtils.copyProperties(merchantProductDTO, merchantProduct);
+            if(StringUtils.isEmpty(merchantProductDTO.getMerchantName())){
+                merchantProduct.setMerchantName(commonService.getMerchant(merchantProductDTO.getMerchantId()).getCnName());
+            }
             merchantProduct.setId(id);
             merchantProduct.setCreateTime(new Date());
             merchantProduct.setCreator(name);
@@ -271,6 +274,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
      **/
     @Override
     public int updateMerchantProduct(String name, MerchantProductDTO merchantProductDTO) {
+        //必要的非空check
+        if(StringUtils.isEmpty(merchantProductDTO.getEffectTime())){
+            throw new BusinessException(EResultEnum.EFFECTTIME_IS_NULL.getCode());
+        }
         Date date = merchantProductDTO.getEffectTime();
         Date date1 = DateToolUtils.addMinute(new Date(), 30);
         if (date.getTime() < date1.getTime()) {

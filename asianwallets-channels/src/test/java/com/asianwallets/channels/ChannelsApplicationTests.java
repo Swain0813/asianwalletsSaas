@@ -237,7 +237,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         //被扫
         iso8583DTO.setProcessingCode_3("400101");
         //交易金额
-        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        iso8583DTO.setAmountOfTransactions_4("000000000009");
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
         //服务点输入方式码
@@ -255,8 +255,8 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         0x31:支付宝
         0x32:银联云闪付
          */
-        String payCode = "31";
-        String scanCode = "286020382107217225";
+        String payCode = "30";
+        String scanCode = "134620119418765853";
         String domain46 = "303002" + payCode + "02" + NumberStringUtil.str2HexStr(scanCode) + "0202";
         //附加信息-被扫
         iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52(domain46));
