@@ -163,14 +163,14 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         /************************************************ 退款 ***************************************************/
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("400100");
-        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        iso8583DTO.setAmountOfTransactions_4("000000000009");
         iso8583DTO.setSystemTraceAuditNumber_11("102994");
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
         iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
-        iso8583DTO.setAdditionalData_46("5F5221303002020232303230303531393030303030313130363230303137383430330202");
+        iso8583DTO.setAdditionalData_46("5F5221303002020232303230303532313030303030313130363130303137383531360202");
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         iso8583DTO.setReservedPrivate_60("55000031");
         thDTO.setIso8583DTO(iso8583DTO);

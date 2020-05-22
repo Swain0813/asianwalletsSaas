@@ -342,15 +342,16 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      **/
     private ISO8583DTO creatRefundISO8583DTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
+        String timeStamp = System.currentTimeMillis() + "";
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("400100");
         iso8583DTO.setAmountOfTransactions_4(NumberStringUtil.addLeftChar(orderRefund.getTradeAmount().toString().replace(".", ""), 12, '0'));
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getOrderId().substring(0, 6));
+        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(6, 12));
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        //iso8583DTO.setAcquiringInstitutionIdentificationCode_32(); 机构号
-        //iso8583DTO.setCardAcceptorTerminalIdentification_41();      //卡机终端标识码
-        //iso8583DTO.setCardAcceptorIdentificationCode_42();          //受卡方标识码
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32( channel.getExtend2()); //机构号
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
 
         String s46 = "303002020202" + orderRefund.getChannelNumber() + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
@@ -362,7 +363,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setAdditionalData_46("5F" + hexString);
 
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-        iso8583DTO.setReservedPrivate_60("55" + "");//批次号
+        iso8583DTO.setReservedPrivate_60("55" +  timeStamp.substring(6, 12));//批次号
 
 
         return iso8583DTO;
@@ -386,13 +387,9 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        //受理方标识码 (机构号)
-        //iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
-        ////受卡机终端标识码 (设备号)
-        //iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
-        ////受卡方标识码 (商户号)
-        //iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
-
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32( channel.getExtend2()); //机构号
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
         //附加信息
         String s46 = "303002020202" + orderRefund.getChannelNumber() + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
