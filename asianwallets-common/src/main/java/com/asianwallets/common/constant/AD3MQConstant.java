@@ -26,6 +26,12 @@ public class AD3MQConstant {
     public static final String MQ_AW_CALLBACK_URL_FAIL_KEY = "MQ_AW_CALLBACK_URL_FAIL_KEY";//回调商户失败队列key
     public static final String MQ_AW_CALLBACK_URL_FAIL_EXCHANGE = "MQ_AW_CALLBACK_URL_FAIL_EXCHANGE";//回调商户失败队列
 
+    /* ===========================================      报备失败队列       =============================================== */
+    public static final String MQ_REPORT_FAIL = "MQ_REPORT_FAIL";
+    public static final String E_MQ_REPORT_FAIL = "E_MQ_REPORT_FAIL";
+    public static final String MQ_REPORT_FAIL_KEY = "MQ_REPORT_FAIL_KEY";
+    public static final String MQ_REPORT_FAIL_EXCHANGE = "MQ_REPORT_FAIL_EXCHANGE";
+
     //撤销更新订单失败
     public final static String CX_GX_FAIL_DL = "CX_GX_FAIL_DL";
     public static final String E_CX_GX_FAIL_DL = "E_CX_GX_FAIL_DL";

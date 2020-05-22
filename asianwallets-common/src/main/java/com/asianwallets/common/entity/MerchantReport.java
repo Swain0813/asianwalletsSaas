@@ -100,5 +100,4 @@ public class MerchantReport extends BaseEntity {
     @ApiModelProperty(value = "备注6")
     @Column(name = "extend6")
     private String extend6;
-
 }

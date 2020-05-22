@@ -1,8 +1,10 @@
 package com.asianwallets.base.service.impl;
+
 import com.asianwallets.base.dao.ChannelMapper;
 import com.asianwallets.base.dao.InstitutionMapper;
 import com.asianwallets.base.dao.MerchantMapper;
 import com.asianwallets.base.dao.MerchantReportMapper;
+import com.asianwallets.base.service.AlipaySecmerchantReport;
 import com.asianwallets.base.service.MerchantReportService;
 import com.asianwallets.common.dto.MerchantReportDTO;
 import com.asianwallets.common.entity.Channel;
@@ -19,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +44,9 @@ public class MerchantReportServiceImpl implements MerchantReportService {
 
     @Autowired
     private MerchantReportMapper merchantReportMapper;
+
+    @Autowired
+    private AlipaySecmerchantReport alipaySecmerchantReport;
 
     /**
      * 添加报备
@@ -130,7 +136,12 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         MerchantReport merchantReport = new MerchantReport();
         BeanUtils.copyProperties(merchantReportDTO, merchantReport, getNullPropertyNames(merchantReportDTO));
         //change the data
-        return merchantReportMapper.updateByPrimaryKeySelective(merchantReport);
+        int i = merchantReportMapper.updateByPrimaryKeySelective(merchantReport);
+        MerchantReport mr = merchantReportMapper.selectByPrimaryKey(merchantReportDTO.getId());
+        if (mr.getEnabled() == null || !mr.getEnabled()) {
+            alipaySecmerchantReport.Resubmit(mr);
+        }
+        return i;
     }
 
     /**
@@ -170,7 +181,8 @@ public class MerchantReportServiceImpl implements MerchantReportService {
     }
 
     /**
-     *导入商户报备信息
+     * 导入商户报备信息
+     *
      * @param merchantReportList
      * @return
      */
