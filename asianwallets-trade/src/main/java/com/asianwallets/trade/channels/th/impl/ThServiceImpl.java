@@ -270,7 +270,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
                     if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
                         log.info("=================【通华线下BSC】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        com.asianwallets.common.entity.RabbitMassage rabbitMassage = new com.asianwallets.common.entity.RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                         rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                     }
                 } catch (Exception e) {
