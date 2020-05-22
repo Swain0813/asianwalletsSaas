@@ -39,6 +39,7 @@ public class ThController extends BaseController {
     public BaseResponse thRefund(@RequestBody @ApiParam ThDTO thDTO) {
         return thService.thRefund(thDTO);
     }
+
     @ApiOperation("thQuery")
     @PostMapping("/thQuery")
     public BaseResponse thQuery(@RequestBody @ApiParam ThDTO thDTO) {

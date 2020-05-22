@@ -393,7 +393,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         log.info("=================【TH撤销 cancel】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             //请求成功
-            //请求成功
             JSONObject jsonObject = JSONObject.fromObject(response.getData());
             ISO8583DTO iso8583DTO1 = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);
             if (iso8583DTO1.getAdditionalData_46().equals("1")) {
@@ -501,7 +500,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ////转成Hex码来传输
         String hexString = HexUtil.toHexString(bytes);
         iso8583DTO.setAdditionalData_46("5F" + hexString);
-
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         iso8583DTO.setReservedPrivate_60("55" + orderRefund.getReportNumber().substring(6, 12));//批次号
         return iso8583DTO;
@@ -536,7 +534,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ////转成Hex码来传输
         String hexString = HexUtil.toHexString(bytes);
         iso8583DTO.setAdditionalData_46("5F" + hexString);
-
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
