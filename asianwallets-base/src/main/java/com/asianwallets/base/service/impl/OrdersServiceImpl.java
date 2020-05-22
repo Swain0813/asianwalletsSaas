@@ -7,6 +7,7 @@ import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.DccReportDTO;
 import com.asianwallets.common.dto.OrdersDTO;
+import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
 import com.asianwallets.common.entity.InsDailyTrade;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.vo.*;
@@ -14,6 +15,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.NumberUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -43,7 +45,11 @@ public class OrdersServiceImpl implements OrdersService {
     @Override
     public PageInfo<Orders> pageFindOrders(OrdersDTO ordersDTO) {
         ordersDTO.setLanguage(auditorProvider.getLanguage());
-        return new PageInfo<>(ordersMapper.pageFindOrders(ordersDTO));
+        List<Orders> orders = ordersMapper.pageFindOrders(ordersDTO);
+        for (Orders order : orders) {
+            order.setChannelNumber(NumberStringUtil.hexStr2Str(order.getChannelNumber()));
+        }
+        return new PageInfo<>(orders);
     }
 
     /**
@@ -71,6 +77,7 @@ public class OrdersServiceImpl implements OrdersService {
         List<OrdersDetailRefundVO> ordersDetailRefundVOS = ordersDetailVO.getOrdersDetailRefundVOS();
         List<OrdersDetailRefundVO> collect = ordersDetailRefundVOS.stream().sorted(Comparator.comparing(OrdersDetailRefundVO::getOrderRefundCreateTime).reversed()).collect(Collectors.toList());
         ordersDetailVO.setOrdersDetailRefundVOS(collect);
+        ordersDetailVO.setChannelNumber(NumberStringUtil.hexStr2Str(ordersDetailVO.getChannelNumber()));
         return ordersDetailVO;
     }
 

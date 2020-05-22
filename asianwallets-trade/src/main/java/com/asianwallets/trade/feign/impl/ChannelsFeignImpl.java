@@ -15,6 +15,7 @@ import com.asianwallets.common.dto.megapay.*;
 import com.asianwallets.common.dto.nganluong.NganLuongDTO;
 import com.asianwallets.common.dto.qfpay.QfPayDTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
+import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.dto.vtc.VTCRequestDTO;
 import com.asianwallets.common.dto.wechat.*;
 import com.asianwallets.common.dto.xendit.XenditDTO;
@@ -26,9 +27,13 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
+
 
 @Component
 public class ChannelsFeignImpl implements ChannelsFeign {
+
+
 
     @Override
     public BaseResponse eGHLPay(EGHLRequestDTO eghlRequestDTO) {
@@ -72,6 +77,11 @@ public class ChannelsFeignImpl implements ChannelsFeign {
 
     @Override
     public BaseResponse eNetsPosCSBPay(EnetsOffLineRequestDTO enetsOffLineRequestDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse aliPayWebsite(@Valid AliPayWebDTO aliPayWebDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -221,22 +231,22 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
-    public BaseResponse thCSB(ISO8583DTO iso8583DTO) {
+    public BaseResponse thCSB(ThDTO thDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse thBSC(ISO8583DTO iso8583DTO) {
+    public BaseResponse thBSC(ThDTO thDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse thQuerry(ISO8583DTO iso8583DTO) {
+    public BaseResponse thQuery(ThDTO thDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
     @Override
-    public BaseResponse thRefund(ISO8583DTO iso8583DTO) {
+    public BaseResponse thRefund(ThDTO thDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }

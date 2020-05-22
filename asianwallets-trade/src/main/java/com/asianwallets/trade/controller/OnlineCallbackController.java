@@ -1,10 +1,10 @@
 package com.asianwallets.trade.controller;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
+import com.asianwallets.trade.channels.alipay.AlipayService;
 import com.asianwallets.trade.channels.doku.DokuService;
 import com.asianwallets.trade.channels.eghl.EGHLService;
 import com.asianwallets.trade.channels.enets.EnetsService;
@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -55,6 +54,9 @@ public class OnlineCallbackController extends BaseController {
 
     @Autowired
     private DokuService dokuService;
+
+    @Autowired
+    private AlipayService alipayService;
 
     @ApiOperation(value = "ad3线上服务器回调接口")
     @PostMapping("/ad3OnlineServerCallback")
@@ -395,5 +397,35 @@ public class OnlineCallbackController extends BaseController {
         DokuBrowserCallbackDTO dokuBrowserCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), DokuBrowserCallbackDTO.class);
         log.info("==============【DOKU浏览器回调接口】==============【JSON解析后的回调参数记录】 dokuBrowserCallbackDTO:{}", JSON.toJSONString(dokuBrowserCallbackDTO));
         dokuService.dokuBrowserCallback(dokuBrowserCallbackDTO,response);
+    }
+
+    @ApiOperation(value = "Alipay线上通道服务器回调")
+    @PostMapping("/alipayServerCallback")
+    public void alipayServerCallback(HttpServletRequest request) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        log.info("==============【Alipay线上通道服务器回调】==============【回调参数】 parameterMap:{}", JSON.toJSONString(parameterMap));
+        Map<String, String> dtoMap = new HashMap<>();
+        Set<String> set = parameterMap.keySet();
+        for (String key : set) {
+            dtoMap.put(key, parameterMap.get(key)[0]);
+        }
+        AplipayServerCallbackDTO  aplipayServerCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), AplipayServerCallbackDTO.class);
+        log.info("==============【Alipay线上通道服务器回调】==============【JSON解析后的回调参数记录】 dokuServerCallbackDTO:{}", JSON.toJSONString(aplipayServerCallbackDTO));
+        alipayService.aplipayServerCallback(aplipayServerCallbackDTO,dtoMap);
+    }
+
+    @ApiOperation(value = "Alipay线上通道浏览器回调")
+    @PostMapping("/alipayBrowserCallback")
+    public void alipayBrowserCallback(HttpServletRequest request,HttpServletResponse response) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        log.info("==============【Alipay线上通道浏览器回调】==============【回调参数】 parameterMap:{}", JSON.toJSONString(parameterMap));
+        Map<String, String> dtoMap = new HashMap<>();
+        Set<String> set = parameterMap.keySet();
+        for (String key : set) {
+            dtoMap.put(key, parameterMap.get(key)[0]);
+        }
+        AplipayBrowserCallbackDTO aplipayBrowserCallbackDTO = JSON.parseObject(JSON.toJSONString(dtoMap), AplipayBrowserCallbackDTO.class);
+        log.info("************【Alipay线上通道浏览器回调】***********【JSON解析后的回调参数记录】 dokuBrowserCallbackDTO:{}", JSON.toJSONString(aplipayBrowserCallbackDTO));
+        alipayService.aplipayBrowserCallback(aplipayBrowserCallbackDTO,response);
     }
 }

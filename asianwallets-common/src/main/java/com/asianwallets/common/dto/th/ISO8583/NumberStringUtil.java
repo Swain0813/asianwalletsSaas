@@ -7,6 +7,7 @@ package com.asianwallets.common.dto.th.ISO8583;
  **/
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 /**
  * 字符工具类
@@ -257,5 +258,14 @@ public class NumberStringUtil {
             bytes[i] = (byte) (n & 0xff);
         }
         return new String(bytes);
+    }
+
+    public static void main(String[] args) {
+        String s = "5F510BB6A9B5A5B4A6C0EDD6D0025F55523035323102373733323535023135393030340232303230303532313030303030313130363130303137383531360277656978696E3A2F2F77787061792F62697A70617975726C3F70723D45445178524B3502";
+        //String s = "5F5109BDBBD2D7B3C9B9A6025F554B303531390230303030334102313032393934023230323030353139303030303031313036323030313738343033023432303030303035323532303230303531393131373035393739393902";
+        String[] split = s.split("02");
+        System.out.println(Arrays.toString(split));
+        System.out.println(NumberStringUtil.hexStr2Str("68747470733A2F2F71722E616C697061792E636F6D2F6261783031373539626E6565653863626D70636A30306635"));
+        System.out.println(NumberStringUtil.hexStr2Str("33"));
     }
 }

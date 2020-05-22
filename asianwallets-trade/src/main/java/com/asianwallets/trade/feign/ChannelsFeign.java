@@ -1,5 +1,4 @@
 package com.asianwallets.trade.feign;
-
 import com.asianwallets.common.dto.ad3.AD3BSCScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3CSBScanPayDTO;
 import com.asianwallets.common.dto.ad3.AD3ONOFFRefundDTO;
@@ -15,6 +14,7 @@ import com.asianwallets.common.dto.megapay.*;
 import com.asianwallets.common.dto.nganluong.NganLuongDTO;
 import com.asianwallets.common.dto.qfpay.QfPayDTO;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
+import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.dto.vtc.VTCRequestDTO;
 import com.asianwallets.common.dto.wechat.*;
 import com.asianwallets.common.dto.xendit.XenditDTO;
@@ -25,11 +25,14 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import javax.validation.Valid;
 
 @FeignClient(value = "asianwallets-channels", fallback = ChannelsFeignImpl.class)
 public interface ChannelsFeign {
+
+    @ApiOperation(value = "支付宝线上下单接口")
+    @PostMapping("aliPayWebsite")
+    BaseResponse aliPayWebsite(@RequestBody @ApiParam @Valid AliPayWebDTO aliPayWebDTO);
 
     @ApiOperation(value = "支付宝线下BSC接口")
     @PostMapping("/aliPay/aliPayOfflineBSC")
@@ -186,17 +189,17 @@ public interface ChannelsFeign {
 
     @ApiOperation(value = "通华CSB收单接口")
     @PostMapping("/th/thCSB")
-    BaseResponse thCSB(ISO8583DTO iso8583DTO);
+    BaseResponse thCSB(ThDTO thDTO);
 
     @ApiOperation(value = "通华BSC收单接口")
     @PostMapping("/th/thBSC")
-    BaseResponse thBSC(ISO8583DTO iso8583DTO);
+    BaseResponse thBSC(ThDTO thDTO);
 
     @ApiOperation(value = "通华退款接口")
     @PostMapping("/th/thRefund")
-    BaseResponse thRefund(ISO8583DTO iso8583DTO);
+    BaseResponse thRefund(ThDTO thDTO);
 
     @ApiOperation(value = "通华查询接口")
-    @PostMapping("/th/thQuerry")
-    BaseResponse thQuerry(ISO8583DTO iso8583DTO);
+    @PostMapping("/th/thQuery")
+    BaseResponse thQuery(ThDTO thDTO);
 }

@@ -52,16 +52,22 @@ public class QfPayServiceImpl extends ChannelsAbstractAdapter implements QfPaySe
 
     @Autowired
     private ChannelsFeign channelsFeign;
+
     @Autowired
     private RabbitMQSender rabbitMQSender;
+
     @Autowired
     private OrdersMapper ordersMapper;
+
     @Autowired
     private OrderRefundMapper orderRefundMapper;
+
     @Autowired
     private CommonBusinessService commonBusinessService;
+
     @Autowired
     private ReconciliationMapper reconciliationMapper;
+
     @Autowired
     private ClearingService clearingService;
 
@@ -352,7 +358,6 @@ public class QfPayServiceImpl extends ChannelsAbstractAdapter implements QfPaySe
      **/
     @Override
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
-
         BaseResponse baseResponse = new BaseResponse();
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
         QfPayDTO qfPayDTO = new QfPayDTO();

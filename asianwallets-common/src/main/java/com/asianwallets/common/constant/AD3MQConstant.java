@@ -75,16 +75,15 @@ public class AD3MQConstant {
     public static final String E_MQ_QFPAY_CANNEL_SEARCH = "E_MQ_QFPAY_CANNEL_SEARCH";//Qfpay查询死信队列2
     public static final String MQ_QFPAY_CANNEL_SEARCH_KEY = "MQ_QFPAY_CANNEL_SEARCH_KEY";//Qfpay查询死信队列2路由
     public static final String MQ_QFPAY_CANNEL_SEARCH_EXCHANGE = "MQ_QFPAY_CANNEL_SEARCH_EXCHANGE";//Qfpay查询死信队列2交换机
-
-    /* ===========================================      Qfpay Canneling2 查询队列      =============================================== */
-    public static final String MQ_QFPAY_CANNEL_SEARCH2= "MQ_QFPAY_CANNEL_SEARCH2";//Qfpay查询队列2
-    public static final String E_MQ_QFPAY_CANNEL_SEARCH2 = "E_MQ_QFPAY_CANNEL_SEARCH2";//Qfpay查询死信队列2
-    public static final String MQ_QFPAY_CANNEL_SEARCH_KEY2 ="MQ_QFPAY_CANNEL_SEARCH_KEY2";//Qfpay查询死信队列2路由
-    public static final String MQ_QFPAY_CANNEL_SEARCH_EXCHANGE2 = "MQ_QFPAY_CANNEL_SEARCH_EXCHANGE2";//Qfpay查询死信队列2交换机
-
     /* ===========================================      QfPay-CSB查询队列      =============================================== */
     public static final String MQ_QFPAY_CSB_CHECK_ORDER = "MQ_QFPAY_CSB_CHECK_ORDER";//QFPAY-CSB查询队列
     public static final String E_MQ_QFPAY_CSB_CHECK_ORDER = "E_MQ_QFPAY_CSB_CHECK_ORDER";//QFPAY-CSB查询死信队列
     public static final String MQ_QFPAY_CSB_CHECK_ORDER_KEY = "MQ_QFPAY_CSB_CHECK_ORDER_KEY";//QFPAY-CSB查询死信队列路由
     public static final String MQ_QFPAY_CSB_CHECK_ORDER_EXCHANGE = "MQ_QFPAY_CSB_CHECK_ORDER_EXCHANGE";//QFPAY-CSB查询死信队列交换机
+
+    /* ===========================================      通华查询队列      =============================================== */
+    public static final String MQ_TH_CHECK_ORDER = "MQ_TH_CHECK_ORDER";//TH查询队列
+    public static final String E_MQ_TH_CHECK_ORDER = "E_MQ_TH_CHECK_ORDER";//TH查询死信队列
+    public static final String MQ_TH_CHECK_ORDER_KEY = "MQ_TH_CHECK_ORDER_KEY";//TH查询死信队列路由
+    public static final String MQ_TH_CHECK_ORDER_EXCHANGE = "MQ_TH_CHECK_ORDER_EXCHANGE";//TH查询死信队列交换机
 }

@@ -106,6 +106,8 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         merchantReport.setChannelMcc(merchantReportDTO.getChannelMcc());
         merchantReport.setSiteType(merchantReportDTO.getSiteType());
         merchantReport.setSiteUrl(merchantReportDTO.getSiteUrl());
+        //新增默认就是报备成功的
+        merchantReport.setEnabled(true);
         merchantReport.setCreateTime(new Date());
         merchantReport.setCreator(merchantReportDTO.getCreator());
         return merchantReportMapper.insert(merchantReport);

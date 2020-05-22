@@ -156,6 +156,10 @@ public class OrderRefund extends BaseEntity {
     @Column(name = "order_id")
     private String orderId;
 
+    @ApiModelProperty(value = "上报通道的流水号")
+    @Column(name = "report_number")
+    private String reportNumber;
+
     @ApiModelProperty(value = "退款单通道流水号")
     @Column(name = "refund_channel_number")
     private String refundChannelNumber;
