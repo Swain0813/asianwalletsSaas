@@ -157,7 +157,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         BaseResponse baseResponse = new BaseResponse();
         log.info("===============【通华线下CSB】===============【上报通华查询队列】 【E_MQ_TH_CHECK_ORDER】");
         ThCheckOrderQueueDTO thCheckOrderQueueDTO = new ThCheckOrderQueueDTO(orders, channel, iso8583DTO);
-        RabbitMassage rabbitMassage = new RabbitMassage(120, JSON.toJSONString(thCheckOrderQueueDTO));
+        RabbitMassage rabbitMassage = new RabbitMassage(30, JSON.toJSONString(thCheckOrderQueueDTO));
         rabbitMQSender.send(AD3MQConstant.E_MQ_TH_CHECK_ORDER, JSON.toJSONString(rabbitMassage));
         baseResponse.setData(codeUrl);
         return baseResponse;

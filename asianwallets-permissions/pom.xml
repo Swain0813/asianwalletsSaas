@@ -77,12 +77,6 @@
             </properties>
         </profile>
         <profile>
-            <id>dev</id>
-            <properties>
-                <profileActive>dev</profileActive>
-            </properties>
-        </profile>
-        <profile>
             <id>pre</id>
             <properties>
                 <profileActive>pre</profileActive>

@@ -33,7 +33,7 @@ import java.util.Date;
  **/
 @Component
 @Slf4j
-public class ThCheckOrderMQRecive {
+public class ThCheckOrderMQReceive {
 
     @Autowired
     private OrdersMapper ordersMapper;
@@ -72,11 +72,14 @@ public class ThCheckOrderMQRecive {
             String domain46 = "3030020202" + orders.getChannelNumber() + "0202";
             iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52(domain46));
             ThDTO thDTO = new ThDTO();
+            thDTO.setIso8583DTO(iso8583DTO);
+            thDTO.setChannel(thCheckOrderQueueDTO.getChannel());
             log.info("==============【Th查询订单队列】============== 【查询请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
             BaseResponse channelResponse = channelsFeign.thQuery(thDTO);
             log.info("==============【Th查询订单队列】============== 【查询响应参数】 response: {}", JSON.toJSONString(channelResponse));
             if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
-                log.info("==============【Th查询订单队列】==============【订单查询异常】");
+                log.info("==============【Th查询订单队列】==============【订单查询异常,上报队列】【E_MQ_TH_CHECK_ORDER】");
+                rabbitMQSender.send(AD3MQConstant.E_MQ_TH_CHECK_ORDER, JSON.toJSONString(message));
                 return;
             }
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
@@ -172,7 +175,7 @@ public class ThCheckOrderMQRecive {
                 log.info("=================【Th查询订单队列】=================【回调商户异常】", e);
             }
         } else {
-            log.error("==============【Th查询订单队列】============== 【2分钟查询,订单为交易中】 message : {}", JSON.toJSONString(message));
+            log.error("==============【Th查询订单队列】============== 【90秒查询,订单为交易中】 message : {}", JSON.toJSONString(message));
         }
     }
 }
