@@ -352,7 +352,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
 
-        String s46 = "303002020202" + orderRefund.getChannelNumber() + "0202";
+        String s46 = "3030020202" + orderRefund.getChannelNumber() + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
         //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
         berTlvBuilder.addHex(new BerTag(0x5F52), s46);
@@ -389,7 +389,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
         //附加信息
-        String s46 = "303002020202" + orderRefund.getChannelNumber() + "0202";
+        String s46 = "3030020202" + orderRefund.getChannelNumber() + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
         //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
         berTlvBuilder.addHex(new BerTag(0x5F52), s46);
