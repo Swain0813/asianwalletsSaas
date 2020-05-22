@@ -221,7 +221,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         BaseResponse baseResponse = new BaseResponse();
         if ("AS".equals(iso8583VO.getResponseCode_39())) {
             //当39域等于AS: 该响应表示该交易已受理,未承兑
-            log.info("===============【通华线下BSC】===============【上报通华查询队列】 【E_MQ_TH_CHECK_ORDER】");
+            log.info("===============【通华线下BSC】===============【39域返回AS,上报通华查询队列】 【E_MQ_TH_CHECK_ORDER】");
             ordersMapper.updateByPrimaryKeySelective(orders);
             ThCheckOrderQueueDTO thCheckOrderQueueDTO = new ThCheckOrderQueueDTO(orders, channel, iso8583DTO);
             RabbitMassage rabbitMassage = new RabbitMassage(20, JSON.toJSONString(thCheckOrderQueueDTO));
