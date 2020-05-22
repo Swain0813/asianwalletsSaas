@@ -174,15 +174,9 @@ public class THServiceImpl implements THService {
             //解包
             ISO8583DTO iso8583VO = ISO8583Util.unpackISO8583DTO(result);
             log.info("===============【通华BSC】===============【返回参数】 iso8583VO: {}", JSON.toJSONString(iso8583VO));
-            if ("00".equals(iso8583VO.getResponseCode_39())) {
-                baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
-                baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
-                baseResponse.setData(iso8583VO);
-            } else {
-                baseResponse.setCode(TradeConstant.HTTP_FAIL);
-                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
-                baseResponse.setData(iso8583VO);
-            }
+            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+            baseResponse.setData(iso8583VO);
         } catch (Exception e) {
             log.info("===============【通华BSC】===============【接口异常】", e);
             baseResponse.setCode(TradeConstant.HTTP_FAIL);
