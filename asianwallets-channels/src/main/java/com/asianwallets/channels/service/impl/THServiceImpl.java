@@ -1,8 +1,6 @@
 package com.asianwallets.channels.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.config.ChannelsConfig;
-import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.THService;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.th.ISO8583.*;
@@ -10,7 +8,6 @@ import com.asianwallets.common.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Map;
 
 /**
@@ -24,9 +21,6 @@ public class THServiceImpl implements THService {
 
     @Autowired
     private ChannelsConfig channelsConfig;
-
-    @Autowired
-    private ChannelsOrderMapper channelsOrderMapper;
 
     /**
      * 通华签到,获取Mac密钥明文
@@ -193,8 +187,6 @@ public class THServiceImpl implements THService {
      **/
     @Override
     public BaseResponse thRefund(ThDTO thDTO) {
-
-
         //ChannelsOrder co = new ChannelsOrder();
         //co.setMerchantOrderId(aliPayRefundDTO.getPartner_trans_id());
         //co.setTradeCurrency(aliPayRefundDTO.getCurrency());
@@ -212,8 +204,6 @@ public class THServiceImpl implements THService {
         //co.setOrderType(Byte.valueOf(AD3Constant.REFUND_ORDER));
         //co.setCreateTime(new Date());
         //channelsOrderMapper.insert(co);
-
-
         BaseResponse response = new BaseResponse();
         log.info("===============【通华退款接口】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(thDTO.getIso8583DTO()));
         String tdpu = channelsConfig.getThTDPU();
