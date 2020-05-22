@@ -230,6 +230,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
      **/
     @Override
     public int updateMerchantProduct(String name, MerchantProductDTO merchantProductDTO) {
+        //必要的非空check
+        if(StringUtils.isEmpty(merchantProductDTO.getEffectTime())){
+            throw new BusinessException(EResultEnum.EFFECTTIME_IS_NULL.getCode());
+        }
         Date date = merchantProductDTO.getEffectTime();
         Date date1 = DateToolUtils.addMinute(new Date(), 30);
         if (date.getTime() < date1.getTime()) {
