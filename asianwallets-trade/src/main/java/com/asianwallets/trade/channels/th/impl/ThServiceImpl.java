@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.th.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -37,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.util.Arrays;
 import java.util.Date;
 
@@ -431,6 +429,13 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
 
+    /**
+     * 撤销中
+     * @param channel
+     * @param orderRefund
+     * @param rabbitMassage
+     * @return
+     */
     @Override
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
@@ -444,8 +449,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         log.info("=================【TH撤销 cancelPaying】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
 
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
-            JSONObject jsonObject = JSONObject.fromObject(response.getData());
-            ISO8583DTO thResDTO = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);
             //请求成功
             if (response.getMsg().equals("success")) {
                 //退款成功
@@ -488,7 +491,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
-        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());//受卡方标识码
 
         String s46 = "3030020202" + orderRefund.getChannelNumber() + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
@@ -501,8 +504,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         iso8583DTO.setReservedPrivate_60("55" + orderRefund.getReportNumber().substring(6, 12));//批次号
-
-
         return iso8583DTO;
     }
 
@@ -540,8 +541,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
         iso8583DTO.setReservedPrivate_60("01" + orderRefund.getReportNumber().substring(6, 12));
-
-
         return iso8583DTO;
     }
+
 }
