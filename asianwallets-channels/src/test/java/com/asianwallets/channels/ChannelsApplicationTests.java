@@ -178,7 +178,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend1("00018644");
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
-        channel.setMd5KeyStr("861B7FBD78A6E196");
+        channel.setMd5KeyStr("9238048CAEFCC39B");
         thDTO.setChannel(channel);
         thService.thRefund(thDTO);
 
@@ -223,7 +223,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend1("00018644");
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
-        channel.setMd5KeyStr("861B7FBD78A6E196");
+        channel.setMd5KeyStr("9238048CAEFCC39B");
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         thService.thCSB(thDTO);
@@ -269,7 +269,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend1("00018644");
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
-        channel.setMd5KeyStr("861B7FBD78A6E196");
+        channel.setMd5KeyStr("9238048CAEFCC39B");
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         thService.thBSC(thDTO);
@@ -309,7 +309,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend1("00018644");
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
-        channel.setMd5KeyStr("861B7FBD78A6E196");
+        channel.setMd5KeyStr("9238048CAEFCC39B");
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         thService.thQuery(thDTO);
