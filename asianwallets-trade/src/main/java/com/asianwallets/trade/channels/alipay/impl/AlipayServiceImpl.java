@@ -784,4 +784,5 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
             }
         }
     }
+
 }
