@@ -282,7 +282,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         } else {
             log.info("=================【通华线下BSC】=================【订单已支付失败】 orderId: {}", orders.getId());
             orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
-            orders.setRemark5(iso8583VO.getAdditionalData_46());
+            orders.setRemark5(iso8583VO.getResponseCode_39());
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_FALID);
             } catch (Exception e) {
