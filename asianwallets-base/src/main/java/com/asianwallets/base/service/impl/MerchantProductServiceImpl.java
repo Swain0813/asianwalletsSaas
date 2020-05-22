@@ -137,7 +137,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             String id = IDS.uuid2();
             MerchantProduct merchantProduct = new MerchantProduct();
             BeanUtils.copyProperties(merchantProductDTO, merchantProduct);
-            if(merchantProductDTO.getMerchantName()==null){
+            if(StringUtils.isEmpty(merchantProductDTO.getMerchantName())){
                 merchantProduct.setMerchantName(commonService.getMerchant(merchantProductDTO.getMerchantId()).getCnName());
             }
             merchantProduct.setId(id);
