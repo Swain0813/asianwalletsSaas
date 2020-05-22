@@ -38,7 +38,7 @@ public class THServiceImpl implements THService {
         String merchNum = "852999958120501";
         //终端号
         String terminalNum = "00018644";
-        //机构号,左边填充0
+        //机构号,左边填充0,总共15位
         String institutionNum = "000000008600005";
         //业务类型
         String businessTypes = "00000000";
