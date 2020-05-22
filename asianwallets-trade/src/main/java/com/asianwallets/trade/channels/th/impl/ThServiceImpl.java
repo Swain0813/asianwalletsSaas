@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.th.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -36,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import java.util.Arrays;
 import java.util.Date;
 
@@ -173,7 +175,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         String[] domain46 = iso8583VO.getAdditionalData_46().split("02");
         log.info("===============【通华线下CSB】===============【46域信息】 domain46: {}", Arrays.toString(domain46));
         //索引第4位 : 通华返回的商户订单号
-        orders.setChannelNumber(domain46[4]);
+        orders.setChannelNumber(NumberStringUtil.hexStr2Str(domain46[4]));
         ordersMapper.updateByPrimaryKeySelective(orders);
         //索引第5位 : 二维码URL
         String codeUrl = NumberStringUtil.hexStr2Str(domain46[5]);
@@ -215,7 +217,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         String[] domain46 = iso8583VO.getAdditionalData_46().split("02");
         log.info("===============【通华线下BSC】===============【46域信息】 domain46: {}", Arrays.toString(domain46));
         //索引第4位 : 通华返回的商户订单号
-        orders.setChannelNumber(domain46[4]);
+        orders.setChannelNumber(NumberStringUtil.hexStr2Str(domain46[4]));
         BaseResponse baseResponse = new BaseResponse();
         if ("AS".equals(iso8583VO.getResponseCode_39())) {
             //当39域等于AS: 该响应表示该交易已受理,未承兑
@@ -430,6 +432,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
     /**
      * 撤销中
+     *
      * @param channel
      * @param orderRefund
      * @param rabbitMassage
@@ -492,7 +495,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());//受卡方标识码
 
-        String s46 = "3030020202" + orderRefund.getChannelNumber() + "0202";
+        String s46 = "3030020202" + NumberStringUtil.str2HexStr(orderRefund.getChannelNumber()) + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
         //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
         berTlvBuilder.addHex(new BerTag(0x5F52), s46);
@@ -526,7 +529,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
         //附加信息
-        String s46 = "3030020202" + orderRefund.getChannelNumber() + "0202";
+        String s46 = "3030020202" + NumberStringUtil.str2HexStr(orderRefund.getChannelNumber()) + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
         //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
         berTlvBuilder.addHex(new BerTag(0x5F52), s46);

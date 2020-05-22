@@ -5,6 +5,7 @@ import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
+import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.dto.th.ISO8583.TlvUtil;
 import com.asianwallets.common.entity.Orders;
@@ -69,7 +70,7 @@ public class ThCheckOrderMQReceive {
             iso8583DTO.setProcessingCode_3("700206");
             iso8583DTO.setPointOfServiceEntryMode_22("000");
             //附加信息
-            String domain46 = "3030020202" + orders.getChannelNumber() + "0202";
+            String domain46 = "3030020202" + NumberStringUtil.str2HexStr(orders.getChannelNumber()) + "0202";
             iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52(domain46));
             ThDTO thDTO = new ThDTO();
             thDTO.setIso8583DTO(iso8583DTO);
