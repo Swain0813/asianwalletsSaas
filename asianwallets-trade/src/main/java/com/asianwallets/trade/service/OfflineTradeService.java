@@ -2,10 +2,7 @@ package com.asianwallets.trade.service;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
 import com.asianwallets.common.dto.PosSearchDTO;
 import com.asianwallets.common.vo.PosSearchVO;
-import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
-import com.asianwallets.trade.dto.OfflineLoginDTO;
-import com.asianwallets.trade.dto.OfflineTradeDTO;
-import com.asianwallets.trade.dto.PosGetMerProDTO;
+import com.asianwallets.trade.dto.*;
 import com.asianwallets.trade.vo.*;
 
 import java.util.List;
@@ -82,4 +79,12 @@ public interface OfflineTradeService {
      * @return
      */
     List<PosSearchVO> posGetOrders(PosSearchDTO posSearchDTO);
+
+    /**
+     * @Author YangXu
+     * @Date 2020/5/25
+     * @Descripate 银行卡收单
+     * @return
+     **/
+    BscDynamicScanVO bankCardReceipt(BankCardTradeDTO bankCardTradeDTO);
 }

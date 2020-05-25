@@ -5,10 +5,7 @@ import com.asianwallets.common.dto.PosQueryOrderListDTO;
 import com.asianwallets.common.dto.PosSearchDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
-import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
-import com.asianwallets.trade.dto.OfflineLoginDTO;
-import com.asianwallets.trade.dto.OfflineTradeDTO;
-import com.asianwallets.trade.dto.PosGetMerProDTO;
+import com.asianwallets.trade.dto.*;
 import com.asianwallets.trade.service.OfflineTradeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,6 +44,12 @@ public class OfflineTradeController extends BaseController {
     @PostMapping("bscDynamicScan")
     public BaseResponse bscDynamicScan(@RequestBody @ApiParam @Valid OfflineTradeDTO offlineTradeDTO) {
         return ResultUtil.success(offlineTradeService.bscDynamicScan(offlineTradeDTO));
+    }
+
+    @ApiOperation(value = "银行卡收单")
+    @PostMapping("bankCardReceipt")
+    public BaseResponse bankCardReceipt(@RequestBody @ApiParam @Valid BankCardTradeDTO bankCardTradeDTO) {
+        return ResultUtil.success(offlineTradeService.bankCardReceipt(bankCardTradeDTO));
     }
 
     @ApiOperation(value = "线下查询订单列表【对外API】")

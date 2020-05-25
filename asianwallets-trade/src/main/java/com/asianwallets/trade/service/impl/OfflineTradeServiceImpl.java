@@ -15,10 +15,7 @@ import com.asianwallets.common.vo.PosSearchVO;
 import com.asianwallets.common.vo.RedisSysUserVO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.dao.*;
-import com.asianwallets.trade.dto.OfflineCheckOrdersDTO;
-import com.asianwallets.trade.dto.OfflineLoginDTO;
-import com.asianwallets.trade.dto.OfflineTradeDTO;
-import com.asianwallets.trade.dto.PosGetMerProDTO;
+import com.asianwallets.trade.dto.*;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.OfflineTradeService;
@@ -755,6 +752,18 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     @Override
     public List<PosSearchVO> posGetOrders(PosSearchDTO posSearchDTO) {
         return ordersMapper.posGetOrders(posSearchDTO);
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/5/25
+     * @Descripate 银行卡收单
+     * @return
+     **/
+    @Override
+    public BscDynamicScanVO bankCardReceipt(BankCardTradeDTO bankCardTradeDTO) {
+
+        return null;
     }
 
 }
