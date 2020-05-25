@@ -761,7 +761,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      * @return
      **/
     @Override
-    public BscDynamicScanVO bankCardReceipt(BankCardTradeDTO bankCardTradeDTO) {
+    public BscDynamicScanVO bankCardReceipt(OfflineTradeDTO offlineTradeDTO) {
 
         return null;
     }

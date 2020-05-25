@@ -48,8 +48,8 @@ public class OfflineTradeController extends BaseController {
 
     @ApiOperation(value = "银行卡收单")
     @PostMapping("bankCardReceipt")
-    public BaseResponse bankCardReceipt(@RequestBody @ApiParam @Valid BankCardTradeDTO bankCardTradeDTO) {
-        return ResultUtil.success(offlineTradeService.bankCardReceipt(bankCardTradeDTO));
+    public BaseResponse bankCardReceipt(@RequestBody @ApiParam @Valid OfflineTradeDTO offlineTradeDTO) {
+        return ResultUtil.success(offlineTradeService.bankCardReceipt(offlineTradeDTO));
     }
 
     @ApiOperation(value = "线下查询订单列表【对外API】")

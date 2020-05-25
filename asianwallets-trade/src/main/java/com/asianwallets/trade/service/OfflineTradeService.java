@@ -86,5 +86,5 @@ public interface OfflineTradeService {
      * @Descripate 银行卡收单
      * @return
      **/
-    BscDynamicScanVO bankCardReceipt(BankCardTradeDTO bankCardTradeDTO);
+    BscDynamicScanVO bankCardReceipt(OfflineTradeDTO offlineTradeDTO);
 }
