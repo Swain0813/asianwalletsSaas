@@ -1,15 +1,6 @@
 package com.asianwallets.common.dto.th.ISO8583;
-
-/**
- * @description:
- * @author: YangXu
- * @create: 2020-05-08 10:53
- **/
-
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
 import java.beans.PropertyDescriptor;
 import java.io.*;
 import java.lang.reflect.Field;
@@ -81,7 +72,6 @@ public class ISO8583Util {
         log.info("==========【ISO8583Util】========== 报文长度 :{}", sendMsgLenStr);
         // 将4位报文长度插到最前边
         sendMsg.insert(0, sendMsgLenStr);
-
         return sendMsg.toString();
     }
 

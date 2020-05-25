@@ -32,10 +32,6 @@ public class AD3Constant {
     public static final String ORDER_FAILED = "2"; //支付失败
     public static final String ORDER_SUCCESS = "3"; //支付成功
 
-    //------------退款订单状态
-    public static final String REFUND_ORDER_SUCCESS = "3"; //退款成功
-    public static final String REFUND_ORDER_FAILED = "4"; //退款失败
-
     //------------银行机构代码
     public static final String ENETS = "enets"; //enets钱包
 
@@ -51,10 +47,6 @@ public class AD3Constant {
     public static final String AD3_OFFLINE_SUCCESS = "10000";//线下成功返回码
     public static final String AD3_ONLINE_SUCCESS = "T000";//线上成功返回码
     public static final String AMOUNT_IS_ILLEGAL = "GW0034";//金额不合法
-
-    //AD3线上和线下通道的类型
-    public static final String AD3_ONLINE = "AD3_ONLINE"; //AD3线上通道
-    public static final String AD3_OFFLINE = "AD3_OFFLINE"; //AD3线下通道
 
 
 
