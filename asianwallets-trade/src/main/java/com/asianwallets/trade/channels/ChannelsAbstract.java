@@ -65,7 +65,7 @@ public abstract class ChannelsAbstract {
      * @return 通用响应实体
      */
     public abstract BaseResponse cancel(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
-    
+
     /**
      * 冲正方法
      *
