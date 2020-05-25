@@ -86,6 +86,9 @@ public class TradeConstant {
     public static final Byte ORDER_CANNELING = 1; //撤销中
     public static final Byte ORDER_CANNEL_SUCCESS = 2; //撤销成功
     public static final Byte ORDER_CANNEL_FALID = 3; //撤销失败
+    public static final Byte ORDER_RESEVALING = 4; //冲正中
+    public static final Byte ORDER_RESEVAL_SUCCESS = 5; //冲正成功
+    public static final Byte ORDER_RESEVAL_FALID = 6; //撤销失败
 
     //---------------原订单退款状态 order status
     public static final Byte ORDER_REFUND_WAIT = 1; //退款中

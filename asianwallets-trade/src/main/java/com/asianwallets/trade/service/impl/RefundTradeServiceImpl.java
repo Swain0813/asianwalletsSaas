@@ -708,7 +708,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             baseResponse = this.doRefundOrder(orderRefund,channel);
         } else if (TradeConstant.PAYING.equals(type)) {
             orderRefund.setRemark3(TradeConstant.CZ);
-            ordersMapper.updateOrderCancelStatus(refundDTO.getOrderNo(),refundDTO.getOperatorId(), TradeConstant.ORDER_CANNELING);
+            ordersMapper.updateOrderCancelStatus(refundDTO.getOrderNo(),refundDTO.getOperatorId(), TradeConstant.ORDER_RESEVALING);
             /***************************************************************  订单是付款中的场合  *************************************************************/
             ChannelsAbstract channelsAbstract = null;
             try {
