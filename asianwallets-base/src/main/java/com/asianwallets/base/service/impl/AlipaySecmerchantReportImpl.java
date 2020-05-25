@@ -138,7 +138,8 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
                 merchantReport.setUpdateTime(new Date());
                 int result = merchantReportMapper.updateByPrimaryKeySelective(merchantReport);
                 if(result>0){
-                    redisService.set(AsianWalletConstant.MERCHANT_REPORT_CACHE_KEY.concat("_").concat(merchantReport.getMerchantId()), JSON.toJSONString(merchantReport));
+                    redisService.set(AsianWalletConstant.MERCHANT_REPORT_CACHE_KEY.concat("_").
+                            concat(merchantReport.getMerchantId()).concat("_").concat(merchantReport.getChannelCode()), JSON.toJSONString(merchantReport));
                 }
             } else {
                 //错误 更新数据 发消息提醒错误

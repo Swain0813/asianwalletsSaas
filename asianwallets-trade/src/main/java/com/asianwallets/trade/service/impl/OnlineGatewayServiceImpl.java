@@ -419,6 +419,10 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setRemark1(onlineTradeDTO.getRemark1());
         orders.setRemark2(onlineTradeDTO.getRemark2());
         orders.setRemark3(onlineTradeDTO.getRemark3());
+        //设置商户报备商户MCC
+        if(basicInfoVO.getChannel().getServiceNameMark().contains(TradeConstant.ALIPAY)){
+            orders.setMerchantIndustry(commonRedisDataService.getMerchantReport(onlineTradeDTO.getMerchantId(),basicInfoVO.getChannel().getChannelCode()).getChannelMcc());
+        }
         return orders;
     }
 

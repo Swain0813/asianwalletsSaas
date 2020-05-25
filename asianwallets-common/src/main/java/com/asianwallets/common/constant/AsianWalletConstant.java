@@ -110,7 +110,7 @@ public class AsianWalletConstant {
     public static final String PAYOUT_BALANCE_KEY = "payoutBalanceKey";//付款校检余额缓存key
 
     /************************************** 商户报备成功后存redis 以便以后下单用 *******************************************************************************************/
-    // merchantReportCacheKey_M202003024032
+    // merchantReportCacheKey_M202003024032_999120127946039296
     public static final String MERCHANT_REPORT_CACHE_KEY = "merchantReportCacheKey";//机构表的缓存key
 
     //清结算接口url的key值

@@ -125,4 +125,12 @@ public interface CommonRedisDataService {
      * @return the pay type by extend 1 and language
      */
     PayType getPayTypeByExtend1AndLanguage(String extend1, String language);
+
+    /**
+     * 根据商户编号以及通道编号获取商户报备信息
+     * @param merchantId
+     * @param channelCode
+     * @return
+     */
+    MerchantReport getMerchantReport(String merchantId,String channelCode);
 }

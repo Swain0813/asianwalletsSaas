@@ -64,6 +64,9 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     @Autowired
     private PayTypeMapper payTypeMapper;
 
+    @Autowired
+    private MerchantReportMapper merchantReportMapper;
+
     /**
      * 根据币种编码获取币种信息
      *
@@ -397,5 +400,27 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         }
         log.info("==================【根据extend1编号和语言查询支付方式】==================【支付方式】 payType: {}", JSON.toJSONString(payType));
         return payType;
+    }
+
+
+    /**
+     * 根据商户编号以及通道编号获取商户报备信息
+     * @param merchantId
+     * @param channelCode
+     * @return
+     */
+    @Override
+    public MerchantReport getMerchantReport(String merchantId,String channelCode) {
+        MerchantReport merchantReport = JSON.parseObject(redisService.get(AsianWalletConstant.MERCHANT_REPORT_CACHE_KEY.concat("_").concat(merchantId).concat("_").concat(channelCode)), MerchantReport.class);
+        if (merchantReport == null) {
+            merchantReport = merchantReportMapper.selectByChannelCodeAndMerchantId(merchantId, channelCode);
+            if (merchantReport == null) {
+                log.info("==================【根据商户编号和通道编号获取商户报备信息】==================【商户报备信息不存在】 merchantId: {} | channelCode: {}", merchantId, channelCode);
+                return null;
+            }
+            redisService.set(AsianWalletConstant.MERCHANT_REPORT_CACHE_KEY.concat("_").concat(merchantId).concat("_").concat(channelCode), JSON.toJSONString(merchantReport));
+        }
+        log.info("==================【根据商户编号和通道编号获取商户报备信息】==================【商户报备信息】 account: {}", JSON.toJSONString(merchantReport));
+        return merchantReport;
     }
 }

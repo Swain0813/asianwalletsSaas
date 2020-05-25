@@ -237,7 +237,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                 for (ChannelInfoDTO channelInfoDTO : prodChannelDTO.getChannelList()) {
                     Channel channel = getChannelById(channelInfoDTO.getChannelId());
                     //判断通道是否是alipay
-                    if (channel.getServiceNameMark().equalsIgnoreCase(TradeConstant.ALIPAY)) {
+                    if (channel.getServiceNameMark().contains(TradeConstant.ALIPAY)) {
                         alipaySecmerchantReport.report(merProDTO.getMerchantId(), channelInfoDTO.getChannelId());
                     }
                 }

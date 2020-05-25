@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.trade.dao.MerchantReportMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.MerchantReport">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="channel_name" property="channelName" jdbcType="VARCHAR"/>
+        <result column="sub_merchant_code" property="subMerchantCode" jdbcType="VARCHAR"/>
+        <result column="sub_merchant_name" property="subMerchantName" jdbcType="VARCHAR"/>
+        <result column="shop_name" property="shopName" jdbcType="VARCHAR"/>
+        <result column="shop_code" property="shopCode" jdbcType="VARCHAR"/>
+        <result column="sub_appid" property="subAppid" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="extend1" property="extend1" jdbcType="VARCHAR"/>
+        <result column="extend2" property="extend2" jdbcType="VARCHAR"/>
+        <result column="extend3" property="extend3" jdbcType="VARCHAR"/>
+        <result column="extend4" property="extend4" jdbcType="VARCHAR"/>
+        <result column="extend5" property="extend5" jdbcType="VARCHAR"/>
+        <result column="extend6" property="extend6" jdbcType="VARCHAR"/>
+        <result column="channel_mcc" property="channelMcc" jdbcType="VARCHAR"/>
+        <result column="site_type" property="siteType" jdbcType="VARCHAR"/>
+        <result column="site_url" property="siteUrl" jdbcType="VARCHAR"/>
+        <result column="country_code" property="countryCode" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, merchant_id, channel_code, institution_id, institution_name, merchant_name, channel_name,
+    sub_merchant_code, sub_merchant_name,shop_code,shop_name,sub_appid, enabled, create_time, update_time, creator,
+    modifier, remark, extend1, extend2, extend3, extend4, extend5, extend6,channel_mcc,site_type,site_url,country_code
+    </sql>
+
+    <select id="selectByChannelCodeAndMerchantId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from merchant_report
+        where channel_code = #{channelCode}
+        and merchant_id = #{merchantId} and enabled=true;
+    </select>
+
+</mapper>
