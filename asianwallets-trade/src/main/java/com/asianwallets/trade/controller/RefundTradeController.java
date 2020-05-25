@@ -60,6 +60,31 @@ public class RefundTradeController extends BaseController {
     }
 
 
+    @ApiOperation(value = "银行卡退款接口")
+    @PostMapping("/bankCardrefund")
+    @CrossOrigin
+    public BaseResponse bankCardrefund(@RequestBody @ApiParam @Valid RefundDTO refundDTO) {
+        //线下判断交易密码
+        if (TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection())) {
+            if (StringUtils.isEmpty(refundDTO.getToken())) {
+                throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+            }
+            RedisSysUserVO sysUserVO = JSON.parseObject(redisService.get(refundDTO.getToken()), RedisSysUserVO.class);
+            if (sysUserVO == null) {
+                throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
+            }
+            if (!commonService.checkPassword(refundDTO.getTradePassword(), sysUserVO.getTradePassword())) {
+                throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
+            }
+        }
+        BaseResponse baseResponse = refundTradeService.bankCardrefund(refundDTO, this.getReqIp());
+        return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
+    }
+
+
+
+
+
     @ApiOperation(value = "撤销接口")
     @PostMapping("/reverse")
     @CrossOrigin

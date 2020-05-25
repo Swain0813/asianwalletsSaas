@@ -41,4 +41,12 @@ public interface RefundTradeService {
      * @return
      **/
     BaseResponse artificialRefund(String username, String refundOrderId, Boolean enabled, String remark);
+
+    /**
+     * @Author YangXu
+     * @Date 2020/5/25
+     * @Descripate 银行卡退款接口
+     * @return
+     **/
+    BaseResponse bankCardrefund(RefundDTO refundDTO, String reqIp);
 }

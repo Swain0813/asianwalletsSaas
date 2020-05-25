@@ -481,6 +481,18 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         return baseResponse;
     }
 
+    /**
+     * @Author YangXu
+     * @Date 2020/5/25
+     * @Descripate 银行卡退款接口
+     * @return
+     **/
+    @Override
+    public BaseResponse bankCardrefund(RefundDTO refundDTO, String reqIp) {
+
+        return null;
+    }
+
 
     /**
      * @return
