@@ -35,11 +35,11 @@ public class THServiceImpl implements THService {
         //通华提供的主密钥
         String primaryKey = "38D57B7C1979CF7910677DE5BB6A56DF";
         //商户号
-        String merchNum = "852999958120501";
+        String merchNum = iso8583DTO.getCardAcceptorIdentificationCode_42();
         //终端号
-        String terminalNum = "00018644";
+        String terminalNum = iso8583DTO.getCardAcceptorTerminalIdentification_41();
         //机构号,左边填充0,总共15位
-        String institutionNum = "000000008600005";
+        String institutionNum = "0000000"+iso8583DTO.getAcquiringInstitutionIdentificationCode_32();
         //业务类型
         String businessTypes = "00000000";
         BaseResponse baseResponse = new BaseResponse();

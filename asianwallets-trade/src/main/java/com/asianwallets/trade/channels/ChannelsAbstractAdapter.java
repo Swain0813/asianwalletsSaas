@@ -23,6 +23,11 @@ public class ChannelsAbstractAdapter extends ChannelsAbstract {
     }
 
     @Override
+    public BaseResponse bankCardReceipt(Orders orders, Channel channel) {
+        return null;
+    }
+
+    @Override
     public BaseResponse onlinePay(Orders orders, Channel channel) {
         return null;
     }
@@ -41,4 +46,5 @@ public class ChannelsAbstractAdapter extends ChannelsAbstract {
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage){
         return null;
     }
+
 }
