@@ -149,6 +149,7 @@ public class TradeConstant {
 
     //---------------清结算交易类型
     public static final String NT = "NT"; //收单
+    public static final String CZ = "CZ"; //冲正
     public static final String RF = "RF"; //退款
     public static final String RV = "RV"; //撤销
     public static final String WD = "WD"; //提款
