@@ -489,7 +489,21 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      **/
     @Override
     public BaseResponse bankCardrefund(RefundDTO refundDTO, String reqIp) {
+        //返回结果
+        BaseResponse baseResponse = new BaseResponse();
+        //退款功能验签，撤销功能的验签在自己的方法里面
+        if(refundDTO.getFunctionType()==null){
+            //签名校验
+            if (!commonBusinessService.checkUniversalSign(refundDTO)) {
+                log.info("=========================【银行卡退款 refundOrder】=========================【签名错误】");
+                throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
+            }
+        }
 
+
+
+
+        
         return null;
     }
 

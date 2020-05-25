@@ -88,6 +88,18 @@ public class RefundDTO {
     @ApiModelProperty(value = "更新者")
     private String modifier;
 
+    @ApiModelProperty(value = "银行卡号")
+    private String bankCardNo;
+
+    @ApiModelProperty(value = "cvv")
+    private String cvv;
+
+    @ApiModelProperty(value = "卡有效期")
+    private String cardValidDate;
+
+    @ApiModelProperty(value = "磁道信息")
+    private String trackInfor;
+
     /**
      * 由于撤销功能依赖退款的方法，为了签名的验签在各自自己的方法做
      * 所以特意加个标志
