@@ -9,7 +9,7 @@ import com.asianwallets.common.response.BaseResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface WechantService {
+public interface WeChatService {
 
     /**
      * @return
