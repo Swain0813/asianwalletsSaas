@@ -444,9 +444,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setAgentCode(merchant.getAgentId());
         orders.setConnectMethod(StringUtils.isEmpty(onlineTradeDTO.getIssuerId()) ? TradeConstant.INDIRECTCONNECTION : TradeConstant.DIRECTCONNECTION);
         orders.setAgentName(commonRedisDataService.getMerchantById(merchant.getId()).getCnName());
-        /*
-        判断GroupMasterAccount是否存在
-         */
         if (!StringUtils.isEmpty(merchant.getGroupMasterAccount())) {
             orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
             orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
@@ -517,6 +514,10 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setMinTate(merchantProduct.getMinTate());
         orders.setIssuerId(channel.getIssuerId());
         orders.setBankName(basicInfoVO.getBankName());
+        //设置商户报备商户MCC
+        if(basicInfoVO.getChannel().getServiceNameMark().contains(TradeConstant.ALIPAY)){
+            orders.setMerchantIndustry(commonRedisDataService.getMerchantReport(orders.getMerchantId(),basicInfoVO.getChannel().getChannelCode()).getChannelMcc());
+        }
     }
 
     /**
