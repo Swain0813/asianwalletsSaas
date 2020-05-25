@@ -116,7 +116,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     }
 
     public static void main(String[] args) {
-//        String url = "http://localhost:5010/offline/csbDynamicScan";
+        //        String url = "http://localhost:5010/offline/csbDynamicScan";
         String url = "http://localhost:5010/offline/bscDynamicScan";
         String md5Key = "47ac097138814db98436dd293edb5b49";
         String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwME0yMDE5MTIyMDMzNjAiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1NzkxNDIwODg5NTEsImV4cCI6MTU3OTIyODQ4OH0.-L7jU7A0ZB2rMK6_Hs9kKIHD8puGDxmCLXB5fxvQ6IvFSFFfSVTQJ0fWU4bAR6fD0D1ArL8TT3ZwvYceRh4aoA";
@@ -131,17 +131,17 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         offlineTradeDTO.setOperatorId("00");
         offlineTradeDTO.setToken(token);
         offlineTradeDTO.setServerUrl("test");
-//        offlineTradeDTO.setBrowserUrl("test");
-//        offlineTradeDTO.setProductName("test");
-//        offlineTradeDTO.setProductDescription("test");
-//        offlineTradeDTO.setPayerName("test");
-//        offlineTradeDTO.setPayerBank("test");
-//        offlineTradeDTO.setPayerEmail("test");
-//        offlineTradeDTO.setPayerPhone("test");
-//        offlineTradeDTO.setLanguage("zh-cn");
-//        offlineTradeDTO.setRemark1("test");
-//        offlineTradeDTO.setRemark2("test");
-//        offlineTradeDTO.setRemark3("test");
+        //        offlineTradeDTO.setBrowserUrl("test");
+        //        offlineTradeDTO.setProductName("test");
+        //        offlineTradeDTO.setProductDescription("test");
+        //        offlineTradeDTO.setPayerName("test");
+        //        offlineTradeDTO.setPayerBank("test");
+        //        offlineTradeDTO.setPayerEmail("test");
+        //        offlineTradeDTO.setPayerPhone("test");
+        //        offlineTradeDTO.setLanguage("zh-cn");
+        //        offlineTradeDTO.setRemark1("test");
+        //        offlineTradeDTO.setRemark2("test");
+        //        offlineTradeDTO.setRemark3("test");
         offlineTradeDTO.setSignType("2");
         offlineTradeDTO.setAuthCode("284216970393036884");
         //获得对象属性名对应的属性值Map
@@ -356,6 +356,23 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
             orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
         }
+        if (!StringUtils.isEmpty(offlineTradeDTO.getBankCardNo())) {
+            //银行卡号
+            orders.setUserBankCardNo(offlineTradeDTO.getBankCardNo());
+        }
+        if (!StringUtils.isEmpty(offlineTradeDTO.getCvv())) {
+            //CVV
+            orders.setCvv(offlineTradeDTO.getCvv());
+        }
+        if (!StringUtils.isEmpty(offlineTradeDTO.getCardValidDate())) {
+            //卡有效期
+            orders.setValid(offlineTradeDTO.getCardValidDate());
+        }
+        if (!StringUtils.isEmpty(offlineTradeDTO.getTrackInfor())) {
+            //磁道信息
+            orders.setTrackData(offlineTradeDTO.getTrackInfor());
+        }
+
         orders.setTradeType(TradeConstant.GATHER_TYPE);
         orders.setTradeDirection(TradeConstant.TRADE_UPLINE);
         orders.setMerchantOrderTime(DateToolUtils.getReqDateG(offlineTradeDTO.getOrderTime()));
@@ -736,6 +753,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     /**
      * pos机查询订单详情打印用
+     *
      * @param posSearchDTO
      * @return
      */
@@ -746,6 +764,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     /**
      * pos机查询订单打印用
+     *
      * @param posSearchDTO
      * @return
      */
@@ -755,15 +774,15 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/5/25
      * @Descripate 银行卡收单
-     * @return
      **/
     @Override
     public BscDynamicScanVO bankCardReceipt(OfflineTradeDTO offlineTradeDTO) {
         log.info("==================【银行卡收单】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
-        if (StringUtils.isEmpty(offlineTradeDTO.getBankCard())) {
+        if (StringUtils.isEmpty(offlineTradeDTO.getBankCardNo())) {
             log.info("==================【银行卡收单】==================【银行卡号为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
@@ -793,11 +812,28 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         BasicInfoVO basicInfoVO = getBasicAndCheck(offlineTradeDTO);
         //设置订单属性
         Orders orders = setAttributes(offlineTradeDTO, basicInfoVO);
-
-
-
-
-        return null;
+        //换汇
+        commonBusinessService.swapRateByPayment(basicInfoVO, orders);
+        //校验商户产品与通道的限额
+        commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //截取币种默认值
+        commonBusinessService.interceptDigit(orders, basicInfoVO.getCurrency());
+        //计算手续费
+        commonBusinessService.calculateCost(basicInfoVO, orders);
+        orders.setReportChannelTime(new Date());
+        orders.setTradeStatus(TradeConstant.ORDER_PAYING);
+        log.info("==================【银行卡收单】==================【落地订单信息】 orders:{}", JSON.toJSONString(orders));
+        ordersMapper.insert(orders);
+        try {
+            //上报通道
+            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark().split("_")[0]);
+            channelsAbstract.bankCardReceipt(orders, basicInfoVO.getChannel());
+        } catch (Exception e) {
+            log.info("==================【银行卡收单】==================【上报通道异常】", e);
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+        log.info("==================【银行卡收单】==================【下单结束】");
+        return new BscDynamicScanVO(orders, offlineTradeDTO.getOrderTime());
     }
 
 }

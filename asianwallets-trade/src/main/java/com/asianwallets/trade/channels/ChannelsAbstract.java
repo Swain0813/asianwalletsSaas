@@ -34,6 +34,13 @@ public abstract class ChannelsAbstract {
     public abstract BaseResponse offlineBSC(Orders orders, Channel channel, String authCode);
 
 
+    /**
+     * 线下CSB处理方法
+     *
+     * @param orders       订单
+     * @param channel      通道
+     */
+    public abstract BaseResponse bankCardReceipt(Orders orders, Channel channel);
 
     /**
      * 线上收单方法

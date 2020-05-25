@@ -62,7 +62,7 @@ public class OfflineTradeDTO {
     //----------------【非必填参数】---------------------
 
     @ApiModelProperty(value = "银行卡号")
-    private String bankCard;
+    private String bankCardNo;
 
     @ApiModelProperty(value = "cvv")
     private String cvv;
