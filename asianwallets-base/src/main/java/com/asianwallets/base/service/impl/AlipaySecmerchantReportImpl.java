@@ -14,6 +14,7 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.entity.MerchantReport;
+import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.ChannelDetailVO;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,6 +58,9 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
 
     @Value("${custom.alipay.url}")
     private String url;
+
+    @Autowired
+    private RedisService redisService;
 
     /**
      * 重新报备
@@ -133,7 +136,10 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
                 //正确 更新数据
                 merchantReport.setEnabled(true);
                 merchantReport.setUpdateTime(new Date());
-                merchantReportMapper.updateByPrimaryKeySelective(merchantReport);
+                int result = merchantReportMapper.updateByPrimaryKeySelective(merchantReport);
+                if(result>0){
+                    redisService.set(AsianWalletConstant.MERCHANT_REPORT_CACHE_KEY.concat("_").concat(merchantReport.getMerchantId()), JSON.toJSONString(merchantReport));
+                }
             } else {
                 //错误 更新数据 发消息提醒错误
                 String msg = (String) xmlMap.get("error");
