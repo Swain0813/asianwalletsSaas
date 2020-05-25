@@ -1,5 +1,4 @@
 package com.asianwallets.base.rabbitmq.receive;
-
 import cn.hutool.core.util.XmlUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.MerchantReportMapper;
@@ -7,15 +6,16 @@ import com.asianwallets.base.feign.MessageFeign;
 import com.asianwallets.base.rabbitmq.RabbitMQSender;
 import com.asianwallets.base.service.AlipaySecmerchantReport;
 import com.asianwallets.common.constant.AD3MQConstant;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.MerchantReport;
+import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.utils.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
 import java.util.Map;
 
@@ -41,6 +41,9 @@ public class ReportFailMQReceive {
     @Value("${custom.warning.email}")
     private String email;
 
+    @Autowired
+    private RedisService redisService;
+
     /**
      * 回调商户服务器失败队列
      *
@@ -60,12 +63,17 @@ public class ReportFailMQReceive {
                 } else {
                     Map<String, Object> xmlMap = XmlUtil.xmlToMap(httpResponse.getStringResult());
                     if (xmlMap.get("is_success").equals("T")) {
-                        //正确 更新数据
+                        log.info("************回调商户服务器失败队列************报备成功的场合");
+                        //成功的场合 更新数据
                         merchantReport.setEnabled(true);
                         merchantReport.setUpdateTime(new Date());
-                        merchantReportMapper.updateByPrimaryKeySelective(merchantReport);
+                        int result = merchantReportMapper.updateByPrimaryKeySelective(merchantReport);
+                        if(result>0){
+                            redisService.set(AsianWalletConstant.MERCHANT_REPORT_CACHE_KEY.concat("_").concat(merchantReport.getMerchantId()), JSON.toJSONString(merchantReport));
+                        }
                     } else {
-                        //错误 更新数据 发消息提醒错误
+                        log.info("************回调商户服务器失败队列************报备失败的场合");
+                        //失败的场合 更新数据 发消息提醒错误
                         String msg = (String) xmlMap.get("error");
                         merchantReport.setEnabled(false);
                         merchantReport.setRemark(msg);

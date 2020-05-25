@@ -93,7 +93,6 @@ public class AsianWalletConstant {
     //channelCacheCodeKey_880239009516445696      key+通道Code
     public static final String CHANNEL_CACHE_CODE_KEY = "channelCacheCodeKey";//通道表的缓存key
 
-    /************************************** 机构 产品 机构产品 机构通道 通道*******************************************************************************************/
 
     //通道银行缓存Key
     public static final String CHANNEL_BANK_CACHE_KEY = "channelBankCacheKey";
@@ -110,6 +109,9 @@ public class AsianWalletConstant {
 
     public static final String PAYOUT_BALANCE_KEY = "payoutBalanceKey";//付款校检余额缓存key
 
+    /************************************** 商户报备成功后存redis 以便以后下单用 *******************************************************************************************/
+    // merchantReportCacheKey_M202003024032
+    public static final String MERCHANT_REPORT_CACHE_KEY = "merchantReportCacheKey";//机构表的缓存key
 
     //清结算接口url的key值
     public static final String CSAPI_MD5KEY = "CSAPI_MD5key";//MD5 key
