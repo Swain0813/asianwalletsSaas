@@ -18,7 +18,6 @@ import com.asianwallets.common.utils.*;
 import com.asianwallets.common.vo.ChannelDetailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -48,7 +47,6 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
     @Autowired
     private RabbitMQSender rabbitMQSender;
 
-    @Qualifier("asianwallets-message")
     @Autowired
     private MessageFeign messageFeign;
 
@@ -64,15 +62,18 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
     /**
      * 重新报备
      *
-     * @param merchantReport
+     * @param mrId
      */
-    public void Resubmit(MerchantReport merchantReport) {
-        try {
-            getHttpResponse(merchantReport);
-        } catch (IOException e) {
-            log.warn("------------------报备异常------------------信息:{}", JSON.toJSONString(e));
-            messageFeign.sendSimple(mobile, "SAAS-支付宝报备异常  ：{ " + merchantReport + " }");//短信通知
-            messageFeign.sendSimpleMail(email, "SAAS-支付宝报备异常 ", "支付宝报备异常  ：{ " + merchantReport + " }");//邮件通知
+    public void Resubmit(String mrId) {
+        MerchantReport merchantReport = merchantReportMapper.selectByPrimaryKey(mrId);
+        if (merchantReport.getEnabled() == null || !merchantReport.getEnabled()) {
+            try {
+                getHttpResponse(merchantReport);
+            } catch (IOException e) {
+                log.warn("------------------报备异常------------------信息:{}", JSON.toJSONString(e));
+                messageFeign.sendSimple(mobile, "SAAS-支付宝报备异常  ：{ " + merchantReport + " }");//短信通知
+                messageFeign.sendSimpleMail(email, "SAAS-支付宝报备异常 ", "支付宝报备异常  ：{ " + merchantReport + " }");//邮件通知
+            }
         }
     }
 
@@ -116,7 +117,6 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
         merchantReport.setSubAppid("");
         merchantReport.setSiteType("WEB");
         merchantReport.setCreator("上报支付宝报备接口");
-        merchantReport.setChannelDetailVO(channelDetailVO);
         merchantReportMapper.insert(merchantReport);
         try {
             HttpResponse response = getHttpResponse(merchantReport);
@@ -130,7 +130,7 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
             String xml = response.getStringResult();
             System.out.println(xml);
             Map<String, Object> xmlMap = XmlUtil.xmlToMap(xml);
-            if (xmlMap.get("is_success").equals("F")) {
+            if (xmlMap.get("is_success").equals("T")) {
                 //正确 更新数据
                 merchantReport.setEnabled(true);
                 merchantReport.setUpdateTime(new Date());
@@ -231,6 +231,7 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
         maps.put("representative_id", merchantReport.getExtend4());
         //进行签名
         Map<String, String> processedMaps = AlipayCore.buildRequestPara(maps, merchantReport.getExtend6());
+        log.info("-----------------支付宝报备 发起请求参数-----------------:{}",JSON.toJSONString(processedMaps));
         HttpProtocolHandler httpProtocolHandler = HttpProtocolHandler.getInstance();
         HttpRequest reportMsg = new HttpRequest(HttpResultType.BYTES);
         reportMsg.setCharset("UTF-8");

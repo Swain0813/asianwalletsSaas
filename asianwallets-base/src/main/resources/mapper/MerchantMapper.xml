@@ -332,6 +332,6 @@
                  left join asianwallets_saas.country c on m.country = c.extend1 and c.language = "zh-cn"
                  right join asianwallets_saas.mcc mc on m.mcc = mc.code
                  right join asianwallets_saas.mcc_channel mccChannel on mc.id = mccChannel.mid and mccChannel.cid = #{channelCode}
-
+        where m.id = #{merchantId}
     </select>
 </mapper>

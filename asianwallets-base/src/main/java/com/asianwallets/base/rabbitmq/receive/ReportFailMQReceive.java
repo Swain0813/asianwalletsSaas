@@ -59,7 +59,7 @@ public class ReportFailMQReceive {
                     rabbitMQSender.send(AD3MQConstant.MQ_REPORT_FAIL, JSON.toJSONString(rabbitMassage));
                 } else {
                     Map<String, Object> xmlMap = XmlUtil.xmlToMap(httpResponse.getStringResult());
-                    if (xmlMap.get("is_success").equals("F")) {
+                    if (xmlMap.get("is_success").equals("T")) {
                         //正确 更新数据
                         merchantReport.setEnabled(true);
                         merchantReport.setUpdateTime(new Date());

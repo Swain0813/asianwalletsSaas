@@ -29,7 +29,7 @@ public class RabbitMQConfig {
 
     //声明报备失败队列
     @Bean
-    public Queue callBackFailQueue() {
+    public Queue reportFailQueue() {
         return new Queue(RabbitMQConfig.MQ_REPORT_FAIL, true, false, false);
     }
 
@@ -42,7 +42,7 @@ public class RabbitMQConfig {
     //绑定报备失败队列到报备失败交换机,并通过指定的RoutingKey路由
     @Bean
     public Binding deadLetterBindingCallBack() {
-        return BindingBuilder.bind(callBackFailQueue()).to(exchangeCallBack()).with(MQ_REPORT_FAIL_KEY);
+        return BindingBuilder.bind(reportFailQueue()).to(exchangeCallBack()).with(MQ_REPORT_FAIL_KEY);
     }
 
     //报备失败队列的配置死信队列,即入队队列

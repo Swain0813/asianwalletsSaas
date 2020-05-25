@@ -16,9 +16,9 @@ public interface AlipaySecmerchantReport {
 
     /**
      * 重新报备
-     * @param merchantReport 报备
+     * @param mrId
      */
-    void Resubmit(MerchantReport merchantReport);
+    void Resubmit(String mrId);
 
     /**
      * 调用支付宝报备接口

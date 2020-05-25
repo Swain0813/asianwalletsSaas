@@ -139,10 +139,7 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         BeanUtils.copyProperties(merchantReportDTO, merchantReport, getNullPropertyNames(merchantReportDTO));
         //change the data
         int i = merchantReportMapper.updateByPrimaryKeySelective(merchantReport);
-        MerchantReport mr = merchantReportMapper.selectByPrimaryKey(merchantReportDTO.getId());
-        if (mr.getEnabled() == null || !mr.getEnabled()) {
-            alipaySecmerchantReport.Resubmit(mr);
-        }
+        alipaySecmerchantReport.Resubmit(merchantReportDTO.getId());
         return i;
     }
 
