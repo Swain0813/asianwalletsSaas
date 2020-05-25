@@ -19,6 +19,22 @@ public class BankCardTradeDTO {
 
 
     @NotBlank(message = "50002")
+    @ApiModelProperty(value = "银行卡号")
+    private String bankCard;
+
+    @NotBlank(message = "50002")
+    @ApiModelProperty(value = "银行卡号")
+    private String cvv;
+
+    @NotBlank(message = "50002")
+    @ApiModelProperty(value = "卡有效期")
+    private String cardValidDate;
+
+    @NotBlank(message = "50002")
+    @ApiModelProperty(value = "磁道信息")
+    private String trackInfor;
+
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "商户编号")
     private String merchantId;
 
