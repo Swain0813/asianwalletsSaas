@@ -762,6 +762,40 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
      **/
     @Override
     public BscDynamicScanVO bankCardReceipt(OfflineTradeDTO offlineTradeDTO) {
+        log.info("==================【银行卡收单】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
+        if (StringUtils.isEmpty(offlineTradeDTO.getBankCard())) {
+            log.info("==================【银行卡收单】==================【银行卡号为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (StringUtils.isEmpty(offlineTradeDTO.getCvv())) {
+            log.info("==================【银行卡收单】==================【CVV为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (StringUtils.isEmpty(offlineTradeDTO.getCardValidDate())) {
+            log.info("==================【银行卡收单】==================【卡有效期为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (StringUtils.isEmpty(offlineTradeDTO.getTrackInfor())) {
+            log.info("==================【银行卡收单】==================【磁道信息为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        //重复请求
+        if (!commonBusinessService.repeatedRequests(offlineTradeDTO.getMerchantId(), offlineTradeDTO.getOrderNo())) {
+            log.info("==================【银行卡收单】==================【重复请求】");
+            throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
+        }
+        //验签
+        if (!commonBusinessService.checkUniversalSign(offlineTradeDTO)) {
+            log.info("==================【银行卡收单,币种信息】==================【签名不匹配】");
+            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+        }
+        //获取收单基础信息并校验
+        BasicInfoVO basicInfoVO = getBasicAndCheck(offlineTradeDTO);
+        //设置订单属性
+        Orders orders = setAttributes(offlineTradeDTO, basicInfoVO);
+
+
+
 
         return null;
     }

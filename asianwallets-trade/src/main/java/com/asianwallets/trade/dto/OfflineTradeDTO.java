@@ -60,6 +60,19 @@ public class OfflineTradeDTO {
     private String signType;
 
     //----------------【非必填参数】---------------------
+
+    @ApiModelProperty(value = "银行卡号")
+    private String bankCard;
+
+    @ApiModelProperty(value = "cvv")
+    private String cvv;
+
+    @ApiModelProperty(value = "卡有效期")
+    private String cardValidDate;
+
+    @ApiModelProperty(value = "磁道信息")
+    private String trackInfor;
+
     @ApiModelProperty(value = "银行机构号")
     private String issuerId;
 
