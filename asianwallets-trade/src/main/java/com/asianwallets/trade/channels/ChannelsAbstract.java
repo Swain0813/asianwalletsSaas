@@ -35,7 +35,7 @@ public abstract class ChannelsAbstract {
 
 
     /**
-     * 线下CSB处理方法
+     * 线下银行卡下单
      *
      * @param orders       订单
      * @param channel      通道
