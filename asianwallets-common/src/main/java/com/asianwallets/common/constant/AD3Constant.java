@@ -31,7 +31,7 @@ public class AD3Constant {
     public static final String ORDER_IN_TRADING = "1"; //交易中
     public static final String ORDER_FAILED = "2"; //支付失败
     public static final String ORDER_SUCCESS = "3"; //支付成功
-    
+
     //------------银行机构代码
     public static final String ENETS = "enets"; //enets钱包
 
