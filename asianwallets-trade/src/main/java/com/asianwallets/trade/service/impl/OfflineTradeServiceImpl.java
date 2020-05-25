@@ -116,8 +116,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     }
 
     public static void main(String[] args) {
-        String url = "http://localhost:5010/offline/csbDynamicScan";
-//        String url = "http://localhost:5010/offline/bscDynamicScan";
+//        String url = "http://localhost:5010/offline/csbDynamicScan";
+        String url = "http://localhost:5010/offline/bscDynamicScan";
         String md5Key = "47ac097138814db98436dd293edb5b49";
         String token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwME0yMDE5MTIyMDMzNjAiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1NzkxNDIwODg5NTEsImV4cCI6MTU3OTIyODQ4OH0.-L7jU7A0ZB2rMK6_Hs9kKIHD8puGDxmCLXB5fxvQ6IvFSFFfSVTQJ0fWU4bAR6fD0D1ArL8TT3ZwvYceRh4aoA";
         OfflineTradeDTO offlineTradeDTO = new OfflineTradeDTO();
@@ -126,7 +126,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         offlineTradeDTO.setOrderCurrency("HKD");
         offlineTradeDTO.setOrderAmount(new BigDecimal("0.09").setScale(2, BigDecimal.ROUND_DOWN));
         offlineTradeDTO.setOrderTime(DateToolUtils.formatDate(new Date()));
-        offlineTradeDTO.setProductCode(53);
+        offlineTradeDTO.setProductCode(55);
         offlineTradeDTO.setImei("线下CSB");
         offlineTradeDTO.setOperatorId("00");
         offlineTradeDTO.setToken(token);
@@ -143,7 +143,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 //        offlineTradeDTO.setRemark2("test");
 //        offlineTradeDTO.setRemark3("test");
         offlineTradeDTO.setSignType("2");
-//        offlineTradeDTO.setAuthCode("284216970393036884");
+        offlineTradeDTO.setAuthCode("284216970393036884");
         //获得对象属性名对应的属性值Map
         Map<String, String> paramMap = ReflexClazzUtils.getFieldForStringValue(offlineTradeDTO);
         String cleatText = SignTools.getSignStr(paramMap) + md5Key;

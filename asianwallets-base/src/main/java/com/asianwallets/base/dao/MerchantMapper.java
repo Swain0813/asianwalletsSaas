@@ -78,4 +78,11 @@ public interface MerchantMapper extends BaseMapper<Merchant> {
      * @return
      */
     List<String> selectByGroupMasterAccount(@Param("merchantId") String merchantId);
+
+    /**
+     * 商户报备时查询商户信息方法
+     * @param merchantId
+     * @return
+     */
+    Merchant getMerchantReportInfo(@Param("merchantId") String merchantId,@Param("channelCode") String channelCode);
 }

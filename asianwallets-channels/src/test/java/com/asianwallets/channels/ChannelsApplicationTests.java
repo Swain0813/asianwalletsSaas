@@ -178,7 +178,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend1("00018644");
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
-        channel.setMd5KeyStr("861B7FBD78A6E196");
+        channel.setMd5KeyStr("9238048CAEFCC39B");
         thDTO.setChannel(channel);
         thService.thRefund(thDTO);
 
@@ -223,7 +223,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend1("00018644");
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
-        channel.setMd5KeyStr("861B7FBD78A6E196");
+        channel.setMd5KeyStr("9238048CAEFCC39B");
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         thService.thCSB(thDTO);
@@ -237,7 +237,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         //被扫
         iso8583DTO.setProcessingCode_3("400101");
         //交易金额
-        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        iso8583DTO.setAmountOfTransactions_4("000000000009");
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
         //服务点输入方式码
@@ -255,8 +255,8 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         0x31:支付宝
         0x32:银联云闪付
          */
-        String payCode = "31";
-        String scanCode = "286020382107217225";
+        String payCode = "30";
+        String scanCode = "134620119418765853";
         String domain46 = "303002" + payCode + "02" + NumberStringUtil.str2HexStr(scanCode) + "0202";
         //附加信息-被扫
         iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52(domain46));
@@ -269,7 +269,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend1("00018644");
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
-        channel.setMd5KeyStr("861B7FBD78A6E196");
+        channel.setMd5KeyStr("9238048CAEFCC39B");
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         thService.thBSC(thDTO);
@@ -309,7 +309,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend1("00018644");
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
-        channel.setMd5KeyStr("861B7FBD78A6E196");
+        channel.setMd5KeyStr("9238048CAEFCC39B");
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         thService.thQuery(thDTO);
@@ -321,8 +321,11 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0800");
         iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
+        //机构号
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
+        //终端号
         iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        //商户号
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
         iso8583DTO.setReservedPrivate_60("50" + timeStamp.substring(6, 12) + "003");
         iso8583DTO.setReservedPrivate_63("001");

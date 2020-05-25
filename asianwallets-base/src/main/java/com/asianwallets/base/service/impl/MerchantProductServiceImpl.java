@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.base.dao.*;
 import com.asianwallets.base.job.ProductInfoJob;
+import com.asianwallets.base.service.AlipaySecmerchantReport;
 import com.asianwallets.base.service.CommonService;
 import com.asianwallets.base.service.MerchantProductService;
 import com.asianwallets.common.base.BaseServiceImpl;
@@ -78,6 +79,9 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     private ProductMapper productMapper;
 
     @Autowired
+    private ChannelMapper channelMapper;
+
+    @Autowired
     private AccountMapper accountMapper;
 
     @Autowired
@@ -88,6 +92,9 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+    private AlipaySecmerchantReport alipaySecmerchantReport;
 
 
     /**
@@ -137,6 +144,9 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             String id = IDS.uuid2();
             MerchantProduct merchantProduct = new MerchantProduct();
             BeanUtils.copyProperties(merchantProductDTO, merchantProduct);
+            if(StringUtils.isEmpty(merchantProductDTO.getMerchantName())){
+                merchantProduct.setMerchantName(commonService.getMerchant(merchantProductDTO.getMerchantId()).getCnName());
+            }
             merchantProduct.setId(id);
             merchantProduct.setCreateTime(new Date());
             merchantProduct.setCreator(name);
@@ -219,9 +229,43 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                 throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
             }
         }
+        //如果通道是支付宝 且产品时线上 需要报备
+        for (ProdChannelDTO prodChannelDTO : merProDTO.getProductList()) {
+            Product product = productMapper.selectByPrimaryKey(prodChannelDTO.getProductId());
+            //判断产品是否是线上
+            if (product.getTradeDirection().equals(TradeConstant.PRODUCT_ONLINE)) {
+                for (ChannelInfoDTO channelInfoDTO : prodChannelDTO.getChannelList()) {
+                    Channel channel = getChannelById(channelInfoDTO.getChannelId());
+                    //判断通道是否是alipay
+                    if (channel.getServiceNameMark().equalsIgnoreCase(TradeConstant.ALIPAY)) {
+                        alipaySecmerchantReport.report(merProDTO.getMerchantId(), channelInfoDTO.getChannelId());
+                    }
+                }
+            }
+        }
         return 0;
     }
 
+    /**
+     * 缓存获取通道信息
+     * @param channelId
+     * @return
+     */
+    public Channel getChannelById(String channelId) {
+        Channel channel = null;
+        channel = JSON.parseObject(redisService.get(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channelId)), Channel.class);
+        if (channel == null) {
+            channel = channelMapper.selectByPrimaryKey(channelId);
+            if (channel == null) {
+                log.info("==================【根据通道ID查询通道信息】==================【通道对象不存在】 channelId: {}", channelId);
+                return null;
+            }
+            redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
+            redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channel.getChannelCode()), JSON.toJSONString(channel));
+        }
+        log.info("==================【根据通道ID查询通道信息】==================【通道信息】 channel: {}", JSON.toJSONString(channel));
+        return channel;
+    }
     /**
      * @return
      * @Author YangXu
@@ -230,6 +274,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
      **/
     @Override
     public int updateMerchantProduct(String name, MerchantProductDTO merchantProductDTO) {
+        //必要的非空check
+        if(StringUtils.isEmpty(merchantProductDTO.getEffectTime())){
+            throw new BusinessException(EResultEnum.EFFECTTIME_IS_NULL.getCode());
+        }
         Date date = merchantProductDTO.getEffectTime();
         Date date1 = DateToolUtils.addMinute(new Date(), 30);
         if (date.getTime() < date1.getTime()) {
@@ -359,7 +407,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
         int num = 0;
         for (String merProId : list) {
             MerchantProduct oldMerchantProduct = merchantProductMapper.selectByPrimaryKey(merProId);
-            if(oldMerchantProduct==null){
+            if (oldMerchantProduct == null) {
                 //商户产品信息不存在
                 throw new BusinessException(EResultEnum.MERCHANT_PRODUCT_DOES_NOT_EXIST.getCode());
             }

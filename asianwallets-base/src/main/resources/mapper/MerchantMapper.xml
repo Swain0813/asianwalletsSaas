@@ -263,7 +263,7 @@
         WHERE id = #{code}
     </select>
     <select id="getAllAgent" resultMap="BaseResultMap">
-        select id as id ,en_name as enName,cn_name as cnName,agent_type as agentType ,institution_id  from merchant
+        select id as id ,en_name as enName,cn_name as cnName,agent_type as agentType ,institution_id from merchant
         <where>
             <if test="merchantType != null and merchantType != ''">
                 and merchant_type=#{merchantType}
@@ -280,5 +280,58 @@
         select id
         from merchant
         where group_master_account = #{merchantId};
+    </select>
+
+    <select id="getMerchantReportInfo" resultMap="BaseResultMap">
+        select m.id,
+               m.institution_id,
+               m.agent_type,
+               m.agent_id,
+               m.parent_id,
+               m.cn_name,
+               m.en_name,
+               m.country_type,
+               m.country,
+               m.region,
+               m.mcc,
+               m.merchant_type,
+               m.group_master_account,
+               m.develop_sales,
+               m.company_regist_number,
+               m.company_validity,
+               m.legal_passport_code,
+               m.legal_passport_validity,
+               m.country_code,
+               m.institution_adress,
+               m.legal_passport_img,
+               m.institution_contract,
+               m.company_articles,
+               m.business_certificate,
+               m.institution_phone,
+               m.legal_name,
+               m.business_category,
+               m.business_license,
+               m.industry_category,
+               m.merchant_postal_code,
+               m.merchant_email,
+               m.merchant_web_url,
+               m.contact_address,
+               m.contact_people,
+               m.contact_phone,
+               m.audit_status,
+               i.cn_name       as ext1,
+               c.extend2       as ext2,
+               mccChannel.code as ext3,
+               m.ext4,
+               m.ext5,
+               m.ext6,
+               m.ext7,
+               m.enabled
+        from asianwallets_saas.merchant m
+                 left join asianwallets_saas.institution i on m.institution_id = i.id
+                 left join asianwallets_saas.country c on m.country = c.extend1 and c.language = "zh-cn"
+                 right join asianwallets_saas.mcc mc on m.mcc = mc.code
+                 right join asianwallets_saas.mcc_channel mccChannel on mc.id = mccChannel.mid and mccChannel.cid = #{channelCode}
+        where m.id = #{merchantId}
     </select>
 </mapper>

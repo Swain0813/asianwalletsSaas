@@ -72,6 +72,12 @@ spring:
     #初始化表结构
     jdbc:
       initialize-schema: NEVER
+  # rabbitMq 配置
+  rabbitmq:
+    addresses: 192.168.124.34:5672
+    username: admin
+    password: admin
+
 redis:
   database: 1
   password: test123
@@ -87,3 +93,5 @@ custom:
   warning:
     email: 842505302@qq.com
     mobile: 18800330943
+  alipay:
+    url: https://intlmapi.alipay.com/gateway.do?
