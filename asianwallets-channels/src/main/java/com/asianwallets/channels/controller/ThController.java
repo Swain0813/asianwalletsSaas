@@ -1,8 +1,6 @@
 package com.asianwallets.channels.controller;
-
 import com.asianwallets.channels.service.THService;
 import com.asianwallets.common.base.BaseController;
-import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.response.BaseResponse;
 import io.swagger.annotations.Api;
