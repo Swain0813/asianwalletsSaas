@@ -13,7 +13,7 @@ import com.asianwallets.trade.channels.alipay.AlipayService;
 import com.asianwallets.trade.channels.enets.EnetsService;
 import com.asianwallets.trade.channels.nextpos.NextPosService;
 import com.asianwallets.trade.channels.qfpay.QfPayService;
-import com.asianwallets.trade.channels.wechat.WechantService;
+import com.asianwallets.trade.channels.wechat.WeChatService;
 import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
 import com.asianwallets.trade.dto.EnetsPosCallbackDTO;
 import com.asianwallets.trade.dto.QfPayCallbackDTO;
@@ -58,7 +58,7 @@ public class OfflineCallbackController extends BaseController {
     private AlipayService alipayService;
 
     @Autowired
-    private WechantService wechantService;
+    private WeChatService wechantService;
 
     @Autowired
     private CommonService commonService;

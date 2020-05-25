@@ -18,7 +18,7 @@ import com.asianwallets.common.utils.SignTools;
 import com.asianwallets.common.utils.XMLUtil;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
-import com.asianwallets.trade.channels.wechat.WechantService;
+import com.asianwallets.trade.channels.wechat.WeChatService;
 import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
@@ -54,7 +54,7 @@ import java.util.Map;
 @Service
 @Transactional
 @HandlerType(TradeConstant.WECHAT)
-public class WechantServiceImpl extends ChannelsAbstractAdapter implements WechantService {
+public class WeChatServiceImpl extends ChannelsAbstractAdapter implements WeChatService {
 
 
     @Autowired
