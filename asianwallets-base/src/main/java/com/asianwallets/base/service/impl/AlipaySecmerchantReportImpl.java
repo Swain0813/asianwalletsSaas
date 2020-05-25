@@ -123,12 +123,11 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
             //响应处理
             if (response == null) {
                 //放到队列
-                RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(merchantReport));
-                rabbitMQSender.send(AD3MQConstant.MQ_REPORT_FAIL, JSON.toJSONString(rabbitMassage));
+                RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.FIVE, JSON.toJSONString(merchantReport));
+                rabbitMQSender.send(AD3MQConstant.E_MQ_REPORT_FAIL, JSON.toJSONString(rabbitMassage));
                 return;
             }
             String xml = response.getStringResult();
-            System.out.println(xml);
             Map<String, Object> xmlMap = XmlUtil.xmlToMap(xml);
             if (xmlMap.get("is_success").equals("T")) {
                 //正确 更新数据
@@ -141,8 +140,6 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
                 merchantReport.setEnabled(false);
                 merchantReport.setRemark(msg);
                 merchantReportMapper.updateByPrimaryKeySelective(merchantReport);
-                messageFeign.sendSimple(mobile, "SAAS-支付宝报备失败  ：{ " + merchantReport + " }");//短信通知
-                messageFeign.sendSimpleMail(email, "SAAS-支付宝报备失败 ", "支付宝报备失败  ：{ " + merchantReport + " }");//邮件通知
             }
         } catch (IOException e) {
             log.warn("------------------报备异常------------------信息:{}", JSON.toJSONString(e));

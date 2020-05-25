@@ -56,7 +56,7 @@ public class ReportFailMQReceive {
                 HttpResponse httpResponse = alipaySecmerchantReport.getHttpResponse(merchantReport);
                 if (httpResponse == null) {
                     log.info("==================【回调商户队列信息记录】==================【商户响应失败,继续上报商户回调队列】 MQ_AW_CALLBACK_URL_FAIL");
-                    rabbitMQSender.send(AD3MQConstant.MQ_REPORT_FAIL, JSON.toJSONString(rabbitMassage));
+                    rabbitMQSender.send(AD3MQConstant.E_MQ_REPORT_FAIL, JSON.toJSONString(rabbitMassage));
                 } else {
                     Map<String, Object> xmlMap = XmlUtil.xmlToMap(httpResponse.getStringResult());
                     if (xmlMap.get("is_success").equals("T")) {
@@ -70,8 +70,6 @@ public class ReportFailMQReceive {
                         merchantReport.setEnabled(false);
                         merchantReport.setRemark(msg);
                         merchantReportMapper.updateByPrimaryKeySelective(merchantReport);
-                        messageFeign.sendSimple(mobile, "SAAS-支付宝报备失败  ：{ " + value + " }");//短信通知
-                        messageFeign.sendSimpleMail(email, "SAAS-支付宝报备失败 ", "支付宝报备失败  ：{ " + value + " }");//邮件通知
                     }
                 }
             } catch (Exception e) {
