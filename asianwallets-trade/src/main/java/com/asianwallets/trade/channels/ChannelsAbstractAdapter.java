@@ -48,6 +48,11 @@ public class ChannelsAbstractAdapter extends ChannelsAbstract {
     }
 
     @Override
+    public BaseResponse bankRefund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        return null;
+    }
+
+    @Override
     public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage){
         return null;
     }

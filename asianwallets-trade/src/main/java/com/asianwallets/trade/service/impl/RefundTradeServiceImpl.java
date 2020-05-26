@@ -721,7 +721,26 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             orderRefundMapper.insert(orderRefund);
             //获取原订单的refCode字段(NextPos用)
             orderRefund.setSign(oldOrder.getSign());
-            baseResponse = this.doRefundOrder(orderRefund,channel);
+            FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
+            log.info("=========================【银行卡退款 doRefundOrder】======================= 【上报清结算 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
+            BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+            log.info("=========================【银行卡退款 doRefundOrder】======================= 【清结算 {} 返回】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+            if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                log.info("=========================【银行卡退款 doRefundOrder】======================= 【清结算 {} 上报失败】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+                RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                log.info("=========================【银行卡退款 doRefundOrder】=========================【上报队列 RV_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
+                rabbitMQSender.send(AD3MQConstant.RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+                return baseResponse;
+            }
+            ChannelsAbstract channelsAbstract = null;
+            try {
+                log.info("=========================【银行卡退款 doRefundOrder】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
+                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
+            } catch (Exception e) {
+                log.info("=========================【银行卡退款 doRefundOrder】========================= 【doRefundOrder Exception】 Exception:【{}】", e);
+            }
+            baseResponse = channelsAbstract.bankRefund(channel, orderRefund, null);
         } else if (TradeConstant.PAYING.equals(type)) {
             orderRefund.setRemark3(TradeConstant.CZ);
             ordersMapper.updateOrderCancelStatus(refundDTO.getOrderNo(),refundDTO.getOperatorId(), TradeConstant.ORDER_RESEVALING);
