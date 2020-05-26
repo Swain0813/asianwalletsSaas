@@ -301,6 +301,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         return baseResponse;
     }
 
+    @Override
+    public BaseResponse bankCardReceipt(Orders orders, Channel channel) {
+        BaseResponse baseResponse = new BaseResponse();
+        return baseResponse;
+    }
+
     /**
      * @return
      * @Author YangXu
