@@ -506,6 +506,22 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             log.info("=========================【银行卡退款 refundOrder】=========================【商户订单号不存在】");
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
+        if (org.springframework.util.StringUtils.isEmpty(refundDTO.getBankCardNo())) {
+            log.info("==================【银行卡退款】==================【银行卡号为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (org.springframework.util.StringUtils.isEmpty(refundDTO.getCvv())) {
+            log.info("==================【银行卡退款】==================【CVV为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (org.springframework.util.StringUtils.isEmpty(refundDTO.getCardValidDate())) {
+            log.info("==================【银行卡退款】==================【卡有效期为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (org.springframework.util.StringUtils.isEmpty(refundDTO.getTrackInfor())) {
+            log.info("==================【银行卡退款】==================【磁道信息为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
         Channel channel = commonRedisDataService.getChannelByChannelCode(oldOrder.getChannelCode());
         log.info("=========================【银行卡退款 refundOrder】========================= Channel:【{}】", JSON.toJSONString(channel));
         /********************************* 判断通道是否支持退款 线下不支持退款直接拒绝*************************************************/
@@ -808,6 +824,22 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         //直接保留2位 直接舍
         orderRefund.setTradeAmount(orderRefund.getTradeAmount().setScale(2, BigDecimal.ROUND_DOWN));
+        if (!org.springframework.util.StringUtils.isEmpty(refundDTO.getBankCardNo())) {
+            //银行卡号
+            orderRefund.setUserBankCardNo(refundDTO.getBankCardNo());
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(refundDTO.getCvv())) {
+            //CVV
+            orderRefund.setCvv(refundDTO.getCvv());
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(refundDTO.getCardValidDate())) {
+            //卡有效期
+            orderRefund.setValid(refundDTO.getCardValidDate());
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(refundDTO.getTrackInfor())) {
+            //磁道信息
+            orderRefund.setTrackData(refundDTO.getTrackInfor());
+        }
         orderRefund.setId("R" + IDS.uniqueID());//退款订单号
         orderRefund.setOrderId(oldOrder.getId());//原订单流水号
         orderRefund.setRefundType(refundDTO.getRefundType());//退款类型
