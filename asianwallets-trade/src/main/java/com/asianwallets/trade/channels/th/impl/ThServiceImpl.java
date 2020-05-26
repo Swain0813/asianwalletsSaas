@@ -476,6 +476,25 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         return baseResponse;
     }
 
+    /**
+     * @Author YangXu
+     * @Date 2020/5/26
+     * @Descripate 银行卡冲正接口
+     * @return
+     **/
+    @Override
+    public BaseResponse reversal(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+        if (rabbitMassage == null) {
+            rabbitMassage = rabbitOrderMsg;
+        }
+        BaseResponse baseResponse = new BaseResponse();
+
+
+
+
+        return baseResponse;
+    }
 
     /**
      * @return
