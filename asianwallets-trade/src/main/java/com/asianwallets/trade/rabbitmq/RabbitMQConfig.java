@@ -34,6 +34,13 @@ public class RabbitMQConfig {
     public Queue RV_RF_FAIL_DL() {
         return new Queue(RabbitMQConfig.RV_RF_FAIL_DL);
     }
+    //银行卡RF or RV请求失败
+    public final static String BANK_RV_RF_FAIL_DL = AD3MQConstant.BANK_RV_RF_FAIL_DL;
+
+    @Bean
+    public Queue BANK_RV_RF_FAIL_DL() {
+        return new Queue(RabbitMQConfig.BANK_RV_RF_FAIL_DL);
+    }
 
     //调账失败队列
     public final static String RA_AA_FAIL_DL = AD3MQConstant.RA_AA_FAIL_DL;
