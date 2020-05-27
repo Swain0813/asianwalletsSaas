@@ -69,7 +69,7 @@ public class RefundTradeController extends BaseController {
 
 
     @ApiOperation(value = "银行卡退款接口")
-    @PostMapping("/bankCardrefund")
+    @PostMapping("/bankCardRefund")
     @CrossOrigin
     public BaseResponse bankCardRefund(@RequestBody @ApiParam @Valid RefundDTO refundDTO) {
         //线下判断交易密码
