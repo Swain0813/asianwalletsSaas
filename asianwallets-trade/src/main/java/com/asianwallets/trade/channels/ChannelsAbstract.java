@@ -73,10 +73,11 @@ public abstract class ChannelsAbstract {
      * @return 通用响应实体
      */
     public abstract BaseResponse reversal(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
+
     /**
-     * 冲正方法
+     * 银行卡退款
      *
-     * @param channel      银行卡退款
+     * @param channel
      * @return 通用响应实体
      */
     public abstract BaseResponse bankRefund(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
