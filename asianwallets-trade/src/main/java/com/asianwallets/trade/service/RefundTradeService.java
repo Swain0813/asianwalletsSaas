@@ -48,5 +48,5 @@ public interface RefundTradeService {
      * @Descripate 银行卡退款接口
      * @return
      **/
-    BaseResponse bankCardrefund(RefundDTO refundDTO, String reqIp);
+    BaseResponse bankCardRefund(RefundDTO refundDTO, String reqIp);
 }

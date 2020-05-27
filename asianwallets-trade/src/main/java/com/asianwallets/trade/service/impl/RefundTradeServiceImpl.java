@@ -488,7 +488,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      * @return
      **/
     @Override
-    public BaseResponse bankCardrefund(RefundDTO refundDTO, String reqIp) {
+    public BaseResponse bankCardRefund(RefundDTO refundDTO, String reqIp) {
         //返回结果
         BaseResponse baseResponse = new BaseResponse();
         //退款功能验签，撤销功能的验签在自己的方法里面
