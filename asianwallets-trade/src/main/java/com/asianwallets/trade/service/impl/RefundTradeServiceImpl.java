@@ -701,13 +701,15 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 //上报清结算
                 FundChangeDTO fundChangeDTO = new FundChangeDTO(type, orderRefund);
                 BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
-                    orderRefund.setRemark("人工退款上报清结算成功");
+                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                    //请求成功
+                    orderRefund.setRemark("银行卡退款接口----人工退款上报清结算成功");
                     orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);
                     //退款中
                     baseResponse.setCode(EResultEnum.REFUNDING.getCode());
-                } else {//请求失败
-                    orderRefund.setRemark("人工退款上报清结算失败");
+                } else {
+                    //请求失败
+                    orderRefund.setRemark("银行卡退款接口----人工退款上报清结算失败");
                     orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
                     //退款失败
                     baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());

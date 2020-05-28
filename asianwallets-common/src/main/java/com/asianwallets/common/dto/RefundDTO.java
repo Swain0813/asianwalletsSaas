@@ -2,7 +2,6 @@ package com.asianwallets.common.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -40,6 +39,19 @@ public class RefundDTO {
     @ApiModelProperty(value = "退款金额")
     private BigDecimal refundAmount;
 
+    @ApiModelProperty(value = "交易方向")//1-线上 2-线下
+    @NotNull(message = "50002")
+    private Byte tradeDirection;
+
+    @NotNull(message = "50002")
+    @ApiModelProperty(value = "签名类型")//1为RSA 2为MD5
+    private String signType;
+
+    @NotNull(message = "50002")
+    @ApiModelProperty(value = "签名")
+    private String sign;
+
+    //----------------【非必填参数】---------------------
     @ApiModelProperty(value = "付款人姓名")
     private String payerName;
 
@@ -58,14 +70,6 @@ public class RefundDTO {
     @ApiModelProperty(value = "Swift Code")
     private String swiftCode;
 
-    @NotNull(message = "50002")
-    @ApiModelProperty(value = "签名")
-    private String sign;
-
-    @NotNull(message = "50002")
-    @ApiModelProperty(value = "签名类型")//1为RSA 2为MD5
-    private String signType;
-
     @ApiModelProperty(value = "设备编号")
     private String imei;
 
@@ -74,10 +78,6 @@ public class RefundDTO {
 
     @ApiModelProperty(value = "token")
     private String token;
-
-    @ApiModelProperty(value = "交易方向")//1-线上 2-线下
-    @NotNull(message = "50002")
-    private Byte tradeDirection;
 
     @ApiModelProperty(value = "交易密码")
     private String tradePassword;
