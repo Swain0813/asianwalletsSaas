@@ -81,13 +81,93 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     @Autowired
     private SysUserMapper sysUserMapper;
 
+
     /**
+     * 撤销接口
+     * @param undoDTO
+     * @param reqIp
      * @return
-     * @Author YangXu
-     * @Date 2019/12/18
-     * @Descripate 退款撤销接口
-     * 对外的接口是分开的 退款 和 撤销接口
-     **/
+     */
+    @Override
+    public BaseResponse undo(UndoDTO undoDTO, String reqIp){
+        //签名校验
+        if (!commonBusinessService.checkUniversalSign(undoDTO)) {
+            log.info("=========================【撤销接口】=========================【签名错误】");
+            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
+        }
+        //检查商户编号
+        commonRedisDataService.getMerchantById(undoDTO.getMerchantId());
+        //校验商户绑定设备
+        DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(undoDTO.getMerchantId(),undoDTO.getImei());
+        if (deviceBinding == null) {
+            log.info("**************校验撤销订单参数 设备编号不合法******************merchantId:{},imei:{}",undoDTO.getMerchantId(),undoDTO.getImei());
+            //设备编号不合法
+            throw new BusinessException(EResultEnum.DEVICE_CODE_INVALID.getCode());
+        }
+        String username = undoDTO.getOperatorId().concat(undoDTO.getMerchantId());
+        SysUser sysUser = sysUserMapper.selectByUsername(username);
+        if (sysUser == null) {
+            log.info("===========校验撤销订单参数 设备操作员不合法==========【操作员ID不存在】***********merchantId:{},operatorId{}",undoDTO.getMerchantId(),undoDTO.getOperatorId());
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        //根据商户订单号获取订单信息
+        Orders order = ordersMapper.selectByMerchantOrderId(undoDTO.getOrderNo());
+        //订单不存在的场合
+        if (order == null) {
+            log.info("**************** 校验撤销订单参数 订单信息不存在**************** order : {}", JSON.toJSON(undoDTO));
+            throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
+        }
+        //防止线上订单调用该接口或者阻止调用退款的接口后再调用撤销接口
+        if (TradeConstant.TRADE_ONLINE.equals(order.getTradeDirection()) || order.getRefundStatus() != null) {
+            //该订单不支持撤销
+            throw new BusinessException(EResultEnum.ONLINE_ORDER_IS_NOT_ALLOW_UNDO.getCode());
+        }
+        //创建退款接口需要的输入参数
+        RefundDTO refundDTO = this.getRefundDTO(undoDTO,order);
+        return this.refundOrder(refundDTO,reqIp);
+    }
+
+    /**
+     * 根据撤销输入参数和订单信息创建退款输入参数
+     * @param undoDTO
+     * @param order
+     * @return
+     */
+    private RefundDTO getRefundDTO(UndoDTO undoDTO,Orders order){
+        RefundDTO refundDTO = new RefundDTO();
+        //商户编号
+        refundDTO.setMerchantId(undoDTO.getMerchantId());
+        //商户订单号
+        refundDTO.setOrderNo(undoDTO.getOrderNo());
+        //全额退款
+        refundDTO.setRefundType(TradeConstant.REFUND_TYPE_TOTAL);
+        //退款时间
+        refundDTO.setRefundTime(DateToolUtils.formatTimestamp.format(new Date()));
+        //退款币种
+        refundDTO.setRefundCurrency(order.getOrderCurrency());
+        //退款金额
+        refundDTO.setRefundAmount(order.getOrderAmount());
+        //交易方向
+        refundDTO.setTradeDirection(order.getTradeDirection());
+        //设备编号
+        refundDTO.setImei(undoDTO.getImei());
+        //设备操作员
+        refundDTO.setOperatorId(undoDTO.getOperatorId());
+        //签名类型
+        refundDTO.setSignType(undoDTO.getSignType());
+        //签名
+        refundDTO.setSign(undoDTO.getSign());
+        //撤销功能的标志,为了在退款功能里面不要再验签
+        refundDTO.setFunctionType(TradeConstant.RV);
+        return refundDTO;
+    }
+
+    /**
+     * 退款接口
+     * @param refundDTO
+     * @param reqIp
+     * @return
+     */
     @Override
     public BaseResponse refundOrder(RefundDTO refundDTO, String reqIp) {
         //返回结果
@@ -358,86 +438,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         baseResponse = channelsAbstract.refund(channel, orderRefund, null);
         return baseResponse;
-    }
-
-    /**
-     * 撤销接口
-     * @param undoDTO
-     * @param reqIp
-     * @return
-     */
-    @Override
-    public BaseResponse undo(UndoDTO undoDTO, String reqIp){
-        //签名校验
-        if (!commonBusinessService.checkUniversalSign(undoDTO)) {
-            log.info("=========================【撤销接口】=========================【签名错误】");
-            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
-        }
-        //检查商户编号
-        commonRedisDataService.getMerchantById(undoDTO.getMerchantId());
-        //校验商户绑定设备
-        DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(undoDTO.getMerchantId(),undoDTO.getImei());
-        if (deviceBinding == null) {
-            log.info("**************校验撤销订单参数 设备编号不合法******************merchantId:{},imei:{}",undoDTO.getMerchantId(),undoDTO.getImei());
-            //设备编号不合法
-            throw new BusinessException(EResultEnum.DEVICE_CODE_INVALID.getCode());
-        }
-        String username = undoDTO.getOperatorId().concat(undoDTO.getMerchantId());
-        SysUser sysUser = sysUserMapper.selectByUsername(username);
-        if (sysUser == null) {
-            log.info("===========校验撤销订单参数 设备操作员不合法==========【操作员ID不存在】***********merchantId:{},operatorId{}",undoDTO.getMerchantId(),undoDTO.getOperatorId());
-            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
-        }
-        //根据商户订单号获取订单信息
-        Orders order = ordersMapper.selectByMerchantOrderId(undoDTO.getOrderNo());
-        //订单不存在的场合
-        if (order == null) {
-            log.info("**************** 校验撤销订单参数 订单信息不存在**************** order : {}", JSON.toJSON(undoDTO));
-            throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
-        }
-        //防止线上订单调用该接口或者阻止调用退款的接口后再调用撤销接口
-        if (TradeConstant.TRADE_ONLINE.equals(order.getTradeDirection()) || order.getRefundStatus() != null) {
-            //该订单不支持撤销
-            throw new BusinessException(EResultEnum.ONLINE_ORDER_IS_NOT_ALLOW_UNDO.getCode());
-        }
-        //创建退款接口需要的输入参数
-        RefundDTO refundDTO = this.getRefundDTO(undoDTO,order);
-        return this.refundOrder(refundDTO,reqIp);
-    }
-
-    /**
-     * 根据撤销输入参数和订单信息创建退款输入参数
-     * @param undoDTO
-     * @param order
-     * @return
-     */
-    private RefundDTO getRefundDTO(UndoDTO undoDTO,Orders order){
-        RefundDTO refundDTO = new RefundDTO();
-        //商户编号
-        refundDTO.setMerchantId(undoDTO.getMerchantId());
-        //商户订单号
-        refundDTO.setOrderNo(undoDTO.getOrderNo());
-        //全额退款
-        refundDTO.setRefundType(TradeConstant.REFUND_TYPE_TOTAL);
-        //退款时间
-        refundDTO.setRefundTime(DateToolUtils.formatTimestamp.format(new Date()));
-        //退款币种
-        refundDTO.setRefundCurrency(order.getOrderCurrency());
-        //退款金额
-        refundDTO.setRefundAmount(order.getOrderAmount());
-        //交易方向
-        refundDTO.setTradeDirection(order.getTradeDirection());
-        //设备编号
-        refundDTO.setImei(undoDTO.getImei());
-        //设备操作员
-        refundDTO.setOperatorId(undoDTO.getOperatorId());
-        //签名类型
-        refundDTO.setSignType(undoDTO.getSignType());
-        //签名
-        refundDTO.setSign(undoDTO.getSign());
-        //撤销功能的标志,为了在退款功能里面不要再验签
-        refundDTO.setFunctionType(TradeConstant.RV);
-        return refundDTO;
     }
 
     /**
