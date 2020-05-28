@@ -2,6 +2,7 @@ package com.asianwallets.trade.controller;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.BankCardUndoDTO;
 import com.asianwallets.common.dto.RefundDTO;
 import com.asianwallets.common.dto.UndoDTO;
 import com.asianwallets.common.exception.BusinessException;
@@ -63,10 +64,25 @@ public class RefundTradeController extends BaseController {
     @PostMapping("/reverse")
     @CrossOrigin
     public BaseResponse reverse(@RequestBody @ApiParam @Valid UndoDTO undoDTO) {
-        BaseResponse baseResponse = refundTradeService.undo(undoDTO, this.getReqIp());
+        BaseResponse baseResponse = refundTradeService.reverse(undoDTO, this.getReqIp());
         return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
     }
 
+    @ApiOperation(value = "银行卡撤销接口")
+    @PostMapping("/bankCardRevoke")
+    @CrossOrigin
+    public BaseResponse bankCardRevoke(@RequestBody @ApiParam @Valid BankCardUndoDTO bankCardUndoDTO) {
+        BaseResponse baseResponse = refundTradeService.bankCardRevoke(bankCardUndoDTO, this.getReqIp());
+        return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
+    }
+
+    @ApiOperation(value = "银行卡冲正接口")
+    @PostMapping("/bankCardReverse")
+    @CrossOrigin
+    public BaseResponse bankCardReverse(@RequestBody @ApiParam @Valid BankCardUndoDTO bankCardUndoDTO) {
+        BaseResponse baseResponse = refundTradeService.bankCardReverse(bankCardUndoDTO, this.getReqIp());
+        return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
+    }
 
     @ApiOperation(value = "银行卡退款接口")
     @PostMapping("/bankCardRefund")

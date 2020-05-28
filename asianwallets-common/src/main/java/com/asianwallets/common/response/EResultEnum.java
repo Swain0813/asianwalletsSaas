@@ -45,7 +45,7 @@ public enum EResultEnum {
     REFUND_AMOUNT_NOT_LEGAL("10017"),//金额不合法
     GET_CHANNEL_INFO_ERROR("10018"),//获取通道信息异常
     REPEAT_ORDER_REQUEST("10019"),//重复请求
-    SWAPRATE_ERROR("10020"),//换汇失败
+    ORDER_NOT_SUPPORT_REVERSE("10020"),//该订单不支持冲正
     CALCFEE_ERROR("10021"),//算费失败
     ONLINE_ORDER_IS_NOT_ALLOW_UNDO("10022"),//该订单不支持撤销
     AUDIT_INFO_EXIENT("10023"),//记录已存在，等待审核中

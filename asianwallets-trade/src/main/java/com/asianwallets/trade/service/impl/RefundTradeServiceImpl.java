@@ -4,6 +4,7 @@ import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.BankCardUndoDTO;
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.RefundDTO;
 import com.asianwallets.common.dto.UndoDTO;
@@ -89,7 +90,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      * @return
      */
     @Override
-    public BaseResponse undo(UndoDTO undoDTO, String reqIp){
+    public BaseResponse reverse(UndoDTO undoDTO, String reqIp){
         //签名校验
         if (!commonBusinessService.checkUniversalSign(undoDTO)) {
             log.info("=========================【撤销接口】=========================【签名错误】");
@@ -482,6 +483,143 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         return baseResponse;
     }
 
+
+    /**
+     * 银行卡冲正接口
+     * @param bankCardUndoDTO
+     * @param reqIp
+     * @return
+     */
+    @Override
+    public BaseResponse bankCardReverse(BankCardUndoDTO bankCardUndoDTO, String reqIp) {
+        log.info("**********银行卡冲正接口的输入参数*********************",JSON.toJSONString(bankCardUndoDTO));
+        //签名校验
+        if (!commonBusinessService.checkUniversalSign(bankCardUndoDTO)) {
+            log.info("=========================【银行卡撤销接口】=========================【签名错误】");
+            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
+        }
+        //检查商户编号
+        commonRedisDataService.getMerchantById(bankCardUndoDTO.getMerchantId());
+        //校验商户绑定设备
+        DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(bankCardUndoDTO.getMerchantId(),bankCardUndoDTO.getImei());
+        if (deviceBinding == null) {
+            log.info("**************银行卡冲正接口 设备编号不合法******************merchantId:{},imei:{}",bankCardUndoDTO.getMerchantId(),bankCardUndoDTO.getImei());
+            //设备编号不合法
+            throw new BusinessException(EResultEnum.DEVICE_CODE_INVALID.getCode());
+        }
+        String username = bankCardUndoDTO.getOperatorId().concat(bankCardUndoDTO.getMerchantId());
+        SysUser sysUser = sysUserMapper.selectByUsername(username);
+        if (sysUser == null) {
+            log.info("===========银行卡冲正接口 设备操作员不合法==========【操作员ID不存在】***********merchantId:{},operatorId{}",bankCardUndoDTO.getMerchantId(),bankCardUndoDTO.getOperatorId());
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        //根据商户订单号获取订单信息
+        Orders order = ordersMapper.selectByMerchantOrderId(bankCardUndoDTO.getOrderNo());
+        //订单不存在的场合
+        if (order == null) {
+            log.info("**************** 银行卡撤销接口 订单信息不存在**************** order : {}", JSON.toJSON(bankCardUndoDTO));
+            throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
+        }
+        //防止线上订单调用该接口或者阻止不是交易中的订单调该接口 以及退款的订单不能调用冲正
+        if (TradeConstant.TRADE_ONLINE.equals(order.getTradeDirection()) || order.getRefundStatus() != null || !TradeConstant.ORDER_PAYING.equals(order.getTradeStatus())) {
+            //该订单不支持冲正
+            throw new BusinessException(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
+        }
+        //创建退款接口需要的输入参数
+        RefundDTO refundDTO = this.getBankCardRefundDTO(bankCardUndoDTO,order,TradeConstant.CZ);
+        return this.refundOrder(refundDTO,reqIp);
+    }
+
+    /**
+     * 银行卡撤销接口
+     * @param bankCardUndoDTO
+     * @param reqIp
+     * @return
+     */
+    @Override
+    public BaseResponse bankCardRevoke(BankCardUndoDTO bankCardUndoDTO, String reqIp) {
+        log.info("**********银行卡撤销接口的输入参数*********************",JSON.toJSONString(bankCardUndoDTO));
+        //签名校验
+        if (!commonBusinessService.checkUniversalSign(bankCardUndoDTO)) {
+            log.info("=========================【银行卡撤销接口】=========================【签名错误】");
+            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
+        }
+        //检查商户编号
+        commonRedisDataService.getMerchantById(bankCardUndoDTO.getMerchantId());
+        //校验商户绑定设备
+        DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(bankCardUndoDTO.getMerchantId(),bankCardUndoDTO.getImei());
+        if (deviceBinding == null) {
+            log.info("**************银行卡撤销接口 设备编号不合法******************merchantId:{},imei:{}",bankCardUndoDTO.getMerchantId(),bankCardUndoDTO.getImei());
+            //设备编号不合法
+            throw new BusinessException(EResultEnum.DEVICE_CODE_INVALID.getCode());
+        }
+        String username = bankCardUndoDTO.getOperatorId().concat(bankCardUndoDTO.getMerchantId());
+        SysUser sysUser = sysUserMapper.selectByUsername(username);
+        if (sysUser == null) {
+            log.info("===========银行卡撤销接口 设备操作员不合法==========【操作员ID不存在】***********merchantId:{},operatorId{}",bankCardUndoDTO.getMerchantId(),bankCardUndoDTO.getOperatorId());
+            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
+        }
+        //根据商户订单号获取订单信息
+        Orders order = ordersMapper.selectByMerchantOrderId(bankCardUndoDTO.getOrderNo());
+        //订单不存在的场合
+        if (order == null) {
+            log.info("**************** 银行卡撤销接口 订单信息不存在**************** order : {}", JSON.toJSON(bankCardUndoDTO));
+            throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
+        }
+        //防止线上订单调用该接口或者阻止调用退款的接口后再调用撤销接口
+        if (TradeConstant.TRADE_ONLINE.equals(order.getTradeDirection()) || order.getRefundStatus() != null) {
+            //该订单不支持撤销
+            throw new BusinessException(EResultEnum.ONLINE_ORDER_IS_NOT_ALLOW_UNDO.getCode());
+        }
+        //创建退款接口需要的输入参数
+        RefundDTO refundDTO = this.getBankCardRefundDTO(bankCardUndoDTO,order,TradeConstant.RV);
+        return this.refundOrder(refundDTO,reqIp);
+    }
+
+    /**
+     * 银行卡撤销和冲正需要的退款的输入参数
+     * @param bankCardUndoDTO
+     * @param order
+     * @return
+     */
+    private RefundDTO getBankCardRefundDTO(BankCardUndoDTO bankCardUndoDTO,Orders order,String functionType){
+        //返回结果
+        RefundDTO refundDTO = new RefundDTO();
+        //商户编号
+        refundDTO.setMerchantId(bankCardUndoDTO.getMerchantId());
+        //商户订单号
+        refundDTO.setOrderNo(bankCardUndoDTO.getOrderNo());
+        //全额退款
+        refundDTO.setRefundType(TradeConstant.REFUND_TYPE_TOTAL);
+        //退款时间
+        refundDTO.setRefundTime(DateToolUtils.formatTimestamp.format(new Date()));
+        //退款币种
+        refundDTO.setRefundCurrency(order.getOrderCurrency());
+        //退款金额
+        refundDTO.setRefundAmount(order.getOrderAmount());
+        //交易方向
+        refundDTO.setTradeDirection(order.getTradeDirection());
+        //设备编号
+        refundDTO.setImei(bankCardUndoDTO.getImei());
+        //设备操作员
+        refundDTO.setOperatorId(bankCardUndoDTO.getOperatorId());
+        //银行卡号
+        refundDTO.setUserBankCardNo(bankCardUndoDTO.getUserBankCardNo());
+        //cvv
+        refundDTO.setCvv(bankCardUndoDTO.getCvv());
+        //卡有效期
+        refundDTO.setValid(bankCardUndoDTO.getValid());
+        //磁道信息
+        refundDTO.setTrackData(bankCardUndoDTO.getTrackData());
+        //签名类型
+        refundDTO.setSignType(bankCardUndoDTO.getSignType());
+        //签名
+        refundDTO.setSign(bankCardUndoDTO.getSign());
+        //撤销功能的标志,为了在退款功能里面不要再验签
+        refundDTO.setFunctionType(functionType);
+        return refundDTO;
+    }
+
     /**
      * @Author YangXu
      * @Date 2020/5/25
@@ -490,6 +628,22 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      **/
     @Override
     public BaseResponse bankCardRefund(RefundDTO refundDTO, String reqIp) {
+        if (StringUtils.isEmpty(refundDTO.getUserBankCardNo())) {
+            log.info("==================【银行卡退款】==================【银行卡号为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (StringUtils.isEmpty(refundDTO.getCvv())) {
+            log.info("==================【银行卡退款】==================【CVV为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (StringUtils.isEmpty(refundDTO.getValid())) {
+            log.info("==================【银行卡退款】==================【卡有效期为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        if (StringUtils.isEmpty(refundDTO.getTrackData())) {
+            log.info("==================【银行卡退款】==================【磁道信息为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
         //返回结果
         BaseResponse baseResponse = new BaseResponse();
         //退款功能验签，撤销功能的验签在自己的方法里面
@@ -506,22 +660,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //商户订单号不存在
             log.info("=========================【银行卡退款 refundOrder】=========================【商户订单号不存在】");
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
-        }
-        if (org.springframework.util.StringUtils.isEmpty(refundDTO.getUserBankCardNo())) {
-            log.info("==================【银行卡退款】==================【银行卡号为空】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
-        if (org.springframework.util.StringUtils.isEmpty(refundDTO.getCvv())) {
-            log.info("==================【银行卡退款】==================【CVV为空】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
-        if (org.springframework.util.StringUtils.isEmpty(refundDTO.getValid())) {
-            log.info("==================【银行卡退款】==================【卡有效期为空】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
-        if (org.springframework.util.StringUtils.isEmpty(refundDTO.getTrackData())) {
-            log.info("==================【银行卡退款】==================【磁道信息为空】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         Channel channel = commonRedisDataService.getChannelByChannelCode(oldOrder.getChannelCode());
         log.info("=========================【银行卡退款 refundOrder】========================= Channel:【{}】", JSON.toJSONString(channel));

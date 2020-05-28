@@ -101,10 +101,10 @@ public class RefundDTO {
     private String trackData;
 
     /**
-     * 由于撤销功能依赖退款的方法，为了签名的验签在各自自己的方法做
+     * 由于撤销和冲正功能依赖退款的方法，为了签名的验签在各自自己的方法做
      * 所以特意加个标志
      */
-    @ApiModelProperty(value ="区分退款和撤销功能的标志")
+    @ApiModelProperty(value ="区分退款和撤销以及冲正功能的标志")
     private String functionType;
 
 

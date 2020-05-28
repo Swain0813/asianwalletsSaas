@@ -1,5 +1,6 @@
 package com.asianwallets.trade.service;
 
+import com.asianwallets.common.dto.BankCardUndoDTO;
 import com.asianwallets.common.dto.RefundDTO;
 import com.asianwallets.common.dto.UndoDTO;
 import com.asianwallets.common.entity.Channel;
@@ -23,7 +24,7 @@ public interface RefundTradeService {
      * @param reqIp
      * @return
      */
-    BaseResponse undo(UndoDTO undoDTO, String reqIp);
+    BaseResponse reverse(UndoDTO undoDTO, String reqIp);
 
     /**
      * @return
@@ -41,6 +42,24 @@ public interface RefundTradeService {
      * @return
      **/
     BaseResponse artificialRefund(String username, String refundOrderId, Boolean enabled, String remark);
+
+
+    /**
+     * 银行卡冲正接口
+     * @param bankCardUndoDTO
+     * @param reqIp
+     * @return
+     */
+    BaseResponse bankCardReverse(BankCardUndoDTO bankCardUndoDTO, String reqIp);
+
+
+    /**
+     * 银行卡撤销接口
+     * @param bankCardUndoDTO
+     * @param reqIp
+     * @return
+     */
+    BaseResponse bankCardRevoke(BankCardUndoDTO bankCardUndoDTO, String reqIp);
 
     /**
      * @Author YangXu
