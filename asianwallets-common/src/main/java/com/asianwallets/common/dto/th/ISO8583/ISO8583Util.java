@@ -126,6 +126,25 @@ public class ISO8583Util {
         return iso8583DTO128;
     }
 
+    /**
+     * 获取ISO8583DTO类的属性，key为fldIndex，value为属性名
+     *
+     * @param clazz
+     * @return
+     */
+    private static Map<Integer, String> getISO8583DTOFldMap(Class clazz) {
+        Map<Integer, String> map = new HashMap<>();
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            boolean fldHasAnnotation = field.isAnnotationPresent(ISO8583Annotation.class);
+            if (fldHasAnnotation) {
+                ISO8583Annotation fldAnnotation = field.getAnnotation(ISO8583Annotation.class);
+                map.put(fldAnnotation.fldIndex(), field.getName());
+            }
+        }
+        return map;
+    }
+
     private static Object[] getBitMapAndMsg(Object iso8583DTO, int bitLen, String key) throws IncorrectLengthException {
         // 获取ISO8583DTO类的属性，key为fldIndex域序号，value为属性名
         Map<Integer, String> iso8583DTOFldMap = getISO8583DTOFldMap(iso8583DTO.getClass());
@@ -184,25 +203,6 @@ public class ISO8583Util {
         }
 
         return new Object[]{bitMapAndMsg.toString().toUpperCase(), len};
-    }
-
-    /**
-     * 获取ISO8583DTO类的属性，key为fldIndex，value为属性名
-     *
-     * @param clazz
-     * @return
-     */
-    private static Map<Integer, String> getISO8583DTOFldMap(Class clazz) {
-        Map<Integer, String> map = new HashMap<>();
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            boolean fldHasAnnotation = field.isAnnotationPresent(ISO8583Annotation.class);
-            if (fldHasAnnotation) {
-                ISO8583Annotation fldAnnotation = field.getAnnotation(ISO8583Annotation.class);
-                map.put(fldAnnotation.fldIndex(), field.getName());
-            }
-        }
-        return map;
     }
 
     private static Object msgToObject(Class clazz, String[] binaryBitMapArgs, String msg) {
@@ -312,7 +312,7 @@ public class ISO8583Util {
 
         // 可变长度，校验一下长度是否超过上限。如果长度符合，则在前边拼接长度值
         if (Objects.equals(FldFlag.UNFIXED_2, fldFlag) || Objects.equals(FldFlag.UNFIXED_3, fldFlag)) {
-            if (actualLen > expectLen) {
+            if ( iso8583Annotation.fldIndex() != 2 && actualLen > expectLen) {
                 String msg = String.format("%s长度不正确，最大长度为[%d]，实际长度为[%d]。"
                         , field.getName(), expectLen, actualLen);
                 throw new IncorrectLengthException(msg);
