@@ -312,7 +312,9 @@ public class ISO8583Util {
 
         // 可变长度，校验一下长度是否超过上限。如果长度符合，则在前边拼接长度值
         if (Objects.equals(FldFlag.UNFIXED_2, fldFlag) || Objects.equals(FldFlag.UNFIXED_3, fldFlag)) {
-            if ( iso8583Annotation.fldIndex() != 2 && actualLen > expectLen) {
+            if ( iso8583Annotation.fldIndex() != 2
+                    && iso8583Annotation.fldIndex() != 35
+                    && actualLen > expectLen) {
                 String msg = String.format("%s长度不正确，最大长度为[%d]，实际长度为[%d]。"
                         , field.getName(), expectLen, actualLen);
                 throw new IncorrectLengthException(msg);
