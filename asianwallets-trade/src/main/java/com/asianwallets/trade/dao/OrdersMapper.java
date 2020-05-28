@@ -128,4 +128,14 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @return
      */
     List<PosSearchVO> posGetOrders(PosSearchDTO posSearchDTO);
+
+    /**
+     * 银行卡冲正更新订单状态
+     * @param merchantOrderId
+     * @param deviceOperator
+     * @param tradeStatus
+     * @return
+     */
+    @Update("update orders set trade_status=#{tradeStatus},modifier=#{deviceOperator},update_time=NOW() where merchant_order_id = #{merchantOrderId} and trade_status=2")
+    int updateOrderTradeStatus(@Param("merchantOrderId") String merchantOrderId, @Param("deviceOperator") String deviceOperator, @Param("tradeStatus") Byte tradeStatus);
 }

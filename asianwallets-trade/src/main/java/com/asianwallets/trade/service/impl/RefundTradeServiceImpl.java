@@ -883,8 +883,8 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             }
             baseResponse = channelsAbstract.bankRefund(channel, orderRefund, null);
         } else if (TradeConstant.PAYING.equals(type)) {
-            orderRefund.setRemark3(TradeConstant.CZ);
-            ordersMapper.updateOrderCancelStatus(refundDTO.getOrderNo(),refundDTO.getOperatorId(), TradeConstant.ORDER_RESEVALING);
+            //更新订单状态---为冲正中
+            ordersMapper.updateOrderTradeStatus(refundDTO.getOrderNo(),refundDTO.getOperatorId(), TradeConstant.ORDER_RESEVALING);
             /***************************************************************  订单是付款中的场合  *************************************************************/
             ChannelsAbstract channelsAbstract = null;
             try {
