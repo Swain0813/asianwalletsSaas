@@ -356,21 +356,21 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
             orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
         }
-        if (!StringUtils.isEmpty(offlineTradeDTO.getBankCardNo())) {
+        if (!StringUtils.isEmpty(offlineTradeDTO.getUserBankCardNo())) {
             //银行卡号
-            orders.setUserBankCardNo(offlineTradeDTO.getBankCardNo());
+            orders.setUserBankCardNo(offlineTradeDTO.getUserBankCardNo());
         }
         if (!StringUtils.isEmpty(offlineTradeDTO.getCvv())) {
             //CVV
             orders.setCvv(offlineTradeDTO.getCvv());
         }
-        if (!StringUtils.isEmpty(offlineTradeDTO.getCardValidDate())) {
+        if (!StringUtils.isEmpty(offlineTradeDTO.getValid())) {
             //卡有效期
-            orders.setValid(offlineTradeDTO.getCardValidDate());
+            orders.setValid(offlineTradeDTO.getValid());
         }
-        if (!StringUtils.isEmpty(offlineTradeDTO.getTrackInfor())) {
+        if (!StringUtils.isEmpty(offlineTradeDTO.getTrackData())) {
             //磁道信息
-            orders.setTrackData(offlineTradeDTO.getTrackInfor());
+            orders.setTrackData(offlineTradeDTO.getTrackData());
         }
 
         orders.setTradeType(TradeConstant.GATHER_TYPE);
@@ -782,7 +782,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     @Override
     public BscDynamicScanVO bankCardReceipt(OfflineTradeDTO offlineTradeDTO) {
         log.info("==================【银行卡收单】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
-        if (StringUtils.isEmpty(offlineTradeDTO.getBankCardNo())) {
+        if (StringUtils.isEmpty(offlineTradeDTO.getUserBankCardNo())) {
             log.info("==================【银行卡收单】==================【银行卡号为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
@@ -790,11 +790,11 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             log.info("==================【银行卡收单】==================【CVV为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        if (StringUtils.isEmpty(offlineTradeDTO.getCardValidDate())) {
+        if (StringUtils.isEmpty(offlineTradeDTO.getValid())) {
             log.info("==================【银行卡收单】==================【卡有效期为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        if (StringUtils.isEmpty(offlineTradeDTO.getTrackInfor())) {
+        if (StringUtils.isEmpty(offlineTradeDTO.getTrackData())) {
             log.info("==================【银行卡收单】==================【磁道信息为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
