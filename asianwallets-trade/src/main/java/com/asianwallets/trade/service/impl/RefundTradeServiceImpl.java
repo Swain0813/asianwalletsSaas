@@ -86,6 +86,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      * @Author YangXu
      * @Date 2019/12/18
      * @Descripate 退款撤销接口
+     * 对外的接口是分开的 退款 和 撤销接口
      **/
     @Override
     public BaseResponse refundOrder(RefundDTO refundDTO, String reqIp) {
