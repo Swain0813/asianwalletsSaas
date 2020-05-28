@@ -224,10 +224,6 @@ public class ExportServiceImpl implements ExportService {
         }
         //设置列宽
         writer.setColumnWidth(-1, 40);
-//        StyleSet style = writer.getStyleSet();
-//        CellStyle cellStyle = style.getHeadCellStyle();
-//        cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.BLUE.getIndex());
-//        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
         //注释信息
         String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
@@ -270,7 +266,13 @@ public class ExportServiceImpl implements ExportService {
                                 oList2.add("撤销成功");
                             } else if (String.valueOf(oMap.get(s)).equals("3")) {
                                 oList2.add("撤销失败");
-                            } else {
+                            } else if(String.valueOf(oMap.get(s)).equals("4")){
+                                oList2.add("冲正中");
+                            }else if(String.valueOf(oMap.get(s)).equals("5")){
+                                oList2.add("冲正成功");
+                            }else if(String.valueOf(oMap.get(s)).equals("6")){
+                                oList2.add("冲正失败");
+                            }else {
                                 oList2.add("");
                             }
                         } else if (s.equals("refundStatus")) {
