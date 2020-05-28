@@ -18,7 +18,7 @@
   "10017": "Illegal amount",
   "10018": "Get channel information exception",
   "10019": "Repeated requests",
-  "10020": "Swap failure",
+  "10020": "This order does not support correction",
   "10021": "Calculate fee failure",
   "10022": "Cancellation of this order is not supported",
   "10023": "The record exists and is awaiting review",
