@@ -195,18 +195,18 @@ public class Demo2 {
             newStr = code.length() + code;
         }
         System.out.println("newstr = " + newStr);
-        byte[] bytes = BCD.strToBcd(newStr);
-        System.out.println("bytes = " + bytes.length);
-        int lentgth = bytes.length;
-        int n = bytes.length % 8;
-        System.out.println("n = " + n);
-        lentgth = lentgth + (8 - n);
-        System.out.println("lentgth = " + lentgth);
-        byte[] b = new byte[lentgth];
-        System.arraycopy(bytes, 0, b, 0, bytes.length);
-        for (int i = bytes.length; i < b.length; i++) {
-            b[i] = 0x00;
-        }
+        byte[] b = BCD.strToBcd(newStr);
+        //System.out.println("bytes = " + bytes.length);
+        //int lentgth = bytes.length;
+        //int n = bytes.length % 8;
+        //System.out.println("n = " + n);
+        //lentgth = lentgth + (8 - n);
+        //System.out.println("lentgth = " + lentgth);
+        //byte[] b = new byte[lentgth];
+        //System.arraycopy(bytes, 0, b, 0, bytes.length);
+        //for (int i = bytes.length; i < b.length; i++) {
+        //    b[i] = 0x00;
+        //}
 
         System.out.println("b = " + b.length);
         System.out.println("HexUtil = " + HexUtil.encodeHexStr(b).length());
