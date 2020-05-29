@@ -4,7 +4,7 @@ import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.response.BaseResponse;
 
 
-public interface THService {
+public interface ThService {
 
     /**
      * @return
@@ -44,4 +44,25 @@ public interface THService {
      * @return
      */
     BaseResponse thBSC(ThDTO thDTO);
+
+    /**
+     * 通华线下银行卡消费
+     * @param thDTO
+     * @return
+     */
+    BaseResponse thBankCard(ThDTO thDTO);
+
+    /**
+     * 通华线下银行卡冲正
+     * @param thDTO
+     * @return
+     */
+    BaseResponse thBankCardReverse(ThDTO thDTO);
+
+    /**
+     * 通华线下银行卡退款
+     * @param thDTO
+     * @return
+     */
+    BaseResponse thBankCardRefund(ThDTO thDTO);
 }

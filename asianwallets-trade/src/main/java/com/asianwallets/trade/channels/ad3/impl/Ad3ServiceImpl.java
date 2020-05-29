@@ -131,7 +131,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         ad3OnlineAcquireDTO.setUrl(url);
         log.info("-------AD3线上收单参数-------AD3OnlineAcquireDTO:{}", JSON.toJSON(ad3OnlineAcquireDTO));
         //返回收款消息
-        //log.info("-----------------URL---------------- type:{}**issuerId:{}**url:{}", channel.getChannelEnName(), channel.getIssuerId(), channel.getPayUrl());
         log.info("==================【线上AD3收款】==================【调用Channels服务】【AD3线上收单接口请求参数】 ad3CSBScanPayDTO: {}", JSON.toJSONString(ad3OnlineAcquireDTO));
         BaseResponse channelResponse = channelsFeign.ad3OnlinePay(ad3OnlineAcquireDTO);
         log.info("==================【线上AD3收款】==================【调用Channels服务】【AD3线上收单接口请求参数】 channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -708,7 +707,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
         if (TradeConstant.TRADE_ONLINE.equals(orderRefund.getTradeDirection())) {
             /**************************************************** AD3线上退款 *******************************************************/
             SendAdRefundDTO sendAdRefundDTO = new SendAdRefundDTO(channel, orderRefund);
-            //channel.getExtend1() 签名方式 2020年1月15日15:51:49
             sendAdRefundDTO.setMerchantSignType("2");
             //channel.getExtend2() ad3私钥
             sendAdRefundDTO.setSignMsg(this.signMsg(sendAdRefundDTO, channel.getMd5KeyStr()));

@@ -44,7 +44,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
     private DokuService dokuService;
 
     @Autowired
-    private THService thService;
+    private ThService thService;
 
 
     @Test

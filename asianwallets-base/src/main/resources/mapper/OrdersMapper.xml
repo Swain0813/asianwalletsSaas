@@ -335,6 +335,8 @@
         concat(p.name,'-',o.trade_currency) as pay_method,
         o.channel_callback_time,
         o.trade_status,
+        o.cancel_status,
+        o.refund_status,
         o.trade_type,
         o.req_ip,
         o.imei,
