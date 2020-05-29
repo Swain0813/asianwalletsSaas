@@ -23,10 +23,10 @@ EC20571F101401A9D60EC21803EA074696F09F60A8DDA86F44B8A8044C57081F4034FE195E43B3B6
 		System.out.println("key=" + key1);
 		System.out.println("data=" + data);
 		System.out.println("des加密后：" + eninfo);
- 
+
 		String decodeStr = decodeDEA(key1, eninfo);
 		System.out.println("des解密后：" + decodeStr);*/
- 
+
 //		String srcStr="<execStatus><statusCode>000000</statusCode><statusDescription>更新订单成功</statusDescription></execStatus>";
 //		//将字节数组转换为十六进制字符串
 //		String data=HexUtil.encodeHexStr(srcStr.getBytes());
@@ -51,7 +51,7 @@ EC20571F101401A9D60EC21803EA074696F09F60A8DDA86F44B8A8044C57081F4034FE195E43B3B6
 		System.out.println(checkValue);
 
 	}
- 
+
 	/**
 	 * 补位填充最后数据块
 	 * @param hexData
@@ -61,9 +61,9 @@ EC20571F101401A9D60EC21803EA074696F09F60A8DDA86F44B8A8044C57081F4034FE195E43B3B6
 		// 先检查最后一个数据块长度是否为8字节，进行补齐处理
 		int n = hexData.length() % 16;
 		if (n != 0) { // 最后的数据块为1-7字节长即为2-14位
- 
+
 			// 先其后加入‘80’刚好达到8字节，则继续，否则继续在后面补0直到8字节
-			hexData += "80";
+			hexData += "00";
 			n = hexData.length() % 16;
 			if (n != 0) {
 				for (int i = 0; i < (16 - n) / 2; i++) {
@@ -75,7 +75,7 @@ EC20571F101401A9D60EC21803EA074696F09F60A8DDA86F44B8A8044C57081F4034FE195E43B3B6
 	}
 	/**
 	 * 单倍长密钥DEA加密算法
-	 * 
+	 *
 	 * @param hexKey
 	 *            16进制密钥(单倍长密钥8字节)
 	 * @param hexData
@@ -102,7 +102,7 @@ EC20571F101401A9D60EC21803EA074696F09F60A8DDA86F44B8A8044C57081F4034FE195E43B3B6
 			 */
 			// 严格来说应该在数据块前面先加上1字节表示数据的长度
 			// hexData=NumberUtil.format2Hex(hexData.length(),1)+hexData;
-			
+
 			hexData=fillLastBlock(hexData);
 			//log.info("des数据补齐后="+hexData);
 			for (int i = 0; i < hexData.length(); i = i + 16) {
@@ -119,7 +119,7 @@ EC20571F101401A9D60EC21803EA074696F09F60A8DDA86F44B8A8044C57081F4034FE195E43B3B6
 	}
 	/**
 	 * 单倍长密钥DEA解密算法
-	 * 
+	 *
 	 * @param hexKey
 	 *            十六进制密钥(16字节)
 	 * @param hexData
@@ -146,17 +146,17 @@ EC20571F101401A9D60EC21803EA074696F09F60A8DDA86F44B8A8044C57081F4034FE195E43B3B6
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * 双倍长密钥（16字节长）3DEA加密算法
-	 * 
+	 *
 	 * @param hexKey
 	 *            16进制密钥(16字节32位长)
 	 * @param hexData
 	 *            16进制的明文数据
 	 */
 	public static String encode3DEA(String hexKey, String hexData) {
-		 
+
 		if (hexKey.length() != 32) {
 			throw new RuntimeException("双倍长密钥（16字节长）3DEA加密算法密钥必须为32位十六进制数,当前密钥长度为："+hexKey.length());
 		}
@@ -193,7 +193,7 @@ EC20571F101401A9D60EC21803EA074696F09F60A8DDA86F44B8A8044C57081F4034FE195E43B3B6
 	}
 	/**
 	 * 双倍长密钥（16字节长）3DEA解密算法
-	 * 
+	 *
 	 * @param hexKey
 	 *            十六进制密钥(32位16字节)
 	 * @param hexData
