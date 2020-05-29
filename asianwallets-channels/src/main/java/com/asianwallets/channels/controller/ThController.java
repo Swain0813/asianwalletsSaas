@@ -1,5 +1,5 @@
 package com.asianwallets.channels.controller;
-import com.asianwallets.channels.service.THService;
+import com.asianwallets.channels.service.ThService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.response.BaseResponse;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ThController extends BaseController {
 
     @Autowired
-    private THService thService;
+    private ThService thService;
 
     @ApiOperation("thCSB")
     @PostMapping("/thCSB")
@@ -42,6 +42,24 @@ public class ThController extends BaseController {
     @PostMapping("/thQuery")
     public BaseResponse thQuery(@RequestBody @ApiParam ThDTO thDTO) {
         return thService.thQuery(thDTO);
+    }
+
+    @ApiOperation("线下银行卡消费")
+    @PostMapping("/thBankCard")
+    public BaseResponse thBankCard(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.thBankCard(thDTO);
+    }
+
+    @ApiOperation("线下银行卡冲正")
+    @PostMapping("/thBankCardReverse")
+    public BaseResponse thBankCardReverse(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.thBankCardReverse(thDTO);
+    }
+
+    @ApiOperation("线下银行卡退款")
+    @PostMapping("/thBankCardRefund")
+    public BaseResponse thBankCardRefund(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.thBankCardRefund(thDTO);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.asianwallets.channels.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.config.ChannelsConfig;
-import com.asianwallets.channels.service.THService;
+import com.asianwallets.channels.service.ThService;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.th.ISO8583.*;
 import com.asianwallets.common.response.BaseResponse;
@@ -17,7 +17,7 @@ import java.util.Map;
  **/
 @Slf4j
 @Service
-public class THServiceImpl implements THService {
+public class ThServiceImpl implements ThService {
 
     @Autowired
     private ChannelsConfig channelsConfig;
@@ -307,6 +307,36 @@ public class THServiceImpl implements THService {
             return response;
         }
         return response;
+    }
+
+    /**
+     * 通华线下银行卡消费
+     * @param thDTO
+     * @return
+     */
+    @Override
+    public BaseResponse thBankCard(ThDTO thDTO) {
+        return null;
+    }
+
+    /**
+     * 通华线下银行卡冲正
+     * @param thDTO
+     * @return
+     */
+    @Override
+    public BaseResponse thBankCardReverse(ThDTO thDTO) {
+        return null;
+    }
+
+    /**
+     *通华线下银行卡退款
+     * @param thDTO
+     * @return
+     */
+    @Override
+    public BaseResponse thBankCardRefund(ThDTO thDTO) {
+        return null;
     }
 
 }
