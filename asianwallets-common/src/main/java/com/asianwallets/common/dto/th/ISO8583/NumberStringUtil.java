@@ -168,6 +168,12 @@ public class NumberStringUtil {
         }
         return sbu.toString();
     }
+
+    /**
+     * BCD码转换成字符串
+     * @param b
+     * @return
+     */
     public static String bcd2Str(byte[] b) {
         char[] HEX_DIGITS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
         StringBuilder sb = new StringBuilder(b.length * 2);
@@ -180,6 +186,11 @@ public class NumberStringUtil {
         return sb.toString();
     }
 
+    /**
+     * 10进制串转为BCD码
+     * @param asc
+     * @return
+     */
     public static byte[] str2Bcd(String asc) {
         int len = asc.length();
         int mod = len % 2;
