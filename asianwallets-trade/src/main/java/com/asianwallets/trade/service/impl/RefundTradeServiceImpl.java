@@ -188,18 +188,18 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             log.info("=========================【退款 refundOrder】=========================【商户订单号不存在】");
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
+        /**************************************** 原订单撤销成功和撤销中不能退款 *************************************************/
+        if (TradeConstant.ORDER_CANNELING.equals(oldOrder.getCancelStatus()) || TradeConstant.ORDER_CANNEL_SUCCESS.equals(oldOrder.getCancelStatus())) {
+            //撤销的单子不能退款--该交易已撤销
+            log.info("=========================【退款 refundOrder】=========================【该交易已撤销】");
+            throw new BusinessException(EResultEnum.REFUND_CANCEL_ERROR.getCode());
+        }
         Channel channel = commonRedisDataService.getChannelByChannelCode(oldOrder.getChannelCode());
         log.info("=========================【退款 refundOrder】========================= Channel:【{}】", JSON.toJSONString(channel));
         /********************************* 判断通道是否支持退款 线下不支持退款直接拒绝*************************************************/
         if (TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection()) && !channel.getSupportRefundState()) {
             log.info("=========================【退款 refundOrder】=========================【通道线下不支持退款】");
             throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
-        }
-        /**************************************** 原订单撤销成功和撤销中不能退款 *************************************************/
-        if (TradeConstant.ORDER_CANNELING.equals(oldOrder.getCancelStatus()) || TradeConstant.ORDER_CANNEL_SUCCESS.equals(oldOrder.getCancelStatus())) {
-            //撤销的单子不能退款--该交易已撤销
-            log.info("=========================【退款 refundOrder】=========================【该交易已撤销】");
-            throw new BusinessException(EResultEnum.REFUND_CANCEL_ERROR.getCode());
         }
         /******************************************** 判断通道是否仅限当天退款 *************************************************/
         String channelCallbackTime = oldOrder.getChannelCallbackTime() == null ? DateToolUtils.getReqDate(oldOrder.getCreateTime())
@@ -661,18 +661,17 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             log.info("=========================【银行卡退款 refundOrder】=========================【商户订单号不存在】");
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
+        /**************************************** 原订单是撤销或者冲正的单子不能退款 *************************************************/
+        if (oldOrder.getCancelStatus()!=null) {
+            log.info("=========================【银行卡退款 refundOrder】=========================【该交易已撤销或者冲正】");
+            throw new BusinessException(EResultEnum.REFUND_CANCEL_OR_REVERSE.getCode());
+        }
         Channel channel = commonRedisDataService.getChannelByChannelCode(oldOrder.getChannelCode());
         log.info("=========================【银行卡退款 refundOrder】========================= Channel:【{}】", JSON.toJSONString(channel));
         /********************************* 判断通道是否支持退款 线下不支持退款直接拒绝*************************************************/
         if (TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection()) && !channel.getSupportRefundState()) {
             log.info("=========================【退款 refundOrder】=========================【通道线下不支持退款】");
             throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
-        }
-        /**************************************** 原订单撤销成功和撤销中不能退款 *************************************************/
-        if (TradeConstant.ORDER_CANNELING.equals(oldOrder.getCancelStatus()) || TradeConstant.ORDER_CANNEL_SUCCESS.equals(oldOrder.getCancelStatus())) {
-            //撤销的单子不能退款--该交易已撤销
-            log.info("=========================【银行卡退款 refundOrder】=========================【该交易已撤销】");
-            throw new BusinessException(EResultEnum.REFUND_CANCEL_ERROR.getCode());
         }
         /******************************************** 判断通道是否仅限当天退款 *************************************************/
         String channelCallbackTime = oldOrder.getChannelCallbackTime() == null ? DateToolUtils.getReqDate(oldOrder.getCreateTime())

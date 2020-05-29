@@ -83,7 +83,7 @@ public enum EResultEnum {
     REFUND_CANCEL_ERROR("10055"),//该交易已撤销，不支持退款
     CALLBACK_ADDRESS_IS_NULL("10056"),//回调地址为空
     EFFECTTIME_IS_ILLEGAL("10057"),//生效时间不合法
-    CALCPOUNDAGE_FAILURE("10058"),//计算手续费失败
+    REFUND_CANCEL_OR_REVERSE("10058"),//该交易已撤销或者已冲正，不支持退款
     CALCCHANNEL_POUNDAGE_FAILURE("10059"),//计算通道手续费失败
     CALCCHANNEL_GATEWAYPOUNDAGE_FAILURE("10060"),//计算通道网关手续费失败
     PRODUCT_ID_IS_NOT_NULL("10061"), //产品ID不能为空
