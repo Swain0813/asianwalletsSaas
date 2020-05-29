@@ -1,5 +1,6 @@
 package com.asianwallets.common.dto.th.ISO8583;
 
+import cn.hutool.core.util.HexUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.dto.th.exception.DesCryptionException;
 import com.asianwallets.common.utils.IDS;
@@ -20,10 +21,10 @@ public class Demo2 {
     private static String institutionId = "000000008600005";
     private static String merchantId = "852999958120501";
     private static String terminalId = "00018644";
-    private static String key = "04AFFF774377AEDE";
+    private static String key = "C5DA676A42D45065";
     private static String checkValue = "58B815045DC19B19";
 
-    public void abc() throws Exception {
+    public static void abc() throws Exception {
         String domain11 = IDS.uniqueID().toString().substring(0, 6);
        /* ISO8583DTO signInDto = new ISO8583DTO();
         signInDto.setMessageType("0200");
@@ -133,7 +134,7 @@ public class Demo2 {
 
         //银行卡
 
-        dto.setProcessingCode_2("878524D4814750FD1FB1C1527B4C601D");
+        dto.setProcessingCode_2("44a27bca5d37e4c4cf485489d873b037aa8670484ad985ae");
       /*  String bankCode = "6214831211664781";
         String s = NumberStringUtil.str2HexStr(bankCode);
         String strHex2 = String.format("%04x", s.length() / 2).toUpperCase();*/
@@ -160,12 +161,12 @@ public class Demo2 {
 
     public static void main(String[] args) throws Exception {
 //        bank();
+//        abc();
         decode();
     }
 
     public static void decode() throws DesCryptionException {
-        /*String aa = "ED2D1554D2B1A86DA94D05D09362396DE0351C3F739495CB3D998C6900000000000000002F5EDE6FB6AA73DB38B42BE1F90EEF0EF690842287D3E2EE";
-        // B6AA73DB38B42BE1F90EEF0EF690842287D3E2EE
+       /* String aa = "00C6600000060980010200000038353239393939353831323035303130303031383634343030303030303030383630303030353030303030303030383532393939393538313230353031303030303030353208100020000102C000161590650808600005303030303031383634343835323939393935383132303530310011506481330030006049B06FC0050F5D8926A7E30C4E42284E1D735367459932C75A7D5AF90000000000000000B7DBD2D43CA94C0A763C6714995523E5892D43360C89FBD80003303031";
         aa.substring(80, 96);
         String trk = EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", aa.substring(80, 96)).toUpperCase();
         System.out.println("trk = " + trk);
@@ -173,70 +174,16 @@ public class Demo2 {
         String key = EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", cipherText).toUpperCase();
         System.out.println("key = " + key);
         *//*
-        trk = 7236BB4ADAD38846
-        key = 04AFFF774377AEDE
+        trk = BE1FF76FF7796F11
+        key = C5DA676A42D45065
          */
 
-//
-//        String aaa = EcbDesUtil.encode3DEA(HexUtil.encodeHexStr("7236BB4ADAD38846"), HexUtil.encodeHexStr("24102200654300619897")).toUpperCase();
-//        System.out.println(aaa);
-//        String str = "6214831211664781";
-
-        /* String s = NumberStringUtil.str2HexStr(str);
-        System.out.println("s = " + s);
-        System.out.println(BCD.strToBcd(NumberStringUtil.stringToAscii(str)));
-        String aaa = String.format("%04x", s.length() / 2).toUpperCase();
-        System.out.println("aaa = " + aaa+s);*/
-
         String asc = "6214850217415352";
-//        NumberStringUtil.
-//        asc = asc.length() + asc;
-//        asc = asc + "000000";
-        System.out.println("asc = " + asc);
-//        byte[] encrypt = SecureUtil.desede(HexUtil.decodeHex("7236BB4ADAD38846")).encrypt(asc);
-//        System.out.println("ISOUtil.bytesToHexString(encrypt) = " + ISOUtil.bytesToHexString(encrypt));
+        String s = EcbDesUtil.encode3DEA(HexUtil.encodeHexStr("BE1FF76FF7796F11"), HexUtil.encodeHexStr(asc)).toUpperCase();
+        String s2 = EcbDesUtil.encode3DEA(HexUtil.encodeHexStr("BE1FF76FF7796F11"), HexUtil.encodeHexStr("6214850217415352=24102200654300619897")).toUpperCase();
+        System.out.println("35 = " + s2);
+        System.out.println("bankCode = " + s);
 
-     /*   String content = asc;
-        byte[] key = HexUtil.decodeHex("7236BB4ADAD38846");
-        SymmetricCrypto des = new SymmetricCrypto(SymmetricAlgorithm.DESede, key);
-
-        //加密
-        byte[] encrypt = des.encrypt(content);
-        //解密
-        byte[] decrypt = des.decrypt(encrypt);
-
-        //加密为16进制字符串（Hex表示）
-        String encryptHex = des.encryptHex(content);
-        System.out.println("encryptHex = " + encryptHex);
-        //解密为字符串
-        String decryptStr = des.decryptStr(encryptHex);*/
-
-        System.out.println(NumberStringUtil.str2HexStr("U2FsdGVkX18ERDOiO5jJ67OVAsbHGu6E6pGEGAS919+42dcvQV870A=="));
-
-        String s = EcbDesUtil.encode3DEA(NumberStringUtil.str2HexStr("7236BB4ADAD38846"), NumberStringUtil.str2HexStr(asc));
-        System.out.println("s1 = " + s);
-        byte[] bytes1 = DesUtil.doubleDesDecrypt("7236BB4ADAD38846".getBytes(), asc.getBytes());
-        System.out.println("s2 = " + ISOUtil.bytesToHexString(bytes1));
-//        String s1 = String.format("%04x", asc.length() / 2).toUpperCase();
     }
 
-
-   /* //加密
-    public String getEncryptedCardNo(String str) {
-        str = str.length() + str;
-        while (str.length() < 32) {
-            str += "0";
-        }
-        byte[] bcdWlen = Util.toBCD(str);
-        System.err.println("----str-----" + str);
-
-        try {
-            byte[] des = api.calcDES((byte) I_ADK, bcdWlen, 1);
-            System.err.println("des---" + HEX.bytesToHex(des));
-            return HEX.bytesToHex(des);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return str;
-        }
-    }*/
 }
