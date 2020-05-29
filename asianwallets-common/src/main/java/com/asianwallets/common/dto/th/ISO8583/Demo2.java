@@ -1,5 +1,6 @@
 package com.asianwallets.common.dto.th.ISO8583;
 
+import cn.hutool.core.codec.BCD;
 import cn.hutool.core.util.HexUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.dto.th.exception.DesCryptionException;
@@ -21,7 +22,7 @@ public class Demo2 {
     private static String institutionId = "000000008600005";
     private static String merchantId = "852999958120501";
     private static String terminalId = "00018644";
-    private static String key = "C5DA676A42D45065";
+    private static String key = "A85313220A42C71A";
     private static String checkValue = "58B815045DC19B19";
 
     public static void abc() throws Exception {
@@ -78,7 +79,7 @@ public class Demo2 {
 //        ISO8583DTO signInVO = ISO8583Util.unpackISO8583DTO(result1);
 //        System.out.println("签到结果:" + JSON.toJSONString(signInVO));
 
-        //扫码组包
+       /* //扫码组包
         String isoMsg = ISO8583Util.packISO8583DTO(iso8583DTO, key);
         String sendMsg = "6006090000"
                 + "800100000000"
@@ -94,7 +95,7 @@ public class Demo2 {
         ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
         System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
         String[] split = iso8583DTO1281.getAdditionalData_46().split("02");
-        System.out.println(Arrays.toString(split));
+        System.out.println(Arrays.toString(split));*/
     }
 
     public static void bank() throws Exception {
@@ -134,13 +135,14 @@ public class Demo2 {
 
         //银行卡
 
-        dto.setProcessingCode_2("44a27bca5d37e4c4cf485489d873b037aa8670484ad985ae");
+        dto.setProcessingCode_2("CCDA07C694DE6530EE550C01D5281332");
       /*  String bankCode = "6214831211664781";
         String s = NumberStringUtil.str2HexStr(bankCode);
         String strHex2 = String.format("%04x", s.length() / 2).toUpperCase();*/
 
-//        dto.setTrack2Data_35("44AF840EA48CDE4B0AE3DEDBF618A12D9B723906826F084DDB0523193377DCFE6D3ACCE6164149F8");
+//        dto.setTrack2Data_35("376214850217415352624102200654300619897080000000");
 
+        System.out.println("JSON.toJSONString(dto) = " + JSON.toJSONString(dto));
         String msg = ISO8583Util.packISO8583DTO(dto, key);
         String sendMsg = "6006090000"
                 + "800100000000"
@@ -154,9 +156,10 @@ public class Demo2 {
         String result = requestMap.get("respData");
         System.out.println("返回报文 = " + result);
         ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
-        System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
+        System.out.println("解析结果:" + JSON.toJSONString(iso8583DTO1281));
         String[] split = iso8583DTO1281.getAdditionalData_46().split("02");
         System.out.println(Arrays.toString(split));
+
     }
 
     public static void main(String[] args) throws Exception {
@@ -166,24 +169,68 @@ public class Demo2 {
     }
 
     public static void decode() throws DesCryptionException {
-       /* String aa = "00C6600000060980010200000038353239393939353831323035303130303031383634343030303030303030383630303030353030303030303030383532393939393538313230353031303030303030353208100020000102C000161590650808600005303030303031383634343835323939393935383132303530310011506481330030006049B06FC0050F5D8926A7E30C4E42284E1D735367459932C75A7D5AF90000000000000000B7DBD2D43CA94C0A763C6714995523E5892D43360C89FBD80003303031";
+       /* String aa = "8962FD8A1CE09D01D79D45C465123111DC59D175C9858D3324606C670000000000000000BDCB26A44A173724EC52D8507CA096F4B730280488D6A311";
         aa.substring(80, 96);
         String trk = EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", aa.substring(80, 96)).toUpperCase();
         System.out.println("trk = " + trk);
         String cipherText = aa.substring(40, 56);
-        String key = EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", cipherText).toUpperCase();
-        System.out.println("key = " + key);
-        *//*
-        trk = BE1FF76FF7796F11
-        key = C5DA676A42D45065
+        String trk = EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", cipherText).toUpperCase();
+        System.out.println("trk = " + trk);*/
+
+        /*
+        trk = E148273CB8F580CA
+        key = A85313220A42C71A
          */
 
-        String asc = "6214850217415352";
-        String s = EcbDesUtil.encode3DEA(HexUtil.encodeHexStr("BE1FF76FF7796F11"), HexUtil.encodeHexStr(asc)).toUpperCase();
-        String s2 = EcbDesUtil.encode3DEA(HexUtil.encodeHexStr("BE1FF76FF7796F11"), HexUtil.encodeHexStr("6214850217415352=24102200654300619897")).toUpperCase();
-        System.out.println("35 = " + s2);
-        System.out.println("bankCode = " + s);
+        String code = "6214850217415352";
+        String var35 = "6214850217415352=24102200654300619897";
+        String newStr = code.length() + code;
+        System.out.println("未拼接 = " + newStr);
+//        newStr = newStr + "000000";
+//        newStr = newStr + "0";
+        System.out.println("拼接0 = " + newStr);
+        System.out.println("拼接0 = " + newStr.length());
+        byte[] bytes = BCD.strToBcd(newStr);
+        String trk = "E148273CB8F580CA";
+        String ery = EcbDesUtil.encode3DEA(HexUtil.encodeHexStr(trk), HexUtil.encodeHexStr(bytes)).toUpperCase();
+        System.out.println("加密 = " + ery);
+//        String s9 = DigestUtils.md5Hex(trk).toUpperCase();
+//        System.out.println("32位16进制TRK = " + s9);
+        String s = EcbDesUtil.decode3DEA(HexUtil.encodeHexStr(trk), ery).toUpperCase();
+        System.out.println("解密 = " + s);
+
 
     }
+
+    public static String DecimaltoBcd(String str) {
+        String b_num = "";
+        for (int i = 0; i < str.length(); i++) {
+
+            String b = Integer.toBinaryString(Integer.parseInt(str.valueOf(str.charAt(i))));
+
+            int b_len = 4 - b.length();
+
+            for (int j = 0; j < b_len; j++) {
+                b = "0" + b;
+            }
+            b_num += b;
+        }
+
+        return b_num;
+    }
+
+    public static String stringToAscii(String value) {
+        StringBuffer sbu = new StringBuffer();
+        char[] chars = value.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (i != chars.length - 1) {
+                sbu.append((int) chars[i]).append(",");
+            } else {
+                sbu.append((int) chars[i]);
+            }
+        }
+        return sbu.toString();
+    }
+
 
 }
