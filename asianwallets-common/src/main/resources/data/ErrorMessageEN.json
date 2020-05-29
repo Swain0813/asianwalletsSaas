@@ -56,7 +56,7 @@
   "10055": "This transaction has been withdrawn and refunds are not supported",
   "10056": "Callback address is empty",
   "10057": "The effective time is illegal",
-  "10058": "Failed to calculate the fee",
+  "10058": "The transaction has been cancelled or corrected, no refund is supported",
   "10059": "Calculate channel fee failed",
   "10060": "Failed to calculate channel gateway fee",
   "10061": "The product ID cannot be empty",
