@@ -39,7 +39,7 @@ public class Demo2 {
         dto.setAcquiringInstitutionIdentificationCode_32("08600005");
         dto.setCardAcceptorTerminalIdentification_41(terminalId);
         dto.setCardAcceptorIdentificationCode_42(merchantId);
-        // 156 人民币币种
+        //交易货币代码
         dto.setCurrencyCodeOfTransaction_49("344");
         // 60 自定义域
         String str60 =
@@ -77,7 +77,7 @@ public class Demo2 {
         String result = requestMap.get("respData");
         System.out.println("返回报文 = " + result);
         ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
-        System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
+        System.out.println("消费返回结果:" + JSON.toJSONString(iso8583DTO1281));
         String[] split = iso8583DTO1281.getAdditionalData_46().split("02");
         System.out.println(Arrays.toString(split));
     }
