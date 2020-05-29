@@ -1,10 +1,8 @@
 package com.asianwallets.common.entity;
-
 import com.asianwallets.common.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -92,5 +90,21 @@ public class ChannelsOrder extends BaseEntity {
     @ApiModelProperty(value = "remark3")
     @Column(name = "remark3")
     private String remark3;
+
+    @ApiModelProperty(value = "银行卡号")
+    @Column(name = "user_bank_card_no")
+    private String userBankCardNo;
+
+    @ApiModelProperty(value = "CVV2")
+    @Column(name = "cvv")
+    private String cvv;
+
+    @ApiModelProperty(value = "卡有效期 MMYY")
+    @Column(name = "valid")
+    private String valid;
+
+    @ApiModelProperty(value = "磁道信息")
+    @Column(name = "track_data")
+    private String trackData;
 
 }
