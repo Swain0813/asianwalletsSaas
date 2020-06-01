@@ -176,10 +176,15 @@ public class Demo2 {
 //        String var2 = "6214850217415352";
         String var35 = "6214850217415352=24102200654300619897";
         String newStr;
-        if (var35.length() % 2 != 0) {
-            newStr = var35.length() + var35 + "0";
+        encrypt(var35);
+    }
+
+    private static void encrypt(String str) {
+        String newStr;
+        if (str.length() % 2 != 0) {
+            newStr = str.length() + str + "0";
         } else {
-            newStr = var35.length() + var35;
+            newStr = str.length() + str;
         }
         System.out.println("newstr = " + newStr);
         byte[] b = NumberStringUtil.str2Bcd(newStr);
