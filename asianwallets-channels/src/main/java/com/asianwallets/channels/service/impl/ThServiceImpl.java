@@ -1,4 +1,6 @@
 package com.asianwallets.channels.service.impl;
+
+import cn.hutool.core.util.HexUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.service.ThService;
@@ -8,13 +10,17 @@ import com.asianwallets.common.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.Map;
+import java.util.Objects;
 
 /**
+ * The type Th service.
+ *
  * @description:
  * @author: YangXu
- * @create: 2020-05-07 11:01
- **/
+ * @create: 2020 -05-07 11:01
+ */
 @Slf4j
 @Service
 public class ThServiceImpl implements ThService {
@@ -39,7 +45,7 @@ public class ThServiceImpl implements ThService {
         //终端号
         String terminalNum = iso8583DTO.getCardAcceptorTerminalIdentification_41();
         //机构号,左边填充0,总共15位
-        String institutionNum = "0000000"+iso8583DTO.getAcquiringInstitutionIdentificationCode_32();
+        String institutionNum = "0000000" + iso8583DTO.getAcquiringInstitutionIdentificationCode_32();
         //业务类型
         String businessTypes = "00000000";
         BaseResponse baseResponse = new BaseResponse();
@@ -311,16 +317,53 @@ public class ThServiceImpl implements ThService {
 
     /**
      * 通华线下银行卡消费
+     *
      * @param thDTO
      * @return
      */
     @Override
     public BaseResponse thBankCard(ThDTO thDTO) {
-        return null;
+        log.info("===============【通华线下银行卡】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
+        String tpdu = channelsConfig.getThTDPU();
+        String header = channelsConfig.getThHeader();
+        //商户号
+        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        //终端号
+        String terminalNum = thDTO.getChannel().getExtend1();
+        //机构号
+        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        //加密key
+        String key = thDTO.getChannel().getMd5KeyStr();
+        //业务类型
+        String businessTypes = "00000001";
+        BaseResponse baseResponse = new BaseResponse();
+        try {
+            String sendMsg = tpdu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
+                    + ISO8583Util.packISO8583DTO(thDTO.getIso8583DTO(), key);
+            //计算报文长度
+            String strHex2 = String.format("%04x", sendMsg.length() / 2);
+            sendMsg = strHex2 + sendMsg;
+            log.info("===============【通华线下银行卡】===============【请求报文参数】 sendMsg: {}", sendMsg);
+            Map<String, String> respMap = ISO8583Util.sendTCPRequest(channelsConfig.getThIp(), channelsConfig.getThPort(), NumberStringUtil.str2Bcd(sendMsg));
+            String result = respMap.get("respData");
+            log.info("===============【通华线下银行卡】===============【返回报文参数】 result: {}", result);
+            //解包
+            ISO8583DTO iso8583VO = ISO8583Util.unpackISO8583DTO(result);
+            log.info("===============【通华线下银行卡】===============【返回参数】 iso8583VO: {}", JSON.toJSONString(iso8583VO));
+            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+            baseResponse.setData(iso8583VO);
+        } catch (Exception e) {
+            log.info("===============【通华线下银行卡】===============【接口异常】", e);
+            baseResponse.setCode(TradeConstant.HTTP_FAIL);
+            baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+        }
+        return baseResponse;
     }
 
     /**
      * 通华线下银行卡冲正
+     *
      * @param thDTO
      * @return
      */
@@ -330,7 +373,8 @@ public class ThServiceImpl implements ThService {
     }
 
     /**
-     *通华线下银行卡退款
+     * 通华线下银行卡退款
+     *
      * @param thDTO
      * @return
      */
@@ -339,4 +383,21 @@ public class ThServiceImpl implements ThService {
         return null;
     }
 
+    /**
+     * trk加密
+     *
+     * @param unprocessed
+     * @return str
+     */
+    private static String trkEncrypt(String unprocessed) {
+        String newStr;
+        if (unprocessed.length() % 2 != 0) {
+            newStr = unprocessed.length() + unprocessed + "0";
+        } else {
+            newStr = unprocessed.length() + unprocessed;
+        }
+        byte[] b = NumberStringUtil.str2Bcd(newStr);
+        String trk = "67EB032CD2C1DAEF7AF2C1F7BFB819DA";
+        return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, HexUtil.encodeHexStr(b))).toUpperCase();
+    }
 }
