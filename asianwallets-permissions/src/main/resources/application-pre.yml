@@ -74,7 +74,7 @@ security:
 #项目自定义配置
 file:
   http:
-    server: https://testsaas.asianwallets.com
+    server: https://cashier.alldebitpay.com
   upload:
-    path: /usr/local/tomcat/apache-tomcat-8.5.38/webapps
-  tmpfile: /usr/local/tomcat/apache-tomcat-8.5.38/webapps/tmp
+    path: /usr/local/tomcat/apache-tomcat-8.5.51/webapps
+  tmpfile: /usr/local/tomcat/apache-tomcat-8.5.51/webapps/tmp

@@ -69,8 +69,8 @@ redis:
 #项目自定义配置
 custom:
   warning:
-    email: 842505302@qq.com
-    mobile: 18800330943
+    email: 247648220@qq.com
+    mobile: 18505513542
   jwt:
     secret: B42uRHeM5qoBSU5b
     token_expire_hour: 24
@@ -82,10 +82,10 @@ custom:
   ad3ItsUrl: https://its.alldebitpay.com/v1/
 
   #收银台url
-  cashierDeskUrl: http://testsaas.asianwallets.com/saascheckstandweb/#/main
+  cashierDeskUrl: http://cashier.alldebitpay.com/saascheckstandweb/#/main
 
   #亚洲钱包的支付页面的url
-  paySuccessUrl: http://testsaas.asianwallets.com/saascheckstandweb/#/Success
+  paySuccessUrl: http://cashier.alldebitpay.com/saascheckstandweb/#/Success
 
   #AD3提供的生产环境地址
   #url
@@ -97,4 +97,4 @@ custom:
   nganLuong:
     check_url: https://www.nganluong.vn/checkout.api.nganluong.post.php
   #给AD3的回调URL
-  channelCallbackUrl: https://testsaas.asianwallets.com/tra
+  channelCallbackUrl: https://cashier.alldebitpay.com/tra

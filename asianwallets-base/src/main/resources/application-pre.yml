@@ -77,7 +77,7 @@ redis:
     max-wait-millis: -1
 custom:
   warning:
-    email: 842505302@qq.com
-    mobile: 18800330943
+    email: 247648220@qq.com
+    mobile: 18505513542
   alipay:
       url: https://intlmapi.alipay.com/gateway.do?
