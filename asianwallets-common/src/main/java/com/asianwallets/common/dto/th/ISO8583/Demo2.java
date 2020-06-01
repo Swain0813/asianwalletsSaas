@@ -1,16 +1,11 @@
 package com.asianwallets.common.dto.th.ISO8583;
 
-import cn.hutool.core.codec.BCD;
 import cn.hutool.core.util.HexUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.dto.th.exception.DesCryptionException;
 import com.asianwallets.common.utils.IDS;
-import org.apache.poi.ss.formula.functions.T;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,8 +39,8 @@ public class Demo2 {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("700206");//查询
-        //        iso8583DTO.setProcessingCode_3("700200");//主扫
-        //        iso8583DTO.setProcessingCode_3("400101");//被扫
+//        iso8583DTO.setProcessingCode_3("700200");//主扫
+//        iso8583DTO.setProcessingCode_3("400101");//被扫
         //交易金额
         iso8583DTO.setAmountOfTransactions_4("000000000100");
         //受卡方系统跟踪号
@@ -62,26 +57,26 @@ public class Demo2 {
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         // iso8583DTO.setAdditionalData_46("5F5206303002300202");//主扫
         iso8583DTO.setAdditionalData_46("5F5221303002020232303230303532303030303030313130363130303137383436350202");//查询
-        //        String scanCode = "134750495118463486";
-        //        iso8583DTO.setAdditionalData_46("5F52193030023002" + NumberStringUtil.str2HexStr(scanCode) + "0202");//被扫
+//        String scanCode = "134750495118463486";
+//        iso8583DTO.setAdditionalData_46("5F52193030023002" + NumberStringUtil.str2HexStr(scanCode) + "0202");//被扫
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
         iso8583DTO.setReservedPrivate_60("0100005A");//01000001000000000
         //签到组包
-        //        String sendMsg1 = "6006090000"
-        //                + "800100000000"
-        //                + NumberStringUtil.str2HexStr(merchantId + terminalId + institutionId + "00000000" + merchantId)
-        //                + isoMsg1;
-        //        String strHex1 = String.format("%04x", sendMsg1.length() / 2);
-        //        sendMsg1 = strHex1 + sendMsg1;
-        //        System.out.println(" ===  签到sendMsg  ====   " + sendMsg1);
-        //        Map<String, String> respMap1 = ISO8583Util.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg1));
-        //        String result1 = respMap1.get("respData");
-        //        System.out.println(" ====  签到result  ===   " + result1);
-        //        //解包
-        //        ISO8583DTO signInVO = ISO8583Util.unpackISO8583DTO(result1);
-        //        System.out.println("签到结果:" + JSON.toJSONString(signInVO));
+//        String sendMsg1 = "6006090000"
+//                + "800100000000"
+//                + NumberStringUtil.str2HexStr(merchantId + terminalId + institutionId + "00000000" + merchantId)
+//                + isoMsg1;
+//        String strHex1 = String.format("%04x", sendMsg1.length() / 2);
+//        sendMsg1 = strHex1 + sendMsg1;
+//        System.out.println(" ===  签到sendMsg  ====   " + sendMsg1);
+//        Map<String, String> respMap1 = ISO8583Util.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg1));
+//        String result1 = respMap1.get("respData");
+//        System.out.println(" ====  签到result  ===   " + result1);
+//        //解包
+//        ISO8583DTO signInVO = ISO8583Util.unpackISO8583DTO(result1);
+//        System.out.println("签到结果:" + JSON.toJSONString(signInVO));
 
        /* //扫码组包
         String isoMsg = ISO8583Util.packISO8583DTO(iso8583DTO, key);
@@ -128,7 +123,7 @@ public class Demo2 {
                 //60.1 消息类型码
                 "22" +
                         //60.2 批次号 自定义 todo
-                        "000099" +
+                        "009119" +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
@@ -138,13 +133,8 @@ public class Demo2 {
         dto.setReservedPrivate_60(str60);
 
         //银行卡
-
-        dto.setProcessingCode_2("EFC84F6FBB5249AC63B2B6442B484532");
-      /*  String bankCode = "6214831211664781";
-        String s = NumberStringUtil.str2HexStr(bankCode);
-        String strHex2 = String.format("%04x", s.length() / 2).toUpperCase();*/
-
-        dto.setTrack2Data_35("C8CD064BC86BF9EA01E3E1AC1ED4115BAC2ADF0C79EC4C17");
+        dto.setProcessingCode_2("63993D59CFB89ED9CF23643FDBD39E71");
+        dto.setTrack2Data_35("43A5A5F920415278879FC5805BBABBC9A2BA90FCE8186335");
 
         System.out.println("JSON.toJSONString(dto) = " + JSON.toJSONString(dto));
         String msg = ISO8583Util.packISO8583DTO(dto, key);
@@ -167,90 +157,40 @@ public class Demo2 {
     }
 
     public static void main(String[] args) throws Exception {
-        //bank();
-        //        abc();
-        decode();
+        bank();
+//        decode();
     }
 
     public static void decode() throws DesCryptionException {
-       /* String aa = "8962FD8A1CE09D01D79D45C465123111DC59D175C9858D3324606C670000000000000000BDCB26A44A173724EC52D8507CA096F4B730280488D6A311";
-        aa.substring(80, 96);
-        String trk = EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", aa.substring(80, 96)).toUpperCase();
+    /*    String msg = "B3045DDECD39FF2B8FA2CE91400851C57EBC27BD60E90927855B741C0000000000000000E4456910D3CC230C534F90763F5B13282DBD872595C33537";
+        String substring = msg.substring(80, 96);
+        String trk = EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", "D3CC230C534F90763F5B13282DBD8725").toUpperCase();
         System.out.println("trk = " + trk);
-        String cipherText = aa.substring(40, 56);
-        String trk = EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", cipherText).toUpperCase();
-        System.out.println("trk = " + trk);*/
+        String cipherText = msg.substring(40, 56);
+        String key1 = EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", cipherText).toUpperCase();
+        System.out.println("key = " + key1);
+       */
+        /* trk = 67EB032CD2C1DAEF7AF2C1F7BFB819DA
+        key = 9F8BB858F2DF3C19*/
 
-        /*
-        trk = E148273CB8F580CA
-        key = A85313220A42C71A
-         */
-
-        //String code = "6214850217415352";
-        String code = "6214850217415352=24102200654300619897";
+//        String var2 = "6214850217415352";
+        String var35 = "6214850217415352=24102200654300619897";
         String newStr;
-        if (code.length() % 2 != 0) {
-            newStr = code.length() + code + "0";
+        if (var35.length() % 2 != 0) {
+            newStr = var35.length() + var35 + "0";
         } else {
-            newStr = code.length() + code;
+            newStr = var35.length() + var35;
         }
         System.out.println("newstr = " + newStr);
-        byte[] bytes = BCD.strToBcd(newStr);
-        System.out.println("bytes = " + bytes.length);
-        int lentgth = bytes.length;
-        int n = bytes.length % 8;
-        System.out.println("n = " + n);
-        lentgth = lentgth + (8 - n);
-        System.out.println("lentgth = " + lentgth);
-        byte[] b = new byte[lentgth];
-        System.arraycopy(bytes, 0, b, 0, bytes.length);
-        for (int i = bytes.length; i < b.length; i++) {
-            b[i] = 0x00;
-        }
-
+        byte[] b = NumberStringUtil.str2Bcd(newStr);
+        System.out.println("NumberStringUtil.bcd2Str(b) = " + NumberStringUtil.bcd2Str(b));
         System.out.println("b = " + b.length);
         System.out.println("HexUtil = " + HexUtil.encodeHexStr(b).length());
-
-        String trk = "67EB032CD2C1DAEF";
-        String ery = EcbDesUtil.encode3DEA(HexUtil.encodeHexStr(trk), HexUtil.encodeHexStr(b)).toUpperCase();
+        String trk = "67EB032CD2C1DAEF7AF2C1F7BFB819DA";
+        String ery = EcbDesUtil.encode3DEA(trk, HexUtil.encodeHexStr(b)).toUpperCase();
         System.out.println("加密 = " + ery);
-        //        String s9 = DigestUtils.md5Hex(trk).toUpperCase();
-        //        System.out.println("32位16进制TRK = " + s9);
-        String s = EcbDesUtil.decode3DEA(HexUtil.encodeHexStr(trk), ery).toUpperCase();
+        String s = EcbDesUtil.decode3DEA(trk, ery).toUpperCase();
         System.out.println("解密 = " + s);
-
-
     }
-
-    public static String DecimaltoBcd(String str) {
-        String b_num = "";
-        for (int i = 0; i < str.length(); i++) {
-
-            String b = Integer.toBinaryString(Integer.parseInt(str.valueOf(str.charAt(i))));
-
-            int b_len = 4 - b.length();
-
-            for (int j = 0; j < b_len; j++) {
-                b = "0" + b;
-            }
-            b_num += b;
-        }
-
-        return b_num;
-    }
-
-    public static String stringToAscii(String value) {
-        StringBuffer sbu = new StringBuffer();
-        char[] chars = value.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            if (i != chars.length - 1) {
-                sbu.append((int) chars[i]).append(",");
-            } else {
-                sbu.append((int) chars[i]);
-            }
-        }
-        return sbu.toString();
-    }
-
 
 }
