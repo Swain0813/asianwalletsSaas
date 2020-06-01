@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.MerchantReportMapper;
 import com.asianwallets.base.feign.MessageFeign;
 import com.asianwallets.base.rabbitmq.RabbitMQSender;
-import com.asianwallets.base.service.AlipaySecmerchantReport;
+import com.asianwallets.base.service.AlipaySecMerchantReport;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.RabbitMassage;
@@ -33,7 +33,7 @@ public class ReportFailMQReceive {
     private MerchantReportMapper merchantReportMapper;
 
     @Autowired
-    private AlipaySecmerchantReport alipaySecmerchantReport;
+    private AlipaySecMerchantReport alipaySecmerchantReport;
 
     @Value("${custom.warning.mobile}")
     private String mobile;

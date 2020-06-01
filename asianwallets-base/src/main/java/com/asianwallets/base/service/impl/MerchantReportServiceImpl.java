@@ -4,7 +4,7 @@ import com.asianwallets.base.dao.ChannelMapper;
 import com.asianwallets.base.dao.InstitutionMapper;
 import com.asianwallets.base.dao.MerchantMapper;
 import com.asianwallets.base.dao.MerchantReportMapper;
-import com.asianwallets.base.service.AlipaySecmerchantReport;
+import com.asianwallets.base.service.AlipaySecMerchantReport;
 import com.asianwallets.base.service.MerchantReportService;
 import com.asianwallets.common.dto.MerchantReportDTO;
 import com.asianwallets.common.entity.Channel;
@@ -46,7 +46,7 @@ public class MerchantReportServiceImpl implements MerchantReportService {
     private MerchantReportMapper merchantReportMapper;
 
     @Autowired
-    private AlipaySecmerchantReport alipaySecmerchantReport;
+    private AlipaySecMerchantReport alipaySecmerchantReport;
 
     /**
      * 添加报备
@@ -139,7 +139,9 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         BeanUtils.copyProperties(merchantReportDTO, merchantReport, getNullPropertyNames(merchantReportDTO));
         //change the data
         int i = merchantReportMapper.updateByPrimaryKeySelective(merchantReport);
-        alipaySecmerchantReport.Resubmit(merchantReportDTO.getId());
+        if(i>0){
+            alipaySecmerchantReport.Resubmit(merchantReportDTO.getId());
+        }
         return i;
     }
 

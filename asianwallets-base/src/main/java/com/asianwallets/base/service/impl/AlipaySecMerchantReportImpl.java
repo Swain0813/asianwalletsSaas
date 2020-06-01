@@ -8,7 +8,7 @@ import com.asianwallets.base.dao.MerchantMapper;
 import com.asianwallets.base.dao.MerchantReportMapper;
 import com.asianwallets.base.feign.MessageFeign;
 import com.asianwallets.base.rabbitmq.RabbitMQSender;
-import com.asianwallets.base.service.AlipaySecmerchantReport;
+import com.asianwallets.base.service.AlipaySecMerchantReport;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.RabbitMassage;
@@ -33,7 +33,7 @@ import java.util.Map;
 @Async
 @Component
 @Slf4j
-public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
+public class AlipaySecMerchantReportImpl implements AlipaySecMerchantReport {
 
     @Autowired
     private MerchantReportMapper merchantReportMapper;
@@ -67,6 +67,7 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
      *
      * @param mrId
      */
+    @Async
     public void Resubmit(String mrId) {
         MerchantReport merchantReport = merchantReportMapper.selectByPrimaryKey(mrId);
         if (merchantReport.getEnabled() == null || !merchantReport.getEnabled()) {
@@ -87,6 +88,7 @@ public class AlipaySecmerchantReportImpl implements AlipaySecmerchantReport {
      * @param channelId
      * @throws IOException
      */
+    @Async
     public void report(String merchantId, String channelId) {
         ChannelDetailVO channelDetailVO = channelMapper.selectByChannelId(channelId, null);
         MerchantReport mr = merchantReportMapper.selectByChannelCodeAndMerchantId(channelDetailVO.getChannelCode(), merchantId);

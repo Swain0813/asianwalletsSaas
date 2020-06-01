@@ -5,7 +5,7 @@ import com.asianwallets.common.utils.HttpResponse;
 
 import java.io.IOException;
 
-public interface AlipaySecmerchantReport {
+public interface AlipaySecMerchantReport {
 
     /**
      * 报备

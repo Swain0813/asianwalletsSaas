@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.base.dao.*;
 import com.asianwallets.base.job.ProductInfoJob;
-import com.asianwallets.base.service.AlipaySecmerchantReport;
+import com.asianwallets.base.service.AlipaySecMerchantReport;
 import com.asianwallets.base.service.CommonService;
 import com.asianwallets.base.service.MerchantProductService;
 import com.asianwallets.common.base.BaseServiceImpl;
@@ -94,7 +94,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     private CommonService commonService;
 
     @Autowired
-    private AlipaySecmerchantReport alipaySecmerchantReport;
+    private AlipaySecMerchantReport alipaySecmerchantReport;
 
 
     /**
