@@ -120,7 +120,7 @@ public class AliPayWebDTO {
         this.service = "create_forex_trade";
         this.partner = channel.getChannelMerchantId();
         this._input_charset = "UTF-8";
-        this.subject = orders.getProductName();
+        this.subject = orders.getProductName() == null ? "Commodity" : orders.getProductName();
         this.md5KeyStr = channel.getMd5KeyStr();
         this.notify_url = notifyUrl;//后台回调地址
         this.return_url = returnUrl;//浏览器回调地址

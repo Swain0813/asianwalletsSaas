@@ -78,7 +78,7 @@ public class AliPayOfflineBSCDTO {
         this._input_charset = "UTF-8";
         //渠道商户号
         this.alipay_seller_id = channel.getChannelMerchantId()==null?"2088421920790891":channel.getChannelMerchantId();
-        this.trans_name = StringUtils.isEmpty(orders.getProductName()) ? "SALE" : orders.getProductName();//产品名称
+        this.trans_name = StringUtils.isEmpty(orders.getProductName()) ? "Commodity" : orders.getProductName();//产品名称
         this.partner_trans_id = orders.getId();//订单号
         this.currency = orders.getTradeCurrency();//币种
         this.trans_amount = String.valueOf(orders.getChannelAmount());
