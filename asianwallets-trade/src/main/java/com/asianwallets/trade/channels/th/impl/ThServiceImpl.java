@@ -555,9 +555,94 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         insertChannelsOrder(orders, channel);
         //创建通华DTO
         ISO8583DTO iso8583DTO = createBankOrder(orders, channel);
-
-
+        //46 自定义域
+        iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52("303002" + channel.getPayCode() + "0202"));
+        log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【请求参数】 iso8583DTO: {}", JSON.toJSONString(iso8583DTO));
+        BaseResponse channelResponse = channelsFeign.thBankCard(new ThDTO(iso8583DTO, channel));
+        log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【通华线下银行卡下单接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【通华线下银行卡下单接口】-【请求状态码异常】");
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+        ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
+        log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【通华线下银行卡下单接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
+        //将46域信息按02分割
+        String[] domain46 = iso8583VO.getAdditionalData_46().split("02");
+        log.info("===============【通华线下银行卡下单】===============【46域信息】 domain46: {}", Arrays.toString(domain46));
+        //索引第4位 : 通华返回的商户订单号
+        orders.setChannelNumber(NumberStringUtil.hexStr2Str(domain46[4]));
+        ordersMapper.updateByPrimaryKeySelective(orders);
+        orders.setUpdateTime(new Date());
+        orders.setChannelCallbackTime(new Date());
+        Example example = new Example(Orders.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("tradeStatus", "2");
+        criteria.andEqualTo("id", orders.getId());
         BaseResponse baseResponse = new BaseResponse();
+        if ("00".equals(iso8583VO.getResponseCode_39())) {
+            log.info("=================【通华线下银行卡下单】=================【订单已支付成功】 orderId: {}", orders.getId());
+            //未发货
+            orders.setDeliveryStatus(TradeConstant.UNSHIPPED);
+            //未签收
+            orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
+            orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_SUCCESS);
+            } catch (Exception e) {
+                log.error("=================【通华线下银行卡下单】=================【更新通道订单异常】", e);
+            }
+            //更新订单信息
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                log.info("=================【通华线下银行卡下单】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
+                //计算支付成功时的通道网关手续费
+                commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
+                //TODO 添加日交易限额与日交易笔数
+                //commonBusinessService.quota(orders.getMerchantId(), orders.getProductCode(), orders.getTradeAmount());
+                //支付成功后向用户发送邮件
+                commonBusinessService.sendEmail(orders);
+                try {
+                    //账户信息不存在的场合创建对应的账户信息
+                    if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
+                        log.info("=================【通华线下银行卡下单】=================【上报清结算前线下下单创建账户信息】");
+                        commonBusinessService.createAccount(orders);
+                    }
+                    //分润
+                    if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
+                        rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
+                    }
+                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
+                    //上报清结算资金变动接口
+                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
+                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
+                        log.info("=================【通华线下银行卡下单】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                    }
+                } catch (Exception e) {
+                    log.error("=================【通华线下银行卡下单】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                    rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                }
+            } else {
+                log.info("=================【通华线下银行卡下单】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        } else {
+            log.info("=================【通华线下银行卡下单】=================【订单已支付失败】 orderId: {}", orders.getId());
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+            orders.setRemark5(iso8583VO.getResponseCode_39());
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_FALID);
+            } catch (Exception e) {
+                log.error("=================【通华线下银行卡下单】=================【更新通道订单异常】", e);
+            }
+            //计算支付失败时的通道网关手续费
+            commonBusinessService.calcCallBackGatewayFeeFailed(orders);
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                log.info("=================【通华线下银行卡下单】=================【订单支付失败后更新数据库成功】 orderId: {}", orders.getId());
+            } else {
+                log.info("=================【通华线下银行卡下单】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        }
         return baseResponse;
     }
 

@@ -22,7 +22,7 @@ public interface ChannelMapper extends BaseMapper<Channel> {
     /**
      * @return MChannelVO 这里面的CID指的是channel_code
      * @date 2019
-     * @deprecated 查询所有通道
+     *  查询所有通道
      */
     List<MChannelVO> selectAllChannel();
 }
