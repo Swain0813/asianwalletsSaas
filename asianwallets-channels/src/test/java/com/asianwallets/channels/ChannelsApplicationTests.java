@@ -348,7 +348,6 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         String timeStamp = System.currentTimeMillis() + "";
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
-        //被扫
         iso8583DTO.setProcessingCode_3("009000");
         //交易金额
         iso8583DTO.setAmountOfTransactions_4("000000000001");

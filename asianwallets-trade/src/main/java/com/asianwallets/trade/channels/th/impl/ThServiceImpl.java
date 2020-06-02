@@ -551,8 +551,99 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      */
     @Override
     public BaseResponse bankCardReceipt(Orders orders, Channel channel) {
+        //插入通道订单
+        insertChannelsOrder(orders, channel);
+        //创建通华DTO
+        ISO8583DTO iso8583DTO = createBankOrder(orders, channel);
+
+
         BaseResponse baseResponse = new BaseResponse();
         return baseResponse;
+    }
+
+    /**
+     * 创建通华银行卡订单
+     *
+     * @param orders 订单
+     */
+    private ISO8583DTO createBankOrder(Orders orders, Channel channel) {
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        //当前时间戳
+        String timeStamp = System.currentTimeMillis() + "";
+        String domain11 = timeStamp.substring(0, 6);
+        String domain60_2 = timeStamp.substring(6, 12);
+        //保存11域与60.2域
+        orders.setReportNumber(domain11 + domain60_2);
+        //消息类型
+        iso8583DTO.setMessageType("0200");
+        //获取交易金额的小数位数
+        int numOfBits = String.valueOf(orders.getTradeAmount()).length() - String.valueOf(orders.getTradeAmount()).indexOf(".") - 1;
+        int tradeAmount;
+        if (numOfBits == 0) {
+            //整数
+            tradeAmount = orders.getTradeAmount().intValue();
+        } else {
+            //小数,扩大对应小数位数
+            tradeAmount = orders.getTradeAmount().movePointRight(numOfBits).intValue();
+        }
+        //12位,左边填充0
+        String formatAmount = String.format("%012d", tradeAmount);
+        iso8583DTO.setProcessingCode_3("009000");
+        //交易金额
+        iso8583DTO.setAmountOfTransactions_4(formatAmount);
+        //受卡方系统跟踪号
+        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
+        //服务点输入方式码
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        //服务点条件码
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
+        //受理方标识码 (机构号)
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
+        //交易货币代码
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        // 60 自定义域
+        String str60 =
+                //60.1 消息类型码
+                "22" +
+                        //60.2 批次号 自定义
+                        timeStamp.substring(6, 12) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        iso8583DTO.setReservedPrivate_60(str60);
+        //银行卡号
+        iso8583DTO.setProcessingCode_2(trkEncryption(orders.getUserBankCardNo(), channel.getMd5KeyStr()));
+        //磁道2 信息
+        iso8583DTO.setTrack2Data_35(trkEncryption(orders.getTrackData(), channel.getMd5KeyStr()));
+        return iso8583DTO;
+    }
+
+    /**
+     * trk 加密
+     *
+     * @param str
+     * @param key
+     * @return
+     */
+    private static String trkEncryption(String str, String key) {
+        //80-112 Trk密钥位
+        String substring = key.substring(80, 112);
+        String trk = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
+        String newStr;
+        if (str.length() % 2 != 0) {
+            newStr = str.length() + str + "0";
+        } else {
+            newStr = str.length() + str;
+        }
+        byte[] bcd = NumberStringUtil.str2Bcd(newStr);
+        return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, cn.hutool.core.util.HexUtil.encodeHexStr(bcd))).toUpperCase();
     }
 
     /**
@@ -572,24 +663,4 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
         return baseResponse;
     }
-
-    /**
-     * 银行卡 trk 加密
-     *
-     * @return
-     */
-    private static String trkEncryption(String str, String key) {
-        //80-112 Trk密钥位
-        String substring = key.substring(80, 112);
-        String trk = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
-        String newStr;
-        if (str.length() % 2 != 0) {
-            newStr = str.length() + str + "0";
-        } else {
-            newStr = str.length() + str;
-        }
-        byte[] bcd = NumberStringUtil.str2Bcd(newStr);
-        return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, cn.hutool.core.util.HexUtil.encodeHexStr(bcd))).toUpperCase();
-    }
-
 }
