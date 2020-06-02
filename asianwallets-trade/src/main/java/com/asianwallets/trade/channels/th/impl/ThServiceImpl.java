@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.th.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -301,12 +300,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         return baseResponse;
     }
 
-    @Override
-    public BaseResponse bankCardReceipt(Orders orders, Channel channel) {
-        BaseResponse baseResponse = new BaseResponse();
-        return baseResponse;
-    }
-
     /**
      * @return
      * @Author YangXu
@@ -482,25 +475,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         return baseResponse;
     }
 
-    /**
-     * @Author YangXu
-     * @Date 2020/5/26
-     * @Descripate 银行卡冲正接口
-     * @return
-     **/
-    @Override
-    public BaseResponse reversal(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
-        RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
-        if (rabbitMassage == null) {
-            rabbitMassage = rabbitOrderMsg;
-        }
-        BaseResponse baseResponse = new BaseResponse();
-
-
-
-
-        return baseResponse;
-    }
 
     /**
      * @return
@@ -567,6 +541,38 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //自定义域
         iso8583DTO.setReservedPrivate_60("01" + orderRefund.getReportNumber().substring(6, 12));
         return iso8583DTO;
+    }
+
+    /**
+     * 通华线下银行卡下单
+     * @param orders
+     * @param channel
+     * @return
+     */
+    @Override
+    public BaseResponse bankCardReceipt(Orders orders, Channel channel) {
+        BaseResponse baseResponse = new BaseResponse();
+        return baseResponse;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/5/26
+     * @Descripate 银行卡冲正接口
+     * @return
+     **/
+    @Override
+    public BaseResponse reversal(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+        if (rabbitMassage == null) {
+            rabbitMassage = rabbitOrderMsg;
+        }
+        BaseResponse baseResponse = new BaseResponse();
+
+
+
+
+        return baseResponse;
     }
 
 }
