@@ -24,8 +24,8 @@ public class BankCardUndoDTO {
     private String userBankCardNo;
 
     @NotNull(message = "50002")
-    @ApiModelProperty(value = "cvv")
-    private String cvv;
+    @ApiModelProperty(value = "cvv2")
+    private String cvv2;
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "卡有效期")

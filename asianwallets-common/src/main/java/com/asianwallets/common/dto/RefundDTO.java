@@ -91,8 +91,8 @@ public class RefundDTO {
     @ApiModelProperty(value = "银行卡号")
     private String userBankCardNo;
 
-    @ApiModelProperty(value = "cvv")
-    private String cvv;
+    @ApiModelProperty(value = "cvv2")
+    private String cvv2;
 
     @ApiModelProperty(value = "卡有效期")
     private String valid;

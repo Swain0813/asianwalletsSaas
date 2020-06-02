@@ -606,7 +606,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         //银行卡号
         refundDTO.setUserBankCardNo(bankCardUndoDTO.getUserBankCardNo());
         //cvv
-        refundDTO.setCvv(bankCardUndoDTO.getCvv());
+        refundDTO.setCvv2(bankCardUndoDTO.getCvv2());
         //卡有效期
         refundDTO.setValid(bankCardUndoDTO.getValid());
         //磁道信息
@@ -632,7 +632,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             log.info("==================【银行卡退款】==================【银行卡号为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
-        if (StringUtils.isEmpty(refundDTO.getCvv())) {
+        if (StringUtils.isEmpty(refundDTO.getCvv2())) {
             log.info("==================【银行卡退款】==================【CVV为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
@@ -987,9 +987,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //银行卡号
             orderRefund.setUserBankCardNo(refundDTO.getUserBankCardNo());
         }
-        if (!org.springframework.util.StringUtils.isEmpty(refundDTO.getCvv())) {
+        if (!org.springframework.util.StringUtils.isEmpty(refundDTO.getCvv2())) {
             //CVV
-            orderRefund.setCvv(refundDTO.getCvv());
+            orderRefund.setCvv2(refundDTO.getCvv2());
         }
         if (!org.springframework.util.StringUtils.isEmpty(refundDTO.getValid())) {
             //卡有效期

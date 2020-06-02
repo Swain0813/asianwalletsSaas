@@ -85,7 +85,7 @@
         <result column="remark7" property="remark7" jdbcType="VARCHAR"/>
         <result column="remark8" property="remark8" jdbcType="VARCHAR"/>
         <result column="user_bank_card_no" property="userBankCardNo" jdbcType="VARCHAR"/>
-        <result column="cvv" property="cvv" jdbcType="VARCHAR"/>
+        <result column="cvv2" property="cvv2" jdbcType="VARCHAR"/>
         <result column="valid" property="valid" jdbcType="VARCHAR"/>
         <result column="track_data" property="trackData" jdbcType="VARCHAR"/>
     </resultMap>
@@ -103,7 +103,7 @@
     channel_gateway_rate, channel_gateway_fee, channel_gateway_fee_type, channel_gateway_charge,refund_fee_trade,
     channel_gateway_status, product_settle_cycle, channel_amount, fee_payer, channel_fee,refund_order_fee_trade,
     refund_rate_type, refund_rate, refund_fee, refund_order_fee, remark4, remark5, remark6,
-    remark7, remark8,user_bank_card_no,cvv,valid,track_data
+    remark7, remark8,user_bank_card_no,cvv2,valid,track_data
     </sql>
 
 
