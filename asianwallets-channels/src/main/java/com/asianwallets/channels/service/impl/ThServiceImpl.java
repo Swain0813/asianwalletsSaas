@@ -332,7 +332,8 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
         //加密key
-        String key = thDTO.getChannel().getMd5KeyStr();
+        String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
+        String key = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
         //业务类型
         String businessTypes = "00000001";
         BaseResponse baseResponse = new BaseResponse();
@@ -382,16 +383,4 @@ public class ThServiceImpl implements ThService {
         return null;
     }
 
-    /**
-     * todo 这里需要转换为key，用到银行卡下单中
-     */
-    private static void getTrkKey(String var62) {
-        String msg = "B3045DDECD39FF2B8FA2CE91400851C57EBC27BD60E90927855B741C0000000000000000E4456910D3CC230C534F90763F5B13282DBD872595C33537";
-        String substring = msg.substring(80, 112);
-        String trk = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
-        System.out.println("trk = " + trk);
-        String cipherText = msg.substring(40, 56);
-        String key1 = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", cipherText)).toUpperCase();
-        System.out.println("key = " + key1);
-    }
 }
