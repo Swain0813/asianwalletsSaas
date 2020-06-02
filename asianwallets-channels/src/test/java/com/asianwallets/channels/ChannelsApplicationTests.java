@@ -1,5 +1,4 @@
 package com.asianwallets.channels;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.service.*;
 import com.asianwallets.common.dto.doku.DOKUReqDTO;
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -154,7 +152,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
      * @return
      * @Author YangXu
      * @Date 2020/5/8
-     * @Descripate 通华
+     * @Descripate 通华主扫和被扫的退款接口
      **/
     @Test
     public void thTest() {
@@ -184,6 +182,9 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
 
     }
 
+    /**
+     * 通华CSB
+     */
     @Test
     public void thCSB() {
         String timeStamp = System.currentTimeMillis() + "";
@@ -229,6 +230,9 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         thService.thCSB(thDTO);
     }
 
+    /**
+     * 通华BSC
+     */
     @Test
     public void thBSC() {
         String timeStamp = System.currentTimeMillis() + "";
@@ -275,6 +279,10 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         thService.thBSC(thDTO);
     }
 
+    /**
+     * 通华查询
+     * 主扫和被扫的查询
+     */
     @Test
     public void thQuery() {
         String timeStamp = System.currentTimeMillis() + "";
@@ -315,6 +323,9 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         thService.thQuery(thDTO);
     }
 
+    /**
+     * 通华签到
+     */
     @Test
     public void thSignIn() {
         String timeStamp = System.currentTimeMillis() + "";
