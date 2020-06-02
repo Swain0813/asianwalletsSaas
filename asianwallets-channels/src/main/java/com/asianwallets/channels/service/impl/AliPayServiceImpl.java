@@ -540,7 +540,6 @@ public class AliPayServiceImpl implements AliPayService {
     public BaseResponse aliPayCSB(AliPayCSBDTO aliPayCSBDTO) {
         log.info("=================【AliPayCSB收单】=====================【请求参数】 aliPayCSBDTO:{}", JSON.toJSONString(aliPayCSBDTO));
         Orders orders = aliPayCSBDTO.getOrders();
-        Channel channel = aliPayCSBDTO.getChannel();
         ChannelsOrder channelsOrder = new ChannelsOrder();
         channelsOrder.setId(aliPayCSBDTO.getOut_trade_no());
         channelsOrder.setMerchantOrderId(orders.getMerchantOrderId());
