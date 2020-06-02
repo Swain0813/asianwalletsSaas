@@ -137,14 +137,11 @@ public class AliPayCSBDTO {
         this.extend_params = null;
         this.it_b_pay = null;
         this.passback_parameters = null;
-//        this.secondary_merchant_industry = "5812";
-//        this.secondary_merchant_id = "20170828500054";
-//        this.secondary_merchant_name = "zhtest";
         this.secondary_merchant_industry=orders.getMerchantIndustry();
         this.secondary_merchant_id=orders.getMerchantId();
         this.secondary_merchant_name=orders.getMerchantName();
-        this.store_id = "zh0001";
-        this.store_name = "zhstore";
+        this.store_id = orders.getShopCode();
+        this.store_name = orders.getShopName();
         this.terminal_id = null;
         this.sys_service_provider_id = null;
         this.orders = orders;

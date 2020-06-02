@@ -66,19 +66,18 @@ public class AliPayOfflineBSCDTO {
 
     public AliPayOfflineBSCDTO(Orders orders, Channel channel, String buyer_identity_code) {
         JSONObject extendJson = new JSONObject();
-//        extendJson.put("secondary_merchant_name", "alldebit01");
-//        extendJson.put("secondary_merchant_id", "001");
-//        extendJson.put("secondary_merchant_industry", "0742");
         extendJson.put("secondary_merchant_name", orders.getMerchantName());
         extendJson.put("secondary_merchant_id", orders.getMerchantId());
         extendJson.put("secondary_merchant_industry", orders.getMerchantIndustry());
-        extendJson.put("store_id", "zh001");
-        extendJson.put("store_name", "zhstore");
+        extendJson.put("store_id", orders.getShopCode());
+        extendJson.put("store_name", orders.getShopName());
         this.extend_info = extendJson.toString();
         this.service = "alipay.acquire.overseas.spot.pay";
-        this.partner = "2088421920790891";
+        //渠道商户号
+        this.partner = channel.getChannelMerchantId();
         this._input_charset = "UTF-8";
-        this.alipay_seller_id = "2088421920790891";
+        //渠道商户号
+        this.alipay_seller_id = channel.getChannelMerchantId();
         this.trans_name = StringUtils.isEmpty(orders.getProductName()) ? "SALE" : orders.getProductName();//产品名称
         this.partner_trans_id = orders.getId();//订单号
         this.currency = orders.getTradeCurrency();//币种

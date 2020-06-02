@@ -128,9 +128,6 @@ public class AliPayWebDTO {
         this.currency = orders.getTradeCurrency();
         this.body = orders.getProductDescription();
         this.timeout_rule = "12h";
-//        this.secondary_merchant_industry = "5812";
-//        this.secondary_merchant_id = "20170828500054";
-//        this.secondary_merchant_name = "zhtest";
         this.secondary_merchant_industry = orders.getMerchantIndustry();
         this.secondary_merchant_id = orders.getMerchantId();
         this.secondary_merchant_name = orders.getMerchantName();
