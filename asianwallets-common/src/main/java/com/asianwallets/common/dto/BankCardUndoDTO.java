@@ -23,15 +23,12 @@ public class BankCardUndoDTO {
     @ApiModelProperty(value = "银行卡号")
     private String userBankCardNo;
 
-    @NotNull(message = "50002")
-    @ApiModelProperty(value = "cvv")
-    private String cvv;
+    @ApiModelProperty(value = "cvv2")
+    private String cvv2;
 
-    @NotNull(message = "50002")
     @ApiModelProperty(value = "卡有效期")
     private String valid;
 
-    @NotNull(message = "50002")
     @ApiModelProperty(value = "磁道信息")
     private String trackData;
 

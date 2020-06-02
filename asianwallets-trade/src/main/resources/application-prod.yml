@@ -82,10 +82,10 @@ custom:
   ad3ItsUrl: https://its.alldebitpay.com/v1/
 
   #收银台url
-  cashierDeskUrl: https://psg.asianwallets.com/checkstandweb/#/main
+  cashierDeskUrl: https://testsaas.asianwallets.com/checkstandweb/#/main
 
   #亚洲钱包的支付页面的url
-  paySuccessUrl: https://psg.asianwallets.com/checkstandweb/#/Success
+  paySuccessUrl: https://testsaas.asianwallets.com/checkstandweb/#/Success
   #AD3提供的生产环境地址
   #url
   ad3Url: https://pgw.alldebitpay.com
@@ -97,4 +97,4 @@ custom:
   nganLuong:
     check_url: https://www.nganluong.vn/checkout.api.nganluong.post.php
   #给AD3的回调URL
-  channelCallbackUrl: https://psg.asianwallets.com/tra
+  channelCallbackUrl: https://testsaas.asianwallets.com/tra

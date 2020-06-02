@@ -360,9 +360,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             //银行卡号
             orders.setUserBankCardNo(offlineTradeDTO.getUserBankCardNo());
         }
-        if (!StringUtils.isEmpty(offlineTradeDTO.getCvv())) {
+        if (!StringUtils.isEmpty(offlineTradeDTO.getCvv2())) {
             //CVV
-            orders.setCvv(offlineTradeDTO.getCvv());
+            orders.setCvv2(offlineTradeDTO.getCvv2());
         }
         if (!StringUtils.isEmpty(offlineTradeDTO.getValid())) {
             //卡有效期
@@ -784,18 +784,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         log.info("==================【银行卡收单】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
         if (StringUtils.isEmpty(offlineTradeDTO.getUserBankCardNo())) {
             log.info("==================【银行卡收单】==================【银行卡号为空】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
-        if (StringUtils.isEmpty(offlineTradeDTO.getCvv())) {
-            log.info("==================【银行卡收单】==================【CVV为空】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
-        if (StringUtils.isEmpty(offlineTradeDTO.getValid())) {
-            log.info("==================【银行卡收单】==================【卡有效期为空】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
-        if (StringUtils.isEmpty(offlineTradeDTO.getTrackData())) {
-            log.info("==================【银行卡收单】==================【磁道信息为空】");
             throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
         }
         //重复请求
