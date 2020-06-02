@@ -1,14 +1,12 @@
 package com.asianwallets.trade.channels.th.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
-import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
-import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
-import com.asianwallets.common.dto.th.ISO8583.ThDTO;
-import com.asianwallets.common.dto.th.ISO8583.TlvUtil;
+import com.asianwallets.common.dto.th.ISO8583.*;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -39,6 +37,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -545,6 +544,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
     /**
      * 通华线下银行卡下单
+     *
      * @param orders
      * @param channel
      * @return
@@ -556,10 +556,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/5/26
      * @Descripate 银行卡冲正接口
-     * @return
      **/
     @Override
     public BaseResponse reversal(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
@@ -570,9 +570,25 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         BaseResponse baseResponse = new BaseResponse();
 
 
-
-
         return baseResponse;
+    }
+
+    /**
+     * 银行卡 trk 加密
+     *
+     * @return
+     */
+    private static String tryEncryption(String var62, String str) {
+        String substring = var62.substring(80, 112);
+        String trk = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
+        String newStr;
+        if (str.length() % 2 != 0) {
+            newStr = str.length() + str + "0";
+        } else {
+            newStr = str.length() + str;
+        }
+        byte[] bcd = NumberStringUtil.str2Bcd(newStr);
+        return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, cn.hutool.core.util.HexUtil.encodeHexStr(bcd))).toUpperCase();
     }
 
 }

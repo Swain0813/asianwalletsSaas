@@ -133,8 +133,8 @@ public class Demo2 {
         dto.setReservedPrivate_60(str60);
 
         //银行卡
-        dto.setProcessingCode_2("63993D59CFB89ED9CF23643FDBD39E71");
-        dto.setTrack2Data_35("43A5A5F920415278879FC5805BBABBC9A2BA90FCE8186335");
+        dto.setProcessingCode_2("C099123C6B0B690A651D3A4A09CDF5DA");
+        dto.setTrack2Data_35("D3767BDE76EBF94EC30C73B372EDAFC33C59FFE01A182016");
 
         System.out.println("JSON.toJSONString(dto) = " + JSON.toJSONString(dto));
         String msg = ISO8583Util.packISO8583DTO(dto, key);
@@ -174,9 +174,14 @@ public class Demo2 {
         key = 9F8BB858F2DF3C19*/
 
 //        String var2 = "6214850217415352";
-        String var35 = "6214850217415352=24102200654300619897";
+ /*       String var35 = "6214850217415352=24102200654300619897";
         String newStr;
-        encrypt(var35);
+        encrypt(var35);*/
+        String code = "4761340000000019";
+        String v35 = "4761340000000019=171210114991787";
+        encrypt(code);
+        encrypt(v35);
+
     }
 
     private static void encrypt(String str) {
