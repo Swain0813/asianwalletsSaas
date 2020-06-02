@@ -343,6 +343,9 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         thService.thSignIn(iso8583DTO);
     }
 
+    /**
+     * 通华线下银行卡消费
+     */
     @Test
     public void thBank() {
         String timeStamp = System.currentTimeMillis() + "";
