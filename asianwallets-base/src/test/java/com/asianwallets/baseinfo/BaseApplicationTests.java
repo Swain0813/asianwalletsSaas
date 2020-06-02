@@ -30,6 +30,7 @@ public class BaseApplicationTests {
     @Autowired
     private TradeCheckAccountServiceImpl tradeCheckAccountService;
 
+
     @Test
     public void contextLoads() {
         Orders orders = new Orders();
@@ -131,4 +132,6 @@ public class BaseApplicationTests {
     public void Testa() {
         tradeCheckAccountService.tradeCheckAccount();
     }
+
+
 }

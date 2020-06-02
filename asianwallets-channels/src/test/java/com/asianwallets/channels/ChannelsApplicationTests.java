@@ -1,4 +1,5 @@
 package com.asianwallets.channels;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.service.*;
 import com.asianwallets.common.dto.doku.DOKUReqDTO;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.test.context.junit4.SpringRunner;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -341,6 +343,53 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setReservedPrivate_60("50" + timeStamp.substring(6, 12) + "003");
         iso8583DTO.setReservedPrivate_63("001");
         thService.thSignIn(iso8583DTO);
+    }
+
+    @Test
+    public void thBank() {
+        String timeStamp = System.currentTimeMillis() + "";
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        //被扫
+        iso8583DTO.setProcessingCode_3("009000");
+        //交易金额
+        iso8583DTO.setAmountOfTransactions_4("000000000001");
+        //受卡方系统跟踪号
+        iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
+        //服务点输入方式码
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        //服务点条件码
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
+        //受理方标识码 (机构号)
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
+        //交易货币代码
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        // 60 自定义域
+        String str60 =
+                //60.1 消息类型码
+                "22" +
+                        //60.2 批次号 自定义
+                        timeStamp.substring(6, 12) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        iso8583DTO.setReservedPrivate_60(str60);
+        ThDTO thDTO = new ThDTO();
+        Channel channel = new Channel();
+        channel.setExtend1("00018644");
+        channel.setExtend2("08600005");
+        channel.setChannelMerchantId("852999958120501");
+        channel.setMd5KeyStr("04AFFF774377AEDE");
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
+        thService.thBankCard(thDTO);
     }
 }
 

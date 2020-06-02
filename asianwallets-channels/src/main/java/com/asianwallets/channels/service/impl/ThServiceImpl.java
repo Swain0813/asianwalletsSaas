@@ -1,6 +1,5 @@
 package com.asianwallets.channels.service.impl;
 
-import cn.hutool.core.util.HexUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.service.ThService;
@@ -384,20 +383,15 @@ public class ThServiceImpl implements ThService {
     }
 
     /**
-     * trk加密
-     *
-     * @param unprocessed
-     * @return str
+     * todo 这里需要转换为key，用到银行卡下单中
      */
-    private static String trkEncrypt(String unprocessed) {
-        String newStr;
-        if (unprocessed.length() % 2 != 0) {
-            newStr = unprocessed.length() + unprocessed + "0";
-        } else {
-            newStr = unprocessed.length() + unprocessed;
-        }
-        byte[] b = NumberStringUtil.str2Bcd(newStr);
-        String trk = "67EB032CD2C1DAEF7AF2C1F7BFB819DA";
-        return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, HexUtil.encodeHexStr(b))).toUpperCase();
+    private static void getTrkKey(String var62) {
+        String msg = "B3045DDECD39FF2B8FA2CE91400851C57EBC27BD60E90927855B741C0000000000000000E4456910D3CC230C534F90763F5B13282DBD872595C33537";
+        String substring = msg.substring(80, 112);
+        String trk = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
+        System.out.println("trk = " + trk);
+        String cipherText = msg.substring(40, 56);
+        String key1 = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", cipherText)).toUpperCase();
+        System.out.println("key = " + key1);
     }
 }
