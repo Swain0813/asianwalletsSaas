@@ -6,6 +6,7 @@ import com.asianwallets.common.utils.DateToolUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Date;
 
@@ -140,8 +141,8 @@ public class AliPayCSBDTO {
         this.secondary_merchant_industry=orders.getMerchantIndustry();
         this.secondary_merchant_id=orders.getMerchantId();
         this.secondary_merchant_name=orders.getMerchantName();
-        this.store_id = orders.getShopCode();
-        this.store_name = orders.getShopName();
+        this.store_id = StringUtils.isEmpty(orders.getShopCode())?"zh001":orders.getShopCode();
+        this.store_name = StringUtils.isEmpty(orders.getShopName())?"zhstore":orders.getShopName();
         this.terminal_id = null;
         this.sys_service_provider_id = null;
         this.orders = orders;

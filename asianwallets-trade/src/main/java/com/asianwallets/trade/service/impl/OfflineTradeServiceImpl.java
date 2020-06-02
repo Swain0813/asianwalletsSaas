@@ -419,8 +419,14 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         //设置商户报备商户MCC
         if(basicInfoVO.getChannel().getServiceNameMark().contains(TradeConstant.ALIPAY)){
             orders.setMerchantIndustry(commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getChannelMcc());
-            orders.setShopCode(commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getShopCode());
-            orders.setShopName(commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getShopName());
+            //店铺编号
+            String shopCode=StringUtils.isEmpty(commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getShopCode())?
+                    "zh001":commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getShopCode();
+            orders.setShopCode(shopCode);
+            //店铺名称
+            String shopName = StringUtils.isEmpty(commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getShopName())?
+                    "zhstore":commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getShopName();
+            orders.setShopName(shopName);
         }
         return orders;
     }
