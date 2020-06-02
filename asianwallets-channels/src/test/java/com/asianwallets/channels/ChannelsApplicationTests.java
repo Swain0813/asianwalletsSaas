@@ -385,8 +385,11 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
         channel.setMd5KeyStr("B3045DDECD39FF2B8FA2CE91400851C57EBC27BD60E90927855B741C0000000000000000E4456910D3CC230C534F90763F5B13282DBD872595C33537");
+        //银行卡号
         String var2 = "4761340000000019";
+        //银行卡 磁道2信息
         String var35 = "4761340000000019=171210114991787";
+        //加密信息
         iso8583DTO.setProcessingCode_2(trkEncryption(var2, channel.getMd5KeyStr()));
         iso8583DTO.setTrack2Data_35(trkEncryption(var35, channel.getMd5KeyStr()));
         thDTO.setChannel(channel);
