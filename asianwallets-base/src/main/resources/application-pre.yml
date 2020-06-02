@@ -63,7 +63,7 @@ spring:
   rabbitmq:
     addresses: mq01.asia:5672
     username: admin
-    password: C4wtEiB8GPkSXqfi
+    password: 8SBJF8kp3ftbuL8H
 redis:
   database: 0
   password: Uj7cELl8emRBqPEE
