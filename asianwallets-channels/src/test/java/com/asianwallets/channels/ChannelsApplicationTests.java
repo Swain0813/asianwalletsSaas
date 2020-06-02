@@ -6,10 +6,7 @@ import com.asianwallets.common.dto.doku.DOKUReqDTO;
 import com.asianwallets.common.dto.doku.DOKURequestDTO;
 import com.asianwallets.common.dto.help2pay.Help2PayOutDTO;
 import com.asianwallets.common.dto.megapay.MegaPayQueryDTO;
-import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
-import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
-import com.asianwallets.common.dto.th.ISO8583.ThDTO;
-import com.asianwallets.common.dto.th.ISO8583.TlvUtil;
+import com.asianwallets.common.dto.th.ISO8583.*;
 import com.asianwallets.common.dto.wechat.WechaRefundDTO;
 import com.asianwallets.common.dto.wechat.WechatQueryDTO;
 import com.asianwallets.common.entity.Channel;
@@ -26,6 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -386,10 +384,28 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         channel.setExtend1("00018644");
         channel.setExtend2("08600005");
         channel.setChannelMerchantId("852999958120501");
-        channel.setMd5KeyStr("04AFFF774377AEDE");
+        channel.setMd5KeyStr("B3045DDECD39FF2B8FA2CE91400851C57EBC27BD60E90927855B741C0000000000000000E4456910D3CC230C534F90763F5B13282DBD872595C33537");
+        String var2 = "4761340000000019";
+        String var35 = "4761340000000019=171210114991787";
+        iso8583DTO.setProcessingCode_2(trkEncryption(var2, channel.getMd5KeyStr()));
+        iso8583DTO.setTrack2Data_35(trkEncryption(var35, channel.getMd5KeyStr()));
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         thService.thBankCard(thDTO);
     }
+
+    private static String trkEncryption(String str, String key) {
+        String substring = key.substring(80, 112);
+        String trk = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
+        String newStr;
+        if (str.length() % 2 != 0) {
+            newStr = str.length() + str + "0";
+        } else {
+            newStr = str.length() + str;
+        }
+        byte[] bcd = NumberStringUtil.str2Bcd(newStr);
+        return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, cn.hutool.core.util.HexUtil.encodeHexStr(bcd))).toUpperCase();
+    }
+
 }
 

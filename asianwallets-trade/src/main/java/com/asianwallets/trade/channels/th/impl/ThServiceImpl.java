@@ -578,8 +578,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      *
      * @return
      */
-    private static String tryEncryption(String var62, String str) {
-        String substring = var62.substring(80, 112);
+    private static String trkEncryption(String str, String key) {
+        String substring = key.substring(80, 112);
         String trk = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
         String newStr;
         if (str.length() % 2 != 0) {
