@@ -398,6 +398,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
     }
 
     private static String trkEncryption(String str, String key) {
+        //80-112 Trk密钥位
         String substring = key.substring(80, 112);
         String trk = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
         String newStr;
