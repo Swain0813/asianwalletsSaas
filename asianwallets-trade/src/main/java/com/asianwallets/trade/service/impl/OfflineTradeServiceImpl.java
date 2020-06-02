@@ -416,6 +416,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setRemark8(channel.getChannelAgentId());
         orders.setCreateTime(new Date());
         orders.setCreator(merchant.getCnName());
+        //设置商户报备商户MCC
+        if(basicInfoVO.getChannel().getServiceNameMark().contains(TradeConstant.ALIPAY)){
+            orders.setMerchantIndustry(commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getChannelMcc());
+        }
         return orders;
     }
 

@@ -73,18 +73,9 @@ public class MerchantReportServiceImpl implements MerchantReportService {
         if (merchant == null) {
             throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
         }
-        //shopCode  不可以重复
-        if (merchantReportMapper.selectByShopCode(merchantReportDTO.getShopCode()) != null) {
-            throw new BusinessException(EResultEnum.SHOP_CODE_EXIST.getCode());
-        }
         //检查重复添加
         if (merchantReportMapper.selectByChannelCodeAndMerchantId(merchantReportDTO.getChannelCode(), merchantReportDTO.getMerchantId()) != null) {
             throw new BusinessException(EResultEnum.REPEATED_ADDITION.getCode());
-        }
-        //检查该商户是否属于此机构
-        if (!StringUtils.isBlank(merchant.getInstitutionId()) && !merchant.getInstitutionId().equals(institution.getId())) {
-            //YES
-            throw new BusinessException(EResultEnum.SHOP_CODE_EXIST.getCode());
         }
         //Assignment
         MerchantReport merchantReport = new MerchantReport();

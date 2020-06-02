@@ -189,7 +189,7 @@ public enum EResultEnum {
     MCC_DOES_NOT_EXIST("30033"),//mcc不存在
     DICINFO_CURRENCY_DEFAULT_IS_NULL("30034"),//币种默认值不能为空
     MERCHANT_DOES_NOT_EXIST("30036"),//商户不存在
-    SHOP_CODE_EXIST("30037"),//通道店铺编号已存在
+    SHOP_CODE_EXIST("30037"),//店铺编号已存在
     EXPIR_TIME_IS_ERROR("30038"),//过期时间必须大于当前系统时间
     SECRET_IS_NOT_EXIST("30039"),//密钥不存在
 

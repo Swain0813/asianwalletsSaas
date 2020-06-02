@@ -105,7 +105,6 @@ public class AliPayCSBDTO {
     @ApiModelProperty(value = "")
     private String sys_service_provider_id;
 
-
     @ApiModelProperty(value = "订单")
     private Orders orders;
 
@@ -138,9 +137,12 @@ public class AliPayCSBDTO {
         this.extend_params = null;
         this.it_b_pay = null;
         this.passback_parameters = null;
-        this.secondary_merchant_industry = "5812";
-        this.secondary_merchant_id = "20170828500054";
-        this.secondary_merchant_name = "zhtest";
+//        this.secondary_merchant_industry = "5812";
+//        this.secondary_merchant_id = "20170828500054";
+//        this.secondary_merchant_name = "zhtest";
+        this.secondary_merchant_industry=orders.getMerchantIndustry();
+        this.secondary_merchant_id=orders.getMerchantId();
+        this.secondary_merchant_name=orders.getMerchantName();
         this.store_id = "zh0001";
         this.store_name = "zhstore";
         this.terminal_id = null;
