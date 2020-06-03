@@ -2,6 +2,7 @@ package com.asianwallets.channels;
 
 import com.asianwallets.channels.service.UpiService;
 import com.asianwallets.common.dto.upi.UpiDTO;
+import com.asianwallets.common.dto.upi.UpiDownDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
 import com.asianwallets.common.dto.upi.UpiRefundDTO;
 import com.asianwallets.common.entity.Channel;
@@ -124,5 +125,51 @@ public class UpiTest extends SpringBootServletInitializer {
         upiDTO.setUpiRefundDTO(upiRefundDTO);
         upiService.upiRefund(upiDTO);
     }
+    @Test
+    public void upiCancelTest() {
+
+        Channel channel = new Channel();
+        channel.setChannelMerchantId("549440159990001");
+        channel.setMd5KeyStr(privateKey);
+        channel.setExtend5(publicKey);
+
+        UpiRefundDTO upiRefundDTO = new UpiRefundDTO();
+        upiRefundDTO.setVersion("2.0.0");
+        upiRefundDTO.setTrade_code("PAYC");
+        upiRefundDTO.setAgencyId(channel.getChannelMerchantId());
+        upiRefundDTO.setTerminal_no("20003968");
+        upiRefundDTO.setOrder_no("payc" + DateFormatUtils.format(new Date(), "yyyyMMddHHmmss"));
+        upiRefundDTO.setOri_order_no("pay20200603160725");
+
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+        upiDTO.setUpiRefundDTO(upiRefundDTO);
+        upiService.upiCancel(upiDTO);
+    }
+
+    @Test
+    public void upiDownTest() {
+
+        Channel channel = new Channel();
+        channel.setChannelMerchantId("549440159990001");
+        channel.setMd5KeyStr(privateKey);
+        channel.setExtend5(publicKey);
+
+        UpiDownDTO upiDownDTO = new UpiDownDTO();
+        upiDownDTO.setVersion("2.0.0");
+        upiDownDTO.setTrade_code("DOWNLOAD_SETTLE_FILE");
+        upiDownDTO.setAgencyId(channel.getChannelMerchantId());
+        upiDownDTO.setTerminal_no("20003968");
+        upiDownDTO.setSettle_date("20200602");
+        upiDownDTO.setFile_type("TRAN");
+
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+        upiDTO.setUpiDownDTO(upiDownDTO);
+        upiService.upiDownSettle(upiDTO);
+    }
+
+
+
 
 }
