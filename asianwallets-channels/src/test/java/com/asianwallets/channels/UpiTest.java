@@ -3,6 +3,7 @@ package com.asianwallets.channels;
 import com.asianwallets.channels.service.UpiService;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
+import com.asianwallets.common.dto.upi.UpiRefundDTO;
 import com.asianwallets.common.entity.Channel;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.junit.Test;
@@ -97,6 +98,31 @@ public class UpiTest extends SpringBootServletInitializer {
         upiDTO.setChannel(channel);
         upiDTO.setUpiPayDTO(upiPayDTO);
         upiService.upiQueery(upiDTO);
+    }
+    @Test
+    public void upiRefundTest() {
+
+        Channel channel = new Channel();
+        channel.setChannelMerchantId("549440159990001");
+        channel.setMd5KeyStr(privateKey);
+        channel.setExtend5(publicKey);
+
+        UpiRefundDTO upiRefundDTO = new UpiRefundDTO();
+        upiRefundDTO.setVersion("2.0.0");
+        upiRefundDTO.setTrade_code("REFUND");
+        upiRefundDTO.setAgencyId(channel.getChannelMerchantId());
+        upiRefundDTO.setTerminal_no("20003968");
+        upiRefundDTO.setOrder_no("pay20200603160725");
+        upiRefundDTO.setRefund_no("R" + DateFormatUtils.format(new Date(), "yyyyMMddHHmmss"));
+        upiRefundDTO.setRefund_amount("0.02");
+        upiRefundDTO.setCurrency_type("HKD");
+        upiRefundDTO.setSett_currency_type("HKD");
+        upiRefundDTO.setNotify_url("https://testpay.sicpay.com/");
+
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+        upiDTO.setUpiRefundDTO(upiRefundDTO);
+        upiService.upiRefund(upiDTO);
     }
 
 }
