@@ -206,4 +206,8 @@ public interface ChannelsFeign {
     @ApiOperation(value = "通华查询接口")
     @PostMapping("/th/thQuery")
     BaseResponse thQuery(ThDTO thDTO);
+
+    @ApiOperation(value = "通华冲正接口")
+    @PostMapping("/th/thBankCardReverse")
+    BaseResponse thBankCardReverse(ThDTO thDTO);
 }
