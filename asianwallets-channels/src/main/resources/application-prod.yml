@@ -123,3 +123,5 @@ custom:
     port: 10089
     tdpu: 6006090000
     header: 800100000000
+  upi:
+    payUrl: https://testpay.sicpay.com/backSecure.do
