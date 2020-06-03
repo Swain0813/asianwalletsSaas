@@ -767,15 +767,15 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 // 修改订单状态为冲正失败
                 orders.setTradeStatus((TradeConstant.ORDER_RESEVAL_FALID));
                 orders.setRemark5(iso8583VO.getResponseCode_39());
+                baseResponse.setCode(EResultEnum.REVERSAL_ERROR.getCode());
             }
         } else {
             //请求失败
-            orders.setTradeStatus((TradeConstant.ORDER_RESEVAL_FALID));
+            baseResponse.setCode(EResultEnum.REVERSAL_ERROR.getCode());
         }
         if (ordersMapper.updateByExampleSelective(orders, example) != 1) {
             log.info("=================【通华冲正】=================【订单冲正后后更新数据库失败】 orderId: {}", orders.getId());
         }
-
         return baseResponse;
     }
 

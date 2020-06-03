@@ -138,6 +138,7 @@ public enum EResultEnum {
     MERCHANT_PRODUCT_DOES_NOT_EXIST("10111"),//商户产品信息不存在
     CHANNEL_BANK_DOES_NOT_EXIST("10112"),//通道银行信息不存在
     NOT_A_GROUP_MERCHANT("10113"),//不是集团商户
+    REVERSAL_ERROR("10114"),//冲正失败
 
     /****通知模块的错误信息从20001开始--杨善龙*****/
     NOTICE_ID_IS_NOT_NULL("20001"),//公告id不能为空
