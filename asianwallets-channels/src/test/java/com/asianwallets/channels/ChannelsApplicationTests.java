@@ -399,6 +399,70 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         thService.thBankCard(thDTO);
     }
 
+    /**
+     * 通华线下银行卡消费
+     */
+    @Test
+    public void thBankCardReverse() {
+        String timeStamp = System.currentTimeMillis() + "";
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0400");
+        iso8583DTO.setProcessingCode_3("009000");
+        //交易金额
+        iso8583DTO.setAmountOfTransactions_4("000000000001");
+        // 原消费11域
+        iso8583DTO.setSystemTraceAuditNumber_11("159116");
+        //服务点输入方式码
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        //服务点条件码
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
+        //受理方标识码 (机构号)
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41("00018644");
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
+        //交易货币代码
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        // 60 自定义域
+        String str60 =
+                //60.1 消息类型码
+                "22" +
+                        //60.2 原批次号
+                        "554625" +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        iso8583DTO.setReservedPrivate_60(str60);
+        // 61 自定义域
+        String str61 =
+                //61.1 原批次号
+                "554625" +
+                        //61.2 原交易流水号 11域
+                        "159116" +
+                        //61.3 原交易日期 由消费返回的13域中获取
+                        "0603";
+        ThDTO thDTO = new ThDTO();
+        Channel channel = new Channel();
+        channel.setExtend1("00018644");
+        channel.setExtend2("08600005");
+        channel.setChannelMerchantId("852999958120501");
+        channel.setMd5KeyStr("B3045DDECD39FF2B8FA2CE91400851C57EBC27BD60E90927855B741C0000000000000000E4456910D3CC230C534F90763F5B13282DBD872595C33537");
+        //银行卡号
+        String var2 = "4761340000000019";
+        //银行卡 磁道2信息
+        String var35 = "4761340000000019=171210114991787";
+        //加密信息
+        iso8583DTO.setProcessingCode_2(trkEncryption(var2, channel.getMd5KeyStr()));
+        iso8583DTO.setTrack2Data_35(trkEncryption(var35, channel.getMd5KeyStr()));
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
+        thService.thBankCardReverse(thDTO);
+    }
+
     private static String trkEncryption(String str, String key) {
         //80-112 Trk密钥位
         String substring = key.substring(80, 112);

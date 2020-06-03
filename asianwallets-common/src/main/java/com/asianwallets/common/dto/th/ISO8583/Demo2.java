@@ -174,7 +174,7 @@ public class Demo2 {
         //金额
         dto.setAmountOfTransactions_4("000000000001");
         // 11域需要和消费相同
-        dto.setSystemTraceAuditNumber_11("103527");
+        dto.setSystemTraceAuditNumber_11("103533");
        /*
         不必填
         dto.setTimeOfLocalTransaction_12(DateUtil.format(new Date(),"HHmmss"));
@@ -195,7 +195,7 @@ public class Demo2 {
         String str60 =
                 //60.1 消息类型码
                 "22" +
-                        //60.2 批次号 自定义 todo
+                        //60.2 原批次号
                         "009119" +
                         //60.3 网络管理信息码
                         "000" +
@@ -213,8 +213,8 @@ public class Demo2 {
         String str61 =
                 //61.1 原批次号
                 "009119" +
-                        //61.2 原交易流水号
-                        "103527" +
+                        //61.2 原交易流水号 11域
+                        "103533" +
                         //61.3 原交易日期 由消费返回的13域中获取
                         "0603";
 
