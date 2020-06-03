@@ -69,8 +69,8 @@ public class AliPayOfflineBSCDTO {
         extendJson.put("secondary_merchant_id", orders.getSubMerchantCode());
         extendJson.put("secondary_merchant_name", orders.getSubMerchantName());
         extendJson.put("secondary_merchant_industry", orders.getMerchantIndustry());
-        extendJson.put("store_id", StringUtils.isEmpty(orders.getShopCode())?"":orders.getShopCode());
-        extendJson.put("store_name", StringUtils.isEmpty(orders.getShopName())?"":orders.getShopName());
+        extendJson.put("store_id", StringUtils.isEmpty(orders.getShopCode())?orders.getSubMerchantCode():orders.getShopCode());
+        extendJson.put("store_name", StringUtils.isEmpty(orders.getShopName())?orders.getSubMerchantName():orders.getShopName());
         this.extend_info = extendJson.toString();
         this.service = "alipay.acquire.overseas.spot.pay";
         //渠道商户号
