@@ -69,15 +69,15 @@ public class AliPayOfflineBSCDTO {
         extendJson.put("secondary_merchant_id", orders.getSubMerchantCode());
         extendJson.put("secondary_merchant_name", orders.getSubMerchantName());
         extendJson.put("secondary_merchant_industry", orders.getMerchantIndustry());
-        extendJson.put("store_id", StringUtils.isEmpty(orders.getShopCode())?"zh001":orders.getShopCode());
-        extendJson.put("store_name", StringUtils.isEmpty(orders.getShopName())?"zhstore":orders.getShopName());
+        extendJson.put("store_id", StringUtils.isEmpty(orders.getShopCode())?"":orders.getShopCode());
+        extendJson.put("store_name", StringUtils.isEmpty(orders.getShopName())?"":orders.getShopName());
         this.extend_info = extendJson.toString();
         this.service = "alipay.acquire.overseas.spot.pay";
         //渠道商户号
-        this.partner = channel.getChannelMerchantId()==null?"2088421920790891":channel.getChannelMerchantId();
+        this.partner = channel.getChannelMerchantId()==null?"":channel.getChannelMerchantId();
         this._input_charset = "UTF-8";
         //渠道商户号
-        this.alipay_seller_id = channel.getChannelMerchantId()==null?"2088421920790891":channel.getChannelMerchantId();
+        this.alipay_seller_id = channel.getChannelMerchantId()==null?"":channel.getChannelMerchantId();
         this.trans_name = StringUtils.isEmpty(orders.getProductName()) ? "Commodity" : orders.getProductName();//产品名称
         this.partner_trans_id = orders.getId();//订单号
         this.currency = orders.getTradeCurrency();//币种
