@@ -789,6 +789,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
         //磁道2 信息
         iso8583DTO.setTrack2Data_35(trkEncryption(orderRefund.getTrackData(), channel.getMd5KeyStr()));
+        //冲正原因
+        //a)  POS终端在时限内未能收到POS中心的应答消息而引发，冲正原因码填“98”。
+        //b)  POS终端在时限内收到POS中心的批准应答消息，但由于POS机故障无法完成交易而引发，冲正原因码填“96”。
+        //c)  POS终端对收到POS中心的应答消息，验证MAC出错，冲正原因码填“A0”。
+        //d)  其他情况，冲正原因码填“06”。
+        iso8583DTO.setResponseCode_39("06");
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
         //交易货币代码
