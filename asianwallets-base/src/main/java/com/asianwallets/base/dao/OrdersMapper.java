@@ -7,8 +7,10 @@ import com.asianwallets.common.dto.OrdersDTO;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.vo.*;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -85,4 +87,23 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @return 订单统计信息
      */
     List<OrdersProStatisticsVO> productStatistics(OrdersDTO ordersDTO);
+
+    /**
+     *查询对应渠道响应时间的订单
+     * @param startTime
+     * @param endTime
+     * @param list
+     * @return
+     */
+    List<Orders> getYesterDayDate(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("list") List<String> list);
+
+    /**
+     * 补单操作
+     * @param id
+     * @param status
+     * @param remark
+     * @return
+     */
+    @Update("update orders set trade_status =#{status},remark1=#{remark},update_time=NOW() where id = #{id}")
+    int supplementStatus(@Param("id") String id, @Param("status") Byte status, @Param("remark") String remark);
 }

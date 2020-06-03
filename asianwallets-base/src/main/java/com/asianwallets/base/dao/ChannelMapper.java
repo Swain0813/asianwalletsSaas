@@ -9,6 +9,7 @@ import com.asianwallets.common.vo.ChannelDetailVO;
 import com.asianwallets.common.vo.ChannelExportVO;
 import com.asianwallets.common.vo.ChannelVO;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -72,4 +73,12 @@ public interface ChannelMapper extends BaseMapper<Channel> {
      * @return
      */
     List<AgentChannelsVO> pageAgentChannels(AgentChannelsDTO agentChannelsDTO);
+
+    /**
+     * 根据通道服务名称获取所有的通道编号
+     * @param name
+     * @return
+     */
+    @Select("select channel_code from channel where channel_en_name like CONCAT(CONCAT('%', #{name}), '%') ")
+    List<String> getChannelCodeByName(@Param("name") String name);
 }

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.CheckAccountAuditMapper" >
+  <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.CheckAccountAudit" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="institution_name" property="institutionName" jdbcType="VARCHAR" />
+    <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+    <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+    <result column="product_code" property="productCode" jdbcType="INTEGER" />
+    <result column="institution_code" property="institutionCode" jdbcType="VARCHAR" />
+    <result column="u_order_id" property="uOrderId" jdbcType="VARCHAR" />
+    <result column="u_channel_number" property="uChannelNumber" jdbcType="VARCHAR" />
+    <result column="c_order_id" property="cOrderId" jdbcType="VARCHAR" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="c_channel_number" property="cChannelNumber" jdbcType="VARCHAR" />
+    <result column="trade_type" property="tradeType" jdbcType="INTEGER" />
+    <result column="u_trade_amount" property="uTradeAmount" jdbcType="DECIMAL" />
+    <result column="u_trade_currency" property="uTradeCurrency" jdbcType="VARCHAR" />
+    <result column="u_fee" property="uFee" jdbcType="DECIMAL" />
+    <result column="c_trade_amount" property="cTradeAmount" jdbcType="DECIMAL" />
+    <result column="c_trade_currency" property="cTradeCurrency" jdbcType="VARCHAR" />
+    <result column="c_fee" property="cFee" jdbcType="DECIMAL" />
+    <result column="c_status" property="cStatus" jdbcType="TINYINT" />
+    <result column="u_status" property="uStatus" jdbcType="TINYINT" />
+    <result column="error_type" property="errorType" jdbcType="INTEGER" />
+    <result column="audit_status" property="auditStatus" jdbcType="INTEGER" />
+    <result column="trade_time" property="tradeTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="remark1" property="remark1" jdbcType="VARCHAR" />
+    <result column="remark2" property="remark2" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, institution_name, product_code, institution_code, u_order_id, u_channel_number, 
+    c_order_id, channel_code, c_channel_number, trade_type, u_trade_amount, u_trade_currency, 
+    u_fee, c_trade_amount, c_trade_currency, c_fee, c_status, u_status, error_type, audit_status, 
+    trade_time, create_time, update_time, creator, modifier, remark, remark1,remark2,merchant_id,merchant_name
+  </sql>
+
+
+  <select id="pageAccountCheckAudit" resultMap="BaseResultMap"
+          resultType="com.asianwallets.common.dto.SearchAccountCheckDTO">
+    select
+    <include refid="Base_Column_List" />
+    from check_account_audit
+    <where>
+      <if test="startTime!=null and startTime != ''">
+        AND DATE_FORMAT(trade_time,'%Y-%m-%d') &gt;= #{startTime}
+      </if>
+      <if test="endTime!=null and endTime != ''">
+        AND DATE_FORMAT(trade_time,'%Y-%m-%d') &lt;= #{endTime}
+      </if>
+      <if test="orderId!=null and orderId != ''">
+        and u_order_id=#{orderId}
+      </if>
+      <if test="channelNumber!=null and channelNumber != ''">
+        and c_channel_number=#{channelNumber}
+      </if>
+      <if test="productCode!=null and productCode != ''">
+        and product_code=#{productCode}
+      </if>
+      <if test="channelCode!=null and channelCode != ''">
+        and channel_code=#{channelCode}
+      </if>
+      <if test="institutionCode!=null and institutionCode != ''">
+        and institution_code=#{institutionCode}
+      </if>
+      <if test="merchantId!=null and merchantId != ''">
+        and merchant_id=#{merchantId}
+      </if>
+      <if test="errorType!=null and errorType != ''">
+        and error_type=#{errorType}
+      </if>
+    </where>
+  </select>
+  <select id="exportAccountCheckAudit" resultMap="BaseResultMap"
+          resultType="com.asianwallets.common.dto.SearchAccountCheckDTO">
+    select
+    <include refid="Base_Column_List" />
+    from check_account_audit
+    <where>
+      <if test="startTime!=null and startTime != ''">
+        AND DATE_FORMAT(trade_time,'%Y-%m-%d') &gt;= #{startTime}
+      </if>
+      <if test="endTime!=null and endTime != ''">
+        AND DATE_FORMAT(trade_time,'%Y-%m-%d') &lt;= #{endTime}
+      </if>
+      <if test="orderId!=null and orderId != ''">
+        and u_order_id=#{orderId}
+      </if>
+      <if test="channelNumber!=null and channelNumber != ''">
+        and c_channel_number=#{channelNumber}
+      </if>
+      <if test="productCode!=null and productCode != ''">
+        and product_code=#{productCode}
+      </if>
+      <if test="channelCode!=null and channelCode != ''">
+        and channel_code=#{channelCode}
+      </if>
+      <if test="institutionCode!=null and institutionCode != ''">
+        and institution_code=#{institutionCode}
+      </if>
+      <if test="merchantId!=null and merchantId != ''">
+        and merchant_id=#{merchantId}
+      </if>
+      <if test="errorType!=null and errorType != ''">
+        and error_type=#{errorType}
+      </if>
+    </where>
+  </select>
+
+</mapper>

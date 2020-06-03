@@ -7,6 +7,10 @@ package com.asianwallets.common.constant;
  **/
 public class AD3MQConstant {
 
+    /* ===========================================      调账队列       =============================================== */
+    public static final String TC_MQ_FINANCE_TKBUDAN_DL = "TC_MQ_FINANCE_TKBUDAN_DL";//退款补单队列
+    public static final String TC_MQ_FINANCE_SDBUDAN_DL = "TC_MQ_FINANCE_SDBUDAN_DL";//收单补单队列
+
     /*******************************************************  分润队列  ******************************************************************/
     public final static String SAAS_FR_DL = "SAAS_FR_DL";
     /********************************************************  退款接口相关队列 **********************************************************************/

@@ -631,4 +631,15 @@
         </if>
         GROUP BY o.pay_method, DATE_FORMAT(o.create_time, '%Y-%m-%d')
     </select>
+
+    <select id="getYesterDayDate" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from orders
+        where update_time > #{startTime} and #{endTime} > update_time and channel_code in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
 </mapper>
