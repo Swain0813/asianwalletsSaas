@@ -191,6 +191,7 @@ EC20571F101401A9D60EC21803EA074696F09F60A8DDA86F44B8A8044C57081F4034FE195E43B3B6
 		//log.info("3des key="+hexKey+",hexData="+hexData+",encValue="+enc);
 		return enc;
 	}
+
 	/**
 	 * 双倍长密钥（16字节长）3DEA解密算法
 	 *
@@ -200,8 +201,6 @@ EC20571F101401A9D60EC21803EA074696F09F60A8DDA86F44B8A8044C57081F4034FE195E43B3B6
 	 *            十六进制密文(长度为8字节倍数)
 	 */
 	public static String decode3DEA(String hexKey, String hexData) {
-		// log.debug("key size="+hexKey.length());
-		// log.debug("data size="+hexData.length());
 		if (hexKey.length() != 32) {
 			throw new RuntimeException("双倍长密钥（16字节长）3DEA解密算法密钥必须为32位十六进制数");
 		}
