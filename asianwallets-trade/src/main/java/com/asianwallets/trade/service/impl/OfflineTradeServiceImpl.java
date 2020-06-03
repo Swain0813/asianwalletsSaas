@@ -418,14 +418,18 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setCreator(merchant.getCnName());
         //设置商户报备商户MCC
         if(basicInfoVO.getChannel().getServiceNameMark().contains(TradeConstant.ALIPAY)){
-            orders.setMerchantIndustry(commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getChannelMcc());
+            MerchantReport merchantReport = commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode());
+            //商户报备商户MCC
+            orders.setMerchantIndustry(merchantReport.getChannelMcc());
+            //通道子商户编号
+            orders.setSubMerchantCode(merchantReport.getSubMerchantCode());
+            //通道子商户名称
+            orders.setSubMerchantName(merchantReport.getSubMerchantName());
             //店铺编号
-            String shopCode=StringUtils.isEmpty(commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getShopCode())?
-                    "zh001":commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getShopCode();
+            String shopCode=StringUtils.isEmpty(merchantReport.getShopCode())?"zh001":merchantReport.getShopCode();
             orders.setShopCode(shopCode);
             //店铺名称
-            String shopName = StringUtils.isEmpty(commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getShopName())?
-                    "zhstore":commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode()).getShopName();
+            String shopName = StringUtils.isEmpty(merchantReport.getShopName())?"zhstore":merchantReport.getShopName();
             orders.setShopName(shopName);
         }
         return orders;

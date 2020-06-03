@@ -66,8 +66,8 @@ public class AliPayOfflineBSCDTO {
 
     public AliPayOfflineBSCDTO(Orders orders, Channel channel, String buyer_identity_code) {
         JSONObject extendJson = new JSONObject();
-        extendJson.put("secondary_merchant_name", orders.getMerchantName());
-        extendJson.put("secondary_merchant_id", orders.getMerchantId());
+        extendJson.put("secondary_merchant_id", orders.getSubMerchantCode());
+        extendJson.put("secondary_merchant_name", orders.getSubMerchantName());
         extendJson.put("secondary_merchant_industry", orders.getMerchantIndustry());
         extendJson.put("store_id", StringUtils.isEmpty(orders.getShopCode())?"zh001":orders.getShopCode());
         extendJson.put("store_name", StringUtils.isEmpty(orders.getShopName())?"zhstore":orders.getShopName());

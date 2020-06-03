@@ -408,6 +408,14 @@ public class Orders extends BaseEntity {
     @Column(name = "merchant_industry")
     private String merchantIndustry;
 
+    @ApiModelProperty(value = "通道子商户编号")
+    @Column(name = "sub_merchant_code")
+    private String subMerchantCode;
+
+    @ApiModelProperty(value = "通道子商户名称")
+    @Column(name = "sub_merchant_name")
+    private String subMerchantName;
+
     @ApiModelProperty(value = "店铺名称")
     @Column(name = "shop_name")
     private String shopName;

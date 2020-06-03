@@ -129,8 +129,8 @@ public class AliPayWebDTO {
         this.body = orders.getProductDescription();
         this.timeout_rule = "12h";
         this.secondary_merchant_industry = orders.getMerchantIndustry();
-        this.secondary_merchant_id = orders.getMerchantId();
-        this.secondary_merchant_name = orders.getMerchantName();
+        this.secondary_merchant_id = orders.getSubMerchantCode();
+        this.secondary_merchant_name = orders.getSubMerchantName();
         DecimalFormat decimalFormat = new DecimalFormat("###0.00");//格式化设置
         this.amt = decimalFormat.format(orders.getChannelAmount());
         this.channel = channel;

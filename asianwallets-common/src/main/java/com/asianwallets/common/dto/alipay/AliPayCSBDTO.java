@@ -139,8 +139,8 @@ public class AliPayCSBDTO {
         this.it_b_pay = null;
         this.passback_parameters = null;
         this.secondary_merchant_industry=orders.getMerchantIndustry();
-        this.secondary_merchant_id=orders.getMerchantId();
-        this.secondary_merchant_name=orders.getMerchantName();
+        this.secondary_merchant_id=orders.getSubMerchantCode();
+        this.secondary_merchant_name=orders.getSubMerchantName();
         this.store_id = StringUtils.isEmpty(orders.getShopCode())?"zh001":orders.getShopCode();
         this.store_name = StringUtils.isEmpty(orders.getShopName())?"zhstore":orders.getShopName();
         this.terminal_id = null;

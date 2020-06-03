@@ -421,7 +421,11 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setRemark3(onlineTradeDTO.getRemark3());
         //设置商户报备商户MCC
         if(basicInfoVO.getChannel().getServiceNameMark().contains(TradeConstant.ALIPAY)){
-            orders.setMerchantIndustry(commonRedisDataService.getMerchantReport(onlineTradeDTO.getMerchantId(),basicInfoVO.getChannel().getChannelCode()).getChannelMcc());
+            MerchantReport merchantReport = commonRedisDataService.getMerchantReport(onlineTradeDTO.getMerchantId(),basicInfoVO.getChannel().getChannelCode());
+            //商户报备商户MCC
+            orders.setMerchantIndustry(merchantReport.getChannelMcc());
+            orders.setSubMerchantCode(merchantReport.getSubMerchantCode());
+            orders.setSubMerchantName(merchantReport.getSubMerchantName());
         }
         return orders;
     }
@@ -516,7 +520,10 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         orders.setBankName(basicInfoVO.getBankName());
         //设置商户报备商户MCC
         if(basicInfoVO.getChannel().getServiceNameMark().contains(TradeConstant.ALIPAY)){
-            orders.setMerchantIndustry(commonRedisDataService.getMerchantReport(orders.getMerchantId(),basicInfoVO.getChannel().getChannelCode()).getChannelMcc());
+            MerchantReport merchantReport = commonRedisDataService.getMerchantReport(orders.getMerchantId(),basicInfoVO.getChannel().getChannelCode());
+            orders.setMerchantIndustry(merchantReport.getChannelMcc());
+            orders.setSubMerchantCode(merchantReport.getSubMerchantCode());
+            orders.setSubMerchantName(merchantReport.getSubMerchantName());
         }
     }
 
