@@ -77,4 +77,26 @@ public class UpiTest extends SpringBootServletInitializer {
 
     }
 
+    @Test
+    public void upiQuerryTest() {
+
+        Channel channel = new Channel();
+        channel.setChannelMerchantId("549440159990001");
+        channel.setMd5KeyStr(privateKey);
+        channel.setExtend5(publicKey);
+
+        UpiPayDTO upiPayDTO = new UpiPayDTO();
+        upiPayDTO.setVersion("2.0.0");
+        upiPayDTO.setTrade_code("SEARCH");
+        upiPayDTO.setAgencyId(channel.getChannelMerchantId());
+        //upiPayDTO.setChild_merchant_no("574034451110001");
+        upiPayDTO.setTerminal_no("20003968");
+        upiPayDTO.setOrder_no("pay20200603160725");
+
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+        upiDTO.setUpiPayDTO(upiPayDTO);
+        upiService.upiQueery(upiDTO);
+    }
+
 }

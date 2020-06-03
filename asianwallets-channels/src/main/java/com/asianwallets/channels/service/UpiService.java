@@ -13,4 +13,11 @@ public interface UpiService {
      * @Descripate upi支付
      **/
     BaseResponse upiPay(UpiDTO upiDTO);
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2020/5/7
+     * @Descripate upi查询
+     **/
+    BaseResponse upiQueery(UpiDTO upiDTO);
 }

@@ -197,5 +197,9 @@ public class ChannelsConfig {
     @ApiModelProperty("upi支付路径")
     @Value("${custom.upi.payUrl}")
     private String upiPayUrl;
+
+    @ApiModelProperty("upi查询路径")
+    @Value("${custom.upi.querryUrl}")
+    private String upiQuerryUrl;
 }
 

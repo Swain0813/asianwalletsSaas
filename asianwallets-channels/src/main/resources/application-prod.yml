@@ -125,3 +125,4 @@ custom:
     header: 800100000000
   upi:
     payUrl: https://testpay.sicpay.com/backSecure.do
+    querryUrl: https://testpay.sicpay.com/backSecure.do
