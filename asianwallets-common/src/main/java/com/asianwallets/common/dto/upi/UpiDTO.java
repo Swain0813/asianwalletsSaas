@@ -20,6 +20,8 @@ public class UpiDTO {
 
     public UpiRefundDTO upiRefundDTO;
 
+    public UpiDownDTO upiDownDTO;
+
 
 
 

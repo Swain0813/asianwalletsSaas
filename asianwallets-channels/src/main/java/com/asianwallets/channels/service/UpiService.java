@@ -33,6 +33,13 @@ public interface UpiService {
      * @Descripate upi撤销（当天订单退款用撤销）
      **/
     BaseResponse upiCancel(UpiDTO upiDTO);
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2020/5/7
+     * @Descripate upi下载对账文件
+     **/
+    BaseResponse upiDownSettle(UpiDTO upiDTO);
 
 
 
