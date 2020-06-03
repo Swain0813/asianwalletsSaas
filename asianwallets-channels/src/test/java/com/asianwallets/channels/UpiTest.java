@@ -47,6 +47,8 @@ public class UpiTest extends SpringBootServletInitializer {
         UpiPayDTO upiPayDTO = new UpiPayDTO();
         upiPayDTO.setVersion("2.0.0");
         upiPayDTO.setTrade_code("PAY");
+        // BACKSTAGEALIPAY 银行直连参数 UNIONZS：银联国际二维码主扫，BACKSTAGEUNION：银联国际二维码反扫
+        //主扫CSB 反扫BSC
         upiPayDTO.setBank_code("UNIONZS");
         upiPayDTO.setAgencyId(channel.getChannelMerchantId());
         //upiPayDTO.setChild_merchant_no("574034451110001");
