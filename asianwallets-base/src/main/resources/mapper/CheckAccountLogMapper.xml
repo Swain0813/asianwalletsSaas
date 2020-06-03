@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.CheckAccountLogMapper" >
+  <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.CheckAccountLog" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="check_file_name" property="checkFileName" jdbcType="VARCHAR" />
+    <result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="channel_name" property="channelName" jdbcType="VARCHAR" />
+    <result column="product_name" property="productName" jdbcType="VARCHAR" />
+    <result column="product_code" property="productCode" jdbcType="INTEGER" />
+    <result column="cha_trade_count" property="chaTradeCount" jdbcType="INTEGER" />
+    <result column="sys_trade_count" property="sysTradeCount" jdbcType="INTEGER" />
+    <result column="currency" property="currency" jdbcType="VARCHAR" />
+    <result column="cha_total_amount" property="chaTotalAmount" jdbcType="DECIMAL" />
+    <result column="sys_trade_amount" property="sysTradeAmount" jdbcType="DECIMAL" />
+    <result column="cha_total_fee" property="chaTotalFee" jdbcType="DECIMAL" />
+    <result column="sys_trade_fee" property="sysTradeFee" jdbcType="DECIMAL" />
+    <result column="error_count" property="errorCount" jdbcType="INTEGER" />
+    <result column="error_amount" property="errorAmount" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, check_time, channel_code, channel_name, product_name, product_code, cha_trade_count, check_file_name,
+    sys_trade_count, currency, cha_total_amount, sys_trade_amount, cha_total_fee, sys_trade_fee, 
+    error_count, error_amount, create_time, update_time, creator, modifier, remark
+  </sql>
+
+  <select id="pageAccountCheckLog" resultMap="BaseResultMap"
+          resultType="com.asianwallets.common.dto.SearchAccountCheckDTO">
+    select
+    <include refid="Base_Column_List" />
+    from check_account_log
+    <where>
+      <if test="startTime!=null and startTime != ''">
+        AND DATE_FORMAT(check_time,'%Y-%m-%d') &gt;= #{startTime}
+      </if>
+      <if test="endTime!=null and endTime != ''">
+        AND DATE_FORMAT(check_time,'%Y-%m-%d') &lt;= #{endTime}
+      </if>
+      <if test="productCode!=null and productCode != ''">
+        and product_code=#{productCode}
+      </if>
+      <if test="channelCode!=null and channelCode != ''">
+        and channel_code=#{channelCode}
+      </if>
+    </where>
+  </select>
+
+</mapper>

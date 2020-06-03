@@ -90,8 +90,16 @@ redis:
     max-total: 100
     max-wait-millis: -1
 custom:
+  #AD3给亚洲钱包提供的商户号
+  merchantCode: 20170921500144
+  #help2Pay给亚洲钱包提供的商户号
+  help2PayMerchantCode: 898763663360
   warning:
     email: 842505302@qq.com
     mobile: 18800330943
   alipay:
     url: https://intlmapi.alipay.com/gateway.do?
+
+#项目自定义配置
+file:
+  tmpfile: C:\apache-tomcat-8.5.38\webapps\tmp

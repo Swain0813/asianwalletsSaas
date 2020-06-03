@@ -6,8 +6,10 @@ import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.vo.OrdersRefundDetailVO;
 import com.asianwallets.common.vo.OrdersRefundVO;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,4 +42,23 @@ public interface OrderRefundMapper extends BaseMapper<OrderRefund> {
      * @return
      */
     List<OrderRefund> selectByDate(String yesterday);
+
+    /**
+     * 查询对应渠道响应时间的订单
+     * @param startTime
+     * @param endTime
+     * @param list
+     * @return
+     */
+    List<OrderRefund> getYesterDayDate(@Param("startTime") Date startTime , @Param("endTime") Date endTime, @Param("list") List<String> list);
+
+    /**
+     * 退款补单操作
+     * @param id
+     * @param status
+     * @param remark
+     * @return
+     */
+    @Update("update order_refund set refund_status =#{status},remark1=#{remark},update_time=NOW() where id = #{id}")
+    int supplementStatus(@Param("id")String id,@Param("status") Byte status,@Param("remark") String remark);
 }
