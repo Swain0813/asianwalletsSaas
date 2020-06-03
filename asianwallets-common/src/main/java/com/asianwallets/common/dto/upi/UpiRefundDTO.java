@@ -34,6 +34,9 @@ public class UpiRefundDTO {
     @ApiModelProperty(value = "商户退款订单号")
     private String refund_no;
 
+    @ApiModelProperty(value = "原系统的系统订单号")
+    private String ori_order_no;
+
     @ApiModelProperty(value = "退款金额")
     private String refund_amount;
 

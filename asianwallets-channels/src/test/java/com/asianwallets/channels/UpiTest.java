@@ -124,5 +124,27 @@ public class UpiTest extends SpringBootServletInitializer {
         upiDTO.setUpiRefundDTO(upiRefundDTO);
         upiService.upiRefund(upiDTO);
     }
+    @Test
+    public void upiCancelTest() {
+
+        Channel channel = new Channel();
+        channel.setChannelMerchantId("549440159990001");
+        channel.setMd5KeyStr(privateKey);
+        channel.setExtend5(publicKey);
+
+        UpiRefundDTO upiRefundDTO = new UpiRefundDTO();
+        upiRefundDTO.setVersion("2.0.0");
+        upiRefundDTO.setTrade_code("PAYC");
+        upiRefundDTO.setAgencyId(channel.getChannelMerchantId());
+        upiRefundDTO.setTerminal_no("20003968");
+        upiRefundDTO.setOrder_no("payc" + DateFormatUtils.format(new Date(), "yyyyMMddHHmmss"));
+        upiRefundDTO.setOri_order_no("pay20200603160725");
+
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+        upiDTO.setUpiRefundDTO(upiRefundDTO);
+        upiService.upiCancel(upiDTO);
+    }
+
 
 }
