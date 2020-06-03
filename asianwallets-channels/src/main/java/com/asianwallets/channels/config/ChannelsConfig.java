@@ -193,5 +193,9 @@ public class ChannelsConfig {
     @ApiModelProperty("通华PORT")
     @Value("${custom.th.port}")
     private String thPort;
+
+    @ApiModelProperty("upi支付路径")
+    @Value("${custom.upi.payUrl}")
+    private String upiPayUrl;
 }
 
