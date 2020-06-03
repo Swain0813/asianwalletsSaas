@@ -18,5 +18,9 @@ public class UpiDTO {
 
     public UpiPayDTO upiPayDTO;
 
+    public UpiRefundDTO upiRefundDTO;
+
+
+
 
 }

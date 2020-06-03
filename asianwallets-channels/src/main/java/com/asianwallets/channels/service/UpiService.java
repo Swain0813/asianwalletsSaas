@@ -1,6 +1,5 @@
 package com.asianwallets.channels.service;
 
-import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.response.BaseResponse;
 
@@ -20,4 +19,14 @@ public interface UpiService {
      * @Descripate upi查询
      **/
     BaseResponse upiQueery(UpiDTO upiDTO);
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2020/5/7
+     * @Descripate upi查询
+     **/
+    BaseResponse upiRefund(UpiDTO upiDTO);
+
+
+
 }

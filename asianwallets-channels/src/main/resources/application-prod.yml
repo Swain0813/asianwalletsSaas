@@ -126,3 +126,4 @@ custom:
   upi:
     payUrl: https://testpay.sicpay.com/backSecure.do
     querryUrl: https://testpay.sicpay.com/backSecure.do
+    refundUrl: https://testpay.sicpay.com/backSecure.do
