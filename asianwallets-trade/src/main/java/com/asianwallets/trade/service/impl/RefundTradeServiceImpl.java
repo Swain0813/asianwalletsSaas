@@ -1,4 +1,5 @@
 package com.asianwallets.trade.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -28,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -870,8 +872,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             }
             baseResponse = channelsAbstract.bankRefund(channel, orderRefund, null);
         } else if (TradeConstant.PAYING.equals(type)) {
-            //更新订单状态---为冲正中
-            ordersMapper.updateOrderCancelStatus(refundDTO.getOrderNo(),refundDTO.getOperatorId(), TradeConstant.ORDER_RESEVALING);
             /***************************************************************  订单是付款中的场合  *************************************************************/
             ChannelsAbstract channelsAbstract = null;
             try {
