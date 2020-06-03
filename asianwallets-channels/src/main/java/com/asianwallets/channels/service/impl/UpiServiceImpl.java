@@ -113,7 +113,7 @@ public class UpiServiceImpl implements UpiService {
             map.put("agencyId", upiDTO.getChannel().getChannelMerchantId());
             map.put("signData", signData);
             log.info("===============【upi查询】===============【请求参数】 map: {}", JSON.toJSONString(map));
-            HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiQuerryUrl(), map, null);
+            HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiPayUrl(), map, null);
             log.info("===============【upi查询】===============【请求参数】 httpResponse: {}", JSON.toJSONString(httpResponse));
             String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
             log.info("===============【upi查询】===============【请求参数】 result: {}", result);
@@ -165,7 +165,7 @@ public class UpiServiceImpl implements UpiService {
             map.put("agencyId", upiDTO.getChannel().getChannelMerchantId());
             map.put("signData", signData);
             log.info("===============【upi退款】===============【请求参数】 map: {}", JSON.toJSONString(map));
-            HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiRefundUrl(), map, null);
+            HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiPayUrl(), map, null);
             log.info("===============【upi退款】===============【请求参数】 httpResponse: {}", JSON.toJSONString(httpResponse));
             String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
             log.info("===============【upi退款】===============【请求参数】 result: {}", result);
