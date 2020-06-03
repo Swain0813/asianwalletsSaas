@@ -69,12 +69,12 @@ public class AccountCheckFeignController extends BaseController {
         return accountCheckFeign.exportAccountCheck(searchAccountCheckDTO);
     }
 
-    @ApiOperation(value = "差错处理")
+    @ApiOperation(value = "差错处理和补单")
     @GetMapping("/updateCheckAccount")
     public BaseResponse updateCheckAccount(@RequestParam @ApiParam String checkAccountId
             , @RequestParam(required = false) @ApiParam String remark) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(checkAccountId),
-                "差错处理"));
+                "差错处理和补单"));
         return accountCheckFeign.updateCheckAccount(checkAccountId, remark);
     }
 
