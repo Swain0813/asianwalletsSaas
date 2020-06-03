@@ -749,20 +749,32 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ISO8583DTO iso8583DTO = this.createRevesalDTO(channel, orderRefund);
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
-
         log.info("=================【TH冲正 reversal】=================【请求Channels服务TH冲正】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thBankCardReverse(thDTO);
         log.info("=================【TH冲正 reversal】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+        ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(response.getData()), ISO8583DTO.class);
+        Example example = new Example(Orders.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("tradeStatus", "2");
+        criteria.andEqualTo("merchantOrderId", orderRefund.getMerchantOrderId());
+        Orders orders = new Orders();
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             //请求成功
-
-
+            if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
+                // 修改订单状态为冲正成功
+                orders.setTradeStatus((TradeConstant.ORDER_RESEVAL_SUCCESS));
+            } else {
+                // 修改订单状态为冲正失败
+                orders.setTradeStatus((TradeConstant.ORDER_RESEVAL_FALID));
+                orders.setRemark5(iso8583VO.getResponseCode_39());
+            }
         } else {
             //请求失败
-
-
+            orders.setTradeStatus((TradeConstant.ORDER_RESEVAL_FALID));
         }
-
+        if (ordersMapper.updateByExampleSelective(orders, example) != 1) {
+            log.info("=================【通华冲正】=================【订单冲正后后更新数据库失败】 orderId: {}", orders.getId());
+        }
 
         return baseResponse;
     }
