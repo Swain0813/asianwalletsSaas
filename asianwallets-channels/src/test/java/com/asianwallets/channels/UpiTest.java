@@ -122,7 +122,7 @@ public class UpiTest extends SpringBootServletInitializer {
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
         upiDTO.setUpiRefundDTO(upiRefundDTO);
-        upiService.upiQueery(upiDTO);
+        upiService.upiRefund(upiDTO);
     }
 
 }
