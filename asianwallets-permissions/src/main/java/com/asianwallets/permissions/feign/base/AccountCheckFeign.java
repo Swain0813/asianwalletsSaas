@@ -40,8 +40,8 @@ public interface AccountCheckFeign {
 
     @ApiOperation(value = "差错处理和补单")
     @GetMapping("/finance/updateCheckAccount")
-    BaseResponse updateCheckAccount(@RequestParam @ApiParam String checkAccountId
-            , @RequestParam(required = false) @ApiParam String remark);
+    BaseResponse updateCheckAccount(@RequestParam("checkAccountId")  @ApiParam String checkAccountId
+            , @RequestParam("remark") @ApiParam String remark);
 
     /**
      * 差错复核一览
@@ -63,6 +63,6 @@ public interface AccountCheckFeign {
 
     @ApiOperation(value = "差错复核")
     @GetMapping("/finance/auditCheckAccount")
-    BaseResponse auditCheckAccount(@RequestParam @ApiParam String checkAccountId
-            , @RequestParam @ApiParam Boolean enable, @RequestParam(required = false) @ApiParam String remark);
+    BaseResponse auditCheckAccount(@RequestParam("checkAccountId")  @ApiParam String checkAccountId
+            , @RequestParam("enable") @ApiParam Boolean enable, @RequestParam("remark") @ApiParam String remark);
 }
