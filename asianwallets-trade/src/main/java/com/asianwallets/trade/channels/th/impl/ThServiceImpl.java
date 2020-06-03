@@ -754,11 +754,11 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         BaseResponse response = channelsFeign.thBankCardReverse(thDTO);
         log.info("=================【TH冲正 reversal】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
-        //请求成功
+            //请求成功
 
 
-        }else{
-        //请求失败
+        } else {
+            //请求失败
 
 
         }
@@ -766,6 +766,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
         return baseResponse;
     }
+
     /**
      * @return
      * @Author YangXu
@@ -774,12 +775,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      **/
     private ISO8583DTO createRevesalDTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
-
-
         iso8583DTO.setMessageType("0400");
         iso8583DTO.setProcessingCode_2(trkEncryption(orderRefund.getUserBankCardNo(), channel.getMd5KeyStr()));
         iso8583DTO.setProcessingCode_3("009000");
-        iso8583DTO.setAmountOfTransactions_4( String.format("%012d", orderRefund.getTradeAmount()));
+        iso8583DTO.setAmountOfTransactions_4(String.format("%012d", orderRefund.getTradeAmount()));
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
         //服务点输入方式码
@@ -812,7 +811,16 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                         //60. 5，6，7 缺省
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
-
+        /* 61域可不填
+        // 61 自定义域
+        String str61 =
+                //61.1 原批次号
+                orderRefund.getReportNumber().substring(6, 12) +
+                        //61.2 原交易流水号 11域
+                        orderRefund.getReportNumber().substring(0, 6) +
+                        //61.3 原交易日期 由消费返回的13域中获取
+                        "0603";
+        iso8583DTO.setOriginalMessage_61(str61);*/
         return iso8583DTO;
     }
 }

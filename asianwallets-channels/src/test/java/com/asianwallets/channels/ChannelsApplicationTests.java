@@ -439,7 +439,8 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
                         //60. 5，6，7 缺省
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
-        // 61 自定义域
+      /* 61域可不填
+      // 61 自定义域
         String str61 =
                 //61.1 原批次号
                 "554625" +
@@ -447,7 +448,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
                         "159116" +
                         //61.3 原交易日期 由消费返回的13域中获取
                         "0603";
-        iso8583DTO.setOriginalMessage_61(str61);
+        iso8583DTO.setOriginalMessage_61(str61);*/
         ThDTO thDTO = new ThDTO();
         Channel channel = new Channel();
         channel.setExtend1("00018644");
