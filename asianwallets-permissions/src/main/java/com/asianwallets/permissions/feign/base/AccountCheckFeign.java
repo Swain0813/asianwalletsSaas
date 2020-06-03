@@ -38,7 +38,7 @@ public interface AccountCheckFeign {
     @PostMapping("/finance/exportAccountCheck")
     BaseResponse exportAccountCheck(@RequestBody @ApiParam SearchAccountCheckDTO searchAccountCheckDTO);
 
-    @ApiOperation(value = "差错处理")
+    @ApiOperation(value = "差错处理和补单")
     @GetMapping("/finance/updateCheckAccount")
     BaseResponse updateCheckAccount(@RequestParam @ApiParam String checkAccountId
             , @RequestParam(required = false) @ApiParam String remark);

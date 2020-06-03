@@ -55,7 +55,7 @@ public class AccountCheckController {
         return ResultUtil.success(accountCheckService.exportAccountCheck(searchAccountCheckDTO));
     }
 
-    @ApiOperation(value = "差错处理")
+    @ApiOperation(value = "差错处理和补单")
     @GetMapping("/updateCheckAccount")
     public BaseResponse updateCheckAccount(@RequestParam @ApiParam String checkAccountId
             , @RequestParam(required = false) @ApiParam String remark) {
