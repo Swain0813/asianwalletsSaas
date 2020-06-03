@@ -96,8 +96,8 @@ public class ChannelsOrder extends BaseEntity {
     private String userBankCardNo;
 
     @ApiModelProperty(value = "CVV2")
-    @Column(name = "cvv")
-    private String cvv;
+    @Column(name = "cvv2")
+    private String cvv2;
 
     @ApiModelProperty(value = "卡有效期 MMYY")
     @Column(name = "valid")
