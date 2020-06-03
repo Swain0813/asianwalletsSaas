@@ -749,23 +749,36 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ISO8583DTO iso8583DTO = this.createRevesalDTO(channel, orderRefund);
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
-
         log.info("=================【TH冲正 reversal】=================【请求Channels服务TH冲正】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thBankCardReverse(thDTO);
         log.info("=================【TH冲正 reversal】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+        ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(response.getData()), ISO8583DTO.class);
+        Example example = new Example(Orders.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("tradeStatus", "2");
+        criteria.andEqualTo("merchantOrderId", orderRefund.getMerchantOrderId());
+        Orders orders = new Orders();
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
-        //请求成功
-
-
-        }else{
-        //请求失败
-
-
+            //请求成功
+            if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
+                // 修改订单状态为冲正成功
+                orders.setTradeStatus((TradeConstant.ORDER_RESEVAL_SUCCESS));
+            } else {
+                // 修改订单状态为冲正失败
+                orders.setTradeStatus((TradeConstant.ORDER_RESEVAL_FALID));
+                orders.setRemark5(iso8583VO.getResponseCode_39());
+            }
+        } else {
+            //请求失败
+            orders.setTradeStatus((TradeConstant.ORDER_RESEVAL_FALID));
         }
-
+        if (ordersMapper.updateByExampleSelective(orders, example) != 1) {
+            log.info("=================【通华冲正】=================【订单冲正后后更新数据库失败】 orderId: {}", orders.getId());
+        }
 
         return baseResponse;
     }
+
     /**
      * @return
      * @Author YangXu
@@ -774,12 +787,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      **/
     private ISO8583DTO createRevesalDTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
-
-
         iso8583DTO.setMessageType("0400");
         iso8583DTO.setProcessingCode_2(trkEncryption(orderRefund.getUserBankCardNo(), channel.getMd5KeyStr()));
         iso8583DTO.setProcessingCode_3("009000");
-        iso8583DTO.setAmountOfTransactions_4( String.format("%012d", orderRefund.getTradeAmount()));
+        iso8583DTO.setAmountOfTransactions_4(String.format("%012d", orderRefund.getTradeAmount()));
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
         //服务点输入方式码
@@ -812,7 +823,16 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                         //60. 5，6，7 缺省
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
-
+        /* 61域可不填
+        // 61 自定义域
+        String str61 =
+                //61.1 原批次号
+                orderRefund.getReportNumber().substring(6, 12) +
+                        //61.2 原交易流水号 11域
+                        orderRefund.getReportNumber().substring(0, 6) +
+                        //61.3 原交易日期 由消费返回的13域中获取
+                        "0603";
+        iso8583DTO.setOriginalMessage_61(str61);*/
         return iso8583DTO;
     }
 }
