@@ -185,7 +185,7 @@ public class Demo2 {
         dto.setPointOfServiceConditionMode_25("00");
         //机构号 给的测试数据
         dto.setAcquiringInstitutionIdentificationCode_32("08600005");
-        //39 域
+        // 冲正新增39 域
         dto.setResponseCode_39("06");
         dto.setCardAcceptorTerminalIdentification_41(terminalId);
         dto.setCardAcceptorIdentificationCode_42(merchantId);
@@ -217,7 +217,7 @@ public class Demo2 {
                         "103533" +
                         //61.3 原交易日期 由消费返回的13域中获取
                         "0603";
-
+        dto.setOriginalMessage_61(str61);
         System.out.println("JSON.toJSONString(dto) = " + JSON.toJSONString(dto));
         String msg = ISO8583Util.packISO8583DTO(dto, key);
         String sendMsg = "6006090000"

@@ -400,7 +400,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
     }
 
     /**
-     * 通华线下银行卡消费
+     * 通华线下银行卡冲正
      */
     @Test
     public void thBankCardReverse() {
@@ -416,6 +416,8 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
+        //冲正原因
+        iso8583DTO.setResponseCode_39("06");
         //受理方标识码 (机构号)
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32("08600005");
         //受卡机终端标识码 (设备号)
@@ -429,7 +431,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
                 //60.1 消息类型码
                 "22" +
                         //60.2 原批次号
-                        "554625" +
+                        "696071" +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
@@ -445,6 +447,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
                         "159116" +
                         //61.3 原交易日期 由消费返回的13域中获取
                         "0603";
+        iso8583DTO.setOriginalMessage_61(str61);
         ThDTO thDTO = new ThDTO();
         Channel channel = new Channel();
         channel.setExtend1("00018644");
