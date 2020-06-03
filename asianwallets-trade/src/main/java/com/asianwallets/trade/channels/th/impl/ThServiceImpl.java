@@ -745,8 +745,74 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             rabbitMassage = rabbitOrderMsg;
         }
         BaseResponse baseResponse = new BaseResponse();
+        ThDTO thDTO = new ThDTO();
+        ISO8583DTO iso8583DTO = this.createRevesalDTO(channel, orderRefund);
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
+
+        log.info("=================【TH冲正 reversal】=================【请求Channels服务TH冲正】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
+        BaseResponse response = channelsFeign.thBankCardReverse(thDTO);
+        log.info("=================【TH冲正 reversal】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+        if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+        //请求成功
+
+
+        }else{
+        //请求失败
+
+
+        }
 
 
         return baseResponse;
+    }
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2020/5/18
+     * @Descripate 创建冲正DTO
+     **/
+    private ISO8583DTO createRevesalDTO(Channel channel, OrderRefund orderRefund) {
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+
+
+        iso8583DTO.setMessageType("0400");
+        iso8583DTO.setProcessingCode_2(trkEncryption(orderRefund.getUserBankCardNo(), channel.getMd5KeyStr()));
+        iso8583DTO.setProcessingCode_3("009000");
+        iso8583DTO.setAmountOfTransactions_4( String.format("%012d", orderRefund.getTradeAmount()));
+        //受卡方系统跟踪号
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
+        //服务点输入方式码
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        //服务点条件码
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
+        //磁道2 信息
+        iso8583DTO.setTrack2Data_35(trkEncryption(orderRefund.getTrackData(), channel.getMd5KeyStr()));
+        //冲正原因
+        //a)  POS终端在时限内未能收到POS中心的应答消息而引发，冲正原因码填“98”。
+        //b)  POS终端在时限内收到POS中心的批准应答消息，但由于POS机故障无法完成交易而引发，冲正原因码填“96”。
+        //c)  POS终端对收到POS中心的应答消息，验证MAC出错，冲正原因码填“A0”。
+        //d)  其他情况，冲正原因码填“06”。
+        iso8583DTO.setResponseCode_39("06");
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
+        //交易货币代码
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        //自定义域
+        String str60 =
+                //60.1 消息类型码
+                "22" +
+                        //60.2 批次号 自定义
+                        orderRefund.getReportNumber().substring(6, 12) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        iso8583DTO.setReservedPrivate_60(str60);
+
+        return iso8583DTO;
     }
 }

@@ -426,10 +426,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             //通道子商户名称
             orders.setSubMerchantName(merchantReport.getSubMerchantName());
             //店铺编号
-            String shopCode=StringUtils.isEmpty(merchantReport.getShopCode())?"zh001":merchantReport.getShopCode();
+            String shopCode=StringUtils.isEmpty(merchantReport.getShopCode())?merchantReport.getSubMerchantCode():merchantReport.getShopCode();
             orders.setShopCode(shopCode);
             //店铺名称
-            String shopName = StringUtils.isEmpty(merchantReport.getShopName())?"zhstore":merchantReport.getShopName();
+            String shopName = StringUtils.isEmpty(merchantReport.getShopName())?merchantReport.getSubMerchantName():merchantReport.getShopName();
             orders.setShopName(shopName);
         }
         return orders;
