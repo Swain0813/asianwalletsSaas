@@ -655,7 +655,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         //当前时间戳
         String timeStamp = System.currentTimeMillis() + "";
-        String domain11 = timeStamp.substring(0, 6);
+        //11 域需要在冲正的时候使用
+        String domain11 = orders.getId().substring(0, 6);
         String domain60_2 = timeStamp.substring(6, 12);
         //保存11域与60.2域
         orders.setReportNumber(domain11 + domain60_2);
