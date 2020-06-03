@@ -70,6 +70,10 @@ public class UpiPayDTO {
     @ApiModelProperty(value = "用户证件号码")
     private String user_cert_no;
 
+    @ApiModelProperty(value = "用户银行证件号码")
+    private String user_bank_card_no;
+
+
     @ApiModelProperty(value = "同步通知地址")
     private String return_url;
 
