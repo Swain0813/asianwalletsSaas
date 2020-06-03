@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.channels.config.ChannelsConfig;
 import com.asianwallets.channels.service.UpiService;
+import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.utils.CryptoUtil;
 import com.asianwallets.common.entity.Channel;
@@ -37,6 +38,7 @@ public class UpiServiceImpl implements UpiService {
 
     @Override
     public BaseResponse upiPay(UpiDTO upiDTO) {
+        BaseResponse baseResponse = new BaseResponse();
         try {
             final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(upiDTO.getChannel().getExtend5(), "pem", "RSA");
             final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(upiDTO.getChannel().getMd5KeyStr(), "pem", null, "RSA");
@@ -61,13 +63,127 @@ public class UpiServiceImpl implements UpiService {
             log.info("===============【upi支付】===============【请求参数】 map: {}", JSON.toJSONString(map));
             HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiPayUrl(), map, null);
             log.info("===============【upi支付】===============【请求参数】 httpResponse: {}", JSON.toJSONString(httpResponse));
-            String result = respDecryption(httpResponse.getJsonObject(),hzfPriKey,yhPubKey);
-            log.info("===============【upi支付】===============【请求参数】 result: {}",result);
-
+            String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
+            log.info("===============【upi支付】===============【请求参数】 result: {}", result);
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            if (httpResponse.getHttpStatus().equals(TradeConstant.HTTP_SUCCESS)) {
+                baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+                baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+                baseResponse.setData(result);
+            } else {
+                //失败
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+            }
         } catch (Exception e) {
-
+            baseResponse.setCode(TradeConstant.HTTP_FAIL);
+            baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
         }
-        return null;
+        return baseResponse;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/6/3
+     * @Descripate upi查询
+     * @return
+     **/
+    @Override
+    public BaseResponse upiQueery(UpiDTO upiDTO) {
+        BaseResponse baseResponse = new BaseResponse();
+        try {
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(upiDTO.getChannel().getExtend5(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(upiDTO.getChannel().getMd5KeyStr(), "pem", null, "RSA");
+
+            log.info("===============【upi查询】===============【请求参数】 UpiDTO: {}", JSON.toJSONString(upiDTO.getUpiPayDTO()));
+            String plainXML = JSON.toJSONString(upiDTO.getUpiPayDTO());
+            byte[] plainBytes = plainXML.getBytes("UTF-8");
+            String keyStr = getRandom(16);
+            byte[] keyBytes = keyStr.getBytes("UTF-8");
+            byte[] base64EncryptDataBytes = Base64.encodeBase64(CryptoUtil.AESEncrypt(plainBytes, keyBytes, "AES", "AES/ECB/PKCS5Padding", null));
+            String encryptData = new String(base64EncryptDataBytes, "UTF-8");
+            byte[] base64SingDataBytes = Base64.encodeBase64(CryptoUtil.digitalSign(plainBytes, hzfPriKey, "SHA1WithRSA"));
+            String signData = new String(base64SingDataBytes, "UTF-8");
+            byte[] base64EncyrptKeyBytes = Base64.encodeBase64(CryptoUtil.RSAEncrypt(keyBytes, yhPubKey, 2048, 11, "RSA/ECB/PKCS1Padding"));
+            String encrtptKey = new String(base64EncyrptKeyBytes, "UTF-8");
+
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("encryptData", encryptData);
+            map.put("encryptKey", encrtptKey);
+            map.put("agencyId", upiDTO.getChannel().getChannelMerchantId());
+            map.put("signData", signData);
+            log.info("===============【upi查询】===============【请求参数】 map: {}", JSON.toJSONString(map));
+            HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiPayUrl(), map, null);
+            log.info("===============【upi查询】===============【请求参数】 httpResponse: {}", JSON.toJSONString(httpResponse));
+            String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
+            log.info("===============【upi查询】===============【请求参数】 result: {}", result);
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            if (httpResponse.getHttpStatus().equals(TradeConstant.HTTP_SUCCESS)) {
+                baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+                baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+                baseResponse.setData(result);
+            } else {
+                //失败
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+            }
+        } catch (Exception e) {
+            baseResponse.setCode(TradeConstant.HTTP_FAIL);
+            baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+        }
+        return baseResponse;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/6/3
+     * @Descripate 退款
+     * @return
+     **/
+    @Override
+    public BaseResponse upiRefund(UpiDTO upiDTO) {
+        BaseResponse baseResponse = new BaseResponse();
+        try {
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(upiDTO.getChannel().getExtend5(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(upiDTO.getChannel().getMd5KeyStr(), "pem", null, "RSA");
+
+            log.info("===============【upi退款】===============【请求参数】 UpiDTO: {}", JSON.toJSONString(upiDTO.getUpiRefundDTO()));
+            String plainXML = JSON.toJSONString(upiDTO.getUpiRefundDTO());
+            byte[] plainBytes = plainXML.getBytes("UTF-8");
+            String keyStr = getRandom(16);
+            byte[] keyBytes = keyStr.getBytes("UTF-8");
+            byte[] base64EncryptDataBytes = Base64.encodeBase64(CryptoUtil.AESEncrypt(plainBytes, keyBytes, "AES", "AES/ECB/PKCS5Padding", null));
+            String encryptData = new String(base64EncryptDataBytes, "UTF-8");
+            byte[] base64SingDataBytes = Base64.encodeBase64(CryptoUtil.digitalSign(plainBytes, hzfPriKey, "SHA1WithRSA"));
+            String signData = new String(base64SingDataBytes, "UTF-8");
+            byte[] base64EncyrptKeyBytes = Base64.encodeBase64(CryptoUtil.RSAEncrypt(keyBytes, yhPubKey, 2048, 11, "RSA/ECB/PKCS1Padding"));
+            String encrtptKey = new String(base64EncyrptKeyBytes, "UTF-8");
+
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("encryptData", encryptData);
+            map.put("encryptKey", encrtptKey);
+            map.put("agencyId", upiDTO.getChannel().getChannelMerchantId());
+            map.put("signData", signData);
+            log.info("===============【upi退款】===============【请求参数】 map: {}", JSON.toJSONString(map));
+            HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiPayUrl(), map, null);
+            log.info("===============【upi退款】===============【请求参数】 httpResponse: {}", JSON.toJSONString(httpResponse));
+            String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
+            log.info("===============【upi退款】===============【请求参数】 result: {}", result);
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            if (httpResponse.getHttpStatus().equals(TradeConstant.HTTP_SUCCESS)) {
+                baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+                baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+                baseResponse.setData(result);
+            } else {
+                //失败
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+            }
+        } catch (Exception e) {
+            baseResponse.setCode(TradeConstant.HTTP_FAIL);
+            baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+        }
+        return baseResponse;
     }
 
     public static String getRandom(int length) {
