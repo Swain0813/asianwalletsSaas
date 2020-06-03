@@ -111,6 +111,7 @@
   "10111": "Merchant product information does not exist",
   "10112": "Channel bank information does not exist",
   "10113": "Not a Group Merchant",
+  "10114": "reversal failed",
   "20001": "The announcement id cannot be empty",
   "20002": "The announcement category cannot be empty",
   "20003": "The announcement language cannot be empty",
