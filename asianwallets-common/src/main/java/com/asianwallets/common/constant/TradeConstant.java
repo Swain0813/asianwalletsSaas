@@ -208,6 +208,7 @@ public class TradeConstant {
     public static final String ENETS = "ENETS";
     public static final String NGANLUONG = "NGANLUONG";
     public static final String TH = "TH";
+    public static final String UPI = "UPI";
 
     //--------------发货状态
     public static final Byte UNSHIPPED = 1; //未发货

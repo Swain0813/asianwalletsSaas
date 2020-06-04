@@ -14,6 +14,7 @@ import com.asianwallets.common.dto.megapay.*;
 import com.asianwallets.common.dto.nganluong.NganLuongDTO;
 import com.asianwallets.common.dto.qfpay.QfPayDTO;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
+import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.vtc.VTCRequestDTO;
 import com.asianwallets.common.dto.wechat.*;
 import com.asianwallets.common.dto.xendit.XenditDTO;
@@ -210,4 +211,20 @@ public interface ChannelsFeign {
     @ApiOperation(value = "通华冲正接口")
     @PostMapping("/th/thBankCardReverse")
     BaseResponse thBankCardReverse(ThDTO thDTO);
+
+    @ApiOperation(value = "upi付款接口")
+    @PostMapping("/upi/upiPay")
+    BaseResponse upiPay(UpiDTO upiDTO);
+
+    @ApiOperation(value = "upi退款接口")
+    @PostMapping("/upi/upiRefund")
+    BaseResponse upiRefund(UpiDTO upiDTO);
+
+    @ApiOperation(value = "upi撤销接口")
+    @PostMapping("/upi/upiCancel")
+    BaseResponse upiCancel(UpiDTO upiDTO);
+
+    @ApiOperation(value = "upi查询接口")
+    @PostMapping("/upi/upiQueery")
+    BaseResponse upiQueery(UpiDTO upiDTO);
 }
