@@ -160,7 +160,6 @@ public class AccountCheckServiceImpl implements AccountCheckService {
         /****************************************************校验收单************************************************************/
         List<CheckAccount> calist = Lists.newArrayList();
         for (Orders orders : ordersList) {
-
             //累计平台交易金额不添加订单状态为待支付和支付中的金额
             if (!(TradeConstant.ORDER_WAIT_PAY.equals(orders.getTradeStatus()) || TradeConstant.ORDER_PAYING.equals(orders.getTradeStatus()))) {
                 uTotalAmount = uTotalAmount.add(orders.getTradeAmount() == null ? BigDecimal.ZERO : orders.getTradeAmount());//累计平台交易金额
