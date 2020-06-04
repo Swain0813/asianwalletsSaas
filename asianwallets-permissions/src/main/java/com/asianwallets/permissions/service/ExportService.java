@@ -92,4 +92,22 @@ public interface ExportService {
      * 导出商户交易对账单
      */
     ExcelWriter exportTradeCheckAccount(ExportTradeAccountVO exportTradeAccountVO, String language, Class clazz1, Class clazz2);
+
+    /**
+     * Excel 导出通道对账详情
+     *
+     * @param insPros 对象集合
+     * @param clazz   类名Class对象
+     * @return ExcelWriter writer
+     */
+    ExcelWriter getCheckAccountWriter(List<CheckAccountVO> insPros, Class clazz);
+
+    /**
+     * Excel 导出通道对账复核详情
+     *
+     * @param insPros 对象集合
+     * @param clazz   类名Class对象
+     * @return ExcelWriter writer
+     */
+    ExcelWriter getCheckAccountAuditWriter(List<CheckAccountAuditVO> insPros, Class clazz);
 }

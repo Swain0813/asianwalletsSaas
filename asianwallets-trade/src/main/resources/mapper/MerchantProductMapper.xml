@@ -88,6 +88,7 @@
         select p.product_code         as productCode,
                p.trans_type           as transType,
                pt.name                as payTypeName,
+               p.product_img          as productImg,
                p.product_details_logo as productDetailsLogo,
                p.product_print_logo   as productPrintLogo,
                substring(pt.name, -3) as flag
@@ -110,6 +111,7 @@
         <result column="productCode" property="productCode" jdbcType="INTEGER"/>
         <result column="transType" property="transType" jdbcType="VARCHAR"/>
         <result column="payTypeName" property="payTypeName" jdbcType="VARCHAR"/>
+        <result column="productImg" property="productImg" jdbcType="VARCHAR"/>
         <result column="productDetailsLogo" property="productDetailsLogo" jdbcType="VARCHAR"/>
         <result column="productPrintLogo" property="productPrintLogo" jdbcType="VARCHAR"/>
         <result column="flag" property="flag" jdbcType="VARCHAR"/>

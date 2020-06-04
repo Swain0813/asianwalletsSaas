@@ -17,6 +17,9 @@ public class PosMerProVO {
     @ApiModelProperty(value = "支付方式名称")
     private String payTypeName;
 
+    @ApiModelProperty(value = "产品图标")
+    private String productImg;
+
     @ApiModelProperty(value = "产品详情图片")
     private String productDetailsLogo;
 
