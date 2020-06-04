@@ -59,7 +59,7 @@ public class UpiTest extends SpringBootServletInitializer {
         upiPayDTO.setAmount("0.02");
         upiPayDTO.setCurrency_type("HKD");
         upiPayDTO.setSett_currency_type("HKD");
-        upiPayDTO.setAuth_code("288009714923099525");
+        //upiPayDTO.setAuth_code("288009714923099525");
         //upiPayDTO.setCvn2();
         //upiPayDTO.setValid();
         upiPayDTO.setProduct_name("Saving the world requires sacrifice.");
