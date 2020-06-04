@@ -124,7 +124,7 @@ public class AESUtil {
      */
     public static void main(String[] args) throws Exception {
     String content = "saas123";
-    String password = "china2020saas";
+    String password = "Uj7cELl8emRBqPEE";
     System.out.println("需要加密的内容：" + content);
     byte[] encrypt = encrypt(content, password);
     String hexStr = parseByte2HexStr(encrypt);
