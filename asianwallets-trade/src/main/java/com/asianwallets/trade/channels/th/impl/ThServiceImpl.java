@@ -740,10 +740,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      **/
     @Override
     public BaseResponse reversal(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
-        RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
-        if (rabbitMassage == null) {
-            rabbitMassage = rabbitOrderMsg;
-        }
         BaseResponse baseResponse = new BaseResponse();
         ThDTO thDTO = new ThDTO();
         ISO8583DTO iso8583DTO = this.createRevesalDTO(channel, orderRefund);
@@ -762,10 +758,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             //请求成功
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 // 修改订单状态为冲正成功
-                orders.setTradeStatus((TradeConstant.ORDER_RESEVAL_SUCCESS));
+                orders.setCancelStatus((TradeConstant.ORDER_RESEVAL_SUCCESS));
             } else {
                 // 修改订单状态为冲正失败
-                orders.setTradeStatus((TradeConstant.ORDER_RESEVAL_FALID));
+                orders.setCancelStatus((TradeConstant.ORDER_RESEVAL_FALID));
                 orders.setRemark5(iso8583VO.getResponseCode_39());
                 baseResponse.setCode(EResultEnum.REVERSAL_ERROR.getCode());
             }
