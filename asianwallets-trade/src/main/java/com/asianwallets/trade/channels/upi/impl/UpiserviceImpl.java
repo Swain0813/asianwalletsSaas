@@ -79,7 +79,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         upiPayDTO.setAmount(orders.getTradeAmount().toString());
         upiPayDTO.setCurrency_type(orders.getTradeCurrency());
         upiPayDTO.setSett_currency_type(orders.getTradeCurrency());
-        upiPayDTO.setProduct_name(orders.getProductName());
+        upiPayDTO.setProduct_name(channel.getExtend6());
         upiPayDTO.setReturn_url(ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/nextPosCallback"));
         upiPayDTO.setNotify_url(ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/nextPosCallback"));
         upiPayDTO.setClient_ip(orders.getReqIp());
