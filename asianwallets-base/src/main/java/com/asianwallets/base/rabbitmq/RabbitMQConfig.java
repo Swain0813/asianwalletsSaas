@@ -14,6 +14,19 @@ import java.util.Map;
  */
 @Configuration
 public class RabbitMQConfig {
+    //—————————————————————————调账队列———————————————————————————————————————————————————
+    public final static String TC_MQ_FINANCE_TKBUDAN_DL = AD3MQConstant.TC_MQ_FINANCE_TKBUDAN_DL;//退款补单队列
+    public final static String TC_MQ_FINANCE_SDBUDAN_DL = AD3MQConstant.TC_MQ_FINANCE_SDBUDAN_DL;//收单补单队列
+
+    @Bean
+    public Queue reconciliationD2() {
+        return new Queue(RabbitMQConfig.TC_MQ_FINANCE_TKBUDAN_DL);
+    }
+
+    @Bean
+    public Queue reconciliationD3() {
+        return new Queue(RabbitMQConfig.TC_MQ_FINANCE_SDBUDAN_DL);
+    }
 
     /* ===========================================【报备失败队列】=============================================== */
     //报备失败队列
