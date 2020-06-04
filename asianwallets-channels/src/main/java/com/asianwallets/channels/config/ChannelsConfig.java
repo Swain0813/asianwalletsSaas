@@ -197,5 +197,13 @@ public class ChannelsConfig {
     @ApiModelProperty("upi支付路径")
     @Value("${custom.upi.payUrl}")
     private String upiPayUrl;
+
+    @ApiModelProperty("upi私钥")
+    @Value("${custom.upi.privateKeyPath}")
+    private String upiPrivateKeyPath;
+
+    @ApiModelProperty("upi公钥")
+    @Value("${custom.upi.publicKeyPath}")
+    private String upiPublicKeyPath;
 }
 

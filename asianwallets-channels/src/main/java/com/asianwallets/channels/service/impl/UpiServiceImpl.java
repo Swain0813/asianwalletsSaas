@@ -40,8 +40,8 @@ public class UpiServiceImpl implements UpiService {
     public BaseResponse upiPay(UpiDTO upiDTO) {
         BaseResponse baseResponse = new BaseResponse();
         try {
-            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(upiDTO.getChannel().getExtend5(), "pem", "RSA");
-            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(upiDTO.getChannel().getMd5KeyStr(), "pem", null, "RSA");
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource("/GHT_ROOT.pem").getPath(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource("/549440159990001.pem").getPath(), "pem", null, "RSA");
 
             log.info("===============【upi支付】===============【请求参数】 UpiDTO: {}", JSON.toJSONString(upiDTO.getUpiPayDTO()));
             String plainXML = JSON.toJSONString(upiDTO.getUpiPayDTO());
