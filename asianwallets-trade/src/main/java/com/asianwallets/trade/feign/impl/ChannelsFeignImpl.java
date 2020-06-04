@@ -15,6 +15,7 @@ import com.asianwallets.common.dto.megapay.*;
 import com.asianwallets.common.dto.nganluong.NganLuongDTO;
 import com.asianwallets.common.dto.qfpay.QfPayDTO;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
+import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.vtc.VTCRequestDTO;
 import com.asianwallets.common.dto.wechat.*;
 import com.asianwallets.common.dto.xendit.XenditDTO;
@@ -256,6 +257,26 @@ public class ChannelsFeignImpl implements ChannelsFeign {
 
     @Override
     public BaseResponse thRefund(ThDTO thDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse upiPay(UpiDTO upiDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse upiRefund(UpiDTO upiDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse upiCancel(UpiDTO upiDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse upiQueery(UpiDTO upiDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 }
