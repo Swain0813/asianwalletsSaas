@@ -851,9 +851,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         log.info("=================【TH银行退款】=================【请求Channels服务TH银行退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
-        BaseResponse response = channelsFeign.thRefund(thDTO);
+        BaseResponse response = channelsFeign.thBankCardRefund(thDTO);
         log.info("=================【TH银行退款】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
-
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             JSONObject jsonObject = JSONObject.fromObject(response.getData());
             ISO8583DTO thResDTO = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);

@@ -250,6 +250,11 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
+    public BaseResponse thBankCardRefund(ThDTO thDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
     public BaseResponse thBankCard(ThDTO thDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
