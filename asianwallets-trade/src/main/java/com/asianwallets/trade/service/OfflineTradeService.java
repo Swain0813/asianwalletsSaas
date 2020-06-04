@@ -87,4 +87,11 @@ public interface OfflineTradeService {
      * @return
      **/
     BscDynamicScanVO bankCardReceipt(OfflineTradeDTO offlineTradeDTO);
+
+    /**
+     * 预授权
+     * @param offlineTradeDTO
+     * @return
+     */
+    BscDynamicScanVO preAuth(OfflineTradeDTO offlineTradeDTO);
 }
