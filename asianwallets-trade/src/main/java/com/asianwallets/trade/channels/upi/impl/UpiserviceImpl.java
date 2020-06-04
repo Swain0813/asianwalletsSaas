@@ -1,6 +1,7 @@
 package com.asianwallets.trade.channels.upi.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
@@ -53,8 +54,9 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             log.info("==================【UPI线下CSB】==================【调用Channels服务】【QfPay-CSB接口】-【请求状态码异常】");
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
+        JSONObject jsonObject = (JSONObject) JSONObject.parse(channelResponse.getData().toString());
         BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setData(channelResponse.getData());
+        baseResponse.setData(jsonObject.get("qrCode"));
         return baseResponse;
     }
 

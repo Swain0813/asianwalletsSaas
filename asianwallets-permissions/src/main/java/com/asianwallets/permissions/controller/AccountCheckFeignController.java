@@ -1,10 +1,20 @@
 package com.asianwallets.permissions.controller;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseController;
+import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.SearchAccountCheckDTO;
+import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
+import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.response.ResultUtil;
+import com.asianwallets.common.utils.SpringContextUtil;
+import com.asianwallets.common.vo.CheckAccountAuditVO;
+import com.asianwallets.common.vo.CheckAccountVO;
 import com.asianwallets.permissions.feign.base.AccountCheckFeign;
+import com.asianwallets.permissions.service.ExportService;
 import com.asianwallets.permissions.service.OperationLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +24,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 @RestController
 @Api(description = "通道对账接口")
@@ -28,6 +45,9 @@ public class AccountCheckFeignController extends BaseController {
 
     @Value("${file.tmpfile}")
     private String tmpfile;//springboot启动的临时文件存放
+
+    @Autowired
+    private ExportService exportService;
 
     @ApiOperation(value = "分页查询对账管理")
     @PostMapping("/pageAccountCheckLog")
@@ -63,10 +83,33 @@ public class AccountCheckFeignController extends BaseController {
      */
     @ApiOperation(value = "导出对账管理详情")
     @PostMapping("/exportAccountCheck")
-    public BaseResponse exportAccountCheck(@RequestBody @ApiParam SearchAccountCheckDTO searchAccountCheckDTO) {
+    public BaseResponse exportAccountCheck(@RequestBody @ApiParam SearchAccountCheckDTO searchAccountCheckDTO, HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(searchAccountCheckDTO),
                 "导出对账管理详情"));
-        return accountCheckFeign.exportAccountCheck(searchAccountCheckDTO);
+        BaseResponse baseResponse = accountCheckFeign.exportAccountCheck(searchAccountCheckDTO);
+        ArrayList<LinkedHashMap> data = (ArrayList<LinkedHashMap>) baseResponse.getData();
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        try {
+            ServletOutputStream out = response.getOutputStream();
+            if (data == null || data.size() == 0) {//数据不存在的场合
+                //数据不存在的场合
+                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(getLanguage());
+                writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
+                writer.flush(out);
+                return ResultUtil.success();
+            }
+            ArrayList<CheckAccountVO> checkAccountVOS = new ArrayList<>();
+            for (LinkedHashMap datum : data) {
+                checkAccountVOS.add(JSON.parseObject(JSON.toJSONString(datum), CheckAccountVO.class));
+            }
+            writer = exportService.getCheckAccountWriter(checkAccountVOS, CheckAccountVO.class);
+            writer.flush(out);
+        } catch (Exception e) {
+            throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
+        } finally {
+            writer.close();
+        }
+        return ResultUtil.success();
     }
 
     @ApiOperation(value = "差错处理和补单")
@@ -98,10 +141,33 @@ public class AccountCheckFeignController extends BaseController {
      */
     @ApiOperation(value = "导出对账管理复核详情")
     @PostMapping("/exportAccountCheckAudit")
-    public BaseResponse exportAccountCheckAudit(@RequestBody @ApiParam SearchAccountCheckDTO searchAccountCheckDTO) {
+    public BaseResponse exportAccountCheckAudit(@RequestBody @ApiParam SearchAccountCheckDTO searchAccountCheckDTO,HttpServletResponse response) {
         operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(searchAccountCheckDTO),
                 "导出对账管理复核详情"));
-        return accountCheckFeign.exportAccountCheckAudit(searchAccountCheckDTO);
+        BaseResponse baseResponse = accountCheckFeign.exportAccountCheckAudit(searchAccountCheckDTO);
+        ArrayList<LinkedHashMap> data = (ArrayList<LinkedHashMap>) baseResponse.getData();
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        try {
+            ServletOutputStream out = response.getOutputStream();
+            if (data == null || data.size() == 0) {//数据不存在的场合
+                //数据不存在的场合
+                HashMap errorMsgMap = SpringContextUtil.getBean(CommonLanguageCacheService.class).getLanguage(getLanguage());
+                writer.write(Arrays.asList("message", errorMsgMap.get(String.valueOf(EResultEnum.DATA_IS_NOT_EXIST.getCode()))));
+                writer.flush(out);
+                return ResultUtil.success();
+            }
+            ArrayList<CheckAccountAuditVO> checkAccountVOS = new ArrayList<>();
+            for (LinkedHashMap datum : data) {
+                checkAccountVOS.add(JSON.parseObject(JSON.toJSONString(datum), CheckAccountAuditVO.class));
+            }
+            writer = exportService.getCheckAccountAuditWriter(checkAccountVOS, CheckAccountAuditVO.class);
+            writer.flush(out);
+        } catch (Exception e) {
+            throw new BusinessException(EResultEnum.INSTITUTION_INFORMATION_EXPORT_FAILED.getCode());
+        } finally {
+            writer.close();
+        }
+        return ResultUtil.success();
     }
 
     @ApiOperation(value = "差错复核")

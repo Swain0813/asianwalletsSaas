@@ -716,4 +716,76 @@ public class ExportServiceImpl implements ExportService {
         }
         return writer;
     }
+
+    /**
+     * Excel 导出通道对账详情
+     *
+     * @param insPros 对象集合
+     * @param clazz   类名Class对象
+     * @return ExcelWriter writer
+     */
+    @Override
+    public ExcelWriter getCheckAccountWriter(List<CheckAccountVO> insPros, Class clazz) {
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (CheckAccountVO checkAccountVO : insPros) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(checkAccountVO);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int i = 0; i < property.length; i++) {
+                for (String s : keySet) {
+                    if (s.equals(property[i])) {
+                        oSet1.add(comment[i]);
+                        oList2.add(oMap.get(s));
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.write(oList1);
+        return writer;
+    }
+
+    /**
+     * Excel 导出通道对账详情
+     *
+     * @param insPros 对象集合
+     * @param clazz   类名Class对象
+     * @return ExcelWriter writer
+     */
+    @Override
+    public ExcelWriter getCheckAccountAuditWriter(List<CheckAccountAuditVO> insPros, Class clazz) {
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (CheckAccountAuditVO checkAccountVO : insPros) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(checkAccountVO);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int i = 0; i < property.length; i++) {
+                for (String s : keySet) {
+                    if (s.equals(property[i])) {
+                        oSet1.add(comment[i]);
+                        oList2.add(oMap.get(s));
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.write(oList1);
+        return writer;
+    }
 }
