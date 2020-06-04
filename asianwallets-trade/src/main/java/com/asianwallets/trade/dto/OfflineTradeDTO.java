@@ -36,15 +36,12 @@ public class OfflineTradeDTO {
     @ApiModelProperty(value = "产品编号")
     private Integer productCode;
 
-    @NotBlank(message = "50002")
     @ApiModelProperty(value = "设备编号")
     private String imei;
 
-    @NotBlank(message = "50002")
     @ApiModelProperty(value = "设备操作员")
     private String operatorId;
-
-    @NotBlank(message = "50002")
+    
     @ApiModelProperty(value = "Token")
     private String token;
 
