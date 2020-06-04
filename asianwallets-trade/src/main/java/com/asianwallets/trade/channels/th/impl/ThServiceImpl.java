@@ -1,5 +1,6 @@
 package com.asianwallets.trade.channels.th.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -586,6 +587,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             //未签收
             orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
             orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
+            //退款时需要使用到37域信息
+            orders.setRemark1(iso8583VO.getRetrievalReferenceNumber_37());
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_SUCCESS);
             } catch (Exception e) {
@@ -831,4 +834,130 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setOriginalMessage_61(str61);*/
         return iso8583DTO;
     }
+
+    /**
+     * th 银行卡退款
+     *
+     * @param channel
+     * @param orderRefund
+     * @param rabbitMassage
+     * @return
+     */
+    @Override
+    public BaseResponse bankRefund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        BaseResponse baseResponse = new BaseResponse();
+        ThDTO thDTO = new ThDTO();
+        ISO8583DTO iso8583DTO = this.createBankRefundDTO(channel, orderRefund);
+        thDTO.setChannel(channel);
+        thDTO.setIso8583DTO(iso8583DTO);
+        log.info("=================【TH银行退款】=================【请求Channels服务TH银行退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
+        BaseResponse response = channelsFeign.thBankCardRefund(thDTO);
+        log.info("=================【TH银行退款】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
+        if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            JSONObject jsonObject = JSONObject.fromObject(response.getData());
+            ISO8583DTO thResDTO = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);
+            //请求成功
+            if ("00".equals(iso8583DTO.getResponseCode_39())) {
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+                log.info("=================【TH银行退款】=================【退款成功】 response: {} ", JSON.toJSONString(response));
+                //退款成功
+                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, thResDTO.getRetrievalReferenceNumber_37(), thResDTO.getResponseCode_39());
+                //改原订单状态
+                commonBusinessService.updateOrderRefundSuccess(orderRefund);
+                //退还分润
+                commonBusinessService.refundShareBinifit(orderRefund);
+            } else {
+                //退款失败
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
+                log.info("=================【TH银行退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
+                baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
+                String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
+                String reconciliationRemark = type.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
+                reconciliationMapper.insert(reconciliation);
+                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+                log.info("=========================【TH银行退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
+                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                    //调账成功
+                    log.info("=================【TH银行退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, thResDTO.getResponseCode_39());
+                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
+                    //改原订单状态
+                    commonBusinessService.updateOrderRefundFail(orderRefund);
+                } else {
+                    //调账失败
+                    log.info("=================【TH银行退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
+                    log.info("=================【TH银行退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
+                }
+            }
+        } else {
+            //请求失败
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+            if (rabbitMassage == null) {
+                rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+            }
+            log.info("===============【TH退款】===============【请求失败 上报队列 TH_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+            rabbitMQSender.send(AD3MQConstant.TH_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
+        }
+        return baseResponse;
+    }
+
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2020/5/18
+     * @Descripate 创建银行卡退款DTO
+     **/
+    private ISO8583DTO createBankRefundDTO(Channel channel, OrderRefund orderRefund) {
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0220");
+        iso8583DTO.setProcessingCode_2(trkEncryption(orderRefund.getUserBankCardNo(), channel.getMd5KeyStr()));
+        iso8583DTO.setProcessingCode_3("200000");
+        iso8583DTO.setAmountOfTransactions_4(String.format("%012d", orderRefund.getTradeAmount()));
+        //受卡方系统跟踪号
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
+        //服务点输入方式码
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        //服务点条件码
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
+        //磁道2 信息
+        iso8583DTO.setTrack2Data_35(trkEncryption(orderRefund.getTrackData(), channel.getMd5KeyStr()));
+        Orders orders = ordersMapper.selectByMerchantOrderId(orderRefund.getMerchantOrderId());
+        //37 域
+        iso8583DTO.setRetrievalReferenceNumber_37(orders.getRemark1());
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
+        //交易货币代码
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        //自定义域
+        String str60 =
+                //60.1 消息类型码
+                "25" +
+                        //60.2 批次号
+                        orderRefund.getReportNumber().substring(6, 12) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        iso8583DTO.setReservedPrivate_60(str60);
+        // 61 自定义域
+        String str = DateUtil.format(orders.getCreateTime(), "MMdd");
+        String str61 =
+                //61.1 原批次号
+                orderRefund.getReportNumber().substring(6, 12) +
+                        //61.2 原交易流水号 11域
+                        orderRefund.getReportNumber().substring(0, 6) +
+                        //61.3 原交易日期
+                        str;
+        iso8583DTO.setOriginalMessage_61(str61);
+        return iso8583DTO;
+    }
 }
+

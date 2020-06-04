@@ -1,4 +1,5 @@
 package com.asianwallets.trade.rabbitmq;
+
 import com.asianwallets.common.constant.AD3MQConstant;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -6,6 +7,7 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +58,14 @@ public class RabbitMQConfig {
     @Bean
     public Queue TK_SB_FAIL_DL() {
         return new Queue(RabbitMQConfig.TK_SB_FAIL_DL);
+    }
+
+    //TH 银行卡退款上报失败队列
+    public final static String TH_SB_FAIL_DL = AD3MQConstant.TH_SB_FAIL_DL;
+
+    @Bean
+    public Queue TH_SB_FAIL_DL() {
+        return new Queue(RabbitMQConfig.TH_SB_FAIL_DL);
     }
 
     //撤销更新失败死信队列
