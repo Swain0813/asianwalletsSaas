@@ -630,6 +630,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             }
             boolean flagTwo = true;
             PosMerProResultVO posMerProResultVO = new PosMerProResultVO();
+            posMerProResultVO.setProductImg(posMerProVOList.get(i).getProductImg());
             posMerProResultVO.setProductDetailsLogo(posMerProVOList.get(i).getProductDetailsLogo());
             posMerProResultVO.setProductPrintLogo(posMerProVOList.get(i).getProductPrintLogo());
             posMerProResultVO.setPayTypeName(posMerProVOList.get(i).getPayTypeName());
