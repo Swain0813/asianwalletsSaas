@@ -46,10 +46,16 @@ public class OfflineTradeController extends BaseController {
         return ResultUtil.success(offlineTradeService.bscDynamicScan(offlineTradeDTO));
     }
 
-    @ApiOperation(value = "银行卡收单")
+    @ApiOperation(value = "线下银行卡收单")
     @PostMapping("bankCardReceipt")
     public BaseResponse bankCardReceipt(@RequestBody @ApiParam @Valid OfflineTradeDTO offlineTradeDTO) {
         return ResultUtil.success(offlineTradeService.bankCardReceipt(offlineTradeDTO));
+    }
+
+    @ApiOperation(value = "预授权")
+    @PostMapping("preAuth")
+    public BaseResponse preAuth(@RequestBody @ApiParam @Valid OfflineTradeDTO offlineTradeDTO) {
+        return ResultUtil.success(offlineTradeService.preAuth(offlineTradeDTO));
     }
 
     @ApiOperation(value = "线下查询订单列表【对外API】")

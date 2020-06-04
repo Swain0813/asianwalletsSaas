@@ -92,4 +92,13 @@ public abstract class ChannelsAbstract {
     public abstract BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
 
 
+    /**
+     * 预授权
+     * @param orders
+     * @param channel
+     * @return
+     */
+    public abstract BaseResponse preAuth(Orders orders, Channel channel);
+
+
 }
