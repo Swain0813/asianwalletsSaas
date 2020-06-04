@@ -74,7 +74,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //主扫CSB 反扫BSC
         upiPayDTO.setBank_code("UNIONZS");
         upiPayDTO.setAgencyId(channel.getChannelMerchantId());
-        upiPayDTO.setTerminal_no(channel.getExtend6());
+        upiPayDTO.setTerminal_no(channel.getExtend1());
         upiPayDTO.setOrder_no(orders.getId());
         upiPayDTO.setAmount(orders.getTradeAmount().toString());
         upiPayDTO.setCurrency_type(orders.getTradeCurrency());
