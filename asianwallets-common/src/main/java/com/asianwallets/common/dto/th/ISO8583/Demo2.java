@@ -246,11 +246,11 @@ public class Demo2 {
     public static void refund() throws Exception {
         ISO8583DTO dto = new ISO8583DTO();
         dto.setMessageType("0220");
-        dto.setProcessingCode_3("020000");
+        dto.setProcessingCode_3("200000");
         //金额
         dto.setAmountOfTransactions_4("000000000001");
         // 11域
-        dto.setSystemTraceAuditNumber_11(IDS.uniqueID().toString().substring(0, 6));
+        dto.setSystemTraceAuditNumber_11("103563");
 
         //022 磁条
         dto.setPointOfServiceEntryMode_22("022");
@@ -259,10 +259,9 @@ public class Demo2 {
         dto.setAcquiringInstitutionIdentificationCode_32("08600005");
 
         // 37域 同返回的数据 消费接口未上传
-        dto.setRetrievalReferenceNumber_37("");
+        dto.setRetrievalReferenceNumber_37("101100180687");
 
-        // 39 域
-        dto.setResponseCode_39("06");
+
         dto.setCardAcceptorTerminalIdentification_41(terminalId);
         dto.setCardAcceptorIdentificationCode_42(merchantId);
         // 156 人民币币种
@@ -284,16 +283,16 @@ public class Demo2 {
         //银行卡
         dto.setProcessingCode_2("C099123C6B0B690A651D3A4A09CDF5DA");
         dto.setTrack2Data_35("D3767BDE76EBF94EC30C73B372EDAFC33C59FFE01A182016");
-/*
         // 61 自定义域
         String str61 =
                 //61.1 原批次号
                 "009119" +
                         //61.2 原交易流水号 11域
-                        "103533" +
+                        "103563" +
                         //61.3 原交易日期 由消费返回的13域中获取
-                        "0603";
-        dto.setOriginalMessage_61(str61);*/
+                        "0604";
+        dto.setOriginalMessage_61(str61);
+        dto.setReservedPrivate_63("000");
         System.out.println("JSON.toJSONString(dto) = " + JSON.toJSONString(dto));
         String msg = ISO8583Util.packISO8583DTO(dto, key);
         String sendMsg = "6006090000"
