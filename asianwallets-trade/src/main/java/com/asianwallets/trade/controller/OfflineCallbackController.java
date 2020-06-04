@@ -13,6 +13,7 @@ import com.asianwallets.trade.channels.alipay.AlipayService;
 import com.asianwallets.trade.channels.enets.EnetsService;
 import com.asianwallets.trade.channels.nextpos.NextPosService;
 import com.asianwallets.trade.channels.qfpay.QfPayService;
+import com.asianwallets.trade.channels.upi.Upiservice;
 import com.asianwallets.trade.channels.wechat.WeChatService;
 import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
 import com.asianwallets.trade.dto.EnetsPosCallbackDTO;
@@ -65,6 +66,9 @@ public class OfflineCallbackController extends BaseController {
 
     @Autowired
     private QfPayService qfPayService;
+
+    @Autowired
+    private Upiservice upiservice;
 
     @ApiOperation(value = "ad3线下服务器回调接口")
     @PostMapping("/ad3CsbServerCallback")
@@ -167,5 +171,24 @@ public class OfflineCallbackController extends BaseController {
     public BaseResponse artificialCallback(@RequestBody @ApiParam ArtificialDTO artificialDTO) {
         log.info("================【人工回调】================【输入参数记录】 artificialDTO: {}", JSON.toJSONString(artificialDTO));
         return ResultUtil.success(commonService.artificialCallback(artificialDTO));
+    }
+
+    @ApiOperation(value = "UPI服务器回调")
+    @PostMapping("/upiServerCallback")
+    public String upiServerCallback(HttpServletRequest request) {
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        BufferedReader reader = null;
+        try {
+            reader = request.getReader();
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            log.info("================【eNets线下Csb回调】================【读取回调参数异常】", e);
+            return null;
+        }
+        com.alibaba.fastjson.JSONObject retJson = com.alibaba.fastjson.JSONObject.parseObject(sb.toString());
+        return upiservice.upiServerCallback(retJson);
     }
 }
