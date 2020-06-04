@@ -22,6 +22,8 @@ public class AD3MQConstant {
     public final static String RA_AA_FAIL_DL = "RA_AA_FAIL_DL";
     //退款上报失败队列
     public final static String TK_SB_FAIL_DL = "TK_SB_FAIL_DL";
+    //TH银行退款上报失败队列
+    public final static String TH_SB_FAIL_DL = "TH_SB_FAIL_DL";
 
     //支付成功上报清结算失败队列
     public static final String MQ_PLACE_ORDER_FUND_CHANGE_FAIL = "MQ_PLACE_ORDER_FUND_CHANGE_FAIL";
