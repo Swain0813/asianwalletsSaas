@@ -11,11 +11,13 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.upi.Upiservice;
+import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -32,6 +34,9 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
 
     @Autowired
     private ChannelsFeign channelsFeign;
+    @Autowired
+    @Qualifier(value = "ad3ParamsConfig")
+    private AD3ParamsConfig ad3ParamsConfig;
 
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
@@ -48,8 +53,9 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             log.info("==================【UPI线下CSB】==================【调用Channels服务】【QfPay-CSB接口】-【请求状态码异常】");
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
-
-        return null;
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setData(channelResponse.getData());
+        return baseResponse;
     }
 
     /**
@@ -66,24 +72,15 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //主扫CSB 反扫BSC
         upiPayDTO.setBank_code("UNIONZS");
         upiPayDTO.setAgencyId(channel.getChannelMerchantId());
-        //upiPayDTO.setChild_merchant_no("574034451110001");
         upiPayDTO.setTerminal_no(channel.getExtend6());
         upiPayDTO.setOrder_no(orders.getId());
         upiPayDTO.setAmount(orders.getTradeAmount().toString());
         upiPayDTO.setCurrency_type(orders.getTradeCurrency());
         upiPayDTO.setSett_currency_type(orders.getTradeCurrency());
-        //upiPayDTO.setAuth_code("288009714923099525");
-        //upiPayDTO.setCvn2();
-        //upiPayDTO.setValid();
-        upiPayDTO.setProduct_name("Saving the world requires sacrifice.");
-        //upiPayDTO.setProduct_desc();
-        //upiPayDTO.setProduct_type();
-        //upiPayDTO.setUser_name();
-        //upiPayDTO.setUser_cert_type();
-        //upiPayDTO.setUser_cert_no();
-        upiPayDTO.setReturn_url("https://testpay.sicpay.com/");
-        upiPayDTO.setNotify_url("https://testpay.sicpay.com/");
-        upiPayDTO.setClient_ip("120.236.178.23");
+        upiPayDTO.setProduct_name(orders.getProductName());
+        upiPayDTO.setReturn_url(ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/nextPosCallback"));
+        upiPayDTO.setNotify_url(ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/nextPosCallback"));
+        upiPayDTO.setClient_ip(orders.getReqIp());
         return upiPayDTO;
     }
 }
