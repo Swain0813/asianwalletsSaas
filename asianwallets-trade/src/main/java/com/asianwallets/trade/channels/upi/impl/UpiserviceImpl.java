@@ -315,8 +315,14 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-upiQueery】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiQueery(upiDTO);
         log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-upiQueery】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        JSONObject jsonObject = (JSONObject) JSONObject.parse(channelResponse.getData().toString());
+        if (channelResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            //请求成功
 
+        }else{
+            //请求失败
 
+        }
         return null;
     }
 
