@@ -115,20 +115,16 @@ public class AccountCheckServiceImpl implements AccountCheckService {
         if (!FinanceConstant.FinanceChannelNameMap.containsKey(name[0])) {
             throw new BusinessException(EResultEnum.NAME_ERROR.getCode());
         }
-        try {
-            AccCheckDTO accCheckDTO = null;
-            //ad3对账单退款单号为退款单原订单号，不支持对账
-            if (name[0].equals("AD3")) {
-                accCheckDTO = ad3Read(file);
-            } else if (name[0].equals("HELP2PAY")) {
-                //针对HELP2PAY的对账逻辑是对账单上游退款和收单都是成功的状态
-                accCheckDTO = help2PayRead(file);
-            }
-            //check账单
-            this.doCheck(accCheckDTO.getAd3SDMap(), accCheckDTO.getAd3TKMap(), name,username);
-        } catch (Exception e) {
-            log.error("***********************ad3通道对账发生异常*******************", e);
+        AccCheckDTO accCheckDTO = null;
+        //ad3对账单退款单号为退款单原订单号，不支持对账
+        if (name[0].equals("AD3")) {
+            accCheckDTO = ad3Read(file);
+        } else if (name[0].equals("HELP2PAY")) {
+            //针对HELP2PAY的对账逻辑是对账单上游退款和收单都是成功的状态
+            accCheckDTO = help2PayRead(file);
         }
+        //check账单
+        this.doCheck(accCheckDTO.getAd3SDMap(), accCheckDTO.getAd3TKMap(), name,username);
         return null;
     }
 
