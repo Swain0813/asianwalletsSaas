@@ -220,17 +220,17 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             type = "PAYC";
             UpiRefundDTO upiRefundDTO = this.createRefundDTO(orderRefund, channel, type);
             upiDTO.setUpiRefundDTO(upiRefundDTO);
-            log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+            log.info("==================【UPI退款】==================【调用Channels服务】【UPI-upiCancel】  upiDTO: {}", JSON.toJSONString(upiDTO));
             channelResponse = channelsFeign.upiCancel(upiDTO);
-            log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-CSB接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+            log.info("==================【UPI退款】==================【调用Channels服务】【UPI-upiCancel】  channelResponse: {}", JSON.toJSONString(channelResponse));
         } else {
             //退款接口
             type = "REFUND";
             UpiRefundDTO upiRefundDTO = this.createRefundDTO(orderRefund, channel, type);
             upiDTO.setUpiRefundDTO(upiRefundDTO);
-            log.info("==================【UPI退款】==================【调用Channels服务】【UPI-接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+            log.info("==================【UPI退款】==================【调用Channels服务】【UPI-upiRefund】  upiDTO: {}", JSON.toJSONString(upiDTO));
             channelResponse = channelsFeign.upiRefund(upiDTO);
-            log.info("==================【UPI退款】==================【调用Channels服务】【UPI-CSB接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+            log.info("==================【UPI退款】==================【调用Channels服务】【UPI-upiRefund】  channelResponse: {}", JSON.toJSONString(channelResponse));
         }
         JSONObject jsonObject = (JSONObject) JSONObject.parse(channelResponse.getData().toString());
         if (channelResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
@@ -273,7 +273,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                     log.info("=================【UPI退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
                     rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
                 }
-            }else if (jsonObject.getString("resp_code").equals("0000") && ("0".equals(jsonObject.getString("refund_result")) || "0".equals(jsonObject.getString("pay_result")))){
+            } else if (jsonObject.getString("resp_code").equals("0000") && ("0".equals(jsonObject.getString("refund_result")) || "0".equals(jsonObject.getString("pay_result")))) {
                 //退款未处理或撤销情况未知
                 log.info("=================【UPI退款】=================【退款未处理或撤销情况未知】  Order: {} ", orderRefund.getOrderId());
             }
@@ -287,6 +287,37 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             rabbitMQSender.send(AD3MQConstant.TK_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return baseResponse;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate 撤销
+     **/
+    @Override
+    public BaseResponse cancel(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        RabbitMassage rabbitOrderMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+        if (rabbitMassage == null) {
+            rabbitMassage = rabbitOrderMsg;
+        }
+        BaseResponse baseResponse = new BaseResponse();
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+
+        UpiPayDTO upiPayDTO = new UpiPayDTO();
+        upiPayDTO.setVersion("2.0.0");
+        upiPayDTO.setTrade_code("SEARCH");
+        upiPayDTO.setAgencyId(channel.getChannelMerchantId());
+        upiPayDTO.setTerminal_no(channel.getExtend1());
+        upiPayDTO.setOrder_no(orderRefund.getOrderId());
+        upiDTO.setUpiPayDTO(upiPayDTO);
+        log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-upiQueery】  upiDTO: {}", JSON.toJSONString(upiDTO));
+        BaseResponse channelResponse = channelsFeign.upiQueery(upiDTO);
+        log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-upiQueery】  channelResponse: {}", JSON.toJSONString(channelResponse));
+
+
+        return null;
     }
 
     /**
