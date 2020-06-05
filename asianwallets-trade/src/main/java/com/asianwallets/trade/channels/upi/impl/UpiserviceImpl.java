@@ -202,22 +202,28 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     public BaseResponse refund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         BaseResponse channelResponse;
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
         //拿到当天的23时间
-        Date endtime =DateToolUtils.addHour(DateToolUtils.getDayEnd(new Date()),-1);
+        Date endtime = DateToolUtils.addHour(DateToolUtils.getDayEnd(new Date()), -1);
         if (System.currentTimeMillis() < endtime.getTime() || orderRefund.getRefundType() == 1) {
             //撤销接口
-
+            UpiRefundDTO upiRefundDTO = this.createRefundDTO(orderRefund, channel, "PAYC");
+            upiDTO.setUpiRefundDTO(upiRefundDTO);
+            log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+            channelResponse = channelsFeign.upiCancel(upiDTO);
+            log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-CSB接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         } else {
             //退款接口
-            UpiDTO upiDTO = new UpiDTO();
-            upiDTO.setChannel(channel);
-            UpiRefundDTO upiRefundDTO = this.createRefundDTO(orderRefund, channel);
+            UpiRefundDTO upiRefundDTO = this.createRefundDTO(orderRefund, channel, "REFUND");
             upiDTO.setUpiRefundDTO(upiRefundDTO);
             log.info("==================【UPI退款】==================【调用Channels服务】【UPI-接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
             channelResponse = channelsFeign.upiRefund(upiDTO);
             log.info("==================【UPI退款】==================【调用Channels服务】【UPI-CSB接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         }
+
+
 
 
         return baseResponse;
@@ -229,17 +235,23 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
      * @Date 2020/6/5
      * @Descripate 创建退款DTO
      **/
-    private UpiRefundDTO createRefundDTO(OrderRefund orderRefund, Channel channel) {
+    private UpiRefundDTO createRefundDTO(OrderRefund orderRefund, Channel channel, String type) {
         UpiRefundDTO upiRefundDTO = new UpiRefundDTO();
         upiRefundDTO.setVersion("2.0.0");
-        upiRefundDTO.setTrade_code("REFUND");
+        upiRefundDTO.setTrade_code(type);
         upiRefundDTO.setAgencyId(channel.getChannelMerchantId());
         upiRefundDTO.setTerminal_no(channel.getExtend1());
-        upiRefundDTO.setOrder_no(orderRefund.getOrderId());
-        upiRefundDTO.setRefund_no(orderRefund.getId());
-        upiRefundDTO.setRefund_amount(orderRefund.getTradeAmount().toString());
-        upiRefundDTO.setCurrency_type(orderRefund.getTradeCurrency());
-        upiRefundDTO.setSett_currency_type(orderRefund.getTradeCurrency());
+        if (type.equals("REFUND")) {
+            upiRefundDTO.setRefund_amount(orderRefund.getTradeAmount().toString());
+            upiRefundDTO.setCurrency_type(orderRefund.getTradeCurrency());
+            upiRefundDTO.setSett_currency_type(orderRefund.getTradeCurrency());
+
+            upiRefundDTO.setRefund_no(orderRefund.getId());
+            upiRefundDTO.setOrder_no(orderRefund.getOrderId());
+        } else {
+            upiRefundDTO.setOrder_no(orderRefund.getId());
+            upiRefundDTO.setOri_order_no(orderRefund.getOrderId());
+        }
         return upiRefundDTO;
     }
 
