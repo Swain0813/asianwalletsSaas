@@ -127,5 +127,5 @@ custom:
     header: 800100000000
   upi:
     payUrl: https://testpay.sicpay.com/backSecure.do
-    privateKeyPath: ./testKey/549440159990001.pem
-    publicKeyPath: ./testKey/GHT_ROOT.pem
+    privateKeyPath: /testKey/549440159990001.pem
+    publicKeyPath: /testKey/GHT_ROOT.pem

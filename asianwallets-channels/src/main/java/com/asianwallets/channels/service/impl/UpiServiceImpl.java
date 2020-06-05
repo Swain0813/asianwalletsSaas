@@ -15,6 +15,8 @@ import com.asianwallets.common.utils.RSAUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.security.PrivateKey;
@@ -40,8 +42,8 @@ public class UpiServiceImpl implements UpiService {
     public BaseResponse upiPay(UpiDTO upiDTO) {
         BaseResponse baseResponse = new BaseResponse();
         try {
-            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource("/GHT_ROOT.pem").getPath(), "pem", "RSA");
-            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource("/549440159990001.pem").getPath(), "pem", null, "RSA");
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPublicKeyPath()).getPath(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPrivateKeyPath()).getPath(), "pem", null, "RSA");
 
             log.info("===============【upi支付】===============【请求参数】 UpiDTO: {}", JSON.toJSONString(upiDTO.getUpiPayDTO()));
             String plainXML = JSON.toJSONString(upiDTO.getUpiPayDTO());
