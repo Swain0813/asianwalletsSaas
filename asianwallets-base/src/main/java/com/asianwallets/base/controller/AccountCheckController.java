@@ -36,7 +36,14 @@ public class AccountCheckController extends BaseController{
         MultipartConfigFactory factory = new MultipartConfigFactory();
         factory.setLocation(tmpfile);//指定临时文件路径，这个路径可以随便写
         factory.createMultipartConfig();
-        return ResultUtil.success(accountCheckService.channelAccountCheck(this.getSysUserVO().getUsername(), file));
+        //这边由于机构系统也要,所以这边的创建人可能是运营后台的人或者是机构
+        String userName = null;
+        if (this.getSysUserVO().getInstitutionId()!=null){
+            userName=this.getSysUserVO().getInstitutionId();
+        }else {
+            userName = this.getSysUserVO().getUsername();
+        }
+        return ResultUtil.success(accountCheckService.channelAccountCheck(userName,file));
     }
 
     @ApiOperation(value = "分页查询对账管理详情")
