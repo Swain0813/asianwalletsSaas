@@ -154,6 +154,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
             redisSysUserVO.setUsername(username);
             redisSysUserVO.setTradePassword(sysUserVO.getTradePassword());
+            redisSysUserVO.setInstitutionId(institution.getId());
             redisService.set(response.getToken(), JSON.toJSONString(redisSysUserVO), time * 60 * 60);
         }
         return response;
