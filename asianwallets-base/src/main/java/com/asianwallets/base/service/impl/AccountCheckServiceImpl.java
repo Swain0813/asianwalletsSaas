@@ -94,7 +94,7 @@ public class AccountCheckServiceImpl implements AccountCheckService {
      * @return
      */
     @Override
-    public Object channelAccountCheck(MultipartFile file) {
+    public Object channelAccountCheck(String username,MultipartFile file) {
         //获取文件名
         String fileName = file.getOriginalFilename();
         String[] name = fileName.split("\\.")[0].split("_");
@@ -124,7 +124,7 @@ public class AccountCheckServiceImpl implements AccountCheckService {
                 accCheckDTO = help2PayRead(file);
             }
             //check账单
-            this.doCheck(accCheckDTO.getAd3SDMap(), accCheckDTO.getAd3TKMap(), name);
+            this.doCheck(accCheckDTO.getAd3SDMap(), accCheckDTO.getAd3TKMap(), name,username);
         } catch (Exception e) {
             log.error("***********************ad3通道对账发生异常*******************", e);
         }
@@ -139,7 +139,7 @@ public class AccountCheckServiceImpl implements AccountCheckService {
      * @param name
      */
     @Async
-    public void doCheck(Map<String, AD3CheckAccountDTO> ad3SDMap, Map<String, AD3CheckAccountDTO> ad3TKMap, String[] name) {
+    public void doCheck(Map<String, AD3CheckAccountDTO> ad3SDMap, Map<String, AD3CheckAccountDTO> ad3TKMap, String[] name,String username) {
         //获取昨天起始时间
         Date startTime = DateToolUtils.getDayStart(DateToolUtils.addDay(DateToolUtils.StringToDate(name[1]), -1));
         //获取昨天结束时间
@@ -463,6 +463,7 @@ public class AccountCheckServiceImpl implements AccountCheckService {
         checkAccountLog.setErrorAmount(uTotalAmount.subtract(cTotalAmount));
         checkAccountLog.setErrorCount(checkAccountMapper.getErrorCount(new Date()));
         checkAccountLog.setCheckFileName(name[0]);
+        checkAccountLog.setCreator(username);
         checkAccountLogMapper.insert(checkAccountLog);
         doSupplement(tkList, sdList);//系统补单
     }
