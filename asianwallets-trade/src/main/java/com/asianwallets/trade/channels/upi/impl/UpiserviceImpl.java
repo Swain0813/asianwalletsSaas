@@ -7,10 +7,12 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
+import com.asianwallets.common.dto.upi.UpiRefundDTO;
 import com.asianwallets.common.dto.upi.utils.CryptoUtil;
 import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
-import com.asianwallets.common.entity.RabbitMassage;
+import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -93,9 +95,9 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         upiDTO.setChannel(channel);
         UpiPayDTO upiPayDTO = this.createBSCDTO(orders, channel,authCode);
         upiDTO.setUpiPayDTO(upiPayDTO);
-        log.info("==================【UPI线下BSC】==================【调用Channels服务】【UPI-CSB接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+        log.info("==================【UPI线下BSC】==================【调用Channels服务】【UPI-BSC接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiPay(upiDTO);
-        log.info("==================【UPI线下BSC】==================【调用Channels服务】【UPI-CSB接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        log.info("==================【UPI线下BSC】==================【调用Channels服务】【UPI-BSC接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         //请求失败
         if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             log.info("==================【UPI线下BSC】==================【调用Channels服务】【UPI-BSC接口】-【请求状态码异常】");
@@ -152,7 +154,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
                     if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
                         log.info("=================【UPI线下BSC】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        com.asianwallets.common.dto.RabbitMassage rabbitMassage = new com.asianwallets.common.dto.RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                         rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                     }
                 } catch (Exception e) {
@@ -186,6 +188,40 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
 
         }
         return baseResponse;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/19
+     * @Descripate 退款接口
+     **/
+    @Override
+    public BaseResponse refund(Channel channel, OrderRefund orderRefund,RabbitMassage rabbitMassage) {
+        BaseResponse baseResponse = new BaseResponse();
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+        UpiRefundDTO upiRefundDTO = this.createRefundDTO(orderRefund, channel);
+        upiDTO.setUpiRefundDTO(upiRefundDTO);
+        log.info("==================【UPI退款】==================【调用Channels服务】【UPI-接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+        BaseResponse channelResponse = channelsFeign.upiRefund(upiDTO);
+        log.info("==================【UPI退款】==================【调用Channels服务】【UPI-CSB接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+
+
+
+        return baseResponse;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/6/5
+     * @Descripate 创建退款DTO
+     * @return
+     **/
+    private UpiRefundDTO createRefundDTO(OrderRefund orderRefund, Channel channel) {
+        UpiRefundDTO upiRefundDTO = new UpiRefundDTO();
+
+        return upiRefundDTO;
     }
 
     /**
@@ -319,12 +355,12 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                     BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
                     if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
                         log.info("=================【upi回调】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        com.asianwallets.common.entity.RabbitMassage rabbitMassage = new com.asianwallets.common.entity.RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                         rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                     }
                 } catch (Exception e) {
                     log.error("=================【upi回调】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
-                    RabbitMassage rabbitMassage = new com.asianwallets.common.entity.RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                     rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                 }
             } else {

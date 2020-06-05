@@ -9,7 +9,6 @@ import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.dto.th.ISO8583.TlvUtil;
 import com.asianwallets.common.entity.Orders;
-import com.asianwallets.common.entity.RabbitMassage;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;

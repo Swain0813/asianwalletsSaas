@@ -8,7 +8,6 @@ import com.asianwallets.common.dto.help2pay.Help2PayRequestDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
 import com.asianwallets.common.entity.Orders;
-import com.asianwallets.common.entity.RabbitMassage;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;

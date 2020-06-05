@@ -9,7 +9,6 @@ import com.asianwallets.common.dto.nganluong.NganLuongMQDTO;
 import com.asianwallets.common.dto.nganluong.NganLuongRequestDTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.Orders;
-import com.asianwallets.common.entity.RabbitMassage;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
