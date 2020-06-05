@@ -219,6 +219,6 @@ public class MerchantProductAudit extends BaseEntity {
 
 	@ApiModelProperty(value = "商户产品排序")
 	@Column(name = "rank")
-	private String rank;
+	private Integer rank;
 
 }

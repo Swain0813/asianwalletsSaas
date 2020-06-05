@@ -27,7 +27,7 @@ public class InstitutionProduct extends BaseEntity {
 
     @ApiModelProperty(value = "产品排序")
     @Column(name = "rank")
-    private String rank;
+    private Integer rank;
 
     @ApiModelProperty(value = "机构名称")
     @Column(name = "institution_name")
