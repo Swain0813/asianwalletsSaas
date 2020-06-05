@@ -9,6 +9,7 @@ import com.asianwallets.common.constant.FinanceConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.AD3CheckAccountDTO;
 import com.asianwallets.common.dto.AccCheckDTO;
+import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.SearchAccountCheckDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
