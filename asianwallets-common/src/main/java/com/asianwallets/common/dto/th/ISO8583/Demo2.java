@@ -325,7 +325,7 @@ public class Demo2 {
         //金额
         dto.setAmountOfTransactions_4("000000000001");
         // 11域 todo
-        dto.setSystemTraceAuditNumber_11("159126");
+        dto.setSystemTraceAuditNumber_11("159132");
 
         //022 磁条
         dto.setPointOfServiceEntryMode_22("022");
@@ -334,7 +334,7 @@ public class Demo2 {
         dto.setAcquiringInstitutionIdentificationCode_32("08600005");
 
         // 37域 同返回的数据 消费接口未上传 TODO
-        dto.setRetrievalReferenceNumber_37("101100180701");
+        dto.setRetrievalReferenceNumber_37("101100180728");
 
 
         dto.setCardAcceptorTerminalIdentification_41(terminalId);
@@ -346,7 +346,7 @@ public class Demo2 {
                 //60.1 交易类型码
                 "23" +
                         //60.2 原批次号
-                        "168861" +
+                        "600805" +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
@@ -361,11 +361,11 @@ public class Demo2 {
         // 61 自定义域
         String str61 =
                 //61.1 原批次号
-                "168861" +
+                "600805" +
                         //61.2 原交易流水号 11域
-                        "159126" +
+                        "159132" +
                         //61.3 原交易日期 由消费返回的13域中获取
-                        "0604";
+                        "0605";
         dto.setOriginalMessage_61(str61);
         dto.setReservedPrivate_63("000");
         System.out.println("JSON.toJSONString(dto) = " + JSON.toJSONString(dto));

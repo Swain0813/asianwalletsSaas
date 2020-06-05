@@ -232,4 +232,8 @@ public interface ChannelsFeign {
     @ApiOperation(value = "通华银行卡退款接口")
     @PostMapping("/th/thBankCardRefund")
     BaseResponse thBankCardRefund(ThDTO thDTO);
+
+    @ApiOperation(value = "通华银行卡撤销接口")
+    @PostMapping("/th/thBankCardUndo")
+    BaseResponse thBankCardUndo(ThDTO thDTO);
 }
