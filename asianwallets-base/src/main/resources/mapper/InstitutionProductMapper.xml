@@ -45,6 +45,7 @@
         <result column="institutionId" property="institutionId" jdbcType="VARCHAR"/>
         <result column="productId" property="productId" jdbcType="VARCHAR"/>
         <result column="institutionName" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="rank" property="rank" jdbcType="VARCHAR"/>
         <result column="productAbbrev" property="productAbbrev" jdbcType="VARCHAR"/>
         <result column="productDetailsLogo" property="productDetailsLogo" jdbcType="VARCHAR"/>
         <result column="productPrintLogo" property="productPrintLogo" jdbcType="VARCHAR"/>
@@ -67,10 +68,12 @@
     </resultMap>
 
     <select id="selectRelevantInfoByInstitutionId" resultMap="InstitutionProductChannelVOMap">
-        SELECT ip.institution_id AS institutionId,
+        SELECT distinct
+        ip.institution_id AS institutionId,
         ip.institution_name AS institutionName,
         ip.product_id AS productId,
         ip.product_abbrev AS productAbbrev,
+        ip.rank as rank,
         ip.product_details_logo AS productDetailsLogo,
         ip.product_print_logo AS productPrintLogo,
         ip.product_img AS productImg,
@@ -99,6 +102,7 @@
                 AND m.id = #{merchantId}
             </if>
         </where>
+        ORDER BY  ip.rank desc
     </select>
 
     <delete id="deleteByInstitutionId">
@@ -131,6 +135,7 @@
         SELECT ip.institution_id AS institutionId,
         ip.institution_name AS institutionName,
         ip.product_id AS productId,
+        ip.rank AS rank,
         ip.product_abbrev AS productAbbrev,
         ip.product_details_logo AS productDetailsLogo,
         ip.product_print_logo AS productPrintLogo,

@@ -33,6 +33,8 @@ public class MerchantAudit extends BaseEntity {
     @ApiModelProperty(value = "代理商id")
     @Column(name = "agent_id")
     private String agentId;
+
+
     @ApiModelProperty(value = "代理商类型")
     @Column(name = "agent_type")
     private String agentType;
@@ -259,5 +261,9 @@ public class MerchantAudit extends BaseEntity {
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")
     private Boolean enabled;
+
+    @ApiModelProperty(value = "商户产品排序")
+    @Column(name = "rank")
+    private String rank;
 
 }

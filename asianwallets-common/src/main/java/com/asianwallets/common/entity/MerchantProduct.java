@@ -165,6 +165,9 @@ public class MerchantProduct extends BaseEntity {
 	@Column(name ="ext7")
 	private String ext7;
 
+	@ApiModelProperty(value = "商户产品排序")
+	@Column(name = "rank")
+	private Integer rank;
 
 
 }
