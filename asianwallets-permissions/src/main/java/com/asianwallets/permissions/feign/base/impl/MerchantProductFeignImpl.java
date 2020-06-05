@@ -89,4 +89,14 @@ public class MerchantProductFeignImpl implements MerchantProductFeign {
     public List<MerChannelVO> exportMerChannel(SearchChannelDTO searchChannelDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    @Override
+    public BaseResponse pageMerProductSort(MerchantProductDTO merchantProductDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
+    public BaseResponse updateMerchantProductSort(List<MerchantProductDTO> merchantProductDTOLists) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

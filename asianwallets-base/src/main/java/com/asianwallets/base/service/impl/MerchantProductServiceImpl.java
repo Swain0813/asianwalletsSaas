@@ -720,5 +720,27 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
         return new PageInfo<MerchantProductSortVO>(merchantProductMapper.pageMerProductSort(merchantProductDTO));
     }
 
+    /**
+     *批量修改商户产品排序
+     * @param name
+     * @param merchantProductDTOLists
+     * @return
+     */
+    @Override
+    public PageInfo<MerchantProductSortVO>  updateMerchantProductSort(String name, List<MerchantProductDTO> merchantProductDTOLists) {
+        if(merchantProductDTOLists==null || merchantProductDTOLists.size()==0){
+            return new PageInfo(merchantProductMapper.pageMerProductRank());
+        }
+        for(MerchantProductDTO merchantProductDTOList:merchantProductDTOLists){
+            MerchantProduct merchantProduct = new MerchantProduct();
+            merchantProduct.setId(merchantProductDTOList.getMerProId());
+            merchantProduct.setRank(merchantProductDTOList.getRank());
+            merchantProduct.setUpdateTime(new Date());//修改时间
+            merchantProduct.setModifier(name);//修改人
+            merchantProductMapper.updateByPrimaryKeySelective(merchantProduct);
+        }
+        return new PageInfo(merchantProductMapper.pageMerProductRank());
+    }
+
 
 }
