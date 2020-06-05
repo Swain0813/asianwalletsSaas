@@ -62,4 +62,9 @@ public class ThController extends BaseController {
         return thService.thBankCardRefund(thDTO);
     }
 
+    @ApiOperation("线下银行卡撤销")
+    @PostMapping("/thBankCardUndo")
+    public BaseResponse thBankCardUndo(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.thBankCardUndo(thDTO);
+    }
 }

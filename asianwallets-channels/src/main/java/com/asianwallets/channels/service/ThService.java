@@ -61,8 +61,19 @@ public interface ThService {
 
     /**
      * 通华线下银行卡退款
+     *
      * @param thDTO
      * @return
      */
     BaseResponse thBankCardRefund(ThDTO thDTO);
+
+    /**
+     * 通华线下银行卡撤销
+     *
+     * @param thDTO
+     * @return
+     */
+    BaseResponse thBankCardUndo(ThDTO thDTO);
+
+
 }

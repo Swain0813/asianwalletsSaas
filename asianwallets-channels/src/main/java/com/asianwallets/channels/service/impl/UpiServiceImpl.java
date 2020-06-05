@@ -3,11 +3,14 @@ package com.asianwallets.channels.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.channels.config.ChannelsConfig;
+import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.UpiService;
+import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.utils.CryptoUtil;
 import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.ChannelsOrder;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.HttpResponse;
 import com.asianwallets.common.utils.HttpClientUtils;
@@ -19,8 +22,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -37,10 +42,32 @@ public class UpiServiceImpl implements UpiService {
     @Autowired
     private ChannelsConfig channelsConfig;
 
+    @Autowired
+    private ChannelsOrderMapper channelsOrderMapper;
+
 
     @Override
     public BaseResponse upiPay(UpiDTO upiDTO) {
         BaseResponse baseResponse = new BaseResponse();
+
+        ChannelsOrder co = new ChannelsOrder();
+        co.setMerchantOrderId(upiDTO.getUpiPayDTO().getAgencyId());
+        co.setTradeCurrency(upiDTO.getUpiPayDTO().getCurrency_type());
+        co.setTradeAmount(new BigDecimal(upiDTO.getUpiPayDTO().getAmount()));
+        //co.setReqIp(msg.get("ipAddress").toString());
+        //co.setDraweeName(eghlRequestDTO.getCustName());
+        //co.setDraweeEmail(eghlRequestDTO.getCustEmail());
+        //co.setBrowserUrl(msg.get("b2sTxnEndURL").toString());
+        //co.setServerUrl(msg.get("s2sTxnEndURL").toString());
+        //co.setDraweePhone(eghlRequestDTO.getCustPhone());
+        co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
+        //co.setIssuerId(enetsBankRequestDTO.getTxnReq().getMsg().getIssuingBank());
+        //co.setMd5KeyStr(wechaRefundDTO.getApikey());
+        co.setId(upiDTO.getUpiPayDTO().getOrder_no());
+        co.setOrderType(Byte.valueOf(AD3Constant.REFUND_ORDER));
+        co.setCreateTime(new Date());
+        channelsOrderMapper.insert(co);
+
         try {
             final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPublicKeyPath()).getPath(), "pem", "RSA");
             final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPrivateKeyPath()).getPath(), "pem", null, "RSA");
