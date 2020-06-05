@@ -57,4 +57,9 @@ public class ChannelsAbstractAdapter extends ChannelsAbstract {
         return null;
     }
 
+    @Override
+    public BaseResponse preAuth(Orders orders, Channel channel) {
+        return null;
+    }
+
 }

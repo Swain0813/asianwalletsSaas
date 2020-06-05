@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
+import com.asianwallets.common.dto.upi.utils.CryptoUtil;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.exception.BusinessException;
@@ -21,7 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @description:
@@ -80,9 +84,19 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         upiPayDTO.setCurrency_type(orders.getTradeCurrency());
         upiPayDTO.setSett_currency_type(orders.getTradeCurrency());
         upiPayDTO.setProduct_name(channel.getExtend6());
-        upiPayDTO.setReturn_url(ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/nextPosCallback"));
-        upiPayDTO.setNotify_url(ad3ParamsConfig.getChannelCallbackUrl().concat("/onlineCallback/nextPosCallback"));
+        upiPayDTO.setReturn_url(ad3ParamsConfig.getChannelCallbackUrl().concat("/offlineCallback/upiServerCallback"));
+        upiPayDTO.setNotify_url(ad3ParamsConfig.getChannelCallbackUrl().concat("/offlineCallback/upiServerCallback"));
         upiPayDTO.setClient_ip(orders.getReqIp());
         return upiPayDTO;
+    }
+
+    @Override
+    public String upiServerCallback(JSONObject jsonObject) {
+        //final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(upiDTO.getChannel().getExtend5(), "pem", "RSA");
+        //final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(upiDTO.getChannel().getMd5KeyStr(), "pem", null, "RSA");
+
+
+
+    return "success";
     }
 }

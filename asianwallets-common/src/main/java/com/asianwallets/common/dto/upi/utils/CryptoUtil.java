@@ -83,24 +83,24 @@ public abstract class CryptoUtil {
      * @throws Exception
      */
     public static PublicKey getRSAPublicKeyByFileSuffix(String filePath, String fileSuffix, String keyAlgorithm) throws Exception {
-        //InputStream in = null;
+        InputStream in = null;
 
         try {
-            //in = new FileInputStream(filePath);
+            in = new FileInputStream(filePath);
             PublicKey pubKey = null;
 
-            //BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            //StringBuilder sb = new StringBuilder();
-            //String readLine = null;
-            //while ((readLine = br.readLine()) != null) {
-            //	if (readLine.charAt(0) == '-') {
-            //		continue;
-            //	} else {
-            //		sb.append(readLine);
-            //		sb.append('\r');
-            //	}
-            //}
-            X509EncodedKeySpec pubX509 = new X509EncodedKeySpec(Base64.decodeBase64(filePath));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            String readLine = null;
+            while ((readLine = br.readLine()) != null) {
+            	if (readLine.charAt(0) == '-') {
+            		continue;
+            	} else {
+            		sb.append(readLine);
+            		sb.append('\r');
+            	}
+            }
+            X509EncodedKeySpec pubX509 = new X509EncodedKeySpec(Base64.decodeBase64(sb.toString()));
             KeyFactory keyFactory = KeyFactory.getInstance(keyAlgorithm);
             pubKey = keyFactory.generatePublic(pubX509);
 
@@ -109,6 +109,8 @@ public abstract class CryptoUtil {
             throw new Exception(e);
         }
     }
+
+
 
     /**
      * 获取RSA私钥对象
@@ -123,23 +125,23 @@ public abstract class CryptoUtil {
     @SuppressWarnings("deprecation")
     public static PrivateKey getRSAPrivateKeyByFileSuffix(String filePath, String fileSuffix, String password, String keyAlgorithm) throws Exception {
 
-        //InputStream in = null;
+        InputStream in = null;
         try {
-            //in = new FileInputStream(filePath);
+            in = new FileInputStream(filePath);
             PrivateKey priKey = null;
 
-            //BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            //StringBuilder sb = new StringBuilder();
-            //String readLine = null;
-            //while ((readLine = br.readLine()) != null) {
-            //    if (readLine.charAt(0) == '-') {
-            //        continue;
-            //    } else {
-            //        sb.append(readLine);
-            //        sb.append('\r');
-            //    }
-            //}
-            PKCS8EncodedKeySpec priPKCS8 = new PKCS8EncodedKeySpec(Base64.decodeBase64(filePath));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            String readLine = null;
+            while ((readLine = br.readLine()) != null) {
+                if (readLine.charAt(0) == '-') {
+                    continue;
+                } else {
+                    sb.append(readLine);
+                    sb.append('\r');
+                }
+            }
+            PKCS8EncodedKeySpec priPKCS8 = new PKCS8EncodedKeySpec(Base64.decodeBase64(sb.toString()));
             KeyFactory keyFactory = KeyFactory.getInstance(keyAlgorithm);
             priKey = keyFactory.generatePrivate(priPKCS8);
 

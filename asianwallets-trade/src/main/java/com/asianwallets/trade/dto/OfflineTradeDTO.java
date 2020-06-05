@@ -17,7 +17,7 @@ public class OfflineTradeDTO {
     private String merchantId;
 
     @NotBlank(message = "50002")
-    @ApiModelProperty(value = "订单号")
+    @ApiModelProperty(value = "商户订单号")
     private String orderNo;
 
     @NotBlank(message = "50002")
@@ -41,7 +41,7 @@ public class OfflineTradeDTO {
 
     @ApiModelProperty(value = "设备操作员")
     private String operatorId;
-    
+
     @ApiModelProperty(value = "Token")
     private String token;
 
@@ -96,6 +96,9 @@ public class OfflineTradeDTO {
 
     @ApiModelProperty(value = "付款人电话")
     private String payerPhone;
+
+    @ApiModelProperty(value = "签购单")
+    private String signOrder;
 
     @ApiModelProperty(value = "语言")
     private String language;

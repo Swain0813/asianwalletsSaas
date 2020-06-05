@@ -630,6 +630,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             }
             boolean flagTwo = true;
             PosMerProResultVO posMerProResultVO = new PosMerProResultVO();
+            posMerProResultVO.setProductImg(posMerProVOList.get(i).getProductImg());
             posMerProResultVO.setProductDetailsLogo(posMerProVOList.get(i).getProductDetailsLogo());
             posMerProResultVO.setProductPrintLogo(posMerProVOList.get(i).getProductPrintLogo());
             posMerProResultVO.setPayTypeName(posMerProVOList.get(i).getPayTypeName());
@@ -837,6 +838,56 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         log.info("==================【银行卡收单】==================【下单结束】");
+        return new BscDynamicScanVO(orders, offlineTradeDTO.getOrderTime());
+    }
+
+    /**
+     * 预授权
+     * @param offlineTradeDTO
+     * @return
+     */
+    @Override
+    public BscDynamicScanVO preAuth(OfflineTradeDTO offlineTradeDTO) {
+        log.info("*******************【预授权】*******************【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
+        if (StringUtils.isEmpty(offlineTradeDTO.getUserBankCardNo())) {
+            log.info("==================【预授权】==================【银行卡号为空】");
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        //重复请求
+        if (!commonBusinessService.repeatedRequests(offlineTradeDTO.getMerchantId(), offlineTradeDTO.getOrderNo())) {
+            log.info("==================【预授权】==================【重复请求】");
+            throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
+        }
+        //验签
+        if (!commonBusinessService.checkUniversalSign(offlineTradeDTO)) {
+            log.info("==================【预授权,币种信息】==================【签名不匹配】");
+            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+        }
+        //获取收单基础信息并校验
+        BasicInfoVO basicInfoVO = getBasicAndCheck(offlineTradeDTO);
+        //设置订单属性
+        Orders orders = setAttributes(offlineTradeDTO, basicInfoVO);
+        //换汇
+        commonBusinessService.swapRateByPayment(basicInfoVO, orders);
+        //校验商户产品与通道的限额
+        commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //截取币种默认值
+        commonBusinessService.interceptDigit(orders, basicInfoVO.getCurrency());
+        //计算手续费
+        commonBusinessService.calculateCost(basicInfoVO, orders);
+        orders.setReportChannelTime(new Date());
+        orders.setTradeStatus(TradeConstant.ORDER_PAYING);
+        log.info("==================【预授权】==================【落地订单信息】 orders:{}", JSON.toJSONString(orders));
+        ordersMapper.insert(orders);
+        try {
+            //上报通道
+            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark().split("_")[0]);
+            channelsAbstract.preAuth(orders, basicInfoVO.getChannel());
+        } catch (Exception e) {
+            log.info("==================【预授权】==================【上报通道异常】", e);
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+        log.info("==================【预授权】==================【下单结束】");
         return new BscDynamicScanVO(orders, offlineTradeDTO.getOrderTime());
     }
 
