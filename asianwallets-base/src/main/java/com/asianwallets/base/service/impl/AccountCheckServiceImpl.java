@@ -151,6 +151,10 @@ public class AccountCheckServiceImpl implements AccountCheckService {
         List<String> sdList = Lists.newArrayList();//收单补单队列
         List<CheckAccount> checkAccountList = checkAccountMapper.getDataByType(FinanceConstant.FINACE_WAIT, startTime, endTime);//获取前一天未对账状态的对账单数据
         List<Orders> ordersList = ordersMapper.getYesterDayDate(startTime, endTime, list);
+        if(ordersList.size()==0){
+            log.info("************************订单表里获取昨天的数据不存在************************");
+            throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
+        }
         List<OrderRefund> orderRefundList = orderRefundMapper.getYesterDayDate(startTime, endTime, list);
         int cCount = ad3SDMap.size() + ad3TKMap.size();
         int sCount = ordersList.size() + orderRefundList.size();
