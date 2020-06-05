@@ -32,6 +32,7 @@ public class AccountCheckController extends BaseController{
 
     @ApiOperation(value = "导入通道对账单")
     @PostMapping("/channelAccountCheck")
+    @CrossOrigin
     public BaseResponse channelAccountCheck(@RequestParam("file") @ApiParam MultipartFile file) {
         MultipartConfigFactory factory = new MultipartConfigFactory();
         factory.setLocation(tmpfile);//指定临时文件路径，这个路径可以随便写
