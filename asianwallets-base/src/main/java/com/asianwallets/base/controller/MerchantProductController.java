@@ -140,4 +140,13 @@ public class MerchantProductController extends BaseController {
         }
         return merchantProductService.exportMerChannel(searchChannelDTO);
     }
+
+    @ApiOperation(value = "商户产品排序一览的分页查询")
+    @PostMapping("/pageMerProductSort")
+    public BaseResponse pageMerProductSort(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO) {
+        if (StringUtils.isBlank(merchantProductDTO.getLanguage())) {
+            merchantProductDTO.setLanguage(this.getLanguage());
+        }
+        return ResultUtil.success(merchantProductService.pageMerProductSort(merchantProductDTO));
+    }
 }

@@ -18,23 +18,26 @@ import java.util.Date;
 @ApiModel(value = "商户产品实体", description = "商户产品实体")
 public class MerchantProductDTO extends BasePageHelper {
 
-    @ApiModelProperty(value = "机构id")
+    @ApiModelProperty(value = "机构编号")
     private String institutionId;
 
-    @ApiModelProperty(value = "商户产品id")
-    private String merProId;
-
-    @ApiModelProperty(value = "商户id")
+    @ApiModelProperty(value = "商户编号")
     private String merchantId;
+
+    @ApiModelProperty(value = "商户名称")
+    private String merchantName;
+
+    @ApiModelProperty(value = "支付方式")
+    private String payType;
 
     @ApiModelProperty(value = "产品id")
     private String productId;
 
+    @ApiModelProperty(value = "商户产品id")
+    private String merProId;
+
     @ApiModelProperty(value = "代理商编号")
     private String agentId;
-
-    @ApiModelProperty(value = "商户名称")
-    private String merchantName;
 
     @ApiModelProperty(value = "产品简称")
     private String productAbbrev;
@@ -44,9 +47,6 @@ public class MerchantProductDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "交易类型（1-收、2-付）")
     private Integer transType;
-
-    @ApiModelProperty(value = "支付方式(银联，网银，...）")
-    private String payType;
 
     @ApiModelProperty(value = "费率类型 (1-单笔费率,2-单笔定额)")
     private String rateType;
@@ -108,7 +108,7 @@ public class MerchantProductDTO extends BasePageHelper {
     @ApiModelProperty(value = "审核备注")
     private String auditRemark;
 
-    @ApiModelProperty(value = "enabled")
+    @ApiModelProperty(value = "启用禁用")
     private Boolean enabled;
 
     @ApiModelProperty(value = "生效时间")

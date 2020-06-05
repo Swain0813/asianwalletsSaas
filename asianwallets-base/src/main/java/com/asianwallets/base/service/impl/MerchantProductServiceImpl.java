@@ -19,10 +19,7 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
-import com.asianwallets.common.vo.ChaBankRelVO;
-import com.asianwallets.common.vo.MerChannelVO;
-import com.asianwallets.common.vo.MerchantProductVO;
-import com.asianwallets.common.vo.MerchantRelevantVO;
+import com.asianwallets.common.vo.*;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -712,4 +709,16 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     public List<MerChannelVO> exportMerChannel(SearchChannelDTO searchChannelDTO) {
         return merchantChannelMapper.exportMerChannel(searchChannelDTO);
     }
+
+    /**
+     * 商户产品排序一览的分页查询
+     * @param merchantProductDTO
+     * @return
+     */
+    @Override
+    public PageInfo<MerchantProductSortVO> pageMerProductSort(MerchantProductDTO merchantProductDTO) {
+        return new PageInfo<MerchantProductSortVO>(merchantProductMapper.pageMerProductSort(merchantProductDTO));
+    }
+
+
 }

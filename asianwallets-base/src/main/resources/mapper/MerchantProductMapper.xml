@@ -279,4 +279,75 @@
         where mp.id = #{merProductId}
     </select>
 
+
+
+    <select id="pageMerProductSort" resultMap="PageSortResultMap">
+        select
+        mp.id,
+        mp.merchant_id,
+        mp.merchant_name,
+        mp.product_id,
+        mp.rank,
+        case
+        when mp.product_abbrev is null
+        then concat(pt.name,"-",p.currency)
+        else mp.product_abbrev
+        end as product_abbrev,
+        mp.pay_type,
+        pt.name as pay_types,
+        mp.create_time,
+        mp.update_time,
+        mp.creator,
+        mp.modifier,
+        mp.enabled
+        from merchant_product mp
+        left join product p on p.id = mp.product_id
+        left join merchant m on m.id = mp.merchant_id
+        left join institution i on i.id = m.institution_id
+        left join pay_type pt on pt.extend1 = p.pay_type and pt.language = #{language}
+        <where>
+            mp.enabled=1
+            <if test="merchantId!=null and merchantId != ''">
+                and mp.merchant_id=#{merchantId}
+            </if>
+            <if test="productId!=null and productId != ''">
+                and mp.product_id=#{productId}
+            </if>
+            <if test="institutionId!=null and institutionId != ''">
+                and i.id=#{institutionId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                and mp.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+            </if>
+            <if test="payType != null and payType != ''">
+                and mp.pay_type=#{payType}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND mp.DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND mp.DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
+            </if>
+        </where>
+        order by mp.rank desc
+    </select>
+
+    <resultMap id="PageSortResultMap" type="com.asianwallets.common.vo.MerchantProductSortVO">
+        <result column="id" property="id"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="merchant_name" property="merchantName"/>
+        <result column="institution_id" property="institutionId"/>
+        <result column="institution_name" property="institutionName"/>
+        <result column="product_id" property="productId"/>
+        <result column="product_abbrev" property="productName"/>
+        <result column="pay_type" property="payType"/>
+        <result column="rank" property="rank"/>
+        <result column="pay_type" property="payType"/>
+        <result column="pay_types" property="payTypes"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="enabled" property="enabled"/>
+    </resultMap>
 </mapper>

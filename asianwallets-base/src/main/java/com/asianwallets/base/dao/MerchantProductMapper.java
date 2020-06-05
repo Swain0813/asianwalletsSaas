@@ -3,6 +3,7 @@ package com.asianwallets.base.dao;
 import com.asianwallets.common.base.BaseMapper;
 import com.asianwallets.common.dto.MerchantProductDTO;
 import com.asianwallets.common.entity.MerchantProduct;
+import com.asianwallets.common.vo.MerchantProductSortVO;
 import com.asianwallets.common.vo.MerchantProductVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -57,4 +58,11 @@ public interface MerchantProductMapper extends BaseMapper<MerchantProduct> {
      * @return
      */
     MerchantProductVO selectById(@Param("merProductId") String merProductId);
+
+    /**
+     * 商户产品排序一览的分页查询
+     * @param merchantProductDTO
+     * @return
+     */
+    List<MerchantProductSortVO> pageMerProductSort(MerchantProductDTO merchantProductDTO);
 }
