@@ -15,6 +15,9 @@ public class InstitutionProductVO {
     @ApiModelProperty(value = "机构名称")
     private String institutionName;
 
+    @ApiModelProperty(value = "产品排序")
+    private Integer rank;
+
     @ApiModelProperty(value = "产品id")
     private String productId;
 

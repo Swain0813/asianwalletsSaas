@@ -24,6 +24,9 @@ public class InstitutionProductChannelDTO {
     @ApiModelProperty(value = "通道id集合")
     private List<String> channelIdList;
 
+    @ApiModelProperty(value = "产品排序")
+    private String rank;
+
     @ApiModelProperty(value = "产品简称")
     private String productAbbrev;
 
