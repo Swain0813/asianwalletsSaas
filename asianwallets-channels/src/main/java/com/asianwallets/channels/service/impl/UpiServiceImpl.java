@@ -92,10 +92,10 @@ public class UpiServiceImpl implements UpiService {
             log.info("===============【upi支付】===============【请求参数】 map: {}", JSON.toJSONString(map));
             HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiPayUrl(), map, null);
             log.info("===============【upi支付】===============【请求参数】 httpResponse: {}", JSON.toJSONString(httpResponse));
-            if (String.valueOf(httpResponse.getHttpStatus()).equals(TradeConstant.HTTP_SUCCESS) && httpResponse.getJsonObject().get("resp_code").equals("0000")) {
-                String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
-                log.info("===============【upi支付】===============【请求参数】 result: {}", result);
-                JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
+            log.info("===============【upi支付】===============【请求参数】 result: {}", result);
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            if (String.valueOf(httpResponse.getHttpStatus()).equals(TradeConstant.HTTP_SUCCESS) && jsonObject.get("resp_code").equals("0000")) {
                 baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
                 baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
                 baseResponse.setData(result);
@@ -143,10 +143,10 @@ public class UpiServiceImpl implements UpiService {
             log.info("===============【upi查询】===============【请求参数】 map: {}", JSON.toJSONString(map));
             HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiPayUrl(), map, null);
             log.info("===============【upi查询】===============【请求参数】 httpResponse: {}", JSON.toJSONString(httpResponse));
-            if (String.valueOf(httpResponse.getHttpStatus()).equals(TradeConstant.HTTP_SUCCESS) && httpResponse.getJsonObject().get("resp_code").equals("0000")) {
-                String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
-                log.info("===============【upi查询】===============【请求参数】 result: {}", result);
-                JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
+            log.info("===============【upi查询】===============【请求参数】 result: {}", result);
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            if (String.valueOf(httpResponse.getHttpStatus()).equals(TradeConstant.HTTP_SUCCESS) && jsonObject.get("resp_code").equals("0000")) {
                 baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
                 baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
                 baseResponse.setData(result);
@@ -194,10 +194,10 @@ public class UpiServiceImpl implements UpiService {
             log.info("===============【upi退款】===============【请求参数】 map: {}", JSON.toJSONString(map));
             HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiPayUrl(), map, null);
             log.info("===============【upi退款】===============【请求参数】 httpResponse: {}", JSON.toJSONString(httpResponse));
-            if (String.valueOf(httpResponse.getHttpStatus()).equals(TradeConstant.HTTP_SUCCESS) && httpResponse.getJsonObject().get("resp_code").equals("0000")) {
-                String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
-                log.info("===============【upi退款】===============【请求参数】 result: {}", result);
-                JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
+            log.info("===============【upi退款】===============【请求参数】 result: {}", result);
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            if (String.valueOf(httpResponse.getHttpStatus()).equals(TradeConstant.HTTP_SUCCESS) && jsonObject.get("resp_code").equals("0000")) {
                 baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
                 baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
                 baseResponse.setData(result);
@@ -245,10 +245,10 @@ public class UpiServiceImpl implements UpiService {
             log.info("===============【upi撤销】===============【请求参数】 map: {}", JSON.toJSONString(map));
             HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiPayUrl(), map, null);
             log.info("===============【upi撤销】===============【请求参数】 httpResponse: {}", JSON.toJSONString(httpResponse));
-            if (String.valueOf(httpResponse.getHttpStatus()).equals(TradeConstant.HTTP_SUCCESS) && httpResponse.getJsonObject().get("resp_code").equals("0000")) {
-                String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
-                log.info("===============【upi撤销】===============【请求参数】 result: {}", result);
-                JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
+            log.info("===============【upi撤销】===============【请求参数】 result: {}", result);
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            if (String.valueOf(httpResponse.getHttpStatus()).equals(TradeConstant.HTTP_SUCCESS) && jsonObject.get("resp_code").equals("0000")) {
                 baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
                 baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
                 baseResponse.setData(result);
@@ -296,10 +296,10 @@ public class UpiServiceImpl implements UpiService {
             log.info("===============【upi下载对账文件】===============【请求参数】 map: {}", JSON.toJSONString(map));
             HttpResponse httpResponse = HttpClientUtils.reqPost(channelsConfig.getUpiPayUrl(), map, null);
             log.info("===============【upi下载对账文件】===============【请求参数】 httpResponse: {}", JSON.toJSONString(httpResponse));
-            if (String.valueOf(httpResponse.getHttpStatus()).equals(TradeConstant.HTTP_SUCCESS) && httpResponse.getJsonObject().get("resp_code").equals("0000")) {
-                String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
-                log.info("===============【upi下载对账文件】===============【请求参数】 result: {}", result);
-                JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            String result = respDecryption(httpResponse.getJsonObject(), hzfPriKey, yhPubKey);
+            log.info("===============【upi下载对账文件】===============【请求参数】 result: {}", result);
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+            if (String.valueOf(httpResponse.getHttpStatus()).equals(TradeConstant.HTTP_SUCCESS) && jsonObject.get("resp_code").equals("0000")) {
                 baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
                 baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
                 baseResponse.setData(result);
