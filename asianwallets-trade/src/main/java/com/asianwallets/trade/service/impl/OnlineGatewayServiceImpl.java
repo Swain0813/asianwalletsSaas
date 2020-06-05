@@ -8,6 +8,7 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.CashierDTO;
 import com.asianwallets.common.dto.MockOrdersDTO;
+import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
