@@ -1,5 +1,6 @@
 package com.asianwallets.base.controller;
 import com.asianwallets.base.service.AccountCheckService;
+import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.SearchAccountCheckDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
@@ -15,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Api(description = "通道对账接口")
 @RequestMapping("/finance")
-public class AccountCheckController {
+public class AccountCheckController extends BaseController{
 
     @Value("${file.tmpfile}")
     private String tmpfile;//springboot启动的临时文件存放
@@ -35,7 +36,7 @@ public class AccountCheckController {
         MultipartConfigFactory factory = new MultipartConfigFactory();
         factory.setLocation(tmpfile);//指定临时文件路径，这个路径可以随便写
         factory.createMultipartConfig();
-        return ResultUtil.success(accountCheckService.channelAccountCheck(file));
+        return ResultUtil.success(accountCheckService.channelAccountCheck(this.getSysUserVO().getUsername(), file));
     }
 
     @ApiOperation(value = "分页查询对账管理详情")

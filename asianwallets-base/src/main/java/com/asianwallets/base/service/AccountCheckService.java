@@ -25,7 +25,7 @@ public interface AccountCheckService {
      * @param file
      * @return
      */
-    Object channelAccountCheck(MultipartFile file);
+    Object channelAccountCheck(String username,MultipartFile file);
 
     /**
      * 分页查询对账管理详情
