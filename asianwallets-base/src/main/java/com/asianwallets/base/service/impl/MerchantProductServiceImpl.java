@@ -96,6 +96,8 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     @Autowired
     private AlipaySecMerchantReport alipaySecmerchantReport;
 
+    @Autowired
+    private InstitutionProductMapper institutionProductMapper;
 
     /**
      * @return
@@ -141,6 +143,12 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 //                }
             }
 
+            //获取机构产品信息
+            InstitutionProduct institutionProduct = institutionProductMapper.getInstitutionProByInstitutionIdAndProductId(merchant.getInstitutionId(),merchantProductDTO.getProductId());
+            if(institutionProduct==null){
+                //机构产品不存在
+                throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_IS_NOT_EXIST.getCode());
+            }
             String id = IDS.uuid2();
             MerchantProduct merchantProduct = new MerchantProduct();
             BeanUtils.copyProperties(merchantProductDTO, merchantProduct);
@@ -151,6 +159,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             merchantProduct.setCreateTime(new Date());
             merchantProduct.setCreator(name);
             merchantProduct.setEnabled(false);
+            merchantProduct.setRank(institutionProduct.getRank());
             merchantProduct.setAuditStatus(TradeConstant.AUDIT_WAIT);
 
             MerchantProductAudit merchantProductAudit = new MerchantProductAudit();
@@ -324,7 +333,12 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 //                throw new BusinessException(EResultEnum.RATE_TYPE_IS_DIFFERENT.getCode());
 //            }
         }
-
+        //获取机构产品信息
+        InstitutionProduct institutionProduct = institutionProductMapper.getInstitutionProByInstitutionIdAndProductId(merchant.getInstitutionId(),merchantProductDTO.getProductId());
+        if(institutionProduct==null){
+            //机构产品不存在
+            throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_IS_NOT_EXIST.getCode());
+        }
         if (oldMerchantProductAudit == null) {
             BeanUtils.copyProperties(oldMerPro, merchantProductAudit);
             merchantProductAudit.setTradeDirection(merchantProductDTO.getTradeDirection());
@@ -355,6 +369,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             merchantProductAudit.setCreator(oldMerPro.getCreator());
             merchantProductAudit.setModifier(name);
             merchantProductAudit.setUpdateTime(oldMerPro.getCreateTime());
+            merchantProductAudit.setRank(institutionProduct.getRank());
             num = merchantProductAuditMapper.insert(merchantProductAudit);
 
         } else if (oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_FAIL || oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_SUCCESS) {
@@ -386,6 +401,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             merchantProductAudit.setEffectTime(merchantProductDTO.getEffectTime());
             merchantProductAudit.setModifier(name);
             merchantProductAudit.setCreateTime(new Date());
+            merchantProductAudit.setRank(institutionProduct.getRank());
             num = merchantProductAuditMapper.updateByPrimaryKeySelective(merchantProductAudit);
 
         } else if (oldMerchantProductAudit.getAuditStatus() == TradeConstant.AUDIT_WAIT || oldMerchantProductAudit.getAuditStatus() == null) {
