@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.qfpay.QfPayDTO;
+import com.asianwallets.common.dto.qfpay.QfPayRefundDTO;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
 import com.asianwallets.common.dto.upi.UpiRefundDTO;
@@ -318,29 +320,96 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         JSONObject jsonObject = (JSONObject) JSONObject.parse(channelResponse.getData().toString());
         if (channelResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             //请求成功
-            if("0000".equals(jsonObject.getString("resp_code")) && "1".equals(jsonObject.getString("pay_result"))){
+            if ("0000".equals(jsonObject.getString("resp_code")) && "1".equals(jsonObject.getString("pay_result"))) {
                 //支付成功
+                if (ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_SUCCESS, jsonObject.getString("pay_no"), new Date()) == 1) {
+                    //更新成功
+                    baseResponse = this.cancelPaying(channel, orderRefund, null);
+                } else {
+                    baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+                    //更新失败后去查询订单信息
+                    rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                }
 
-                
-
-
-            }else if("0000".equals(jsonObject.getString("resp_code")) && "2".equals(jsonObject.getString("pay_result"))){
+            } else if ("0000".equals(jsonObject.getString("resp_code")) && "2".equals(jsonObject.getString("pay_result"))) {
                 //支付失败
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=================【UPI撤销】================= 【交易失败】orderId : {}", orderRefund.getOrderId());
-                ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_FAILD,jsonObject.getString("pay_no"), new Date());
-            }else if("0000".equals(jsonObject.getString("resp_code")) && "0".equals(jsonObject.getString("pay_result"))){
+                ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_FAILD, jsonObject.getString("pay_no"), new Date());
+            } else if ("0000".equals(jsonObject.getString("resp_code")) && "0".equals(jsonObject.getString("pay_result"))) {
                 //支付中
                 baseResponse.setCode(EResultEnum.REFUNDING.getCode());
                 log.info("=================【UPI撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
                 rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
             }
-        }else{
+        } else {
             //请求失败
             baseResponse.setCode(EResultEnum.REFUNDING.getCode());
             log.info("=================【UPI撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
             rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
 
+        }
+        return baseResponse;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/23
+     * @Descripate 退款不上报清结算
+     **/
+    @Override
+    public BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        BaseResponse channelResponse;
+        BaseResponse baseResponse = new BaseResponse();
+        Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
+        UpiDTO upiDTO = new UpiDTO();
+        //拿到当天的23时间
+        Date endtime = DateToolUtils.addHour(DateToolUtils.getDayEnd(new Date()), -1);
+        String type = null;
+        if (System.currentTimeMillis() < endtime.getTime() || orderRefund.getRefundType() == 1) {
+            //撤销接口
+            type = "PAYC";
+            UpiRefundDTO upiRefundDTO = this.createRefundDTO(orderRefund, channel, type);
+            upiDTO.setUpiRefundDTO(upiRefundDTO);
+            log.info("==================【UPI退款】==================【调用Channels服务】【UPI-upiCancel】  upiDTO: {}", JSON.toJSONString(upiDTO));
+            channelResponse = channelsFeign.upiCancel(upiDTO);
+            log.info("==================【UPI退款】==================【调用Channels服务】【UPI-upiCancel】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        } else {
+            //退款接口
+            type = "REFUND";
+            UpiRefundDTO upiRefundDTO = this.createRefundDTO(orderRefund, channel, type);
+            upiDTO.setUpiRefundDTO(upiRefundDTO);
+            log.info("==================【UPI退款】==================【调用Channels服务】【UPI-upiRefund】  upiDTO: {}", JSON.toJSONString(upiDTO));
+            channelResponse = channelsFeign.upiRefund(upiDTO);
+            log.info("==================【UPI退款】==================【调用Channels服务】【UPI-upiRefund】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        }
+        JSONObject jsonObject = (JSONObject) JSONObject.parse(channelResponse.getData().toString());
+        if (channelResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            //请求成功
+            if (jsonObject.getString("resp_code").equals("0000") && ("1".equals(jsonObject.getString("refund_result")) || "1".equals(jsonObject.getString("pay_result")))) {
+                //退款成功
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+                log.info("=================【UPI退款 cancelPaying】=================【撤销成功】orderId : {}", orders.getId());
+                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_SUCCESS);
+            } else if (jsonObject.getString("resp_code").equals("0000") && ("2".equals(jsonObject.getString("refund_result")) || "2".equals(jsonObject.getString("pay_result")))) {
+                //退款失败
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
+                log.info("=================【UPI退款 cancelPaying】=================【撤销失败】orderId : {}", orders.getId());
+                ordersMapper.updateOrderCancelStatus(orders.getMerchantOrderId(), orderRefund.getOperatorId(), TradeConstant.ORDER_CANNEL_FALID);
+            } else if (jsonObject.getString("resp_code").equals("0000") && ("0".equals(jsonObject.getString("refund_result")) || "0".equals(jsonObject.getString("pay_result")))) {
+                //退款未处理或撤销情况未知
+                log.info("=================【UPI退款 cancelPaying】=================【退款未处理或撤销情况未知】  Order: {} ", orderRefund.getOrderId());
+            }
+        } else {
+            //请求失败
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+            log.info("=================【UPI退款 cancelPaying】=================【请求失败】orderId : {}", orders.getId());
+            if (rabbitMassage == null) {
+                rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+            }
+            log.info("=================【UPI退款 cancelPaying】=================【上报通道】rabbitMassage: {} ", JSON.toJSON(rabbitMassage));
+            rabbitMQSender.send(AD3MQConstant.CX_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return baseResponse;
     }
