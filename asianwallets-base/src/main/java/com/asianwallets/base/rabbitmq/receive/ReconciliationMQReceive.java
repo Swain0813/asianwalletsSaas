@@ -8,6 +8,7 @@ import com.asianwallets.base.rabbitmq.RabbitMQSender;
 import com.asianwallets.base.service.ClearingService;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;

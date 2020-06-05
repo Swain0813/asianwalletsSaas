@@ -315,9 +315,34 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-upiQueery】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiQueery(upiDTO);
         log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-upiQueery】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        JSONObject jsonObject = (JSONObject) JSONObject.parse(channelResponse.getData().toString());
+        if (channelResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            //请求成功
+            if("0000".equals(jsonObject.getString("resp_code")) && "1".equals(jsonObject.getString("pay_result"))){
+                //支付成功
+
+                
 
 
-        return null;
+            }else if("0000".equals(jsonObject.getString("resp_code")) && "2".equals(jsonObject.getString("pay_result"))){
+                //支付失败
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
+                log.info("=================【UPI撤销】================= 【交易失败】orderId : {}", orderRefund.getOrderId());
+                ordersMapper.updateOrderByAd3Query(orderRefund.getOrderId(), TradeConstant.ORDER_PAY_FAILD,jsonObject.getString("pay_no"), new Date());
+            }else if("0000".equals(jsonObject.getString("resp_code")) && "0".equals(jsonObject.getString("pay_result"))){
+                //支付中
+                baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+                log.info("=================【UPI撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
+                rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
+            }
+        }else{
+            //请求失败
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+            log.info("=================【UPI撤销】=================【查询订单失败】orderId : {}", orderRefund.getOrderId());
+            rabbitMQSender.send(AD3MQConstant.E_CX_GX_FAIL_DL, JSON.toJSONString(rabbitMassage));
+
+        }
+        return baseResponse;
     }
 
     /**
