@@ -43,8 +43,10 @@ public class MerchantProductFeignController extends BaseController {
 
     @Autowired
     private MerchantProductFeign merchantProductFeign;
+
     @Autowired
     private ExportService exportService;
+
     @Autowired
     private OperationLogService operationLogService;
 
@@ -204,6 +206,22 @@ public class MerchantProductFeignController extends BaseController {
             writer.close();
         }
         return ResultUtil.success();
+    }
+
+    @ApiOperation(value = "商户产品排序一览的分页查询")
+    @PostMapping("/pageMerProductSort")
+    public BaseResponse pageMerProductSort(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(merchantProductDTO),
+                "商户产品排序一览的分页查询"));
+        return merchantProductFeign.pageMerProductSort(merchantProductDTO);
+    }
+
+    @ApiOperation(value = "批量修改商户产品排序")
+    @PostMapping("/updateMerchantProductSort")
+    public BaseResponse updateMerchantProductSort(@RequestBody @ApiParam List<MerchantProductDTO> merchantProductDTOLists) {
+        operationLogService.addOperationLog(this.setOperationLog(this.getSysUserVO().getUsername(), AsianWalletConstant.UPDATE, JSON.toJSONString(merchantProductDTOLists),
+                "批量修改商户产品排序"));
+        return merchantProductFeign.updateMerchantProductSort(merchantProductDTOLists);
     }
 
 }

@@ -1,17 +1,13 @@
 package com.asianwallets.permissions.feign.base;
-
 import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.MerChannelVO;
 import com.asianwallets.permissions.feign.base.impl.MerchantProductFeignImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 
@@ -74,4 +70,12 @@ public interface MerchantProductFeign {
     @ApiOperation(value = "导出商户通道信息")
     @PostMapping("/merchantProduct/exportMerChannel")
     List<MerChannelVO> exportMerChannel(@RequestBody @ApiParam SearchChannelDTO searchChannelDTO);
+
+    @ApiOperation(value = "商户产品排序一览的分页查询")
+    @PostMapping("/merchantProduct/pageMerProductSort")
+    BaseResponse pageMerProductSort(@RequestBody @ApiParam MerchantProductDTO merchantProductDTO);
+
+    @ApiOperation(value = "批量修改商户产品排序")
+    @PostMapping("/merchantProduct/updateMerchantProductSort")
+    BaseResponse updateMerchantProductSort(@RequestBody @ApiParam List<MerchantProductDTO> merchantProductDTOLists);
 }

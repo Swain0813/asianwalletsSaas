@@ -149,4 +149,10 @@ public class MerchantProductController extends BaseController {
         }
         return ResultUtil.success(merchantProductService.pageMerProductSort(merchantProductDTO));
     }
+
+    @ApiOperation(value = "批量修改商户产品排序")
+    @PostMapping("/updateMerchantProductSort")
+    public BaseResponse updateMerchantProductSort(@RequestBody @ApiParam List<MerchantProductDTO> merchantProductDTOLists) {
+        return ResultUtil.success(merchantProductService.updateMerchantProductSort(this.getSysUserVO().getUsername(), merchantProductDTOLists));
+    }
 }

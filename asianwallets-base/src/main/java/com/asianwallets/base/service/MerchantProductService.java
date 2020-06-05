@@ -144,4 +144,12 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
      * @return
      */
     PageInfo<MerchantProductSortVO> pageMerProductSort(MerchantProductDTO merchantProductDTO);
+
+    /**
+     * 批量修改商户产品排序
+     * @param name
+     * @param merchantProductDTOLists
+     * @return
+     */
+    PageInfo<MerchantProductSortVO>  updateMerchantProductSort(String name, List<MerchantProductDTO> merchantProductDTOLists);
 }
