@@ -17,6 +17,7 @@ import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,7 +49,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
 
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
-        UpiPayDTO upiPayDTO = this.createCSBDTO(orders,channel);
+        UpiPayDTO upiPayDTO = this.createCSBDTO(orders, channel);
         upiDTO.setUpiPayDTO(upiPayDTO);
         log.info("==================【UPI线下CSB】==================【调用Channels服务】【QfPay-CSB接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiPay(upiDTO);
@@ -65,10 +66,10 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/4
      * @Descripate 创建CSBDTO
-     * @return
      **/
     private UpiPayDTO createCSBDTO(Orders orders, Channel channel) {
         UpiPayDTO upiPayDTO = new UpiPayDTO();
@@ -90,13 +91,27 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         return upiPayDTO;
     }
 
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2020/6/5
+     * @Descripate upi回调
+     **/
     @Override
     public String upiServerCallback(JSONObject jsonObject) {
-        //final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(upiDTO.getChannel().getExtend5(), "pem", "RSA");
-        //final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(upiDTO.getChannel().getMd5KeyStr(), "pem", null, "RSA");
+        try {
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource(ad3ParamsConfig.getUpiPublicKeyPath()).getPath(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource(ad3ParamsConfig.getUpiPrivateKeyPath()).getPath(), "pem", null, "RSA");
+            String result =CryptoUtil.respDecryption(jsonObject, hzfPriKey, yhPubKey);
+            log.info("===============【upi回调】===============【返回】 result: {}", result);
+            JSONObject json = (JSONObject) JSONObject.parse(result);
 
 
 
-    return "success";
+        } catch (Exception e) {
+            log.info("================【upi回调】================【异常】", e);
+        }
+
+        return "success";
     }
 }

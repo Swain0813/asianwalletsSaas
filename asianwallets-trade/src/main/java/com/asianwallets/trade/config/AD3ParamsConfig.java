@@ -31,6 +31,13 @@ public class AD3ParamsConfig {
     @Value("${custom.nextPosUrl}")
     private String nextPosUrl;
 
+    @ApiModelProperty("upi私钥")
+    @Value("${custom.upi.privateKeyPath}")
+    private String upiPrivateKeyPath;
+
+    @ApiModelProperty("upi公钥")
+    @Value("${custom.upi.publicKeyPath}")
+    private String upiPublicKeyPath;
 
 }
 
