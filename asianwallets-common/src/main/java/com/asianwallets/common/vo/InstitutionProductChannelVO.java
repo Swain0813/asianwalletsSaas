@@ -20,6 +20,9 @@ public class InstitutionProductChannelVO {
     @ApiModelProperty(value = "产品id")
     private String productId;
 
+    @ApiModelProperty(value = "排序")
+    private Integer rank;
+
     @ApiModelProperty(value = "产品简称")
     private String productAbbrev;
 

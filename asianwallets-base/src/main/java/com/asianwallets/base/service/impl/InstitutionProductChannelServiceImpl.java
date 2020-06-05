@@ -125,6 +125,7 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
             institutionProduct.setId(insProId);
             institutionProduct.setInstitutionId(institutionProductChannelDTO.getInstitutionId());
             institutionProduct.setProductId(institutionProductChannelDTO.getProductId());
+            institutionProduct.setRank(institutionProductChannelDTO.getRank());
             institutionProduct.setInstitutionName(institutionProductChannelDTO.getInstitutionName());
             institutionProduct.setProductAbbrev(institutionProductChannelDTO.getProductAbbrev());
             institutionProduct.setProductImg(institutionProductChannelDTO.getProductImg());
@@ -196,6 +197,7 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
     public PageInfo<InstitutionProductVO> pageInstitutionPro(InstitutionProductDTO institutionProductDTO){
         //当前请求语言
         institutionProductDTO.setLanguage(auditorProvider.getLanguage());
+        institutionProductDTO.setSort("ip.rank");
         institutionProductDTO.setSort("ip.create_time");
         return new PageInfo(institutionProductMapper.pageInstitutionPro(institutionProductDTO));
     }

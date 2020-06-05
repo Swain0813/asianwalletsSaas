@@ -1,5 +1,6 @@
 package com.asianwallets.common.dto.upi.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 
@@ -397,5 +398,26 @@ public abstract class CryptoUtil {
             sb.append(StringUtils.leftPad(str.toUpperCase(), size, "0"));
         }
         return sb.toString();
+    }
+
+    public static String respDecryption(JSONObject jsonObject, PrivateKey hzfPriKey, PublicKey yhPubKey) {
+        String xmlData = "";
+        try {
+            byte[] encryptedBytes = Base64.decodeBase64(jsonObject.getString("encryptKey").toString().getBytes("UTF-8"));
+            //			String encrtptKey = new String(encryptedBytes, "UTF-8");
+            byte[] keyBytes = CryptoUtil.RSADecrypt(encryptedBytes, hzfPriKey, 2048, 11, "RSA/ECB/PKCS1Padding");
+            byte[] plainBytes = Base64.decodeBase64(jsonObject.getString("encryptData").toString().getBytes("UTF-8"));
+            byte[] xmlBytes = CryptoUtil.AESDecrypt(plainBytes, keyBytes, "AES", "AES/ECB/PKCS5Padding", null);
+            xmlData = new String(xmlBytes, "UTF-8");
+
+            boolean signResult = CryptoUtil.verifyDigitalSign(xmlBytes, Base64.decodeBase64(jsonObject.getString("signData")), yhPubKey, "SHA1WithRSA");
+
+            if (!signResult) {
+                throw new Exception("sign error");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return xmlData;
     }
 }

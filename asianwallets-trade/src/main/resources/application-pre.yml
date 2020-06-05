@@ -98,3 +98,6 @@ custom:
     check_url: https://www.nganluong.vn/checkout.api.nganluong.post.php
   #给AD3的回调URL
   channelCallbackUrl: https://cashier.alldebitpay.com/tra
+  upi:
+    privateKeyPath: /testKey/549440159990001.pem
+    publicKeyPath: /testKey/GHT_ROOT.pem

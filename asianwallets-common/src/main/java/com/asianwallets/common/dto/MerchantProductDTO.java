@@ -144,4 +144,7 @@ public class MerchantProductDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "结束时间")
     private String endTime;
+
+    @ApiModelProperty(value = "商户产品排序")
+    private Integer rank;
 }
