@@ -1,5 +1,6 @@
 package com.asianwallets.base.service;
 
+import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.Merchant;
 
@@ -21,4 +22,11 @@ public interface CommonService {
      * @return
      */
     Merchant getMerchant(String merchantId);
+
+    /**
+     * 根据通道id获取通道信息
+     * @param channelId
+     * @return
+     */
+    Channel getChannelById(String channelId);
 }

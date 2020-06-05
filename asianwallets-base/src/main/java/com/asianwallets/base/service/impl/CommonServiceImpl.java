@@ -1,9 +1,11 @@
 package com.asianwallets.base.service.impl;
 import com.alibaba.fastjson.JSON;
+import com.asianwallets.base.dao.ChannelMapper;
 import com.asianwallets.base.dao.InstitutionMapper;
 import com.asianwallets.base.dao.MerchantMapper;
 import com.asianwallets.base.service.CommonService;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.Merchant;
 import com.asianwallets.common.exception.BusinessException;
@@ -28,6 +30,9 @@ public class CommonServiceImpl implements CommonService {
 
     @Autowired
     private MerchantMapper merchantMapper;
+
+    @Autowired
+    private ChannelMapper channelMapper;
 
     /**
      * 根据机构code获取机构名称
@@ -80,5 +85,27 @@ public class CommonServiceImpl implements CommonService {
             redisService.set(AsianWalletConstant.MERCHANT_CACHE_KEY.concat("_").concat(merchant.getId()), JSON.toJSONString(merchant));
         }
         return merchant;
+    }
+
+
+    /**
+     * 缓存获取通道信息
+     * @param channelId
+     * @return
+     */
+    public Channel getChannelById(String channelId) {
+        Channel channel = null;
+        channel = JSON.parseObject(redisService.get(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channelId)), Channel.class);
+        if (channel == null) {
+            channel = channelMapper.selectByPrimaryKey(channelId);
+            if (channel == null) {
+                log.info("==================【根据通道ID查询通道信息】==================【通道对象不存在】 channelId: {}", channelId);
+                return null;
+            }
+            redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
+            redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channel.getChannelCode()), JSON.toJSONString(channel));
+        }
+        log.info("==================【根据通道ID查询通道信息】==================【通道信息】 channel: {}", JSON.toJSONString(channel));
+        return channel;
     }
 }

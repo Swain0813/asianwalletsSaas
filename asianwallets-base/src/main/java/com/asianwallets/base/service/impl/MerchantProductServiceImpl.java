@@ -1,5 +1,4 @@
 package com.asianwallets.base.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.base.dao.*;
@@ -20,10 +19,7 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
-import com.asianwallets.common.vo.ChaBankRelVO;
-import com.asianwallets.common.vo.MerChannelVO;
-import com.asianwallets.common.vo.MerchantProductVO;
-import com.asianwallets.common.vo.MerchantRelevantVO;
+import com.asianwallets.common.vo.*;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -79,9 +74,6 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     private ProductMapper productMapper;
 
     @Autowired
-    private ChannelMapper channelMapper;
-
-    @Autowired
     private AccountMapper accountMapper;
 
     @Autowired
@@ -96,6 +88,8 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     @Autowired
     private AlipaySecMerchantReport alipaySecmerchantReport;
 
+    @Autowired
+    private InstitutionProductMapper institutionProductMapper;
 
     /**
      * @return
@@ -141,6 +135,12 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 //                }
             }
 
+            //获取机构产品信息
+            InstitutionProduct institutionProduct = institutionProductMapper.getInstitutionProByInstitutionIdAndProductId(merchant.getInstitutionId(),merchantProductDTO.getProductId());
+            if(institutionProduct==null){
+                //机构产品不存在
+                throw new BusinessException(EResultEnum.INSTITUTION_PRODUCT_IS_NOT_EXIST.getCode());
+            }
             String id = IDS.uuid2();
             MerchantProduct merchantProduct = new MerchantProduct();
             BeanUtils.copyProperties(merchantProductDTO, merchantProduct);
@@ -151,6 +151,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             merchantProduct.setCreateTime(new Date());
             merchantProduct.setCreator(name);
             merchantProduct.setEnabled(false);
+            merchantProduct.setRank(institutionProduct.getRank());
             merchantProduct.setAuditStatus(TradeConstant.AUDIT_WAIT);
 
             MerchantProductAudit merchantProductAudit = new MerchantProductAudit();
@@ -235,7 +236,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             //判断产品是否是线上
             if (product.getTradeDirection().equals(TradeConstant.PRODUCT_ONLINE)) {
                 for (ChannelInfoDTO channelInfoDTO : prodChannelDTO.getChannelList()) {
-                    Channel channel = getChannelById(channelInfoDTO.getChannelId());
+                    Channel channel = commonService.getChannelById(channelInfoDTO.getChannelId());
                     //判断通道是否是alipay
                     if (channel.getServiceNameMark().contains(TradeConstant.ALIPAY)) {
                         alipaySecmerchantReport.report(merProDTO.getMerchantId(), channelInfoDTO.getChannelId());
@@ -246,26 +247,6 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
         return 0;
     }
 
-    /**
-     * 缓存获取通道信息
-     * @param channelId
-     * @return
-     */
-    public Channel getChannelById(String channelId) {
-        Channel channel = null;
-        channel = JSON.parseObject(redisService.get(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channelId)), Channel.class);
-        if (channel == null) {
-            channel = channelMapper.selectByPrimaryKey(channelId);
-            if (channel == null) {
-                log.info("==================【根据通道ID查询通道信息】==================【通道对象不存在】 channelId: {}", channelId);
-                return null;
-            }
-            redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
-            redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channel.getChannelCode()), JSON.toJSONString(channel));
-        }
-        log.info("==================【根据通道ID查询通道信息】==================【通道信息】 channel: {}", JSON.toJSONString(channel));
-        return channel;
-    }
     /**
      * @return
      * @Author YangXu
@@ -324,7 +305,6 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 //                throw new BusinessException(EResultEnum.RATE_TYPE_IS_DIFFERENT.getCode());
 //            }
         }
-
         if (oldMerchantProductAudit == null) {
             BeanUtils.copyProperties(oldMerPro, merchantProductAudit);
             merchantProductAudit.setTradeDirection(merchantProductDTO.getTradeDirection());
@@ -729,4 +709,16 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
     public List<MerChannelVO> exportMerChannel(SearchChannelDTO searchChannelDTO) {
         return merchantChannelMapper.exportMerChannel(searchChannelDTO);
     }
+
+    /**
+     * 商户产品排序一览的分页查询
+     * @param merchantProductDTO
+     * @return
+     */
+    @Override
+    public PageInfo<MerchantProductSortVO> pageMerProductSort(MerchantProductDTO merchantProductDTO) {
+        return new PageInfo<MerchantProductSortVO>(merchantProductMapper.pageMerProductSort(merchantProductDTO));
+    }
+
+
 }

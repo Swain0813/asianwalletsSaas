@@ -6,6 +6,7 @@ import com.asianwallets.common.entity.MerchantProduct;
 import com.asianwallets.common.entity.MerchantProductAudit;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.MerChannelVO;
+import com.asianwallets.common.vo.MerchantProductSortVO;
 import com.asianwallets.common.vo.MerchantProductVO;
 import com.asianwallets.common.vo.MerchantRelevantVO;
 import com.github.pagehelper.PageInfo;
@@ -136,4 +137,11 @@ public interface MerchantProductService extends BaseService<MerchantProduct> {
      * @Descripate 导出商户通道信息
      **/
     List<MerChannelVO> exportMerChannel(SearchChannelDTO searchChannelDTO);
+
+    /**
+     * 商户产品排序一览的分页查询
+     * @param merchantProductDTO
+     * @return
+     */
+    PageInfo<MerchantProductSortVO> pageMerProductSort(MerchantProductDTO merchantProductDTO);
 }

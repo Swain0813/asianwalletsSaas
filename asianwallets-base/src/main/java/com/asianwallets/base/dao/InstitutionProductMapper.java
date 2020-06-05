@@ -79,4 +79,12 @@ public interface InstitutionProductMapper extends BaseMapper<InstitutionProduct>
      * @return
      */
     List<InstitutionChannelQueryVO> pageInstitutionCha(InstitutionChannelQueryDTO institutionChannelQueryDTO);
+
+    /**
+     * 根据机构编号和产品id获取机构产品信息
+     * @param institutionId
+     * @param productId
+     * @return
+     */
+    InstitutionProduct getInstitutionProByInstitutionIdAndProductId(@Param("institutionId") String institutionId,@Param("productId") String productId);
 }

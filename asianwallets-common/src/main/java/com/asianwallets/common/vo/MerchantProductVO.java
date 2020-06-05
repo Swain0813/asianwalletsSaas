@@ -132,16 +132,22 @@ public class MerchantProductVO {
 
     @ApiModelProperty(value = "ext1")
     private String ext1;
+
     @ApiModelProperty(value = "ext2")
     private String ext2;
+
     @ApiModelProperty(value = "ext3")
     private String ext3;
+
     @ApiModelProperty(value = "ext4")
     private String ext4;
+
     @ApiModelProperty(value = "ext5")
     private String ext5;
+
     @ApiModelProperty(value = "ext6")
     private String ext6;
+
     @ApiModelProperty(value = "ext7")
     private String ext7;
 
