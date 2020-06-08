@@ -370,7 +370,6 @@
         <result column="institution_name" property="institutionName"/>
         <result column="product_id" property="productId"/>
         <result column="product_abbrev" property="productName"/>
-        <result column="pay_type" property="payType"/>
         <result column="rank" property="rank"/>
         <result column="pay_type" property="payType"/>
         <result column="pay_types" property="payTypes"/>
