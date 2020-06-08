@@ -211,8 +211,102 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     @Override
     public BaseResponse bankCardReceipt(Orders orders, Channel channel) {
         BaseResponse baseResponse = new BaseResponse();
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+        UpiPayDTO upiPayDTO = this.createBSCDTO(orders, channel);
+        upiDTO.setUpiPayDTO(upiPayDTO);
+        log.info("==================【UPI银行卡下单】==================【调用Channels服务】【UPI-银行卡下单接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+        BaseResponse channelResponse = channelsFeign.upiPay(upiDTO);
+        log.info("==================【UPI银行卡下单】==================【调用Channels服务】【UPI-银行卡下单接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        //请求失败
+        if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            log.info("==================【UPI银行卡下单】==================【调用Channels服务】【UPI-银行卡下单】-【请求状态码异常】");
+            throw new BusinessException(EResultEnum.PAYMENT_ABNORMAL.getCode());
+        }
+        JSONObject jsonObject = (JSONObject) JSONObject.parse(channelResponse.getData().toString());
+        //通道订单号
+        orders.setChannelNumber(jsonObject.getString("pay_no"));
+        ordersMapper.updateByPrimaryKeySelective(orders);
+        //订单状态
+        String status = jsonObject.getString("pay_result");
+        //通道回调时间
+        orders.setChannelCallbackTime(new Date());
+        //修改时间
+        orders.setUpdateTime(new Date());
+        Example example = new Example(Orders.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("tradeStatus", "2");
+        criteria.andEqualTo("id", orders.getId());
+        if ("1".equals(status)) {
+            //支付成功
+            log.info("==================【UPI银行卡下单】==================【支付成功】orderId: {}", orders.getId());
+            //未发货
+            orders.setDeliveryStatus(TradeConstant.UNSHIPPED);
+            //未签收
+            orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
+            orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), jsonObject.getString("pay_no"), TradeConstant.TRADE_SUCCESS);
+            } catch (Exception e) {
+                log.error("=================【UPI银行卡下单】=================【更新通道订单异常】", e);
+            }
+            //更新订单信息
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                log.info("=================【UPI银行卡下单】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
+                //计算支付成功时的通道网关手续费
+                commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
+                //TODO 添加日交易限额与日交易笔数
+                //commonBusinessService.quota(orders.getMerchantId(), orders.getProductCode(), orders.getTradeAmount());
+                //支付成功后向用户发送邮件
+                commonBusinessService.sendEmail(orders);
+                try {
+                    //账户信息不存在的场合创建对应的账户信息
+                    if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
+                        log.info("=================【UPI银行卡下单】=================【上报清结算前线下下单创建账户信息】");
+                        commonBusinessService.createAccount(orders);
+                    }
+                    //分润
+                    if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
+                        rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
+                    }
+                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
+                    //上报清结算资金变动接口
+                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
+                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
+                        log.info("=================【UPI银行卡下单】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                    }
+                } catch (Exception e) {
+                    log.error("=================【UPI银行卡下单】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                    rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                }
+            } else {
+                log.info("=================【UPI银行卡下单】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        } else if ("2".equals(status)) {
+            //支付失败
+            log.info("==================【UPI银行卡下单】==================【支付失败】orderId: {}", orders.getId());
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+            orders.setRemark5(jsonObject.getString("resp_desc"));
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_FALID);
+            } catch (Exception e) {
+                log.error("=================【UPI银行卡下单】=================【更新通道订单异常】", e);
+            }
+            //计算支付失败时的通道网关手续费
+            commonBusinessService.calcCallBackGatewayFeeFailed(orders);
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                log.info("=================【UPI银行卡下单】=================【订单支付失败后更新数据库成功】 orderId: {}", orders.getId());
+            } else {
+                log.info("=================【UPI银行卡下单】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        } else {
+            //未支付
+            log.info("==================【UPI银行卡下单】==================【未支付】orderId: {}", orders.getId());
 
-        
+        }
         return baseResponse;
     }
     /**
