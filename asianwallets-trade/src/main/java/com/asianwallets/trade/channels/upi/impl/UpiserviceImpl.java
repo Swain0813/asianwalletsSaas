@@ -213,7 +213,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         BaseResponse baseResponse = new BaseResponse();
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
-        UpiPayDTO upiPayDTO = this.createBSCDTO(orders, channel);
+        UpiPayDTO upiPayDTO = this.createBankDTO(orders, channel);
         upiDTO.setUpiPayDTO(upiPayDTO);
         log.info("==================【UPI银行卡下单】==================【调用Channels服务】【UPI-银行卡下单接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiPay(upiDTO);
@@ -309,6 +309,36 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         }
         return baseResponse;
     }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/6/8
+     * @Descripate 创建银行卡下单dto
+     * @return
+     **/
+    private UpiPayDTO createBankDTO(Orders orders, Channel channel) {
+        UpiPayDTO upiPayDTO = new UpiPayDTO();
+        upiPayDTO.setVersion("2.0.0");
+        upiPayDTO.setTrade_code("PAY");
+        // BACKSTAGEALIPAY 银行直连参数 UNIONZS：银联国际二维码主扫，BACKSTAGEUNION：银联国际二维码反扫
+        //主扫CSB 反扫BSC
+        upiPayDTO.setBank_code("BACKSTAGEALIPAY");
+        upiPayDTO.setAgencyId(channel.getChannelMerchantId());
+        upiPayDTO.setTerminal_no(channel.getExtend1());
+        upiPayDTO.setOrder_no(orders.getId());
+        upiPayDTO.setAmount(orders.getTradeAmount().toString());
+        upiPayDTO.setCurrency_type(orders.getTradeCurrency());
+        upiPayDTO.setSett_currency_type(orders.getTradeCurrency());
+        upiPayDTO.setProduct_name(channel.getExtend6());
+        upiPayDTO.setUser_bank_card_no(orders.getUserBankCardNo());
+        upiPayDTO.setCvn2(orders.getCvv2());
+        upiPayDTO.setValid(orders.getValid());
+        upiPayDTO.setReturn_url(ad3ParamsConfig.getChannelCallbackUrl().concat("/offlineCallback/upiServerCallback"));
+        upiPayDTO.setNotify_url(ad3ParamsConfig.getChannelCallbackUrl().concat("/offlineCallback/upiServerCallback"));
+        upiPayDTO.setClient_ip(orders.getReqIp());
+        return upiPayDTO;
+    }
+
     /**
      * @return
      * @Author YangXu
