@@ -337,6 +337,8 @@
         mp.id,
         mp.merchant_id,
         mp.merchant_name,
+        i.id as institution_id,
+        i.cn_name as institution_name,
         mp.product_id,
         mp.rank,
         case
