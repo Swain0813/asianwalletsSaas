@@ -728,8 +728,9 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
      */
     @Override
     public PageInfo<MerchantProductSortVO>  updateMerchantProductSort(String name, List<MerchantProductDTO> merchantProductDTOLists) {
+
         if(merchantProductDTOLists==null || merchantProductDTOLists.size()==0){
-            return new PageInfo(merchantProductMapper.pageMerProductRank());
+            return new PageInfo(merchantProductMapper.pageMerProductRank(auditorProvider.getLanguage()));
         }
         for(MerchantProductDTO merchantProductDTOList:merchantProductDTOLists){
             MerchantProduct merchantProduct = new MerchantProduct();
@@ -739,7 +740,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             merchantProduct.setModifier(name);//修改人
             merchantProductMapper.updateByPrimaryKeySelective(merchantProduct);
         }
-        return new PageInfo(merchantProductMapper.pageMerProductRank());
+        return new PageInfo(merchantProductMapper.pageMerProductRank(auditorProvider.getLanguage()));
     }
 
 
