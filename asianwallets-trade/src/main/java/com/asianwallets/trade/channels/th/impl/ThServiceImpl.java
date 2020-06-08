@@ -746,7 +746,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public BaseResponse reversal(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         ThDTO thDTO = new ThDTO();
-        ISO8583DTO iso8583DTO = this.createRevesalDTO(channel, orderRefund);
+        ISO8583DTO iso8583DTO = this.createReversalDTO(channel, orderRefund);
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         log.info("=================【TH冲正 reversal】=================【请求Channels服务TH冲正】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
@@ -785,7 +785,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      * @Date 2020/5/18
      * @Descripate 创建冲正DTO
      **/
-    private ISO8583DTO createRevesalDTO(Channel channel, OrderRefund orderRefund) {
+    private ISO8583DTO createReversalDTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0400");
         iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()), channel.getMd5KeyStr()));
@@ -848,7 +848,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public BaseResponse bankRefund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         ThDTO thDTO = new ThDTO();
-        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        ISO8583DTO iso8583DTO = null;
         Orders orders = ordersMapper.selectByMerchantOrderId(orderRefund.getMerchantOrderId());
         if (DateUtil.isSameDay(orders.getCreateTime(), new Date())) {
             //当日内走撤销
@@ -939,7 +939,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //37 域
         iso8583DTO.setRetrievalReferenceNumber_37(orders.getRemark1());
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
-        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId()); //受卡方标识码
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
