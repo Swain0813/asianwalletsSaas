@@ -788,7 +788,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     private ISO8583DTO createRevesalDTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0400");
-        iso8583DTO.setProcessingCode_2(trkEncryption(orderRefund.getUserBankCardNo(), channel.getMd5KeyStr()));
+        iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()), channel.getMd5KeyStr()));
         iso8583DTO.setProcessingCode_3("009000");
         iso8583DTO.setAmountOfTransactions_4(String.format("%012d", orderRefund.getTradeAmount()));
         //受卡方系统跟踪号
