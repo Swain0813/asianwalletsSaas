@@ -41,7 +41,7 @@ public class UpiTest extends SpringBootServletInitializer {
         upiPayDTO.setTrade_code("PAY");
         // BACKSTAGEALIPAY 银行直连参数 UNIONZS：银联国际二维码主扫，BACKSTAGEUNION：银联国际二维码反扫
         //主扫CSB 反扫BSC
-        upiPayDTO.setBank_code("UNIONZS");
+        upiPayDTO.setBank_code("BACKSTAGEALIPAY");
         upiPayDTO.setAgencyId(channel.getChannelMerchantId());
         //upiPayDTO.setChild_merchant_no("574034451110001");
         upiPayDTO.setTerminal_no("20003968");
@@ -61,6 +61,10 @@ public class UpiTest extends SpringBootServletInitializer {
         upiPayDTO.setReturn_url("https://testpay.sicpay.com/");
         upiPayDTO.setNotify_url("https://testpay.sicpay.com/");
         upiPayDTO.setClient_ip("120.236.178.23");
+
+        upiPayDTO.setUser_bank_card_no("6226388000000095");
+        upiPayDTO.setCvn2("248");
+        upiPayDTO.setValid("1219");
 
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
