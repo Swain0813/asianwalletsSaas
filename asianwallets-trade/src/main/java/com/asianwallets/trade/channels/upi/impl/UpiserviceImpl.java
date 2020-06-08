@@ -202,6 +202,20 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
+     * UPI线下银行卡下单
+     *
+     * @param orders
+     * @param channel
+     * @return
+     */
+    @Override
+    public BaseResponse bankCardReceipt(Orders orders, Channel channel) {
+        BaseResponse baseResponse = new BaseResponse();
+
+        
+        return baseResponse;
+    }
+    /**
      * @return
      * @Author YangXu
      * @Date 2019/12/19
