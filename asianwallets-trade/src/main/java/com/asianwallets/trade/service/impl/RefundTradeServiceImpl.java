@@ -529,7 +529,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         //创建退款接口需要的输入参数
         RefundDTO refundDTO = this.getBankCardRefundDTO(bankCardUndoDTO,order,TradeConstant.CZ);
-        return this.refundOrder(refundDTO,reqIp);
+        return this.bankCardRefund(refundDTO,reqIp);
     }
 
     /**
@@ -575,7 +575,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         //创建退款接口需要的输入参数
         RefundDTO refundDTO = this.getBankCardRefundDTO(bankCardUndoDTO,order,TradeConstant.RV);
-        return this.refundOrder(refundDTO,reqIp);
+        return this.bankCardRefund(refundDTO,reqIp);
     }
 
     /**
