@@ -240,6 +240,7 @@
         p.product_details_logo as productDetailsLogo,
         p.product_print_logo as productPrintLogo,
         c.defaults as defaultValue,
+        o.pre_remark as preRemark,
         o.create_time as createTime
         FROM orders o left join pay_type pt on o.pay_method = pt.extend1 and pt.language = #{language}
         left join currency c on o.order_currency = c.code
@@ -296,6 +297,7 @@
         p.product_details_logo as productDetailsLogo,
         p.product_print_logo as productPrintLogo,
         c.defaults as defaultValue,
+        o.pre_remark as preRemark,
         o.create_time as createTime
         FROM orders o left join pay_type pt on o.pay_method = pt.extend1 and pt.language = #{language}
         left join currency c on o.order_currency = c.code
@@ -409,6 +411,7 @@
         <result column="orderAmount" property="orderAmount" jdbcType="DECIMAL"/>
         <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="orderCurrency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <result column="preRemark" property="preRemark" jdbcType="VARCHAR"/>
         <result column="count" property="count" jdbcType="INTEGER"/>
     </resultMap>
 
@@ -426,6 +429,7 @@
         "1" AS tradeType,
         o.issuer_id AS payMethod,
         o.order_amount AS orderAmount,
+        o.pre_remark AS preRemark,
         o.order_currency AS orderCurrency
         FROM
         orders o
@@ -454,6 +458,7 @@
         "2" AS tradeType,
         r.issuer_id AS payMethod,
         r.order_amount AS orderAmount,
+        r.pre_remark AS preRemark,
         r.order_currency AS orderCurrency
         FROM
         order_refund r
@@ -510,6 +515,7 @@
         di. NAME AS tradeType,
         o.issuer_id AS payMethod,
         o.order_amount AS orderAmount,
+        o.pre_remark AS preRemark,
         o.order_currency AS orderCurrency
         FROM
         orders o,
@@ -547,6 +553,7 @@
         di. NAME AS tradeType,
         r.issuer_id AS payMethod,
         r.order_amount AS orderAmount,
+        r.pre_remark AS preRemark,
         r.order_currency AS orderCurrency
         FROM
         order_refund r,

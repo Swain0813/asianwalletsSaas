@@ -424,4 +424,8 @@ public class Orders extends BaseEntity {
     @Column(name = "shop_code")
     private String shopCode;
 
+    @ApiModelProperty(value = "预授权订单的备注")
+    @Column(name = "pre_remark")
+    private String preRemark;
+
 }
