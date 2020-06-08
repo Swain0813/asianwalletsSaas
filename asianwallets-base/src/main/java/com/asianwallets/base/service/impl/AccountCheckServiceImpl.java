@@ -115,20 +115,16 @@ public class AccountCheckServiceImpl implements AccountCheckService {
         if (!FinanceConstant.FinanceChannelNameMap.containsKey(name[0])) {
             throw new BusinessException(EResultEnum.NAME_ERROR.getCode());
         }
-        try {
-            AccCheckDTO accCheckDTO = null;
-            //ad3对账单退款单号为退款单原订单号，不支持对账
-            if (name[0].equals("AD3")) {
-                accCheckDTO = ad3Read(file);
-            } else if (name[0].equals("HELP2PAY")) {
-                //针对HELP2PAY的对账逻辑是对账单上游退款和收单都是成功的状态
-                accCheckDTO = help2PayRead(file);
-            }
-            //check账单
-            this.doCheck(accCheckDTO.getAd3SDMap(), accCheckDTO.getAd3TKMap(), name,username);
-        } catch (Exception e) {
-            log.error("***********************ad3通道对账发生异常*******************", e);
+        AccCheckDTO accCheckDTO = null;
+        //ad3对账单退款单号为退款单原订单号，不支持对账
+        if (name[0].equals("AD3")) {
+            accCheckDTO = ad3Read(file);
+        } else if (name[0].equals("HELP2PAY")) {
+            //针对HELP2PAY的对账逻辑是对账单上游退款和收单都是成功的状态
+            accCheckDTO = help2PayRead(file);
         }
+        //check账单
+        this.doCheck(accCheckDTO.getAd3SDMap(), accCheckDTO.getAd3TKMap(), name,username);
         return null;
     }
 
@@ -147,6 +143,10 @@ public class AccountCheckServiceImpl implements AccountCheckService {
         Date endTime = DateToolUtils.getDayEnd(DateToolUtils.addDay(DateToolUtils.StringToDate(name[1]), -1));
         //文件对应的通道编号
         List<String> list = FinanceConstant.FinanceChannelNameMap.get(name[0]);
+        if(list.size()==0){
+            log.info("************************通道编号数据不存在************************");
+            throw new BusinessException(EResultEnum.CHANNEL_IS_NOT_EXISTS.getCode());
+        }
         List<String> tkList = Lists.newArrayList();//退款补单队列
         List<String> sdList = Lists.newArrayList();//收单补单队列
         List<CheckAccount> checkAccountList = checkAccountMapper.getDataByType(FinanceConstant.FINACE_WAIT, startTime, endTime);//获取前一天未对账状态的对账单数据
