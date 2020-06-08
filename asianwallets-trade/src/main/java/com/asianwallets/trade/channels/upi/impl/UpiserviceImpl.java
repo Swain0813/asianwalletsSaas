@@ -311,10 +311,35 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
+     * @return
+     * @Author YangXu
+     * @Date 2020/5/26
+     * @Descripate 银行卡冲正接口
+     **/
+    @Override
+    public BaseResponse reversal(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        log.info("==================【UPI银行卡撤销接口】==================orderId: {}", orderRefund.getOrderId());
+        return this.cancel(channel, orderRefund, rabbitMassage);
+    }
+
+    /**
+     * UPI 银行卡退款
+     *
+     * @param channel
+     * @param orderRefund
+     * @param rabbitMassage
+     * @return
+     */
+    @Override
+    public BaseResponse bankRefund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        log.info("==================【UPI银行卡退款接口】==================orderId: {}", orderRefund.getOrderId());
+        return this.refund(channel, orderRefund, rabbitMassage);
+    }
+    /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/8
      * @Descripate 创建银行卡下单dto
-     * @return
      **/
     private UpiPayDTO createBankDTO(Orders orders, Channel channel) {
         UpiPayDTO upiPayDTO = new UpiPayDTO();
