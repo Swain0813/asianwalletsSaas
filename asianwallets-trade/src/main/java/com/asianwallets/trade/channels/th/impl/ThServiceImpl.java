@@ -678,7 +678,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         //服务点输入方式码 021 刷卡，且PIN可输入
-        iso8583DTO.setPointOfServiceEntryMode_22("021");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         //个人PIN
