@@ -143,36 +143,21 @@ public class UpiTest extends SpringBootServletInitializer {
     @Test
     public void upiDownTest() {
 
-        //Channel channel = new Channel();
-        //channel.setChannelMerchantId("549440189990001");
-        //
-        //UpiDownDTO upiDownDTO = new UpiDownDTO();
-        //upiDownDTO.setVersion("2.0.0");
-        //upiDownDTO.setTrade_code("DOWNLOAD_SETTLE_FILE");
-        //upiDownDTO.setAgencyId(channel.getChannelMerchantId());
-        //upiDownDTO.setTerminal_no("20003962");
-        //upiDownDTO.setSettle_date("20200602");
-        //upiDownDTO.setFile_type("TRAN");
-        //
-        //UpiDTO upiDTO = new UpiDTO();
-        //upiDTO.setChannel(channel);
-        //upiDTO.setUpiDownDTO(upiDownDTO);
-        //upiService.upiDownSettle(upiDTO);
+        Channel channel = new Channel();
+        channel.setChannelMerchantId("549440189990001");
 
+        UpiDownDTO upiDownDTO = new UpiDownDTO();
+        upiDownDTO.setVersion("2.0.0");
+        upiDownDTO.setTrade_code("DOWNLOAD_SETTLE_FILE");
+        upiDownDTO.setAgencyId(channel.getChannelMerchantId());
+        upiDownDTO.setTerminal_no("20003962");
+        upiDownDTO.setSettle_date("20200602");
+        upiDownDTO.setFile_type("TRAN");
 
-        Map<String, String> map = new HashMap<>();
-        map.put("signData", "Gl6oXPG7qNfkBbZPs4wapjQ5PQ8k+LQmJJqlmziaJVRSu4nrnGqaagubNq1ww2SFghDxbeKzm3BMJlcdjlPrSXrHuTe+ZfkM+ctbPYe/Ms7P9imiScmBwLD3tEMsE/igsW8vsy//V25TJjGVGs6YgO8PM06p32RFrrkGO/GTmETs7yYRtqdg0gviDGm34Nm+XkwtGIeh88/4BflzIY5MyIBVg6feVYcveiz4ShTPU2/7ctF6LPK9UFHrPxietXOduyHVImsJXXhzao/i8+UWropbwnPcIwzPl/bVhibaqtWYM7rCoOTGh0+8IU7lB+BvYAH7cxGh2DByhMu5AzEuiA==");
-        map.put("encryptData", "R5g/exKgZL5uaPMNYUKlMHuSupLE2QHdgqt/Xy2tbIJ3jK3cichi6uujEJkaD18TuaPBmKvkrbI7wRegw7q1gEwR3XuQnFaxOyqwN/a+zKCdeuBGbgshEBeouCNQP6QvUoqFDYBs8kzPT2hDunI8dDMdTrSEfHvgrVN9/sop0xUyNLn8HePJhWRJp0U47CIPN36cFG3/FxOLFtcurTx/Eq2Ygk70NiVlnaI+aNbBknArOhqFPhxjeElioaIvQic10nYAa4YWGg5MMJZRB8kujsaxOXSYc7OT2WPB9gPR7utswOZ6pH8QXSbr0bbF2EKWDzTIr/m5RBXUZj0YrPmYWFylzfYqyx1pXkya5E1s53f/Ot6qFvsA3/Zgyhwiqh5TeRtMpnCRYT5MsJMeF3W8kEvYD8Pr6F5CCFp3qMVx9CRNAOj69RQeGlpRhNwBdz3F5eN/G6p6Ub9RIOMvE6PmZQ78xorxbtord/RWv0VDQ+DXrLrjyEhBTwWS2nM+IYDbn+pBe7YEVxspI+uhp2QIAeLNhsrd2gr1PA/+EiRJprnscPQG/BwBjQxy0zIynJPYoWbwXL+/1jL9mV5qm7nlXg==");
-        map.put("agencyId", "549440189990001");
-        map.put("encryptKey", "lswQf6WrLzJoFoZ2EzE3CmxGKU+Kdma5CDxQinzQi6r0RfkSXM9fOaBbivNizwHvxXAnZ42ijySrZdk5FTQfMTR9IlVMe9nNW/0sVILbphd/woK7wL0fvLRWn8tuE5g7+B4J0eDh+j9KKjtUXakRCIpqUeXuS2tG16eONkI6xiPcmXX/D5JGgNVu8RanKorwbbeXM9T3m0ti9zORalI8xUF5MWORPvkyp9QykmP31cZW9ucG6GUevE+b7YB/d+KDG6z/eQRb6gt84mQtd3SgVofo3MlyuK9W6ULkxhUDprN7TsFU/bYwolQxE5pVVG7CNKICMa0zxX/jQi6Nk+viNw==");
-        try {
-
-            HttpResponse httpResponse = HttpClientUtils.reqPost("http://192.168.124.27:5010/offlineCallback/upiServerCallback", map, null);
-            System.out.println(httpResponse.toString());
-        } catch (Exception e) {
-
-        }
-
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+        upiDTO.setUpiDownDTO(upiDownDTO);
+        upiService.upiDownSettle(upiDTO);
     }
     @Test
     public void upiCallBackTest() {
