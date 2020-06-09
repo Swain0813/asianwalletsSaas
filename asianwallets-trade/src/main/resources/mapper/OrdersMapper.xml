@@ -103,6 +103,7 @@
         <result column="cvv2" property="cvv2" jdbcType="VARCHAR"/>
         <result column="valid" property="valid" jdbcType="VARCHAR"/>
         <result column="track_data" property="trackData" jdbcType="VARCHAR"/>
+        <result column="pin" property="pin" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="OnlineCheckOrdersVOMap" type="com.asianwallets.trade.vo.OnlineCheckOrdersVO">
@@ -135,7 +136,7 @@
     sign, received_time, product_settle_cycle, issuer_id, bank_name, browser_url, server_url,fee_trade,
     fee_payer, rate_type, rate, fee, channel_fee_type, channel_rate, channel_fee, channel_gateway_charge,
     channel_gateway_status, channel_gateway_fee_type, channel_gateway_rate, channel_gateway_fee,
-    language, create_time, update_time, creator, modifier, remark, remark1, remark2,user_bank_card_no,cvv2,valid,track_data,
+    language, create_time, update_time, creator, modifier, remark, remark1, remark2,user_bank_card_no,cvv2,valid,track_data,pin,
     remark3, remark4, remark5, remark6, remark7, remark8,min_tate,max_tate
     </sql>
 
@@ -240,6 +241,7 @@
         p.product_details_logo as productDetailsLogo,
         p.product_print_logo as productPrintLogo,
         c.defaults as defaultValue,
+        o.pre_remark as preRemark,
         o.create_time as createTime
         FROM orders o left join pay_type pt on o.pay_method = pt.extend1 and pt.language = #{language}
         left join currency c on o.order_currency = c.code
@@ -296,6 +298,7 @@
         p.product_details_logo as productDetailsLogo,
         p.product_print_logo as productPrintLogo,
         c.defaults as defaultValue,
+        o.pre_remark as preRemark,
         o.create_time as createTime
         FROM orders o left join pay_type pt on o.pay_method = pt.extend1 and pt.language = #{language}
         left join currency c on o.order_currency = c.code
@@ -409,6 +412,7 @@
         <result column="orderAmount" property="orderAmount" jdbcType="DECIMAL"/>
         <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="orderCurrency" property="orderCurrency" jdbcType="VARCHAR"/>
+        <result column="preRemark" property="preRemark" jdbcType="VARCHAR"/>
         <result column="count" property="count" jdbcType="INTEGER"/>
     </resultMap>
 
@@ -426,6 +430,7 @@
         "1" AS tradeType,
         o.issuer_id AS payMethod,
         o.order_amount AS orderAmount,
+        o.pre_remark AS preRemark,
         o.order_currency AS orderCurrency
         FROM
         orders o
@@ -454,6 +459,7 @@
         "2" AS tradeType,
         r.issuer_id AS payMethod,
         r.order_amount AS orderAmount,
+        r.pre_remark AS preRemark,
         r.order_currency AS orderCurrency
         FROM
         order_refund r
@@ -510,6 +516,7 @@
         di. NAME AS tradeType,
         o.issuer_id AS payMethod,
         o.order_amount AS orderAmount,
+        o.pre_remark AS preRemark,
         o.order_currency AS orderCurrency
         FROM
         orders o,
@@ -547,6 +554,7 @@
         di. NAME AS tradeType,
         r.issuer_id AS payMethod,
         r.order_amount AS orderAmount,
+        r.pre_remark AS preRemark,
         r.order_currency AS orderCurrency
         FROM
         order_refund r,

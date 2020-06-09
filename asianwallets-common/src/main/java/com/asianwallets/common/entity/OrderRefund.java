@@ -339,4 +339,12 @@ public class OrderRefund extends BaseEntity {
     @ApiModelProperty(value = "磁道信息")
     @Column(name = "track_data")
     private String trackData;
+
+    @ApiModelProperty(value = "银行卡Pin")
+    @Column(name = "pin")
+    private String pin;
+
+    @ApiModelProperty(value = "预授权订单的备注")
+    @Column(name = "pre_remark")
+    private String preRemark;
 }

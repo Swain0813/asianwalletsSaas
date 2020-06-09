@@ -277,7 +277,7 @@
         SELECT
         <include refid="Base_Column_List"/>
         FROM order_refund
-        WHERE DATE_FORMAT(update_time, '%Y-%m-%d') = #{yesterday}
+        WHERE refund_status=2 and DATE_FORMAT(update_time, '%Y-%m-%d') = #{yesterday}
     </select>
 
     <select id="getYesterDayDate" resultMap="BaseResultMap">

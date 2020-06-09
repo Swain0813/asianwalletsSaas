@@ -66,6 +66,7 @@ public class ThServiceImpl implements ThService {
                 String cipherText = domain62.substring(40, 56);
                 String clearKey = EcbDesUtil.decode3DEA(primaryKey, cipherText).toUpperCase();
                 log.info("===============【通华签到】===============【密钥明文】 clearKey: {}", clearKey);
+                log.info("===============【通华签到】===============【银行卡密钥明文】 签到返回的62域信息: {}", domain62);
                 baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
                 baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
                 baseResponse.setData(iso8583VO);

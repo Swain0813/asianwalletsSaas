@@ -44,4 +44,7 @@ public class PosSearchVO {
 
     @ApiModelProperty(value = "订单笔数")
     private int count;
+
+    @ApiModelProperty(value = "预授权订单的备注")
+    private String preRemark;
 }

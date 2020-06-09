@@ -70,6 +70,9 @@ public class OfflineTradeDTO {
     @ApiModelProperty(value = "磁道信息")
     private String trackData;
 
+    @ApiModelProperty(value = "银行卡pin")
+    private String pin;
+
     @ApiModelProperty(value = "银行机构号")
     private String issuerId;
 

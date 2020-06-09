@@ -286,6 +286,8 @@
         mp.id,
         mp.merchant_id,
         mp.merchant_name,
+        i.id as institution_id,
+        i.cn_name as institution_name,
         mp.product_id,
         mp.rank,
         case
@@ -337,6 +339,8 @@
         mp.id,
         mp.merchant_id,
         mp.merchant_name,
+        i.id as institution_id,
+        i.cn_name as institution_name,
         mp.product_id,
         mp.rank,
         case
@@ -368,7 +372,6 @@
         <result column="institution_name" property="institutionName"/>
         <result column="product_id" property="productId"/>
         <result column="product_abbrev" property="productName"/>
-        <result column="pay_type" property="payType"/>
         <result column="rank" property="rank"/>
         <result column="pay_type" property="payType"/>
         <result column="pay_types" property="payTypes"/>

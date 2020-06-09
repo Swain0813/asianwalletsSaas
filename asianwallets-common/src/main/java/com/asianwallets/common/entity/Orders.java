@@ -42,11 +42,11 @@ public class Orders extends BaseEntity {
     @Column(name = "second_merchant_code")
     private String secondMerchantCode;
 
-    @ApiModelProperty(value = "代理编号")
+    @ApiModelProperty(value = "代理商编号")
     @Column(name = "agent_code")
     private String agentCode;
 
-    @ApiModelProperty(value = "代理名称")
+    @ApiModelProperty(value = "代理商名称")
     @Column(name = "agent_name")
     private String agentName;
 
@@ -404,6 +404,10 @@ public class Orders extends BaseEntity {
     @Column(name = "track_data")
     private String trackData;
 
+    @ApiModelProperty(value = "银行卡Pin")
+    @Column(name = "pin")
+    private String pin;
+
     @ApiModelProperty(value = "商户报备商户MCC")
     @Column(name = "merchant_industry")
     private String merchantIndustry;
@@ -423,5 +427,9 @@ public class Orders extends BaseEntity {
     @ApiModelProperty(value = "店铺编号")
     @Column(name = "shop_code")
     private String shopCode;
+
+    @ApiModelProperty(value = "预授权订单的备注")
+    @Column(name = "pre_remark")
+    private String preRemark;
 
 }

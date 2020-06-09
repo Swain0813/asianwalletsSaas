@@ -38,10 +38,10 @@ public class MerchantProductSortVO {
     @ApiModelProperty(value = "产品名称")
     private String productName;
 
-    @ApiModelProperty(value = "支付方式")
+    @ApiModelProperty(value = "支付方式编号")
     private String payType;
 
-    @ApiModelProperty(value = "支付方式")
+    @ApiModelProperty(value = "支付方式名称")
     private String payTypes;
 
     @ApiModelProperty(value = "排序号")

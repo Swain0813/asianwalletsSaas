@@ -75,4 +75,7 @@ public class PosQueryOrderListVO {
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date createTime;
+
+    @ApiModelProperty(value = "预授权订单的备注")
+    private String preRemark;
 }
