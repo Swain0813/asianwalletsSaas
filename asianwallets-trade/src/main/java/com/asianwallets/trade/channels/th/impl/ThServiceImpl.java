@@ -1,10 +1,6 @@
 package com.asianwallets.trade.channels.th.impl;
 
-import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.CharsetUtil;
-import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
-import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -655,7 +651,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             } else {
                 log.info("=================【通华线下银行卡下单】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
             }
-            baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         return baseResponse;
     }
@@ -699,7 +695,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         //个人PIN
         if (!StringUtils.isEmpty(orders.getPin())) {
-            iso8583DTO.setPointOfServicePINCaptureCode_26(aesDecrypt(orders.getPin()));
+            iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orders.getPin()));
         }
         //受理方标识码 (机构号)
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
@@ -723,9 +719,9 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
         //银行卡号
-        iso8583DTO.setProcessingCode_2(trkEncryption(aesDecrypt(orders.getUserBankCardNo()), channel.getMd5KeyStr()));
+        iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orders.getUserBankCardNo()), channel.getMd5KeyStr()));
         //磁道2 信息
-        iso8583DTO.setTrack2Data_35(trkEncryption(aesDecrypt(orders.getTrackData()), channel.getMd5KeyStr()));
+        iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orders.getTrackData()), channel.getMd5KeyStr()));
         return iso8583DTO;
     }
 
@@ -1043,18 +1039,5 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setOriginalMessage_61(str61);
         return iso8583DTO;
     }
-
-    private strictfp String aesDecrypt(String content) {
-        String origKey = "Uj7cELl8emRBqPEE";
-        //随机生成密钥
-        byte[] key = Base64.decode(origKey);
-        //构建
-        SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, key);
-        //解密为字符串
-        return aes.decryptStr(content, CharsetUtil.CHARSET_UTF_8);
-    }
-
-
-
 }
 

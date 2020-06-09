@@ -21,7 +21,6 @@ public class BankCardUndoDTO {
     @ApiModelProperty(value = "商户订单号")
     private String orderNo;
 
-    @NotNull(message = "50002")
     @ApiModelProperty(value = "银行卡号")
     private String userBankCardNo;
 
