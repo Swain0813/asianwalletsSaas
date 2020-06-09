@@ -723,9 +723,13 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
         //银行卡号
-        iso8583DTO.setProcessingCode_2(trkEncryption(aesDecrypt(orders.getUserBankCardNo()), channel.getMd5KeyStr()));
+        String bankCode = aesDecrypt(orders.getUserBankCardNo());
+        log.info("------------------解密后bankCode------------------:{}", bankCode);
+        iso8583DTO.setProcessingCode_2(trkEncryption(bankCode, channel.getMd5KeyStr()));
         //磁道2 信息
-        iso8583DTO.setTrack2Data_35(trkEncryption(aesDecrypt(orders.getTrackData()), channel.getMd5KeyStr()));
+        String var35 = aesDecrypt(orders.getTrackData());
+        log.info("------------------解密后磁道二信息------------------:{}", var35);
+        iso8583DTO.setTrack2Data_35(trkEncryption(var35, channel.getMd5KeyStr()));
         return iso8583DTO;
     }
 
@@ -1045,7 +1049,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     private strictfp String aesDecrypt(String content) {
-        String origKey = "Uj7cELl8emRBqPEE";
+        String origKey = "YrF/TUKJqzBDCJ5ubyv00Q==";
         //随机生成密钥
         byte[] key = Base64.decode(origKey);
         //构建
