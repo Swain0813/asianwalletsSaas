@@ -99,5 +99,5 @@ custom:
   #给AD3的回调URL
   channelCallbackUrl: https://cashier.alldebitpay.com/tra
   upi:
-    privateKeyPath: /testKey/549440159990001.pem
+    privateKeyPath: /testKey/549440189990001.pem
     publicKeyPath: /testKey/GHT_ROOT.pem
