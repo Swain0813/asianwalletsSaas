@@ -335,6 +335,7 @@ public class ThServiceImpl implements ThService {
         //加密key
         String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
         String key = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
+        log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
         BaseResponse baseResponse = new BaseResponse();
@@ -382,6 +383,7 @@ public class ThServiceImpl implements ThService {
         //加密key
         String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
         String key = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
+        log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
         BaseResponse baseResponse = new BaseResponse();
@@ -429,6 +431,7 @@ public class ThServiceImpl implements ThService {
         //加密key
         String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
         String key = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
+        log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
         BaseResponse baseResponse = new BaseResponse();
@@ -470,6 +473,7 @@ public class ThServiceImpl implements ThService {
         //加密key
         String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
         String key = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
+        log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
         BaseResponse baseResponse = new BaseResponse();

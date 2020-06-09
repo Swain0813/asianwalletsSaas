@@ -639,6 +639,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             } else {
                 log.info("=================【通华线下银行卡下单】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
             }
+            baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         return baseResponse;
     }
