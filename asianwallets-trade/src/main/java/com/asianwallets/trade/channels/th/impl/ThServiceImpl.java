@@ -683,10 +683,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
-        //服务点输入方式码
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        //服务点输入方式码 021 刷卡，且PIN可输入
+        iso8583DTO.setPointOfServiceEntryMode_22("021");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
+        //个人PIN
+        iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orders.getPin()));
         //受理方标识码 (机构号)
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
         //受卡机终端标识码 (设备号)
@@ -793,8 +795,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setAmountOfTransactions_4(String.format("%012d", orderRefund.getTradeAmount()));
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(0, 6));
-        //服务点输入方式码
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        //服务点输入方式码 同原交易
+        iso8583DTO.setPointOfServiceEntryMode_22("021");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
@@ -930,9 +932,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(0, 6));
         //服务点输入方式码
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        iso8583DTO.setPointOfServiceEntryMode_22("021");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
+        iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
         //磁道2 信息
         iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), channel.getMd5KeyStr()));
@@ -983,9 +986,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(0, 6));
         //服务点输入方式码
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        iso8583DTO.setPointOfServiceEntryMode_22("021");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
+        iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
         //磁道2 信息
         iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), channel.getMd5KeyStr()));
