@@ -74,6 +74,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     @Autowired
     private HandlerContext handlerContext;
 
+    @Autowired
+    private PreOrdersMapper preOrdersMapper;
+
 
     /**
      * 线下登录
@@ -871,30 +874,102 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         }
         //获取收单基础信息并校验
         BasicInfoVO basicInfoVO = getBasicAndCheck(offlineTradeDTO);
-        //设置订单属性
-        Orders orders = setAttributes(offlineTradeDTO, basicInfoVO);
-        //换汇
-        commonBusinessService.swapRateByPayment(basicInfoVO, orders);
+        //设置预授权属性
+        PreOrders preOrders = setPreOrdersAttributes(offlineTradeDTO, basicInfoVO);
+        //预授权下单换汇
+        commonBusinessService.swapRateByPreOrders(basicInfoVO, preOrders);
         //校验商户产品与通道的限额
-        commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        commonBusinessService.checkPreQuota(preOrders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
         //截取币种默认值
-        commonBusinessService.interceptDigit(orders, basicInfoVO.getCurrency());
-        //计算手续费
-        commonBusinessService.calculateCost(basicInfoVO, orders);
-        orders.setReportChannelTime(new Date());
-        orders.setTradeStatus(TradeConstant.ORDER_PAYING);
-        log.info("==================【预授权】==================【落地订单信息】 orders:{}", JSON.toJSONString(orders));
-        ordersMapper.insert(orders);
+        commonBusinessService.interceptPreDigit(preOrders, basicInfoVO.getCurrency());
+        preOrders.setReportChannelTime(new Date());
+        log.info("==================【预授权】==================【落地订单信息】 preOrders:{}", JSON.toJSONString(preOrders));
+        preOrdersMapper.insert(preOrders);
         try {
             //上报通道
             ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark().split("_")[0]);
-            channelsAbstract.preAuth(orders, basicInfoVO.getChannel());
+            channelsAbstract.preAuth(preOrders, basicInfoVO.getChannel());
         } catch (Exception e) {
             log.info("==================【预授权】==================【上报通道异常】", e);
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         log.info("==================【预授权】==================【下单结束】");
-        return new BscDynamicScanVO(orders, offlineTradeDTO.getOrderTime());
+        return new BscDynamicScanVO(preOrders, offlineTradeDTO.getOrderTime());
     }
 
+    /**
+     * 设置预授权订单表
+     * @param offlineTradeDTO
+     * @param basicInfoVO
+     * @return
+     */
+    private PreOrders setPreOrdersAttributes(OfflineTradeDTO offlineTradeDTO, BasicInfoVO basicInfoVO) {
+        Institution institution = basicInfoVO.getInstitution();
+        Merchant merchant = basicInfoVO.getMerchant();
+        Product product = basicInfoVO.getProduct();
+        Channel channel = basicInfoVO.getChannel();
+        PreOrders preOrders = new PreOrders();
+        preOrders.setId("Y" + IDS.uniqueID().toString().substring(0, 15));
+        preOrders.setInstitutionId(institution.getId());
+        preOrders.setInstitutionName(institution.getCnName());
+        preOrders.setMerchantId(merchant.getId());
+        preOrders.setMerchantName(merchant.getCnName());
+        if (!StringUtils.isEmpty(merchant.getAgentId())) {
+            Merchant agentMerchant = commonRedisDataService.getMerchantById(merchant.getAgentId());
+            preOrders.setAgentCode(agentMerchant.getId());
+            preOrders.setAgentName(agentMerchant.getCnName());
+        }
+        if (!StringUtils.isEmpty(merchant.getGroupMasterAccount())) {
+            preOrders.setGroupMerchantCode(merchant.getGroupMasterAccount());
+            preOrders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
+        }
+        if (!StringUtils.isEmpty(offlineTradeDTO.getUserBankCardNo())) {
+            //银行卡号
+            preOrders.setUserBankCardNo(offlineTradeDTO.getUserBankCardNo());
+        }
+        if (!StringUtils.isEmpty(offlineTradeDTO.getCvv2())) {
+            //CVV
+            preOrders.setCvv2(offlineTradeDTO.getCvv2());
+        }
+        if (!StringUtils.isEmpty(offlineTradeDTO.getValid())) {
+            //卡有效期
+            preOrders.setValid(offlineTradeDTO.getValid());
+        }
+        if (!StringUtils.isEmpty(offlineTradeDTO.getTrackData())) {
+            //磁道信息
+            preOrders.setTrackData(offlineTradeDTO.getTrackData());
+        }
+        preOrders.setTradeType(TradeConstant.GATHER_TYPE);
+        preOrders.setTradeDirection(TradeConstant.TRADE_UPLINE);
+        preOrders.setMerchantOrderTime(DateToolUtils.getReqDateG(offlineTradeDTO.getOrderTime()));
+        preOrders.setMerchantOrderId(offlineTradeDTO.getOrderNo());
+        preOrders.setMerchantType(merchant.getMerchantType());
+        preOrders.setOrderAmount(offlineTradeDTO.getOrderAmount());
+        preOrders.setOrderCurrency(offlineTradeDTO.getOrderCurrency());
+        preOrders.setTradeCurrency(channel.getCurrency());
+        preOrders.setImei(offlineTradeDTO.getImei());
+        preOrders.setOperatorId(offlineTradeDTO.getOperatorId());
+        preOrders.setProductCode(product.getProductCode());
+        preOrders.setProductName(offlineTradeDTO.getProductName());
+        preOrders.setProductDescription(offlineTradeDTO.getProductDescription());
+        preOrders.setChannelCode(channel.getChannelCode());
+        preOrders.setChannelName(channel.getChannelCnName());
+        preOrders.setPayMethod(product.getPayType());
+        commonBusinessService.getPreUrl(offlineTradeDTO.getServerUrl(), preOrders);
+        preOrders.setReportChannelTime(new Date());
+        preOrders.setPayerName(offlineTradeDTO.getPayerName());
+        preOrders.setPayerBank(offlineTradeDTO.getPayerBank());
+        preOrders.setPayerEmail(offlineTradeDTO.getPayerEmail());
+        preOrders.setPayerPhone(offlineTradeDTO.getPayerPhone());
+        preOrders.setIssuerId(channel.getIssuerId());
+        preOrders.setBankName(basicInfoVO.getBankName());
+        preOrders.setServerUrl(offlineTradeDTO.getServerUrl());
+        preOrders.setLanguage(offlineTradeDTO.getLanguage());
+        preOrders.setRemark1(offlineTradeDTO.getRemark1());
+        preOrders.setRemark2(offlineTradeDTO.getRemark2());
+        preOrders.setRemark3(offlineTradeDTO.getRemark3());
+        preOrders.setCreateTime(new Date());
+        preOrders.setCreator(merchant.getCnName());
+        return preOrders;
+    }
 }

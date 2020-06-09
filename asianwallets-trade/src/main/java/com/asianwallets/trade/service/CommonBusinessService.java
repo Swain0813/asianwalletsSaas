@@ -67,6 +67,13 @@ public interface CommonBusinessService {
     void swapRateByPayment(BasicInfoVO basicInfoVO, Orders orders);
 
     /**
+     * 预授权下单的换汇输出实体
+     * @param basicInfoVO
+     * @param preOrders
+     */
+    void swapRateByPreOrders(BasicInfoVO basicInfoVO,PreOrders preOrders);
+
+    /**
      * 校验重复请求【线上与线下下单】
      *
      * @param merchantId      商户编号
@@ -95,6 +102,14 @@ public interface CommonBusinessService {
     void checkQuota(Orders orders, MerchantProduct merchantProduct, Channel channel);
 
     /**
+     * 预授权下单时的校验商户产品与通道的限额
+     * @param preOrders
+     * @param merchantProduct
+     * @param channel
+     */
+    void checkPreQuota(PreOrders preOrders,MerchantProduct merchantProduct, Channel channel);
+
+    /**
      * 截取币种默认值
      *
      * @param orders   订单
@@ -103,12 +118,26 @@ public interface CommonBusinessService {
     void interceptDigit(Orders orders, Currency currency);
 
     /**
+     * 预授权下单截取币种默认值
+     * @param preOrders
+     * @param currency
+     */
+    void interceptPreDigit(PreOrders preOrders,Currency currency);
+
+    /**
      * 截取Url
      *
      * @param serverUrl 服务器回调地址
      * @param orders    订单
      */
     void getUrl(String serverUrl, Orders orders);
+
+    /**
+     * 预授权获取url
+     * @param serverUrl
+     * @param preOrders
+     */
+    void getPreUrl(String serverUrl, PreOrders preOrders);
 
     /**
      * 计算手续费

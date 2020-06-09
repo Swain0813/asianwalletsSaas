@@ -1,6 +1,10 @@
 package com.asianwallets.trade.channels.th.impl;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -557,8 +561,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         insertChannelsOrder(orders, channel);
         //创建通华DTO
         ISO8583DTO iso8583DTO = createBankOrder(orders, channel);
-        //46 自定义域
-        iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52("303002" + channel.getPayCode() + "0202"));
         log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【请求参数】 iso8583DTO: {}", JSON.toJSONString(iso8583DTO));
         BaseResponse channelResponse = channelsFeign.thBankCard(new ThDTO(iso8583DTO, channel));
         log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【通华线下银行卡下单接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -568,11 +570,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         }
         ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
         log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【通华线下银行卡下单接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
-        //将46域信息按02分割
-        String[] domain46 = iso8583VO.getAdditionalData_46().split("02");
-        log.info("===============【通华线下银行卡下单】===============【46域信息】 domain46: {}", Arrays.toString(domain46));
-        //索引第4位 : 通华返回的商户订单号
-        orders.setChannelNumber(NumberStringUtil.hexStr2Str(domain46[4]));
         ordersMapper.updateByPrimaryKeySelective(orders);
         orders.setUpdateTime(new Date());
         orders.setChannelCallbackTime(new Date());
@@ -646,6 +643,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             } else {
                 log.info("=================【通华线下银行卡下单】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
             }
+            baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         return baseResponse;
     }
@@ -684,11 +682,13 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         //服务点输入方式码 021 刷卡，且PIN可输入
-        iso8583DTO.setPointOfServiceEntryMode_22("021");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         //个人PIN
-        iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orders.getPin()));
+        if (!StringUtils.isEmpty(orders.getPin())) {
+            iso8583DTO.setPointOfServicePINCaptureCode_26(aesDecrypt(orders.getPin()));
+        }
         //受理方标识码 (机构号)
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
         //受卡机终端标识码 (设备号)
@@ -711,9 +711,9 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
         //银行卡号
-        iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orders.getUserBankCardNo()), channel.getMd5KeyStr()));
+        iso8583DTO.setProcessingCode_2(trkEncryption(aesDecrypt(orders.getUserBankCardNo()), channel.getMd5KeyStr()));
         //磁道2 信息
-        iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orders.getTrackData()), channel.getMd5KeyStr()));
+        iso8583DTO.setTrack2Data_35(trkEncryption(aesDecrypt(orders.getTrackData()), channel.getMd5KeyStr()));
         return iso8583DTO;
     }
 
@@ -935,7 +935,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setPointOfServiceEntryMode_22("021");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
+        //银行卡pin
+        if (!StringUtils.isEmpty(orders.getPin())) {
+            iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
+        }
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
         //磁道2 信息
         iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), channel.getMd5KeyStr()));
@@ -989,8 +992,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setPointOfServiceEntryMode_22("021");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
-        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
+        //银行卡pin
+        if (!StringUtils.isEmpty(orders.getPin())) {
+            iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
+        }
+        //机构号
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
         //磁道2 信息
         iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), channel.getMd5KeyStr()));
         //37 域
@@ -1023,6 +1030,16 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                         str;
         iso8583DTO.setOriginalMessage_61(str61);
         return iso8583DTO;
+    }
+
+    private strictfp String aesDecrypt(String content) {
+        String origKey = "Uj7cELl8emRBqPEE";
+        //随机生成密钥
+        byte[] key = Base64.decode(origKey);
+        //构建
+        SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, key);
+        //解密为字符串
+        return aes.decryptStr(content, CharsetUtil.CHARSET_UTF_8);
     }
 }
 

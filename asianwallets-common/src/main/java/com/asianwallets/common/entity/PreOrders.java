@@ -16,6 +16,14 @@ import java.util.Date;
 @ApiModel(value = "预授权订单表", description = "预授权订单表")
 public class PreOrders extends BaseEntity {
 
+    @ApiModelProperty(value = "机构编号")
+    @Column(name = "institution_id")
+    private String institutionId;
+
+    @ApiModelProperty(value = "机构名称")
+    @Column(name = "institution_name")
+    private String institutionName;
+
     @ApiModelProperty(value = "产品类型")//1-收款 2-付款
     @Column(name = "trade_type")
     private Byte tradeType;
@@ -143,7 +151,7 @@ public class PreOrders extends BaseEntity {
 
     @ApiModelProperty(value = "订单状态")//1-预授权成功 2-预授权失败 3-冲正成功 4-撤销成功  5-预授权完成
     @Column(name = "order_status")
-    private Boolean orderStatus;
+    private Byte orderStatus;
 
     @ApiModelProperty(value = "通道流水号")
     @Column(name = "channel_number")
