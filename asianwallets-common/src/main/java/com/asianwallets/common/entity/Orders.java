@@ -404,6 +404,10 @@ public class Orders extends BaseEntity {
     @Column(name = "track_data")
     private String trackData;
 
+    @ApiModelProperty(value = "银行卡Pin")
+    @Column(name = "pin")
+    private String pin;
+
     @ApiModelProperty(value = "商户报备商户MCC")
     @Column(name = "merchant_industry")
     private String merchantIndustry;

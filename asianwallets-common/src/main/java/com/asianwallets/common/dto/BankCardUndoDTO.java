@@ -1,7 +1,9 @@
 package com.asianwallets.common.dto;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -31,6 +33,9 @@ public class BankCardUndoDTO {
 
     @ApiModelProperty(value = "磁道信息")
     private String trackData;
+
+    @ApiModelProperty(value = "pin")
+    private String pin;
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "设备编号")

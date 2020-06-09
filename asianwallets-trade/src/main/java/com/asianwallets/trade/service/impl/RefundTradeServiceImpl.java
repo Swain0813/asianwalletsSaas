@@ -606,13 +606,15 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         //设备操作员
         refundDTO.setOperatorId(bankCardUndoDTO.getOperatorId());
         //银行卡号
-        refundDTO.setUserBankCardNo(bankCardUndoDTO.getUserBankCardNo());
+        refundDTO.setUserBankCardNo(order.getUserBankCardNo());
         //cvv2
-        refundDTO.setCvv2(bankCardUndoDTO.getCvv2());
+        refundDTO.setCvv2(order.getCvv2());
         //卡有效期
-        refundDTO.setValid(bankCardUndoDTO.getValid());
+        refundDTO.setValid(order.getValid());
         //磁道信息
-        refundDTO.setTrackData(bankCardUndoDTO.getTrackData());
+        refundDTO.setTrackData(order.getTrackData());
+        //pin
+        refundDTO.setPin(order.getPin());
         //签名类型
         refundDTO.setSignType(bankCardUndoDTO.getSignType());
         //签名
@@ -986,6 +988,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         if (!StringUtils.isEmpty(refundDTO.getTrackData())) {
             //磁道信息
             orderRefund.setTrackData(refundDTO.getTrackData());
+        }
+        if (!StringUtils.isEmpty(oldOrder.getPin())) {
+            //pin
+            orderRefund.setPin(oldOrder.getPin());
         }
         orderRefund.setId("R" + IDS.uniqueID());//退款订单号
         orderRefund.setOrderId(oldOrder.getId());//原订单流水号

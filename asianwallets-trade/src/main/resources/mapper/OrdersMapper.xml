@@ -103,6 +103,7 @@
         <result column="cvv2" property="cvv2" jdbcType="VARCHAR"/>
         <result column="valid" property="valid" jdbcType="VARCHAR"/>
         <result column="track_data" property="trackData" jdbcType="VARCHAR"/>
+        <result column="pin" property="pin" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="OnlineCheckOrdersVOMap" type="com.asianwallets.trade.vo.OnlineCheckOrdersVO">
@@ -135,7 +136,7 @@
     sign, received_time, product_settle_cycle, issuer_id, bank_name, browser_url, server_url,fee_trade,
     fee_payer, rate_type, rate, fee, channel_fee_type, channel_rate, channel_fee, channel_gateway_charge,
     channel_gateway_status, channel_gateway_fee_type, channel_gateway_rate, channel_gateway_fee,
-    language, create_time, update_time, creator, modifier, remark, remark1, remark2,user_bank_card_no,cvv2,valid,track_data,
+    language, create_time, update_time, creator, modifier, remark, remark1, remark2,user_bank_card_no,cvv2,valid,track_data,pin,
     remark3, remark4, remark5, remark6, remark7, remark8,min_tate,max_tate
     </sql>
 

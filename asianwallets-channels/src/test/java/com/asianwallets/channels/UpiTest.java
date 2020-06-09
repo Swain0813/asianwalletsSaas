@@ -34,7 +34,7 @@ public class UpiTest extends SpringBootServletInitializer {
     public void upiPayTest() {
 
         Channel channel  = new Channel();
-        channel.setChannelMerchantId("549440159990001");
+        channel.setChannelMerchantId("549440189990001");
 
         UpiPayDTO upiPayDTO = new UpiPayDTO();
         upiPayDTO.setVersion("2.0.0");
@@ -62,9 +62,9 @@ public class UpiTest extends SpringBootServletInitializer {
         upiPayDTO.setNotify_url("https://testpay.sicpay.com/");
         upiPayDTO.setClient_ip("120.236.178.23");
 
-        upiPayDTO.setUser_bank_card_no("6226388000000095");
+        upiPayDTO.setUser_bank_card_no("6250948200000004");
         upiPayDTO.setCvn2("248");
-        upiPayDTO.setValid("1219");
+        upiPayDTO.setValid("1225");
 
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
@@ -77,7 +77,7 @@ public class UpiTest extends SpringBootServletInitializer {
     public void upiQuerryTest() {
 
         Channel channel = new Channel();
-        channel.setChannelMerchantId("549440159990001");
+        channel.setChannelMerchantId("549440189990001");
 
         UpiPayDTO upiPayDTO = new UpiPayDTO();
         upiPayDTO.setVersion("2.0.0");
@@ -96,7 +96,7 @@ public class UpiTest extends SpringBootServletInitializer {
     public void upiRefundTest() {
 
         Channel channel = new Channel();
-        channel.setChannelMerchantId("549440159990001");
+        channel.setChannelMerchantId("549440189990001");
 
         UpiRefundDTO upiRefundDTO = new UpiRefundDTO();
         upiRefundDTO.setVersion("2.0.0");
@@ -119,7 +119,7 @@ public class UpiTest extends SpringBootServletInitializer {
     public void upiCancelTest() {
 
         Channel channel = new Channel();
-        channel.setChannelMerchantId("549440159990001");
+        channel.setChannelMerchantId("549440189990001");
 
         UpiRefundDTO upiRefundDTO = new UpiRefundDTO();
         upiRefundDTO.setVersion("2.0.0");
@@ -139,7 +139,7 @@ public class UpiTest extends SpringBootServletInitializer {
     public void upiDownTest() {
 
         Channel channel = new Channel();
-        channel.setChannelMerchantId("549440159990001");
+        channel.setChannelMerchantId("549440189990001");
 
         UpiDownDTO upiDownDTO = new UpiDownDTO();
         upiDownDTO.setVersion("2.0.0");
