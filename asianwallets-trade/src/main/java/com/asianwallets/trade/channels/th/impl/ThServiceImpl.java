@@ -681,7 +681,9 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         //个人PIN
-        iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orders.getPin()));
+        if (!StringUtils.isEmpty(orders.getPin())) {
+            iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orders.getPin()));
+        }
         //受理方标识码 (机构号)
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
         //受卡机终端标识码 (设备号)
@@ -928,7 +930,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setPointOfServiceEntryMode_22("021");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
+        //银行卡pin
+        if (!StringUtils.isEmpty(orders.getPin())) {
+            iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
+        }
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
         //磁道2 信息
         iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), channel.getMd5KeyStr()));
@@ -982,8 +987,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setPointOfServiceEntryMode_22("021");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
-        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
+        //银行卡pin
+        if (!StringUtils.isEmpty(orders.getPin())) {
+            iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
+        }
+        //机构号
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
         //磁道2 信息
         iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), channel.getMd5KeyStr()));
         //37 域
