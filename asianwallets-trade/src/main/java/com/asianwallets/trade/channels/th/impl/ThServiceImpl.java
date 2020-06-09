@@ -557,8 +557,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         insertChannelsOrder(orders, channel);
         //创建通华DTO
         ISO8583DTO iso8583DTO = createBankOrder(orders, channel);
-        //46 自定义域
-        iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52("303002" + channel.getPayCode() + "0202"));
         log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【请求参数】 iso8583DTO: {}", JSON.toJSONString(iso8583DTO));
         BaseResponse channelResponse = channelsFeign.thBankCard(new ThDTO(iso8583DTO, channel));
         log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【通华线下银行卡下单接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -568,11 +566,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         }
         ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
         log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【通华线下银行卡下单接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
-        //将46域信息按02分割
-        String[] domain46 = iso8583VO.getAdditionalData_46().split("02");
-        log.info("===============【通华线下银行卡下单】===============【46域信息】 domain46: {}", Arrays.toString(domain46));
-        //索引第4位 : 通华返回的商户订单号
-        orders.setChannelNumber(NumberStringUtil.hexStr2Str(domain46[4]));
         ordersMapper.updateByPrimaryKeySelective(orders);
         orders.setUpdateTime(new Date());
         orders.setChannelCallbackTime(new Date());
