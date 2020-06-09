@@ -299,6 +299,7 @@
         p.product_print_logo as productPrintLogo,
         c.defaults as defaultValue,
         o.pre_remark as preRemark,
+        o.channel_number as channelNumber,
         o.create_time as createTime
         FROM orders o left join pay_type pt on o.pay_method = pt.extend1 and pt.language = #{language}
         left join currency c on o.order_currency = c.code
