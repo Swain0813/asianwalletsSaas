@@ -44,7 +44,7 @@ public class UpiTest extends SpringBootServletInitializer {
         upiPayDTO.setBank_code("BACKSTAGEALIPAY");
         upiPayDTO.setAgencyId(channel.getChannelMerchantId());
         //upiPayDTO.setChild_merchant_no("574034451110001");
-        upiPayDTO.setTerminal_no("20003968");
+        upiPayDTO.setTerminal_no("20003962");
         upiPayDTO.setOrder_no("pay" + DateFormatUtils.format(new Date(), "yyyyMMddHHmmss"));
         upiPayDTO.setAmount("0.02");
         upiPayDTO.setCurrency_type("HKD");
@@ -84,7 +84,7 @@ public class UpiTest extends SpringBootServletInitializer {
         upiPayDTO.setTrade_code("SEARCH");
         upiPayDTO.setAgencyId(channel.getChannelMerchantId());
         //upiPayDTO.setChild_merchant_no("574034451110001");
-        upiPayDTO.setTerminal_no("20003968");
+        upiPayDTO.setTerminal_no("20003962");
         upiPayDTO.setOrder_no("pay20200603160725");
 
         UpiDTO upiDTO = new UpiDTO();
@@ -102,7 +102,7 @@ public class UpiTest extends SpringBootServletInitializer {
         upiRefundDTO.setVersion("2.0.0");
         upiRefundDTO.setTrade_code("REFUND");
         upiRefundDTO.setAgencyId(channel.getChannelMerchantId());
-        upiRefundDTO.setTerminal_no("20003968");
+        upiRefundDTO.setTerminal_no("20003962");
         upiRefundDTO.setOrder_no("pay20200603160725");
         upiRefundDTO.setRefund_no("R" + DateFormatUtils.format(new Date(), "yyyyMMddHHmmss"));
         upiRefundDTO.setRefund_amount("0.02");
@@ -125,7 +125,7 @@ public class UpiTest extends SpringBootServletInitializer {
         upiRefundDTO.setVersion("2.0.0");
         upiRefundDTO.setTrade_code("PAYC");
         upiRefundDTO.setAgencyId(channel.getChannelMerchantId());
-        upiRefundDTO.setTerminal_no("20003968");
+        upiRefundDTO.setTerminal_no("20003962");
         upiRefundDTO.setOrder_no("payc" + DateFormatUtils.format(new Date(), "yyyyMMddHHmmss"));
         upiRefundDTO.setOri_order_no("pay20200603160725");
 
@@ -145,7 +145,7 @@ public class UpiTest extends SpringBootServletInitializer {
         upiDownDTO.setVersion("2.0.0");
         upiDownDTO.setTrade_code("DOWNLOAD_SETTLE_FILE");
         upiDownDTO.setAgencyId(channel.getChannelMerchantId());
-        upiDownDTO.setTerminal_no("20003968");
+        upiDownDTO.setTerminal_no("20003962");
         upiDownDTO.setSettle_date("20200602");
         upiDownDTO.setFile_type("TRAN");
 
