@@ -85,7 +85,7 @@ public class UpiTest extends SpringBootServletInitializer {
         upiPayDTO.setAgencyId(channel.getChannelMerchantId());
         //upiPayDTO.setChild_merchant_no("574034451110001");
         upiPayDTO.setTerminal_no("20003962");
-        upiPayDTO.setOrder_no("pay20200603160725");
+        upiPayDTO.setOrder_no("O103753129326284");
 
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
