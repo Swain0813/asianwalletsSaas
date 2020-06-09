@@ -83,6 +83,9 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     @Autowired
     private ShareBenefitLogsMapper shareBenefitLogsMapper;
 
+    @Autowired
+    private PreOrdersMapper preOrdersMapper;
+
     /**
      * 使用机构对应平台的RSA私钥生成签名【回调时用】
      *
@@ -296,6 +299,56 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     }
 
     /**
+     * 预授权下单的换汇输出实体
+     * @param basicInfoVO
+     * @param preOrders
+     */
+    @Override
+    public void swapRateByPreOrders(BasicInfoVO basicInfoVO, PreOrders preOrders) {
+        if (StringUtils.isEmpty(preOrders.getOrderCurrency()) || StringUtils.isEmpty(preOrders.getTradeCurrency())) {
+            log.info("==================【预授权下单换汇】==================【换汇币种为空】");
+            preOrders.setRemark4("换汇币种为空");
+            preOrders.setOrderStatus(TradeConstant.PRE_ORDER_FAIL);
+            preOrdersMapper.insert(preOrders);
+            throw new BusinessException(EResultEnum.REQUEST_REMOTE_ERROR.getCode());
+        }
+        //币种一致时,不需要换汇
+        if (preOrders.getOrderCurrency().equalsIgnoreCase(preOrders.getTradeCurrency())) {
+            log.info("==================【预授权下单换汇】==================【币种相同,无需换汇】");
+            preOrders.setTradeAmount(preOrders.getOrderAmount());
+            preOrders.setOrderForTradeRate(BigDecimal.ONE);
+            preOrders.setTradeForOrderRate(BigDecimal.ONE);
+            preOrders.setExchangeRate(BigDecimal.ONE);
+            preOrders.setExchangeStatus(TradeConstant.SWAP_SUCCESS);
+            preOrders.setExchangeTime(new Date());
+            return;
+        }
+        //校验机构DCC
+        if (!basicInfoVO.getInstitution().getDcc()) {
+            log.info("==================【预授权下单换汇】==================【机构不支持DCC】");
+            preOrders.setRemark4("机构不支持DCC");
+            preOrders.setOrderStatus(TradeConstant.PRE_ORDER_FAIL);
+            preOrdersMapper.insert(preOrders);
+            throw new BusinessException(EResultEnum.DCC_IS_NOT_OPEN.getCode());
+        }
+        //换汇计算
+        CalcExchangeRateVO calcExchangeRateVO = calcExchangeRate(preOrders.getOrderCurrency(), preOrders.getTradeCurrency(), basicInfoVO.getMerchantProduct().getFloatRate(), preOrders.getOrderAmount());
+        preOrders.setExchangeTime(calcExchangeRateVO.getExchangeTime());
+        preOrders.setExchangeStatus(calcExchangeRateVO.getExchangeStatus());
+        if (TradeConstant.SWAP_FALID.equals(calcExchangeRateVO.getExchangeStatus())) {
+            log.info("==================【预授权下单换汇】==================【换汇失败】");
+            preOrders.setRemark4("换汇失败");
+            preOrders.setOrderStatus(TradeConstant.PRE_ORDER_FAIL);
+            preOrdersMapper.insert(preOrders);
+            throw new BusinessException(EResultEnum.SYS_ERROR_CREATE_ORDER_FAIL.getCode());
+        }
+        preOrders.setExchangeRate(calcExchangeRateVO.getExchangeRate());
+        preOrders.setTradeAmount(calcExchangeRateVO.getTradeAmount());
+        preOrders.setOrderForTradeRate(calcExchangeRateVO.getOriginalRate());
+        preOrders.setTradeForOrderRate(calcExchangeRateVO.getReverseRate());
+    }
+
+    /**
      * 校验重复请求【线上与线下下单】
      *
      * @param merchantId      商户编号
@@ -399,6 +452,34 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
     }
 
     /**
+     * 预授权下单时的校验商户产品与通道的限额
+     * @param preOrders
+     * @param merchantProduct
+     * @param channel
+     */
+    @Override
+    public void checkPreQuota(PreOrders preOrders, MerchantProduct merchantProduct, Channel channel) {
+        //校验通道限额
+        if ((channel.getLimitMinAmount() != null && channel.getLimitMaxAmount() != null) &&
+                (channel.getLimitMinAmount().compareTo(BigDecimal.ZERO) != 0 && channel.getLimitMaxAmount().compareTo(BigDecimal.ZERO) != 0)) {
+            if (preOrders.getTradeAmount().compareTo(channel.getLimitMinAmount()) < 0) {
+                log.info("==================【预授权校验商户产品与通道的限额】==================【小于通道单笔金额限制】 TradeAmount: {} | LimitMinAmount: {} ", preOrders.getTradeAmount(), channel.getLimitMinAmount());
+                preOrders.setRemark("预授权下单时小于通道单笔金额限制");
+                preOrders.setOrderStatus(TradeConstant.PRE_ORDER_FAIL);
+                preOrdersMapper.insert(preOrders);
+                throw new BusinessException(EResultEnum.LESS_THAN_EEOR.getCode());
+            }
+            if (preOrders.getTradeAmount().compareTo(channel.getLimitMaxAmount()) > 0) {
+                log.info("==================【预授权校验商户产品与通道的限额】==================【大于通道单笔金额限制】 TradeAmount: {} | LimitMaxAmount: {} ", preOrders.getTradeAmount(), channel.getLimitMaxAmount());
+                preOrders.setRemark("预授权下单时大于通道单笔金额限制");
+                preOrders.setOrderStatus(TradeConstant.PRE_ORDER_FAIL);
+                preOrdersMapper.insert(preOrders);
+                throw new BusinessException(EResultEnum.LIMIT_AMOUNT_ERROR.getCode());
+            }
+        }
+    }
+
+    /**
      * 截取币种默认值
      *
      * @param orders   订单
@@ -413,6 +494,22 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
         }
         //交易金额
         orders.setTradeAmount((orders.getTradeAmount().setScale(numOfBits, BigDecimal.ROUND_HALF_UP)));
+    }
+
+    /**
+     * 预授权下单截取币种默认值
+     * @param preOrders
+     * @param currency
+     */
+    @Override
+    public void interceptPreDigit(PreOrders preOrders,Currency currency) {
+        int bitPos = currency.getDefaults().indexOf(".");
+        int numOfBits = 0;
+        if (bitPos != -1) {
+            numOfBits = currency.getDefaults().length() - bitPos - 1;
+        }
+        //交易金额
+        preOrders.setTradeAmount((preOrders.getTradeAmount().setScale(numOfBits, BigDecimal.ROUND_HALF_UP)));
     }
 
     /**
@@ -445,6 +542,38 @@ public class CommonBusinessServiceImpl implements CommonBusinessService {
             }
         } catch (Exception e) {
             log.info("===============【截取网站URL异常】===============", e);
+        }
+    }
+
+    /**
+     * 预授权获取url
+     * @param serverUrl
+     * @param preOrders
+     */
+    @Override
+    public void getPreUrl(String serverUrl, PreOrders preOrders) {
+        try {
+            if (!StringUtils.isEmpty(serverUrl)) {
+                String[] split = serverUrl.split("/");
+                StringBuffer sb = new StringBuffer();
+                if (serverUrl.contains("http")) {
+                    for (int i = 0; i < split.length; i++) {
+                        if (i == 2) {
+                            sb.append(split[i]);
+                            break;
+                        } else {
+                            sb.append(split[i]).append("/");
+                        }
+                    }
+                } else {
+                    sb.append(split[0]);
+                }
+                preOrders.setReqIp(String.valueOf(sb));//请求ip
+            } else {
+                preOrders.setReqIp(auditorProvider.getReqIp());//请求ip
+            }
+        } catch (Exception e) {
+            log.info("=========****======【预授权获取url截取网站URL异常】=========***======", e);
         }
     }
 
