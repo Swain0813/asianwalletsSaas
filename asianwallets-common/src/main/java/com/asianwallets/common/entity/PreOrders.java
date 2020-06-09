@@ -235,6 +235,10 @@ public class PreOrders extends BaseEntity {
     @Column(name = "track_data")
     private String trackData;
 
+    @ApiModelProperty(value = "pin")
+    @Column(name = "pin")
+    private String pin;
+
     @ApiModelProperty(value = "remark1")
     @Column(name = "remark1")
     private String remark1;

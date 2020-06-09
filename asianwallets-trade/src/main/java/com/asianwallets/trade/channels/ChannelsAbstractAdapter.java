@@ -63,4 +63,14 @@ public class ChannelsAbstractAdapter extends ChannelsAbstract {
         return null;
     }
 
+    @Override
+    public BaseResponse preAuthReverse(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
+        return null;
+    }
+
+    @Override
+    public BaseResponse preAuthRevoke(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
+        return null;
+    }
+
 }

@@ -101,5 +101,21 @@ public abstract class ChannelsAbstract {
      */
     public abstract BaseResponse preAuth(PreOrders preOrders, Channel channel);
 
+    /**
+     * 预授权冲正
+     * @param channel
+     * @param preOrders
+     * @param rabbitMassage
+     * @return
+     */
+    public abstract BaseResponse preAuthReverse(Channel channel,PreOrders preOrders,RabbitMassage rabbitMassage);
 
+    /**
+     * 预授权撤销
+     * @param channel
+     * @param preOrders
+     * @param rabbitMassage
+     * @return
+     */
+    public abstract BaseResponse preAuthRevoke(Channel channel,PreOrders preOrders,RabbitMassage rabbitMassage);
 }

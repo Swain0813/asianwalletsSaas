@@ -939,6 +939,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             //磁道信息
             preOrders.setTrackData(offlineTradeDTO.getTrackData());
         }
+        if (!StringUtils.isEmpty(offlineTradeDTO.getPin())) {
+            //pin
+            preOrders.setPin(offlineTradeDTO.getPin());
+        }
         preOrders.setTradeType(TradeConstant.GATHER_TYPE);
         preOrders.setTradeDirection(TradeConstant.TRADE_UPLINE);
         preOrders.setMerchantOrderTime(DateToolUtils.getReqDateG(offlineTradeDTO.getOrderTime()));
