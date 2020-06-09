@@ -1033,7 +1033,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     private strictfp String aesDecrypt(String content) {
-        String origKey = "Uj7cELl8emRBqPEE";
+        String origKey = "YrF/TUKJqzBDCJ5ubyv00Q==";
         //随机生成密钥
         byte[] key = Base64.decode(origKey);
         //构建
