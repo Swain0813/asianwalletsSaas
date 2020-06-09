@@ -1,6 +1,7 @@
 package com.asianwallets.trade.vo;
 
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.entity.PreOrders;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -51,5 +52,22 @@ public class BscDynamicScanVO {
         this.txnStatus = orders.getTradeStatus();
         this.terminalId = orders.getImei();
         this.operatorId = orders.getOperatorId();
+    }
+
+    /**
+     * 预授权下单用
+     * @param preOrders
+     * @param orderTime
+     */
+    public BscDynamicScanVO(PreOrders preOrders, String orderTime) {
+        this.merchantId = preOrders.getMerchantId();
+        this.orderNo = preOrders.getMerchantOrderId();
+        this.referenceNo = preOrders.getId();
+        this.orderCurrency = preOrders.getOrderCurrency();
+        this.orderAmount = preOrders.getOrderAmount();
+        this.orderTime = orderTime;
+        this.txnStatus = preOrders.getOrderStatus();
+        this.terminalId = preOrders.getImei();
+        this.operatorId = preOrders.getOperatorId();
     }
 }

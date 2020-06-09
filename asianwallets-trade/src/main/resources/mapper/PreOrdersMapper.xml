@@ -3,6 +3,8 @@
 <mapper namespace="com.asianwallets.trade.dao.PreOrdersMapper" >
   <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.PreOrders" >
     <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+    <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
     <result column="trade_type" property="tradeType" jdbcType="BIT" />
     <result column="trade_direction" property="tradeDirection" jdbcType="BIT" />
     <result column="merchant_id" property="merchantId" jdbcType="VARCHAR" />
@@ -70,7 +72,7 @@
     <result column="remark8" property="remark8" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, trade_type, trade_direction, merchant_id, merchant_name, merchant_type, second_merchant_code, 
+    id, institution_id,institution_name,trade_type, trade_direction, merchant_id, merchant_name, merchant_type, second_merchant_code,
     second_merchant_name, group_merchant_code, group_merchant_name, agent_code, agent_name, 
     merchant_order_id, merchant_order_time, order_currency, order_amount, complete_amount, 
     imei, operator_id, order_for_trade_rate, trade_for_order_rate, exchange_rate, exchange_time, 
