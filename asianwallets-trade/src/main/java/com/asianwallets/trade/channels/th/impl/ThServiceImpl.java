@@ -1,10 +1,6 @@
 package com.asianwallets.trade.channels.th.impl;
 
-import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.CharsetUtil;
-import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
-import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -699,7 +695,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         //个人PIN
         if (!StringUtils.isEmpty(orders.getPin())) {
-            iso8583DTO.setPointOfServicePINCaptureCode_26(aesDecrypt(orders.getPin()));
+            iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orders.getPin()));
         }
         //受理方标识码 (机构号)
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
@@ -724,11 +720,9 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setReservedPrivate_60(str60);
         //银行卡号
         String bankCode = aesDecrypt(orders.getUserBankCardNo());
-        log.info("------------------解密后bankCode------------------:{}", bankCode);
         iso8583DTO.setProcessingCode_2(trkEncryption(bankCode, channel.getMd5KeyStr()));
         //磁道2 信息
         String var35 = aesDecrypt(orders.getTrackData());
-        log.info("------------------解密后磁道二信息------------------:{}", var35);
         iso8583DTO.setTrack2Data_35(trkEncryption(var35, channel.getMd5KeyStr()));
         return iso8583DTO;
     }
@@ -1047,18 +1041,5 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setOriginalMessage_61(str61);
         return iso8583DTO;
     }
-
-    private strictfp String aesDecrypt(String content) {
-        String origKey = "YrF/TUKJqzBDCJ5ubyv00Q==";
-        //随机生成密钥
-        byte[] key = Base64.decode(origKey);
-        //构建
-        SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, key);
-        //解密为字符串
-        return aes.decryptStr(content, CharsetUtil.CHARSET_UTF_8);
-    }
-
-
-
 }
 
