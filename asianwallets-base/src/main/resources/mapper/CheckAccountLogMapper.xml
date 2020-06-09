@@ -49,6 +49,9 @@
       <if test="channelCode!=null and channelCode != ''">
         and channel_code=#{channelCode}
       </if>
+      <if test="creator!=null and creator != ''">
+        and creator=#{creator}
+      </if>
     </where>
   </select>
 

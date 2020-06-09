@@ -75,6 +75,7 @@ public class InstitutionProductChannelServiceImpl implements InstitutionProductC
             institutionProduct.setProductImg(institutionProductChannelDTO.getProductImg());
             institutionProduct.setProductDetailsLogo(institutionProductChannelDTO.getProductDetailsLogo());
             institutionProduct.setProductPrintLogo(institutionProductChannelDTO.getProductPrintLogo());
+            institutionProduct.setRank(institutionProductChannelDTO.getRank());
             institutionProduct.setCreateTime(new Date());
             institutionProduct.setCreator(username);
             institutionProductMapper.insert(institutionProduct);

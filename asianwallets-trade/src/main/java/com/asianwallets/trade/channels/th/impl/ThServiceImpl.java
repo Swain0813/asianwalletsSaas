@@ -12,6 +12,7 @@ import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.utils.AESUtil;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.th.ThService;
@@ -487,7 +488,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("400100");
         iso8583DTO.setAmountOfTransactions_4(NumberStringUtil.addLeftChar(orderRefund.getTradeAmount().toString().replace(".", ""), 12, '0'));
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
+        iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(0, 6));
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
@@ -708,9 +709,9 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
         //银行卡号
-        iso8583DTO.setProcessingCode_2(trkEncryption(orders.getUserBankCardNo(), channel.getMd5KeyStr()));
+        iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orders.getUserBankCardNo()), channel.getMd5KeyStr()));
         //磁道2 信息
-        iso8583DTO.setTrack2Data_35(trkEncryption(orders.getTrackData(), channel.getMd5KeyStr()));
+        iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orders.getTrackData()), channel.getMd5KeyStr()));
         return iso8583DTO;
     }
 
@@ -745,7 +746,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public BaseResponse reversal(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         ThDTO thDTO = new ThDTO();
-        ISO8583DTO iso8583DTO = this.createRevesalDTO(channel, orderRefund);
+        ISO8583DTO iso8583DTO = this.createReversalDTO(channel, orderRefund);
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
         log.info("=================【TH冲正 reversal】=================【请求Channels服务TH冲正】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
@@ -784,21 +785,21 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      * @Date 2020/5/18
      * @Descripate 创建冲正DTO
      **/
-    private ISO8583DTO createRevesalDTO(Channel channel, OrderRefund orderRefund) {
+    private ISO8583DTO createReversalDTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0400");
-        iso8583DTO.setProcessingCode_2(trkEncryption(orderRefund.getUserBankCardNo(), channel.getMd5KeyStr()));
+        iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()), channel.getMd5KeyStr()));
         iso8583DTO.setProcessingCode_3("009000");
         iso8583DTO.setAmountOfTransactions_4(String.format("%012d", orderRefund.getTradeAmount()));
         //受卡方系统跟踪号
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
+        iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(0, 6));
         //服务点输入方式码
         iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
         //磁道2 信息
-        iso8583DTO.setTrack2Data_35(trkEncryption(orderRefund.getTrackData(), channel.getMd5KeyStr()));
+        iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), channel.getMd5KeyStr()));
         //冲正原因
         //a)  POS终端在时限内未能收到POS中心的应答消息而引发，冲正原因码填“98”。
         //b)  POS终端在时限内收到POS中心的批准应答消息，但由于POS机故障无法完成交易而引发，冲正原因码填“96”。
@@ -847,7 +848,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public BaseResponse bankRefund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         ThDTO thDTO = new ThDTO();
-        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        ISO8583DTO iso8583DTO = null;
         Orders orders = ordersMapper.selectByMerchantOrderId(orderRefund.getMerchantOrderId());
         if (DateUtil.isSameDay(orders.getCreateTime(), new Date())) {
             //当日内走撤销
@@ -923,22 +924,22 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     private ISO8583DTO createBankRefundDTO(Channel channel, OrderRefund orderRefund, Orders orders) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0220");
-        iso8583DTO.setProcessingCode_2(trkEncryption(orderRefund.getUserBankCardNo(), channel.getMd5KeyStr()));
+        iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()), channel.getMd5KeyStr()));
         iso8583DTO.setProcessingCode_3("200000");
         iso8583DTO.setAmountOfTransactions_4(String.format("%012d", orderRefund.getTradeAmount()));
         //受卡方系统跟踪号
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
+        iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(0, 6));
         //服务点输入方式码
         iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
         //磁道2 信息
-        iso8583DTO.setTrack2Data_35(trkEncryption(orderRefund.getTrackData(), channel.getMd5KeyStr()));
+        iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), channel.getMd5KeyStr()));
         //37 域
         iso8583DTO.setRetrievalReferenceNumber_37(orders.getRemark1());
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
-        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId()); //受卡方标识码
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
@@ -976,18 +977,18 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     private ISO8583DTO createBankUndoDTO(Channel channel, OrderRefund orderRefund, Orders orders) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
-        iso8583DTO.setProcessingCode_2(trkEncryption(orderRefund.getUserBankCardNo(), channel.getMd5KeyStr()));
+        iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()), channel.getMd5KeyStr()));
         iso8583DTO.setProcessingCode_3("200000");
         iso8583DTO.setAmountOfTransactions_4(String.format("%012d", orderRefund.getTradeAmount()));
         //受卡方系统跟踪号
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
+        iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(0, 6));
         //服务点输入方式码
         iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
         //磁道2 信息
-        iso8583DTO.setTrack2Data_35(trkEncryption(orderRefund.getTrackData(), channel.getMd5KeyStr()));
+        iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), channel.getMd5KeyStr()));
         //37 域
         iso8583DTO.setRetrievalReferenceNumber_37(orders.getRemark1());
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码

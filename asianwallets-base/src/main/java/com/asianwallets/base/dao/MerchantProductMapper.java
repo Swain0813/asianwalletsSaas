@@ -70,5 +70,5 @@ public interface MerchantProductMapper extends BaseMapper<MerchantProduct> {
      *根据rank进行排序的商户产品
      * @return
      */
-    List<MerchantProductSortVO> pageMerProductRank();
+    List<MerchantProductSortVO> pageMerProductRank(String language);
 }

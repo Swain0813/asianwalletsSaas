@@ -9,6 +9,7 @@ import com.asianwallets.common.constant.FinanceConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.AD3CheckAccountDTO;
 import com.asianwallets.common.dto.AccCheckDTO;
+import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.SearchAccountCheckDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
@@ -94,7 +95,7 @@ public class AccountCheckServiceImpl implements AccountCheckService {
      * @return
      */
     @Override
-    public Object channelAccountCheck(MultipartFile file) {
+    public Object channelAccountCheck(String username,MultipartFile file) {
         //获取文件名
         String fileName = file.getOriginalFilename();
         String[] name = fileName.split("\\.")[0].split("_");
@@ -114,20 +115,16 @@ public class AccountCheckServiceImpl implements AccountCheckService {
         if (!FinanceConstant.FinanceChannelNameMap.containsKey(name[0])) {
             throw new BusinessException(EResultEnum.NAME_ERROR.getCode());
         }
-        try {
-            AccCheckDTO accCheckDTO = null;
-            //ad3对账单退款单号为退款单原订单号，不支持对账
-            if (name[0].equals("AD3")) {
-                accCheckDTO = ad3Read(file);
-            } else if (name[0].equals("HELP2PAY")) {
-                //针对HELP2PAY的对账逻辑是对账单上游退款和收单都是成功的状态
-                accCheckDTO = help2PayRead(file);
-            }
-            //check账单
-            this.doCheck(accCheckDTO.getAd3SDMap(), accCheckDTO.getAd3TKMap(), name);
-        } catch (Exception e) {
-            log.error("***********************ad3通道对账发生异常*******************", e);
+        AccCheckDTO accCheckDTO = null;
+        //ad3对账单退款单号为退款单原订单号，不支持对账
+        if (name[0].equals("AD3")) {
+            accCheckDTO = ad3Read(file);
+        } else if (name[0].equals("HELP2PAY")) {
+            //针对HELP2PAY的对账逻辑是对账单上游退款和收单都是成功的状态
+            accCheckDTO = help2PayRead(file);
         }
+        //check账单
+        this.doCheck(accCheckDTO.getAd3SDMap(), accCheckDTO.getAd3TKMap(), name,username);
         return null;
     }
 
@@ -139,17 +136,25 @@ public class AccountCheckServiceImpl implements AccountCheckService {
      * @param name
      */
     @Async
-    public void doCheck(Map<String, AD3CheckAccountDTO> ad3SDMap, Map<String, AD3CheckAccountDTO> ad3TKMap, String[] name) {
+    public void doCheck(Map<String, AD3CheckAccountDTO> ad3SDMap, Map<String, AD3CheckAccountDTO> ad3TKMap, String[] name,String username) {
         //获取昨天起始时间
         Date startTime = DateToolUtils.getDayStart(DateToolUtils.addDay(DateToolUtils.StringToDate(name[1]), -1));
         //获取昨天结束时间
         Date endTime = DateToolUtils.getDayEnd(DateToolUtils.addDay(DateToolUtils.StringToDate(name[1]), -1));
         //文件对应的通道编号
         List<String> list = FinanceConstant.FinanceChannelNameMap.get(name[0]);
+        if(list.size()==0){
+            log.info("************************通道编号数据不存在************************");
+            throw new BusinessException(EResultEnum.CHANNEL_IS_NOT_EXISTS.getCode());
+        }
         List<String> tkList = Lists.newArrayList();//退款补单队列
         List<String> sdList = Lists.newArrayList();//收单补单队列
         List<CheckAccount> checkAccountList = checkAccountMapper.getDataByType(FinanceConstant.FINACE_WAIT, startTime, endTime);//获取前一天未对账状态的对账单数据
         List<Orders> ordersList = ordersMapper.getYesterDayDate(startTime, endTime, list);
+        if(ordersList.size()==0){
+            log.info("************************订单表里获取昨天的数据不存在************************");
+            throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
+        }
         List<OrderRefund> orderRefundList = orderRefundMapper.getYesterDayDate(startTime, endTime, list);
         int cCount = ad3SDMap.size() + ad3TKMap.size();
         int sCount = ordersList.size() + orderRefundList.size();
@@ -463,6 +468,7 @@ public class AccountCheckServiceImpl implements AccountCheckService {
         checkAccountLog.setErrorAmount(uTotalAmount.subtract(cTotalAmount));
         checkAccountLog.setErrorCount(checkAccountMapper.getErrorCount(new Date()));
         checkAccountLog.setCheckFileName(name[0]);
+        checkAccountLog.setCreator(username);
         checkAccountLogMapper.insert(checkAccountLog);
         doSupplement(tkList, sdList);//系统补单
     }

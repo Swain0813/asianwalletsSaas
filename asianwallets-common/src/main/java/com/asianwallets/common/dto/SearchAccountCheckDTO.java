@@ -34,4 +34,7 @@ public class SearchAccountCheckDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "对账状态")
     private int errorType;
+
+    @ApiModelProperty(value = "创建者")
+    private String creator;
 }
