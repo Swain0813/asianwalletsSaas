@@ -719,11 +719,9 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
         //银行卡号
-        String bankCode = aesDecrypt(orders.getUserBankCardNo());
-        iso8583DTO.setProcessingCode_2(trkEncryption(bankCode, channel.getMd5KeyStr()));
+        iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orders.getUserBankCardNo()), channel.getMd5KeyStr()));
         //磁道2 信息
-        String var35 = aesDecrypt(orders.getTrackData());
-        iso8583DTO.setTrack2Data_35(trkEncryption(var35, channel.getMd5KeyStr()));
+        iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orders.getTrackData()), channel.getMd5KeyStr()));
         return iso8583DTO;
     }
 
