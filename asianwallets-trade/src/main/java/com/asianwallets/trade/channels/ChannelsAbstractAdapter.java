@@ -3,6 +3,7 @@ import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.entity.PreOrders;
 import com.asianwallets.common.response.BaseResponse;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +59,7 @@ public class ChannelsAbstractAdapter extends ChannelsAbstract {
     }
 
     @Override
-    public BaseResponse preAuth(Orders orders, Channel channel) {
+    public BaseResponse preAuth(PreOrders preOrders, Channel channel) {
         return null;
     }
 

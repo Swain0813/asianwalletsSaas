@@ -482,6 +482,18 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
 
     /**
+     *通华预授权
+     * @param preOrders
+     * @param channel
+     * @return
+     */
+    @Override
+    public BaseResponse preAuth(PreOrders preOrders, Channel channel) {
+        return null;
+    }
+
+
+    /**
      * @return
      * @Author YangXu
      * @Date 2020/5/18
@@ -1041,5 +1053,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //解密为字符串
         return aes.decryptStr(content, CharsetUtil.CHARSET_UTF_8);
     }
+
+
+
 }
 
