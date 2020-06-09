@@ -585,7 +585,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("tradeStatus", "2");
         criteria.andEqualTo("id", orders.getId());
-        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse response = new BaseResponse();
         if ("00".equals(iso8583VO.getResponseCode_39())) {
             log.info("=================【通华线下银行卡下单】=================【订单已支付成功】 orderId: {}", orders.getId());
             //未发货
@@ -653,7 +653,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             }
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
-        return baseResponse;
+        return response;
     }
 
     /**
