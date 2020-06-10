@@ -380,7 +380,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         upiDTO.setChannel(channel);
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
         //拿到当天的23时间
-        Date endtime = DateToolUtils.addHour(DateToolUtils.getDayEnd(new Date()), -1);
+        Date endtime = DateToolUtils.addHour(DateToolUtils.getDayEnd(orders.getCreateTime()), -1);
         String type = null;
         if (System.currentTimeMillis() < endtime.getTime() && orderRefund.getRefundType() == 1) {
             //撤销接口
@@ -530,7 +530,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
         UpiDTO upiDTO = new UpiDTO();
         //拿到当天的23时间
-        Date endtime = DateToolUtils.addHour(DateToolUtils.getDayEnd(new Date()), -1);
+        Date endtime = DateToolUtils.addHour(DateToolUtils.getDayEnd(orders.getCreateTime()), -1);
         String type = null;
         if (System.currentTimeMillis() < endtime.getTime() && orderRefund.getRefundType() == 1) {
             //撤销接口
