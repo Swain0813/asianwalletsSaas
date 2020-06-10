@@ -980,10 +980,10 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         ChannelsAbstract channelsAbstract = null;
         Channel channel = commonRedisDataService.getChannelByChannelCode(preOrders.getChannelCode());
         try {
-            log.info("=========================【预授权冲正接口】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
+            log.info("=========================【预授权撤销接口】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
             channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
         } catch (Exception e) {
-            log.info("=========================【预授权冲正接口】========================= Exception:【{}】", e);
+            log.info("=========================【预授权撤销接口】========================= Exception:【{}】", e);
         }
         //返回结果
         BaseResponse baseResponse = channelsAbstract.preAuthRevoke(channel, preOrders, null);
