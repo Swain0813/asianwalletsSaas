@@ -382,7 +382,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //拿到当天的23时间
         Date endtime = DateToolUtils.addHour(DateToolUtils.getDayEnd(new Date()), -1);
         String type = null;
-        if (System.currentTimeMillis() < endtime.getTime() || orderRefund.getRefundType() == 1) {
+        if (System.currentTimeMillis() < endtime.getTime() && orderRefund.getRefundType() == 1) {
             //撤销接口
             type = "PAYC";
             UpiRefundDTO upiRefundDTO = this.createRefundDTO(orderRefund, channel, type);
@@ -532,7 +532,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //拿到当天的23时间
         Date endtime = DateToolUtils.addHour(DateToolUtils.getDayEnd(new Date()), -1);
         String type = null;
-        if (System.currentTimeMillis() < endtime.getTime() || orderRefund.getRefundType() == 1) {
+        if (System.currentTimeMillis() < endtime.getTime() && orderRefund.getRefundType() == 1) {
             //撤销接口
             type = "PAYC";
             UpiRefundDTO upiRefundDTO = this.createRefundDTO(orderRefund, channel, type);
