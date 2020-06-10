@@ -84,4 +84,11 @@
     modifier, remark, remark1, remark2, remark3, remark4, remark5, remark6, remark7, 
     remark8
   </sql>
+
+  <select id="selectMerchantOrderId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from pre_orders where merchant_order_id = #{merchantOrderId}
+  </select>
+
 </mapper>

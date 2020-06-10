@@ -68,4 +68,21 @@ public interface RefundTradeService {
      * @return
      **/
     BaseResponse bankCardRefund(RefundDTO refundDTO, String reqIp);
+
+    /**
+     * 预授权冲正接口
+     * @param bankCardUndoDTO
+     * @param reqIp
+     * @return
+     */
+    BaseResponse preAuthReverse(BankCardUndoDTO bankCardUndoDTO, String reqIp);
+
+    /**
+     * 预授权撤销接口
+     * @param bankCardUndoDTO
+     * @param reqIp
+     * @return
+     */
+    BaseResponse preAuthRevoke(BankCardUndoDTO bankCardUndoDTO, String reqIp);
+
 }

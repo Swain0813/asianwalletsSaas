@@ -10,4 +10,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PreOrdersMapper  extends BaseMapper<PreOrders> {
 
+    /**
+     * 根据商户订单号获取预授权订单信息
+     * @param merchantOrderId
+     * @return
+     */
+    PreOrders selectMerchantOrderId(String merchantOrderId);
+
 }

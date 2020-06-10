@@ -72,6 +72,9 @@ public class PosQueryOrderListVO {
     @ApiModelProperty(value = "币种默认值")
     private String defaultValue;
 
+    @ApiModelProperty(value = "通道流水号")
+    private String channelNumber;
+
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date createTime;
