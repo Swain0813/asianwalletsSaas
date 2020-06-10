@@ -64,7 +64,7 @@ public class Demo {
 
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, key);
-        String sendMsg = "6000120000" + isoMsg;
+        String sendMsg = "6000120000" +"602110200610"+ isoMsg;
         System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
         Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
         String result = respMap.get("respData");
