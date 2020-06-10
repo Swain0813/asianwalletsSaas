@@ -405,7 +405,7 @@ public class UpiIsoUtil {
         try {
             socket.setTcpNoDelay(true);
             socket.setReuseAddress(true);
-            socket.setSoTimeout(30000);
+            socket.setSoTimeout(300000);
             socket.setSoLinger(true, 5);
             socket.setSendBufferSize(1024);
             socket.setReceiveBufferSize(1024);

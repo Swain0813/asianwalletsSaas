@@ -43,14 +43,16 @@ public class Demo {
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         //自定义域
         iso8583DTO.setReservedPrivate_60("00000002003");//01000001000000000
-        iso8583DTO.setReservedPrivate_63("00");
+        iso8583DTO.setReservedPrivate_63("000");
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, null);
-        String sendMsg = "6000060000" +"602110190121"+ isoMsg;
+        String sendMsg = "6000060000" +"601410190121"+ isoMsg;
+        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        sendMsg = strHex2 + sendMsg;
         System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
 
-        Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
-        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
+        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
+        Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
         String result = respMap.get("respData");
         System.out.println(" ====  扫码result  ===   " + result);
         //解包
