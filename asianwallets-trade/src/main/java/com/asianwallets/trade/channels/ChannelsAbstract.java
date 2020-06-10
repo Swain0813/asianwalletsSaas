@@ -126,4 +126,13 @@ public abstract class ChannelsAbstract {
      * @return
      */
     public abstract BaseResponse preAuthComplete(Orders orders, Channel channel);
+
+    /**
+     * 预授权完成撤销
+     * @param channel
+     * @param orderRefund
+     * @param rabbitMassage
+     * @return
+     */
+    public abstract BaseResponse preAuthCompleteRevoke(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
 }

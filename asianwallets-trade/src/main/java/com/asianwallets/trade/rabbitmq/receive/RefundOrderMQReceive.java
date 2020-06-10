@@ -164,6 +164,49 @@ public class RefundOrderMQReceive {
 
 
     /**
+     * 预授权完成撤销上报清结算
+     * RF or RV上报清结算失败队列
+     * 三次上报清结算失败后就是退款失败
+     * @param value
+     */
+    @RabbitListener(queues = "PRE_AUTH_RV_RF_FAIL_DL")
+    public void processPreAuthCompleteRevoke(String value) {
+        RabbitMassage rabbitMassage = JSON.parseObject(value, RabbitMassage.class);
+        OrderRefund orderRefund = JSON.parseObject(rabbitMassage.getValue(), OrderRefund.class);
+        log.info("=========================【PRE_AUTH_RV_RF_FAIL_DL】==================== 【消费】 RabbitMassage : 【{}】", JSON.toJSONString(rabbitMassage));
+        if (rabbitMassage.getCount() > 0) {
+            //请求次数减一
+            rabbitMassage.setCount(rabbitMassage.getCount() - 1);
+            FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
+            log.info("=========================【PRE_AUTH_RV_RF_FAIL_DL】==================== 【上报清结算 {}】fundChangeDTO : 【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
+            BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+            log.info("=========================【PRE_AUTH_RV_RF_FAIL_DL】==================== 【上报清结算 {}返回】 cFundChange : 【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+            if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                log.info("========================= 【PRE_AUTH_RV_RF_FAIL_DL】 ==================== 【上报清结算 失败】 : 【{}】", JSON.toJSONString(rabbitMassage));
+                rabbitMQSender.send(AD3MQConstant.PRE_AUTH_RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                return;
+            }
+            Channel channel = this.commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
+            ChannelsAbstract channelsAbstract = null;
+            try {
+                log.info("========================= 【PRE_AUTH_RV_RF_FAIL_DL】 ==================== 【Channel Name】  channel: 【{}】", JSON.toJSONString(channel));
+                channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
+            } catch (Exception e) {
+                log.info("========================= 【PRE_AUTH_RV_RF_FAIL_DL】 ==================== 【Exception】 e : 【{}】", e);
+            }
+            channelsAbstract.preAuthCompleteRevoke(channel, orderRefund, null);
+        } else {
+            //三次上报清结算失败，则退款单就是退款失败更新退款单状态以及失败原因
+            orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, "上报清结算失败:PRE_AUTH_RV_RF_FAIL_DL");
+            //更新订单表
+            commonBusinessService.updateOrderRefundFail(orderRefund);
+            messageFeign.sendSimple(developerMobile, "SAAS-上报清结算失败 PRE_AUTH_RV_RF_FAIL_DL ：{ " + value + " }");
+            messageFeign.sendSimpleMail(developerEmail, "SAAS-上报清结算失败 PRE_AUTH_RV_RF_FAIL_DL 预警", "PRE_AUTH_RV_RF_FAIL_DL 预警 ：{ " + value + " }");
+        }
+
+    }
+
+    /**
      * @return
      * @Author YangXu
      * @Date 2019/12/20

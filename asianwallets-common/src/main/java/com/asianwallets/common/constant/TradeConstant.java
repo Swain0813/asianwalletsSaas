@@ -275,7 +275,7 @@ public class TradeConstant {
     public static final Byte PRE_ORDER_FAIL=2;//预授权失败
     public static final Byte PRE_ORDER_RESVER_SUCCESS=3;//冲正成功
     public static final Byte PRE_ORDER_CANCEL_SUCCESS=4;//撤销成功
-    public static final Byte PRE_ORDER_COMPLETE_SUCCESS=5;//预授权完成成功
+    public static final Byte PRE_ORDER_COMPLETE_SUCCESS=5;//预授权完成
 
 
 

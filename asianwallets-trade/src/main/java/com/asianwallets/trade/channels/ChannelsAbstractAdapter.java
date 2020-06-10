@@ -78,4 +78,10 @@ public class ChannelsAbstractAdapter extends ChannelsAbstract {
         return null;
     }
 
+    @Override
+    public BaseResponse preAuthCompleteRevoke(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        return null;
+    }
+
+
 }
