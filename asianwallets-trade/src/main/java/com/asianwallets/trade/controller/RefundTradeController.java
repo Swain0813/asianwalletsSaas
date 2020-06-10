@@ -128,4 +128,25 @@ public class RefundTradeController extends BaseController {
         BaseResponse baseResponse = refundTradeService.preAuthRevoke(bankCardUndoDTO, this.getReqIp());
         return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
     }
+
+    @ApiOperation(value = "预授权完成撤销接口")
+    @PostMapping("/preAuthCompleteRevoke")
+    @CrossOrigin
+    public BaseResponse preAuthCompleteRevoke(@RequestBody @ApiParam @Valid RefundDTO refundDTO) {
+        //线下判断交易密码
+        if (TradeConstant.TRADE_UPLINE.equals(refundDTO.getTradeDirection())) {
+            if (StringUtils.isEmpty(refundDTO.getToken())) {
+                throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+            }
+            RedisSysUserVO sysUserVO = JSON.parseObject(redisService.get(refundDTO.getToken()), RedisSysUserVO.class);
+            if (sysUserVO == null) {
+                throw new BusinessException(EResultEnum.USER_IS_NOT_LOGIN.getCode());
+            }
+            if (!commonService.checkPassword(refundDTO.getTradePassword(), sysUserVO.getTradePassword())) {
+                throw new BusinessException(EResultEnum.TRADE_PASSWORD_ERROR.getCode());
+            }
+        }
+        BaseResponse baseResponse = refundTradeService.preAuthCompleteRevoke(refundDTO, this.getReqIp());
+        return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
+    }
 }
