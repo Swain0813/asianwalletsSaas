@@ -94,4 +94,11 @@ public interface OfflineTradeService {
      * @return
      */
     BscDynamicScanVO preAuth(OfflineTradeDTO offlineTradeDTO);
+
+    /**
+     * 预授权完成
+     * @param offlinePreTradeDTO
+     * @return
+     */
+    BscDynamicScanVO preAuthComplete(OfflinePreTradeDTO offlinePreTradeDTO);
 }
