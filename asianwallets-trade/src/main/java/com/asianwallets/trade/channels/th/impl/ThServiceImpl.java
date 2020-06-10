@@ -488,6 +488,18 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         return null;
     }
 
+    /**
+     *预授权完成撤销
+     * @param channel
+     * @param orderRefund
+     * @param rabbitMassage
+     * @return
+     */
+    @Override
+    public BaseResponse preAuthCompleteRevoke(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        return null;
+    }
+
 
     /**
      * @return

@@ -18,6 +18,8 @@ public class AD3MQConstant {
     public final static String RV_RF_FAIL_DL = "RV_RF_FAIL_DL";
     //银行卡RF or RV请求失败
     public final static String BANK_RV_RF_FAIL_DL = "BANK_RV_RF_FAIL_DL";
+    //预授权 RF or RV请求失败
+    public final static String PRE_AUTH_RV_RF_FAIL_DL = "PRE_AUTH_RV_RF_FAIL_DL";
     //调账失败队列
     public final static String RA_AA_FAIL_DL = "RA_AA_FAIL_DL";
     //退款上报失败队列

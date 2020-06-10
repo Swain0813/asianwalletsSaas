@@ -58,6 +58,12 @@ public class OfflineTradeController extends BaseController {
         return ResultUtil.success(offlineTradeService.preAuth(offlineTradeDTO));
     }
 
+    @ApiOperation(value = "预授权完成")
+    @PostMapping("preAuthComplete")
+    public BaseResponse preAuthComplete(@RequestBody @ApiParam @Valid OfflinePreTradeDTO offlinePreTradeDTO) {
+        return ResultUtil.success(offlineTradeService.preAuthComplete(offlinePreTradeDTO));
+    }
+
     @ApiOperation(value = "线下查询订单列表【对外API】")
     @PostMapping("checkOrder")
     public BaseResponse checkOrder(@RequestBody @ApiParam @Valid OfflineCheckOrdersDTO offlineCheckOrdersDTO) {
