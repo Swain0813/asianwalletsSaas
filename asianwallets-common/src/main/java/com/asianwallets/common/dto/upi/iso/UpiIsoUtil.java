@@ -115,11 +115,10 @@ public class UpiIsoUtil {
         if (totalLen < 40) {
             throw new IncorrectMessageException("报文格式不正确，报文长度最少为40");
         }
-        //
-        //int msgLen = Integer.valueOf(NumberStringUtil.hexStr2Str(receivedMsg.substring(0,4)));
-        //if(msgLen != totalLen - 4){
-        //    throw new IncorrectMessageException("报文长度不匹配");
-        //}
+        int msgLen = Integer.parseInt(receivedMsg.substring(0, 4), 16);
+        if (msgLen * 2 != totalLen - 4) {
+            throw new IncorrectMessageException("报文长度不匹配");
+        }
         String messageType = receivedMsg.substring(26, 30);
         String hexBitMap = receivedMsg.substring(30, 46);
         String binaryBitMap = NumberStringUtil.hexToBinaryString(hexBitMap);
@@ -319,7 +318,7 @@ public class UpiIsoUtil {
 
         // 可变长度，校验一下长度是否超过上限。如果长度符合，则在前边拼接长度值
         if (Objects.equals(FldFlag.UNFIXED_2, fldFlag) || Objects.equals(FldFlag.UNFIXED_3, fldFlag)) {
-            if ( iso8583Annotation.fldIndex() != 2
+            if (iso8583Annotation.fldIndex() != 2
                     && iso8583Annotation.fldIndex() != 35
                     && actualLen > expectLen) {
                 String msg = String.format("%s长度不正确，最大长度为[%d]，实际长度为[%d]。"
