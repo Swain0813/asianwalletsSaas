@@ -45,15 +45,16 @@ public class Demo {
         iso8583DTO.setReservedPrivate_60("00000002003");//01000001000000000
         iso8583DTO.setReservedPrivate_63("000");
         //扫码组包
-        String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, null);
-        String sendMsg = "6000060000" +"601410190121"+ isoMsg;
-        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
-        sendMsg = strHex2 + sendMsg;
-        System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
-
-        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
-        Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
-        String result = respMap.get("respData");
+        //String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, null);
+        //String sendMsg = "6000060000" +"601410190121"+ isoMsg;
+        //String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        //sendMsg = strHex2 + sendMsg;
+        //System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
+        //
+        ////Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
+        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
+        //String result = respMap.get("respData");
+        String result ="009760000000066014101901210810002000010AC10014103792081832581030313632353936333137343130303030303031393033303030303030303030303033343231002400001903000000000003421000110000000200300061007F1D89D2F5D0C18EF6A32641136F5EE55954D2023A7186E0D75977CF38D0F260C22792C6E08FD789ED7779BD26525C4AF5DF9AA69C390A6D45F5E9D4";
         System.out.println(" ====  扫码result  ===   " + result);
         //解包
         ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO(result);
