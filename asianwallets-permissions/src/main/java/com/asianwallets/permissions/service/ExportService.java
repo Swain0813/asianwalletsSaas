@@ -110,4 +110,12 @@ public interface ExportService {
      * @return ExcelWriter writer
      */
     ExcelWriter getCheckAccountAuditWriter(List<CheckAccountAuditVO> insPros, Class clazz);
+
+    /**
+     * 预授权订单导出
+     * @param exportOrdersVOList
+     * @param clazz
+     * @return
+     */
+    ExcelWriter exportPreOrders(List<ExportPreOrdersVO> exportOrdersVOList, Class clazz);
 }

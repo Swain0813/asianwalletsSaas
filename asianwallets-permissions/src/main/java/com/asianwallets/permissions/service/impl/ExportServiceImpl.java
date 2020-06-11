@@ -3,6 +3,7 @@ package com.asianwallets.permissions.service.impl;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.entity.PreOrders;
 import com.asianwallets.common.entity.SettleCheckAccount;
 import com.asianwallets.common.entity.TradeCheckAccount;
 import com.asianwallets.common.utils.BeanToMapUtil;
@@ -779,6 +780,58 @@ public class ExportServiceImpl implements ExportService {
                     if (s.equals(property[i])) {
                         oSet1.add(comment[i]);
                         oList2.add(oMap.get(s));
+                    }
+                }
+            }
+            oList1.add(oList2);
+        }
+        oList1.add(0, oSet1);
+        writer.write(oList1);
+        return writer;
+    }
+
+
+    /**
+     * 预授权订单导出
+     * @param list
+     * @param clazz
+     * @return
+     */
+    @Override
+    public ExcelWriter exportPreOrders(List<ExportPreOrdersVO> list, Class clazz) {
+        ExcelWriter writer = ExcelUtil.getBigWriter();
+        Map<String, String[]> result = ReflexClazzUtils.getFiledStructMap(clazz);
+        //注释信息
+        String[] comment = result.get(AsianWalletConstant.EXCEL_TITLES);
+        //属性名信息
+        String[] property = result.get(AsianWalletConstant.EXCEL_ATTRS);
+        ArrayList<Object> oList1 = new ArrayList<>();
+        LinkedHashSet<Object> oSet1 = new LinkedHashSet<>();
+        for (ExportPreOrdersVO exportPreOrdersVO : list) {
+            HashMap<String, Object> oMap = BeanToMapUtil.beanToMap(exportPreOrdersVO);
+            ArrayList<Object> oList2 = new ArrayList<>();
+            Set<String> keySet = oMap.keySet();
+            for (int i = 0; i < property.length; i++) {
+                for (String s : keySet) {
+                    if (s.equals(property[i])) {
+                        oSet1.add(comment[i]);
+                        if (s.equals("orderStatus")) {
+                            if ((String.valueOf((oMap.get(s))).equals("1"))) {
+                                oList2.add("预授权成功");
+                            } else if ((String.valueOf((oMap.get(s))).equals("2"))) {
+                                oList2.add("预授权失败");
+                            } else if ((String.valueOf((oMap.get(s))).equals("3"))) {
+                                oList2.add("冲正成功");
+                            } else if ((String.valueOf((oMap.get(s))).equals("4"))) {
+                                oList2.add("撤销成功");
+                            } else if ((String.valueOf((oMap.get(s))).equals("5"))) {
+                                oList2.add("预授权完成");
+                            }else {
+                                oList2.add("");
+                            }
+                        } else {
+                            oList2.add(oMap.get(s));
+                        }
                     }
                 }
             }
