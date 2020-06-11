@@ -45,20 +45,19 @@ public class Demo {
         iso8583DTO.setReservedPrivate_60("00000002003");//01000001000000000
         iso8583DTO.setReservedPrivate_63("000");
         //扫码组包
-        String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, null);
-        String sendMsg = "6000060000" +"601410190121"+ isoMsg;
-        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
-        sendMsg = strHex2 + sendMsg;
-        System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
-
-        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
-        Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
-        String result = respMap.get("respData");
+        //String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, null);
+        //String sendMsg = "6000060000" +"601410190121"+ isoMsg;
+        //String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        //sendMsg = strHex2 + sendMsg;
+        //System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
+        //
+        ////Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
+        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
+        //String result = respMap.get("respData");
+        String result ="009760000000066014101901210810002000010AC1001410381708183258103131363332373633313737373030303030303139303330303030303030303030303334323100240000190300000000000342100011000000020030006100238FE1736B6B3C7797CAF22751380E1AC8FEC1766B669A9DAAE21EDD62BD98C67626F365125B3F2B1CD7548687C8313A22BD699118F111361944BA01";
         System.out.println(" ====  扫码result  ===   " + result);
         //解包
         ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO(result);
         System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
-        String[] split = iso8583DTO1281.getAdditionalData_46().split("02");
-        System.out.println(Arrays.toString(split));
     }
 }

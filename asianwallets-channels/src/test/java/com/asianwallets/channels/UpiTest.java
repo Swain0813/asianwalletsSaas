@@ -1,13 +1,18 @@
 package com.asianwallets.channels;
 
+import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.service.UpiService;
+import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
+import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.UpiDownDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
 import com.asianwallets.common.dto.upi.UpiRefundDTO;
+import com.asianwallets.common.dto.upi.iso.UpiIsoUtil;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.response.HttpResponse;
 import com.asianwallets.common.utils.HttpClientUtils;
+import com.asianwallets.common.utils.IDS;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +38,11 @@ public class UpiTest extends SpringBootServletInitializer {
     @Autowired
     private UpiService upiService;
 
+    private static String ip = "210.48.142.168";
+    private static String port = "7000";
+    private static String merchantId = "000000000003421";
+    private static String terminalId = "00001903";
+    private static String key = "861B7FBD78A6E196";
 
     @Test
     public void upiPayTest() {
@@ -177,6 +188,40 @@ public class UpiTest extends SpringBootServletInitializer {
         }
 
     }
+
+    //签到
+    @Test
+    public void upiQDTest()  throws Exception {
+        String domain11 = IDS.uniqueID().toString().substring(0, 6);
+
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0800");
+        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
+        //自定义域
+        iso8583DTO.setReservedPrivate_60("00000002003");//01000001000000000
+        iso8583DTO.setReservedPrivate_63("000");
+        //扫码组包
+        String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, null);
+        String sendMsg = "6000060000" +"601410190121"+ isoMsg;
+        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        sendMsg = strHex2 + sendMsg;
+        System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
+
+        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
+        Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
+        String result = respMap.get("respData");
+        System.out.println(" ====  扫码result  ===   " + result);
+        //解包
+        ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO(result);
+        System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
+        //String[] split = iso8583DTO1281.getAdditionalData_46().split("02");
+        //System.out.println(Arrays.toString(split));
+    }
+
 
 
 
