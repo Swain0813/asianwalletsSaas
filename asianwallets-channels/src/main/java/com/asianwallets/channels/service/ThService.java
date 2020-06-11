@@ -1,4 +1,5 @@
 package com.asianwallets.channels.service;
+
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.response.BaseResponse;
@@ -47,6 +48,7 @@ public interface ThService {
 
     /**
      * 通华线下银行卡消费
+     *
      * @param thDTO
      * @return
      */
@@ -54,6 +56,7 @@ public interface ThService {
 
     /**
      * 通华线下银行卡冲正
+     *
      * @param thDTO
      * @return
      */
@@ -75,5 +78,43 @@ public interface ThService {
      */
     BaseResponse thBankCardUndo(ThDTO thDTO);
 
+    /**
+     * 预授权
+     *
+     * @param thDTO
+     * @return
+     */
+    BaseResponse preAuth(ThDTO thDTO);
 
+    /**
+     * 预授权冲正
+     *
+     * @param thDTO
+     * @return
+     */
+    BaseResponse preAuthReverse(ThDTO thDTO);
+
+    /**
+     * 预授权撤销
+     *
+     * @param thDTO
+     * @return
+     */
+    BaseResponse preAuthRevoke(ThDTO thDTO);
+
+    /**
+     * 预授权完成
+     *
+     * @param thDTO
+     * @return
+     */
+    BaseResponse preAuthComplete(ThDTO thDTO);
+
+    /**
+     * 预授权完成撤销
+     *
+     * @param thDTO
+     * @return
+     */
+    BaseResponse preAuthCompleteRevoke(ThDTO thDTO);
 }

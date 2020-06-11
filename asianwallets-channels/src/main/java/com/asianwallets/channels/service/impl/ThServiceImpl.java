@@ -500,4 +500,60 @@ public class ThServiceImpl implements ThService {
         }
         return baseResponse;
     }
+
+
+    /**
+     * 预授权
+     *
+     * @param thDTO
+     * @return
+     */
+    @Override
+    public BaseResponse preAuth(ThDTO thDTO) {
+        return null;
+    }
+
+    /**
+     * 预授权冲正
+     *
+     * @param thDTO
+     * @return
+     */
+    @Override
+    public BaseResponse preAuthReverse(ThDTO thDTO) {
+        return null;
+    }
+
+    /**
+     * 预授权撤销
+     *
+     * @param thDTO
+     * @return
+     */
+    @Override
+    public BaseResponse preAuthRevoke(ThDTO thDTO) {
+        return null;
+    }
+
+    /**
+     * 预授权完成
+     *
+     * @param thDTO
+     * @return
+     */
+    @Override
+    public BaseResponse preAuthComplete(ThDTO thDTO) {
+        return null;
+    }
+
+    /**
+     * 预授权完成撤销
+     *
+     * @param thDTO
+     * @return
+     */
+    @Override
+    public BaseResponse preAuthCompleteRevoke(ThDTO thDTO) {
+        return null;
+    }
 }
