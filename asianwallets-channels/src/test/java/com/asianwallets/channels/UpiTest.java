@@ -218,8 +218,8 @@ public class UpiTest extends SpringBootServletInitializer {
         //解包
         ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO(result);
         System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
-        String[] split = iso8583DTO1281.getAdditionalData_46().split("02");
-        System.out.println(Arrays.toString(split));
+        //String[] split = iso8583DTO1281.getAdditionalData_46().split("02");
+        //System.out.println(Arrays.toString(split));
     }
 
 
