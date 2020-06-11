@@ -116,16 +116,16 @@ public class UpiIsoUtil {
             throw new IncorrectMessageException("报文格式不正确，报文长度最少为40");
         }
 
-        int msgLen = Integer.valueOf(NumberStringUtil.hexStr2Str(receivedMsg.substring(148, 164)));
-        //if(msgLen != totalLen - 4){
-        //    throw new IncorrectMessageException("报文长度不匹配");
-        //}
-        String messageType = receivedMsg.substring(164, 168);
-        String hexBitMap = receivedMsg.substring(168, 184);
+        int msgLen = Integer.valueOf(NumberStringUtil.hexStr2Str(receivedMsg.substring(0,4)));
+        if(msgLen != totalLen - 4){
+            throw new IncorrectMessageException("报文长度不匹配");
+        }
+        String messageType = receivedMsg.substring(25, 29);
+        String hexBitMap = receivedMsg.substring(29, 45);
         String binaryBitMap = NumberStringUtil.hexToBinaryString(hexBitMap);
         //String binaryBitMap = hexBitMap;
         String[] binaryBitMapArgs = binaryBitMap.split("");
-        String msg = receivedMsg.substring(184);
+        String msg = receivedMsg.substring(45);
 
         ISO8583DTO iso8583DTO128 = (ISO8583DTO) msgToObject(ISO8583DTO.class, binaryBitMapArgs, msg);
         iso8583DTO128.setMessageType(messageType);
