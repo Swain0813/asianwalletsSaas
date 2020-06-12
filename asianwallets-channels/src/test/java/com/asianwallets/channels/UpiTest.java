@@ -40,8 +40,8 @@ public class UpiTest extends SpringBootServletInitializer {
     private static String port = "7000";
     private static String merchantId = "000000000003421";
     private static String terminalId = "00001903";
-    private static String key = "861B7FBD78A6E196";
-    private static String key_62 = "C80C9C5AEF671BB7AE63D50DDA0EE5FD1DD7DD2400E0A435AC12A51F50850E45DF0EF070195A1B1E3976E398D4F5A66F0E1A6D8602E218491E186CB1";
+    private static String key = "868A494FEF5BF273";
+    private static String key_62 = "B6A37DF7AF79A3E5BA47C55FCC33B773C1CF0FA4C3617990ED5C9FBEE0CD023F955806CE644A6B301069ABA901B70E3E88A324CB6B1EAF4C5DE523DF";
     @Test
     public void upiPayTest() {
 
