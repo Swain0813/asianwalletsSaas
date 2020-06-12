@@ -236,7 +236,7 @@ public class UpiTest extends SpringBootServletInitializer {
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         //自定义域
         iso8583DTO.setReservedPrivate_60("96000002400");//
-        iso8583DTO.setReservedPrivate_62("9F0605DF000000039F220102");
+        iso8583DTO.setReservedPrivate_62("9F0605DF000000039F220101");
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, null);
         String sendMsg = "6000060000" +"601410190121"+ isoMsg;
