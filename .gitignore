@@ -48,6 +48,11 @@ asianwallets-task/mvnw
 asianwallets-task/mvnw.cmd
 asianwallets-task/.mvn/
 
+asianwallets-rights/.mvn/wrapper/maven-wrapper.properties
+asianwallets-rights/mvnw
+asianwallets-rights/mvnw.cmd
+asianwallets-rights/.mvn/
+
 
 asianwallets-message/.mvn/wrapper/maven-wrapper.properties
 asianwallets-message/mvnw
