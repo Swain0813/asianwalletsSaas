@@ -22,7 +22,7 @@
   "10021": "Đơn đặt hàng ban đầu không được ủy quyền trước để hoàn thành đơn đặt hàng, không thể ủy quyền trước để hoàn thành việc hủy bỏ",
   "10022": "Đơn đặt hàng không hỗ trợ việc hủy bỏ",
   "10023": "Sửa đổi hồ sơ đã tồn tại, chờ đợi cho kiểm toán",
-  "10024": "Hồ sơ đã tồn tại, đang chờ kiểm toán",
+  "10024": "Các cơ quan và thương mại không liên quan",
   "10025": "Đơn đặt hàng không thể được hủy bỏ",
   "10026": "Thời gian có hiệu lực không phải là trống rỗng",
   "10027": "Hiện tại tài khoản thương mại không có tài khoản trong loại tiền đó",
@@ -200,5 +200,20 @@
   "30036": "Doanh nghiệp không tồn tại",
   "30037": "ID cửa hàng đã tồn tại",
   "30038": "Thời gian hết hạn phải lớn hơn thời gian hệ thống hiện tại",
-  "30039": "Thông tin chính không tồn tại"
+  "30039": "Thông tin chính không tồn tại",
+
+  "60001": "Phiếu không tồn tại hoặc đã được sử dụng",
+  "60002": "Thông tin bất thường về vé",
+  "60003": "Thời hạn bất thường của phiếu",
+  "60005": "Quyền lợi của các tổ chức không tồn tại",
+  "60006": "Nền tảng OTA không hỗ trợ việc hủy bỏ",
+  "60007": "Số lượng hoạt động không hợp pháp",
+  "60008": "Thời gian bắt đầu sự kiện bất hợp pháp",
+  "60009": "Thời gian kết thúc bất hợp pháp",
+  "60010": "Thời gian bắt đầu không hợp lệ",
+  "60011": "Thời gian kết thúc không hợp lệ",
+  "60012": "Chủ đề sự kiện trùng lặp",
+  "60013": "Số lượng sự kiện bất hợp pháp",
+  "60014": "Giá vé không thể lớn hơn giá vé",
+  "60015": "Thời gian không khả dụng là bất hợp pháp"
 }
