@@ -229,7 +229,6 @@ public class UpiTest extends SpringBootServletInitializer {
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0800");
-        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
         //受卡方标识码 (商户号)
