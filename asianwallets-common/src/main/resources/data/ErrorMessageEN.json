@@ -22,7 +22,7 @@
   "10021": "The original order is not pre-authorized and cannot be cancelled",
   "10022": "Cancellation of this order is not supported",
   "10023": "The record exists and is awaiting review",
-  "10024": "Accept success, cancel in",
+  "10024": "There is no association between the organization and the Merchant",
   "10025": "A cancelled order cannot be cancelled any more",
   "10026": "The effective time cannot be empty",
   "10027": "The current merchant does not have an account in this currency",
@@ -203,5 +203,20 @@
   "30036": "Merchant does not exist",
   "30037": "Shop ID already exists",
   "30038": "The expiration time must be greater than the current system time",
-  "30039": "Key information does not exist"
+  "30039": "Key information does not exist",
+
+  "60001": "Tickets do not exist or have been used",
+  "60002": "Ticket information is abnormal",
+  "60003": "Ticket period is abnormal",
+  "60005": "Institutional equity does not exist",
+  "60006": "The OTA platform does not support undo",
+  "60007": "The number of activities is not legal",
+  "60008": "Illegal event start time",
+  "60009": "Illegal end time",
+  "60010": "Illegal unavailable start time",
+  "60011": "Illegal unavailable end time",
+  "60012": "Duplicate event theme",
+  "60013": "Illegal number of events",
+  "60014": "The purchase price of the ticket shall not be greater than the face value of the ticket",
+  "60015": "Unavailable time is illegal"
 }

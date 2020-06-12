@@ -118,4 +118,29 @@ public interface ExportService {
      * @return
      */
     ExcelWriter exportPreOrders(List<ExportPreOrdersVO> exportOrdersVOList, Class clazz);
+
+
+    /**
+     * 导出权益发放管理信息
+     * @param exportRightsGrantVOs
+     * @param clazz
+     * @return
+     */
+    ExcelWriter getRightsGrantExcel(List<ExportRightsGrantVO> exportRightsGrantVOs, Class clazz);
+
+    /**
+     * 导出权益票券信息
+     * @param exportRightsUserGrantVOList
+     * @param clazz
+     * @return
+     */
+    ExcelWriter getRightsUserGrantExcel(List<ExportRightsUserGrantVO> exportRightsUserGrantVOList, Class clazz);
+
+    /**
+     * 导出权益核销
+     * @param language
+     * @param list
+     * @return
+     */
+    ExcelWriter exportRightsOrders(String language, List<RightsOrdersVO> list);
 }

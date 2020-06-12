@@ -25,6 +25,7 @@
         <module>asianwallets-channels</module>
         <module>asianwallets-clearing</module>
         <module>asianwallets-trade</module>
+        <module>asianwallets-rights</module>
     </modules>
 
     <properties>
