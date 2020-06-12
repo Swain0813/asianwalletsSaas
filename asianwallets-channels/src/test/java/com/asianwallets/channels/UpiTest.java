@@ -221,6 +221,40 @@ public class UpiTest extends SpringBootServletInitializer {
         //String[] split = iso8583DTO1281.getAdditionalData_46().split("02");
         //System.out.println(Arrays.toString(split));
     }
+
+    //主密钥下载
+    @Test
+    public void upiZMYXZTest()  throws Exception {
+        String domain11 = IDS.uniqueID().toString().substring(0, 6);
+
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0800");
+        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
+        //自定义域
+        iso8583DTO.setReservedPrivate_60("96000002400");//
+        iso8583DTO.setReservedPrivate_62("9F0605DF000000039F220102");
+        //扫码组包
+        String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, null);
+        String sendMsg = "6000060000" +"601410190121"+ isoMsg;
+        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        sendMsg = strHex2 + sendMsg;
+        System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
+
+        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
+        Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
+        String result = respMap.get("respData");
+        System.out.println(" ====  扫码result  ===   " + result);
+        //解包
+        ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO(result);
+        System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
+        //String[] split = iso8583DTO1281.getAdditionalData_46().split("02");
+        //System.out.println(Arrays.toString(split));
+    }
+
     //主密钥更新
     @Test
     public void upiZMYGXTest()  throws Exception {
