@@ -77,4 +77,4 @@ file:
     server: https://psg.asianwallets.com
   upload:
     path: /usr/local/tomcat/apache-tomcat-8.5.38/webapps
-  tmpfile: /usr/local/tomcat/apache-tomcat-8.5.38/webapps/tmp
+  tmpfile: /usr/local/upload/images
