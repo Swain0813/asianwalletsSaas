@@ -33,11 +33,11 @@ public class RightsGrant extends BaseEntity {
     @Column(name = "institution_name")
     private String institutionName;
 
-    @ApiModelProperty(value = "二级商户编号")
+    @ApiModelProperty(value = "商户编号")
     @Column(name = "merchant_id")
     private String merchantId;
 
-    @ApiModelProperty(value = "二级商户名称")
+    @ApiModelProperty(value = "商户名称")
     @Column(name = "merchant_name")
     private String merchantName;
 
@@ -100,9 +100,21 @@ public class RightsGrant extends BaseEntity {
     @Column(name = "user_id")
     private String userId;
 
+    @ApiModelProperty(value = "发送类型")//1-短信平台 2-邮件平台
+    @Column(name = "send_type")
+    private Byte sendType;
+
     @ApiModelProperty(value = "用户手机号")
     @Column(name = "mobile_no")
     private String mobileNo;
+
+    @ApiModelProperty(value = "用户邮箱")
+    @Column(name = "email")
+    private String email;
+
+    @ApiModelProperty(value = "发送内容")
+    @Column(name = "content")
+    private String content;
 
     @ApiModelProperty(value = "领取数量")
     @Column(name = "get_amount")

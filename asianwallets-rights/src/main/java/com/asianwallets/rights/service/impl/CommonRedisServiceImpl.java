@@ -87,7 +87,7 @@ public class CommonRedisServiceImpl implements CommonRedisService {
                 log.info("-----------------【权益系统】根据机构编号获取机构秘钥信息 信息不存在 -----------------  institutionCode:{}", institutionCode);
                 throw new BusinessException(EResultEnum.SECRET_IS_NOT_EXIST.getCode());
             }
-            redisService.get(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(JSON.toJSONString(attestation)));
+            redisService.set(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(JSON.toJSONString(attestation)),JSON.toJSONString(attestation));
         }
         return attestation;
     }

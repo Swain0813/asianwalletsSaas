@@ -83,7 +83,7 @@
                 AND  ro.id = #{id}
             </if>
             <if test="orderNo != null and orderNo != ''">
-                AND  ro.orderNo = #{orderNo}
+                AND  ro.order_no = #{orderNo}
             </if>
             <if test="institutionId != null and institutionId != ''">
                 AND  ro.institution_id = #{institutionId}
@@ -127,7 +127,7 @@
         from rights_orders ro
         <where>
             <if test="orderNo != null and orderNo != ''">
-                AND  ro.orderNo = #{orderNo}
+                AND  ro.order_no = #{orderNo}
             </if>
             <if test="institutionId != null and institutionId != ''">
                 AND  ro.institution_id = #{institutionId}
@@ -197,7 +197,7 @@
     <select id="selectByTicketId" resultMap="BaseResultMap">
         select
         <include refid="common"/>
-        from asianwallet_institution.rights_orders
+        from rights_orders
         <where>
             <if test="id != null and id != ''">
                 AND id = #{id}

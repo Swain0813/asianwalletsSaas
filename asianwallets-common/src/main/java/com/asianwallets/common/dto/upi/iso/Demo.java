@@ -91,7 +91,7 @@ public class Demo {
     }
 
     private static void test2() {
-        String substring = key_62.substring(40, 56);
+        String substring = key_62.substring(40,72);
         String mac = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
         System.out.println(mac);
     }
@@ -100,14 +100,13 @@ public class Demo {
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0800");
-        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         //自定义域
-        iso8583DTO.setReservedPrivate_60("00000002003");//01000001000000000
-        iso8583DTO.setReservedPrivate_63("000");
+        iso8583DTO.setReservedPrivate_60("96000002400");//
+        iso8583DTO.setReservedPrivate_62("9F0605DF000000039F220101");
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, null);
         String sendMsg = "6000060000" +"601410190121"+ isoMsg;
