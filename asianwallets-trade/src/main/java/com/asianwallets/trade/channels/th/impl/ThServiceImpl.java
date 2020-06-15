@@ -678,7 +678,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //当前时间戳
         String timeStamp = System.currentTimeMillis() + "";
         //11 域需要在冲正的时候使用
-        String domain11 = orders.getId().substring(0, 6);
+        String domain11 = orders.getId().substring(10, 16);
         String domain60_2 = timeStamp.substring(6, 12);
         //保存11域与60.2域
         orders.setReportNumber(domain11 + domain60_2);
