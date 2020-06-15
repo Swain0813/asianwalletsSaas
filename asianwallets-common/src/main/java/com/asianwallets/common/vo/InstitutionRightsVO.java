@@ -26,10 +26,10 @@ public class InstitutionRightsVO {
     @ApiModelProperty(value = "机构名称")
     private String institutionName;
 
-    @ApiModelProperty(value = "二级商户编号")
+    @ApiModelProperty(value = "商户编号")
     private String merchantId;
 
-    @ApiModelProperty(value = "二级商户名称")
+    @ApiModelProperty(value = "商户名称")
     private String merchantName;
 
     @ApiModelProperty(value = "权益类型：1-满减 2-折扣 3-套餐 4-定额")

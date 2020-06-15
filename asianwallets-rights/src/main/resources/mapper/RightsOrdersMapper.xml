@@ -73,7 +73,7 @@
 
     <select id="pageRightsOrders" resultMap="SecResultMap">
         select
-        ro.institution_id,ro.institution_name,ro.order_no,ro.order_amount,
+        ro.institution_id,ro.institution_name,ro.merchant_id,ro.merchant_name,ro.order_no,ro.order_amount,
         ro.deduction_amount,ro.actual_amount,ro.ticket_id,ro.rights_currency,
         ro.rights_type,ro.system_order_id,ro.system_name,ro.create_time,ro.update_time,
         ro.status,ro.remark
@@ -82,11 +82,20 @@
             <if test="id != null and id != ''">
                 AND  ro.id = #{id}
             </if>
+            <if test="orderNo != null and orderNo != ''">
+                AND  ro.orderNo = #{orderNo}
+            </if>
             <if test="institutionId != null and institutionId != ''">
                 AND  ro.institution_id = #{institutionId}
             </if>
             <if test="institutionName != null and institutionName != ''">
                 AND  ro.institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+            </if>
+            <if test="merchantId != null and merchantId != ''">
+                AND  ro.merchant_id = #{merchantId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                AND  ro.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
             </if>
             <if test="rightsType != null and rightsType != ''">
                 AND  ro.rights_type = #{rightsType}
@@ -117,11 +126,20 @@
         ro.status,ro.remark
         from rights_orders ro
         <where>
+            <if test="orderNo != null and orderNo != ''">
+                AND  ro.orderNo = #{orderNo}
+            </if>
             <if test="institutionId != null and institutionId != ''">
                 AND  ro.institution_id = #{institutionId}
             </if>
             <if test="institutionName != null and institutionName != ''">
                 AND  ro.institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+            </if>
+            <if test="merchantId != null and merchantId != ''">
+                AND  ro.merchant_id = #{merchantId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                AND  ro.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
             </if>
             <if test="rightsType != null and rightsType != ''">
                 AND  ro.rights_type = #{rightsType}

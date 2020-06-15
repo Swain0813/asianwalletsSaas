@@ -23,9 +23,6 @@ import java.math.BigDecimal;
 @Table(name =  "rights_orders")
 public class RightsOrders extends BaseEntity {
 
-	private static final long serialVersionUID = 1L;
-
-
 	@ApiModelProperty(value = "机构编号")
 	@Column(name ="institution_id")
 	private String institutionId;
@@ -34,11 +31,11 @@ public class RightsOrders extends BaseEntity {
 	@Column(name ="institution_name")
 	private String institutionName;
 
-	@ApiModelProperty(value = "二级商户编号")
+	@ApiModelProperty(value = "商户编号")
 	@Column(name ="merchant_id")
 	private String merchantId;
 
-	@ApiModelProperty(value = "二级商户名称")
+	@ApiModelProperty(value = "商户名称")
 	@Column(name ="merchant_name")
 	private String merchantName;
 
@@ -54,7 +51,7 @@ public class RightsOrders extends BaseEntity {
 	@Column(name ="request_order_no")
 	private String requestOrderNo;
 
-	@ApiModelProperty(value = "机构订单号")
+	@ApiModelProperty(value = "商户订单号")
 	@Column(name ="order_no")
 	private String orderNo;
 
@@ -69,9 +66,7 @@ public class RightsOrders extends BaseEntity {
 	@ApiModelProperty(value = "实际支付金额")
 	@Column(name ="actual_amount")
 	private BigDecimal actualAmount;
-	/**
-	 * 权益币种
-	 */
+
 	@ApiModelProperty(value = "权益币种")
 	@Column(name ="rights_currency")
 	private String rightsCurrency;
@@ -124,7 +119,7 @@ public class RightsOrders extends BaseEntity {
 	@Column(name ="server_url")
 	private String serverUrl;
 
-	@ApiModelProperty(value = "enabled")
+	@ApiModelProperty(value = "启用禁用")
 	@Column(name ="enabled")
 	private Boolean enabled;
 
