@@ -277,6 +277,4 @@ public class TradeConstant {
     public static final Byte PRE_ORDER_CANCEL_SUCCESS=4;//撤销成功
     public static final Byte PRE_ORDER_COMPLETE_SUCCESS=5;//预授权完成
 
-
-
 }

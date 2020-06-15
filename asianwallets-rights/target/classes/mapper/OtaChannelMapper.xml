@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.asianwallets.rights.dao.OtaChannelMapper">
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.asianwallets.common.entity.OtaChannel">
+	<result column="id" property="id" />
+		<result column="system_name" property="systemName" />
+		<result column="cancel_default" property="cancelDefault" />
+		<result column="cancel_url" property="cancelUrl" />
+		<result column="report_url" property="reportUrl" />
+		<result column="verification_default" property="verificationDefault" />
+		<result column="verification_url" property="verificationUrl" />
+		<result column="system_img" property="systemImg" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator" property="creator" />
+		<result column="modifier" property="modifier" />
+		<result column="remark" property="remark" />
+		<result column="enabled" property="enabled" />
+		<result column="ext1" property="ext1" />
+		<result column="ext2" property="ext2" />
+		<result column="ext3" property="ext3" />
+		<result column="ext4" property="ext4" />
+		<result column="ext5" property="ext5" />
+		<result column="ext6" property="ext6" />
+		<result column="ext7" property="ext7" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+    id,system_name,report_url,cancel_default,cancel_url,verification_default,verification_url,system_img,create_time,
+    update_time,creator,modifier,remark,enabled,ext1,ext2,ext3,ext4,ext5,ext6,ext7
+   </sql>
+
+	<select id="selectBySystemName" resultMap="BaseResultMap">
+		select id,system_name,cancel_default,cancel_url,verification_default,verification_url,report_url,system_img,create_time,
+		update_time,creator,modifier,remark,enabled,ext1,ext2,ext3,ext4,ext5,ext6,ext7
+		from ota_channel where system_name = #{systemName} and enabled=1
+	</select>
+
+	<select id="pageOtaChannel"  resultMap="BaseResultMap">
+		select id,system_name,cancel_default,cancel_url,verification_default,verification_url,report_url,system_img,create_time,
+		update_time,creator,modifier,remark,enabled,ext1,ext2,ext3,ext4,ext5,ext6,ext7
+		from ota_channel
+		<where>
+			<if test="systemName != null and systemName != ''">
+				system_name LIKE CONCAT(CONCAT('%', #{systemName}), '%')
+			</if>
+			<if test="enabled != null and enabled != ''">
+				enabled = #{enabled}
+			</if>
+			<if test="startDate != null ">
+				AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startDate}
+			</if>
+			<if test="endDate != null ">
+				AND DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endDate}
+			</if>
+		</where>
+
+	</select>
+
+	<select id="getOtaChannelLists" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"/>
+		from ota_channel where enabled=1 order by create_time desc
+	</select>
+
+</mapper>

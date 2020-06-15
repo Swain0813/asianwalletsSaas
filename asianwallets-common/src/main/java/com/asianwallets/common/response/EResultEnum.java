@@ -49,7 +49,7 @@ public enum EResultEnum {
     PRE_ORDERS_STATUS_ERROR("10021"),//原订单不是预授权完成的订单,不能预授权完成撤销
     ONLINE_ORDER_IS_NOT_ALLOW_UNDO("10022"),//该订单不支持撤销
     AUDIT_INFO_EXIENT("10023"),//记录已存在，等待审核中
-    CANCEL_ORDER_RUNNING("10024"),//受理成功，撤销中
+    INSTITUTION_AND_MERCHANT_NOT_RELATED("10024"),//机构和商户未关联
     CANCEL_ORDER_RUNNING_IS_NOT_UNDO("10025"),//撤销中的订单不能再撤销
     EFFECTTIME_IS_NULL("10026"),//生效时间不能为空
     MERCHANT_ACCOUNT_CURRENCY_IS_NOT_EXIST("10027"),//当前商户不存在该币种的账户
@@ -213,7 +213,23 @@ public enum EResultEnum {
     EXCEEDING_UPLOAD_LIMIT("40015"),//超过最大导入条数300
     IMPORT_REPEAT_ERROR("40016"),//导入信息重复
     HOLIDAYS_NAME_IS_NOT_NULL("40017"),//节假日名称为空
-    LOCAL_FOREIGN_CURRENCY_IS_SAME("40018");//本币和外币不能相同
+    LOCAL_FOREIGN_CURRENCY_IS_SAME("40018"),//本币和外币不能相同
+
+    TICKET_NOT_EXTENT("60001"),//票券不存在或已使用
+    TICKET_INFO_EXCEPTION("60002"),//票券信息异常
+    TICKET_TIME_EXCEPTION("60003"),//票券期限异常
+    EQUITY_DOES_NOT_EXIST("60005"),//机构权益不存在
+    OTA_NOT_SUPPORT_CANCLE("60006"),//OTA平台不支持撤销
+    OTA_ACTIVITY_AMOUNT_IS_ILLEGAL("60007"),//活动数量不合法
+    EVENT_START_TIME_IS_ILLEGAL("60008"),//活动开始时间非法
+    EVENT_END_TIME_IS_ILLEGAL("60009"),//活动结束时间非法
+    UNAVAILABLE_START_TIME_ILLEGAL("60010"),//不可用开始时间非法
+    UNAVAILABLE_END_TIME_ILLEGAL("60011"),//不可用结束时间非法
+    DUPLICATE_EVENT_THEME("60012"),//活动主题重复
+    ILLEGAL_NUMBER_OF_ACTIVITIES("60013"),//活动数量不合法
+    TICKET_BUY_PRICE_NOT_THAN_TICKET_PRICE("60014"),//票券购买价不能大于票券面额
+    UNAVAILABLE_TIME_IS_ILLEGAL("60015");//不可用时间非法
+
 
     private String code;
 
