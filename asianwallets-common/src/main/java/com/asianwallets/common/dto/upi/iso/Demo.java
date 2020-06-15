@@ -36,9 +36,9 @@ public class Demo {
     private static String key = "94A1FB75E03EADEA";
 
     public static void main(String[] args) throws Exception {
-        //test1();
+        test1();
         //test2();
-        test3();
+        //test3();
     }
 
     private static void test1() throws Exception  {
@@ -91,7 +91,7 @@ public class Demo {
     }
 
     private static void test2() {
-        String substring = key_62.substring(40, 56);
+        String substring = key_62.substring(40,72);
         String mac = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
         System.out.println(mac);
     }
