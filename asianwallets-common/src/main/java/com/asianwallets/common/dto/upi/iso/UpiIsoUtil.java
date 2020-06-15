@@ -345,9 +345,10 @@ public class UpiIsoUtil {
                 fldValue = NumberStringUtil.str2HexStr(fldValue);
             }
             if (iso8583Annotation.fldIndex() == 35
-                    || iso8583Annotation.fldIndex() == 2
+                    //|| iso8583Annotation.fldIndex() == 2
                     || iso8583Annotation.fldIndex() == 46
                     || iso8583Annotation.fldIndex() == 47
+                    || iso8583Annotation.fldIndex() == 55
                     || iso8583Annotation.fldIndex() == 62) {
                 actualLen = actualLen / 2;
             }
