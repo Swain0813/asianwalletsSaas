@@ -2,6 +2,7 @@ package com.asianwallets.rights.service.impl;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.base.BaseServiceImpl;
+import com.asianwallets.common.constant.RightsConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.*;
 import com.asianwallets.common.entity.OtaChannel;
@@ -125,9 +126,9 @@ public class RightsOrdersServiceImpl extends BaseServiceImpl<RightsOrders> imple
             }
 
             /********************************  修改票券状态 *********************************/
-            if (rightsUserGrantMapper.updateTicketStatus(rightsUserGrant.getId(), TradeConstant.TICKETS_USE) == 1) {
+            if (rightsUserGrantMapper.updateTicketStatus(rightsUserGrant.getId(), RightsConstant.TICKETS_USE) == 1) {
                 log.info("===================== 权益退款(发放平台)API =================== 票券编号：【{}】权益核销成功", verificationCancleDTO.getTicketId());
-                rightsOrder.setStatus(TradeConstant.HX_SUCCESS);
+                rightsOrder.setStatus(RightsConstant.HX_SUCCESS);
                 rightsOrdersVO.setStatus("SUCCESS");
                 baseResponse.setCode("200");
                 baseResponse.setMsg("SUCCESS");
@@ -135,7 +136,7 @@ public class RightsOrdersServiceImpl extends BaseServiceImpl<RightsOrders> imple
                 rightsGrantMapper.updateCancelVerificationAmount(rightsUserGrant.getDealId());
             } else {
                 log.info("===================== 权益退款(发放平台)API =================== 票券编号：【{}】权益核销失败", verificationCancleDTO.getTicketId());
-                rightsOrder.setStatus(TradeConstant.HX_FAIL);
+                rightsOrder.setStatus(RightsConstant.HX_FAIL);
                 rightsOrdersVO.setStatus("FAIL");
                 baseResponse.setCode("10071");
                 baseResponse.setMsg("FAIL");
@@ -246,7 +247,7 @@ public class RightsOrdersServiceImpl extends BaseServiceImpl<RightsOrders> imple
         int num = sb.toString().lastIndexOf(",");
         rightsOrders.setTicketId(sb.toString().substring(0, num));
         rightsOrders.setTicketNum(verificationCancleDTO.getTicketId().size());
-        rightsOrders.setStatus(TradeConstant.HX_WAIT);
+        rightsOrders.setStatus(RightsConstant.HX_WAIT);
         rightsOrders.setServerUrl(verificationCancleDTO.getServerUrl());
         rightsOrders.setEnabled(true);
         rightsOrders.setId("RO" + IDS.uniqueID());
@@ -329,9 +330,9 @@ public class RightsOrdersServiceImpl extends BaseServiceImpl<RightsOrders> imple
         /************************************** 创建权益退款单 ***************************************/
         RightsOrdersRefund rightsOrdersRefund = createRightsOrdersRefund(rightsRefundDTO, rightsUserGrant);
         /*************************************** 修改票券状态 *****************************************/
-        if (rightsUserGrantMapper.updateTicketStatusRefund(rightsUserGrant.getId(), TradeConstant.TICKETS_REFUND) == 1) {
+        if (rightsUserGrantMapper.updateTicketStatusRefund(rightsUserGrant.getId(), RightsConstant.TICKETS_REFUND) == 1) {
             log.info("===================== 权益退款(发放平台)API =================== 票券编号：【{}】退款成功", rightsRefundDTO.getTicketId());
-            rightsUserGrant.setTicketStatus(TradeConstant.TICKETS_REFUND);
+            rightsUserGrant.setTicketStatus(RightsConstant.TICKETS_REFUND);
             rightsOrdersRefund.setRefundStatus(TradeConstant.REFUND_SUCCESS);
             rightsOrdersRefund.setSysRefundTime(new Date());
             rightsOrdersRefundMapper.insert(rightsOrdersRefund);
@@ -410,7 +411,7 @@ public class RightsOrdersServiceImpl extends BaseServiceImpl<RightsOrders> imple
         }
 
         /*************************************** 修改票券状态 *****************************************/
-        if (rightsUserGrantMapper.updateTicketStatusRefund(rightsUserGrant.getId(), TradeConstant.TICKETS_REFUND) != 1) {
+        if (rightsUserGrantMapper.updateTicketStatusRefund(rightsUserGrant.getId(), RightsConstant.TICKETS_REFUND) != 1) {
             log.info("===================== 权益退款(机构)API =================== 票券编号：【{}】退款失败", rightsRefundDTO.getTicketId());
             rightsOrdersRefund.setRefundStatus(TradeConstant.REFUND_FALID);
             rightsOrdersRefundMapper.insert(rightsOrdersRefund);
@@ -420,7 +421,7 @@ public class RightsOrdersServiceImpl extends BaseServiceImpl<RightsOrders> imple
         }
 
         log.info("===================== 权益退款(机构)API =================== 票券编号：【{}】退款成功", rightsRefundDTO.getTicketId());
-        rightsUserGrant.setTicketStatus(TradeConstant.TICKETS_REFUND);
+        rightsUserGrant.setTicketStatus(RightsConstant.TICKETS_REFUND);
         rightsOrdersRefund.setRefundStatus(TradeConstant.REFUND_SUCCESS);
         rightsOrdersRefund.setSysRefundTime(new Date());
         rightsOrdersRefundMapper.insert(rightsOrdersRefund);

@@ -31,7 +31,7 @@ public class RightsOrdersVO {
     @ApiModelProperty(value = "商户名称")
     private String merchantName;
 
-    @ApiModelProperty(value = "机构订单号")
+    @ApiModelProperty(value = "商户订单号")
     private String orderNo;
 
     @ApiModelProperty(value = "订单金额")

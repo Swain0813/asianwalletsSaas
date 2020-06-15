@@ -29,10 +29,10 @@ public class InstitutionRightsInfoVO extends BaseEntity {
     @ApiModelProperty(value = "机构名称")
     private String institutionName;
 
-    @ApiModelProperty(value = "二级商户编号")
+    @ApiModelProperty(value = "商户编号")
     private List<String> merchantIds;
 
-    @ApiModelProperty(value = "二级商户名称")
+    @ApiModelProperty(value = "商户名称")
     private List<String> merchantNames;
 
     @ApiModelProperty(value = "经营类目")

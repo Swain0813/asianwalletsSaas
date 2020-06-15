@@ -24,11 +24,20 @@ public class RightsOrdersDTO extends BasePageHelper {
     @ApiModelProperty(value = "核销状态")
     private Byte status;
 
-    @ApiModelProperty(value = "机构编号哦")
+    @ApiModelProperty(value = "商户编号")
+    private String merchantId;
+
+    @ApiModelProperty(value = "商户名称")
+    private String merchantName;
+
+    @ApiModelProperty(value = "机构编号")
     private String institutionId;
 
     @ApiModelProperty(value = "机构名称")
     private String institutionName;
+
+    @ApiModelProperty(value = "商户订单号")
+    private String orderNo;
 
     @ApiModelProperty(value = "票券编号")
     private String ticketId;

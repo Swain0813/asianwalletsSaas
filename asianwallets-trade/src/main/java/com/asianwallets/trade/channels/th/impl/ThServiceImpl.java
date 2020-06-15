@@ -597,7 +597,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("tradeStatus", "2");
         criteria.andEqualTo("id", orders.getId());
-        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse response = new BaseResponse();
         if ("00".equals(iso8583VO.getResponseCode_39())) {
             log.info("=================【通华线下银行卡下单】=================【订单已支付成功】 orderId: {}", orders.getId());
             //未发货
@@ -665,7 +665,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             }
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
-        return baseResponse;
+        return response;
     }
 
     /**
@@ -678,7 +678,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //当前时间戳
         String timeStamp = System.currentTimeMillis() + "";
         //11 域需要在冲正的时候使用
-        String domain11 = orders.getId().substring(0, 6);
+        String domain11 = orders.getId().substring(10, 16);
         String domain60_2 = timeStamp.substring(6, 12);
         //保存11域与60.2域
         orders.setReportNumber(domain11 + domain60_2);
