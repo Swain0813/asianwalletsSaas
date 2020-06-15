@@ -251,7 +251,9 @@ public class UpiIsoUtil {
                     continue;
                 }
                 if (type.equals("ASC") || type.equals("BINARY")) {
-                    dataLength = dataLength * 2;
+                    if( fldAnnotation.fldIndex() != 2){
+                        dataLength = dataLength * 2;
+                    }
                 }
                 fldValue = msg.substring(indexFlag, indexFlag + dataLength);
                 if (dataLength % 2 != 0) {
