@@ -598,6 +598,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         criteria.andEqualTo("tradeStatus", "2");
         criteria.andEqualTo("id", orders.getId());
         BaseResponse response = new BaseResponse();
+        log.info("***************************调用DTO*************************** dto:{}", JSON.toJSONString(iso8583DTO));
+        log.info("***************************返回VO*************************** vo:{}:", JSON.toJSONString(iso8583VO));
         if ("00".equals(iso8583VO.getResponseCode_39())) {
             log.info("=================【通华线下银行卡下单】=================【订单已支付成功】 orderId: {}", orders.getId());
             //未发货
@@ -870,29 +872,31 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public BaseResponse bankRefund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
         ThDTO thDTO = new ThDTO();
-        ISO8583DTO iso8583DTO = null;
+        ISO8583DTO dto = null;
         Orders orders = ordersMapper.selectByMerchantOrderId(orderRefund.getMerchantOrderId());
         if (DateUtil.isSameDay(orders.getCreateTime(), new Date())) {
             //当日内走撤销
             log.info("=================【TH银行退款 --订单当日内 走撤销方式退款】=================");
-            iso8583DTO = this.createBankUndoDTO(channel, orderRefund, orders);
+            dto = this.createBankUndoDTO(channel, orderRefund, orders);
         } else {
-            iso8583DTO = this.createBankRefundDTO(channel, orderRefund, orders);
+            dto = this.createBankRefundDTO(channel, orderRefund, orders);
         }
         thDTO.setChannel(channel);
-        thDTO.setIso8583DTO(iso8583DTO);
-        log.info("=================【TH银行退款】=================【请求Channels服务TH银行退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
+        thDTO.setIso8583DTO(dto);
+        log.info("=================【TH银行退款】=================【请求Channels服务TH银行退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(dto));
         BaseResponse response = channelsFeign.thBankCardRefund(thDTO);
         log.info("=================【TH银行退款】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
         if (response.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             JSONObject jsonObject = JSONObject.fromObject(response.getData());
-            ISO8583DTO thResDTO = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);
+            ISO8583DTO vo = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);
+            log.info("***************************调用DTO*************************** dto:{}", JSON.toJSONString(dto));
+            log.info("***************************返回VO*************************** vo:{}:", JSON.toJSONString(vo));
             //请求成功
-            if ("00".equals(iso8583DTO.getResponseCode_39())) {
+            if ("00".equals(vo.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 log.info("=================【TH银行退款】=================【退款成功】 response: {} ", JSON.toJSONString(response));
                 //退款成功
-                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, thResDTO.getRetrievalReferenceNumber_37(), thResDTO.getResponseCode_39());
+                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, vo.getRetrievalReferenceNumber_37(), vo.getResponseCode_39());
                 //改原订单状态
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
                 //退还分润
@@ -912,7 +916,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
                     //调账成功
                     log.info("=================【TH银行退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, thResDTO.getResponseCode_39());
+                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, vo.getResponseCode_39());
                     reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
                     //改原订单状态
                     commonBusinessService.updateOrderRefundFail(orderRefund);
