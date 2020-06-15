@@ -41,7 +41,7 @@ public class Demo {
     }
 
     private static void test1() throws Exception  {
-        String domain11 = IDS.uniqueID().toString().substring(0, 6);
+        String domain11 = String.valueOf(System.currentTimeMillis()).substring(0, 6);
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
@@ -57,6 +57,35 @@ public class Demo {
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+
+        iso8583DTO.setSecurityRelatedControlInformation_53("0610000000000000");
+
+        String s55 = "9F260856EF162D0CEB0C40" +
+                "9F270180" +
+                "9F101107010103A0000001083030323530303031" +
+                "9F37044611D2FC" +
+                "9F36020622" +
+                "95050000000800" +
+                "9A03010101" +
+                "9C0100" +
+                "9F0206000000000001" +
+                "5F2A020156" +
+                "82020000" +
+                "9F1A020156" +
+                "9F0306000000000000" +
+                "9F3303E0E8C0" +
+                "9F1E083835373639383139" +
+                "8408A000000333010102";
+        iso8583DTO.setIntergratedCircuitCardSystemRelatedData_55(s55);
+
+        String s59 ="475330363930303034353035313031" +
+                "30356E756C6C2030323430342E39452D" +
+                "33323420202020202020202020202034" +
+                "2E39452D333234202020202020202020" +
+                "202020303330346E756C6C534E303038" +
+                "38353736393831394F4E30323031";
+        iso8583DTO.setReservedPrivate_59(s59);
+
         //自定义域
         iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
 
