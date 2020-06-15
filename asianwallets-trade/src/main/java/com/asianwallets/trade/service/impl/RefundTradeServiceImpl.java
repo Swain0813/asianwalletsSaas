@@ -635,10 +635,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
      **/
     @Override
     public BaseResponse bankCardRefund(RefundDTO refundDTO, String reqIp) {
-        if (StringUtils.isEmpty(refundDTO.getUserBankCardNo())) {
-            log.info("==================【银行卡退款】==================【银行卡号为空】");
-            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
-        }
         //返回结果
         BaseResponse baseResponse = new BaseResponse();
         //退款功能验签，撤销功能的验签在自己的方法里面
