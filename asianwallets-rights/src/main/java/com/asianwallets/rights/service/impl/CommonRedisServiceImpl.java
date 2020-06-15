@@ -76,6 +76,14 @@ public class CommonRedisServiceImpl implements CommonRedisService {
         if (attestation == null) {
             attestation = attestationMapper.selectByInstitutionCode(institutionCode);
             if (attestation == null) {
+                /*
+                用户未在机构后台上传RSA时，通过机构号查询为空，此时通过平台生成的数据使用 priKey与pubKey置为空
+                * */
+                attestation = attestationMapper.selectByInstitutionCode("PF_" + institutionCode);
+                attestation.setPrikey("");
+                attestation.setPubkey("");
+            }
+            if (attestation == null) {
                 log.info("-----------------【权益系统】根据机构编号获取机构秘钥信息 信息不存在 -----------------  institutionCode:{}", institutionCode);
                 throw new BusinessException(EResultEnum.SECRET_IS_NOT_EXIST.getCode());
             }
