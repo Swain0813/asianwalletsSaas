@@ -67,4 +67,39 @@ public class ThController extends BaseController {
     public BaseResponse thBankCardUndo(@RequestBody @ApiParam ThDTO thDTO) {
         return thService.thBankCardUndo(thDTO);
     }
+
+
+    @ApiOperation("预授权")
+    @PostMapping("/preAuth")
+    public BaseResponse preAuth(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.preAuth(thDTO);
+    }
+
+
+    @ApiOperation("预授权冲正")
+    @PostMapping("/preAuthReverse")
+    public BaseResponse preAuthReverse(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.preAuthReverse(thDTO);
+    }
+
+
+    @ApiOperation("预授权撤销")
+    @PostMapping("/preAuthRevoke")
+    public BaseResponse preAuthRevoke(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.preAuthRevoke(thDTO);
+    }
+
+
+    @ApiOperation("预授权完成")
+    @PostMapping("/preAuthComplete")
+    public BaseResponse preAuthComplete(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.preAuthComplete(thDTO);
+    }
+
+
+    @ApiOperation("预授权完成撤销")
+    @PostMapping("/preAuthCompleteRevoke")
+    public BaseResponse preAuthCompleteRevoke(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.preAuthCompleteRevoke(thDTO);
+    }
 }
