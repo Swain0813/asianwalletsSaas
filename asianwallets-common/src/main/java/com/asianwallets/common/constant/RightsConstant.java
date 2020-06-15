@@ -11,4 +11,17 @@ public class RightsConstant {
     public static final Byte PACKAGE = 3;
     public static final Byte QUOTA = 4;
 
+
+    //-------------- 票券状态
+    public static final Byte TICKETS_WAIT = 1; //待领取
+    public static final Byte TICKETS_NOT_USE = 2; //未使用
+    public static final Byte TICKETS_USE = 3; //已使用
+    public static final Byte TICKETS_OVERDUE = 4; //已过期
+    public static final Byte TICKETS_REFUND = 5; //已退款
+
+    //-------------- 核销状态
+    public static final Byte HX_WAIT = 1; //核销中
+    public static final Byte HX_SUCCESS = 2; //核销成功
+    public static final Byte HX_FAIL = 3; //核销失败
+
 }
