@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AttestationMapper extends BaseMapper<Attestation> {
     /**
-     * 查询 institutionCode 机构code 对应的签名信息
+     * 查询 merchantId 机构code 对应的签名信息
      *
-     * @param institutionCode
+     * @param merchantId
      * @return
      */
-    Attestation selectByInstitutionCode(@Param("institutionCode") String institutionCode);
+    Attestation selectByMerchantId(@Param("merchantId") String merchantId);
 
 }
