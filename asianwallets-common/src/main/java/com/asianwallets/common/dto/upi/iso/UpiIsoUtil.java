@@ -310,8 +310,13 @@ public class UpiIsoUtil {
                 fldValue = NumberStringUtil.str2HexStr(fldValue);
             }
             if (actualLen % 2 != 0 && type.equals("BCD")) {
-                fldValue = fldValue + "0";
-                actualLen = actualLen + 1;
+                if (iso8583Annotation.fldIndex() == 23) {
+                    fldValue = "0" + fldValue;
+                    actualLen = actualLen + 1;
+                } else {
+                    fldValue = fldValue + "0";
+                    actualLen = actualLen + 1;
+                }
             }
             return new Object[]{fldValue, actualLen};
         }
@@ -340,9 +345,10 @@ public class UpiIsoUtil {
                 fldValue = NumberStringUtil.str2HexStr(fldValue);
             }
             if (iso8583Annotation.fldIndex() == 35
-                    || iso8583Annotation.fldIndex() == 2
+                    //|| iso8583Annotation.fldIndex() == 2
                     || iso8583Annotation.fldIndex() == 46
                     || iso8583Annotation.fldIndex() == 47
+                    || iso8583Annotation.fldIndex() == 55
                     || iso8583Annotation.fldIndex() == 62) {
                 actualLen = actualLen / 2;
             }
