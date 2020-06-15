@@ -197,7 +197,7 @@
     <select id="selectByTicketId" resultMap="BaseResultMap">
         select
         <include refid="common"/>
-        from asianwallet_institution.rights_orders
+        from rights_orders
         <where>
             <if test="id != null and id != ''">
                 AND id = #{id}

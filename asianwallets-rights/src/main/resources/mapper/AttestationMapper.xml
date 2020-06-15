@@ -29,7 +29,7 @@
                creator,
                modifier,
                remark
-        FROM asianwallet_institution.attestation
+        FROM attestation
         WHERE institution_code = #{institutionCode}
           AND enabled = 1;
     </select>

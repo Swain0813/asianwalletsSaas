@@ -163,7 +163,7 @@
         remark,
         rights_type,
         enabled
-        from asianwallet_institution.institution_rights
+        from institution_rights
         <where>
             <if test="institutionId != null and institutionId != ''">
                 AND institution_id = #{institutionId}
@@ -195,14 +195,14 @@
     <select id="selectRightsInfo" resultMap="BaseResultMap">
         select
         <include refid="common"/>
-        from asianwallet_institution.institution_rights
+        from institution_rights
         where id = #{id}
     </select>
 
     <select id="getRightsInfo" resultMap="ApiResultMap">
         select
         <include refid="common"/>
-        from asianwallet_institution.institution_rights
+        from institution_rights
         <where>
             <if test="merchantId != null and merchantId != ''">
                 AND merchant_id = #{merchantId}
@@ -217,20 +217,20 @@
     <select id="getRightsInfoLists" resultMap="BaseResultMap">
         select
         <include refid="common"/>
-        from asianwallet_institution.institution_rights where now()&gt;=start_time and now()&lt;=end_time
+        from institution_rights where now()&gt;=start_time and now()&lt;=end_time
         order by create_time
     </select>
 
     <select id="getInstitutionRights" resultMap="BaseResultMap">
         select
         <include refid="common"/>
-        from asianwallet_institution.institution_rights where enabled=1 and batch_no = #{batchNo}
+        from institution_rights where enabled=1 and batch_no = #{batchNo}
     </select>
 
     <select id="selectByActivityTheme" resultMap="BaseResultMap">
         select
         <include refid="common"/>
-        from asianwallet_institution.institution_rights where activity_theme = #{activityTheme};
+        from institution_rights where activity_theme = #{activityTheme};
     </select>
 
 
@@ -238,7 +238,7 @@
         select
         <include refid="common"/>,
         concat(start_time, '-',end_time) AS activity_time
-        from asianwallet_institution.institution_rights
+        from institution_rights
         <where>
             <if test="institutionId != null and institutionId != ''">
                 institution_id = #{institutionId}
