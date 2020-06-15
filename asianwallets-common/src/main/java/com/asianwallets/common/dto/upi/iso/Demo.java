@@ -50,6 +50,7 @@ public class Demo {
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         iso8583DTO.setDateOfExpired_14("5012");
         iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
@@ -57,15 +58,17 @@ public class Demo {
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
-        iso8583DTO.setReservedPrivate_60("23000001000600");//01000001000000000
+        iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
 
         //银行卡号
         String var2 = "4761340000000019";
         //银行卡 磁道2信息
         String var35 = "4761340000000019=171210114991787";
         //加密信息
-        iso8583DTO.setProcessingCode_2(trkEncryption(var2, key_62));
-        iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
+        //iso8583DTO.setProcessingCode_2(trkEncryption(var2, key_62));
+        //iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
+        iso8583DTO.setTrack2Data_35("B9F24EFEF4B179CF643B349A873F2FB7");
+        iso8583DTO.setProcessingCode_2("6251640751492683");
 
 
 
