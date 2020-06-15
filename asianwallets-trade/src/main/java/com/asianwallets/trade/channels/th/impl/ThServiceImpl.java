@@ -1007,7 +1007,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setProcessingCode_3("200000");
         iso8583DTO.setAmountOfTransactions_4(String.format("%012d", orderRefund.getTradeAmount().intValue()));
         //受卡方系统跟踪号
-        iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(0, 6));
+        iso8583DTO.setSystemTraceAuditNumber_11(orders.getId().substring(10, 16));
         //服务点输入方式码
         iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
