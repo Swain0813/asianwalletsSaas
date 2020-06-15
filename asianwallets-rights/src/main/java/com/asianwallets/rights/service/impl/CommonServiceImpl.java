@@ -39,11 +39,11 @@ public class CommonServiceImpl implements CommonService {
         Map<String, String> map = ReflexClazzUtils.getFieldForStringValue(obj);
         String sign = map.get("sign");
         String signType = map.get("signType");
-        String merchantId = map.get("institutionId");
+        String merchantId = map.get("merchantId");
         if (sign == null || "".equals(sign)) {
             throw new BusinessException(EResultEnum.SIGNATURE_CANNOT_BE_EMPTY.getCode());
         }
-        Attestation attestation = commonRedisService.getAttestationInfo((map.get("institutionId")));
+        Attestation attestation = commonRedisService.getAttestationInfo(merchantId);
         map.put("sign", null);
         if (signType.equals(TradeConstant.RSA)) {
             Base64.Decoder decoder = Base64.getDecoder();
