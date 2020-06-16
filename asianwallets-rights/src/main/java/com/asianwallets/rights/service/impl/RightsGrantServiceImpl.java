@@ -109,14 +109,14 @@ public class RightsGrantServiceImpl implements RightsGrantService {
         //更新权益发放表
         rightsGrantMapper.updateByPrimaryKeySelective(rightsGrant);
         List<String> ticketIdList = new ArrayList<>();
-        for (int i = 0; i <= sendReceiptDTO.getSendCount(); i++) {
+        for (int i = 0; i < sendReceiptDTO.getSendCount(); i++) {
             RightsUserGrant rightsUserGrant = new RightsUserGrant();
             String ticketId = IDS.uniqueID().toString();
             ticketIdList.add(ticketId);
             rightsUserGrant.setId(IDS.uuid2());
             rightsUserGrant.setTicketId(ticketId);
             rightsUserGrant.setDealId(sendReceiptDTO.getDealId());
-            rightsUserGrant.setSystemOrderId(sendReceiptDTO.getSystemOrderId());
+            rightsUserGrant.setSystemOrderId(rightsGrant.getSystemOrderId());
             rightsUserGrant.setGetAmount(1);
             if(!StringUtils.isEmpty(sendReceiptDTO.getMobileNo())){
                 rightsUserGrant.setMobileNo(sendCount[i]);
