@@ -49,6 +49,7 @@ public class Demo {
         iso8583DTO.setProcessingCode_3("280000");
         iso8583DTO.setAmountOfTransactions_4("000000000009");
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
+        iso8583DTO.setDateOfExpired_14("5012");
         iso8583DTO.setPointOfServiceEntryMode_22("032");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
