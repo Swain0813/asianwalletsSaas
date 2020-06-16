@@ -69,10 +69,6 @@ public class Demo {
         //加密信息
         iso8583DTO.setProcessingCode_2(var2);
         iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
-        //iso8583DTO.setTrack2Data_35("B9F24EFEF4B179CF643B349A873F2FB7");
-        //iso8583DTO.setProcessingCode_2("6251640751492683");
-
-
 
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, key);
