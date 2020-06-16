@@ -42,5 +42,11 @@ public interface UpiService {
     BaseResponse upiDownSettle(UpiDTO upiDTO);
 
 
-
+    /**
+     * @Author YangXu
+     * @Date 2020/6/16
+     * @Descripate upi银行卡
+     * @return
+     **/
+    BaseResponse upiBankPay(UpiDTO upiDTO);
 }

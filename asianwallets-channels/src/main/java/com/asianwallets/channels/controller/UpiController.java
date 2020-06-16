@@ -34,6 +34,12 @@ public class UpiController extends BaseController {
         return upiService.upiPay(upiDTO);
     }
 
+    @ApiOperation("upiBankPay")
+    @PostMapping("/upiBankPay")
+    public BaseResponse upiupiBankPayPay(@RequestBody @ApiParam UpiDTO upiDTO) {
+        return upiService.upiBankPay(upiDTO);
+    }
+
     @ApiOperation("upiRefund")
     @PostMapping("/upiRefund")
     public BaseResponse upiRefund(@RequestBody @ApiParam UpiDTO upiDTO) {

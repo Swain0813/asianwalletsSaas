@@ -1,6 +1,7 @@
 package com.asianwallets.common.dto.upi;
 
 import com.alibaba.fastjson.JSONObject;
+import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.entity.Channel;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
@@ -21,6 +22,8 @@ public class UpiDTO {
     public UpiRefundDTO upiRefundDTO;
 
     public UpiDownDTO upiDownDTO;
+
+    public String iso8583DTO;
 
 
 

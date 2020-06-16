@@ -205,5 +205,13 @@ public class ChannelsConfig {
     @ApiModelProperty("upi公钥")
     @Value("${custom.upi.publicKeyPath}")
     private String upiPublicKeyPath;
+
+    @ApiModelProperty("upi ip")
+    @Value("${custom.upi.ip}")
+    private String upiIp;
+
+    @ApiModelProperty("upi port")
+    @Value("${custom.upi.port}")
+    private String upiPort;
 }
 

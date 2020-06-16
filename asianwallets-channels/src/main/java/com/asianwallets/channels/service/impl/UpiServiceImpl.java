@@ -7,7 +7,10 @@ import com.asianwallets.channels.dao.ChannelsOrderMapper;
 import com.asianwallets.channels.service.UpiService;
 import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
+import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
 import com.asianwallets.common.dto.upi.UpiDTO;
+import com.asianwallets.common.dto.upi.iso.UpiIsoUtil;
 import com.asianwallets.common.dto.upi.utils.CryptoUtil;
 import com.asianwallets.common.entity.ChannelsOrder;
 import com.asianwallets.common.response.BaseResponse;
@@ -331,6 +334,31 @@ public class UpiServiceImpl implements UpiService {
             baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
         }
         return baseResponse;
+    }
+
+    /**
+     * @return
+     * @Author YangXu
+     * @Date 2020/6/16
+     * @Descripate 银行卡
+     **/
+    @Override
+    public BaseResponse upiBankPay(UpiDTO upiDTO) {
+        //扫码组包
+        try {
+            log.info("===============【upi银行卡收单】===============【请求参数】ip:{}, port:{} sendMsg:{}", channelsConfig.getUpiIp(), channelsConfig.getUpiPort(), upiDTO.getIso8583DTO());
+            Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(channelsConfig.getUpiIp(), channelsConfig.getUpiPort(), NumberStringUtil.str2Bcd(upiDTO.getIso8583DTO()));
+            String result = respMap.get("respData");
+            log.info("===============【upi银行卡收单】===============【扫码result】 result: {}", result);
+            //解包
+            ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO(result);
+            log.info("===============【upi银行卡收单】===============【返回参数】 result: {}", JSON.toJSONString(iso8583DTO1281));
+
+            
+        } catch (Exception e) {
+
+        }
+        return null;
     }
 
     public static String getRandom(int length) {
