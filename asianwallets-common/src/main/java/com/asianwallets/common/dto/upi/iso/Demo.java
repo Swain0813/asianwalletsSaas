@@ -33,7 +33,7 @@ public class Demo {
     private static String merchantId = "000000000003421";
     private static String terminalId = "00001903";
     private static String key_62 = "2F9781AE38D8CAFB6D29CD8F9A88CF11C8EEC334F898A9D1507D76837864D01C0CA0D4204BE2468B83E2212BCB7909E1E2FD84C3793F09B6E2E88FD5";
-    private static String key = "94A1FB75E03EADEA";
+    private static String key = "94A1FB75E03EADEAAD83528983948FC8";
 
     public static void main(String[] args) throws Exception {
         test1();
@@ -67,10 +67,10 @@ public class Demo {
         //银行卡 磁道2信息
         String var35 = "4761340000000019=171210114991787";
         //加密信息
-        //iso8583DTO.setProcessingCode_2(trkEncryption(var2, key_62));
-        //iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
-        iso8583DTO.setTrack2Data_35("B9F24EFEF4B179CF643B349A873F2FB7");
-        iso8583DTO.setProcessingCode_2("6251640751492683");
+        iso8583DTO.setProcessingCode_2(var2);
+        iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
+        //iso8583DTO.setTrack2Data_35("B9F24EFEF4B179CF643B349A873F2FB7");
+        //iso8583DTO.setProcessingCode_2("6251640751492683");
 
 
 

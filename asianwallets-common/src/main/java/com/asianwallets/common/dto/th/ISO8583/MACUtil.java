@@ -154,15 +154,8 @@ public class MACUtil {
      * @return mac  十六进制
      * @throws MacException
      */
-    public static String getCupEcbMac(String mak, String macBlock) throws MacException {
+    public static String getDoubleCupEcbMac(String mak, String macBlock) throws MacException {
         try {
-            // 参数检查
-
-            // MAK必须为8位
-            if (StringUtils.isBlank(mak) || mak.trim().length() != 16) {
-                throw new MacException("MAK length must be 8 Byte! [" + mak + "]");
-            }
-
             // MAC明文数据不能为空
             if (StringUtils.isBlank(macBlock)) {
                 throw new MacException("Mac Data must be not null!");
@@ -199,7 +192,7 @@ public class MACUtil {
             System.arraycopy(xorResult, 8, xorRsRight, 0, 8);
 
             // 取前8字节使用MAK进行DES
-            xorRsLeft = DesUtil.desEncrypt(ISOUtil.hexStringToByte(mak), xorRsLeft);
+            xorRsLeft = DesUtil.doubleDesDecrypt(ISOUtil.hexStringToByte(mak), xorRsLeft);
 
             // 加密后的结果与后8字节异或
             byte[] xorMac = new byte[8];
@@ -208,7 +201,7 @@ public class MACUtil {
             }
 
             // 异或结果使用MAK进行DES
-            xorMac = DesUtil.desEncrypt(ISOUtil.hexStringToByte(mak), xorMac);
+            xorMac = DesUtil.doubleDesDecrypt(ISOUtil.hexStringToByte(mak), xorMac);
 
             // 将异或结果转为十六进制，并获取十六进制字节数组
             byte[] byteHexMac = ISOUtil.bytesToHexString(xorMac).getBytes();
