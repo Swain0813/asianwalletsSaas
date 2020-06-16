@@ -20,10 +20,10 @@ public interface CommonRedisService {
     /**
      * 获取机构的公钥
      *
-     * @param institutionCode 机构号
+     * @param merchantId 商户号
      * @return Attestation
      */
-    Attestation getAttestationInfo(String institutionCode);
+    Attestation getAttestationInfo(String merchantId);
 
     /**
      * 获取商户信息

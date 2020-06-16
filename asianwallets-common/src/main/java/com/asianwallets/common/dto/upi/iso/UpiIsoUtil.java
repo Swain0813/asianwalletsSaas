@@ -69,7 +69,7 @@ public class UpiIsoUtil {
         log.info("==========【ISO8583Util】========== Mac Block :{}", sendMsg.toString());
         //计算MAC值
         if (!StringUtils.isEmpty(key)) {
-            sendMsg.append(MACUtil.getCupEcbMac(key, sendMsg.toString()));
+            sendMsg.append(MACUtil.getDoubleCupEcbMac(key, sendMsg.toString()));
         }
         // 计算报文长度，长度占4个字节，不足4字节左补0
         int sendMsgLen = (int) o[1];

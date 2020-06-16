@@ -67,27 +67,19 @@ public class CommonRedisServiceImpl implements CommonRedisService {
     /**
      * 获取机构的公钥
      *
-     * @param institutionCode 机构号
+     * @param merchantId 商户号
      * @return Attestation
      */
     @Override
-    public Attestation getAttestationInfo(String institutionCode) {
-        Attestation attestation = JSON.parseObject(redisService.get(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(institutionCode)), Attestation.class);
+    public Attestation getAttestationInfo(String merchantId) {
+        Attestation attestation = JSON.parseObject(redisService.get(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(merchantId)), Attestation.class);
         if (attestation == null) {
-            attestation = attestationMapper.selectByInstitutionCode(institutionCode);
+            attestation = attestationMapper.selectByMerchantId(merchantId);
             if (attestation == null) {
-                /*
-                用户未在机构后台上传RSA时，通过机构号查询为空，此时通过平台生成的数据使用 priKey与pubKey置为空
-                * */
-                attestation = attestationMapper.selectByInstitutionCode("PF_" + institutionCode);
-                attestation.setPrikey("");
-                attestation.setPubkey("");
-            }
-            if (attestation == null) {
-                log.info("-----------------【权益系统】根据机构编号获取机构秘钥信息 信息不存在 -----------------  institutionCode:{}", institutionCode);
+                log.info("-----------------【权益系统】根据机构编号获取机构秘钥信息 信息不存在 -----------------  merchantId:{}", merchantId);
                 throw new BusinessException(EResultEnum.SECRET_IS_NOT_EXIST.getCode());
             }
-            redisService.set(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(JSON.toJSONString(attestation)),JSON.toJSONString(attestation));
+            redisService.set(AsianWalletConstant.ATTESTATION_CACHE_KEY.concat("_").concat(JSON.toJSONString(attestation)), JSON.toJSONString(attestation));
         }
         return attestation;
     }

@@ -40,9 +40,8 @@ public class UpiTest extends SpringBootServletInitializer {
     private static String port = "7000";
     private static String merchantId = "000000000003421";
     private static String terminalId = "00001903";
-    private static String key = "868A494FEF5BF273";
-    private static String key_62 = "B6A37DF7AF79A3E5BA47C55FCC33B773C1CF0FA4C3617990ED5C9FBEE0CD023F955806CE644A6B301069ABA901B70E3E88A324CB6B1EAF4C5DE523DF";
-    @Test
+    private static String key_62 = "2F9781AE38D8CAFB6D29CD8F9A88CF11C8EEC334F898A9D1507D76837864D01C0CA0D4204BE2468B83E2212BCB7909E1E2FD84C3793F09B6E2E88FD5";
+    private static String key = "94A1FB75E03EADEAAD83528983948FC8";  @Test
     public void upiPayTest() {
 
         Channel channel = new Channel();
@@ -290,7 +289,7 @@ public class UpiTest extends SpringBootServletInitializer {
     //消费
     @Test
     public void upiXFTest()  throws Exception {
-        String domain11 = IDS.uniqueID().toString().substring(0, 6);
+        String domain11 = String.valueOf(System.currentTimeMillis()).substring(0, 6);
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
@@ -299,24 +298,71 @@ public class UpiTest extends SpringBootServletInitializer {
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         iso8583DTO.setDateOfExpired_14("5012");
         iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+
         //自定义域
-        iso8583DTO.setReservedPrivate_60("23000001000600");//01000001000000000
+        iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
 
         //银行卡号
         String var2 = "4761340000000019";
         //银行卡 磁道2信息
         String var35 = "4761340000000019=171210114991787";
         //加密信息
-        iso8583DTO.setProcessingCode_2(trkEncryption(var2, key_62));
+        iso8583DTO.setProcessingCode_2(var2);
         iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
 
+        //扫码组包
+        String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, key);
+        String sendMsg = "6000060000" +"601410190121"+ isoMsg;
+        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        sendMsg = strHex2 + sendMsg;
+        System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
 
+        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
+        Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
+        String result = respMap.get("respData");
+        System.out.println(" ====  扫码result  ===   " + result);
+        //解包
+        ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO(result);
+        System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
+    }
+
+    //消费
+    @Test
+    public void upiCXTest()  throws Exception {
+        String domain11 = String.valueOf(System.currentTimeMillis()).substring(0, 6);
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        iso8583DTO.setProcessingCode_3("280000");
+        iso8583DTO.setAmountOfTransactions_4("000000000009");
+        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
+        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setCardSequenceNumber_23("001");
+        iso8583DTO.setPointOfServiceConditionMode_25("82");
+        iso8583DTO.setRetrievalReferenceNumber_37("016810632000");
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+
+        //自定义域
+        iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
+        iso8583DTO.setOriginalMessage_61("000001159227");
+
+        //银行卡号
+        String var2 = "4761340000000019";
+        //银行卡 磁道2信息
+        String var35 = "4761340000000019=171210114991787";
+        //加密信息
+        iso8583DTO.setProcessingCode_2(var2);
+        //iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
 
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, key);
