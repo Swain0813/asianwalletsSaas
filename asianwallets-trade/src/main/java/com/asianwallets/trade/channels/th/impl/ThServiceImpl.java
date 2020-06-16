@@ -608,9 +608,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
             orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
             //退款时需要使用到37域信息
-            orders.setRemark1(iso8583VO.getRetrievalReferenceNumber_37());
+            String retrievalReferenceNumber_37 = iso8583VO.getRetrievalReferenceNumber_37();
+            orders.setRemark1(retrievalReferenceNumber_37);
             try {
-                channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_SUCCESS);
+                channelsOrderMapper.updateStatusById(orders.getId(), retrievalReferenceNumber_37, TradeConstant.TRADE_SUCCESS);
             } catch (Exception e) {
                 log.error("=================【通华线下银行卡下单】=================【更新通道订单异常】", e);
             }
@@ -952,7 +953,19 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setMessageType("0220");
         iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()), channel.getMd5KeyStr()));
         iso8583DTO.setProcessingCode_3("200000");
-        iso8583DTO.setAmountOfTransactions_4(String.format("%012d", orderRefund.getTradeAmount().intValue()));
+        //获取交易金额的小数位数
+        int numOfBits = String.valueOf(orderRefund.getTradeAmount()).length() - String.valueOf(orderRefund.getTradeAmount()).indexOf(".") - 1;
+        int tradeAmount;
+        if (numOfBits == 0) {
+            //整数
+            tradeAmount = orderRefund.getTradeAmount().intValue();
+        } else {
+            //小数,扩大对应小数位数
+            tradeAmount = orderRefund.getTradeAmount().movePointRight(numOfBits).intValue();
+        }
+        //12位,左边填充0
+        String formatAmount = String.format("%012d", tradeAmount);
+        iso8583DTO.setAmountOfTransactions_4(formatAmount);
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(0, 6));
         //服务点输入方式码
@@ -1009,7 +1022,19 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()), channel.getMd5KeyStr()));
         iso8583DTO.setProcessingCode_3("200000");
-        iso8583DTO.setAmountOfTransactions_4(String.format("%012d", orderRefund.getTradeAmount().intValue()));
+        //获取交易金额的小数位数
+        int numOfBits = String.valueOf(orderRefund.getTradeAmount()).length() - String.valueOf(orderRefund.getTradeAmount()).indexOf(".") - 1;
+        int tradeAmount;
+        if (numOfBits == 0) {
+            //整数
+            tradeAmount = orderRefund.getTradeAmount().intValue();
+        } else {
+            //小数,扩大对应小数位数
+            tradeAmount = orderRefund.getTradeAmount().movePointRight(numOfBits).intValue();
+        }
+        //12位,左边填充0
+        String formatAmount = String.format("%012d", tradeAmount);
+        iso8583DTO.setAmountOfTransactions_4(formatAmount);
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(orders.getId().substring(10, 16));
         //服务点输入方式码
