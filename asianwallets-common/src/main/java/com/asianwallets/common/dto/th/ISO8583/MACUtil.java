@@ -192,7 +192,7 @@ public class MACUtil {
             System.arraycopy(xorResult, 8, xorRsRight, 0, 8);
 
             // 取前8字节使用MAK进行DES
-            xorRsLeft = DesUtil.doubleDesDecrypt(ISOUtil.hexStringToByte(mak), xorRsLeft);
+            xorRsLeft = DesUtil.doubleDesEncrypt(ISOUtil.hexStringToByte(mak), xorRsLeft);
 
             // 加密后的结果与后8字节异或
             byte[] xorMac = new byte[8];
@@ -201,7 +201,7 @@ public class MACUtil {
             }
 
             // 异或结果使用MAK进行DES
-            xorMac = DesUtil.doubleDesDecrypt(ISOUtil.hexStringToByte(mak), xorMac);
+            xorMac = DesUtil.doubleDesEncrypt(ISOUtil.hexStringToByte(mak), xorMac);
 
             // 将异或结果转为十六进制，并获取十六进制字节数组
             byte[] byteHexMac = ISOUtil.bytesToHexString(xorMac).getBytes();
@@ -263,7 +263,7 @@ public class MACUtil {
             System.arraycopy(xorResult, 8, xorRsRight, 0, 8);
 
             // 取前8字节使用MAK进行DES
-            xorRsLeft = DesUtil.desDecrypt(ISOUtil.hexStringToByte(mak), xorRsLeft);
+            xorRsLeft = DesUtil.desEncrypt(ISOUtil.hexStringToByte(mak), xorRsLeft);
 
             // 加密后的结果与后8字节异或
             byte[] xorMac = new byte[8];
@@ -272,7 +272,7 @@ public class MACUtil {
             }
 
             // 异或结果使用MAK进行DES
-            xorMac = DesUtil.desDecrypt(ISOUtil.hexStringToByte(mak), xorMac);
+            xorMac = DesUtil.desEncrypt(ISOUtil.hexStringToByte(mak), xorMac);
 
             // 将异或结果转为十六进制，并获取十六进制字节数组
             byte[] byteHexMac = ISOUtil.bytesToHexString(xorMac).getBytes();
