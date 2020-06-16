@@ -227,21 +227,17 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             log.info("==================【UPI银行卡下单】==================【调用Channels服务】【UPI-银行卡下单】-【请求状态码异常】");
             throw new BusinessException(EResultEnum.PAYMENT_ABNORMAL.getCode());
         }
-        JSONObject jsonObject = (JSONObject) JSONObject.parse(channelResponse.getData().toString());
-        //通道订单号
-        orders.setChannelNumber(jsonObject.getString("pay_no"));
+        ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
+        log.info("==================【UPI银行卡下单】==================【调用Channels服务】【通华线下银行卡下单接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
         ordersMapper.updateByPrimaryKeySelective(orders);
-        //订单状态
-        String status = jsonObject.getString("pay_result");
-        //通道回调时间
-        orders.setChannelCallbackTime(new Date());
-        //修改时间
         orders.setUpdateTime(new Date());
+        orders.setChannelCallbackTime(new Date());
         Example example = new Example(Orders.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("tradeStatus", "2");
         criteria.andEqualTo("id", orders.getId());
-        if ("1".equals(status)) {
+        BaseResponse response = new BaseResponse();
+        if ("00".equals(iso8583VO.getResponseCode_39())) {
             //支付成功
             log.info("==================【UPI银行卡下单】==================【支付成功】orderId: {}", orders.getId());
             //未发货
@@ -250,7 +246,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
             orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
             try {
-                channelsOrderMapper.updateStatusById(orders.getId(), jsonObject.getString("pay_no"), TradeConstant.TRADE_SUCCESS);
+                channelsOrderMapper.updateStatusById(orders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), TradeConstant.TRADE_SUCCESS);
             } catch (Exception e) {
                 log.error("=================【UPI银行卡下单】=================【更新通道订单异常】", e);
             }
@@ -289,11 +285,11 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             } else {
                 log.info("=================【UPI银行卡下单】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
             }
-        } else if ("2".equals(status)) {
+        } else {
             //支付失败
             log.info("==================【UPI银行卡下单】==================【支付失败】orderId: {}", orders.getId());
             orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
-            orders.setRemark5(jsonObject.getString("resp_desc"));
+            orders.setRemark5(iso8583VO.getResponseCode_39());
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_FALID);
             } catch (Exception e) {
@@ -306,10 +302,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             } else {
                 log.info("=================【UPI银行卡下单】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
             }
-        } else {
-            //未支付
-            log.info("==================【UPI银行卡下单】==================【未支付】orderId: {}", orders.getId());
-
         }
         return baseResponse;
     }
@@ -352,6 +344,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         String timeStamp = System.currentTimeMillis() + "";
         String domain11 = orders.getId().substring(10, 16);
         String domain60_2 = timeStamp.substring(6, 12);
+        //保存11域与60.2域
+        orders.setReportNumber(domain11 + domain60_2);
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
