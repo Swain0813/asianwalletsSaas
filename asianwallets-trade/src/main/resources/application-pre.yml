@@ -101,3 +101,5 @@ custom:
   upi:
     privateKeyPath: /testKey/549440189990001.pem
     publicKeyPath: /testKey/GHT_ROOT.pem
+    tdpu: 6000060000
+    header: 601410190121

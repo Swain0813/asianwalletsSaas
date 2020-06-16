@@ -405,7 +405,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         } catch (Exception e) {
             log.info("=================【UPI银行卡下单】=================【组包异常】");
         }
-        String sendMsg = "6000060000" + "601410190121" + isoMsg;
+        String sendMsg = ad3ParamsConfig.getUpiTdpu() + ad3ParamsConfig.getUpiHeader() + isoMsg;
         String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
         sendMsg = strHex2 + sendMsg;
         upiDTO.setIso8583DTO(sendMsg);
