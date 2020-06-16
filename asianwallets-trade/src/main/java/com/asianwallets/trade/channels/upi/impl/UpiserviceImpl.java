@@ -316,19 +316,37 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
      **/
     @Override
     public BaseResponse reversal(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
-        log.info("==================【UPI银行卡撤销接口】==================orderId: {}", orderRefund.getOrderId());
+        log.info("==================【UPI银行卡冲正接口】==================orderId: {}", orderRefund.getOrderId());
         BaseResponse baseResponse = new BaseResponse();
         UpiDTO upiDTO = this.createReversalDTO(orderRefund, channel);
-        log.info("==================【UPI银行卡下单】==================【调用Channels服务】【UPI-银行卡下单接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+        log.info("==================【UPI银行卡冲正接口】==================【调用Channels服务】【UPI-银行卡下单接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
-        log.info("==================【UPI银行卡下单】==================【调用Channels服务】【UPI-银行卡下单接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
-        //请求失败
-        if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
-            log.info("==================【UPI银行卡下单】==================【调用Channels服务】【UPI-银行卡下单】-【请求状态码异常】");
-            throw new BusinessException(EResultEnum.PAYMENT_ABNORMAL.getCode());
-        }
+        log.info("==================【UPI银行卡冲正接口】==================【调用Channels服务】【UPI-银行卡下单接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
-        return this.cancel(channel, orderRefund, rabbitMassage);
+        Example example = new Example(Orders.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("tradeStatus", "2");
+        criteria.andEqualTo("merchantOrderId", orderRefund.getMerchantOrderId());
+        Orders orders = new Orders();
+        if (channelResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            //请求成功
+            if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
+                // 修改订单状态为冲正成功
+                orders.setCancelStatus((TradeConstant.ORDER_RESEVAL_SUCCESS));
+            } else {
+                // 修改订单状态为冲正失败
+                orders.setCancelStatus((TradeConstant.ORDER_RESEVAL_FALID));
+                orders.setRemark5(iso8583VO.getResponseCode_39());
+                baseResponse.setCode(EResultEnum.REVERSAL_ERROR.getCode());
+            }
+        } else {
+            //请求失败
+            baseResponse.setCode(EResultEnum.REVERSAL_ERROR.getCode());
+        }
+        if (ordersMapper.updateByExampleSelective(orders, example) != 1) {
+            log.info("=================【UPI银行卡冲正接口】=================【订单冲正后后更新数据库失败】 orderId: {}", orders.getId());
+        }
+        return baseResponse;
     }
 
     private UpiDTO createReversalDTO(OrderRefund orderRefund, Channel channel) {
@@ -338,7 +356,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         String domain60_2 = orderRefund.getReportNumber().substring(6, 12);
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
-        iso8583DTO.setMessageType("0200");
+        iso8583DTO.setMessageType("0400");
         iso8583DTO.setProcessingCode_3("190000");
 
         //获取交易金额的小数位数
@@ -354,12 +372,12 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //12位,左边填充0
         String formatAmount = String.format("%012d", tradeAmount);
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0,6));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
         iso8583DTO.setPointOfServiceEntryMode_22("032");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
-        iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getChannelNumber());
+        iso8583DTO.setResponseCode_39("98");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
         //受卡方标识码 (商户号)
@@ -379,7 +397,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                         //60. 5，6，7 缺省
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
-        iso8583DTO.setOriginalMessage_61(domain60_2+domain11);
 
         //银行卡号
         iso8583DTO.setProcessingCode_2(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()));
