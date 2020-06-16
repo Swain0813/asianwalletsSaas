@@ -21,7 +21,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -69,10 +68,9 @@ public class UpiServiceImpl implements UpiService {
         channelsOrderMapper.insert(co);
 
         try {
-            String fileSeperator = File.separator;
 
-            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix("src" + fileSeperator + "main" + fileSeperator + "resources" + fileSeperator + "testKey" + fileSeperator + "549440189990001.pem", "pem", "RSA");
-            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix("src" + fileSeperator + "main" + fileSeperator + "resources" + fileSeperator + "testKey" + fileSeperator + "GHT_ROOT.pem", "pem", null, "RSA");
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(channelsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
             //final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPublicKeyPath()).getPath(), "pem", "RSA");
             //final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPrivateKeyPath()).getPath(), "pem", null, "RSA");
 
