@@ -608,9 +608,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
             orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
             //退款时需要使用到37域信息
-            orders.setRemark1(iso8583VO.getRetrievalReferenceNumber_37());
+            String retrievalReferenceNumber_37 = iso8583VO.getRetrievalReferenceNumber_37();
+            orders.setRemark1(retrievalReferenceNumber_37);
             try {
-                channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_SUCCESS);
+                channelsOrderMapper.updateStatusById(orders.getId(), retrievalReferenceNumber_37, TradeConstant.TRADE_SUCCESS);
             } catch (Exception e) {
                 log.error("=================【通华线下银行卡下单】=================【更新通道订单异常】", e);
             }
