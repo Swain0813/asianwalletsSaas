@@ -1,4 +1,4 @@
-package com.asianwallets.rights.dto;
+package com.asianwallets.common.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,5 +33,8 @@ public class SendReceiptDTO {
 
     @ApiModelProperty(value = "发券数量")
     private Integer sendCount;
+
+    @ApiModelProperty(value = "发放人")
+    private String userName;
 
 }

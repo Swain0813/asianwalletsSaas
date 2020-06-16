@@ -7,6 +7,7 @@ import com.asianwallets.common.cache.CommonLanguageCacheService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.RightsGrantDTO;
 import com.asianwallets.common.dto.RightsGrantInsertDTO;
+import com.asianwallets.common.dto.SendReceiptDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -127,6 +128,15 @@ public class RightsGrantFeignController extends BaseController {
         operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.SELECT, JSON.toJSONString(ticketId),
                 "查询权益票券详情"));
         return rightsGrantFeign.getRightsUserGrantDetail(ticketId);
+    }
+
+    @ApiOperation(value = "发券")
+    @PostMapping("/sendReceipt")
+    public BaseResponse sendReceipt(@RequestBody @ApiParam @Valid SendReceiptDTO sendReceiptDTO) {
+        operationLogService.addOperationLog(setOperationLog(getSysUserVO().getUsername(), AsianWalletConstant.ADD, JSON.toJSONString(sendReceiptDTO),
+                "导出权益票券信息"));
+        sendReceiptDTO.setUserName(this.getSysUserVO().getUsername());
+        return rightsGrantFeign.sendReceipt(sendReceiptDTO);
     }
 
 

@@ -2,12 +2,12 @@ package com.asianwallets.rights.service;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.dto.RightsGrantDTO;
 import com.asianwallets.common.dto.RightsGrantInsertDTO;
+import com.asianwallets.common.dto.SendReceiptDTO;
 import com.asianwallets.common.entity.RightsGrant;
 import com.asianwallets.common.entity.RightsUserGrant;
 import com.asianwallets.common.vo.ExportRightsGrantVO;
 import com.asianwallets.common.vo.ExportRightsUserGrantVO;
 import com.asianwallets.common.vo.RightsUserGrantDetailVO;
-import com.asianwallets.rights.dto.SendReceiptDTO;
 import com.github.pagehelper.PageInfo;
 import java.util.List;
 
