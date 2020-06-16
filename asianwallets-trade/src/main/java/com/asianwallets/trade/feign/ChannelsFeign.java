@@ -217,6 +217,10 @@ public interface ChannelsFeign {
     @PostMapping("/upi/upiPay")
     BaseResponse upiPay(UpiDTO upiDTO);
 
+    @ApiOperation("upi银行接口")
+    @PostMapping("/upi/upiBankPay")
+    BaseResponse upiBankPay(UpiDTO upiDTO);
+
     @ApiOperation(value = "upi退款接口")
     @PostMapping("/upi/upiRefund")
     BaseResponse upiRefund(UpiDTO upiDTO);

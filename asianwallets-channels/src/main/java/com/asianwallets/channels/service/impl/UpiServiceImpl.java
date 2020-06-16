@@ -351,7 +351,7 @@ public class UpiServiceImpl implements UpiService {
             ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO(result);
             log.info("===============【upi银行卡收单】===============【返回参数】 result: {}", JSON.toJSONString(iso8583DTO1281));
 
-            
+
         } catch (Exception e) {
 
         }
