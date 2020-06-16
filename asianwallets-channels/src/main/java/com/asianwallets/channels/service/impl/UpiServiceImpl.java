@@ -106,6 +106,7 @@ public class UpiServiceImpl implements UpiService {
                 baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
             }
         } catch (Exception e) {
+            log.info("===============【upi支付】===============【异常】 e: {}", e);
             baseResponse.setCode(TradeConstant.HTTP_FAIL);
             baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
         }
