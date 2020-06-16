@@ -116,7 +116,7 @@ public class RightsGrantServiceImpl implements RightsGrantService {
             rightsUserGrant.setId(IDS.uuid2());
             rightsUserGrant.setTicketId(ticketId);
             rightsUserGrant.setDealId(sendReceiptDTO.getDealId());
-            rightsUserGrant.setSystemOrderId(sendReceiptDTO.getSystemOrderId());
+            rightsUserGrant.setSystemOrderId(rightsGrant.getSystemOrderId());
             rightsUserGrant.setGetAmount(1);
             if(!StringUtils.isEmpty(sendReceiptDTO.getMobileNo())){
                 rightsUserGrant.setMobileNo(sendCount[i]);
