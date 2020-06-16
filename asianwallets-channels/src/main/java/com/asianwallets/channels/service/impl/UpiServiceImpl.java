@@ -67,12 +67,9 @@ public class UpiServiceImpl implements UpiService {
 
         try {
             String fileSeperator = File.separator;
-            String pathPub = "usr" + fileSeperator + "local" + fileSeperator + "asianwalletsSaas" + fileSeperator + "asianwallets-channels-1.0.0-SNAPSHOT.jar" + fileSeperator + "BOOT-INF" + fileSeperator + "classes" + channelsConfig.getUpiPublicKeyPath();
-            log.info("()()()()()()()()()())pathPub:{}", pathPub);
-            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(pathPub, "pem", "RSA");
-            String pathPri = "usr" + fileSeperator + "local" + fileSeperator + "asianwalletsSaas" + fileSeperator + "asianwallets-channels-1.0.0-SNAPSHOT.jar" + fileSeperator + "BOOT-INF" + fileSeperator + "classes" + channelsConfig.getUpiPrivateKeyPath();
-            log.info("()()()()()()()()())pathPri:{}", pathPri);
-            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(pathPri, "pem", null, "RSA");
+
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix("src" + fileSeperator + "main" + fileSeperator + "resources" + fileSeperator + "testKey" + fileSeperator + "549440189990001.pem", "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix("src" + fileSeperator + "main" + fileSeperator + "resources" + fileSeperator + "testKey" + fileSeperator + "GHT_ROOT.pem", "pem", null, "RSA");
             //final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPublicKeyPath()).getPath(), "pem", "RSA");
             //final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPrivateKeyPath()).getPath(), "pem", null, "RSA");
 
