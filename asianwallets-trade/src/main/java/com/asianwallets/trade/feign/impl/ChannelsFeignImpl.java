@@ -276,6 +276,11 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
+    public BaseResponse upiBankPay(UpiDTO upiDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    @Override
     public BaseResponse upiRefund(UpiDTO upiDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }

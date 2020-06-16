@@ -265,6 +265,9 @@ public class UpiIsoUtil {
                         && fldAnnotation.fldIndex() != 35
                         && fldAnnotation.fldIndex() != 46
                         && fldAnnotation.fldIndex() != 47
+                        && fldAnnotation.fldIndex() != 57
+                        && fldAnnotation.fldIndex() != 58
+                        && fldAnnotation.fldIndex() != 59
                         && fldAnnotation.fldIndex() != 62) {
                     fldValue = NumberStringUtil.hexStr2Str(fldValue);
                 }

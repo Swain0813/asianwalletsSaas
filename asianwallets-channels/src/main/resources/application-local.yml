@@ -129,3 +129,5 @@ custom:
     payUrl: https://testpay.sicpay.com/backSecure.do
     privateKeyPath: /testKey/549440189990001.pem
     publicKeyPath: /testKey/GHT_ROOT.pem
+    ip: 210.48.142.168
+    port: 7000

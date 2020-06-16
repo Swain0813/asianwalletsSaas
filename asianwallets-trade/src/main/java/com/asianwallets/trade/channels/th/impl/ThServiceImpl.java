@@ -724,7 +724,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 //60.1 消息类型码
                 "22" +
                         //60.2 批次号 自定义
-                        timeStamp.substring(6, 12) +
+                        domain60_2 +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
@@ -1049,7 +1049,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 //61.1 原批次号
                 orderRefund.getReportNumber().substring(6, 12) +
                         //61.2 原交易流水号 11域
-                        orderRefund.getReportNumber().substring(0, 6) +
+                        orders.getId().substring(10, 16) +
                         //61.3 原交易日期
                         str;
         iso8583DTO.setOriginalMessage_61(str61);
