@@ -1,6 +1,7 @@
 package com.asianwallets.permissions.feign.rights;
 import com.asianwallets.common.dto.RightsGrantDTO;
 import com.asianwallets.common.dto.RightsGrantInsertDTO;
+import com.asianwallets.common.dto.SendReceiptDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.ExportRightsGrantVO;
 import com.asianwallets.common.vo.ExportRightsUserGrantVO;
@@ -33,6 +34,10 @@ public interface RightsGrantFeign {
     @ApiOperation(value = "新增权益发放管理")
     @PostMapping("/rightsGrant/addRightsGrant")
     BaseResponse addRightsGrant(@RequestBody @ApiParam @Valid RightsGrantInsertDTO rightsGrantInsertDTO);
+
+    @ApiOperation(value = "发券接口")
+    @PostMapping("/rightsGrant/sendReceipt")
+    BaseResponse sendReceipt(@RequestBody @ApiParam @Valid SendReceiptDTO sendReceiptDTO);
 
     @ApiOperation(value = "分页查询权益票券信息")
     @PostMapping("/rightsGrant/pageFindRightsUserGrant")

@@ -339,21 +339,25 @@ public class UpiServiceImpl implements UpiService {
      **/
     @Override
     public BaseResponse upiBankPay(UpiDTO upiDTO) {
-        //扫码组包
+        BaseResponse baseResponse = new BaseResponse();
         try {
-            log.info("===============【upi银行卡收单】===============【请求参数】ip:{}, port:{} sendMsg:{}", channelsConfig.getUpiIp(), channelsConfig.getUpiPort(), upiDTO.getIso8583DTO());
+            log.info("===============【upi银行卡】===============【请求参数】ip:{}, port:{} sendMsg:{}", channelsConfig.getUpiIp(), channelsConfig.getUpiPort(), upiDTO.getIso8583DTO());
             Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(channelsConfig.getUpiIp(), channelsConfig.getUpiPort(), NumberStringUtil.str2Bcd(upiDTO.getIso8583DTO()));
             String result = respMap.get("respData");
-            log.info("===============【upi银行卡收单】===============【扫码result】 result: {}", result);
+            log.info("===============【upi银行卡】===============【扫码result】 result: {}", result);
             //解包
-            ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO(result);
-            log.info("===============【upi银行卡收单】===============【返回参数】 result: {}", JSON.toJSONString(iso8583DTO1281));
-
-
+            ISO8583DTO iso8583VO = UpiIsoUtil.unpackISO8583DTO(result);
+            log.info("===============【upi银行卡】===============【返回参数】 iso8583VO: {}", JSON.toJSONString(iso8583VO));
+            log.info("===============【upi银行卡】===============【返回参数】 iso8583VO: {}", JSON.toJSONString(iso8583VO));
+            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+            baseResponse.setData(iso8583VO);
         } catch (Exception e) {
-
+            log.info("===============【upi银行卡】===============【接口异常】", e);
+            baseResponse.setCode(TradeConstant.HTTP_FAIL);
+            baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
         }
-        return null;
+        return baseResponse;
     }
 
     public static String getRandom(int length) {

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.RightsConstant;
 import com.asianwallets.common.dto.RightsGrantDTO;
 import com.asianwallets.common.dto.RightsGrantInsertDTO;
+import com.asianwallets.common.dto.SendReceiptDTO;
 import com.asianwallets.common.entity.InstitutionRights;
 import com.asianwallets.common.entity.RightsGrant;
 import com.asianwallets.common.entity.RightsUserGrant;
@@ -17,7 +18,6 @@ import com.asianwallets.common.vo.RightsUserGrantDetailVO;
 import com.asianwallets.rights.dao.InstitutionRightsMapper;
 import com.asianwallets.rights.dao.RightsGrantMapper;
 import com.asianwallets.rights.dao.RightsUserGrantMapper;
-import com.asianwallets.rights.dto.SendReceiptDTO;
 import com.asianwallets.rights.service.CommonService;
 import com.asianwallets.rights.service.RightsGrantService;
 import com.github.pagehelper.PageInfo;
@@ -163,6 +163,7 @@ public class RightsGrantServiceImpl implements RightsGrantService {
             rightsUserGrant.setCancelVerificationTime(new Date());
             rightsUserGrant.setEnabled(true);
             rightsUserGrant.setCreateTime(new Date());
+            rightsUserGrant.setCreator(sendReceiptDTO.getUserName());
             int result = rightsUserGrantMapper.insert(rightsUserGrant);
             if(result>0){
                this.commonService.sendMobileAndEmail(rightsUserGrant);
