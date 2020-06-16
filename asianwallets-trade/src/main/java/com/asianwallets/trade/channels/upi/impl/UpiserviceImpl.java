@@ -389,7 +389,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 //60.1 消息类型码
                 "22" +
                         //60.2 批次号 自定义
-                        orderRefund.getId().substring(1,7) +
+                        orderRefund.getReportNumber().substring(6,12) +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
