@@ -9,19 +9,16 @@ import com.asianwallets.common.constant.AD3Constant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.utils.CryptoUtil;
-import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.ChannelsOrder;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.HttpResponse;
 import com.asianwallets.common.utils.HttpClientUtils;
-import com.asianwallets.common.utils.RSAUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -69,8 +66,9 @@ public class UpiServiceImpl implements UpiService {
         channelsOrderMapper.insert(co);
 
         try {
-            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix("/usr/local/asianwalletsSaas/asianwallets-channels-1.0.0-SNAPSHOT.jar/BOOT-INF/classes"+channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
-            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix("/usr/local/asianwalletsSaas/asianwallets-channels-1.0.0-SNAPSHOT.jar/BOOT-INF/classes"+channelsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
+            String fileSeperator = File.separator;
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix("usr" + fileSeperator + "local" + fileSeperator + "asianwalletsSaas" + fileSeperator + "asianwallets-channels-1.0.0-SNAPSHOT.jar" + fileSeperator + "BOOT-INF" + fileSeperator + "classes" + channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix("usr" + fileSeperator + "local" + fileSeperator + "asianwalletsSaas" + fileSeperator + "asianwallets-channels-1.0.0-SNAPSHOT.jar" + fileSeperator + "BOOT-INF" + fileSeperator + "classes" + channelsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
             //final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPublicKeyPath()).getPath(), "pem", "RSA");
             //final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPrivateKeyPath()).getPath(), "pem", null, "RSA");
 
