@@ -10,6 +10,7 @@ import com.asianwallets.common.dto.qfpay.QfPayRefundDTO;
 import com.asianwallets.common.dto.th.ISO8583.EcbDesUtil;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
+import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
 import com.asianwallets.common.dto.upi.UpiRefundDTO;
@@ -245,6 +246,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             //未签收
             orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
             orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
+            orders.setReportNumber(orders.getReportNumber()+iso8583VO.getDateOfLocalTransaction_13());
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), TradeConstant.TRADE_SUCCESS);
             } catch (Exception e) {
@@ -315,7 +317,85 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     @Override
     public BaseResponse reversal(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         log.info("==================【UPI银行卡撤销接口】==================orderId: {}", orderRefund.getOrderId());
+        BaseResponse baseResponse = new BaseResponse();
+        UpiDTO upiDTO = this.createReversalDTO(orderRefund, channel);
+        log.info("==================【UPI银行卡下单】==================【调用Channels服务】【UPI-银行卡下单接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+        BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
+        log.info("==================【UPI银行卡下单】==================【调用Channels服务】【UPI-银行卡下单接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        //请求失败
+        if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            log.info("==================【UPI银行卡下单】==================【调用Channels服务】【UPI-银行卡下单】-【请求状态码异常】");
+            throw new BusinessException(EResultEnum.PAYMENT_ABNORMAL.getCode());
+        }
+        ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
         return this.cancel(channel, orderRefund, rabbitMassage);
+    }
+
+    private UpiDTO createReversalDTO(OrderRefund orderRefund, Channel channel) {
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+        String domain11 = orderRefund.getReportNumber().substring(0, 6);
+        String domain60_2 = orderRefund.getReportNumber().substring(6, 12);
+
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        iso8583DTO.setProcessingCode_3("190000");
+
+        //获取交易金额的小数位数
+        int numOfBits = String.valueOf(orderRefund.getTradeAmount()).length() - String.valueOf(orderRefund.getTradeAmount()).indexOf(".") - 1;
+        int tradeAmount;
+        if (numOfBits == 0) {
+            //整数
+            tradeAmount = orderRefund.getTradeAmount().intValue();
+        } else {
+            //小数,扩大对应小数位数
+            tradeAmount = orderRefund.getTradeAmount().movePointRight(numOfBits).intValue();
+        }
+        //12位,左边填充0
+        String formatAmount = String.format("%012d", tradeAmount);
+        iso8583DTO.setAmountOfTransactions_4(formatAmount);
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
+        iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
+        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setCardSequenceNumber_23("001");
+        iso8583DTO.setPointOfServiceConditionMode_25("82");
+        iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getChannelNumber());
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+
+        //自定义域
+        String str60 =
+                //60.1 消息类型码
+                "22" +
+                        //60.2 批次号 自定义
+                        orderRefund.getId().substring(1,7) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        iso8583DTO.setReservedPrivate_60(str60);
+        iso8583DTO.setOriginalMessage_61(domain60_2+domain11);
+
+        //银行卡号
+        iso8583DTO.setProcessingCode_2(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()));
+        //加密信息
+        String isoMsg = null;
+        //扫码组包
+        try {
+            isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, makEncryption(channel.getMd5KeyStr()));
+        } catch (Exception e) {
+            log.info("=================【UPI银行卡撤销】=================【组包异常】");
+        }
+        String sendMsg = ad3ParamsConfig.getUpiTdpu() + ad3ParamsConfig.getUpiHeader() + isoMsg;
+        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        sendMsg = strHex2 + sendMsg;
+        upiDTO.setIso8583DTO(sendMsg);
+        return upiDTO;
     }
 
     /**
@@ -329,7 +409,173 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     @Override
     public BaseResponse bankRefund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         log.info("==================【UPI银行卡退款接口】==================orderId: {}", orderRefund.getOrderId());
-        return this.refund(channel, orderRefund, rabbitMassage);
+        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse channelResponse;
+        Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
+        //拿到当天的23时间
+        Date endtime = DateToolUtils.addHour(DateToolUtils.getDayEnd(orders.getCreateTime()), -1);
+        String type = null;
+        UpiDTO upiDTO;
+        if (System.currentTimeMillis() < endtime.getTime() && orderRefund.getRefundType() == 1) {
+            //撤销接口
+            type = "PAYC";
+            upiDTO = this.createBankUndoDTO(orderRefund, channel, type);
+        } else {
+            //退款接口
+            type = "REFUND";
+            upiDTO = this.createBankRefundDTO(orderRefund, channel, type);
+        }
+        log.info("==================【UPI退款】==================【调用Channels服务】type：{}  upiDTO: {}", type,JSON.toJSONString(upiDTO));
+        channelResponse = channelsFeign.upiBankPay(upiDTO);
+        log.info("==================【UPI退款】==================【调用Channels服务返回】type：{}  channelResponse: {}", type,JSON.toJSONString(channelResponse));
+        return null;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/6/16
+     * @Descripate 退款DTO
+     * @return
+     **/
+    private UpiDTO createBankRefundDTO(OrderRefund orderRefund, Channel channel, String type) {
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+        String domain11 = orderRefund.getReportNumber().substring(0, 6);
+        String domain60_2 = orderRefund.getReportNumber().substring(6, 12);
+        String domain62_3 = orderRefund.getReportNumber().substring(12, 16);
+
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        iso8583DTO.setProcessingCode_3("200000");
+
+        //获取交易金额的小数位数
+        int numOfBits = String.valueOf(orderRefund.getTradeAmount()).length() - String.valueOf(orderRefund.getTradeAmount()).indexOf(".") - 1;
+        int tradeAmount;
+        if (numOfBits == 0) {
+            //整数
+            tradeAmount = orderRefund.getTradeAmount().intValue();
+        } else {
+            //小数,扩大对应小数位数
+            tradeAmount = orderRefund.getTradeAmount().movePointRight(numOfBits).intValue();
+        }
+        //12位,左边填充0
+        String formatAmount = String.format("%012d", tradeAmount);
+        iso8583DTO.setAmountOfTransactions_4(formatAmount);
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
+        iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
+        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setCardSequenceNumber_23("001");
+        iso8583DTO.setPointOfServiceConditionMode_25("82");
+        iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getChannelNumber());
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+
+        //自定义域
+        String str60 =
+                //60.1 消息类型码
+                "22" +
+                        //60.2 批次号 自定义
+                        orderRefund.getId().substring(1,7) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        iso8583DTO.setReservedPrivate_60(str60);
+        iso8583DTO.setOriginalMessage_61(domain60_2+domain11+domain62_3);
+
+        //银行卡号
+        iso8583DTO.setProcessingCode_2(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()));
+        //加密信息
+        String isoMsg = null;
+        //扫码组包
+        try {
+            isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, makEncryption(channel.getMd5KeyStr()));
+        } catch (Exception e) {
+            log.info("=================【UPI银行卡撤销】=================【组包异常】");
+        }
+        String sendMsg = ad3ParamsConfig.getUpiTdpu() + ad3ParamsConfig.getUpiHeader() + isoMsg;
+        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        sendMsg = strHex2 + sendMsg;
+        upiDTO.setIso8583DTO(sendMsg);
+        return upiDTO;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/6/16
+     * @Descripate 撤销DTO
+     * @return
+     **/
+    private UpiDTO createBankUndoDTO(OrderRefund orderRefund, Channel channel, String type) {
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+        String domain11 = orderRefund.getReportNumber().substring(0, 6);
+        String domain60_2 = orderRefund.getReportNumber().substring(6, 12);
+
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        iso8583DTO.setProcessingCode_3("190000");
+
+        //获取交易金额的小数位数
+        int numOfBits = String.valueOf(orderRefund.getTradeAmount()).length() - String.valueOf(orderRefund.getTradeAmount()).indexOf(".") - 1;
+        int tradeAmount;
+        if (numOfBits == 0) {
+            //整数
+            tradeAmount = orderRefund.getTradeAmount().intValue();
+        } else {
+            //小数,扩大对应小数位数
+            tradeAmount = orderRefund.getTradeAmount().movePointRight(numOfBits).intValue();
+        }
+        //12位,左边填充0
+        String formatAmount = String.format("%012d", tradeAmount);
+        iso8583DTO.setAmountOfTransactions_4(formatAmount);
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
+        iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
+        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setCardSequenceNumber_23("001");
+        iso8583DTO.setPointOfServiceConditionMode_25("82");
+        iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getChannelNumber());
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+
+        //自定义域
+        String str60 =
+                //60.1 消息类型码
+                "22" +
+                        //60.2 批次号 自定义
+                        orderRefund.getId().substring(1,7) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        iso8583DTO.setReservedPrivate_60(str60);
+        iso8583DTO.setOriginalMessage_61(domain60_2+domain11);
+
+        //银行卡号
+        iso8583DTO.setProcessingCode_2(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()));
+        //加密信息
+        String isoMsg = null;
+        //扫码组包
+        try {
+            isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, makEncryption(channel.getMd5KeyStr()));
+        } catch (Exception e) {
+            log.info("=================【UPI银行卡撤销】=================【组包异常】");
+        }
+        String sendMsg = ad3ParamsConfig.getUpiTdpu() + ad3ParamsConfig.getUpiHeader() + isoMsg;
+        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        sendMsg = strHex2 + sendMsg;
+        upiDTO.setIso8583DTO(sendMsg);
+        return upiDTO;
     }
 
     /**
