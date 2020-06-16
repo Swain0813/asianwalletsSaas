@@ -59,13 +59,16 @@
         <result column="ext5" property="ext5" jdbcType="VARCHAR"/>
         <result column="ext6" property="ext6" jdbcType="VARCHAR"/>
         <result column="ext7" property="ext7" jdbcType="VARCHAR"/>
+        <result column="send_type" property="sendType" jdbcType="TINYINT"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, system_name, batch_no, institution_id,institution_name,merchant_id,merchant_name,rights_type, activity_theme, activity_amount, start_time, end_time,
     use_time, unusable_start_time, unusable_end_time,ticket_id, ticket_status, package_value, full_reduction_amount,deal_id,system_order_id,user_id,mobile_no,deduction_amount,ticket_buy_price,
     discount, cap_amount, get_limit, shop_addresses, set_text, set_images, rule_description,ticket_amount,get_amount,cancel_verification_amount,surplus_amount,distribution_price,
     rights_currency, server_url, get_time, cancel_verification_time, create_time, update_time, creator,ota_start_time,ota_end_time,overlay,
-    modifier, remark, enabled, ext1, ext2, ext3, ext4, ext5, ext6, ext7
+    modifier, remark, enabled, ext1, ext2, ext3, ext4, ext5, ext6, ext7,send_type,email,content
   </sql>
 
     <select id="pageFindRightsGrant" resultMap="BaseResultMap">
@@ -234,6 +237,9 @@
             <if test="rightsType!=null">
                 and rights_type=#{rightsType}
             </if>
+            <if test="sendType!=null">
+                and send_type=#{sendType}
+            </if>
             <if test="ticketStatus!=null">
                 and ticket_status=#{ticketStatus}
             </if>
@@ -279,6 +285,7 @@
         merchant_id as  merchantId,
         merchant_name as merchantName,
         ticket_status as ticketStatus,
+        send_type as sendType,
         remark
         from rights_user_grant
         <where>

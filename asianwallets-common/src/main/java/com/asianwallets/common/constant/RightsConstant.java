@@ -24,4 +24,8 @@ public class RightsConstant {
     public static final Byte HX_SUCCESS = 2; //核销成功
     public static final Byte HX_FAIL = 3; //核销失败
 
+    //-------------- 发布平台
+    public static final Byte MOBILE_SYS = 1; //短信平台
+    public static final Byte EMAIL_SYS= 2; //邮件平台
+
 }

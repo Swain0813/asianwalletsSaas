@@ -53,8 +53,14 @@ public class RightsUserGrantDetailVO {
     @ApiModelProperty(value = "发放平台返回的交易流水号")
     private String systemOrderId;
 
+    @ApiModelProperty(value = "发送类型")//1-短信平台 2-邮件平台
+    private Byte sendType;
+
     @ApiModelProperty(value = "用户手机号")
     private String mobileNo;
+
+    @ApiModelProperty(value = "用户邮箱")
+    private String email;
 
     @ApiModelProperty(value = "权益币种")
     private String rightsCurrency;

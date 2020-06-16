@@ -18,12 +18,14 @@ import com.asianwallets.rights.dao.InstitutionRightsMapper;
 import com.asianwallets.rights.dao.RightsGrantMapper;
 import com.asianwallets.rights.dao.RightsUserGrantMapper;
 import com.asianwallets.rights.dto.SendReceiptDTO;
+import com.asianwallets.rights.service.CommonService;
 import com.asianwallets.rights.service.RightsGrantService;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +46,8 @@ public class RightsGrantServiceImpl implements RightsGrantService {
     @Autowired
     private InstitutionRightsMapper institutionRightsMapper;
 
+    @Autowired
+    private CommonService commonService;
 
     //======================================【票券】=================================================
 
@@ -56,6 +60,26 @@ public class RightsGrantServiceImpl implements RightsGrantService {
     @Transactional
     public JSONObject sendReceipt(SendReceiptDTO sendReceiptDTO) {
         log.info("===================【发券接口】===================【请求参数】 sendReceiptDTO: {}", JSON.toJSONString(sendReceiptDTO));
+        String[] sendCount = null;
+        if(RightsConstant.MOBILE_SYS.equals(sendReceiptDTO.getSendType())){
+            //短信平台则手机号不能为空
+            if(StringUtils.isEmpty(sendReceiptDTO.getMobileNo())){
+                throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+            }
+            sendCount = sendReceiptDTO.getMobileNo().split(",");
+        }else {
+            //邮箱平台则邮箱不能为空
+            if(StringUtils.isEmpty(sendReceiptDTO.getEmail())){
+                throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+            }
+            sendCount = sendReceiptDTO.getEmail().split(",");
+        }
+        if(sendCount.length<=0){
+            log.info("===================【发券的真正数量】===================",sendCount.length);
+            throw new BusinessException(EResultEnum.OTA_ACTIVITY_AMOUNT_IS_ILLEGAL.getCode());
+        }
+        //设置发券数量
+        sendReceiptDTO.setSendCount(sendCount.length);
         RightsGrant rightsGrant = rightsGrantMapper.selectByDealId(sendReceiptDTO.getDealId());
         if (rightsGrant == null) {
             log.info("===================【发券接口】===================【权益不存在】");
@@ -85,8 +109,7 @@ public class RightsGrantServiceImpl implements RightsGrantService {
         //更新权益发放表
         rightsGrantMapper.updateByPrimaryKeySelective(rightsGrant);
         List<String> ticketIdList = new ArrayList<>();
-        List<RightsUserGrant> rightsUserGrantList = new ArrayList<>();
-        for (int i = 1; i <= sendReceiptDTO.getSendCount(); i++) {
+        for (int i = 0; i <= sendReceiptDTO.getSendCount(); i++) {
             RightsUserGrant rightsUserGrant = new RightsUserGrant();
             String ticketId = IDS.uniqueID().toString();
             ticketIdList.add(ticketId);
@@ -94,8 +117,14 @@ public class RightsGrantServiceImpl implements RightsGrantService {
             rightsUserGrant.setTicketId(ticketId);
             rightsUserGrant.setDealId(sendReceiptDTO.getDealId());
             rightsUserGrant.setSystemOrderId(sendReceiptDTO.getSystemOrderId());
-            rightsUserGrant.setGetAmount(sendReceiptDTO.getSendCount());
-            rightsUserGrant.setMobileNo(sendReceiptDTO.getMobileNo());
+            rightsUserGrant.setGetAmount(1);
+            if(!StringUtils.isEmpty(sendReceiptDTO.getMobileNo())){
+                rightsUserGrant.setMobileNo(sendCount[i]);
+            }else {
+                rightsUserGrant.setEmail(sendCount[i]);
+            }
+            rightsUserGrant.setSendType(sendReceiptDTO.getSendType());
+            rightsUserGrant.setContent(sendReceiptDTO.getContent());
 
             rightsUserGrant.setSystemName(rightsGrant.getSystemName());
             rightsUserGrant.setBatchNo(rightsGrant.getBatchNo());
@@ -134,10 +163,12 @@ public class RightsGrantServiceImpl implements RightsGrantService {
             rightsUserGrant.setCancelVerificationTime(new Date());
             rightsUserGrant.setEnabled(true);
             rightsUserGrant.setCreateTime(new Date());
-            rightsUserGrantList.add(rightsUserGrant);
+            int result = rightsUserGrantMapper.insert(rightsUserGrant);
+            if(result>0){
+               this.commonService.sendMobileAndEmail(rightsUserGrant);
+            }
         }
-        rightsUserGrantMapper.insertList(rightsUserGrantList);
-        log.info("===================【发券接口】===================【响应参数】");
+        log.info("===================【发券接口】===================【发出的券号】",JSON.toJSONString(ticketIdList));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ticketIdList", ticketIdList);
         return jsonObject;
