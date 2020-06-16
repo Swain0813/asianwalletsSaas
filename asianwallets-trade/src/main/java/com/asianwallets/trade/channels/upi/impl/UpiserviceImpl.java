@@ -410,7 +410,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     public BaseResponse bankRefund(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         log.info("==================【UPI银行卡退款接口】==================orderId: {}", orderRefund.getOrderId());
         BaseResponse baseResponse = new BaseResponse();
-        BaseResponse channelResponse;
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
         //拿到当天的23时间
         Date endtime = DateToolUtils.addHour(DateToolUtils.getDayEnd(orders.getCreateTime()), -1);
@@ -426,9 +425,58 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             upiDTO = this.createBankRefundDTO(orderRefund, channel, type);
         }
         log.info("==================【UPI退款】==================【调用Channels服务】type：{}  upiDTO: {}", type,JSON.toJSONString(upiDTO));
-        channelResponse = channelsFeign.upiBankPay(upiDTO);
+        BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
         log.info("==================【UPI退款】==================【调用Channels服务返回】type：{}  channelResponse: {}", type,JSON.toJSONString(channelResponse));
-        return null;
+        if (channelResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            //请求成功
+            net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(channelResponse.getData());
+            ISO8583DTO vo = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);
+            //请求成功
+            if ("00".equals(vo.getResponseCode_39())) {
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+                //退款成功
+                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, vo.getRetrievalReferenceNumber_37(), vo.getResponseCode_39());
+                //改原订单状态
+                commonBusinessService.updateOrderRefundSuccess(orderRefund);
+                //退还分润
+                commonBusinessService.refundShareBinifit(orderRefund);
+            } else {
+                //退款失败
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
+                baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
+                String type1 = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
+                String reconciliationRemark = type1.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(type1, orderRefund, reconciliationRemark);
+                reconciliationMapper.insert(reconciliation);
+                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+                log.info("=========================【UPI退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type1, JSON.toJSONString(fundChangeDTO));
+                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                    //调账成功
+                    log.info("=================【TH银行退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, vo.getResponseCode_39());
+                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
+                    //改原订单状态
+                    commonBusinessService.updateOrderRefundFail(orderRefund);
+                } else {
+                    //调账失败
+                    log.info("=================【TH银行退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
+                    log.info("=================【TH银行退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
+                }
+            }
+        }else {
+            //请求失败
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+            if (rabbitMassage == null) {
+                rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+            }
+            log.info("===============【TH退款】===============【请求失败 上报队列 TH_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+            rabbitMQSender.send(AD3MQConstant.TH_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
+        }
+        return baseResponse;
+
     }
 
     /**
