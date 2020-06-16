@@ -131,7 +131,8 @@ public abstract class CryptoUtil {
 
         InputStream in = null;
         try {
-            in = new FileInputStream(filePath);
+            Class<CryptoUtil> cryptoUtilClass = CryptoUtil.class;
+            in = cryptoUtilClass.getResourceAsStream(filePath);
             PrivateKey priKey = null;
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
