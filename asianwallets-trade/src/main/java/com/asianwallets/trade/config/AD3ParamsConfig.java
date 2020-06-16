@@ -39,5 +39,13 @@ public class AD3ParamsConfig {
     @Value("${custom.upi.publicKeyPath}")
     private String upiPublicKeyPath;
 
+    @ApiModelProperty("upi tdpu")
+    @Value("${custom.upi.tdpu}")
+    private String upiTdpu;
+
+    @ApiModelProperty("upi header")
+    @Value("${custom.upi.header}")
+    private String upiHeader;
+
 }
 

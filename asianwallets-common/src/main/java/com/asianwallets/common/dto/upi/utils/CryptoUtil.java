@@ -74,6 +74,7 @@ public abstract class CryptoUtil {
         }
     }
 
+
     /**
      * 获取RSA公钥对象
      *
@@ -87,17 +88,19 @@ public abstract class CryptoUtil {
         InputStream in = null;
 
         try {
-            in = new FileInputStream(filePath);
+//            in = new FileInputStream(filePath);
+            Class<CryptoUtil> cryptoUtilClass = CryptoUtil.class;
+            in = cryptoUtilClass.getResourceAsStream(filePath);
             PublicKey pubKey = null;
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             StringBuilder sb = new StringBuilder();
             String readLine = null;
             while ((readLine = br.readLine()) != null) {
-            	if (readLine.charAt(0) == '-') {
-            		continue;
-            	} else {
-            		sb.append(readLine);
+                if (readLine.charAt(0) == '-') {
+                    continue;
+                } else {
+                    sb.append(readLine);
             		sb.append('\r');
             	}
             }
@@ -128,7 +131,8 @@ public abstract class CryptoUtil {
 
         InputStream in = null;
         try {
-            in = new FileInputStream(filePath);
+            Class<CryptoUtil> cryptoUtilClass = CryptoUtil.class;
+            in = cryptoUtilClass.getResourceAsStream(filePath);
             PrivateKey priKey = null;
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
