@@ -21,6 +21,9 @@ public class RightsGrantDTO extends BasePageHelper {
     @ApiModelProperty(value = "发放平台")
     private String systemName;
 
+    @ApiModelProperty(value = "发送类型")//1-短信平台 2-邮件平台
+    private Byte sendType;
+
     @ApiModelProperty(value = "权益类型")//1-满减  2-折扣 3-套餐
     private Byte rightsType;
 

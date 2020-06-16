@@ -67,7 +67,7 @@ public class SmsServiceImpl implements SmsService {
     public boolean sendSimple(String mobile,String content) {
         String returnCode = null;
         try {
-            //获取多个邮箱
+            //获取多个手机号
             List<String> lists = this.getSendMobiles(mobile);
             for(String list:lists){
                 String returnString = HttpSend.batchSend(url, account, pwd, list, content, needstatus, extno);
@@ -93,7 +93,7 @@ public class SmsServiceImpl implements SmsService {
      */
     @Override
     public boolean sendInternation(String mobile,String content){
-        //获取多个邮箱
+        //获取多个手机号
         List<String> lists = this.getSendMobiles(mobile);
         for (String list : lists) {
             //组装请求参数

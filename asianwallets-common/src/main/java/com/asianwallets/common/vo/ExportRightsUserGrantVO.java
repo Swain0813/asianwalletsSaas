@@ -52,6 +52,9 @@ public class ExportRightsUserGrantVO {
     @ApiModelProperty(value = "票券状态")// 1-待领取 2-未使用 3-已使用 4-已过期 5-已退款
     private Byte ticketStatus;
 
+    @ApiModelProperty(value = "发送类型")//1-短信平台 2-邮件平台
+    private Byte sendType;
+
     @ApiModelProperty(value = "备注")
     private String remark;
 }
