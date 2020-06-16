@@ -246,6 +246,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             //未签收
             orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
             orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
+            orders.setChannelNumber(iso8583VO.getRetrievalReferenceNumber_37());
             orders.setReportNumber(orders.getReportNumber()+iso8583VO.getDateOfLocalTransaction_13());
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), TradeConstant.TRADE_SUCCESS);
