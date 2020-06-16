@@ -305,10 +305,19 @@ public class ISO8583DTO {
     @ISO8583Annotation(fldIndex = 55, dataFldLength = 255, type = "BCD", fldFlag = FldFlag.UNFIXED_3)
     private String IntergratedCircuitCardSystemRelatedData_55;
 
+    @ISO8583Annotation(fldIndex = 56, dataFldLength = 512, type = "ASC", fldFlag = FldFlag.UNFIXED_3)
+    private String IntergratedCircuitCardSystemRelatedData_56;
+
+    @ISO8583Annotation(fldIndex = 57, dataFldLength = 255, type = "ASC", fldFlag = FldFlag.UNFIXED_3)
+    private String IntergratedCircuitCardSystemRelatedData_57;
+
+    @ISO8583Annotation(fldIndex = 58, dataFldLength = 255, type = "ASC", fldFlag = FldFlag.UNFIXED_3)
+    private String IntergratedCircuitCardSystemRelatedData_58;
+
     /**
      * 域59自定义域（Reserved Private）
      */
-    @ISO8583Annotation(fldIndex = 59, dataFldLength = 999, type = "BCD", fldFlag = FldFlag.UNFIXED_3)
+    @ISO8583Annotation(fldIndex = 59, dataFldLength = 999, type = "ASC", fldFlag = FldFlag.UNFIXED_3)
     private String ReservedPrivate_59;
 
     /**

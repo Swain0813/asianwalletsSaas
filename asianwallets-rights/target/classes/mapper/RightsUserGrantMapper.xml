@@ -91,7 +91,9 @@
                rus.remark                    as remark,
 
                rus.system_order_id           as systemOrderId,
+               rus.send_type                 as sendType,
                rus.mobile_no                 as mobileNo,
+               rus.email                     as email,
                rus.rights_currency           as rightsCurrency,
                rus.ticket_amount             as ticketAmount,
                rus.ticket_buy_price          as ticketBuyPrice,

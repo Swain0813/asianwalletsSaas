@@ -42,47 +42,47 @@ public class Demo {
     }
 
     private static void test1() throws Exception  {
-        String domain11 = String.valueOf(System.currentTimeMillis()).substring(0, 6);
-
-        ISO8583DTO iso8583DTO = new ISO8583DTO();
-        iso8583DTO.setMessageType("0200");
-        iso8583DTO.setProcessingCode_3("190000");
-        iso8583DTO.setAmountOfTransactions_4("000000000100");
-        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
-        iso8583DTO.setDateOfExpired_14("5012");
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
-        iso8583DTO.setCardSequenceNumber_23("001");
-        iso8583DTO.setPointOfServiceConditionMode_25("82");
-        //受卡机终端标识码 (设备号)
-        iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
-        //受卡方标识码 (商户号)
-        iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
-        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-
-        //自定义域
-        iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
-
-        //银行卡号
-        String var2 = "4761340000000019";
-        //银行卡 磁道2信息
-        String var35 = "4761340000000019=171210114991787";
-        //加密信息
-        iso8583DTO.setProcessingCode_2(var2);
-        iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
-
-        //扫码组包
-        String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, key);
-        String sendMsg = "6000060000" +"601410190121"+ isoMsg;
-        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
-        sendMsg = strHex2 + sendMsg;
-        System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
-
-        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
-        Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
-        String result = respMap.get("respData");
-        System.out.println(" ====  扫码result  ===   " + result);
+        //String domain11 = String.valueOf(System.currentTimeMillis()).substring(0, 6);
+        //
+        //ISO8583DTO iso8583DTO = new ISO8583DTO();
+        //iso8583DTO.setMessageType("0200");
+        //iso8583DTO.setProcessingCode_3("190000");
+        //iso8583DTO.setAmountOfTransactions_4("000000000100");
+        //iso8583DTO.setSystemTraceAuditNumber_11(domain11);
+        //iso8583DTO.setDateOfExpired_14("5012");
+        //iso8583DTO.setPointOfServiceEntryMode_22("032");
+        //iso8583DTO.setCardSequenceNumber_23("001");
+        //iso8583DTO.setPointOfServiceConditionMode_25("82");
+        ////受卡机终端标识码 (设备号)
+        //iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
+        ////受卡方标识码 (商户号)
+        //iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
+        //iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        //
+        ////自定义域
+        //iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
+        //
+        ////银行卡号
+        //String var2 = "4761340000000019";
+        ////银行卡 磁道2信息
+        //String var35 = "4761340000000019=171210114991787";
+        ////加密信息
+        //iso8583DTO.setProcessingCode_2(var2);
+        //iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
+        //
+        ////扫码组包
+        //String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, key);
+        //String sendMsg = "6000060000" +"601410190121"+ isoMsg;
+        //String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        //sendMsg = strHex2 + sendMsg;
+        //System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
+        //
+        ////Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
+        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
+        //String result = respMap.get("respData");
+        //System.out.println(" ====  扫码result  ===   " + result);
         //解包
-        ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO(result);
+        ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO("00A160000000066014101901210210703E00810AD080B1164761340000000019190000000000000100159227112659061650120616820825490344303136383131363332303235303030303030313930333030303030303030303030333432312237373737313630372020203235343930333434202020333434001155543030363633323032350009424E303034B2E2CAD40014220000010006003142453446373430");
         System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
     }
 
