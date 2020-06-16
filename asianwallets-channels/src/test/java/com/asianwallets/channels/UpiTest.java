@@ -333,7 +333,7 @@ public class UpiTest extends SpringBootServletInitializer {
         System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
     }
 
-    //消费
+    //撤销
     @Test
     public void upiCXTest()  throws Exception {
         String domain11 = String.valueOf(System.currentTimeMillis()).substring(0, 6);
