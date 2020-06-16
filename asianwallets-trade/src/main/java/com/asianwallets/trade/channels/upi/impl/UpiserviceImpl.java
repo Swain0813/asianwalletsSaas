@@ -585,7 +585,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
-        iso8583DTO.setProcessingCode_3("190000");
+        iso8583DTO.setProcessingCode_3("280000");
 
         //获取交易金额的小数位数
         int numOfBits = String.valueOf(orderRefund.getTradeAmount()).length() - String.valueOf(orderRefund.getTradeAmount()).indexOf(".") - 1;
