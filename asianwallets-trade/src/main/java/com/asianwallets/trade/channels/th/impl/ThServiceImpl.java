@@ -965,7 +965,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         }
         //12位,左边填充0
         String formatAmount = String.format("%012d", tradeAmount);
-        iso8583DTO.setAmountOfTransactions_4(String.format("%012d", formatAmount));
+        iso8583DTO.setAmountOfTransactions_4(formatAmount);
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(0, 6));
         //服务点输入方式码
@@ -1034,7 +1034,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         }
         //12位,左边填充0
         String formatAmount = String.format("%012d", tradeAmount);
-        iso8583DTO.setAmountOfTransactions_4(String.format("%012d", formatAmount));
+        iso8583DTO.setAmountOfTransactions_4(formatAmount);
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(orders.getId().substring(10, 16));
         //服务点输入方式码
