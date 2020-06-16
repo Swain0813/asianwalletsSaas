@@ -1,6 +1,7 @@
 package com.asianwallets.permissions.feign.rights.impl;
 import com.asianwallets.common.dto.RightsGrantDTO;
 import com.asianwallets.common.dto.RightsGrantInsertDTO;
+import com.asianwallets.common.dto.SendReceiptDTO;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -47,6 +49,16 @@ public class RightsGrantFeignImpl implements RightsGrantFeign {
      */
     @Override
     public BaseResponse addRightsGrant(RightsGrantInsertDTO rightsGrantInsertDTO){
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
+     * 发券接口
+     * @param sendReceiptDTO
+     * @return
+     */
+    @Override
+    public BaseResponse sendReceipt(@Valid SendReceiptDTO sendReceiptDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
