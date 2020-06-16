@@ -1036,7 +1036,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         String formatAmount = String.format("%012d", tradeAmount);
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         //受卡方系统跟踪号
-        iso8583DTO.setSystemTraceAuditNumber_11(orders.getId().substring(10, 16));
+        iso8583DTO.setSystemTraceAuditNumber_11(orders.getId().substring(9, 15));
         //服务点输入方式码
         iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
