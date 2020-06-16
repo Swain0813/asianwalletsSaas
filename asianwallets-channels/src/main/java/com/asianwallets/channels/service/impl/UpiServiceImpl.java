@@ -125,8 +125,8 @@ public class UpiServiceImpl implements UpiService {
     public BaseResponse upiQueery(UpiDTO upiDTO) {
         BaseResponse baseResponse = new BaseResponse();
         try {
-            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix("/usr/local/asianwalletsSaas/asianwallets-channels-1.0.0-SNAPSHOT.jar/BOOT-INF/classes" + channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
-            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix("/usr/local/asianwalletsSaas/asianwallets-channels-1.0.0-SNAPSHOT.jar/BOOT-INF/classes" + channelsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(channelsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
             //final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPublicKeyPath()).getPath(), "pem", "RSA");
             //final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPrivateKeyPath()).getPath(), "pem", null, "RSA");
             log.info("===============【upi查询】===============【请求参数】 UpiDTO: {}", JSON.toJSONString(upiDTO.getUpiPayDTO()));
@@ -179,8 +179,8 @@ public class UpiServiceImpl implements UpiService {
     public BaseResponse upiRefund(UpiDTO upiDTO) {
         BaseResponse baseResponse = new BaseResponse();
         try {
-            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix("/usr/local/asianwalletsSaas/asianwallets-channels-1.0.0-SNAPSHOT.jar/BOOT-INF/classes" + channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
-            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix("/usr/local/asianwalletsSaas/asianwallets-channels-1.0.0-SNAPSHOT.jar/BOOT-INF/classes" + channelsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(channelsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
             //final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPublicKeyPath()).getPath(), "pem", "RSA");
             //final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPrivateKeyPath()).getPath(), "pem", null, "RSA");
             log.info("===============【upi退款】===============【请求参数】 UpiDTO: {}", JSON.toJSONString(upiDTO.getUpiRefundDTO()));
@@ -233,8 +233,8 @@ public class UpiServiceImpl implements UpiService {
     public BaseResponse upiCancel(UpiDTO upiDTO) {
         BaseResponse baseResponse = new BaseResponse();
         try {
-            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix("/usr/local/asianwalletsSaas/asianwallets-channels-1.0.0-SNAPSHOT.jar/BOOT-INF/classes" + channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
-            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix("/usr/local/asianwalletsSaas/asianwallets-channels-1.0.0-SNAPSHOT.jar/BOOT-INF/classes" + channelsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(channelsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
             //final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPublicKeyPath()).getPath(), "pem", "RSA");
             //final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPrivateKeyPath()).getPath(), "pem", null, "RSA");
             log.info("===============【upi撤销】===============【请求参数】 UpiDTO: {}", JSON.toJSONString(upiDTO.getUpiRefundDTO()));
@@ -287,8 +287,8 @@ public class UpiServiceImpl implements UpiService {
     public BaseResponse upiDownSettle(UpiDTO upiDTO) {
         BaseResponse baseResponse = new BaseResponse();
         try {
-            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix("/usr/local/asianwalletsSaas/asianwallets-channels-1.0.0-SNAPSHOT.jar/BOOT-INF/classes" + channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
-            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix("/usr/local/asianwalletsSaas/asianwallets-channels-1.0.0-SNAPSHOT.jar/BOOT-INF/classes" + channelsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(channelsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
             //final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPublicKeyPath()).getPath(), "pem", "RSA");
             //final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource(channelsConfig.getUpiPrivateKeyPath()).getPath(), "pem", null, "RSA");
             log.info("===============【upi下载对账文件】===============【请求参数】 UpiDTO: {}", JSON.toJSONString(upiDTO.getUpiDownDTO()));
