@@ -69,7 +69,7 @@ public class Demo {
         String var35 = "4761340000000019=171210114991787";
         //加密信息
         iso8583DTO.setProcessingCode_2(var2);
-        iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
+        //iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
 
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, key);
