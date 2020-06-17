@@ -170,6 +170,46 @@ public class NumberStringUtil {
     }
 
     /**
+     * 格式化PIN
+     *
+     * @param pin
+     * @return
+     */
+    public static byte[] formatPinByX98(byte[] pin) {
+
+        byte[] encode = new byte[8];
+        encode[0] = (byte) 0x06;
+        encode[1] = (byte) ((pin[0] & 0x0F) << 4 | (pin[1] & 0x0F));
+        encode[2] = (byte) ((pin[2] & 0x0F) << 4 | (pin[3] & 0x0F));
+        encode[3] = (byte) ((pin[4] & 0x0F) << 4 | (pin[5] & 0x0F));
+        encode[4] = (byte) 0xFF;
+        encode[5] = (byte) 0xFF;
+        encode[6] = (byte) 0xFF;
+        encode[7] = (byte) 0xFF;
+        return encode;
+    }
+
+    /**
+     * 格式化PAN
+     *
+     * @param pan
+     * @return
+     */
+    public static byte[] formartPan(byte[] pan) {
+        byte[] encode = new byte[8];
+        encode[0] = 0x00;
+        encode[1] = 0x00;
+        encode[2] = (byte) ((pan[0] & 0x0F) << 4 | (pan[1] & 0x0F));
+        encode[3] = (byte) ((pan[2] & 0x0F) << 4 | (pan[3] & 0x0F));
+        encode[4] = (byte) ((pan[4] & 0x0F) << 4 | (pan[5] & 0x0F));
+        encode[5] = (byte) ((pan[6] & 0x0F) << 4 | (pan[7] & 0x0F));
+        encode[6] = (byte) ((pan[8] & 0x0F) << 4 | (pan[9] & 0x0F));
+        encode[7] = (byte) ((pan[10] & 0x0F) << 4 | (pan[11] & 0x0F));
+        return encode;
+
+    }
+
+    /**
      * BCD码转换成字符串
      * @param b
      * @return
