@@ -12,8 +12,8 @@ eureka:
     prefer-ip-address: true
 
 ribbon:
-  ReadTimeout: 10000
-  ConnectTimeout: 10000
+  ReadTimeout: 600000
+  ConnectTimeout: 600000
   MaxAutoRetries: 0
   MaxAutoRetriesNextServer: 1
 hystrix:
@@ -23,7 +23,7 @@ hystrix:
         isolation:
           strategy: SEMAPHORE
           thread:
-            timeoutInMilliseconds: 60000
+            timeoutInMilliseconds: 600000
 spring:
   # 数据库配置
   datasource:
