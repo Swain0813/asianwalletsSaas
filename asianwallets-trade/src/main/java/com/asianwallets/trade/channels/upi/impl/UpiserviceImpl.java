@@ -444,7 +444,14 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        if(!StringUtils.isEmpty(orderRefund.getPin())){
+            iso8583DTO.setPointOfServiceEntryMode_22("021");
+            iso8583DTO.setPointOfServicePINCaptureCode_26("06");
+            iso8583DTO.setPINData_52(pINEncryption(orderRefund.getPin(), orderRefund.getUserBankCardNo().substring(3,15),channel.getMd5KeyStr()));
+            iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
+        }else{
+            iso8583DTO.setPointOfServiceEntryMode_22("022");
+        }
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getChannelNumber());
         //受卡机终端标识码 (设备号)
@@ -597,7 +604,14 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        if(!StringUtils.isEmpty(orderRefund.getPin())){
+            iso8583DTO.setPointOfServiceEntryMode_22("021");
+            iso8583DTO.setPointOfServicePINCaptureCode_26("06");
+            iso8583DTO.setPINData_52(pINEncryption(orderRefund.getPin(), orderRefund.getUserBankCardNo().substring(3,15),channel.getMd5KeyStr()));
+            iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
+        }else{
+            iso8583DTO.setPointOfServiceEntryMode_22("022");
+        }
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getChannelNumber());
         //受卡机终端标识码 (设备号)
