@@ -51,12 +51,13 @@ public class Demo {
         iso8583DTO.setPointOfServiceEntryMode_22("021");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
+        iso8583DTO.setPointOfServicePINCaptureCode_26("06");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-        iso8583DTO.setPINData_52(pINEncryption("123456", "094200000000"));
+        iso8583DTO.setPINData_52(pINEncryption("111111", "094200000000"));
         iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
 
         //自定义域
@@ -149,6 +150,7 @@ public class Demo {
         try {
             String substring = key_62.substring(0, 32);
             String pik = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
+            System.out.println("===== pik ====="+pik);
             String s = DesUtil.doubleDesEncrypt(pik,ISOUtil.bytesToHexString(xorMac));
             System.out.println("===== pINEncryption ====="+s);
             return s;
