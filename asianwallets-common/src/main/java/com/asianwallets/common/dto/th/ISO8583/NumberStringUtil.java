@@ -168,7 +168,7 @@ public class NumberStringUtil {
         }
         return sbu.toString();
     }
-    
+
 
     /**
      * BCD码转换成字符串
