@@ -375,7 +375,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0,6));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setResponseCode_39("98");
@@ -448,7 +448,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getChannelNumber());
@@ -602,7 +602,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getChannelNumber());
@@ -678,7 +678,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         iso8583DTO.setDateOfExpired_14(orders.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         //受卡机终端标识码 (设备号)

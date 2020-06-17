@@ -297,7 +297,7 @@ public class UpiTest extends SpringBootServletInitializer {
         iso8583DTO.setAmountOfTransactions_4("000000000009");
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         iso8583DTO.setDateOfExpired_14("5012");
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         //受卡机终端标识码 (设备号)
@@ -343,7 +343,7 @@ public class UpiTest extends SpringBootServletInitializer {
         iso8583DTO.setAmountOfTransactions_4("000000000100");
         iso8583DTO.setSystemTraceAuditNumber_11("159228");
         iso8583DTO.setDateOfExpired_14("5012");
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setRetrievalReferenceNumber_37("016811632025");
@@ -391,7 +391,7 @@ public class UpiTest extends SpringBootServletInitializer {
         iso8583DTO.setAmountOfTransactions_4("000000000100");
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         iso8583DTO.setDateOfExpired_14("5012");
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setRetrievalReferenceNumber_37("016814632113");
