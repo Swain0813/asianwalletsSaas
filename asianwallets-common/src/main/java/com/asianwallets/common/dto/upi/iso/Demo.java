@@ -63,9 +63,9 @@ public class Demo {
         iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
 
         //银行卡号
-        String var2 = "4761340000000019";
+        String var2 = "6250942000000001";
         //银行卡 磁道2信息
-        String var35 = "4761340000000019=171210114991787";
+        String var35 = "6250942000000001=49121213715950580001";
         //加密信息
         iso8583DTO.setProcessingCode_2(var2);
         iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
