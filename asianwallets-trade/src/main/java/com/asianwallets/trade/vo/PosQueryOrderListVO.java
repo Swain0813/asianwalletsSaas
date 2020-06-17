@@ -57,7 +57,7 @@ public class PosQueryOrderListVO {
     @ApiModelProperty(value = "退款状态 1-退款中 2-部分退款成功 3-退款成功 4-退款失败")
     private Byte refundStatus;
 
-    @ApiModelProperty(value = "撤销状态 1-撤销中 2-撤销成功 3-撤销失败")
+    @ApiModelProperty(value = "撤销状态:1-撤销中 2-撤销成功 3-撤销失败 4-冲正中 5-冲正成功 6-冲正失败")
     private Byte reverseStatus;
 
     @ApiModelProperty(value = "支付方式名称")
