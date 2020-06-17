@@ -47,10 +47,10 @@ public class Demo {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("190000");
-        iso8583DTO.setAmountOfTransactions_4("000000000100");
-        iso8583DTO.setSystemTraceAuditNumber_11("000004");
+        iso8583DTO.setAmountOfTransactions_4("000000000009");
+        iso8583DTO.setSystemTraceAuditNumber_11(IDS.getRandomInt(6));
         iso8583DTO.setDateOfExpired_14("5012");
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         //受卡机终端标识码 (设备号)
@@ -63,9 +63,9 @@ public class Demo {
         iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
 
         //银行卡号
-        String var2 = "4761340000000019";
+        String var2 = "6250942000000001";
         //银行卡 磁道2信息
-        String var35 = "4761340000000019=171210114991787";
+        String var35 = "6250942000000001=49121213715950580001";
         //加密信息
         iso8583DTO.setProcessingCode_2(var2);
         iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));

@@ -375,7 +375,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0,6));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setResponseCode_39("98");
@@ -448,7 +448,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getChannelNumber());
@@ -461,7 +461,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //自定义域
         String str60 =
                 //60.1 消息类型码
-                "22" +
+                "25" +
                         //60.2 批次号 自定义
                         orderRefund.getId().substring(1,7) +
                         //60.3 网络管理信息码
@@ -472,7 +472,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
         iso8583DTO.setOriginalMessage_61(domain60_2+domain11+domain62_3);
-
+        iso8583DTO.setReservedPrivate_63("000");
         //银行卡号
         iso8583DTO.setProcessingCode_2(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()));
         //加密信息
@@ -602,7 +602,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getChannelNumber());
@@ -678,7 +678,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         iso8583DTO.setDateOfExpired_14(orders.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("032");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         //受卡机终端标识码 (设备号)
