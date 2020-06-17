@@ -47,7 +47,11 @@ public class Demo {
         iso8583DTO.setAmountOfTransactions_4("000000000009");
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         iso8583DTO.setDateOfExpired_14("4912");
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        iso8583DTO.setPointOfServiceEntryMode_22("021");
+        iso8583DTO.setPointOfServicePINCaptureCode_26("06");
+        iso8583DTO.setPINData_52(pINEncryption("111111", "094200000000"));
+        iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
+
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setRetrievalReferenceNumber_37("016917632251");
         //受卡机终端标识码 (设备号)
