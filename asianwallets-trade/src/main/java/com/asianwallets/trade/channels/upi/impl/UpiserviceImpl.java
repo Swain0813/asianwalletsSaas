@@ -7,10 +7,7 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.qfpay.QfPayDTO;
 import com.asianwallets.common.dto.qfpay.QfPayRefundDTO;
-import com.asianwallets.common.dto.th.ISO8583.EcbDesUtil;
-import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
-import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
-import com.asianwallets.common.dto.th.ISO8583.ThDTO;
+import com.asianwallets.common.dto.th.ISO8583.*;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
 import com.asianwallets.common.dto.upi.UpiRefundDTO;
@@ -678,8 +675,15 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         iso8583DTO.setDateOfExpired_14(orders.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
-        iso8583DTO.setCardSequenceNumber_23("001");
+        if(!StringUtils.isEmpty(orders.getPin())){
+            iso8583DTO.setPointOfServiceEntryMode_22("021");
+            iso8583DTO.setPointOfServicePINCaptureCode_26("06");
+            iso8583DTO.setPINData_52(pINEncryption(orders.getPin(), orders.getUserBankCardNo().substring(3,15),channel.getMd5KeyStr()));
+            iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
+        }else{
+            iso8583DTO.setPointOfServiceEntryMode_22("022");
+        }
+
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
@@ -753,7 +757,29 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         byte[] bcd = NumberStringUtil.str2Bcd(newStr);
         return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, cn.hutool.core.util.HexUtil.encodeHexStr(bcd))).toUpperCase();
     }
+    public static String pINEncryption(String pin, String pan,String key) {
 
+        byte[] apan = NumberStringUtil.formartPan(pan.getBytes());
+        System.out.println("pan=== "+ ISOUtil.bytesToHexString(apan));
+        byte[] apin = NumberStringUtil.formatPinByX98(pin.getBytes());
+        System.out.println("pin=== "+ISOUtil.bytesToHexString(apin));
+        byte[] xorMac = new byte[apan.length];
+        for (int i = 0; i < apan.length; i++) {//异或
+            xorMac[i] = apin[i] ^= apan[i];
+        }
+        System.out.println("异或==="+ISOUtil.bytesToHexString(xorMac));
+        try {
+            String substring = key.substring(0, 32);
+            String pik = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
+            System.out.println("===== pik ====="+pik);
+            String s = DesUtil.doubleDesEncrypt(pik,ISOUtil.bytesToHexString(xorMac));
+            System.out.println("===== pINEncryption ====="+s);
+            return s;
+        } catch (Exception e) {
+            System.out.println("===== pINEncryption e ====="+e);
+        }
+        return null;
+    }
     /**
      * @return
      * @Author YangXu
