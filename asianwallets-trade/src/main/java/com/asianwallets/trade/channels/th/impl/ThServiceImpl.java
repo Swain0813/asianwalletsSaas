@@ -108,7 +108,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         //当前时间戳
         String timeStamp = System.currentTimeMillis() + "";
-        String domain11 = timeStamp.substring(0, 6);
+        String domain11 = timeStamp.substring(4, 10);
         String domain60_2 = timeStamp.substring(6, 12);
         //保存11域与60.2域
         orders.setReportNumber(domain11 + domain60_2);
@@ -512,7 +512,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("400100");
         iso8583DTO.setAmountOfTransactions_4(NumberStringUtil.addLeftChar(orderRefund.getTradeAmount().toString().replace(".", ""), 12, '0'));
-        iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(0, 6));
+        iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(6, 12));
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
