@@ -447,7 +447,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         if(!StringUtils.isEmpty(orderRefund.getPin())){
             iso8583DTO.setPointOfServiceEntryMode_22("021");
             iso8583DTO.setPointOfServicePINCaptureCode_26("06");
-            iso8583DTO.setPINData_52(pINEncryption(orderRefund.getPin(), orderRefund.getUserBankCardNo().substring(3,15),channel.getMd5KeyStr()));
+            iso8583DTO.setPINData_52(pINEncryption(AESUtil.aesDecrypt(orderRefund.getPin()), AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()).substring(3,15),channel.getMd5KeyStr()));
             iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
         }else{
             iso8583DTO.setPointOfServiceEntryMode_22("022");
@@ -608,7 +608,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         if(!StringUtils.isEmpty(orderRefund.getPin())){
             iso8583DTO.setPointOfServiceEntryMode_22("021");
             iso8583DTO.setPointOfServicePINCaptureCode_26("06");
-            iso8583DTO.setPINData_52(pINEncryption(orderRefund.getPin(), orderRefund.getUserBankCardNo().substring(3,15),channel.getMd5KeyStr()));
+            iso8583DTO.setPINData_52(pINEncryption(AESUtil.aesDecrypt(orderRefund.getPin()), AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()).substring(3,15),channel.getMd5KeyStr()));
             iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
         }else{
             iso8583DTO.setPointOfServiceEntryMode_22("022");
@@ -691,7 +691,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         if(!StringUtils.isEmpty(orders.getPin())){
             iso8583DTO.setPointOfServiceEntryMode_22("021");
             iso8583DTO.setPointOfServicePINCaptureCode_26("06");
-            iso8583DTO.setPINData_52(pINEncryption(orders.getPin(), orders.getUserBankCardNo().substring(3,15),channel.getMd5KeyStr()));
+            iso8583DTO.setPINData_52(pINEncryption(AESUtil.aesDecrypt(orders.getPin()), AESUtil.aesDecrypt(orders.getUserBankCardNo()).substring(3,15),channel.getMd5KeyStr()));
             iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
         }else{
             iso8583DTO.setPointOfServiceEntryMode_22("022");
