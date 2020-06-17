@@ -141,7 +141,7 @@ public class Demo {
             //byte[] pa = NumberStringUtil.formartPan(HexUtil.decodeHex(pan));
             String substring = key_62.substring(0, 32);
             String pik = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
-            String s = DesUtil.doubleDesEncrypt(pik, HexUtil.encodeHexStr(MacEcbUtils.bytesXOR(NumberStringUtil.str2Bcd(pin), NumberStringUtil.str2Bcd(pan))));
+            String s = DesUtil.doubleDesEncrypt(pik, HexUtil.encodeHexStr(MacEcbUtils.bytesXOR(pin.getBytes(),pan.getBytes())));
             System.out.println("===== pINEncryption ====="+s);
             return s;
         } catch (Exception e) {
