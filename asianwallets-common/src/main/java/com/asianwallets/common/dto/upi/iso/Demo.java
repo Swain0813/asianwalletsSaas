@@ -44,9 +44,9 @@ public class Demo {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0220");
         iso8583DTO.setProcessingCode_3("200000");
-        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        iso8583DTO.setAmountOfTransactions_4("000000000009");
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
-        iso8583DTO.setDateOfExpired_14("5012");
+        iso8583DTO.setDateOfExpired_14("4912");
         iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         iso8583DTO.setRetrievalReferenceNumber_37("016917632251");
@@ -58,7 +58,7 @@ public class Demo {
 
         //自定义域
         iso8583DTO.setReservedPrivate_60("25000001000600");//01000001000000000
-        iso8583DTO.setOriginalMessage_61("0000000000000616");
+        iso8583DTO.setOriginalMessage_61("0000015087180617");
         iso8583DTO.setReservedPrivate_63("000");
         //银行卡号
         String var2 = "6250942000000001";
