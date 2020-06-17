@@ -270,7 +270,7 @@ public class ISO8583DTO {
      * 变量属性
      * B64，8个字节的定长二进制数域。
      */
-    @ISO8583Annotation(fldIndex = 52, dataFldLength = 8, type = "BINARY", fldFlag = FldFlag.FIXED)
+    @ISO8583Annotation(fldIndex = 52, dataFldLength = 16, type = "BINARY", fldFlag = FldFlag.FIXED)
     private String PINData_52;
 
     /**

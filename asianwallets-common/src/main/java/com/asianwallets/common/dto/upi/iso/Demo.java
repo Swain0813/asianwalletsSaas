@@ -1,10 +1,8 @@
 package com.asianwallets.common.dto.upi.iso;
 
+import cn.hutool.core.util.HexUtil;
 import com.alibaba.fastjson.JSON;
-import com.asianwallets.common.dto.th.ISO8583.EcbDesUtil;
-import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
-import com.asianwallets.common.dto.th.ISO8583.ISO8583Util;
-import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
+import com.asianwallets.common.dto.th.ISO8583.*;
 import com.asianwallets.common.utils.AESUtil;
 import com.asianwallets.common.utils.IDS;
 
@@ -41,7 +39,7 @@ public class Demo {
         //test3();
     }
 
-    private static void test1() throws Exception  {
+    private static void test1() throws Exception {
         String domain11 = String.valueOf(System.currentTimeMillis()).substring(0, 6);
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
@@ -58,6 +56,8 @@ public class Demo {
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        iso8583DTO.setPINData_52(pINEncryption("123456", "094200000000"));
+        iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
 
         //自定义域
         iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
@@ -72,7 +72,7 @@ public class Demo {
 
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, key);
-        String sendMsg = "6000060000" +"601410190121"+ isoMsg;
+        String sendMsg = "6000060000" + "601410190121" + isoMsg;
         String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
         sendMsg = strHex2 + sendMsg;
         System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
@@ -87,11 +87,12 @@ public class Demo {
     }
 
     private static void test2() {
-        String substring = key_62.substring(40,72);
+        String substring = key_62.substring(40, 72);
         String mac = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
         System.out.println(mac);
     }
-    private static void test3() throws Exception{
+
+    private static void test3() throws Exception {
         String domain11 = IDS.uniqueID().toString().substring(0, 6);
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
@@ -105,7 +106,7 @@ public class Demo {
         iso8583DTO.setReservedPrivate_62("9F0605DF000000039F220101");
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, null);
-        String sendMsg = "6000060000" +"601410190121"+ isoMsg;
+        String sendMsg = "6000060000" + "601410190121" + isoMsg;
         String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
         sendMsg = strHex2 + sendMsg;
         System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
@@ -118,6 +119,7 @@ public class Demo {
         ISO8583DTO iso8583DTO1281 = UpiIsoUtil.unpackISO8583DTO(result);
         System.out.println("扫码结果:" + JSON.toJSONString(iso8583DTO1281));
     }
+
     private static String trkEncryption(String str, String key) {
         //80-112 Trk密钥位
         String substring = key.substring(80, 112);
@@ -129,6 +131,32 @@ public class Demo {
             newStr = str.length() + str;
         }
         byte[] bcd = NumberStringUtil.str2Bcd(newStr);
-        return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, cn.hutool.core.util.HexUtil.encodeHexStr(bcd))).toUpperCase();
+        return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, HexUtil.encodeHexStr(bcd))).toUpperCase();
     }
+
+
+    public static String pINEncryption(String pin, String pan) {
+
+        byte[] apan = NumberStringUtil.formartPan(pan.getBytes());
+        System.out.println("pan=== "+ISOUtil.bytesToHexString(apan));
+        byte[] apin = NumberStringUtil.formatPinByX98(pin.getBytes());
+        System.out.println("pin=== "+ISOUtil.bytesToHexString(apin));
+        byte[] xorMac = new byte[apan.length];
+        for (int i = 0; i < apan.length; i++) {//异或
+            xorMac[i] = apin[i] ^= apan[i];
+        }
+        System.out.println("异或==="+ISOUtil.bytesToHexString(xorMac));
+        try {
+            String substring = key_62.substring(0, 32);
+            String pik = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
+            String s = DesUtil.doubleDesEncrypt(pik,ISOUtil.bytesToHexString(xorMac));
+            System.out.println("===== pINEncryption ====="+s);
+            return s;
+        } catch (Exception e) {
+            System.out.println("===== pINEncryption e ====="+e);
+        }
+        return null;
+    }
+
+
 }
