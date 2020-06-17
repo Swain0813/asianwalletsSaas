@@ -56,7 +56,7 @@ public class Demo {
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-        iso8583DTO.setPINData_52(pINEncryption("061111111FFFFFFFF ", "0000094200000000"));
+        iso8583DTO.setPINData_52(pINEncryption("1111111", "094200000000"));
         iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
 
         //自定义域
@@ -136,10 +136,18 @@ public class Demo {
 
 
     public static String pINEncryption(String pin, String pan) {
+
+        byte[] apan = NumberStringUtil.formartPan(pan.getBytes());
+        byte[] apin = NumberStringUtil.formatPinByX98(pin.getBytes());
+        byte[] xorMac = new byte[apan.length];
+        for (int i = 0; i < apan.length; i++) {//异或
+            xorMac[i] = apin[i] ^= apan[i];
+        }
+        System.out.println(ISOUtil.bytesToHexString(xorMac));
         try {
             String substring = key_62.substring(0, 32);
             String pik = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
-            String s = DesUtil.doubleDesEncrypt(pik, HexUtil.encodeHexStr(MacEcbUtils.bytesXOR(pin.getBytes(),pan.getBytes())));
+            String s = DesUtil.doubleDesEncrypt(pik,ISOUtil.bytesToHexString(xorMac));
             System.out.println("===== pINEncryption ====="+s);
             return s;
         } catch (Exception e) {
