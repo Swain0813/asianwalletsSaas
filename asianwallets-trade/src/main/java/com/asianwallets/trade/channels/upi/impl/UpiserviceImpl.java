@@ -472,7 +472,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
         iso8583DTO.setOriginalMessage_61(domain60_2+domain11+domain62_3);
-
+        iso8583DTO.setReservedPrivate_63("000");
         //银行卡号
         iso8583DTO.setProcessingCode_2(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()));
         //加密信息
