@@ -60,7 +60,7 @@ public class Demo {
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
 
         //自定义域
-        iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
+        iso8583DTO.setReservedPrivate_60("25000001000600");//01000001000000000
         iso8583DTO.setOriginalMessage_61("0000000000000616");
         iso8583DTO.setReservedPrivate_63("000");
         //银行卡号
@@ -69,7 +69,7 @@ public class Demo {
         String var35 = "4761340000000019=171210114991787";
         //加密信息
         iso8583DTO.setProcessingCode_2(var2);
-        //iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
+        iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
 
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, key);
