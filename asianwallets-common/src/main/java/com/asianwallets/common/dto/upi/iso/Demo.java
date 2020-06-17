@@ -41,39 +41,36 @@ public class Demo {
 
     private static void test1() throws Exception {
         String domain11 = String.valueOf(System.currentTimeMillis()).substring(0, 6);
-
         ISO8583DTO iso8583DTO = new ISO8583DTO();
-        iso8583DTO.setMessageType("0200");
-        iso8583DTO.setProcessingCode_3("190000");
-        iso8583DTO.setAmountOfTransactions_4("000000000009");
-        iso8583DTO.setSystemTraceAuditNumber_11(IDS.getRandomInt(6));
+        iso8583DTO.setMessageType("0220");
+        iso8583DTO.setProcessingCode_3("200000");
+        iso8583DTO.setAmountOfTransactions_4("000000000100");
+        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         iso8583DTO.setDateOfExpired_14("5012");
-        iso8583DTO.setPointOfServiceEntryMode_22("021");
-        iso8583DTO.setCardSequenceNumber_23("001");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
-        iso8583DTO.setPointOfServicePINCaptureCode_26("06");
+        iso8583DTO.setRetrievalReferenceNumber_37("016917632251");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-        iso8583DTO.setPINData_52(pINEncryption("111111", "094200000000"));
-        iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
 
         //自定义域
-        iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
-
+        iso8583DTO.setReservedPrivate_60("25000001000600");//01000001000000000
+        iso8583DTO.setOriginalMessage_61("0000000000000616");
+        iso8583DTO.setReservedPrivate_63("000");
         //银行卡号
         String var2 = "6250942000000001";
         //银行卡 磁道2信息
         String var35 = "6250942000000001=49121213715950580001";
         //加密信息
         iso8583DTO.setProcessingCode_2(var2);
-        iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
+        //iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
 
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, key);
-        String sendMsg = "6000060000" + "601410190121" + isoMsg;
+        String sendMsg = "6000060000" +"601410190121"+ isoMsg;
         String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
         sendMsg = strHex2 + sendMsg;
         System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
