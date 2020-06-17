@@ -137,8 +137,8 @@ public class Demo {
 
     public static String pINEncryption(String pin, String pan) {
         try {
-            //byte[] pi = NumberStringUtil.formatPinByX98(HexUtil.decodeHex(pin));
-            //byte[] pa = NumberStringUtil.formartPan(HexUtil.decodeHex(pan));
+            byte[] pi = NumberStringUtil.formatPinByX98(HexUtil.decodeHex(pin));
+            byte[] pa = NumberStringUtil.formartPan(HexUtil.decodeHex(pan));
             String substring = key_62.substring(0, 32);
             String pik = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
             String s = DesUtil.doubleDesEncrypt(pik, HexUtil.encodeHexStr(MacEcbUtils.bytesXOR(pin.getBytes(),pan.getBytes())));
