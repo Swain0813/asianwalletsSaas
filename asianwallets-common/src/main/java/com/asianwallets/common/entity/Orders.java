@@ -147,7 +147,7 @@ public class Orders extends BaseEntity {
     @Column(name = "trade_status")
     private Byte tradeStatus;
 
-    @ApiModelProperty(value = "撤销状态")//1-撤销中 2-撤销成功 3-撤销失败
+    @ApiModelProperty(value = "撤销状态")//撤销状态:1-撤销中 2-撤销成功 3-撤销失败 4-冲正中 5-冲正成功 6-冲正失败
     @Column(name = "cancel_status")
     private Byte cancelStatus;
 
