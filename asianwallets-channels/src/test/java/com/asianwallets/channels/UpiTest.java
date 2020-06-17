@@ -389,7 +389,7 @@ public class UpiTest extends SpringBootServletInitializer {
         iso8583DTO.setMessageType("0220");
         iso8583DTO.setProcessingCode_3("200000");
         iso8583DTO.setAmountOfTransactions_4("000000000100");
-        iso8583DTO.setSystemTraceAuditNumber_11("259228");
+        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         iso8583DTO.setDateOfExpired_14("5012");
         iso8583DTO.setPointOfServiceEntryMode_22("032");
         iso8583DTO.setCardSequenceNumber_23("001");
@@ -402,9 +402,9 @@ public class UpiTest extends SpringBootServletInitializer {
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
 
         //自定义域
-        iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
-        iso8583DTO.setOriginalMessage_61("0000010000030616");
-
+        iso8583DTO.setReservedPrivate_60("25000001000600");//01000001000000000
+        iso8583DTO.setOriginalMessage_61("0000000000000616");
+        iso8583DTO.setReservedPrivate_63("000");
         //银行卡号
         String var2 = "4761340000000019";
         //银行卡 磁道2信息
