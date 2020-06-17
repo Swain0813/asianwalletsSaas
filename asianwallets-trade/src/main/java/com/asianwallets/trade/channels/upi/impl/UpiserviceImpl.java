@@ -477,6 +477,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setReservedPrivate_63("000");
         //银行卡号
         iso8583DTO.setProcessingCode_2(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()));
+        iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), channel.getMd5KeyStr()));
         //加密信息
         String isoMsg = null;
         //扫码组包
