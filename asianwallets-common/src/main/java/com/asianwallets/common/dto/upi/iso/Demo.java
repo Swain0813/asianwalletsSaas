@@ -145,7 +145,7 @@ public class Demo {
             System.out.println("===== pINEncryption ====="+s);
             return s;
         } catch (Exception e) {
-
+            System.out.println("===== pINEncryption e ====="+e);
         }
         return null;
     }
