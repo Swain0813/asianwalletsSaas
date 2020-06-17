@@ -50,7 +50,7 @@ public class Demo {
         iso8583DTO.setAmountOfTransactions_4("000000000009");
         iso8583DTO.setSystemTraceAuditNumber_11(IDS.getRandomInt(6));
         iso8583DTO.setDateOfExpired_14("5012");
-        iso8583DTO.setPointOfServiceEntryMode_22("902");
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         iso8583DTO.setCardSequenceNumber_23("001");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
         //受卡机终端标识码 (设备号)
