@@ -2,9 +2,7 @@ package com.asianwallets.channels;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.service.UpiService;
-import com.asianwallets.common.dto.th.ISO8583.EcbDesUtil;
-import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
-import com.asianwallets.common.dto.th.ISO8583.NumberStringUtil;
+import com.asianwallets.common.dto.th.ISO8583.*;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.UpiDownDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
@@ -447,6 +445,30 @@ public class UpiTest extends SpringBootServletInitializer {
         return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, cn.hutool.core.util.HexUtil.encodeHexStr(bcd))).toUpperCase();
 
     }
+    public static String pINEncryption(String pin, String pan) {
+
+        byte[] apan = NumberStringUtil.formartPan(pan.getBytes());
+        System.out.println("pan=== "+ ISOUtil.bytesToHexString(apan));
+        byte[] apin = NumberStringUtil.formatPinByX98(pin.getBytes());
+        System.out.println("pin=== "+ISOUtil.bytesToHexString(apin));
+        byte[] xorMac = new byte[apan.length];
+        for (int i = 0; i < apan.length; i++) {//异或
+            xorMac[i] = apin[i] ^= apan[i];
+        }
+        System.out.println("异或==="+ISOUtil.bytesToHexString(xorMac));
+        try {
+            String substring = key_62.substring(0, 32);
+            String pik = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
+            System.out.println("===== pik ====="+pik);
+            String s = DesUtil.doubleDesEncrypt(pik,ISOUtil.bytesToHexString(xorMac));
+            System.out.println("===== pINEncryption ====="+s);
+            return s;
+        } catch (Exception e) {
+            System.out.println("===== pINEncryption e ====="+e);
+        }
+        return null;
+    }
+
 
 
 }
