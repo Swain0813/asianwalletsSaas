@@ -1192,7 +1192,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         //返回结果
         BaseResponse baseResponse = new BaseResponse();
         if (TradeConstant.RV.equals(type) || TradeConstant.RF.equals(type)) {
-            orderRefund.setRemark3(type);
+            orderRefund.setRemark3(type);//业务上撤销
             orderRefund.setRemark4(type);
             /*************************************************************** 订单是付款成功的场合 将订单表中的退款状态修改成退款中*******************************************/
             //把原订单状态改为退款中

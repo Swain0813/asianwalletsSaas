@@ -1042,6 +1042,9 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
      */
     @Override
     public BaseResponse preAuthCompleteRevoke(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+
+
+
         return null;
     }
 
