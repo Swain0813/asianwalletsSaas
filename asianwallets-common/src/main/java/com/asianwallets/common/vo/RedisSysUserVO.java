@@ -14,6 +14,9 @@ public class RedisSysUserVO {
     @ApiModelProperty("机构编号")
     private String institutionId;
 
+    @ApiModelProperty("机构名称")
+    private String institutionName;
+
     @ApiModelProperty("交易密码")
     private String tradePassword;
 
