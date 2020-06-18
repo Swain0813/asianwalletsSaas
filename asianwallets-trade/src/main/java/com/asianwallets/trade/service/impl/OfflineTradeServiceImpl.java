@@ -995,7 +995,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         //根据商户订单号获取预授权订单信息
         PreOrders preOrders = preOrdersMapper.selectMerchantOrderId(offlinePreTradeDTO.getOrderNo());
         log.info("==================【预授权完成,商户订单号】==================", offlinePreTradeDTO.getOrderNo());
-        if (preOrders == null || System.currentTimeMillis() > DateToolUtils.addDay(preOrders.getCreateTime(), 30).getTime()) {
+        if (preOrders == null || System.currentTimeMillis() > DateToolUtils.addDay(preOrders.getCreateTime(), 30).getTime()
+                || preOrders.getOrderStatus() != 1) {
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
         //预授权完成的金额和原预授权订单金额比较 以及预授权完成金额不能小于等于0
