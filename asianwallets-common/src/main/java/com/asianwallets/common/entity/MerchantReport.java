@@ -77,7 +77,7 @@ public class MerchantReport extends BaseEntity {
     @Column(name = "enabled")
     private Boolean enabled;
 
-    @ApiModelProperty(value = "备注1")
+    @ApiModelProperty(value = "终端号")
     @Column(name = "extend1")
     private String extend1;
 

@@ -82,7 +82,7 @@ public class MerchantReportDTO extends BasePageHelper {
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ApiModelProperty(value = "备注1")
+    @ApiModelProperty(value = "终端号")
     private String extend1;
 
     @ApiModelProperty(value = "备注2")
