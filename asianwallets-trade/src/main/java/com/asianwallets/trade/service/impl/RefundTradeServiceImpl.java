@@ -943,7 +943,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //返回结果
             baseResponse = channelsAbstract.preAuthReverse(channel, preOrders, null);
 
-        } else if(preOrders.getOrderStatus() == 0){
+        } else if (preOrders.getOrderStatus() == 0) {
             //调用预授权的冲正接口
             ChannelsAbstract channelsAbstract = null;
             Channel channel = commonRedisDataService.getChannelByChannelCode(preOrders.getChannelCode());
@@ -1051,10 +1051,8 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         String channelCallbackTime = oldOrder.getChannelCallbackTime() == null ? DateToolUtils.getReqDate(oldOrder.getCreateTime())
                 : DateToolUtils.getReqDate(oldOrder.getChannelCallbackTime());
         String today = DateToolUtils.getReqDate();
-        if (channel.getOnlyTodayOrderRefund()) {
-            if (!channelCallbackTime.equals(today)) {
-                throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
-            }
+        if (!channelCallbackTime.equals(today)) {
+            throw new BusinessException(EResultEnum.NOT_SUPPORT_REFUND.getCode());
         }
         /*****************************************************  校验退款相关参数 判断退款类型 *****************************************************/
         commonRedisDataService.getMerchantById(refundDTO.getMerchantId());
