@@ -21,10 +21,7 @@ import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.upi.Upiservice;
 import com.asianwallets.trade.config.AD3ParamsConfig;
-import com.asianwallets.trade.dao.ChannelsOrderMapper;
-import com.asianwallets.trade.dao.OrderRefundMapper;
-import com.asianwallets.trade.dao.OrdersMapper;
-import com.asianwallets.trade.dao.ReconciliationMapper;
+import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
@@ -82,6 +79,9 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
 
     @Autowired
     private ReconciliationMapper reconciliationMapper;
+
+    @Autowired
+    private PreOrdersMapper preOrdersMapper;
 
     /**
      * 银联主扫接口
@@ -752,14 +752,57 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
-     *通华预授权
+     *UPI预授权
      * @param preOrders
      * @param channel
      * @return
      */
     @Override
     public BaseResponse preAuth(PreOrders preOrders, Channel channel) {
-        return null;
+        BaseResponse baseResponse = new BaseResponse();
+        UpiDTO upiDTO = this.createPreAuthDTO(preOrders, channel);
+        log.info("==================【UPI预授权】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+        BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
+        log.info("==================【UPI预授权】==================【调用Channels服务】【UPI-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        //请求失败
+        if (TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            //请求成功
+            ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
+            log.info("==================【UPI预授权】==================【预授权失败】iso8583VO:{}",JSONObject.toJSONString(iso8583VO));
+            if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+                preOrdersMapper.updatePreStatusById(preOrders.getId(),iso8583VO.getRetrievalReferenceNumber_37(), (byte) 2,null);
+            } else {
+                log.info("==================【UPI预授权】==================【预授权失败】preOrders:{}",preOrders.getId());
+                baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
+                preOrdersMapper.updatePreStatusById(preOrders.getId(),null, (byte) 2,null);
+            }
+        }else{
+            //请求失败
+            log.info("==================【UPI预授权】==================【请求状态码异常】preOrders:{}",preOrders.getId());
+            baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
+            preOrdersMapper.updatePreStatusById(preOrders.getId(),null, (byte) 2,null);
+        }
+        return baseResponse;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/6/18
+     * @Descripate 创造预授权DTO
+     * @return
+     **/
+    private UpiDTO createPreAuthDTO(PreOrders preOrders, Channel channel) {
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        iso8583DTO.setProcessingCode_3("190000");
+
+
+        return upiDTO;
+
     }
 
     /**
