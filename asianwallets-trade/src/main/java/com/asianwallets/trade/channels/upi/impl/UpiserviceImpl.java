@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.upi.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
@@ -85,6 +87,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
 
     /**
      * 银联主扫接口
+     *
      * @param orders
      * @param channel
      * @return
@@ -111,6 +114,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
 
     /**
      * 银联被扫接口
+     *
      * @param orders
      * @param channel
      * @param authCode
@@ -256,7 +260,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
             orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
             orders.setChannelNumber(iso8583VO.getRetrievalReferenceNumber_37());
-            orders.setReportNumber(orders.getReportNumber()+iso8583VO.getDateOfLocalTransaction_13());
+            orders.setReportNumber(orders.getReportNumber() + iso8583VO.getDateOfLocalTransaction_13());
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), TradeConstant.TRADE_SUCCESS);
             } catch (Exception e) {
@@ -382,11 +386,11 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //12位,左边填充0
         String formatAmount = String.format("%012d", tradeAmount);
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0,6));
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        if(StringUtils.isEmpty(orderRefund.getPin())){
+        if (StringUtils.isEmpty(orderRefund.getPin())) {
             iso8583DTO.setPointOfServiceEntryMode_22("021");
-        }else{
+        } else {
             iso8583DTO.setPointOfServiceEntryMode_22("022");
         }
         iso8583DTO.setPointOfServiceConditionMode_25("82");
@@ -402,7 +406,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 //60.1 消息类型码
                 "22" +
                         //60.2 批次号 自定义
-                        orderRefund.getReportNumber().substring(6,12) +
+                        orderRefund.getReportNumber().substring(6, 12) +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
@@ -429,10 +433,10 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/16
      * @Descripate 退款DTO
-     * @return
      **/
     private UpiDTO createBankRefundDTO(OrderRefund orderRefund, Channel channel, String type) {
         UpiDTO upiDTO = new UpiDTO();
@@ -458,14 +462,14 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //12位,左边填充0
         String formatAmount = String.format("%012d", tradeAmount);
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10, 16));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        if(!StringUtils.isEmpty(orderRefund.getPin())){
+        if (!StringUtils.isEmpty(orderRefund.getPin())) {
             iso8583DTO.setPointOfServiceEntryMode_22("021");
             iso8583DTO.setPointOfServicePINCaptureCode_26("06");
-            iso8583DTO.setPINData_52(pINEncryption(AESUtil.aesDecrypt(orderRefund.getPin()), AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()).substring(3,15),channel.getMd5KeyStr()));
+            iso8583DTO.setPINData_52(pINEncryption(AESUtil.aesDecrypt(orderRefund.getPin()), AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()).substring(3, 15), channel.getMd5KeyStr()));
             iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
-        }else{
+        } else {
             iso8583DTO.setPointOfServiceEntryMode_22("022");
         }
         iso8583DTO.setPointOfServiceConditionMode_25("82");
@@ -481,7 +485,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 //60.1 消息类型码
                 "25" +
                         //60.2 批次号 自定义
-                        orderRefund.getId().substring(1,7) +
+                        orderRefund.getId().substring(1, 7) +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
@@ -489,7 +493,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                         //60. 5，6，7 缺省
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
-        iso8583DTO.setOriginalMessage_61(domain60_2+domain11+domain62_3);
+        iso8583DTO.setOriginalMessage_61(domain60_2 + domain11 + domain62_3);
         iso8583DTO.setReservedPrivate_63("000");
         //银行卡号
         iso8583DTO.setProcessingCode_2(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()));
@@ -535,9 +539,9 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             type = "REFUND";
             upiDTO = this.createBankRefundDTO(orderRefund, channel, type);
         }
-        log.info("==================【UPI退款】==================【调用Channels服务】type：{}  upiDTO: {}", type,JSON.toJSONString(upiDTO));
+        log.info("==================【UPI退款】==================【调用Channels服务】type：{}  upiDTO: {}", type, JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
-        log.info("==================【UPI退款】==================【调用Channels服务返回】type：{}  channelResponse: {}", type,JSON.toJSONString(channelResponse));
+        log.info("==================【UPI退款】==================【调用Channels服务返回】type：{}  channelResponse: {}", type, JSON.toJSONString(channelResponse));
         if (channelResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
             //请求成功
             net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(channelResponse.getData());
@@ -577,7 +581,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                     rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
                 }
             }
-        }else {
+        } else {
             //请求失败
             baseResponse.setCode(EResultEnum.REFUNDING.getCode());
             if (rabbitMassage == null) {
@@ -591,10 +595,10 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/16
      * @Descripate 撤销DTO
-     * @return
      **/
     private UpiDTO createBankUndoDTO(OrderRefund orderRefund, Channel channel, String type) {
         UpiDTO upiDTO = new UpiDTO();
@@ -619,14 +623,14 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //12位,左边填充0
         String formatAmount = String.format("%012d", tradeAmount);
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
-        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10,16));
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(10, 16));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        if(!StringUtils.isEmpty(orderRefund.getPin())){
+        if (!StringUtils.isEmpty(orderRefund.getPin())) {
             iso8583DTO.setPointOfServiceEntryMode_22("021");
             iso8583DTO.setPointOfServicePINCaptureCode_26("06");
-            iso8583DTO.setPINData_52(pINEncryption(AESUtil.aesDecrypt(orderRefund.getPin()), AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()).substring(3,15),channel.getMd5KeyStr()));
+            iso8583DTO.setPINData_52(pINEncryption(AESUtil.aesDecrypt(orderRefund.getPin()), AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()).substring(3, 15), channel.getMd5KeyStr()));
             iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
-        }else{
+        } else {
             iso8583DTO.setPointOfServiceEntryMode_22("022");
         }
         iso8583DTO.setPointOfServiceConditionMode_25("82");
@@ -642,7 +646,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 //60.1 消息类型码
                 "22" +
                         //60.2 批次号 自定义
-                        orderRefund.getId().substring(1,7) +
+                        orderRefund.getId().substring(1, 7) +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
@@ -650,7 +654,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                         //60. 5，6，7 缺省
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
-        iso8583DTO.setOriginalMessage_61(domain60_2+domain11);
+        iso8583DTO.setOriginalMessage_61(domain60_2 + domain11);
 
         //银行卡号
         iso8583DTO.setProcessingCode_2(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()));
@@ -704,12 +708,12 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         iso8583DTO.setDateOfExpired_14(orders.getValid());
-        if(!StringUtils.isEmpty(orders.getPin())){
+        if (!StringUtils.isEmpty(orders.getPin())) {
             iso8583DTO.setPointOfServiceEntryMode_22("021");
             iso8583DTO.setPointOfServicePINCaptureCode_26("06");
-            iso8583DTO.setPINData_52(pINEncryption(AESUtil.aesDecrypt(orders.getPin()), AESUtil.aesDecrypt(orders.getUserBankCardNo()).substring(3,15),channel.getMd5KeyStr()));
+            iso8583DTO.setPINData_52(pINEncryption(AESUtil.aesDecrypt(orders.getPin()), AESUtil.aesDecrypt(orders.getUserBankCardNo()).substring(3, 15), channel.getMd5KeyStr()));
             iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
-        }else{
+        } else {
             iso8583DTO.setPointOfServiceEntryMode_22("022");
         }
 
@@ -752,7 +756,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
-     *UPI预授权
+     * UPI预授权
+     *
      * @param preOrders
      * @param channel
      * @return
@@ -768,29 +773,29 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         if (TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             //请求成功
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
-            log.info("==================【UPI预授权】==================【预授权】iso8583VO:{}",JSONObject.toJSONString(iso8583VO));
+            log.info("==================【UPI预授权】==================【预授权】iso8583VO:{}", JSONObject.toJSONString(iso8583VO));
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                preOrdersMapper.updatePreStatusById0(preOrders.getId(),iso8583VO.getRetrievalReferenceNumber_37(), (byte) 1,null);
+                preOrdersMapper.updatePreStatusById0(preOrders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), (byte) 1, null);
             } else {
-                log.info("==================【UPI预授权】==================【预授权失败】preOrders:{}",preOrders.getId());
+                log.info("==================【UPI预授权】==================【预授权失败】preOrders:{}", preOrders.getId());
                 baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
-                preOrdersMapper.updatePreStatusById0(preOrders.getId(),null, (byte) 2,null);
+                preOrdersMapper.updatePreStatusById0(preOrders.getId(), null, (byte) 2, null);
             }
-        }else{
+        } else {
             //请求失败
-            log.info("==================【UPI预授权】==================【请求状态码异常】preOrders:{}",preOrders.getId());
+            log.info("==================【UPI预授权】==================【请求状态码异常】preOrders:{}", preOrders.getId());
             baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
-            preOrdersMapper.updatePreStatusById0(preOrders.getId(),null, (byte) 2,null);
+            preOrdersMapper.updatePreStatusById0(preOrders.getId(), null, (byte) 2, null);
         }
         return baseResponse;
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/18
      * @Descripate 创造预授权DTO
-     * @return
      **/
     private UpiDTO createPreAuthDTO(PreOrders preOrders, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
@@ -804,11 +809,12 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         return upiDTO;
 
     }
+
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/18
      * @Descripate 预授权撤销接口
-     * @return
      **/
     @Override
     public BaseResponse preAuthReverse(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
@@ -821,27 +827,27 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         if (TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             //请求成功
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
-            log.info("==================【UPI预授权撤销】==================【预授权撤销】iso8583VO:{}",JSONObject.toJSONString(iso8583VO));
+            log.info("==================【UPI预授权撤销】==================【预授权撤销】iso8583VO:{}", JSONObject.toJSONString(iso8583VO));
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                preOrdersMapper.updatePreStatusById1(preOrders.getId(),iso8583VO.getRetrievalReferenceNumber_37(), (byte) 4,null);
+                preOrdersMapper.updatePreStatusById1(preOrders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), (byte) 4, null);
             } else {
-                log.info("==================【UPI预授权撤销】==================【预授权撤销失败】preOrders:{}",preOrders.getId());
+                log.info("==================【UPI预授权撤销】==================【预授权撤销失败】preOrders:{}", preOrders.getId());
                 baseResponse.setCode(EResultEnum.ONLINE_ORDER_IS_NOT_ALLOW_UNDO.getCode());
             }
-        }else{
+        } else {
             //请求失败
-            log.info("==================【UPI预授权撤销】==================【请求状态码异常】preOrders:{}",preOrders.getId());
+            log.info("==================【UPI预授权撤销】==================【请求状态码异常】preOrders:{}", preOrders.getId());
             baseResponse.setCode(EResultEnum.ONLINE_ORDER_IS_NOT_ALLOW_UNDO.getCode());
         }
         return baseResponse;
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/18
      * @Descripate 创建预授权撤销DTO
-     * @return
      **/
     private UpiDTO createPreAuthhReverseDTO(PreOrders preOrders, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
@@ -857,10 +863,10 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/18
      * @Descripate 预授权冲正接口
-     * @return
      **/
     @Override
     public BaseResponse preAuthRevoke(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
@@ -873,27 +879,27 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         if (TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             //请求成功
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
-            log.info("==================【UPI预授权冲正】==================【预授权冲正】iso8583VO:{}",JSONObject.toJSONString(iso8583VO));
+            log.info("==================【UPI预授权冲正】==================【预授权冲正】iso8583VO:{}", JSONObject.toJSONString(iso8583VO));
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                preOrdersMapper.updatePreStatusById1(preOrders.getId(),iso8583VO.getRetrievalReferenceNumber_37(), (byte) 4,null);
+                preOrdersMapper.updatePreStatusById1(preOrders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), (byte) 4, null);
             } else {
-                log.info("==================【UPI预授权冲正】==================【预授权冲正失败】preOrders:{}",preOrders.getId());
+                log.info("==================【UPI预授权冲正】==================【预授权冲正失败】preOrders:{}", preOrders.getId());
                 baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
             }
-        }else{
+        } else {
             //请求失败
-            log.info("==================【UPI预授权冲正】==================【请求状态码异常】preOrders:{}",preOrders.getId());
+            log.info("==================【UPI预授权冲正】==================【请求状态码异常】preOrders:{}", preOrders.getId());
             baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
         }
         return baseResponse;
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/18
      * @Descripate 预授权冲正DTO
-     * @return
      **/
     private UpiDTO createPreAuthhRevokeDTO(PreOrders preOrders, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
@@ -908,10 +914,10 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/18
      * @Descripate 预授权完成
-     * @return
      **/
     @Override
     public BaseResponse preAuthComplete(Orders orders, Channel channel) {
@@ -944,7 +950,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
             orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
             orders.setChannelNumber(iso8583VO.getRetrievalReferenceNumber_37());
-            orders.setReportNumber(orders.getReportNumber()+iso8583VO.getDateOfLocalTransaction_13());
+            orders.setReportNumber(orders.getReportNumber() + iso8583VO.getDateOfLocalTransaction_13());
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), TradeConstant.TRADE_SUCCESS);
             } catch (Exception e) {
@@ -952,35 +958,39 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             }
             //更新订单信息
             if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
-                log.info("=================【UPI预授权完成】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
-                //计算支付成功时的通道网关手续费
-                commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
-                //TODO 添加日交易限额与日交易笔数
-                //commonBusinessService.quota(orders.getMerchantId(), orders.getProductCode(), orders.getTradeAmount());
-                //支付成功后向用户发送邮件
-                commonBusinessService.sendEmail(orders);
-                try {
-                    //账户信息不存在的场合创建对应的账户信息
-                    if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
-                        log.info("=================【UPI预授权完成】=================【上报清结算前线下下单创建账户信息】");
-                        commonBusinessService.createAccount(orders);
-                    }
-                    //分润
-                    if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
-                        rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
-                    }
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                    //上报清结算资金变动接口
-                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                        log.info("=================【UPI预授权完成】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                if (preOrdersMapper.updatePreStatusByMerchantOrderId(orders.getMerchantOrderId(), orders.getOrderAmount(), null, (byte) 5) == 1) {
+                    log.info("=================【UPI预授权完成】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
+                    //计算支付成功时的通道网关手续费
+                    commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
+                    //TODO 添加日交易限额与日交易笔数
+                    //commonBusinessService.quota(orders.getMerchantId(), orders.getProductCode(), orders.getTradeAmount());
+                    //支付成功后向用户发送邮件
+                    commonBusinessService.sendEmail(orders);
+                    try {
+                        //账户信息不存在的场合创建对应的账户信息
+                        if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
+                            log.info("=================【UPI预授权完成】=================【上报清结算前线下下单创建账户信息】");
+                            commonBusinessService.createAccount(orders);
+                        }
+                        //分润
+                        if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
+                            rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
+                        }
+                        FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
+                        //上报清结算资金变动接口
+                        BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
+                        if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
+                            log.info("=================【UPI预授权完成】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                        }
+                    } catch (Exception e) {
+                        log.error("=================【UPI预授权完成】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                         RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
                         rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
                     }
-                } catch (Exception e) {
-                    log.error("=================【UPI预授权完成】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
-                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                    rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                } else {
+                    log.info("=================【UPI预授权完成】=================【订单支付成功后更新原订单失败】 MerchantOrderId: {}", orders.getMerchantOrderId());
                 }
             } else {
                 log.info("=================【UPI预授权完成】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
@@ -1007,10 +1017,10 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/18
      * @Descripate 预授权完成DTO
-     * @return
      **/
     private UpiDTO createPreAuthCompleteDTO(Orders orders, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
@@ -1023,7 +1033,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
-     *预授权完成撤销
+     * 预授权完成撤销
+     *
      * @param channel
      * @param orderRefund
      * @param rabbitMassage
@@ -1069,7 +1080,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         byte[] bcd = NumberStringUtil.str2Bcd(newStr);
         return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, cn.hutool.core.util.HexUtil.encodeHexStr(bcd))).toUpperCase();
     }
-    public static String pINEncryption(String pin, String pan,String key) {
+
+    public static String pINEncryption(String pin, String pan, String key) {
 
         byte[] apan = NumberStringUtil.formartPan(pan.getBytes());
         byte[] apin = NumberStringUtil.formatPinByX98(pin.getBytes());
@@ -1080,13 +1092,14 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         try {
             String substring = key.substring(0, 32);
             String pik = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
-            String s = DesUtil.doubleDesEncrypt(pik,ISOUtil.bytesToHexString(xorMac));
+            String s = DesUtil.doubleDesEncrypt(pik, ISOUtil.bytesToHexString(xorMac));
             return s;
         } catch (Exception e) {
-           log.info("===== pINEncryption e ====="+e);
+            log.info("===== pINEncryption e =====" + e);
         }
         return null;
     }
+
     /**
      * @return
      * @Author YangXu
