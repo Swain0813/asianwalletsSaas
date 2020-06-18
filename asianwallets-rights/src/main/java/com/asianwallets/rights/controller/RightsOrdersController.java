@@ -28,7 +28,7 @@ public class RightsOrdersController extends BaseController {
         return ResultUtil.success(rightsOrdersService.pageRightsOrders(rightsOrdersDTO));
     }
 
-    @ApiOperation(value = "权益核销分页查询")
+    @ApiOperation(value = "查询核销详情")
     @PostMapping("getRightsOrdersInfo")
     public BaseResponse getRightsOrdersInfo(@RequestBody @ApiParam RightsOrdersDTO rightsOrdersDTO) {
         return ResultUtil.success(rightsOrdersService.getRightsOrdersInfo(rightsOrdersDTO));
