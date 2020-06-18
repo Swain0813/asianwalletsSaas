@@ -908,6 +908,55 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
+     * @Author YangXu
+     * @Date 2020/6/18
+     * @Descripate 预授权完成
+     * @return
+     **/
+    @Override
+    public BaseResponse preAuthComplete(Orders orders, Channel channel) {
+        BaseResponse baseResponse = new BaseResponse();
+        UpiDTO upiDTO = this.createPreAuthCompleteDTO(orders, channel);
+        log.info("==================【UPI预授权完成】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+        BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
+        log.info("==================【UPI预授权完成】==================【调用Channels服务】【UPI-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        //请求失败
+        if (TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            //请求成功
+            ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
+            log.info("==================【UPI预授权完成】==================【预授权完成】iso8583VO:{}",JSONObject.toJSONString(iso8583VO));
+            if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+                //preOrdersMapper.updatePreStatusById1(preOrders.getId(),iso8583VO.getRetrievalReferenceNumber_37(), (byte) 4,null);
+            } else {
+                log.info("==================【UPI预授权完成】==================【预授权完成失败】preOrders:{}",orders.getId());
+                baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
+            }
+        }else{
+            //请求失败
+            log.info("==================【UPI预授权完成】==================【请求状态码异常】preOrders:{}",orders.getId());
+            baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
+        }
+        return baseResponse;
+    }
+
+    /**
+     * @Author YangXu
+     * @Date 2020/6/18
+     * @Descripate 预授权完成DTO
+     * @return
+     **/
+    private UpiDTO createPreAuthCompleteDTO(Orders orders, Channel channel) {
+        UpiDTO upiDTO = new UpiDTO();
+        upiDTO.setChannel(channel);
+
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        iso8583DTO.setProcessingCode_3("190000");
+        return upiDTO;
+    }
+
+    /**
      *预授权完成撤销
      * @param channel
      * @param orderRefund
