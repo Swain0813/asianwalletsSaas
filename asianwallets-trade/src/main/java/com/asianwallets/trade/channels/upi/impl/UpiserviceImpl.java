@@ -792,23 +792,18 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     public static String pINEncryption(String pin, String pan,String key) {
 
         byte[] apan = NumberStringUtil.formartPan(pan.getBytes());
-        System.out.println("pan=== "+ ISOUtil.bytesToHexString(apan));
         byte[] apin = NumberStringUtil.formatPinByX98(pin.getBytes());
-        System.out.println("pin=== "+ISOUtil.bytesToHexString(apin));
         byte[] xorMac = new byte[apan.length];
         for (int i = 0; i < apan.length; i++) {//异或
             xorMac[i] = apin[i] ^= apan[i];
         }
-        System.out.println("异或==="+ISOUtil.bytesToHexString(xorMac));
         try {
             String substring = key.substring(0, 32);
             String pik = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
-            System.out.println("===== pik ====="+pik);
             String s = DesUtil.doubleDesEncrypt(pik,ISOUtil.bytesToHexString(xorMac));
-            System.out.println("===== pINEncryption ====="+s);
             return s;
         } catch (Exception e) {
-            System.out.println("===== pINEncryption e ====="+e);
+           log.info("===== pINEncryption e ====="+e);
         }
         return null;
     }
