@@ -50,8 +50,7 @@ public class Demo {
         iso8583DTO.setDateOfExpired_14("5012");
         iso8583DTO.setPointOfServiceEntryMode_22("021");
         iso8583DTO.setPointOfServiceConditionMode_25("82");
-        iso8583DTO.setPointOfServicePINCaptureCode_26("06");
-        iso8583DTO.setResponseCode_39("98");
+        iso8583DTO.setResponseCode_39("96");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
         //受卡方标识码 (商户号)
@@ -75,7 +74,6 @@ public class Demo {
         sendMsg = strHex2 + sendMsg;
         System.out.println(" ===  扫码sendMsg  ====   " + sendMsg);
 
-        //Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, sendMsg.getBytes());
         Map<String, String> respMap = UpiIsoUtil.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
         String result = respMap.get("respData");
         System.out.println(" ====  扫码result  ===   " + result);
