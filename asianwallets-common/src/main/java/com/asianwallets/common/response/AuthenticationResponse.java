@@ -29,8 +29,11 @@ public class AuthenticationResponse {
     @ApiModelProperty("公钥")
     private String publicKey;
 
-    @ApiModelProperty("机构id")
+    @ApiModelProperty("机构编号")
     private String institutionId;
+
+    @ApiModelProperty("机构名称")
+    private String institutionName;
 
     @ApiModelProperty("机构logo")
     private String institutionLogo;

@@ -147,6 +147,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setInstitutionLogo(org.springframework.util.StringUtils.isEmpty(institution.getInstitutionLogo()) ? null : institution.getInstitutionLogo());
         //公钥
         response.setPublicKey(attestation.getPubkey());
+        response.setInstitutionId(institution.getId());
+        response.setInstitutionName(institution.getCnName());
         //是否开通dcc
         response.setDcc(institution.getDcc());
         if (StringUtils.isNotBlank(response.getToken())) {
