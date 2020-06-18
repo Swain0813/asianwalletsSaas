@@ -1094,9 +1094,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             if (rabbitMassage == null) {
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
-            //TODO
-            log.info("===============【UPI银行卡预授权完成撤销】===============【请求失败 上报队列 TH_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
-            rabbitMQSender.send(AD3MQConstant.TH_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
+            log.info("===============【UPI银行卡预授权完成撤销】===============【请求失败 上报队列 SAAS_YSQWC_CCQQSB_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+            rabbitMQSender.send(AD3MQConstant.SAAS_YSQWC_CCQQSB_DL, JSON.toJSONString(rabbitMassage));
         }
         return baseResponse;
     }
