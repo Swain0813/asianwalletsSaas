@@ -751,12 +751,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public static ISO8583DTO pin(Orders orders, ISO8583DTO iso8583DTO, Channel channels) {
         //个人PIN
         if (StringUtils.isEmpty(orders.getPin())) {
-            log.info("------------------银行卡pin不存在------------------");
+            log.info("***************************银行卡pin不存在***************************");
             //服务点输入方式码 022：刷卡，无PIN
             iso8583DTO.setPointOfServiceEntryMode_22("022");
             return iso8583DTO;
         }
-        log.info("------------------银行卡pin存在------------------");
+        log.info("***************************银行卡pin存在***************************");
         //服务点输入方式码 021 刷卡，且PIN可输入
         iso8583DTO.setPointOfServiceEntryMode_22("021");
         //密码长度
@@ -890,8 +890,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0, 6));
-        //服务点输入方式码 同原交易
-        iso8583DTO.setPointOfServiceEntryMode_22("021");
+        //服务点输入方式码 同原交易 文档上PIN参数不用输入
+        iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
@@ -1040,14 +1040,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(orders.getId().substring(9, 15));
-        //服务点输入方式码 021为输入Pin
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        //银行卡pin
-        if (!StringUtils.isEmpty(orders.getPin())) {
-            iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
-        }
+        //对 pin 相关参数进行封装
+        pin(orders, iso8583DTO, channel);
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
         //磁道2 信息
         iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), channel.getMd5KeyStr()));
@@ -1109,14 +1105,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(orders.getId().substring(9, 15));
-        //服务点输入方式码
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        //银行卡pin
-        if (!StringUtils.isEmpty(orders.getPin())) {
-            iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orderRefund.getPin()));
-        }
+        //对 pin 相关参数进行封装
+        pin(orders, iso8583DTO, channel);
         //机构号
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
         //磁道2 信息
