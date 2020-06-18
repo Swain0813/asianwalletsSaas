@@ -45,9 +45,9 @@ public enum EResultEnum {
     REFUND_AMOUNT_NOT_LEGAL("10017"),//金额不合法
     GET_CHANNEL_INFO_ERROR("10018"),//获取通道信息异常
     REPEAT_ORDER_REQUEST("10019"),//重复请求
-    ORDER_NOT_SUPPORT_REVERSE("10020"),//该订单不支持冲正
+    ORDER_NOT_SUPPORT_REVERSE("10020"),//冲正请求失败
     PRE_ORDERS_STATUS_ERROR("10021"),//原订单不是预授权完成的订单,不能预授权完成撤销
-    ONLINE_ORDER_IS_NOT_ALLOW_UNDO("10022"),//该订单不支持撤销
+    ONLINE_ORDER_IS_NOT_ALLOW_UNDO("10022"),//撤销请求失败
     AUDIT_INFO_EXIENT("10023"),//记录已存在，等待审核中
     INSTITUTION_AND_MERCHANT_NOT_RELATED("10024"),//机构和商户未关联
     CANCEL_ORDER_RUNNING_IS_NOT_UNDO("10025"),//撤销中的订单不能再撤销
