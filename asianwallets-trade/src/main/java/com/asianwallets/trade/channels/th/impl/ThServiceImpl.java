@@ -431,6 +431,12 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         return baseResponse;
     }
 
+    @Override
+    public BaseResponse thSign(ISO8583DTO iso8583DTO) {
+        log.info("---------");
+        BaseResponse baseResponse = channelsFeign.thSign(iso8583DTO);
+        return baseResponse;
+    }
 
     /**
      * 撤销中
@@ -1007,8 +1013,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             if (rabbitMassage == null) {
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
-            log.info("===============【TH退款】===============【请求失败 上报队列 TH_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
-            rabbitMQSender.send(AD3MQConstant.TH_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
+            log.info("===============【TH退款】===============【请求失败 上报队列 BTK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+            rabbitMQSender.send(AD3MQConstant.BTK_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return baseResponse;
     }

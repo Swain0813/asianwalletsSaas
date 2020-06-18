@@ -70,11 +70,11 @@ public class RabbitMQConfig {
     }
 
     //TH 银行卡退款上报失败队列
-    public final static String TH_SB_FAIL_DL = AD3MQConstant.TH_SB_FAIL_DL;
+    public final static String BTK_SB_FAIL_DL = AD3MQConstant.BTK_SB_FAIL_DL;
 
     @Bean
-    public Queue TH_SB_FAIL_DL() {
-        return new Queue(RabbitMQConfig.TH_SB_FAIL_DL);
+    public Queue BTK_SB_FAIL_DL() {
+        return new Queue(RabbitMQConfig.BTK_SB_FAIL_DL);
     }
 
     //撤销更新失败死信队列

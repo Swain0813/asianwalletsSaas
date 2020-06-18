@@ -1,5 +1,6 @@
 package com.asianwallets.trade.channels;
 import com.asianwallets.common.dto.RabbitMassage;
+import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
@@ -85,16 +86,26 @@ public abstract class ChannelsAbstract {
 
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2019/12/18
-     * @Descripate  付款中撤销
-     * @return
+     * @Descripate 付款中撤销
      **/
     public abstract BaseResponse cancelPaying(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
+
+    /**
+     * @param iso8583DTO
+     * @return
+     * @Author YangXu
+     * @Date 2019/12/18
+     * @Descripate 通化签到
+     */
+    public abstract BaseResponse thSign(ISO8583DTO iso8583DTO);
 
 
     /**
      * 预授权
+     *
      * @param preOrders
      * @param channel
      * @return

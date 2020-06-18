@@ -128,9 +128,20 @@ public interface CommonRedisDataService {
 
     /**
      * 根据商户编号以及通道编号获取商户报备信息
+     *
      * @param merchantId
      * @param channelCode
      * @return
      */
-    MerchantReport getMerchantReport(String merchantId,String channelCode);
+    MerchantReport getMerchantReport(String merchantId, String channelCode);
+
+    /**
+     * 签到方法
+     *
+     * @param institutionId
+     * @param terminalId
+     * @param merchantId
+     * @return
+     */
+    String getThKey(String institutionId, String terminalId, String merchantId);
 }

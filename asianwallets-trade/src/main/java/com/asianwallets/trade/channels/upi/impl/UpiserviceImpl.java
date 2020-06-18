@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
+import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.th.ISO8583.*;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
@@ -12,7 +13,6 @@ import com.asianwallets.common.dto.upi.UpiRefundDTO;
 import com.asianwallets.common.dto.upi.iso.UpiIsoUtil;
 import com.asianwallets.common.dto.upi.utils.CryptoUtil;
 import com.asianwallets.common.entity.*;
-import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -587,8 +587,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             if (rabbitMassage == null) {
                 rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
             }
-            log.info("===============【TH退款】===============【请求失败 上报队列 TH_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
-            rabbitMQSender.send(AD3MQConstant.TH_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
+            log.info("===============【TH退款】===============【请求失败 上报队列 BTK_SB_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+            rabbitMQSender.send(AD3MQConstant.BTK_SB_FAIL_DL, JSON.toJSONString(rabbitMassage));
         }
         return baseResponse;
 

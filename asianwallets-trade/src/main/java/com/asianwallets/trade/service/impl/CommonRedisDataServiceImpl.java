@@ -7,6 +7,7 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
+import com.asianwallets.trade.channels.th.ThService;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +67,9 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
 
     @Autowired
     private MerchantReportMapper merchantReportMapper;
+
+    @Autowired
+    private ThService thService;
 
     /**
      * 根据币种编码获取币种信息
@@ -422,5 +426,18 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         }
         log.info("==================【根据商户编号和通道编号获取商户报备信息】==================【商户报备信息】 account: {}", JSON.toJSONString(merchantReport));
         return merchantReport;
+    }
+
+    /**
+     * 签到方法
+     *
+     * @param institutionId
+     * @param terminalId
+     * @param merchantId
+     * @return
+     */
+    @Override
+    public String getThKey(String institutionId, String terminalId, String merchantId) {
+        return null;
     }
 }

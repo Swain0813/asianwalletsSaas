@@ -295,11 +295,11 @@ public class RefundOrderMQReceive {
      * @Date 2019/12/20
      * @Descripate TH银行卡退款上报失败队列
      **/
-    @RabbitListener(queues = "TH_SB_FAIL_DL")
+    @RabbitListener(queues = "BTK_SB_FAIL_DL")
     public void processTHSBSB(String value) {
         RabbitMassage rabbitMassage = JSON.parseObject(value, RabbitMassage.class);
         OrderRefund orderRefund = JSON.parseObject(rabbitMassage.getValue(), OrderRefund.class);
-        log.info("========================= 【TH_SB_FAIL_DL】 ====================【消费】 rabbitMassage : 【{}】 ", value);
+        log.info("========================= 【BTK_SB_FAIL_DL】 ====================【消费】 rabbitMassage : 【{}】 ", value);
         if (rabbitMassage.getCount() > 0) {
             rabbitMassage.setCount(rabbitMassage.getCount() - 1);//请求次数减一
             Channel channel = this.commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
@@ -307,7 +307,7 @@ public class RefundOrderMQReceive {
             try {
                 channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
             } catch (Exception e) {
-                log.info("========================= 【TH_SB_FAIL_DL】 ChannelsAbstract ==================== Exception : 【{}】,rabbitMassage : 【{}】", e, JSON.toJSONString(rabbitMassage));
+                log.info("========================= 【BTK_SB_FAIL_DL】 ChannelsAbstract ==================== Exception : 【{}】,rabbitMassage : 【{}】", e, JSON.toJSONString(rabbitMassage));
             }
             channelsAbstract.bankRefund(channel, orderRefund, rabbitMassage);
         } else {
@@ -317,11 +317,11 @@ public class RefundOrderMQReceive {
             Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
             reconciliationMapper.insert(reconciliation);
             RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-            log.info("=================【TH_SB_FAIL_DL】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+            log.info("=================【BTK_SB_FAIL_DL】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
             rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
             //预警机制
-            messageFeign.sendSimple(developerMobile, "SAAS-TH银行卡退款上请求上游失败 TH_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
-            messageFeign.sendSimpleMail(developerEmail, "SAAS-TH银行卡退款上请求上游失败 TH_SB_FAIL_DL 预警", "TH_SB_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
+            messageFeign.sendSimple(developerMobile, "SAAS-TH银行卡退款上请求上游失败 BTK_SB_FAIL_DL 预警 ：{ " + value + " }");//短信通知
+            messageFeign.sendSimpleMail(developerEmail, "SAAS-TH银行卡退款上请求上游失败 BTK_SB_FAIL_DL 预警", "BTK_SB_FAIL_DL 预警 ：{ " + value + " }");//邮件通知
         }
 
     }
