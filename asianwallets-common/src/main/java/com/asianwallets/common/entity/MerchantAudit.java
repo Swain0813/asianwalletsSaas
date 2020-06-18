@@ -1,28 +1,17 @@
 package com.asianwallets.common.entity;
-
 import com.asianwallets.common.base.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-/**
- * <p>
- *
- * </p>
- *
- * @author yx
- * @since 2019-11-25
- */
 
 @Data
 @Entity
 @Table(name = "merchant_audit")
 public class MerchantAudit extends BaseEntity {
 
-    private static final long serialVersionUID = 1L;
     /**
      * 机构id
      */
@@ -261,9 +250,5 @@ public class MerchantAudit extends BaseEntity {
     @ApiModelProperty(value = "启用禁用")
     @Column(name = "enabled")
     private Boolean enabled;
-
-    @ApiModelProperty(value = "商户产品排序")
-    @Column(name = "rank")
-    private String rank;
 
 }
