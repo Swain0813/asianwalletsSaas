@@ -149,7 +149,7 @@ public class PreOrders extends BaseEntity {
     @Column(name = "debit_amount")
     private BigDecimal debitAmount;
 
-    @ApiModelProperty(value = "订单状态")//0-初始状态 1-预授权成功 2-预授权失败 3-冲正成功 4-撤销成功  5-预授权完成
+    @ApiModelProperty(value = "订单状态")//0-预授权中 1-预授权成功 2-预授权失败 3-冲正成功 4-撤销成功  5-预授权完成
     @Column(name = "order_status")
     private Byte orderStatus;
 
