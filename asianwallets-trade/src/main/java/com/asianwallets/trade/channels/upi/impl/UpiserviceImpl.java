@@ -1,12 +1,9 @@
 package com.asianwallets.trade.channels.upi.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
-import com.asianwallets.common.dto.qfpay.QfPayDTO;
-import com.asianwallets.common.dto.qfpay.QfPayRefundDTO;
 import com.asianwallets.common.dto.th.ISO8583.*;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.upi.UpiPayDTO;
@@ -38,17 +35,14 @@ import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -63,29 +57,43 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
 
     @Autowired
     private ChannelsFeign channelsFeign;
+
     @Autowired
     @Qualifier(value = "ad3ParamsConfig")
     private AD3ParamsConfig ad3ParamsConfig;
+
     @Autowired
     private OrdersMapper ordersMapper;
+
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
+
     @Autowired
     private CommonBusinessService commonBusinessService;
+
     @Autowired
     private CommonRedisDataService commonRedisDataService;
+
     @Autowired
     private RabbitMQSender rabbitMQSender;
+
     @Autowired
     private ClearingService clearingService;
+
     @Autowired
     private OrderRefundMapper orderRefundMapper;
+
     @Autowired
     private ReconciliationMapper reconciliationMapper;
 
+    /**
+     * 银联主扫接口
+     * @param orders
+     * @param channel
+     * @return
+     */
     @Override
     public BaseResponse offlineCSB(Orders orders, Channel channel) {
-
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
         UpiPayDTO upiPayDTO = this.createCSBDTO(orders, channel);
@@ -104,6 +112,13 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         return baseResponse;
     }
 
+    /**
+     * 银联被扫接口
+     * @param orders
+     * @param channel
+     * @param authCode
+     * @return
+     */
     @Override
     public BaseResponse offlineBSC(Orders orders, Channel channel, String authCode) {
         BaseResponse baseResponse = new BaseResponse();
