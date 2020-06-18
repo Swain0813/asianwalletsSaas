@@ -423,8 +423,8 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setCreateTime(new Date());
         orders.setCreator(merchant.getCnName());
         //设置商户报备商户MCC
-        if(basicInfoVO.getChannel().getServiceNameMark().contains(TradeConstant.ALIPAY)){
-            MerchantReport merchantReport = commonRedisDataService.getMerchantReport(merchant.getId(),basicInfoVO.getChannel().getChannelCode());
+        if (basicInfoVO.getChannel().getServiceNameMark().contains(TradeConstant.ALIPAY)) {
+            MerchantReport merchantReport = commonRedisDataService.getMerchantReport(merchant.getId(), basicInfoVO.getChannel().getChannelCode());
             //商户报备商户MCC
             orders.setMerchantIndustry(merchantReport.getChannelMcc());
             //通道子商户编号
@@ -432,10 +432,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             //通道子商户名称
             orders.setSubMerchantName(merchantReport.getSubMerchantName());
             //店铺编号
-            String shopCode=StringUtils.isEmpty(merchantReport.getShopCode())?merchantReport.getSubMerchantCode():merchantReport.getShopCode();
+            String shopCode = StringUtils.isEmpty(merchantReport.getShopCode()) ? merchantReport.getSubMerchantCode() : merchantReport.getShopCode();
             orders.setShopCode(shopCode);
             //店铺名称
-            String shopName = StringUtils.isEmpty(merchantReport.getShopName())?merchantReport.getSubMerchantName():merchantReport.getShopName();
+            String shopName = StringUtils.isEmpty(merchantReport.getShopName()) ? merchantReport.getSubMerchantName() : merchantReport.getShopName();
             orders.setShopName(shopName);
         }
         return orders;
@@ -849,6 +849,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     /**
      * 预授权
+     *
      * @param offlineTradeDTO
      * @return
      */
@@ -896,6 +897,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     /**
      * 设置预授权订单表
+     *
      * @param offlineTradeDTO
      * @param basicInfoVO
      * @return
@@ -911,7 +913,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         preOrders.setInstitutionName(institution.getCnName());
         preOrders.setMerchantId(merchant.getId());
         preOrders.setMerchantName(merchant.getCnName());
-        preOrders.setOrderStatus((byte)0);//设置初始状态
+        preOrders.setOrderStatus((byte) 0);//设置初始状态
         if (!StringUtils.isEmpty(merchant.getAgentId())) {
             Merchant agentMerchant = commonRedisDataService.getMerchantById(merchant.getAgentId());
             preOrders.setAgentCode(agentMerchant.getId());
@@ -978,6 +980,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     /**
      * 预授权完成
+     *
      * @param offlinePreTradeDTO
      * @return
      */
@@ -991,18 +994,19 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         }
         //根据商户订单号获取预授权订单信息
         PreOrders preOrders = preOrdersMapper.selectMerchantOrderId(offlinePreTradeDTO.getOrderNo());
-        log.info("==================【预授权完成,商户订单号】==================",offlinePreTradeDTO.getOrderNo());
-        if(preOrders==null){
+        log.info("==================【预授权完成,商户订单号】==================", offlinePreTradeDTO.getOrderNo());
+        if (preOrders == null || System.currentTimeMillis() > DateToolUtils.addDay(preOrders.getCreateTime(), 30).getTime()
+                || preOrders.getOrderStatus() != 1) {
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
         //预授权完成的金额和原预授权订单金额比较 以及预授权完成金额不能小于等于0
-        if(offlinePreTradeDTO.getOrderAmount().compareTo(preOrders.getOrderAmount())==1 || offlinePreTradeDTO.getOrderAmount().compareTo(BigDecimal.ZERO) <= 0){
+        if (offlinePreTradeDTO.getOrderAmount().compareTo(preOrders.getOrderAmount()) == 1 || offlinePreTradeDTO.getOrderAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
         }
         //获取预授权完成的基础信息
         BasicInfoVO basicInfoVO = getPreBasicAndCheck(preOrders);
         //设置订单属性
-        Orders orders = setOrdersAttributes(offlinePreTradeDTO, preOrders,basicInfoVO);
+        Orders orders = setOrdersAttributes(offlinePreTradeDTO, preOrders, basicInfoVO);
         //换汇
         commonBusinessService.swapRateByPayment(basicInfoVO, orders);
         //校验商户产品与通道的限额
@@ -1030,11 +1034,12 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     /**
      * 根据预授权订单设置订单信息
+     *
      * @param offlinePreTradeDTO
      * @param preOrders
      * @return
      */
-    private  Orders  setOrdersAttributes(OfflinePreTradeDTO offlinePreTradeDTO,PreOrders preOrders,BasicInfoVO basicInfoVO){
+    private Orders setOrdersAttributes(OfflinePreTradeDTO offlinePreTradeDTO, PreOrders preOrders, BasicInfoVO basicInfoVO) {
         MerchantProduct merchantProduct = basicInfoVO.getMerchantProduct();
         Channel channel = basicInfoVO.getChannel();
         Orders orders = new Orders();
@@ -1121,6 +1126,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     /**
      * 预授权完成需要的基础信息
+     *
      * @param preOrders
      * @return
      */
