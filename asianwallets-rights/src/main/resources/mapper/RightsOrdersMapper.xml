@@ -169,6 +169,8 @@
         ro.create_time as createTime,
         ro.institution_id as institutionId,
         ro.institution_name as institutionName,
+        ro.deal_id as dealId,
+        ro.order_no as orderNo,
         ro.order_no as orderNo,
         ro.order_amount as orderAmount,
         ro.rights_currency as currency,

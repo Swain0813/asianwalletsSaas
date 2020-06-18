@@ -25,6 +25,12 @@ public class RightsOrdersApiVO {
     @ApiModelProperty(value = "机构订单号")
     private String orderNo;
 
+    @ApiModelProperty(value = "平台交易流水号")
+    private String systemOrderId;
+
+    @ApiModelProperty(value = "团购号")
+    private String dealId;
+
     @ApiModelProperty(value = "订单金额")
     private BigDecimal orderAmount;
 
