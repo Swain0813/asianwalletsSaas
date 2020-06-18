@@ -37,7 +37,14 @@ public interface PreOrdersMapper  extends BaseMapper<PreOrders> {
      * @param status
      * @return
      */
+    @Update("update pre_orders set order_status = #{status},update_time= NOW(),channel_number =#{channelNumber},remark1 =#{remark1} where id = #{id} and order_status = 0")
+    int updatePreStatusById0(@Param("id") String id,@Param("channelNumber") String channelNumber, @Param("status") Byte status,@Param("remark1") String remark1);
+    /**
+     * 更新预授权状态
+     * @param status
+     * @return
+     */
     @Update("update pre_orders set order_status = #{status},update_time= NOW(),channel_number =#{channelNumber},remark1 =#{remark1} where id = #{id} and order_status = 1")
-    int updatePreStatusById(@Param("id") String id,@Param("channelNumber") String channelNumber, @Param("status") Byte status,@Param("remark1") String remark1);
+    int updatePreStatusById1(@Param("id") String id,@Param("channelNumber") String channelNumber, @Param("status") Byte status,@Param("remark1") String remark1);
 
 }
