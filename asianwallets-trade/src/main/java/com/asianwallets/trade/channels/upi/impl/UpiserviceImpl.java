@@ -1172,8 +1172,9 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     public String upiServerCallback(JSONObject jsonObject) {
         JSONObject json;
         try {
-            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(this.getClass().getResource(ad3ParamsConfig.getUpiPublicKeyPath()).getPath(), "pem", "RSA");
-            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(this.getClass().getResource(ad3ParamsConfig.getUpiPrivateKeyPath()).getPath(), "pem", null, "RSA");
+
+            final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(ad3ParamsConfig.getUpiPublicKeyPath(), "pem", "RSA");
+            final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(ad3ParamsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
 
 
             String result = CryptoUtil.respDecryption(jsonObject, hzfPriKey, yhPubKey);
