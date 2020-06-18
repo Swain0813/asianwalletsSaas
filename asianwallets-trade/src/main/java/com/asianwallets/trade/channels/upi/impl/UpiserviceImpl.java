@@ -387,9 +387,13 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0,6));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        if(StringUtils.isEmpty(orderRefund.getPin())){
+            iso8583DTO.setPointOfServiceEntryMode_22("021");
+        }else{
+            iso8583DTO.setPointOfServiceEntryMode_22("022");
+        }
         iso8583DTO.setPointOfServiceConditionMode_25("82");
-        iso8583DTO.setResponseCode_39("98");
+        iso8583DTO.setResponseCode_39("96");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
         //受卡方标识码 (商户号)
