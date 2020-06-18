@@ -10,11 +10,8 @@ import com.asianwallets.common.dto.upi.UpiPayDTO;
 import com.asianwallets.common.dto.upi.UpiRefundDTO;
 import com.asianwallets.common.dto.upi.iso.UpiIsoUtil;
 import com.asianwallets.common.dto.upi.utils.CryptoUtil;
-import com.asianwallets.common.entity.Channel;
-import com.asianwallets.common.entity.OrderRefund;
-import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.dto.RabbitMassage;
-import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -387,9 +384,13 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getReportNumber().substring(0,6));
         iso8583DTO.setDateOfExpired_14(orderRefund.getValid());
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
+        if(StringUtils.isEmpty(orderRefund.getPin())){
+            iso8583DTO.setPointOfServiceEntryMode_22("021");
+        }else{
+            iso8583DTO.setPointOfServiceEntryMode_22("022");
+        }
         iso8583DTO.setPointOfServiceConditionMode_25("82");
-        iso8583DTO.setResponseCode_39("98");
+        iso8583DTO.setResponseCode_39("96");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
         //受卡方标识码 (商户号)
@@ -750,6 +751,29 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         return upiDTO;
     }
 
+    /**
+     *通华预授权
+     * @param preOrders
+     * @param channel
+     * @return
+     */
+    @Override
+    public BaseResponse preAuth(PreOrders preOrders, Channel channel) {
+        return null;
+    }
+
+    /**
+     *预授权完成撤销
+     * @param channel
+     * @param orderRefund
+     * @param rabbitMassage
+     * @return
+     */
+    @Override
+    public BaseResponse preAuthCompleteRevoke(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        return null;
+    }
+
 
     /**
      * MAK 加密
@@ -788,23 +812,18 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     public static String pINEncryption(String pin, String pan,String key) {
 
         byte[] apan = NumberStringUtil.formartPan(pan.getBytes());
-        System.out.println("pan=== "+ ISOUtil.bytesToHexString(apan));
         byte[] apin = NumberStringUtil.formatPinByX98(pin.getBytes());
-        System.out.println("pin=== "+ISOUtil.bytesToHexString(apin));
         byte[] xorMac = new byte[apan.length];
         for (int i = 0; i < apan.length; i++) {//异或
             xorMac[i] = apin[i] ^= apan[i];
         }
-        System.out.println("异或==="+ISOUtil.bytesToHexString(xorMac));
         try {
             String substring = key.substring(0, 32);
             String pik = Objects.requireNonNull(EcbDesUtil.decode3DEA("3104BAC458BA1513043E4010FD642619", substring)).toUpperCase();
-            System.out.println("===== pik ====="+pik);
             String s = DesUtil.doubleDesEncrypt(pik,ISOUtil.bytesToHexString(xorMac));
-            System.out.println("===== pINEncryption ====="+s);
             return s;
         } catch (Exception e) {
-            System.out.println("===== pINEncryption e ====="+e);
+           log.info("===== pINEncryption e ====="+e);
         }
         return null;
     }
