@@ -19,6 +19,14 @@ import java.util.Map;
 @Configuration
 public class RabbitMQConfig {
 
+    /********************************************************* 预授权完成撤销请求失败 **********************************************************************/
+    //RF or RV请求失败
+    public final static String SAAS_YSQWC_CCQQSB_DL = AD3MQConstant.SAAS_YSQWC_CCQQSB_DL;
+
+    @Bean
+    public Queue SAAS_YSQWC_CCQQSB_DL() {
+        return new Queue(RabbitMQConfig.SAAS_YSQWC_CCQQSB_DL);
+    }
     /********************************************************* 分润队列 **********************************************************************/
     //RF or RV请求失败
     public final static String SAAS_FR_DL = AD3MQConstant.SAAS_FR_DL;
