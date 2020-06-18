@@ -911,6 +911,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         preOrders.setInstitutionName(institution.getCnName());
         preOrders.setMerchantId(merchant.getId());
         preOrders.setMerchantName(merchant.getCnName());
+        preOrders.setOrderStatus((byte)0);//设置初始状态
         if (!StringUtils.isEmpty(merchant.getAgentId())) {
             Merchant agentMerchant = commonRedisDataService.getMerchantById(merchant.getAgentId());
             preOrders.setAgentCode(agentMerchant.getId());

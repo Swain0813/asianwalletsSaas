@@ -113,7 +113,7 @@ public class RefundTradeController extends BaseController {
     }
 
 
-    @ApiOperation(value = "预授权冲正接口")
+    @ApiOperation(value = "预授权冲正撤销接口")
     @PostMapping("/preAuthReverse")
     @CrossOrigin
     public BaseResponse preAuthReverse(@RequestBody @ApiParam @Valid BankCardUndoDTO bankCardUndoDTO) {
@@ -121,13 +121,13 @@ public class RefundTradeController extends BaseController {
         return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
     }
 
-    @ApiOperation(value = "预授权撤销接口")
-    @PostMapping("/preAuthRevoke")
-    @CrossOrigin
-    public BaseResponse preAuthRevoke(@RequestBody @ApiParam @Valid BankCardUndoDTO bankCardUndoDTO) {
-        BaseResponse baseResponse = refundTradeService.preAuthRevoke(bankCardUndoDTO, this.getReqIp());
-        return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
-    }
+    //@ApiOperation(value = "预授权撤销接口")
+    //@PostMapping("/preAuthRevoke")
+    //@CrossOrigin
+    //public BaseResponse preAuthRevoke(@RequestBody @ApiParam @Valid BankCardUndoDTO bankCardUndoDTO) {
+    //    BaseResponse baseResponse = refundTradeService.preAuthRevoke(bankCardUndoDTO, this.getReqIp());
+    //    return ResultUtil.success(baseResponse.getCode(), this.getErrorMsgMap(baseResponse.getCode()));
+    //}
 
     @ApiOperation(value = "预授权完成撤销接口")
     @PostMapping("/preAuthCompleteRevoke")

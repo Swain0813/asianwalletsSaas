@@ -771,7 +771,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             log.info("==================【UPI预授权】==================【预授权失败】iso8583VO:{}",JSONObject.toJSONString(iso8583VO));
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                preOrdersMapper.updatePreStatusById(preOrders.getId(),iso8583VO.getRetrievalReferenceNumber_37(), (byte) 2,null);
+                preOrdersMapper.updatePreStatusById(preOrders.getId(),iso8583VO.getRetrievalReferenceNumber_37(), (byte) 1,null);
             } else {
                 log.info("==================【UPI预授权】==================【预授权失败】preOrders:{}",preOrders.getId());
                 baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
@@ -803,6 +803,16 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
 
         return upiDTO;
 
+    }
+
+    @Override
+    public BaseResponse preAuthReverse(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
+        return null;
+    }
+
+    @Override
+    public BaseResponse preAuthRevoke(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
+        return null;
     }
 
     /**
