@@ -751,7 +751,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public static ISO8583DTO pin(Orders orders, ISO8583DTO iso8583DTO, Channel channels) {
         //个人PIN
         if (StringUtils.isEmpty(orders.getPin())) {
-            //服务点输入方式码 021 刷卡，且PIN可输入
+            //服务点输入方式码 022：刷卡，无PIN
             iso8583DTO.setPointOfServiceEntryMode_22("022");
             return iso8583DTO;
         }
