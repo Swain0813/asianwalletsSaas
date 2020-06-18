@@ -46,6 +46,8 @@ import java.util.Objects;
 @HandlerType(TradeConstant.TH)
 public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService {
 
+    private static String hexKey = "3104BAC458BA1513043E4010FD642619";
+
     @Autowired
     private ChannelsFeign channelsFeign;
 
@@ -478,7 +480,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
 
     /**
-     *通华预授权
+     * 通华预授权
+     *
      * @param preOrders
      * @param channel
      * @return
@@ -489,7 +492,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     /**
-     *预授权完成撤销
+     * 预授权完成撤销
+     *
      * @param channel
      * @param orderRefund
      * @param rabbitMassage
@@ -704,14 +708,10 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
-        //服务点输入方式码 021 刷卡，且PIN可输入
-        iso8583DTO.setPointOfServiceEntryMode_22("022");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        //个人PIN
-        if (!StringUtils.isEmpty(orders.getPin())) {
-            iso8583DTO.setPointOfServicePINCaptureCode_26(AESUtil.aesDecrypt(orders.getPin()));
-        }
+        //对 pin 相关参数进行封装
+        pin(orders, iso8583DTO, channel);
         //受理方标识码 (机构号)
         iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
         //受卡机终端标识码 (设备号)
@@ -741,6 +741,64 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     /**
+     * ISO8583 中与 pin 银行卡密码相关的域赋值
+     *
+     * @param orders
+     * @param iso8583DTO
+     * @param channels
+     * @return
+     */
+    public static ISO8583DTO pin(Orders orders, ISO8583DTO iso8583DTO, Channel channels) {
+        //个人PIN
+        if (StringUtils.isEmpty(orders.getPin())) {
+            //服务点输入方式码 022：刷卡，无PIN
+            iso8583DTO.setPointOfServiceEntryMode_22("022");
+            return iso8583DTO;
+        }
+        //服务点输入方式码 021 刷卡，且PIN可输入
+        iso8583DTO.setPointOfServiceEntryMode_22("021");
+        //密码长度
+        iso8583DTO.setPointOfServicePINCaptureCode_26("06");
+        iso8583DTO.setPINData_52(pinEncryption(AESUtil.aesDecrypt(orders.getPin()), AESUtil.aesDecrypt(orders.getUserBankCardNo()).substring(3, 15), channels.getMd5KeyStr()));
+        iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
+        return iso8583DTO;
+    }
+
+    /**
+     * 52域加密
+     *
+     * @param pin
+     * @param pan
+     * @param key
+     * @return
+     */
+    public static String pinEncryption(String pin, String pan, String key) {
+        //加密pin
+        byte[] apan = NumberStringUtil.formartPan(pan.getBytes());
+        System.out.println("pan=== " + ISOUtil.bytesToHexString(apan));
+        byte[] apin = NumberStringUtil.formatPinByX98(pin.getBytes());
+        System.out.println("pin=== " + ISOUtil.bytesToHexString(apin));
+        byte[] xorMac = new byte[apan.length];
+        for (int i = 0; i < apan.length; i++) {//异或
+            xorMac[i] = apin[i] ^= apan[i];
+        }
+        System.out.println("异或===" + ISOUtil.bytesToHexString(xorMac));
+        try {
+            String substring = key.substring(0, 32);
+            hexKey = "3104BAC458BA1513043E4010FD642619";
+            String pik = Objects.requireNonNull(EcbDesUtil.decode3DEA(hexKey, substring)).toUpperCase();
+            System.out.println("===== pik =====" + pik);
+            String s = DesUtil.doubleDesEncrypt(pik, ISOUtil.bytesToHexString(xorMac));
+            System.out.println("===== pINEncryption =====" + s);
+            return s;
+        } catch (Exception e) {
+            System.out.println("===== pINEncryption e =====" + e);
+        }
+        return null;
+    }
+
+
+    /**
      * trk 加密
      *
      * @param str
@@ -750,7 +808,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     private static String trkEncryption(String str, String key) {
         //80-112 Trk密钥位
         String substring = key.substring(80, 112);
-        String trk = Objects.requireNonNull(EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring)).toUpperCase();
+        String trk = Objects.requireNonNull(EcbDesUtil.decode3DEA(hexKey, substring)).toUpperCase();
         String newStr;
         if (str.length() % 2 != 0) {
             newStr = str.length() + str + "0";
@@ -1092,5 +1150,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setOriginalMessage_61(str61);
         return iso8583DTO;
     }
+
 }
 
