@@ -72,12 +72,27 @@
     </sql>
 
     <select id="pageRightsOrders" resultMap="SecResultMap">
-        select
-        ro.institution_id,ro.institution_name,ro.merchant_id,ro.merchant_name,ro.order_no,ro.order_amount,
-        ro.deduction_amount,ro.actual_amount,ro.ticket_id,ro.rights_currency,
-        ro.rights_type,ro.system_order_id,ro.system_name,ro.create_time,ro.update_time,
-        ro.status,ro.remark
-        from rights_orders ro
+        SELECT
+        ro.institution_id,
+        ro.institution_name,
+        ro.merchant_id,
+        ro.merchant_name,
+        ro.order_no,
+        ro.order_amount,
+        ro.deduction_amount,
+        ro.actual_amount,
+        ro.ticket_id,
+        ro.ticket_amount,
+        ro.rights_currency,
+        ro.rights_type,
+        ro.system_order_id,
+        ro.system_name,
+        ro.create_time,
+        ro.update_time,
+        ro. STATUS,
+        ro.remark
+        FROM
+        rights_orders ro
         <where>
             <if test="id != null and id != ''">
                 AND  ro.id = #{id}
@@ -110,21 +125,36 @@
                 AND  ro.system_name = #{systemName}
             </if>
             <if test="startDate != null and startDate != ''">
-                AND DATE_FORMAT( ro.create_time,'%Y-%m-%d') &gt;= #{startDate}
+                AND ro.create_time&gt;= #{startDate}
             </if>
             <if test="endDate != null and endDate != ''">
-                AND DATE_FORMAT( ro.create_time,'%Y-%m-%d') &lt;= #{endDate}
+                AND ro.create_time &lt;= #{endDate}
             </if>
         </where>
     </select>
 
     <select id="exportRightsOrders" resultMap="SecResultMap">
-        select
-        ro.institution_id,ro.institution_name,ro.order_no,ro.order_amount,merchant_id,merchant_name,ticket_amount,
-        ro.deduction_amount,ro.actual_amount,ro.ticket_id,ro.rights_currency,
-        ro.rights_type,ro.system_order_id,ro.system_name,ro.create_time,ro.update_time,
-        ro.status,ro.remark
-        from rights_orders ro
+        SELECT
+        ro.institution_id,
+        ro.institution_name,
+        ro.order_no,
+        ro.order_amount,
+        ro.merchant_id,
+        ro.merchant_name,
+        ro.ticket_amount,
+        ro.deduction_amount,
+        ro.actual_amount,
+        ro.ticket_id,
+        ro.rights_currency,
+        ro.rights_type,
+        ro.system_order_id,
+        ro.system_name,
+        ro.create_time,
+        ro.update_time,
+        ro. STATUS,
+        ro.remark
+        FROM
+        rights_orders ro
         <where>
             <if test="orderNo != null and orderNo != ''">
                 AND  ro.order_no = #{orderNo}
