@@ -917,25 +917,91 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     public BaseResponse preAuthComplete(Orders orders, Channel channel) {
         BaseResponse baseResponse = new BaseResponse();
         UpiDTO upiDTO = this.createPreAuthCompleteDTO(orders, channel);
-        log.info("==================【UPI预授权完成】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+        log.info("==================【UPI预授权完成】==================【调用Channels服务】【UPI-预授权完成接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
-        log.info("==================【UPI预授权完成】==================【调用Channels服务】【UPI-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        log.info("==================【UPI预授权完成】==================【调用Channels服务】【UPI-预授权完成接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         //请求失败
-        if (TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
-            //请求成功
-            ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
-            log.info("==================【UPI预授权完成】==================【预授权完成】iso8583VO:{}",JSONObject.toJSONString(iso8583VO));
-            if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
-                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                //preOrdersMapper.updatePreStatusById1(preOrders.getId(),iso8583VO.getRetrievalReferenceNumber_37(), (byte) 4,null);
-            } else {
-                log.info("==================【UPI预授权完成】==================【预授权完成失败】preOrders:{}",orders.getId());
-                baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
+        if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            log.info("==================【UPI预授权完成】==================【调用Channels服务】【UPI-银行卡下单】-【请求状态码异常】");
+            throw new BusinessException(EResultEnum.PAYMENT_ABNORMAL.getCode());
+        }
+        ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
+        log.info("==================【UPI预授权完成】==================【调用Channels服务】【通华线下银行卡下单接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
+        ordersMapper.updateByPrimaryKeySelective(orders);
+        orders.setUpdateTime(new Date());
+        orders.setChannelCallbackTime(new Date());
+        Example example = new Example(Orders.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("tradeStatus", "2");
+        criteria.andEqualTo("id", orders.getId());
+        BaseResponse response = new BaseResponse();
+        if ("00".equals(iso8583VO.getResponseCode_39())) {
+            //支付成功
+            log.info("==================【UPI预授权完成】==================【支付成功】orderId: {}", orders.getId());
+            //未发货
+            orders.setDeliveryStatus(TradeConstant.UNSHIPPED);
+            //未签收
+            orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
+            orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
+            orders.setChannelNumber(iso8583VO.getRetrievalReferenceNumber_37());
+            orders.setReportNumber(orders.getReportNumber()+iso8583VO.getDateOfLocalTransaction_13());
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), TradeConstant.TRADE_SUCCESS);
+            } catch (Exception e) {
+                log.error("=================【UPI预授权完成】=================【更新通道订单异常】", e);
             }
-        }else{
-            //请求失败
-            log.info("==================【UPI预授权完成】==================【请求状态码异常】preOrders:{}",orders.getId());
-            baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
+            //更新订单信息
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                log.info("=================【UPI预授权完成】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
+                //计算支付成功时的通道网关手续费
+                commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
+                //TODO 添加日交易限额与日交易笔数
+                //commonBusinessService.quota(orders.getMerchantId(), orders.getProductCode(), orders.getTradeAmount());
+                //支付成功后向用户发送邮件
+                commonBusinessService.sendEmail(orders);
+                try {
+                    //账户信息不存在的场合创建对应的账户信息
+                    if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
+                        log.info("=================【UPI预授权完成】=================【上报清结算前线下下单创建账户信息】");
+                        commonBusinessService.createAccount(orders);
+                    }
+                    //分润
+                    if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
+                        rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
+                    }
+                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
+                    //上报清结算资金变动接口
+                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
+                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
+                        log.info("=================【UPI预授权完成】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                    }
+                } catch (Exception e) {
+                    log.error("=================【UPI预授权完成】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                    rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                }
+            } else {
+                log.info("=================【UPI预授权完成】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        } else {
+            //支付失败
+            log.info("==================【UPI预授权完成】==================【支付失败】orderId: {}", orders.getId());
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+            orders.setRemark5(iso8583VO.getResponseCode_39());
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_FALID);
+            } catch (Exception e) {
+                log.error("=================【UPI预授权完成】=================【更新通道订单异常】", e);
+            }
+            //计算支付失败时的通道网关手续费
+            commonBusinessService.calcCallBackGatewayFeeFailed(orders);
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                log.info("=================【UPI预授权完成】=================【订单支付失败后更新数据库成功】 orderId: {}", orders.getId());
+            } else {
+                log.info("=================【UPI预授权完成】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
+            }
         }
         return baseResponse;
     }
