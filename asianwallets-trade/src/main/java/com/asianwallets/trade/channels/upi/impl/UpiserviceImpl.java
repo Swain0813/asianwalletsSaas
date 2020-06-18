@@ -10,11 +10,8 @@ import com.asianwallets.common.dto.upi.UpiPayDTO;
 import com.asianwallets.common.dto.upi.UpiRefundDTO;
 import com.asianwallets.common.dto.upi.iso.UpiIsoUtil;
 import com.asianwallets.common.dto.upi.utils.CryptoUtil;
-import com.asianwallets.common.entity.Channel;
-import com.asianwallets.common.entity.OrderRefund;
-import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.entity.*;
 import com.asianwallets.common.dto.RabbitMassage;
-import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -752,6 +749,29 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         sendMsg = strHex2 + sendMsg;
         upiDTO.setIso8583DTO(sendMsg);
         return upiDTO;
+    }
+
+    /**
+     *通华预授权
+     * @param preOrders
+     * @param channel
+     * @return
+     */
+    @Override
+    public BaseResponse preAuth(PreOrders preOrders, Channel channel) {
+        return null;
+    }
+
+    /**
+     *预授权完成撤销
+     * @param channel
+     * @param orderRefund
+     * @param rabbitMassage
+     * @return
+     */
+    @Override
+    public BaseResponse preAuthCompleteRevoke(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
+        return null;
     }
 
 
