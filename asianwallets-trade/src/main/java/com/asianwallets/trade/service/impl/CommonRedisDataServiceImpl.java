@@ -450,7 +450,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             String timeStamp = System.currentTimeMillis() + "";
             ISO8583DTO iso8583DTO = new ISO8583DTO();
             iso8583DTO.setMessageType("0800");
-            iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(0, 6));
+            iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(6, 12));
             //机构号
             iso8583DTO.setAcquiringInstitutionIdentificationCode_32(institutionId);
             //终端号
