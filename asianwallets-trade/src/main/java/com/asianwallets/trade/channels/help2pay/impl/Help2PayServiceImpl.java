@@ -27,6 +27,7 @@ import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
+import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,9 @@ public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
+
+    @Autowired
+    private CommonService commonService;
 
     /**
      * 线上收单方法
@@ -239,20 +243,7 @@ public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help
                         rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
                     //更新成功,上报清结算
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                    //上报清结算资金变动接口
-                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    //请求成功
-                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                        //业务处理失败
-                        log.info("=================【help2Pay服务器回调接口信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                    } else {
-                        log.info("=================【help2Pay服务器回调接口信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                    }
+                    commonService.fundChangePlaceOrderSuccess(orders);
                 } catch (Exception e) {
                     log.error("=================【help2Pay服务器回调接口信息记录】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));

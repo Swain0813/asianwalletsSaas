@@ -1,5 +1,6 @@
 package com.asianwallets.trade.service;
 
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.dto.ArtificialDTO;
 
@@ -24,4 +25,10 @@ public interface CommonService {
      * @return
      */
     BaseResponse artificialCallback(ArtificialDTO artificialDTO);
+
+    /**
+     * 订单成功后上报清结算
+     * @param orders
+     */
+    void fundChangePlaceOrderSuccess(Orders orders);
 }

@@ -5,6 +5,7 @@ import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
+import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
@@ -72,6 +73,7 @@ public class CommonServiceImpl implements CommonService {
     public Boolean checkPassword(String oldPassword, String password) {
         return passwordEncoder.matches(oldPassword, password);
     }
+
 
     /**
      * 人工回调
@@ -142,14 +144,8 @@ public class CommonServiceImpl implements CommonService {
                     if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
                         rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                    //上报清结算资金变动接口
-                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                        log.info("=================【人工回调】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                    }
+                    //更新成功,上报清结算
+                    this.fundChangePlaceOrderSuccess(orders);
                 } catch (Exception e) {
                     log.error("=================【人工回调】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
@@ -185,4 +181,30 @@ public class CommonServiceImpl implements CommonService {
         }
         return baseResponse;
     }
+
+    /**
+     * 下单成功后上报清结算
+     * 由于saas系统如果对接的通道能结算就不要上报清结算
+     * @param orders
+     */
+    @Override
+    public void fundChangePlaceOrderSuccess(Orders orders) {
+        //查询通道
+        Channel channel = commonRedisDataService.getChannelByChannelCode(orders.getChannelCode());
+        if(!channel.getChannelSupportSettle()){
+            //更新成功,上报清结算
+            FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
+            //上报清结算资金变动接口
+            BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
+            log.info("=================【交易服务共通下单成功后上报清结算】=================【上报清结算返回信息】 fundChangeResponse:{}", JSON.toJSONString(fundChangeResponse));
+            if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
+                log.info("=================【交易服务共通下单成功后上报清结算】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
+                RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+            }
+        }
+    }
+
+
+
 }

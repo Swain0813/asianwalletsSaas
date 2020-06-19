@@ -8,18 +8,14 @@ import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.nganluong.NganLuongMQDTO;
 import com.asianwallets.common.entity.Orders;
-import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.utils.MD5;
 import com.asianwallets.common.utils.XMLUtil;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
-import com.asianwallets.trade.feign.MessageFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
-import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
-import com.asianwallets.trade.vo.FundChangeVO;
+import com.asianwallets.trade.service.CommonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,13 +49,10 @@ public class NganLuongMQReciveSecond {
     private CommonRedisDataService commonRedisDataService;
 
     @Autowired
-    private ClearingService clearingService;
-
-    @Autowired
     private RabbitMQSender rabbitMQSender;
 
     @Autowired
-    private MessageFeign messageFeign;
+    private CommonService commonService;
 
     @Value("${custom.nganLuong.check_url}")
     private String checkUrl;
@@ -164,23 +157,7 @@ public class NganLuongMQReciveSecond {
                             rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                         }
                         //更新成功,上报清结算
-                        FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                        //上报清结算资金变动接口
-                        BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                        if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
-                            //请求成功
-                            FundChangeVO fundChangeVO = (FundChangeVO) fundChangeResponse.getData();
-                            if (!fundChangeVO.getRespCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                                //业务处理失败
-                                log.info("==============【NL查询队列2】============== 【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                                RabbitMassage massage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                                rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(massage));
-                            }
-                        } else {
-                            log.info("==============【NL查询队列2】============== 【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                            RabbitMassage massage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(massage));
-                        }
+                        commonService.fundChangePlaceOrderSuccess(orders);
                     } catch (Exception e) {
                         log.error("==============【NL查询队列2】============== 【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                         RabbitMassage massage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));

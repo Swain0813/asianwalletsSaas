@@ -30,6 +30,7 @@ import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
+import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -84,6 +85,9 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
 
     @Autowired
     private OrdersMapper ordersMapper;
+
+    @Autowired
+    private CommonService commonService;
 
     /**
      * NextPos线下CSB
@@ -250,14 +254,8 @@ public class NextPosServiceImpl extends ChannelsAbstractAdapter implements NextP
                     if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
                         rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                    //上报清结算资金变动接口
-                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                        log.info("=================【NextPos回调】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                    }
+                    //更新成功,上报清结算
+                    commonService.fundChangePlaceOrderSuccess(orders);
                 } catch (Exception e) {
                     log.error("=================【NextPos回调】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));

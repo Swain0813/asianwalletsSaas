@@ -34,6 +34,7 @@ import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
+import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.utils.HandlerType;
 import com.asianwallets.trade.vo.FundChangeVO;
 import lombok.extern.slf4j.Slf4j;
@@ -83,6 +84,9 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
+
+    @Autowired
+    private CommonService commonService;
 
     /**
      * MegaPay网银收单方法
@@ -235,23 +239,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
                         rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
                     //更新成功,上报清结算
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                    //上报清结算资金变动接口
-                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
-                        //请求成功
-                        FundChangeVO fundChangeVO = (FundChangeVO) fundChangeResponse.getData();
-                        if (!fundChangeVO.getRespCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                            //业务处理失败
-                            log.info("=================【megaPayTHB服务器回调方法信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                        }
-                    } else {
-                        log.info("=================【megaPayTHB服务器回调方法信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                    }
+                    commonService.fundChangePlaceOrderSuccess(orders);
                 } catch (Exception e) {
                     log.error("=================【megaPayTHB服务器回调方法信息记录】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
@@ -459,23 +447,7 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
                         rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
                     //更新成功,上报清结算
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                    //上报清结算资金变动接口
-                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
-                        //请求成功
-                        FundChangeVO fundChangeVO = (FundChangeVO) fundChangeResponse.getData();
-                        if (!fundChangeVO.getRespCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                            //业务处理失败
-                            log.info("=================【megaPayIDR服务器回调方法信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                        }
-                    } else {
-                        log.info("=================【megaPayIDR服务器回调方法信息记录】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                    }
+                    commonService.fundChangePlaceOrderSuccess(orders);
                 } catch (Exception e) {
                     log.error("=================【megaPayIDR服务器回调方法信息记录】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));

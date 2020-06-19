@@ -30,10 +30,7 @@ import com.asianwallets.trade.dao.MerchantProductMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.dto.*;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
-import com.asianwallets.trade.service.ClearingService;
-import com.asianwallets.trade.service.CommonBusinessService;
-import com.asianwallets.trade.service.CommonRedisDataService;
-import com.asianwallets.trade.service.OnlineGatewayService;
+import com.asianwallets.trade.service.*;
 import com.asianwallets.trade.utils.HandlerContext;
 import com.asianwallets.trade.utils.SettleDateUtil;
 import com.asianwallets.trade.vo.*;
@@ -87,6 +84,9 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
 
     @Autowired
     private Ad3Service ad3Service;
+
+    @Autowired
+    private CommonService commonService;
 
 
     //收银台地址
@@ -922,15 +922,7 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
                             rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                         }
                         //更新成功,上报清结算
-                        FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                        //上报清结算资金变动接口
-                        BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                        log.info("=================【线上通道订单状态查询】=================【上报清结算返回信息】 fundChangeResponse:{}", JSON.toJSONString(fundChangeResponse));
-                        if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                            log.info("=================【线上通道订单状态查询】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                        }
+                        commonService.fundChangePlaceOrderSuccess(orders);
                     } catch (Exception e) {
                         log.error("=================【线上通道订单状态查询】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                         RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));

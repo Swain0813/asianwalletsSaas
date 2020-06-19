@@ -1,5 +1,4 @@
 package com.asianwallets.trade.rabbitmq.receive;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -10,14 +9,13 @@ import com.asianwallets.common.dto.qfpay.QfPayQueryDTO;
 import com.asianwallets.common.dto.qfpay.QfResDTO;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
-import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
+import com.asianwallets.trade.service.CommonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +39,6 @@ public class QfPayCsbCheckOrderMQRecive {
     private ChannelsFeign channelsFeign;
 
     @Autowired
-    private ClearingService clearingService;
-
-    @Autowired
     private RabbitMQSender rabbitMQSender;
 
     @Autowired
@@ -54,6 +49,10 @@ public class QfPayCsbCheckOrderMQRecive {
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
+
+
+    @Autowired
+    private CommonService commonService;
 
     @RabbitListener(queues = "MQ_QFPAY_CSB_CHECK_ORDER")
     public void qfPayCsbCheckOrderMQ(String value) {
@@ -121,14 +120,8 @@ public class QfPayCsbCheckOrderMQRecive {
                         if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
                             rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                         }
-                        FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                        //上报清结算资金变动接口
-                        BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                        if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                            log.info("=================【QfPay-Csb查询订单队列】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                        }
+                        //更新成功,上报清结算
+                        commonService.fundChangePlaceOrderSuccess(orders);
                     } catch (Exception e) {
                         log.error("=================【QfPay-Csb查询订单队列】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                         RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
