@@ -41,44 +41,75 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
+/**
+ * The type Th service.
+ */
 @Slf4j
 @Service
 @HandlerType(TradeConstant.TH)
 public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService {
 
+    /**
+     * The Channels feign.
+     */
     @Autowired
-    private ChannelsFeign channelsFeign;
+    public ChannelsFeign channelsFeign;
 
+    /**
+     * The Channels order mapper.
+     */
     @Autowired
-    private ChannelsOrderMapper channelsOrderMapper;
+    public ChannelsOrderMapper channelsOrderMapper;
 
+    /**
+     * The Rabbit mq sender.
+     */
     @Autowired
-    private RabbitMQSender rabbitMQSender;
+    public RabbitMQSender rabbitMQSender;
 
+    /**
+     * The Order refund mapper.
+     */
     @Autowired
-    private OrderRefundMapper orderRefundMapper;
+    public OrderRefundMapper orderRefundMapper;
 
+    /**
+     * The Common business service.
+     */
     @Autowired
-    private CommonBusinessService commonBusinessService;
+    public CommonBusinessService commonBusinessService;
 
+    /**
+     * The Common redis data service.
+     */
     @Autowired
-    private CommonRedisDataService commonRedisDataService;
+    public CommonRedisDataService commonRedisDataService;
 
+    /**
+     * The Reconciliation mapper.
+     */
     @Autowired
-    private ReconciliationMapper reconciliationMapper;
+    public ReconciliationMapper reconciliationMapper;
 
+    /**
+     * The Clearing service.
+     */
     @Autowired
-    private ClearingService clearingService;
+    public ClearingService clearingService;
 
+    /**
+     * The Orders mapper.
+     */
     @Autowired
-    private OrdersMapper ordersMapper;
+    public OrdersMapper ordersMapper;
 
     /**
      * 插入通道订单
      *
-     * @param orders 订单
+     * @param orders  订单
+     * @param channel the channel
      */
-    private void insertChannelsOrder(Orders orders, Channel channel) {
+    public void insertChannelsOrder(Orders orders, Channel channel) {
         ChannelsOrder channelsOrder = new ChannelsOrder();
         channelsOrder.setId(orders.getId());
         channelsOrder.setMerchantOrderId(orders.getMerchantOrderId());
@@ -102,9 +133,11 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     /**
      * 创建通华扫码订单
      *
-     * @param orders 订单
+     * @param orders  订单
+     * @param channel the channel
+     * @return the iso 8583 dto
      */
-    private ISO8583DTO createScanOrder(Orders orders, Channel channel) {
+    public ISO8583DTO createScanOrder(Orders orders, Channel channel) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         //当前时间戳
         String timeStamp = System.currentTimeMillis() + "";
@@ -511,12 +544,16 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
 
     /**
-     * @return
+     * Create refund iso 8583 dto iso 8583 dto.
+     *
+     * @param channel     the channel
+     * @param orderRefund the order refund
+     * @return iso 8583 dto
      * @Author YangXu
-     * @Date 2020/5/18
+     * @Date 2020 /5/18
      * @Descripate 创建退款DTO
-     **/
-    private ISO8583DTO createRefundISO8583DTO(Channel channel, OrderRefund orderRefund) {
+     */
+    public ISO8583DTO createRefundISO8583DTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("400100");
@@ -541,12 +578,16 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     /**
-     * @return
+     * Create query iso 8583 dto iso 8583 dto.
+     *
+     * @param channel     the channel
+     * @param orderRefund the order refund
+     * @return iso 8583 dto
      * @Author YangXu
-     * @Date 2020/5/18
+     * @Date 2020 /5/18
      * @Descripate 创建查询DTO
-     **/
-    private ISO8583DTO createQueryISO8583DTO(Channel channel, OrderRefund orderRefund) {
+     */
+    public ISO8583DTO createQueryISO8583DTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("700206");
@@ -580,9 +621,9 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     /**
      * 从缓存中获取62域信息
      *
-     * @param orders
-     * @param channel
-     * @return
+     * @param orders  the orders
+     * @param channel the channel
+     * @return th key
      */
     private String getThKey(Orders orders, Channel channel) {
         MerchantReport merchantReport = commonRedisDataService.getMerchantReport(orders.getMerchantId(), channel.getChannelCode());
@@ -592,9 +633,9 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     /**
      * 从缓存中获取62域信息
      *
-     * @param orderRefund
-     * @param channel
-     * @return
+     * @param orderRefund the order refund
+     * @param channel     the channel
+     * @return th key
      */
     private String getThKey(OrderRefund orderRefund, Channel channel) {
         MerchantReport merchantReport = commonRedisDataService.getMerchantReport(orderRefund.getMerchantId(), channel.getChannelCode());
@@ -602,41 +643,13 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     /**
-     * ISO8583 中与 pin 银行卡密码相关的域赋值
-     *
-     * @param orders
-     * @param iso8583DTO
-     * @param channels
-     * @return
-     */
-    public ISO8583DTO setFiled22And26And52And53(Orders orders, ISO8583DTO iso8583DTO, Channel channels) {
-        //个人PIN
-        if (StringUtils.isEmpty(orders.getPin())) {
-            log.info("***************************银行卡pin不存在***************************");
-            //服务点输入方式码 022：刷卡，无PIN
-            iso8583DTO.setPointOfServiceEntryMode_22("022");
-            return iso8583DTO;
-        }
-        log.info("***************************银行卡pin存在***************************");
-        //服务点输入方式码 021 刷卡，且PIN可输入
-        iso8583DTO.setPointOfServiceEntryMode_22("021");
-        //密码长度
-        iso8583DTO.setPointOfServicePINCaptureCode_26("06");
-        //获取62域信息
-        String thKey = getThKey(orders, channels);
-        iso8583DTO.setPINData_52(pinEncryption(AESUtil.aesDecrypt(orders.getPin()), AESUtil.aesDecrypt(orders.getUserBankCardNo()).substring(3, 15), thKey, channels.getMd5KeyStr()));
-        iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
-        return iso8583DTO;
-    }
-
-    /**
      * 52域加密
      *
-     * @param pin
-     * @param pan
-     * @param key
-     * @param channelMd5Key
-     * @return
+     * @param pin           the pin
+     * @param pan           the pan
+     * @param key           the key
+     * @param channelMd5Key the channel md 5 key
+     * @return string string
      */
     public static String pinEncryption(String pin, String pan, String key, String channelMd5Key) {
         //加密pin
@@ -662,16 +675,15 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         return null;
     }
 
-
     /**
      * trk 加密
      *
-     * @param str
-     * @param key
-     * @param channelMd5Key
-     * @return
+     * @param str           the str
+     * @param key           the key
+     * @param channelMd5Key the channel md 5 key
+     * @return string
      */
-    private static String trkEncryption(String str, String key, String channelMd5Key) {
+    public static String trkEncryption(String str, String key, String channelMd5Key) {
         //80-112 Trk密钥位
         String substring = key.substring(80, 112);
         String trk = Objects.requireNonNull(EcbDesUtil.decode3DEA(channelMd5Key, substring)).toUpperCase();
@@ -683,6 +695,51 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         }
         byte[] bcd = NumberStringUtil.str2Bcd(newStr);
         return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, cn.hutool.core.util.HexUtil.encodeHexStr(bcd))).toUpperCase();
+    }
+
+    /**
+     * 从商户报备中获取商户号与设备号信息
+     *
+     * @param merchantId  the merchant id
+     * @param channelCode the channel code
+     * @param dto         the dto
+     * @return filed 41 and 42
+     */
+    private ISO8583DTO setFiled41And42(String merchantId, String channelCode, ISO8583DTO dto) {
+        MerchantReport merchantReport = commonRedisDataService.getMerchantReport(merchantId, channelCode);
+        //受卡机终端标识码 (设备号)
+        dto.setCardAcceptorTerminalIdentification_41(merchantReport.getExtend1());
+        //受卡方标识码 (商户号)
+        dto.setCardAcceptorIdentificationCode_42(merchantReport.getMerchantId());
+        return dto;
+    }
+
+    /**
+     * ISO8583 中与 pin 银行卡密码相关的域赋值
+     *
+     * @param orders     the orders
+     * @param iso8583DTO the iso 8583 dto
+     * @param channels   the channels
+     * @return filed 22 and 26 and 52 and 53
+     */
+    private ISO8583DTO setFiled22And26And52And53(Orders orders, ISO8583DTO iso8583DTO, Channel channels) {
+        //个人PIN
+        if (StringUtils.isEmpty(orders.getPin())) {
+            log.info("***************************银行卡pin不存在***************************");
+            //服务点输入方式码 022：刷卡，无PIN
+            iso8583DTO.setPointOfServiceEntryMode_22("022");
+            return iso8583DTO;
+        }
+        log.info("***************************银行卡pin存在***************************");
+        //服务点输入方式码 021 刷卡，且PIN可输入
+        iso8583DTO.setPointOfServiceEntryMode_22("021");
+        //密码长度
+        iso8583DTO.setPointOfServicePINCaptureCode_26("06");
+        //获取62域信息
+        String thKey = getThKey(orders, channels);
+        iso8583DTO.setPINData_52(pinEncryption(AESUtil.aesDecrypt(orders.getPin()), AESUtil.aesDecrypt(orders.getUserBankCardNo()).substring(3, 15), thKey, channels.getMd5KeyStr()));
+        iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
+        return iso8583DTO;
     }
 
     /**
@@ -788,10 +845,13 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         return response;
     }
 
+
     /**
-     * 创建通华银行卡订单
+     * 创建银行卡订单
      *
-     * @param orders 订单
+     * @param orders  the orders
+     * @param channel the channel
+     * @return the iso 8583 dto
      */
     private ISO8583DTO createBankOrder(Orders orders, Channel channel) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
@@ -854,24 +914,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     /**
-     * 从商户报备中获取商户号与设备号信息
+     * 银行卡冲正接口
      *
-     * @param merchantId
-     * @param channelCode
-     * @param dto
-     * @return
-     */
-    private ISO8583DTO setFiled41And42(String merchantId, String channelCode, ISO8583DTO dto) {
-        MerchantReport merchantReport = commonRedisDataService.getMerchantReport(merchantId, channelCode);
-        //受卡机终端标识码 (设备号)
-        dto.setCardAcceptorTerminalIdentification_41(merchantReport.getExtend1());
-        //受卡方标识码 (商户号)
-        dto.setCardAcceptorIdentificationCode_42(merchantReport.getMerchantId());
-        return dto;
-    }
-
-
-    /**
      * @return
      * @Author YangXu
      * @Date 2020/5/26
@@ -915,11 +959,15 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     /**
-     * @return
+     * 创建冲正DTO
+     *
+     * @param channel     the channel
+     * @param orderRefund the order refund
+     * @return iso 8583 dto
      * @Author YangXu
-     * @Date 2020/5/18
+     * @Date 2020 /5/18
      * @Descripate 创建冲正DTO
-     **/
+     */
     private ISO8583DTO createReversalDTO(Channel channel, OrderRefund orderRefund) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0400");
@@ -1065,13 +1113,17 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         return baseResponse;
     }
 
-
     /**
-     * @return
+     * 创建银行卡退款DTO
+     *
+     * @param channel     the channel
+     * @param orderRefund the order refund
+     * @param orders      the orders
+     * @return iso 8583 dto
      * @Author YangXu
-     * @Date 2020/5/18
+     * @Date 2020 /5/18
      * @Descripate 创建银行卡退款DTO
-     **/
+     */
     private ISO8583DTO createBankRefundDTO(Channel channel, OrderRefund orderRefund, Orders orders) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0220");
@@ -1134,11 +1186,16 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     /**
-     * @return
+     * 创建银行卡撤销DTO
+     *
+     * @param channel     the channel
+     * @param orderRefund the order refund
+     * @param orders      the orders
+     * @return iso 8583 dto
      * @Author YangXu
-     * @Date 2020/5/18
+     * @Date 2020 /5/18
      * @Descripate 创建银行卡撤销DTO
-     **/
+     */
     private ISO8583DTO createBankUndoDTO(Channel channel, OrderRefund orderRefund, Orders orders) {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
