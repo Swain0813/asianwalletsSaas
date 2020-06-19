@@ -10,19 +10,16 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.AlipayCore;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.alipay.AlipayService;
 import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
-import com.asianwallets.trade.dao.ReconciliationMapper;
 import com.asianwallets.trade.dto.AplipayBrowserCallbackDTO;
 import com.asianwallets.trade.dto.AplipayServerCallbackDTO;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
-import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.CommonService;
@@ -70,12 +67,6 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
-
-    @Autowired
-    private ReconciliationMapper reconciliationMapper;
-
-    @Autowired
-    private ClearingService clearingService;
 
     @Autowired
     private RabbitMQSender rabbitMQSender;
@@ -130,27 +121,8 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=====================【AliPay退款】==================== 【退款失败】 : {} ", JSON.toJSON(orderRefund));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                String reconciliationRemark = type.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
-                reconciliationMapper.insert(reconciliation);
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                log.info("=========================【AliPay退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
-                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                    //调账成功
-                    log.info("=================【AliPay退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
-                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
-                    //改原订单状态
-                    commonBusinessService.updateOrderRefundFail(orderRefund);
-                } else {
-                    //调账失败
-                    log.info("=================【AliPay退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                    log.info("=================【NextPos退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
-                }
+                //退款失败调用清结算
+                commonService.orderRefundFailFundChange(orderRefund,channel);
             }
         } else {
             log.info("=====================【AliPay退款】==================== 【请求失败】 : {} ", JSON.toJSON(orderRefund));

@@ -12,7 +12,6 @@ import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.utils.Sha256Tools;
 import com.asianwallets.common.vo.OnlineTradeVO;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.eghl.EGHLService;
 import com.asianwallets.trade.config.AD3ParamsConfig;
@@ -33,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -56,9 +54,6 @@ public class EGHLServiceImpl extends ChannelsAbstractAdapter implements EGHLServ
 
     @Autowired
     private ChannelsOrderMapper channelsOrderMapper;
-
-    @Autowired
-    private ClearingService clearingService;
 
     @Autowired
     private RabbitMQSender rabbitMQSender;

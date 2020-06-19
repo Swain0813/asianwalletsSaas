@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.help2pay.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -15,7 +14,6 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.MD5;
 import com.asianwallets.common.vo.OnlineTradeVO;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.help2pay.Help2PayService;
 import com.asianwallets.trade.config.AD3ParamsConfig;
@@ -35,7 +33,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -55,9 +52,6 @@ public class Help2PayServiceImpl extends ChannelsAbstractAdapter implements Help
 
     @Autowired
     private OrdersMapper ordersMapper;
-
-    @Autowired
-    private ClearingService clearingService;
 
     @Autowired
     private RabbitMQSender rabbitMQSender;

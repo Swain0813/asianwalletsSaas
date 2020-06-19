@@ -6,15 +6,15 @@ import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.clearing.FundChangeDTO;
-import com.asianwallets.trade.dao.ChannelsOrderMapper;
-import com.asianwallets.trade.dao.OrdersMapper;
+import com.asianwallets.trade.dao.*;
 import com.asianwallets.common.dto.ArtificialDTO;
-import com.asianwallets.trade.dao.PreOrdersMapper;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
@@ -60,6 +60,12 @@ public class CommonServiceImpl implements CommonService {
 
     @Autowired
     private PreOrdersMapper preOrdersMapper;
+
+    @Autowired
+    private ReconciliationMapper reconciliationMapper;
+
+    @Autowired
+    private OrderRefundMapper orderRefundMapper;
 
 
     /**
@@ -205,6 +211,43 @@ public class CommonServiceImpl implements CommonService {
         }
     }
 
+
+    /**
+     * 退款失败调用清结算
+     * @param orderRefund
+     * @param channel
+     */
+    @Override
+    public void orderRefundFailFundChange(OrderRefund orderRefund,Channel channel) {
+        if(!channel.getChannelSupportSettle()){
+            log.info("=====================【交易服务 退款】==================== 【退款单信息】 : {} ", JSON.toJSON(orderRefund));
+            String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
+            String reconciliationRemark = type.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
+            Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
+            reconciliationMapper.insert(reconciliation);
+            FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+            log.info("==================【交易服务 退款】================== 【调用资金变动接口输入参数】 cFundChange: {}", JSON.toJSONString(fundChangeDTO));
+            BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+            if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                //调账成功
+                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
+                reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
+                //改原订单状态
+                commonBusinessService.updateOrderRefundFail(orderRefund);
+            } else {
+                //调账失败
+                RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
+                log.info("=================【交易服务 退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+                rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
+            }
+        }else {
+            //更新退款订单
+            orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
+            //改原订单状态
+            commonBusinessService.updateOrderRefundFail(orderRefund);
+        }
+
+    }
 
 
 }
