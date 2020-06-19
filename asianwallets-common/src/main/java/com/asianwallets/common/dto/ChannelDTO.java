@@ -1,10 +1,8 @@
 package com.asianwallets.common.dto;
-
 import com.asianwallets.common.base.BasePageHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -212,5 +210,8 @@ public class ChannelDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "交易密码")
     private String tradePwd;
+
+    @ApiModelProperty(value = "是否通道结算")
+    private Boolean channelSupportSettle;
 
 }

@@ -1,11 +1,9 @@
 package com.asianwallets.common.entity;
-
 import com.asianwallets.common.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -171,8 +169,8 @@ public class Channel extends BaseEntity {
     @Column(name = "md5_key_str")
     private String md5KeyStr;
 
-    @ApiModelProperty(value = "IMEI")
-    @Column(name = "extend1")
+    @ApiModelProperty(value = "设备编号")
+    @Column(name = "IMEI")
     private String extend1;
 
     @ApiModelProperty(value = "操作员id")
@@ -251,4 +249,9 @@ public class Channel extends BaseEntity {
     @ApiModelProperty(value = "仅当日交易可退款")//0-否,1-是
     @Column(name = "only_today_order_refund")
     private Boolean onlyTodayOrderRefund;
+
+
+    @ApiModelProperty(value = "是否通道结算")
+    @Column(name = "channel_support_settle")
+    private Boolean channelSupportSettle;
 }

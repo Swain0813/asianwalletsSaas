@@ -184,10 +184,10 @@
                 AND  ro.system_name = #{systemName}
             </if>
             <if test="startDate != null and startDate != ''">
-                AND DATE_FORMAT( ro.create_time,'%Y-%m-%d') &gt;= #{startDate}
+                AND ro.create_time &gt;= #{startDate}
             </if>
             <if test="endDate != null and endDate != ''">
-                AND DATE_FORMAT( ro.create_time,'%Y-%m-%d') &lt;= #{endDate}
+                AND ro.create_time &lt;= #{endDate}
             </if>
         </where>
         order by ro.create_time desc

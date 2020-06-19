@@ -194,23 +194,6 @@ public class ThServiceImpl implements ThService {
      **/
     @Override
     public BaseResponse thRefund(ThDTO thDTO) {
-        //ChannelsOrder co = new ChannelsOrder();
-        //co.setMerchantOrderId(aliPayRefundDTO.getPartner_trans_id());
-        //co.setTradeCurrency(aliPayRefundDTO.getCurrency());
-        //co.setTradeAmount(new BigDecimal(aliPayRefundDTO.getRefund_amount()));
-        ////co.setReqIp(msg.get("ipAddress").toString());
-        ////co.setDraweeName(eghlRequestDTO.getCustName());
-        ////co.setDraweeEmail(eghlRequestDTO.getCustEmail());
-        ////co.setBrowserUrl(msg.get("b2sTxnEndURL").toString());
-        ////co.setServerUrl(msg.get("s2sTxnEndURL").toString());
-        ////co.setDraweePhone(eghlRequestDTO.getCustPhone());
-        //co.setTradeStatus(Byte.valueOf(TradeConstant.TRADE_WAIT));
-        ////co.setIssuerId(enetsBankRequestDTO.getTxnReq().getMsg().getIssuingBank());
-        ////co.setMd5KeyStr(wechaRefundDTO.getApikey());
-        //co.setId(aliPayRefundDTO.getPartner_refund_id());
-        //co.setOrderType(Byte.valueOf(AD3Constant.REFUND_ORDER));
-        //co.setCreateTime(new Date());
-        //channelsOrderMapper.insert(co);
         BaseResponse response = new BaseResponse();
         log.info("===============【通华退款接口】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(thDTO.getIso8583DTO()));
         String tdpu = channelsConfig.getThTDPU();
