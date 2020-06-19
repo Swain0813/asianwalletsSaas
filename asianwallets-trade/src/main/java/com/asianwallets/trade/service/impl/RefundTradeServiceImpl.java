@@ -894,18 +894,18 @@ public class RefundTradeServiceImpl implements RefundTradeService {
 
     /**
      * 预授权冲正接口
-     *
+     *预授权撤销接口
      * @param bankCardUndoDTO
      * @param reqIp
      * @return
      */
     @Override
-    public BaseResponse preAuthReverse(BankCardUndoDTO bankCardUndoDTO, String reqIp) {
+    public BaseResponse preAuthReverseAndRevoke(BankCardUndoDTO bankCardUndoDTO, String reqIp) {
         BaseResponse baseResponse = new BaseResponse();
-        log.info("**********预授权冲正接口的输入参数*********************", JSON.toJSONString(bankCardUndoDTO));
+        log.info("**********预授权冲正 预授权撤销接口 接口的输入参数*********************", JSON.toJSONString(bankCardUndoDTO));
         //签名校验
         if (!commonBusinessService.checkUniversalSign(bankCardUndoDTO)) {
-            log.info("=========================【预授权冲正接口】=========================【签名错误】");
+            log.info("=========================【预授权冲正 预授权撤销接口】=========================【签名错误】");
             throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
         }
         //检查商户编号
@@ -913,21 +913,21 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         //校验商户绑定设备
         DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getImei());
         if (deviceBinding == null) {
-            log.info("**************预授权冲正接口 设备编号不合法******************merchantId:{},imei:{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getImei());
+            log.info("**************预授权冲正接口 预授权撤销接口 设备编号不合法******************merchantId:{},imei:{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getImei());
             //设备编号不合法
             throw new BusinessException(EResultEnum.DEVICE_CODE_INVALID.getCode());
         }
         String username = bankCardUndoDTO.getOperatorId().concat(bankCardUndoDTO.getMerchantId());
         SysUser sysUser = sysUserMapper.selectByUsername(username);
         if (sysUser == null) {
-            log.info("===========预授权冲正接口 设备操作员不合法==========【操作员ID不存在】***********merchantId:{},operatorId{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getOperatorId());
+            log.info("===========预授权冲正接口 预授权撤销接口 设备操作员不合法==========【操作员ID不存在】***********merchantId:{},operatorId{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getOperatorId());
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }
         //根据商户订单号获取预授权订单信息
         PreOrders preOrders = preOrdersMapper.selectMerchantOrderId(bankCardUndoDTO.getOrderNo());
         //预授权订单信息不存在的场合
         if (preOrders == null) {
-            log.info("**************** 预授权冲正接口 订单信息不存在**************** preOrders : {}", JSON.toJSON(bankCardUndoDTO));
+            log.info("**************** 预授权冲正接口 预授权撤销接口 订单信息不存在**************** preOrders : {}", JSON.toJSON(bankCardUndoDTO));
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
         if (preOrders.getOrderStatus() == 1) {
@@ -956,57 +956,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //返回结果
             baseResponse = channelsAbstract.preAuthRevoke(channel, preOrders, null);
         }
-        return baseResponse;
-    }
-
-    /**
-     * 预授权撤销接口
-     *
-     * @param bankCardUndoDTO
-     * @param reqIp
-     * @return
-     */
-    @Override
-    public BaseResponse preAuthRevoke(BankCardUndoDTO bankCardUndoDTO, String reqIp) {
-        log.info("**********预授权撤销接口接口的输入参数*********************", JSON.toJSONString(bankCardUndoDTO));
-        //签名校验
-        if (!commonBusinessService.checkUniversalSign(bankCardUndoDTO)) {
-            log.info("=========================【预授权撤销接口】=========================【签名错误】");
-            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
-        }
-        //检查商户编号
-        commonRedisDataService.getMerchantById(bankCardUndoDTO.getMerchantId());
-        //校验商户绑定设备
-        DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getImei());
-        if (deviceBinding == null) {
-            log.info("**************预授权撤销接口 设备编号不合法******************merchantId:{},imei:{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getImei());
-            //设备编号不合法
-            throw new BusinessException(EResultEnum.DEVICE_CODE_INVALID.getCode());
-        }
-        String username = bankCardUndoDTO.getOperatorId().concat(bankCardUndoDTO.getMerchantId());
-        SysUser sysUser = sysUserMapper.selectByUsername(username);
-        if (sysUser == null) {
-            log.info("===========预授权撤销接口 设备操作员不合法==========【操作员ID不存在】***********merchantId:{},operatorId{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getOperatorId());
-            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
-        }
-        //根据商户订单号获取预授权订单信息
-        PreOrders preOrders = preOrdersMapper.selectMerchantOrderId(bankCardUndoDTO.getOrderNo());
-        //预授权订单不存在的场合
-        if (preOrders == null) {
-            log.info("**************** 预授权撤销接口 订单信息不存在**************** preOrders : {}", JSON.toJSON(bankCardUndoDTO));
-            throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
-        }
-        //调用预授权撤销接口
-        ChannelsAbstract channelsAbstract = null;
-        Channel channel = commonRedisDataService.getChannelByChannelCode(preOrders.getChannelCode());
-        try {
-            log.info("=========================【预授权撤销接口】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
-            channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
-        } catch (Exception e) {
-            log.info("=========================【预授权撤销接口】========================= Exception:【{}】", e);
-        }
-        //返回结果
-        BaseResponse baseResponse = channelsAbstract.preAuthRevoke(channel, preOrders, null);
         return baseResponse;
     }
 
