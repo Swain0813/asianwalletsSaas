@@ -70,7 +70,7 @@ public class WeChatServiceImpl extends ChannelsAbstractAdapter implements WeChat
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
-    
+
     @Autowired
     private RabbitMQSender rabbitMQSender;
 
