@@ -40,33 +40,33 @@ public class Demo {
     }
 
     private static void test1() throws Exception {
-
         ISO8583DTO iso8583DTO = new ISO8583DTO();
-        iso8583DTO.setMessageType("0400");
-        iso8583DTO.setProcessingCode_3("030000");
+        iso8583DTO.setMessageType("0100");
+        iso8583DTO.setProcessingCode_3("200000");
         iso8583DTO.setAmountOfTransactions_4("000000000100");
-        iso8583DTO.setSystemTraceAuditNumber_11("810294");
+        iso8583DTO.setSystemTraceAuditNumber_11(IDS.getRandomInt(6));
         iso8583DTO.setDateOfExpired_14("4912");
         iso8583DTO.setPointOfServiceEntryMode_22("021");
         iso8583DTO.setPointOfServiceConditionMode_25("06");
-        iso8583DTO.setResponseCode_39("96");
+        iso8583DTO.setPointOfServicePINCaptureCode_26("06");
+        iso8583DTO.setAuthorizationIdentificationResponse_38("081426");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-        //iso8583DTO.setPINData_52(pINEncryption("111111", "094200000000"));
-        //iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
+        iso8583DTO.setPINData_52(pINEncryption("111111", "094200000000"));
+        iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
         //自定义域
         iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
-
+        iso8583DTO.setOriginalMessage_61("0000013427940619");
         //银行卡号
         String var2 = "6250942000000001";
         //银行卡 磁道2信息
         String var35 = "6250942000000001=49121213715950580001";
         //加密信息
         iso8583DTO.setProcessingCode_2(var2);
-        //iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
+        iso8583DTO.setTrack2Data_35(trkEncryption(var35, key_62));
         //扫码组包
         String isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, key);
         String sendMsg = "6000060000" + "601410190121" + isoMsg;
