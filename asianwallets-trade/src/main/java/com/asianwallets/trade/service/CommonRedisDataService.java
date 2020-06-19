@@ -136,12 +136,13 @@ public interface CommonRedisDataService {
     MerchantReport getMerchantReport(String merchantId, String channelCode);
 
     /**
-     * 签到方法
+     * 通化签到获取62域
      *
-     * @param institutionId
-     * @param terminalId
-     * @param merchantId
+     * @param institutionId 机构号
+     * @param terminalId    设备号
+     * @param merchantId    商户号
+     * @param channelCode   通道编号
      * @return
      */
-    String getThKey(String institutionId, String terminalId, String merchantId);
+    String getThKey(String institutionId, String terminalId, String merchantId, String channelCode);
 }

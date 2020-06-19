@@ -433,18 +433,19 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     }
 
     /**
-     * 获取62域
+     * 通化签到获取62域
      *
-     * @param institutionId
-     * @param terminalId
-     * @param merchantId
+     * @param institutionId 机构号
+     * @param terminalId    设备号
+     * @param merchantId    商户号
+     * @param channelCode   通道编号
      * @return
      */
     @Override
-    public String getThKey(String institutionId, String terminalId, String merchantId) {
+    public String getThKey(String institutionId, String terminalId, String merchantId, String channelCode) {
         log.info("++++++++++++++++++++++商户获取62域缓存信息开始++++++++++++++++++++++");
         String key = JSON.parseObject(redisService.get(AsianWalletConstant.Th_SIGN_CACHE_KEY.
-                concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId)), String.class);
+                concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode)), String.class);
         if (StringUtils.isEmpty(key)) {
             log.info("++++++++++++++++++++++商户获取62域缓存信息 缓存不存在 调用通华ThSign签到接口++++++++++++++++++++++");
             String timeStamp = System.currentTimeMillis() + "";
@@ -463,7 +464,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), ISO8583DTO.class);
             key = iso8583VO.getReservedPrivate_62();
             redisService.set(AsianWalletConstant.Th_SIGN_CACHE_KEY.
-                    concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId), key);
+                    concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode), key);
 
         }
         log.info("++++++++++++++++++++++商户获取62域缓存信息完成++++++++++++++++++++++");
