@@ -179,7 +179,7 @@
                ch.only_today_order_refund   as onlyTodayOrderRefund,
                ch.service_name_mark         as serviceNameMark,
                ch.channel_support_settle    as channelSupportSettle,
-               ch.extend1                   as imei,
+               ch.extend1,
                ch.extend2,
                ch.extend3,
                ch.extend4,
