@@ -737,7 +737,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             log.info("==================【UPI预授权】==================【预授权】iso8583VO:{}", JSONObject.toJSONString(iso8583VO));
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                preOrdersMapper.updatePreStatusById0(preOrders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), (byte) 1, null);
+                preOrdersMapper.updatePreStatusById0(preOrders.getId(), iso8583VO.getRetrievalReferenceNumber_37()+iso8583VO.getAuthorizationIdentificationResponse_38(), (byte) 1, null);
             } else {
                 log.info("==================【UPI预授权】==================【预授权失败】preOrders:{}", preOrders.getId());
                 baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());

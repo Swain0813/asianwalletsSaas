@@ -243,7 +243,7 @@ public class PreOrders extends BaseEntity {
     @Column(name = "remark1")
     private String remark1;
 
-    @ApiModelProperty(value = "38域授权码")
+    @ApiModelProperty(value = "remark2")
     @Column(name = "remark2")
     private String remark2;
 
