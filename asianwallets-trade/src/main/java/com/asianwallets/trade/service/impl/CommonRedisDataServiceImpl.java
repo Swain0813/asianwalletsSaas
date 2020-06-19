@@ -429,6 +429,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             redisService.set(AsianWalletConstant.MERCHANT_REPORT_CACHE_KEY.concat("_").concat(merchantId).concat("_").concat(channelCode), JSON.toJSONString(merchantReport));
         }
         log.info("==================【根据商户编号和通道编号获取商户报备信息】==================【商户报备信息】 account: {}", JSON.toJSONString(merchantReport));
+
         return merchantReport;
     }
 
@@ -463,6 +464,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             BaseResponse baseResponse = thService.thSign(iso8583DTO);
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), ISO8583DTO.class);
             key = iso8583VO.getReservedPrivate_62();
+            log.info("++++++++++++++++++++++商户获取62域缓存信息++++++++++++++++++++++ iso8583VO:{}", JSON.toJSONString(iso8583VO));
             redisService.set(AsianWalletConstant.Th_SIGN_CACHE_KEY.
                     concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode), key);
 
