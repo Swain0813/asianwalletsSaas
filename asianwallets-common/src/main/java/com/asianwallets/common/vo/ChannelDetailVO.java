@@ -208,4 +208,7 @@ public class ChannelDetailVO {
 
     @ApiModelProperty(value = "交易密码")
     private String tradePwd;
+
+    @ApiModelProperty(value = "是否通道结算")
+    private Boolean channelSupportSettle;
 }

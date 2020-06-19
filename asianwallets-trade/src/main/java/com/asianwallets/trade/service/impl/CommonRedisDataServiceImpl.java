@@ -2,17 +2,20 @@ package com.asianwallets.trade.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
+import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
-import com.asianwallets.trade.channels.th.ThService;
+import com.asianwallets.trade.channels.th.impl.ThServiceImpl;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -69,7 +72,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     private MerchantReportMapper merchantReportMapper;
 
     @Autowired
-    private ThService thService;
+    private ThServiceImpl thService;
 
     /**
      * 根据币种编码获取币种信息
@@ -409,12 +412,13 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
 
     /**
      * 根据商户编号以及通道编号获取商户报备信息
+     *
      * @param merchantId
      * @param channelCode
      * @return
      */
     @Override
-    public MerchantReport getMerchantReport(String merchantId,String channelCode) {
+    public MerchantReport getMerchantReport(String merchantId, String channelCode) {
         MerchantReport merchantReport = JSON.parseObject(redisService.get(AsianWalletConstant.MERCHANT_REPORT_CACHE_KEY.concat("_").concat(merchantId).concat("_").concat(channelCode)), MerchantReport.class);
         if (merchantReport == null) {
             merchantReport = merchantReportMapper.selectByChannelCodeAndMerchantId(merchantId, channelCode);
@@ -429,7 +433,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     }
 
     /**
-     * 签到方法
+     * 获取62域
      *
      * @param institutionId
      * @param terminalId
@@ -438,6 +442,31 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
      */
     @Override
     public String getThKey(String institutionId, String terminalId, String merchantId) {
-        return null;
+        log.info("++++++++++++++++++++++商户获取62域缓存信息开始++++++++++++++++++++++");
+        String key = JSON.parseObject(redisService.get(AsianWalletConstant.Th_SIGN_CACHE_KEY.
+                concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId)), String.class);
+        if (StringUtils.isEmpty(key)) {
+            log.info("++++++++++++++++++++++商户获取62域缓存信息 缓存不存在 调用通华ThSign签到接口++++++++++++++++++++++");
+            String timeStamp = System.currentTimeMillis() + "";
+            ISO8583DTO iso8583DTO = new ISO8583DTO();
+            iso8583DTO.setMessageType("0800");
+            iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(6, 12));
+            //机构号
+            iso8583DTO.setAcquiringInstitutionIdentificationCode_32(institutionId);
+            //终端号
+            iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
+            //商户号
+            iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
+            iso8583DTO.setReservedPrivate_60("50" + timeStamp.substring(6, 12) + "003");
+            iso8583DTO.setReservedPrivate_63("001");
+            BaseResponse baseResponse = thService.thSign(iso8583DTO);
+            ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), ISO8583DTO.class);
+            key = iso8583VO.getReservedPrivate_62();
+            redisService.set(AsianWalletConstant.Th_SIGN_CACHE_KEY.
+                    concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId), key);
+
+        }
+        log.info("++++++++++++++++++++++商户获取62域缓存信息完成++++++++++++++++++++++");
+        return key;
     }
 }

@@ -433,8 +433,9 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
 
     @Override
     public BaseResponse thSign(ISO8583DTO iso8583DTO) {
-        log.info("---------");
+        log.info("++++++++++++++++++++通化签到开始++++++++++++++++++++");
         BaseResponse baseResponse = channelsFeign.thSign(iso8583DTO);
+        log.info("++++++++++++++++++++通化签到结束++++++++++++++++++++");
         return baseResponse;
     }
 

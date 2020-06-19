@@ -113,6 +113,10 @@ public class AsianWalletConstant {
     // merchantReportCacheKey_M202003024032_999120127946039296
     public static final String MERCHANT_REPORT_CACHE_KEY = "merchantReportCacheKey";//机构表的缓存key
 
+    /************************通化签到62域缓存*************************/
+    // Th_SIGN_CACHE_KEY_机构号_商户号_设备号
+    public static final String Th_SIGN_CACHE_KEY = "ThSIGNCacheKey";//机构表的缓存key
+
     //清结算接口url的key值
     public static final String CSAPI_MD5KEY = "CSAPI_MD5key";//MD5 key
 
