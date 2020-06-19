@@ -41,16 +41,14 @@ public class Demo {
 
     private static void test1() throws Exception {
         ISO8583DTO iso8583DTO = new ISO8583DTO();
-        iso8583DTO.setMessageType("0200");
-        iso8583DTO.setProcessingCode_3("200000");
+        iso8583DTO.setMessageType("0100");
+        iso8583DTO.setProcessingCode_3("030000");
         iso8583DTO.setAmountOfTransactions_4("000000000100");
         iso8583DTO.setSystemTraceAuditNumber_11(IDS.getRandomInt(6));
         iso8583DTO.setDateOfExpired_14("4912");
-        iso8583DTO.setPointOfServiceEntryMode_22("012");
+        iso8583DTO.setPointOfServiceEntryMode_22("021");
         iso8583DTO.setPointOfServiceConditionMode_25("06");
         iso8583DTO.setPointOfServicePINCaptureCode_26("06");
-        iso8583DTO.setRetrievalReferenceNumber_37("017111632438");
-        iso8583DTO.setAuthorizationIdentificationResponse_38("081432");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
         //受卡方标识码 (商户号)
@@ -60,7 +58,6 @@ public class Demo {
         iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
         //自定义域
         iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
-        iso8583DTO.setOriginalMessage_61("0000016001160619");
 
         //银行卡号
         String var2 = "6250942000000001";
