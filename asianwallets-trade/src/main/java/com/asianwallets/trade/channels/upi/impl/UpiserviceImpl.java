@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.upi.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -18,7 +17,6 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.AESUtil;
 import com.asianwallets.common.utils.DateToolUtils;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.upi.Upiservice;
 import com.asianwallets.trade.config.AD3ParamsConfig;
@@ -28,6 +26,7 @@ import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
+import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.utils.HandlerType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
@@ -74,16 +72,13 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     private RabbitMQSender rabbitMQSender;
 
     @Autowired
-    private ClearingService clearingService;
-
-    @Autowired
     private OrderRefundMapper orderRefundMapper;
 
     @Autowired
-    private ReconciliationMapper reconciliationMapper;
+    private PreOrdersMapper preOrdersMapper;
 
     @Autowired
-    private PreOrdersMapper preOrdersMapper;
+    private CommonService commonService;
 
     /**
      * 银联主扫接口
@@ -181,14 +176,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                     if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
                         rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                    //上报清结算资金变动接口
-                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                        log.info("=================【UPI线下BSC】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                    }
+                    //更新成功,上报清结算
+                    commonService.fundChangePlaceOrderSuccess(orders);
                 } catch (Exception e) {
                     log.error("=================【UPI线下BSC】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
@@ -285,14 +274,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                     if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
                         rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                    //上报清结算资金变动接口
-                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                        log.info("=================【UPI银行卡下单】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                    }
+                    //更新成功,上报清结算
+                    commonService.fundChangePlaceOrderSuccess(orders);
                 } catch (Exception e) {
                     log.error("=================【UPI银行卡下单】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
@@ -366,9 +349,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     private UpiDTO createReversalDTO(OrderRefund orderRefund, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
-        String domain11 = orderRefund.getReportNumber().substring(0, 6);
-        String domain60_2 = orderRefund.getReportNumber().substring(6, 12);
-
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0400");
         iso8583DTO.setProcessingCode_3("190000");
@@ -559,27 +539,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 //退款失败
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                String type1 = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                String reconciliationRemark = type1.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type1, orderRefund, reconciliationRemark);
-                reconciliationMapper.insert(reconciliation);
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                log.info("=========================【UPI退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type1, JSON.toJSONString(fundChangeDTO));
-                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                    //调账成功
-                    log.info("=================【TH银行退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, vo.getResponseCode_39());
-                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
-                    //改原订单状态
-                    commonBusinessService.updateOrderRefundFail(orderRefund);
-                } else {
-                    //调账失败
-                    log.info("=================【TH银行退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                    log.info("=================【TH银行退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
-                }
+                //退款失败调用清结算
+                commonService.orderRefundFailFundChange(orderRefund,channel);
             }
         } else {
             //请求失败
@@ -976,14 +937,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                         if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
                             rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                         }
-                        FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                        //上报清结算资金变动接口
-                        BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                        if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                            log.info("=================【UPI预授权完成】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                        }
+                        //更新成功,上报清结算
+                        commonService.fundChangePlaceOrderSuccess(orders);
                     } catch (Exception e) {
                         log.error("=================【UPI预授权完成】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                         RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
@@ -1066,27 +1021,9 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 //退款失败
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                String type1 = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                String reconciliationRemark = type1.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type1, orderRefund, reconciliationRemark);
-                reconciliationMapper.insert(reconciliation);
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                log.info("=========================【UPI银行卡预授权完成撤销】======================= 【调账 {}】， fundChangeDTO:【{}】", type1, JSON.toJSONString(fundChangeDTO));
-                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                    //调账成功
-                    log.info("=================【UPI银行卡预授权完成撤销】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, vo.getResponseCode_39());
-                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
-                    //改原订单状态
-                    commonBusinessService.updateOrderRefundFail(orderRefund);
-                } else {
-                    //调账失败
-                    log.info("=================【UPI银行卡预授权完成撤销】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                    log.info("=================【UPI银行卡预授权完成撤销】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
-                }
+                log.info("==================【UPI银行卡预授权完成撤销】=================退款失败: {}", JSON.toJSONString(orderRefund));
+                //退款失败调用清结算
+                commonService.orderRefundFailFundChange(orderRefund,channel);
             }
         }else{
             //请求失败
@@ -1224,27 +1161,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=================【UPI退款】=================【退款失败】  Order: {} ", orderRefund.getOrderId());
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                String type1 = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                String reconciliationRemark = type1.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type1, orderRefund, reconciliationRemark);
-                reconciliationMapper.insert(reconciliation);
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                log.info("=========================【UPI退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type1, JSON.toJSONString(fundChangeDTO));
-                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                    //调账成功
-                    log.info("=================【UPI退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
-                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
-                    //改原订单状态
-                    commonBusinessService.updateOrderRefundFail(orderRefund);
-                } else {
-                    //调账失败
-                    log.info("=================【UPI退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                    log.info("=================【UPI退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
-                }
+                //退款失败调用清结算
+                commonService.orderRefundFailFundChange(orderRefund,channel);
             } else if ("0".equals(jsonObject.getString("refund_result")) || "0".equals(jsonObject.getString("pay_result"))) {
                 //退款未处理或撤销情况未知
                 log.info("=================【UPI退款】=================【退款未处理或撤销情况未知】  Order: {} ", orderRefund.getOrderId());
@@ -1537,14 +1455,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                     if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
                         rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                    //上报清结算资金变动接口
-                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                        log.info("=================【upi回调】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                    }
+                    //更新成功,上报清结算
+                    commonService.fundChangePlaceOrderSuccess(orders);
                 } catch (Exception e) {
                     log.error("=================【upi回调】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));

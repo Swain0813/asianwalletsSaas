@@ -8,14 +8,13 @@ import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.megapay.MegaPayQueryDTO;
 import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
-import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
+import com.asianwallets.trade.service.CommonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +45,13 @@ public class MegaPayQueryMQReceive {
     private ChannelsOrderMapper channelsOrderMapper;
 
     @Autowired
-    private ClearingService clearingService;
-
-    @Autowired
     private RabbitMQSender rabbitMQSender;
 
     @Autowired
     private ChannelsFeign channelsFeign;
+
+    @Autowired
+    private CommonService commonService;
 
 
     @RabbitListener(queues = "MQ_MEGAPAY_THB_CHECK_ORDER")
@@ -133,21 +132,7 @@ public class MegaPayQueryMQReceive {
                             rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                         }
                         //更新成功,上报清结算
-                        //上报清结算资金变动接口
-                        FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                        BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                        if (fundChangeResponse.getCode() != null && TradeConstant.HTTP_SUCCESS.equals(fundChangeResponse.getCode())) {
-                            if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                                //业务处理失败
-                                log.info("==============【MegaPay-THB查询队列1】============== 【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                                RabbitMassage massage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                                rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(massage));
-                            }
-                        } else {
-                            log.info("==============【MegaPay-THB查询队列1】============== 【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                            RabbitMassage massage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                            rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(massage));
-                        }
+                        commonService.fundChangePlaceOrderSuccess(orders);
                     } catch (Exception e) {
                         log.error("==============【MegaPay-THB查询队列1】============== 【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                         RabbitMassage massage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));

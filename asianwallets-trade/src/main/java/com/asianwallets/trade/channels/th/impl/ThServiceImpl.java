@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.th.impl;
-
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
@@ -13,19 +12,17 @@ import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.AESUtil;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.th.ThService;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
-import com.asianwallets.trade.dao.ReconciliationMapper;
 import com.asianwallets.trade.dto.ThCheckOrderQueueDTO;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
-import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
+import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.utils.HandlerType;
 import com.payneteasy.tlv.BerTag;
 import com.payneteasy.tlv.BerTlvBuilder;
@@ -36,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -86,22 +82,13 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     public CommonRedisDataService commonRedisDataService;
 
     /**
-     * The Reconciliation mapper.
-     */
-    @Autowired
-    public ReconciliationMapper reconciliationMapper;
-
-    /**
-     * The Clearing service.
-     */
-    @Autowired
-    public ClearingService clearingService;
-
-    /**
      * The Orders mapper.
      */
     @Autowired
     public OrdersMapper ordersMapper;
+
+    @Autowired
+    private CommonService commonService;
 
     /**
      * 插入通道订单
@@ -168,11 +155,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
         //受理方标识码 (机构号)
-        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2());
-        //受卡机终端标识码 (设备号)
-        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
-        //受卡方标识码 (商户号)
-        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getChannelMerchantId());
+        setFiled41And42(orders.getMerchantId(), orders.getChannelCode(), iso8583DTO);
         //交易货币代码
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
         //自定义域
@@ -196,7 +180,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setProcessingCode_3("700200");
         iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52("303002" + channel.getPayCode() + "0202"));
         log.info("==================【通华线下CSB】==================【调用Channels服务】【请求参数】 iso8583DTO: {}", JSON.toJSONString(iso8583DTO));
-        BaseResponse channelResponse = channelsFeign.thCSB(new ThDTO(iso8583DTO, channel));
+        BaseResponse channelResponse = channelsFeign.thCSB(new ThDTO(iso8583DTO, channel, orders.getMerchantId()));
         log.info("==================【通华线下CSB】==================【调用Channels服务】【通华-CSB接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             log.info("==================【通华线下CSB】==================【调用Channels服务】【通华-CSB接口】-【请求状态码异常】");
@@ -238,7 +222,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setProcessingCode_3("400101");
         iso8583DTO.setAdditionalData_46(TlvUtil.tlv5f52("303002" + channel.getPayCode() + "02" + NumberStringUtil.str2HexStr(authCode) + "0202"));
         log.info("==================【通华线下BSC】==================【调用Channels服务】【请求参数】 iso8583DTO: {}", JSON.toJSONString(iso8583DTO));
-        BaseResponse channelResponse = channelsFeign.thBSC(new ThDTO(iso8583DTO, channel));
+        BaseResponse channelResponse = channelsFeign.thBSC(new ThDTO(iso8583DTO, channel, orders.getMerchantId()));
         log.info("==================【通华线下BSC】==================【调用Channels服务】【通华-BSC接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             log.info("==================【通华线下BSC】==================【调用Channels服务】【通华-BSC接口】-【接口异常】");
@@ -298,14 +282,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                     if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
                         rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                    //上报清结算资金变动接口
-                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                        log.info("=================【通华线下BSC】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                    }
+                    //更新成功,上报清结算
+                    commonService.fundChangePlaceOrderSuccess(orders);
                 } catch (Exception e) {
                     log.error("=================【通华线下BSC】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
@@ -347,6 +325,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ISO8583DTO iso8583DTO = this.createRefundISO8583DTO(channel, orderRefund);
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
+        thDTO.setMerchantId(orderRefund.getMerchantId());
         log.info("=================【TH退款】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thRefund(thDTO);
         log.info("=================【TH退款】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
@@ -369,27 +348,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=================【TH退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                String reconciliationRemark = type.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
-                reconciliationMapper.insert(reconciliation);
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                log.info("=========================【TH退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
-                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                    //调账成功
-                    log.info("=================【TH退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, thResDTO.getResponseCode_39());
-                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
-                    //改原订单状态
-                    commonBusinessService.updateOrderRefundFail(orderRefund);
-                } else {
-                    //调账失败
-                    log.info("=================【TH退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                    log.info("=================【TH退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
-                }
+                //退款失败调用清结算
+                commonService.orderRefundFailFundChange(orderRefund,channel);
             }
         } else {
             //请求失败
@@ -422,7 +382,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ISO8583DTO iso8583DTO = this.createQueryISO8583DTO(channel, orderRefund);
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
-
+        thDTO.setMerchantId(orderRefund.getMerchantId());
         log.info("=================【TH撤销 cancel】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thQuery(thDTO);
         log.info("=================【TH撤销 cancel】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
@@ -486,6 +446,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ISO8583DTO iso8583DTO = this.createRefundISO8583DTO(channel, orderRefund);
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
+        thDTO.setMerchantId(orderRefund.getMerchantId());
         log.info("=================【TH撤销 cancelPaying】=================【请求Channels服务TH退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thRefund(thDTO);
         log.info("=================【TH撤销 cancelPaying】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
@@ -561,9 +522,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setSystemTraceAuditNumber_11(String.valueOf(System.currentTimeMillis()).substring(6, 12));
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
-        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
-        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());//受卡方标识码
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getChannelMerchantId()); //机构号
+        setFiled41And42(orderRefund.getMerchantId(), channel.getChannelCode(), iso8583DTO);
         String s46 = "3030020202" + NumberStringUtil.str2HexStr(orderRefund.getChannelNumber()) + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
         //这里的Tag要用16进制,Length是自动算出来的,最后是要存的数据
@@ -598,9 +558,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setPointOfServiceEntryMode_22("030");
         //服务点条件码
         iso8583DTO.setPointOfServiceConditionMode_25("00");
-        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getExtend2()); //机构号
-        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());      //卡机终端标识码
-        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());          //受卡方标识码
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getChannelMerchantId()); //机构号
+        setFiled41And42(orderRefund.getMerchantId(), channel.getChannelCode(), iso8583DTO);
         //附加信息
         String s46 = "3030020202" + NumberStringUtil.str2HexStr(orderRefund.getChannelNumber()) + "0202";
         BerTlvBuilder berTlvBuilder = new BerTlvBuilder();
@@ -756,7 +715,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //创建通华DTO
         ISO8583DTO iso8583DTO = createBankOrder(orders, channel);
         log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【请求参数】 iso8583DTO: {}", JSON.toJSONString(iso8583DTO));
-        BaseResponse channelResponse = channelsFeign.thBankCard(new ThDTO(iso8583DTO, channel));
+        BaseResponse channelResponse = channelsFeign.thBankCard(new ThDTO(iso8583DTO, channel, orders.getMerchantId()));
         log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【通华线下银行卡下单接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             log.info("==================【通华线下银行卡下单】==================【调用Channels服务】【通华线下银行卡下单接口】-【请求状态码异常】");
@@ -808,14 +767,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                     if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
                         rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
                     }
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(orders, TradeConstant.NT);
-                    //上报清结算资金变动接口
-                    BaseResponse fundChangeResponse = clearingService.fundChange(fundChangeDTO);
-                    if (fundChangeResponse.getCode().equals(TradeConstant.CLEARING_FAIL)) {
-                        log.info("=================【通华线下银行卡下单】=================【上报清结算失败,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】");
-                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
-                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
-                    }
+                    //更新成功,上报清结算
+                    commonService.fundChangePlaceOrderSuccess(orders);
                 } catch (Exception e) {
                     log.error("=================【通华线下银行卡下单】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
                     RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
@@ -928,6 +881,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         ISO8583DTO iso8583DTO = this.createReversalDTO(channel, orderRefund);
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(iso8583DTO);
+        thDTO.setMerchantId(orderRefund.getMerchantId());
         log.info("=================【TH冲正 reversal】=================【请求Channels服务TH冲正】请求参数 iso8583DTO: {} ", JSON.toJSONString(iso8583DTO));
         BaseResponse response = channelsFeign.thBankCardReverse(thDTO);
         log.info("=================【TH冲正 reversal】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
@@ -1056,6 +1010,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         }
         thDTO.setChannel(channel);
         thDTO.setIso8583DTO(dto);
+        thDTO.setMerchantId(orderRefund.getMerchantId());
         log.info("=================【TH银行退款】=================【请求Channels服务TH银行退款】请求参数 iso8583DTO: {} ", JSON.toJSONString(dto));
         BaseResponse response = channelsFeign.thBankCardRefund(thDTO);
         log.info("=================【TH银行退款】=================【Channels服务响应】 response: {} ", JSON.toJSONString(response));
@@ -1079,27 +1034,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=================【TH银行退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                String reconciliationRemark = type.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
-                reconciliationMapper.insert(reconciliation);
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                log.info("=========================【TH银行退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
-                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                    //调账成功
-                    log.info("=================【TH银行退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, vo.getResponseCode_39());
-                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
-                    //改原订单状态
-                    commonBusinessService.updateOrderRefundFail(orderRefund);
-                } else {
-                    //调账失败
-                    log.info("=================【TH银行退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                    log.info("=================【TH银行退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
-                }
+                //退款失败调用清结算
+                commonService.orderRefundFailFundChange(orderRefund,channel);
             }
         } else {
             //请求失败

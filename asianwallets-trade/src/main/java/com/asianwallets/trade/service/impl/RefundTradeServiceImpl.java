@@ -1,5 +1,4 @@
 package com.asianwallets.trade.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.config.AuditorProvider;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -29,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -369,25 +367,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //线下订单不支持退款上面已经拒绝 若是线上订单，通道不支持退款走人工退款
             if (!channel.getSupportRefundState()) {
                 log.info("=========================【退款 refundOrder】========================= 【通道不支持退款 人工退款】");
-                orderRefund.setRefundMode(TradeConstant.REFUND_MODE_PERSON);
-                orderRefundMapper.insert(orderRefund);
-                //上报清结算
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(type, orderRefund);
-                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {//请求成功
-                    orderRefund.setRemark("人工退款上报清结算成功");
-                    orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);
-                    //退款中
-                    baseResponse.setCode(EResultEnum.REFUNDING.getCode());
-                } else {//请求失败
-                    orderRefund.setRemark("人工退款上报清结算失败");
-                    orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
-                    //退款失败
-                    baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
-                }
-                //人工退款上报清结算成功或者失败更新退款单表
-                orderRefundMapper.updaterefundOrder(orderRefund.getId(), orderRefund.getRefundStatus(), orderRefund.getRemark());
-                return baseResponse;
+                this.ArtificialRefundFundChange(baseResponse,orderRefund,channel,type);
             }
             /********************************************************* 通道支持支持退款 *************************************************************/
             log.info("=========================【退款 refundOrder】========================= 【通道支持支持退款】");
@@ -417,6 +397,42 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     }
 
     /**
+     * 人工退款上报清结算
+     * @param baseResponse
+     * @param orderRefund
+     * @param channel
+     * @param type
+     * @return
+     */
+    private BaseResponse ArtificialRefundFundChange(BaseResponse baseResponse,OrderRefund orderRefund,Channel channel,String type){
+        orderRefund.setRefundMode(TradeConstant.REFUND_MODE_PERSON);
+        orderRefundMapper.insert(orderRefund);
+        if(!channel.getChannelSupportSettle()){
+            //上报清结算
+            FundChangeDTO fundChangeDTO = new FundChangeDTO(type, orderRefund);
+            BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+            if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                orderRefund.setRemark("人工退款上报清结算成功");
+                orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);
+                //退款中
+                baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+            } else {//请求失败
+                orderRefund.setRemark("人工退款上报清结算失败");
+                orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
+                //退款失败
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
+            }
+        }else {
+            orderRefund.setRemark("人工退款通道结算");
+            orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+        }
+        //人工退款上报清结算成功或者失败更新退款单表
+        orderRefundMapper.updaterefundOrder(orderRefund.getId(), orderRefund.getRefundStatus(), orderRefund.getRemark());
+        return baseResponse;
+    }
+
+    /**
      * @return
      * @Author YangXu
      * @Date 2019/3/14
@@ -426,17 +442,19 @@ public class RefundTradeServiceImpl implements RefundTradeService {
     public BaseResponse doRefundOrder(OrderRefund orderRefund, Channel channel) {
         BaseResponse baseResponse = new BaseResponse();
         log.info("=========================【退款 doRefundOrder】======================= 【doRefundOrder】 orderRefund:【{}】", JSON.toJSONString(orderRefund));
-        FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
-        log.info("=========================【退款 doRefundOrder】======================= 【上报清结算 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
-        BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-        log.info("=========================【退款 doRefundOrder】======================= 【清结算 {} 返回】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
-        if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-            log.info("=========================【退款 doRefundOrder】======================= 【清结算 {} 上报失败】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
-            RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
-            log.info("=========================【退款 doRefundOrder】=========================【上报队列 RV_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
-            rabbitMQSender.send(AD3MQConstant.RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
-            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
-            return baseResponse;
+        if(!channel.getChannelSupportSettle()){
+            FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
+            log.info("=========================【退款 doRefundOrder】======================= 【上报清结算 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
+            BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+            log.info("=========================【退款 doRefundOrder】======================= 【清结算 {} 返回】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+            if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                log.info("=========================【退款 doRefundOrder】======================= 【清结算 {} 上报失败】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+                RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                log.info("=========================【退款 doRefundOrder】=========================【上报队列 RV_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
+                rabbitMQSender.send(AD3MQConstant.RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+                return baseResponse;
+            }
         }
         ChannelsAbstract channelsAbstract = null;
         try {
@@ -466,27 +484,36 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //改原订单状态
             commonBusinessService.updateOrderRefundSuccess(orderRefund);
         } else {
-            //审核不通过
-            //退款失败
-            Reconciliation reconciliation = commonBusinessService.createReconciliation(orderRefund.getRemark4(), orderRefund, remark);
-            reconciliationMapper.insert(reconciliation);
-            FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-            log.info("=========================【人工退款】======================= 【调账 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
-            BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-            if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                //调账成功
-                log.info("=================【人工退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+            //审核不通过 即退款失败
+            //获取通道信息
+            Channel channel = commonRedisDataService.getChannelByChannelCode(orderRefund.getChannelCode());
+            if(!channel.getChannelSupportSettle()){
+                Reconciliation reconciliation = commonBusinessService.createReconciliation(orderRefund.getRemark4(), orderRefund, remark);
+                reconciliationMapper.insert(reconciliation);
+                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
+                log.info("=========================【人工退款】======================= 【调账 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
+                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                    //调账成功
+                    log.info("=================【人工退款】=================【调账成功】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, remark);
+                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
+                    //改原订单状态
+                    commonBusinessService.updateOrderRefundFail(orderRefund);
+                } else {
+                    //调账失败
+                    log.info("=================【人工退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
+                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
+                    log.info("=================【人工退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
+                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
+                }
+            }else {
+                //更新退款订单
                 orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, remark);
-                reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
                 //改原订单状态
                 commonBusinessService.updateOrderRefundFail(orderRefund);
-            } else {
-                //调账失败
-                log.info("=================【人工退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                log.info("=================【人工退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
             }
+
         }
         return baseResponse;
     }
@@ -830,27 +857,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //线下订单不支持退款上面已经拒绝 若是线上订单，通道不支持退款走人工退款
             if (!channel.getSupportRefundState()) {
                 log.info("=========================【银行卡退款 refundOrder】========================= 【通道不支持退款 人工退款】");
-                orderRefund.setRefundMode(TradeConstant.REFUND_MODE_PERSON);
-                orderRefundMapper.insert(orderRefund);
-                //上报清结算
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(type, orderRefund);
-                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                    //请求成功
-                    orderRefund.setRemark("银行卡退款接口----人工退款上报清结算成功");
-                    orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);
-                    //退款中
-                    baseResponse.setCode(EResultEnum.REFUNDING.getCode());
-                } else {
-                    //请求失败
-                    orderRefund.setRemark("银行卡退款接口----人工退款上报清结算失败");
-                    orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
-                    //退款失败
-                    baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
-                }
-                //人工退款上报清结算成功或者失败更新退款单表
-                orderRefundMapper.updaterefundOrder(orderRefund.getId(), orderRefund.getRefundStatus(), orderRefund.getRemark());
-                return baseResponse;
+                this.ArtificialRefundFundChange(baseResponse,orderRefund,channel,type);
             }
             /********************************************************* 通道支持支持退款 *************************************************************/
             log.info("=========================【银行卡退款 refundOrder】========================= 【通道支持支持退款】");
@@ -858,17 +865,20 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             orderRefundMapper.insert(orderRefund);
             //获取原订单的refCode字段(NextPos用)
             orderRefund.setSign(oldOrder.getSign());
-            FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
-            log.info("=========================【银行卡退款 doRefundOrder】======================= 【上报清结算 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
-            BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-            log.info("=========================【银行卡退款 doRefundOrder】======================= 【清结算 {} 返回】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
-            if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                log.info("=========================【银行卡退款 doRefundOrder】======================= 【清结算 {} 上报失败】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
-                RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
-                log.info("=========================【银行卡退款 doRefundOrder】=========================【上报队列 RV_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
-                rabbitMQSender.send(AD3MQConstant.BANK_RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
-                baseResponse.setCode(EResultEnum.REFUNDING.getCode());
-                return baseResponse;
+            //通道不结算就上报清结算
+            if(!channel.getChannelSupportSettle()){
+                FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
+                log.info("=========================【银行卡退款 doRefundOrder】======================= 【上报清结算 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
+                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+                log.info("=========================【银行卡退款 doRefundOrder】======================= 【清结算 {} 返回】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+                if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                    log.info("=========================【银行卡退款 doRefundOrder】======================= 【清结算 {} 上报失败】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                    log.info("=========================【银行卡退款 doRefundOrder】=========================【上报队列 RV_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
+                    rabbitMQSender.send(AD3MQConstant.BANK_RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                    baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+                    return baseResponse;
+                }
             }
             ChannelsAbstract channelsAbstract = null;
             try {
@@ -894,18 +904,18 @@ public class RefundTradeServiceImpl implements RefundTradeService {
 
     /**
      * 预授权冲正接口
-     *
+     *预授权撤销接口
      * @param bankCardUndoDTO
      * @param reqIp
      * @return
      */
     @Override
-    public BaseResponse preAuthReverse(BankCardUndoDTO bankCardUndoDTO, String reqIp) {
+    public BaseResponse preAuthReverseAndRevoke(BankCardUndoDTO bankCardUndoDTO, String reqIp) {
         BaseResponse baseResponse = new BaseResponse();
-        log.info("**********预授权冲正接口的输入参数*********************", JSON.toJSONString(bankCardUndoDTO));
+        log.info("**********预授权冲正 预授权撤销接口 接口的输入参数*********************", JSON.toJSONString(bankCardUndoDTO));
         //签名校验
         if (!commonBusinessService.checkUniversalSign(bankCardUndoDTO)) {
-            log.info("=========================【预授权冲正接口】=========================【签名错误】");
+            log.info("=========================【预授权冲正 预授权撤销接口】=========================【签名错误】");
             throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
         }
         //检查商户编号
@@ -913,21 +923,21 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         //校验商户绑定设备
         DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getImei());
         if (deviceBinding == null) {
-            log.info("**************预授权冲正接口 设备编号不合法******************merchantId:{},imei:{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getImei());
+            log.info("**************预授权冲正接口 预授权撤销接口 设备编号不合法******************merchantId:{},imei:{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getImei());
             //设备编号不合法
             throw new BusinessException(EResultEnum.DEVICE_CODE_INVALID.getCode());
         }
         String username = bankCardUndoDTO.getOperatorId().concat(bankCardUndoDTO.getMerchantId());
         SysUser sysUser = sysUserMapper.selectByUsername(username);
         if (sysUser == null) {
-            log.info("===========预授权冲正接口 设备操作员不合法==========【操作员ID不存在】***********merchantId:{},operatorId{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getOperatorId());
+            log.info("===========预授权冲正接口 预授权撤销接口 设备操作员不合法==========【操作员ID不存在】***********merchantId:{},operatorId{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getOperatorId());
             throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
         }
         //根据商户订单号获取预授权订单信息
         PreOrders preOrders = preOrdersMapper.selectMerchantOrderId(bankCardUndoDTO.getOrderNo());
         //预授权订单信息不存在的场合
         if (preOrders == null) {
-            log.info("**************** 预授权冲正接口 订单信息不存在**************** preOrders : {}", JSON.toJSON(bankCardUndoDTO));
+            log.info("**************** 预授权冲正接口 预授权撤销接口 订单信息不存在**************** preOrders : {}", JSON.toJSON(bankCardUndoDTO));
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
         if (preOrders.getOrderStatus() == 1) {
@@ -956,57 +966,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //返回结果
             baseResponse = channelsAbstract.preAuthRevoke(channel, preOrders, null);
         }
-        return baseResponse;
-    }
-
-    /**
-     * 预授权撤销接口
-     *
-     * @param bankCardUndoDTO
-     * @param reqIp
-     * @return
-     */
-    @Override
-    public BaseResponse preAuthRevoke(BankCardUndoDTO bankCardUndoDTO, String reqIp) {
-        log.info("**********预授权撤销接口接口的输入参数*********************", JSON.toJSONString(bankCardUndoDTO));
-        //签名校验
-        if (!commonBusinessService.checkUniversalSign(bankCardUndoDTO)) {
-            log.info("=========================【预授权撤销接口】=========================【签名错误】");
-            throw new BusinessException(EResultEnum.SIGNATURE_ERROR.getCode());
-        }
-        //检查商户编号
-        commonRedisDataService.getMerchantById(bankCardUndoDTO.getMerchantId());
-        //校验商户绑定设备
-        DeviceBinding deviceBinding = deviceBindingMapper.selectByMerchantIdAndImei(bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getImei());
-        if (deviceBinding == null) {
-            log.info("**************预授权撤销接口 设备编号不合法******************merchantId:{},imei:{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getImei());
-            //设备编号不合法
-            throw new BusinessException(EResultEnum.DEVICE_CODE_INVALID.getCode());
-        }
-        String username = bankCardUndoDTO.getOperatorId().concat(bankCardUndoDTO.getMerchantId());
-        SysUser sysUser = sysUserMapper.selectByUsername(username);
-        if (sysUser == null) {
-            log.info("===========预授权撤销接口 设备操作员不合法==========【操作员ID不存在】***********merchantId:{},operatorId{}", bankCardUndoDTO.getMerchantId(), bankCardUndoDTO.getOperatorId());
-            throw new BusinessException(EResultEnum.USER_NOT_EXIST.getCode());
-        }
-        //根据商户订单号获取预授权订单信息
-        PreOrders preOrders = preOrdersMapper.selectMerchantOrderId(bankCardUndoDTO.getOrderNo());
-        //预授权订单不存在的场合
-        if (preOrders == null) {
-            log.info("**************** 预授权撤销接口 订单信息不存在**************** preOrders : {}", JSON.toJSON(bankCardUndoDTO));
-            throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
-        }
-        //调用预授权撤销接口
-        ChannelsAbstract channelsAbstract = null;
-        Channel channel = commonRedisDataService.getChannelByChannelCode(preOrders.getChannelCode());
-        try {
-            log.info("=========================【预授权撤销接口】========================= Channel ServiceName:【{}】", channel.getServiceNameMark());
-            channelsAbstract = handlerContext.getInstance(channel.getServiceNameMark().split("_")[0]);
-        } catch (Exception e) {
-            log.info("=========================【预授权撤销接口】========================= Exception:【{}】", e);
-        }
-        //返回结果
-        BaseResponse baseResponse = channelsAbstract.preAuthRevoke(channel, preOrders, null);
         return baseResponse;
     }
 
@@ -1201,27 +1160,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             //线下订单不支持退款上面已经拒绝 若是线上订单，通道不支持退款走人工退款
             if (!channel.getSupportRefundState()) {
                 log.info("=========================【预授权完成撤销接口 refundOrder】========================= 【通道不支持退款 人工退款】");
-                orderRefund.setRefundMode(TradeConstant.REFUND_MODE_PERSON);
-                orderRefundMapper.insert(orderRefund);
-                //上报清结算
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(type, orderRefund);
-                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                    //请求成功
-                    orderRefund.setRemark("预授权完成撤销接口----人工退款上报清结算成功");
-                    orderRefund.setRefundStatus(TradeConstant.REFUND_WAIT);
-                    //退款中
-                    baseResponse.setCode(EResultEnum.REFUNDING.getCode());
-                } else {
-                    //请求失败
-                    orderRefund.setRemark("预授权完成撤销接口----人工退款上报清结算失败");
-                    orderRefund.setRefundStatus(TradeConstant.REFUND_SYS_FALID);
-                    //退款失败
-                    baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
-                }
-                //人工退款上报清结算成功或者失败更新退款单表
-                orderRefundMapper.updaterefundOrder(orderRefund.getId(), orderRefund.getRefundStatus(), orderRefund.getRemark());
-                return baseResponse;
+                this.ArtificialRefundFundChange(baseResponse,orderRefund,channel,type);
             }
             /********************************************************* 通道支持支持退款 *************************************************************/
             log.info("=========================【预授权完成撤销接口 refundOrder】========================= 【通道支持支持退款】");
@@ -1229,17 +1168,20 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             orderRefundMapper.insert(orderRefund);
             //获取原订单的refCode字段(NextPos用)
             orderRefund.setSign(oldOrder.getSign());
-            FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
-            log.info("=========================【预授权完成撤销接口】======================= 【上报清结算 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
-            BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-            log.info("=========================【预授权完成撤销接口】======================= 【清结算 {} 返回】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
-            if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                log.info("=========================【预授权完成撤销接口】======================= 【清结算 {} 上报失败】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
-                RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
-                log.info("=========================【预授权完成撤销接口】=========================【上报队列 RV_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
-                rabbitMQSender.send(AD3MQConstant.PRE_AUTH_RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
-                baseResponse.setCode(EResultEnum.REFUNDING.getCode());
-                return baseResponse;
+            //通道不结算就上报清结算
+            if(!channel.getChannelSupportSettle()){
+                FundChangeDTO fundChangeDTO = new FundChangeDTO(orderRefund.getRemark4(), orderRefund);
+                log.info("=========================【预授权完成撤销接口】======================= 【上报清结算 {}】， fundChangeDTO:【{}】", orderRefund.getRemark4(), JSON.toJSONString(fundChangeDTO));
+                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
+                log.info("=========================【预授权完成撤销接口】======================= 【清结算 {} 返回】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+                if (!cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
+                    log.info("=========================【预授权完成撤销接口】======================= 【清结算 {} 上报失败】 cFundChange:【{}】", orderRefund.getRemark4(), JSON.toJSONString(cFundChange));
+                    RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+                    log.info("=========================【预授权完成撤销接口】=========================【上报队列 RV_RF_FAIL_DL】RabbitMassage : 【{}】", JSON.toJSON(rabbitMassage));
+                    rabbitMQSender.send(AD3MQConstant.PRE_AUTH_RV_RF_FAIL_DL, JSON.toJSONString(rabbitMassage));
+                    baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+                    return baseResponse;
+                }
             }
             ChannelsAbstract channelsAbstract = null;
             try {
@@ -1252,7 +1194,6 @@ public class RefundTradeServiceImpl implements RefundTradeService {
         }
         return baseResponse;
     }
-
 
     /**
      * @return
