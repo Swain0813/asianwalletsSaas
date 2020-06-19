@@ -7,6 +7,7 @@ import com.asianwallets.channels.service.ThService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.th.ISO8583.*;
+import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.MerchantReport;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
@@ -98,10 +99,11 @@ public class ThServiceImpl implements ThService {
      * 获取key值
      *
      * @param merchantReport
+     * @param channel
      * @return
      */
-    public String getThKey(MerchantReport merchantReport) {
-        String institutionId = merchantReport.getInstitutionId();
+    public String getThKey(MerchantReport merchantReport, Channel channel) {
+        String institutionId = channel.getChannelMerchantId();
         String terminalId = merchantReport.getExtend1();
         String merchantId = merchantReport.getMerchantId();
         String channelCode = merchantReport.getChannelCode();
@@ -156,7 +158,7 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+        String key = getThKey(merchantReport, thDTO.getChannel());
         //业务类型
         String businessTypes = "00000001";
         BaseResponse baseResponse = new BaseResponse();
@@ -213,7 +215,7 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+        String key = getThKey(merchantReport, thDTO.getChannel());
         //业务类型
         String businessTypes = "00000001";
         BaseResponse baseResponse = new BaseResponse();
@@ -261,7 +263,7 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+        String key = getThKey(merchantReport, thDTO.getChannel());
         //业务类型
         String businessTypes = "00000000";
         //加密key
@@ -318,7 +320,7 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+        String key = getThKey(merchantReport, thDTO.getChannel());
         //业务类型
         String businessTypes = "00000001";
         try {
@@ -396,7 +398,8 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+
+        String key = getThKey(merchantReport, thDTO.getChannel());
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -444,7 +447,8 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+
+        String key = getThKey(merchantReport, thDTO.getChannel());
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -492,7 +496,8 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+
+        String key = getThKey(merchantReport, thDTO.getChannel());
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -534,7 +539,8 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+
+        String key = getThKey(merchantReport, thDTO.getChannel());
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -583,7 +589,8 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+
+        String key = getThKey(merchantReport, thDTO.getChannel());
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -631,7 +638,8 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+
+        String key = getThKey(merchantReport, thDTO.getChannel());
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -679,7 +687,8 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+
+        String key = getThKey(merchantReport, thDTO.getChannel());
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -727,7 +736,8 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+
+        String key = getThKey(merchantReport, thDTO.getChannel());
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -775,7 +785,8 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = getThKey(merchantReport);
+
+        String key = getThKey(merchantReport, thDTO.getChannel());
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
