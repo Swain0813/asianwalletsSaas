@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.megaPay.impl;
-
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
@@ -19,7 +18,6 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.BeanToMapUtil;
 import com.asianwallets.common.utils.MD5;
 import com.asianwallets.common.vo.OnlineTradeVO;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.megaPay.MegaPayService;
 import com.asianwallets.trade.config.AD3ParamsConfig;
@@ -36,7 +34,6 @@ import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.utils.HandlerType;
-import com.asianwallets.trade.vo.FundChangeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,7 +41,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -70,8 +66,6 @@ public class MegaPayServiceImpl extends ChannelsAbstractAdapter implements MegaP
     @Autowired
     private OrdersMapper ordersMapper;
 
-    @Autowired
-    private ClearingService clearingService;
 
     @Autowired
     private ChannelsFeign channelsFeign;

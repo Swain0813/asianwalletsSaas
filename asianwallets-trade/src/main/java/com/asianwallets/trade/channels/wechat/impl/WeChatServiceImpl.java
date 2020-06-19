@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.wechat.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -16,7 +15,6 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ArrayUtil;
 import com.asianwallets.common.utils.SignTools;
 import com.asianwallets.common.utils.XMLUtil;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.wechat.WeChatService;
 import com.asianwallets.trade.config.AD3ParamsConfig;
@@ -38,7 +36,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -73,13 +70,7 @@ public class WeChatServiceImpl extends ChannelsAbstractAdapter implements WeChat
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
-
-    @Autowired
-    private ReconciliationMapper reconciliationMapper;
-
-    @Autowired
-    private ClearingService clearingService;
-
+    
     @Autowired
     private RabbitMQSender rabbitMQSender;
 
@@ -123,27 +114,8 @@ public class WeChatServiceImpl extends ChannelsAbstractAdapter implements WeChat
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 log.info("=================【WeChant退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
-                String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                String reconciliationRemark = type.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-                Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
-                reconciliationMapper.insert(reconciliation);
-                FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                log.info("=========================【WeChant退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
-                BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                    //调账成功
-                    log.info("=================【WeChant退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
-                    reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
-                    //改原订单状态
-                    commonBusinessService.updateOrderRefundFail(orderRefund);
-                } else {
-                    //调账失败
-                    log.info("=================【WeChant退款】=================【调账失败】 cFundChange: {} ", JSON.toJSONString(cFundChange));
-                    RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                    log.info("=================【WeChant退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                    rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
-                }
+                //退款失败调用清结算
+                commonService.orderRefundFailFundChange(orderRefund,channel);
             }
         } else {
             //请求失败

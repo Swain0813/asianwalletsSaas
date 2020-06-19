@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.enets.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -17,7 +16,6 @@ import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.ComTools;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.vo.OnlineTradeVO;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.enets.EnetsService;
 import com.asianwallets.trade.config.AD3ParamsConfig;
@@ -32,7 +30,6 @@ import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.CommonService;
 import com.asianwallets.trade.utils.HandlerType;
-import com.asianwallets.trade.vo.FundChangeVO;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +40,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
@@ -69,8 +65,6 @@ public class EnetsServiceImpl extends ChannelsAbstractAdapter implements EnetsSe
     @Autowired
     private OrdersMapper ordersMapper;
 
-    @Autowired
-    private ClearingService clearingService;
 
     @Autowired
     private RabbitMQSender rabbitMQSender;

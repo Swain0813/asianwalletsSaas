@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.ad3.impl;
-
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -12,7 +11,6 @@ import com.asianwallets.common.dto.ad3.*;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
 import com.asianwallets.common.entity.Orders;
-import com.asianwallets.common.entity.Reconciliation;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
@@ -23,20 +21,17 @@ import com.asianwallets.common.vo.AD3BSCScanVO;
 import com.asianwallets.common.vo.AD3LoginVO;
 import com.asianwallets.common.vo.OnlineTradeVO;
 import com.asianwallets.common.vo.RefundAdResponseVO;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
 import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.ChannelsOrderMapper;
 import com.asianwallets.trade.dao.OrderRefundMapper;
 import com.asianwallets.trade.dao.OrdersMapper;
-import com.asianwallets.trade.dao.ReconciliationMapper;
 import com.asianwallets.trade.dto.AD3OfflineCallbackDTO;
 import com.asianwallets.trade.dto.AD3OnlineCallbackDTO;
 import com.asianwallets.trade.dto.AD3OnlineOrderQueryDTO;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
-import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.CommonService;
@@ -48,7 +43,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -79,12 +73,6 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
 
     @Autowired
     private CommonRedisDataService commonRedisDataService;
-
-    @Autowired
-    private ReconciliationMapper reconciliationMapper;
-
-    @Autowired
-    private ClearingService clearingService;
 
     @Autowired
     private RabbitMQSender rabbitMQSender;
@@ -716,27 +704,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                 } else if (response.getMsg().equals("T001")) {
                     //退款失败
                     baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
-                    String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                    String reconciliationRemark = type.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-                    Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
-                    reconciliationMapper.insert(reconciliation);
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                    log.info("=========================【AD3线上退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
-                    BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                    if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                        log.info("==================【AD3线上退款】================== 【调账成功】 cFundChange: {}", JSON.toJSONString(cFundChange));
-                        //调账成功
-                        orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
-                        reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
-                        //改原订单状态
-                        commonBusinessService.updateOrderRefundFail(orderRefund);
-                    } else {
-                        //调账失败
-                        log.info("==================【AD3线上退款】================== 【调账失败】 cFundChange: {}", JSON.toJSONString(cFundChange));
-                        RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                        log.info("=================【AD3线上退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                        rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
-                    }
+                    //退款失败调用清结算
+                    commonService.orderRefundFailFundChange(orderRefund,channel);
                 }
             } else {
                 //请求失败
@@ -783,27 +752,8 @@ public class Ad3ServiceImpl extends ChannelsAbstractAdapter implements Ad3Servic
                     //退款失败
                     log.info("==================【AD3线下退款】================== 【退款失败】 refundAdResponseVO: {}", JSON.toJSONString(refundAdResponseVO));
                     baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
-                    String type = orderRefund.getRemark4().equals(TradeConstant.RF) ? TradeConstant.AA : TradeConstant.RA;
-                    String reconciliationRemark = type.equals(TradeConstant.AA) ? TradeConstant.REFUND_FAIL_RECONCILIATION : TradeConstant.CANCEL_ORDER_REFUND_FAIL;
-                    Reconciliation reconciliation = commonBusinessService.createReconciliation(type, orderRefund, reconciliationRemark);
-                    reconciliationMapper.insert(reconciliation);
-                    FundChangeDTO fundChangeDTO = new FundChangeDTO(reconciliation);
-                    log.info("=========================【AD3线下退款】======================= 【调账 {}】， fundChangeDTO:【{}】", type, JSON.toJSONString(fundChangeDTO));
-                    BaseResponse cFundChange = clearingService.fundChange(fundChangeDTO);
-                    if (cFundChange.getCode().equals(TradeConstant.CLEARING_SUCCESS)) {
-                        log.info("==================【AD3线下退款】================== 【调账成功】 cFundChange: {}", JSON.toJSONString(cFundChange));
-                        //调账成功
-                        orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_FALID, null, null);
-                        reconciliationMapper.updateStatusById(reconciliation.getId(), TradeConstant.RECONCILIATION_SUCCESS);
-                        //改原订单状态
-                        commonBusinessService.updateOrderRefundFail(orderRefund);
-                    } else {
-                        //调账失败
-                        log.info("==================【AD3线下退款】================== 【调账失败】 cFundChange: {}", JSON.toJSONString(cFundChange));
-                        RabbitMassage rabbitMsg = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(reconciliation));
-                        log.info("=================【AD3线下退款】=================【调账失败 上报队列 RA_AA_FAIL_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMsg));
-                        rabbitMQSender.send(AD3MQConstant.RA_AA_FAIL_DL, JSON.toJSONString(rabbitMsg));
-                    }
+                    //退款失败调用清结算
+                    commonService.orderRefundFailFundChange(orderRefund,channel);
                 }
             } else {
                 //请求失败
