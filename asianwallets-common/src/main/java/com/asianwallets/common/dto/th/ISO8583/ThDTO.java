@@ -15,11 +15,15 @@ public class ThDTO {
     @ApiModelProperty(value = "通道")
     public Channel channel;
 
+    @ApiModelProperty(value = "商户号")
+    public String merchantId;
+
     public ThDTO() {
     }
 
-    public ThDTO(ISO8583DTO iso8583DTO, Channel channel) {
+    public ThDTO(ISO8583DTO iso8583DTO, Channel channel, String merchantId) {
         this.iso8583DTO = iso8583DTO;
         this.channel = channel;
+        this.merchantId = merchantId;
     }
 }

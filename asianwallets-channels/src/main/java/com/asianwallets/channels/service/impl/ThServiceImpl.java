@@ -2,13 +2,18 @@ package com.asianwallets.channels.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.config.ChannelsConfig;
+import com.asianwallets.channels.dao.MerchantReportMapper;
 import com.asianwallets.channels.service.ThService;
+import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.th.ISO8583.*;
+import com.asianwallets.common.entity.MerchantReport;
+import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Objects;
@@ -27,6 +32,11 @@ public class ThServiceImpl implements ThService {
     @Autowired
     private ChannelsConfig channelsConfig;
 
+    @Autowired
+    private MerchantReportMapper merchantReportMapper;
+
+    @Autowired
+    private RedisService redisService;
 
     /**
      * 通华签到,获取Mac密钥明文
@@ -85,6 +95,49 @@ public class ThServiceImpl implements ThService {
     }
 
     /**
+     * 获取key值
+     *
+     * @param merchantReport
+     * @return
+     */
+    public String getThKey(MerchantReport merchantReport) {
+        String institutionId = merchantReport.getInstitutionId();
+        String terminalId = merchantReport.getExtend1();
+        String merchantId = merchantReport.getMerchantId();
+        String channelCode = merchantReport.getChannelCode();
+        log.info("++++++++++++++++++++++商户获取62域缓存信息开始++++++++++++++++++++++");
+        String key = JSON.parseObject(redisService.get(AsianWalletConstant.Th_SIGN_CACHE_KEY.
+                        concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode)),
+                String.class);
+        if (StringUtils.isEmpty(key)) {
+            log.info("++++++++++++++++++++++商户获取62域缓存信息 缓存不存在 调用通华ThSign签到接口++++++++++++++++++++++");
+            String timeStamp = System.currentTimeMillis() + "";
+            ISO8583DTO iso8583DTO = new ISO8583DTO();
+            iso8583DTO.setMessageType("0800");
+            iso8583DTO.setSystemTraceAuditNumber_11(timeStamp.substring(6, 12));
+            //机构号
+            iso8583DTO.setAcquiringInstitutionIdentificationCode_32(institutionId);
+            //终端号
+            iso8583DTO.setCardAcceptorTerminalIdentification_41(terminalId);
+            //商户号
+            iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
+            iso8583DTO.setReservedPrivate_60("50" + timeStamp.substring(6, 12) + "003");
+            iso8583DTO.setReservedPrivate_63("001");
+            BaseResponse baseResponse = thSignIn(iso8583DTO);
+            ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), ISO8583DTO.class);
+            key = iso8583VO.getReservedPrivate_62();
+            redisService.set(AsianWalletConstant.Th_SIGN_CACHE_KEY.
+                    concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode), key);
+
+        }
+        log.info("++++++++++++++++++++++商户获取62域缓存信息完成++++++++++++++++++++++");
+        //截取并解密 获取key
+        String substring = key.substring(40, 56);
+        key = Objects.requireNonNull(EcbDesUtil.decode3DEA(channelsConfig.getHexKey(), substring)).toUpperCase();
+        return key;
+    }
+
+    /**
      * 通华CSB
      *
      * @param thDTO 通华DTO
@@ -95,14 +148,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华CSB】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = thDTO.getChannel().getMd5KeyStr();
+        String key = getThKey(merchantReport);
         //业务类型
         String businessTypes = "00000001";
         BaseResponse baseResponse = new BaseResponse();
@@ -151,14 +205,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华BSC】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = thDTO.getChannel().getMd5KeyStr();
+        String key = getThKey(merchantReport);
         //业务类型
         String businessTypes = "00000001";
         BaseResponse baseResponse = new BaseResponse();
@@ -198,14 +253,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华退款接口】===============【请求参数】 iso8583DTO:{}", JSON.toJSONString(thDTO.getIso8583DTO()));
         String tdpu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = thDTO.getChannel().getMd5KeyStr();
+        String key = getThKey(merchantReport);
         //业务类型
         String businessTypes = "00000000";
         //加密key
@@ -254,14 +310,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华查询接口】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO.getIso8583DTO()));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String key = thDTO.getChannel().getMd5KeyStr();
+        String key = getThKey(merchantReport);
         //业务类型
         String businessTypes = "00000001";
         try {
@@ -300,6 +357,27 @@ public class ThServiceImpl implements ThService {
     }
 
     /**
+     * 获取商户报备信息
+     *
+     * @param merchantId
+     * @param channelCode
+     * @return
+     */
+    public MerchantReport getMerchantReport(String merchantId, String channelCode) {
+        MerchantReport merchantReport = JSON.parseObject(redisService.get(AsianWalletConstant.MERCHANT_REPORT_CACHE_KEY.concat("_").concat(merchantId).concat("_").concat(channelCode)), MerchantReport.class);
+        if (merchantReport == null) {
+            merchantReport = merchantReportMapper.selectByChannelCodeAndMerchantId(merchantId, channelCode);
+            if (merchantReport == null) {
+                log.info("==================【根据商户编号和通道编号获取商户报备信息】==================【商户报备信息不存在】 merchantId: {} | channelCode: {}", merchantId, channelCode);
+                return null;
+            }
+            redisService.set(AsianWalletConstant.MERCHANT_REPORT_CACHE_KEY.concat("_").concat(merchantId).concat("_").concat(channelCode), JSON.toJSONString(merchantReport));
+        }
+        log.info("==================【根据商户编号和通道编号获取商户报备信息】==================【商户报备信息】 account: {}", JSON.toJSONString(merchantReport));
+        return merchantReport;
+    }
+
+    /**
      * 通华线下银行卡消费
      *
      * @param thDTO
@@ -310,15 +388,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华线下银行卡】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
-        String key = Objects.requireNonNull(EcbDesUtil.decode3DEA(channelsConfig.getHexKey(), substring)).toUpperCase();
+        String key = getThKey(merchantReport);
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -358,15 +436,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华线下银行卡冲正】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
-        String key = Objects.requireNonNull(EcbDesUtil.decode3DEA(channelsConfig.getHexKey(), substring)).toUpperCase();
+        String key = getThKey(merchantReport);
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -406,15 +484,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华线下银行卡退款】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
-        String key = Objects.requireNonNull(EcbDesUtil.decode3DEA(channelsConfig.getHexKey(), substring)).toUpperCase();
+        String key = getThKey(merchantReport);
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -448,15 +526,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华线下银行卡撤销】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
-        String key = Objects.requireNonNull(EcbDesUtil.decode3DEA(channelsConfig.getHexKey(), substring)).toUpperCase();
+        String key = getThKey(merchantReport);
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -497,15 +575,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华预授权】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
-        String key = Objects.requireNonNull(EcbDesUtil.decode3DEA(channelsConfig.getHexKey(), substring)).toUpperCase();
+        String key = getThKey(merchantReport);
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -545,15 +623,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华预授权冲正】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
-        String key = Objects.requireNonNull(EcbDesUtil.decode3DEA(channelsConfig.getHexKey(), substring)).toUpperCase();
+        String key = getThKey(merchantReport);
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -593,15 +671,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华预授权撤销】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
-        String key = Objects.requireNonNull(EcbDesUtil.decode3DEA(channelsConfig.getHexKey(), substring)).toUpperCase();
+        String key = getThKey(merchantReport);
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -641,15 +719,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华预授权完成】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
-        String key = Objects.requireNonNull(EcbDesUtil.decode3DEA(channelsConfig.getHexKey(), substring)).toUpperCase();
+        String key = getThKey(merchantReport);
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
@@ -689,15 +767,15 @@ public class ThServiceImpl implements ThService {
         log.info("===============【通华预授权完成撤销】===============【请求参数】 thDTO: {}", JSON.toJSONString(thDTO));
         String tpdu = channelsConfig.getThTDPU();
         String header = channelsConfig.getThHeader();
+        MerchantReport merchantReport = getMerchantReport(thDTO.getMerchantId(), thDTO.getChannel().getChannelCode());
         //商户号
-        String merchNum = thDTO.getChannel().getChannelMerchantId();
+        String merchNum = merchantReport.getMerchantId();
         //终端号
-        String terminalNum = thDTO.getChannel().getExtend1();
+        String terminalNum = merchantReport.getExtend1();
         //机构号
-        String institutionNum = "0000000" + thDTO.getChannel().getExtend2();
+        String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-        String substring = thDTO.getChannel().getMd5KeyStr().substring(40, 56);
-        String key = Objects.requireNonNull(EcbDesUtil.decode3DEA(channelsConfig.getHexKey(), substring)).toUpperCase();
+        String key = getThKey(merchantReport);
         log.info("----------------key----------------key:{}", key);
         //业务类型
         String businessTypes = "00000001";
