@@ -115,7 +115,7 @@ public class UpiServiceImpl implements UpiService {
      * @Descripate upi查询
      **/
     @Override
-    public BaseResponse upiQueery(UpiDTO upiDTO) {
+    public BaseResponse upiQuery(UpiDTO upiDTO) {
         BaseResponse baseResponse = new BaseResponse();
         try {
             final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(channelsConfig.getUpiPublicKeyPath(), "pem", "RSA");
