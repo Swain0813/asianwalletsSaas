@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.HashMap;
@@ -126,6 +127,7 @@ public class CommonServiceImpl implements CommonService {
             }
             //票券的二维码
             String imagePath = fileUploadPath.concat(IMAGES_DIR).concat(DateUtil.getCurrentDate()).concat("/").concat(UUID.randomUUID().toString()).concat(".png");
+            createDir(imagePath);
             QrCodeUtil.generateQrCodeAndSave(rightsUserGrant.getTicketId(),"png",350,350,imagePath);
             map.put("ticketQrCode", fileHttpServer.concat(imagePath));
             //票券编号
@@ -154,4 +156,14 @@ public class CommonServiceImpl implements CommonService {
         log.info("*********************发邮件和短信 End*************************************");
     }
 
+    /**
+     * 创建目录
+     * @param path
+     */
+    private void createDir(String path) {
+        File fileDir = new File(path);
+        if (!fileDir.exists() && !fileDir.isDirectory()) {
+            fileDir.mkdirs();
+        }
+    }
 }
