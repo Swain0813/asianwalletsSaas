@@ -429,11 +429,12 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             redisService.set(AsianWalletConstant.MERCHANT_REPORT_CACHE_KEY.concat("_").concat(merchantId).concat("_").concat(channelCode), JSON.toJSONString(merchantReport));
         }
         log.info("==================【根据商户编号和通道编号获取商户报备信息】==================【商户报备信息】 account: {}", JSON.toJSONString(merchantReport));
+
         return merchantReport;
     }
 
     /**
-     * 通化签到获取62域
+     *通华签到获取62域
      *
      * @param institutionId 机构号
      * @param terminalId    设备号
@@ -444,8 +445,8 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     @Override
     public String getThKey(String institutionId, String terminalId, String merchantId, String channelCode) {
         log.info("++++++++++++++++++++++商户获取62域缓存信息开始++++++++++++++++++++++");
-        String key = JSON.parseObject(redisService.get(AsianWalletConstant.Th_SIGN_CACHE_KEY.
-                concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode)), String.class);
+        String key = redisService.get(AsianWalletConstant.Th_SIGN_CACHE_KEY.
+                concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode));
         if (StringUtils.isEmpty(key)) {
             log.info("++++++++++++++++++++++商户获取62域缓存信息 缓存不存在 调用通华ThSign签到接口++++++++++++++++++++++");
             String timeStamp = System.currentTimeMillis() + "";
@@ -463,6 +464,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             BaseResponse baseResponse = thService.thSign(iso8583DTO);
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), ISO8583DTO.class);
             key = iso8583VO.getReservedPrivate_62();
+            log.info("++++++++++++++++++++++商户获取62域缓存信息++++++++++++++++++++++ iso8583VO:{}", JSON.toJSONString(iso8583VO));
             redisService.set(AsianWalletConstant.Th_SIGN_CACHE_KEY.
                     concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode), key);
 

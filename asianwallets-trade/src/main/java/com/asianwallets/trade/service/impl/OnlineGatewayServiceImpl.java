@@ -1,5 +1,4 @@
 package com.asianwallets.trade.service.impl;
-
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
@@ -21,7 +20,6 @@ import com.asianwallets.common.utils.RSAUtils;
 import com.asianwallets.common.vo.CalcExchangeRateVO;
 import com.asianwallets.common.vo.OnlineTradeScanVO;
 import com.asianwallets.common.vo.OnlineTradeVO;
-import com.asianwallets.common.vo.clearing.FundChangeDTO;
 import com.asianwallets.trade.channels.ChannelsAbstract;
 import com.asianwallets.trade.channels.ad3.Ad3Service;
 import com.asianwallets.trade.dao.BankIssuerIdMapper;
@@ -43,7 +41,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,9 +65,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     private CommonRedisDataService commonRedisDataService;
 
     @Autowired
-    private ClearingService clearingService;
-
-    @Autowired
     private OrdersMapper ordersMapper;
 
     @Autowired
@@ -88,7 +82,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
     @Autowired
     private CommonService commonService;
 
-
     //收银台地址
     @Value("${custom.cashierDeskUrl}")
     private String cashierDeskUrl;
@@ -101,7 +94,6 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
      */
     @Override
     public BaseResponse gateway(OnlineTradeDTO onlineTradeDTO) {
-
         //判断
         if (!StringUtils.isEmpty(onlineTradeDTO.getIssuerId())) {
             //直连

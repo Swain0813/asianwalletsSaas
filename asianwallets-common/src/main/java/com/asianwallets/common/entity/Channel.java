@@ -170,7 +170,7 @@ public class Channel extends BaseEntity {
     private String md5KeyStr;
 
     @ApiModelProperty(value = "设备编号")
-    @Column(name = "IMEI")
+    @Column(name = "extend1")
     private String extend1;
 
     @ApiModelProperty(value = "操作员id")
