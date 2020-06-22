@@ -18,6 +18,7 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.AESUtil;
 import com.asianwallets.common.utils.DateToolUtils;
+import com.asianwallets.common.utils.IDS;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.upi.Upiservice;
 import com.asianwallets.trade.config.AD3ParamsConfig;
@@ -879,10 +880,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
         String timeStamp = System.currentTimeMillis() + "";
-        String domain11 = preOrders.getId().substring(10, 16);
-        String domain60_2 = timeStamp.substring(6, 12);
-        //保存11域与60.2域
-        preOrders.setRemark1(domain60_2 + domain11);
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0100");
@@ -901,7 +898,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //12位,左边填充0
         String formatAmount = String.format("%012d", tradeAmount);
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
-        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
+        iso8583DTO.setSystemTraceAuditNumber_11(IDS.getRandomInt(6));
         iso8583DTO.setDateOfExpired_14(preOrders.getValid());
         if (!StringUtils.isEmpty(preOrders.getPin())) {
             iso8583DTO.setPointOfServiceEntryMode_22("021");
