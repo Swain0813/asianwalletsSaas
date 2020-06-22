@@ -465,6 +465,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             iso8583DTO.setReservedPrivate_63("001");
             ThDTO thDTO = new ThDTO();
             thDTO.setIso8583DTO(iso8583DTO);
+            thDTO.setChannel(channel);
             BaseResponse baseResponse = thService.thSign(thDTO);
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), ISO8583DTO.class);
             key = iso8583VO.getReservedPrivate_62();
