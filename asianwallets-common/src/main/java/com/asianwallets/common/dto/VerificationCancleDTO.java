@@ -43,11 +43,9 @@ public class VerificationCancleDTO {
     private String serverUrl;
 
     @ApiModelProperty(value = "签名类型")
-    @NotNull(message = "50002")
     private String signType;
 
     @ApiModelProperty(value = "签名")
-    @NotNull(message = "50002")
     private String sign;
 
     @ApiModelProperty(value = "备注")
