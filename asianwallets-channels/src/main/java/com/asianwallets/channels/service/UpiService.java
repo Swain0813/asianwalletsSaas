@@ -18,7 +18,7 @@ public interface UpiService {
      * @Date 2020/5/7
      * @Descripate upi查询
      **/
-    BaseResponse upiQueery(UpiDTO upiDTO);
+    BaseResponse upiQuery(UpiDTO upiDTO);
     /**
      * @return
      * @Author YangXu

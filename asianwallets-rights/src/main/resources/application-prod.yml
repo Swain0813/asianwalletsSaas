@@ -47,12 +47,6 @@ spring:
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
 
-    # rabbitMq 配置
-  rabbitmq:
-    addresses: mq01.asia:5672
-    username: admin
-    password: C4wtEiB8GPkSXqfi
-
 # redis 配置
 redis:
   database: 0

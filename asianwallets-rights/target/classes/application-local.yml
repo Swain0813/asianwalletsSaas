@@ -27,9 +27,9 @@ hystrix:
 spring:
   # 数据库配置
   datasource:
-    url: jdbc:mysql://db.asia:3306/asianwallets_saas?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    username: asianwallets
-    password: QJI1Zh((FSFAyAAf
+    url: jdbc:mysql://192.168.124.34:3306/asianwallets_saas?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: root
     # 使用druid数据源
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
@@ -47,11 +47,17 @@ spring:
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
 
+    # rabbitMq 配置
+  rabbitmq:
+    addresses: 192.168.124.34:5672
+    username: admin
+    password: admin
+
 # redis 配置
 redis:
-  database: 0
-  password: Uj7cELl8emRBqPEE
-  host: redis.asia
+  database: 1
+  password: test123
+  host: 192.168.124.34
   port: 6379
   time: 0
   pool:

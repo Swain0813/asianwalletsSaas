@@ -1250,7 +1250,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     public BaseResponse preAuthCompleteRevoke(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
         log.info("==================【UPI银行卡预授权完成撤销】==================orderId: {}", orderRefund.getOrderId());
         BaseResponse baseResponse = new BaseResponse();
-        Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
         UpiDTO upiDTO = this.createCompleteRevokeDTO(orderRefund, channel);
         log.info("==================【UPI银行卡预授权完成撤销】==================【调用Channels服务】 upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
@@ -1375,8 +1374,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
 
     /**
      * MAK 加密
-     *
-     * @param str
      * @param key
      * @return
      */

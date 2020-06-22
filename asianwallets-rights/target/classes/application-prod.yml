@@ -1,5 +1,5 @@
 server:
-  port: 5010
+  port: 5006
 
 eureka:
   client:
@@ -8,7 +8,7 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
   instance:
-    instance-id: asianwallets-trade5010
+    instance-id: asianwallets-rights5006
     prefer-ip-address: true
 
 ribbon:
@@ -47,7 +47,7 @@ spring:
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
 
-  # rabbitMq 配置
+    # rabbitMq 配置
   rabbitmq:
     addresses: mq01.asia:5672
     username: admin
@@ -68,38 +68,3 @@ redis:
 
 #项目自定义配置
 custom:
-  warning:
-    email: 842505302@qq.com
-    mobile: 18800330943
-  jwt:
-    secret: M2UwFPOfdPW2JqI5
-    token_expire_hour: 24
-
-  #nextPos分发AD3地址
-  nextPosUrl: https://its.alldebitpay.com/nextPosNotifyAction/nextPosqrbackNotify.do
-
-  #megaPayAD3分发地址
-  ad3ItsUrl: https://its.alldebitpay.com/v1/
-
-  #收银台url
-  cashierDeskUrl: https://testsaas.asianwallets.com/checkstandweb/#/main
-
-  #亚洲钱包的支付页面的url
-  paySuccessUrl: https://testsaas.asianwallets.com/checkstandweb/#/Success
-  #AD3提供的生产环境地址
-  #url
-  ad3Url: https://pgw.alldebitpay.com
-
-  #线上 指定密钥的提供方 1为使用平台提供的密钥 2为使用自己生成的密钥
-  merchantSignType: 2
-
-  #NL查询URL
-  nganLuong:
-    check_url: https://www.nganluong.vn/checkout.api.nganluong.post.php
-  #给AD3的回调URL
-  channelCallbackUrl: https://testsaas.asianwallets.com/tra
-  upi:
-    privateKeyPath: /testKey/00001963.pem
-    publicKeyPath: /testKey/GHT_ROOT_PROD.pem
-    tdpu: 6000060000
-    header: 601410190121

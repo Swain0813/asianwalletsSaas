@@ -5,6 +5,7 @@ import com.asianwallets.common.constant.RightsConstant;
 import com.asianwallets.common.dto.RightsGrantDTO;
 import com.asianwallets.common.dto.RightsGrantInsertDTO;
 import com.asianwallets.common.dto.SendReceiptDTO;
+import com.asianwallets.common.dto.SendTicketDTO;
 import com.asianwallets.common.entity.InstitutionRights;
 import com.asianwallets.common.entity.RightsGrant;
 import com.asianwallets.common.entity.RightsUserGrant;
@@ -50,16 +51,115 @@ public class RightsGrantServiceImpl implements RightsGrantService {
     private CommonService commonService;
 
     //======================================【票券】=================================================
-
     /**
      * 发券接口【对外API】
+     * @param sendTicketDTO 发券DTO
+     * @return
+     */
+    @Override
+    @Transactional
+    public JSONObject sendTicket(SendTicketDTO sendTicketDTO) {
+        log.info("===================【发券接口】===================【请求参数】 sendReceiptDTO: {}", JSON.toJSONString(sendTicketDTO));
+        RightsGrant rightsGrant = rightsGrantMapper.selectByDealId(sendTicketDTO.getDealId());
+        if (rightsGrant == null) {
+            log.info("===================【发券接口】===================【权益不存在】");
+            throw new BusinessException(EResultEnum.EQUITY_DOES_NOT_EXIST.getCode());
+        }
+        //剩余数量
+        Integer surplusAmount = rightsGrant.getSurplusAmount();
+        //比较剩余数量
+        if (sendTicketDTO.getSendCount() > surplusAmount) {
+            log.info("===================【发券接口】===================【票券数量不足】");
+            throw new BusinessException(EResultEnum.OTA_ACTIVITY_AMOUNT_IS_ILLEGAL.getCode());
+        }
+        //当前时间
+        long nowTime = new Date().getTime();
+        //活动开始和结束时间与当前时间的判断
+        if (rightsGrant.getEndTime() != null && nowTime > rightsGrant.getEndTime().getTime()) {
+            log.info("===================【发券接口】===================【大于活动结束时间】");
+            throw new BusinessException(EResultEnum.EVENT_END_TIME_IS_ILLEGAL.getCode());
+        }
+        //剩余数量
+        surplusAmount = surplusAmount - sendTicketDTO.getSendCount();
+        rightsGrant.setSurplusAmount(surplusAmount);
+        //领取数量
+        rightsGrant.setGetAmount(rightsGrant.getActivityAmount() - surplusAmount);
+        rightsGrant.setUpdateTime(new Date());
+        rightsGrant.setExt3("发券更新");
+        //更新权益发放表
+        rightsGrantMapper.updateByPrimaryKeySelective(rightsGrant);
+        List<String> ticketIdList = new ArrayList<>();
+        List<RightsUserGrant> rightsUserGrantList = new ArrayList<>();
+        for (int i = 1; i <= sendTicketDTO.getSendCount(); i++) {
+            RightsUserGrant rightsUserGrant = new RightsUserGrant();
+            String ticketId = IDS.uniqueID().toString();
+            ticketIdList.add(ticketId);
+            rightsUserGrant.setId(IDS.uuid2());
+            rightsUserGrant.setTicketId(ticketId);
+            rightsUserGrant.setDealId(sendTicketDTO.getDealId());
+            rightsUserGrant.setSystemOrderId(sendTicketDTO.getSystemOrderId());
+            rightsUserGrant.setGetAmount(sendTicketDTO.getSendCount());
+            if(!StringUtils.isEmpty(sendTicketDTO.getMobileNo())){
+                rightsUserGrant.setMobileNo(sendTicketDTO.getMobileNo());
+            }
+            if(!StringUtils.isEmpty(sendTicketDTO.getEmail())){
+                rightsUserGrant.setEmail(sendTicketDTO.getEmail());
+            }
+            rightsUserGrant.setSystemName(rightsGrant.getSystemName());
+            rightsUserGrant.setBatchNo(rightsGrant.getBatchNo());
+            rightsUserGrant.setInstitutionId(rightsGrant.getInstitutionId());
+            rightsUserGrant.setInstitutionName(rightsGrant.getInstitutionName());
+            rightsUserGrant.setMerchantId(rightsGrant.getMerchantId());
+            rightsUserGrant.setMerchantName(rightsGrant.getMerchantName());
+            rightsUserGrant.setRightsType(rightsGrant.getRightsType());
+            rightsUserGrant.setActivityTheme(rightsGrant.getActivityTheme());
+            rightsUserGrant.setActivityAmount(rightsGrant.getActivityAmount());
+            rightsUserGrant.setStartTime(rightsGrant.getStartTime());
+            rightsUserGrant.setEndTime(rightsGrant.getEndTime());
+            rightsUserGrant.setUseTime(rightsGrant.getUseTime());
+            rightsUserGrant.setUserId(rightsGrant.getUserId());
+            rightsUserGrant.setCancelVerificationAmount(rightsGrant.getCancelVerificationAmount());
+            rightsUserGrant.setSurplusAmount(rightsGrant.getSurplusAmount());
+            rightsUserGrant.setTicketStatus(RightsConstant.TICKETS_NOT_USE);
+            rightsUserGrant.setTicketAmount(rightsGrant.getTicketAmount());
+            rightsUserGrant.setPackageValue(rightsGrant.getPackageValue());
+            rightsUserGrant.setFullReductionAmount(rightsGrant.getFullReductionAmount());
+            rightsUserGrant.setDiscount(rightsGrant.getDiscount());
+            rightsUserGrant.setCapAmount(rightsGrant.getCapAmount());
+            rightsUserGrant.setDeductionAmount(rightsGrant.getDeductionAmount());
+            rightsUserGrant.setTicketBuyPrice(rightsGrant.getTicketBuyPrice());
+            rightsUserGrant.setGetLimit(rightsGrant.getGetLimit());
+            rightsUserGrant.setShopAddresses(rightsGrant.getShopAddresses());
+            rightsUserGrant.setSetText(rightsGrant.getSetText());
+            rightsUserGrant.setSetImages(rightsGrant.getSetImages());
+            rightsUserGrant.setRuleDescription(rightsGrant.getRuleDescription());
+            rightsUserGrant.setRightsCurrency(rightsGrant.getRightsCurrency());
+            rightsUserGrant.setServerUrl(rightsGrant.getServerUrl());
+            rightsUserGrant.setDistributionPrice(rightsGrant.getDistributionPrice());
+            rightsUserGrant.setOverlay(rightsGrant.getOverlay());
+            rightsUserGrant.setExt4(rightsGrant.getExt4());
+            rightsUserGrant.setGetTime(new Date());
+            rightsUserGrant.setCancelVerificationTime(new Date());
+            rightsUserGrant.setEnabled(true);
+            rightsUserGrant.setCreateTime(new Date());
+            rightsUserGrantList.add(rightsUserGrant);
+        }
+        rightsUserGrantMapper.insertList(rightsUserGrantList);
+        log.info("===================【发券接口】===================【响应参数】");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("ticketIdList", ticketIdList);
+        return jsonObject;
+    }
+
+    /**
+     * 短信和邮箱发券
      * @param sendReceiptDTO 发券DTO
      * @return
      */
     @Override
     @Transactional
     public JSONObject sendReceipt(SendReceiptDTO sendReceiptDTO) {
-        log.info("===================【发券接口】===================【请求参数】 sendReceiptDTO: {}", JSON.toJSONString(sendReceiptDTO));
+        log.info("===================【短信和邮箱发券接口】===================【请求参数】 sendReceiptDTO: {}", JSON.toJSONString(sendReceiptDTO));
         String[] sendCount = null;
         if(RightsConstant.MOBILE_SYS.equals(sendReceiptDTO.getSendType())){
             //短信平台则手机号不能为空
@@ -168,7 +268,7 @@ public class RightsGrantServiceImpl implements RightsGrantService {
                this.commonService.sendMobileAndEmail(rightsUserGrant);
             }
         }
-        log.info("===================【发券接口】===================【发出的券号】",JSON.toJSONString(ticketIdList));
+        log.info("===================【短信和邮箱发券接口】===================【发出的券号】",JSON.toJSONString(ticketIdList));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ticketIdList", ticketIdList);
         return jsonObject;

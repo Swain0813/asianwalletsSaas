@@ -38,6 +38,9 @@ public class AuthenticationResponse {
     @ApiModelProperty("机构logo")
     private String institutionLogo;
 
+    @ApiModelProperty("商户名称")
+    private String merchantName;
+
     @ApiModelProperty("商户类型")
     private String merchantType;
 
