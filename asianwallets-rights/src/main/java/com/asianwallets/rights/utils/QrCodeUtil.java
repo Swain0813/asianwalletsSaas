@@ -4,6 +4,8 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import org.springframework.stereotype.Component;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -13,6 +15,7 @@ import java.nio.file.Paths;
  * @author: yangshanlong@asianwallets.com
  * @create: 2020/6/22 16:01
  **/
+@Component
 public class QrCodeUtil {
     private static final QRCodeWriter QR_CODE_WRITER = new QRCodeWriter();
 

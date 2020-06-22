@@ -11,8 +11,10 @@ import com.asianwallets.common.utils.*;
 import com.asianwallets.rights.feign.message.MessageFeign;
 import com.asianwallets.rights.service.CommonRedisService;
 import com.asianwallets.rights.service.CommonService;
+import com.asianwallets.rights.utils.QrCodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 通用方法
@@ -37,6 +40,14 @@ public class CommonServiceImpl implements CommonService {
 
     @Autowired
     private AuditorProvider auditorProvider;
+
+    public static final String IMAGES_DIR = "/imagesaas/";
+
+    @Value("${file.http.server}")
+    private String fileHttpServer;
+
+    @Value("${file.upload.path}")
+    private String fileUploadPath;
 
     /**
      * 通用签名校验
@@ -113,8 +124,21 @@ public class CommonServiceImpl implements CommonService {
                //定额
                 map.put("content", rightsUserGrant.getTicketAmount()+"优惠券");
             }
+            //票券的二维码
+            String imagePath = fileUploadPath.concat(IMAGES_DIR).concat(DateUtil.getCurrentDate()).concat("/").concat(UUID.randomUUID().toString()).concat(".png");
+            QrCodeUtil.generateQrCodeAndSave(rightsUserGrant.getTicketId(),"png",350,350,imagePath);
+            map.put("ticketQrCode", fileHttpServer.concat(imagePath));
             //票券编号
             map.put("ticketId",rightsUserGrant.getTicketId());
+            //可用时间
+            map.put("startTime",rightsUserGrant.getStartTime());
+            map.put("endTime",rightsUserGrant.getEndTime());
+            //不可用时间
+            map.put("unusableTime",rightsUserGrant.getExt4());
+            //使用规则
+            map.put("ruleDescription",rightsUserGrant.getRuleDescription());
+            //商家地址
+            map.put("shopAddresses",rightsUserGrant.getShopAddresses());
              if(!StringUtils.isEmpty(rightsUserGrant.getMobileNo())) {
                  //调用发送短信
                  messageFeign.sendSimple(rightsUserGrant.getMobileNo(),"恭喜你获得优惠券:"+rightsUserGrant.getTicketId());
