@@ -880,7 +880,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         String domain11 = preOrders.getId().substring(10, 16);
         String domain60_2 = timeStamp.substring(6, 12);
         //保存11域与60.2域
-        preOrders.setRemark1(domain11 + domain60_2);
+        preOrders.setRemark1(domain60_2 + domain11);
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0100");
@@ -1153,10 +1153,77 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     private UpiDTO createPreAuthCompleteDTO(Orders orders, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
+        String timeStamp = System.currentTimeMillis() + "";
+        String domain11 = orders.getId().substring(10, 16);
+        String domain60_2 = timeStamp.substring(6, 12);
+        //保存11域与60.2域
+        orders.setReportNumber(domain60_2 + domain11);
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
-        iso8583DTO.setProcessingCode_3("190000");
+        iso8583DTO.setProcessingCode_3("000000");
+
+        //获取交易金额的小数位数
+        int numOfBits = String.valueOf(orders.getTradeAmount()).length() - String.valueOf(orders.getTradeAmount()).indexOf(".") - 1;
+        int tradeAmount;
+        if (numOfBits == 0) {
+            //整数
+            tradeAmount = orders.getTradeAmount().intValue();
+        } else {
+            //小数,扩大对应小数位数
+            tradeAmount = orders.getTradeAmount().movePointRight(numOfBits).intValue();
+        }
+        //12位,左边填充0
+        String formatAmount = String.format("%012d", tradeAmount);
+        iso8583DTO.setAmountOfTransactions_4(formatAmount);
+        iso8583DTO.setSystemTraceAuditNumber_11(domain11);
+        iso8583DTO.setDateOfExpired_14(orders.getValid());
+        if (!StringUtils.isEmpty(orders.getPin())) {
+            iso8583DTO.setPointOfServiceEntryMode_22("021");
+            iso8583DTO.setPointOfServicePINCaptureCode_26("06");
+            iso8583DTO.setPINData_52(pINEncryption(AESUtil.aesDecrypt(orders.getPin()), AESUtil.aesDecrypt(orders.getUserBankCardNo()).substring(3, 15), channel.getMd5KeyStr()));
+            iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
+        } else {
+            iso8583DTO.setPointOfServiceEntryMode_22("022");
+        }
+
+        iso8583DTO.setPointOfServiceConditionMode_25("06");
+        iso8583DTO.setAuthorizationIdentificationResponse_38(orders.getChannelNumber().substring(12));
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+
+        String str60 =
+                //60.1 消息类型码
+                "22" +
+                        //60.2 批次号 自定义
+                        timeStamp.substring(6, 12) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        iso8583DTO.setReservedPrivate_60(str60);
+        iso8583DTO.setOriginalMessage_61(orders.getRemark1());
+
+        //银行卡号
+        iso8583DTO.setProcessingCode_2(AESUtil.aesDecrypt(orders.getUserBankCardNo()));
+        //磁道2 信息
+        iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orders.getTrackData()), channel.getMd5KeyStr()));
+        String isoMsg = null;
+        //扫码组包
+        try {
+            isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, makEncryption(channel.getMd5KeyStr()));
+        } catch (Exception e) {
+            log.info("=================【UPI银行卡下单】=================【组包异常】");
+        }
+        String sendMsg = ad3ParamsConfig.getUpiTdpu() + ad3ParamsConfig.getUpiHeader() + isoMsg;
+        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        sendMsg = strHex2 + sendMsg;
+        upiDTO.setIso8583DTO(sendMsg);
         return upiDTO;
     }
 
