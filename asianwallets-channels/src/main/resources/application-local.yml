@@ -125,7 +125,6 @@ custom:
     port: 10089
     tdpu: 6006090000
     header: 800100000000
-    hexKey: 38D57B7C1979CF7910677DE5BB6A56DF
   upi:
     payUrl: https://testpay.sicpay.com/backSecure.do
     privateKeyPath: /testKey/549440189990001.pem

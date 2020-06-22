@@ -1,6 +1,5 @@
 package com.asianwallets.channels.service;
 
-import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.response.BaseResponse;
 
@@ -28,7 +27,7 @@ public interface ThService {
      *
      * @return
      */
-    BaseResponse thSignIn(ISO8583DTO iso8583DTO);
+    BaseResponse thSignIn(ThDTO thDTO);
 
     /**
      * 通华CSB

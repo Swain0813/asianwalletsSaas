@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.th.impl;
+
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -349,7 +351,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 log.info("=================【TH退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 //退款失败调用清结算
-                commonService.orderRefundFailFundChange(orderRefund,channel);
+                commonService.orderRefundFailFundChange(orderRefund, channel);
             }
         } else {
             //请求失败
@@ -423,9 +425,9 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     }
 
     @Override
-    public BaseResponse thSign(ISO8583DTO iso8583DTO) {
+    public BaseResponse thSign(ThDTO thDTO) {
         log.info("++++++++++++++++++++通化签到开始++++++++++++++++++++");
-        BaseResponse baseResponse = channelsFeign.thSign(iso8583DTO);
+        BaseResponse baseResponse = channelsFeign.thSign(thDTO);
         log.info("++++++++++++++++++++通化签到结束++++++++++++++++++++");
         return baseResponse;
     }
@@ -586,7 +588,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      */
     private String getThKey(Orders orders, Channel channel) {
         MerchantReport merchantReport = commonRedisDataService.getMerchantReport(orders.getMerchantId(), channel.getChannelCode());
-        return commonRedisDataService.getThKey(channel.getChannelMerchantId(), merchantReport.getExtend1(), orders.getMerchantId(), channel.getChannelCode());
+        return commonRedisDataService.getThKey(merchantReport.getExtend1(), orders.getMerchantId(), channel);
     }
 
     /**
@@ -598,7 +600,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      */
     private String getThKey(OrderRefund orderRefund, Channel channel) {
         MerchantReport merchantReport = commonRedisDataService.getMerchantReport(orderRefund.getMerchantId(), channel.getChannelCode());
-        return commonRedisDataService.getThKey(channel.getChannelMerchantId(), merchantReport.getExtend1(), orderRefund.getMerchantId(), channel.getChannelCode());
+        return commonRedisDataService.getThKey(merchantReport.getExtend1(), orderRefund.getMerchantId(), channel);
     }
 
     /**
@@ -1035,7 +1037,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
                 log.info("=================【TH银行退款】=================【退款失败】 response: {} ", JSON.toJSONString(response));
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 //退款失败调用清结算
-                commonService.orderRefundFailFundChange(orderRefund,channel);
+                commonService.orderRefundFailFundChange(orderRefund, channel);
             }
         } else {
             //请求失败

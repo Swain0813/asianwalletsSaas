@@ -138,11 +138,10 @@ public interface CommonRedisDataService {
     /**
      * 通化签到获取62域
      *
-     * @param institutionId 机构号
-     * @param terminalId    设备号
-     * @param merchantId    商户号
-     * @param channelCode   通道编号
+     * @param terminalId 设备号
+     * @param merchantId 商户号
+     * @param channel
      * @return
      */
-    String getThKey(String institutionId, String terminalId, String merchantId, String channelCode);
+    String getThKey(String terminalId, String merchantId, Channel channel);
 }

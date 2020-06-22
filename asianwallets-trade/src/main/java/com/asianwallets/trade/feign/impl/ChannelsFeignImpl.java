@@ -14,7 +14,6 @@ import com.asianwallets.common.dto.help2pay.Help2PayRequestDTO;
 import com.asianwallets.common.dto.megapay.*;
 import com.asianwallets.common.dto.nganluong.NganLuongDTO;
 import com.asianwallets.common.dto.qfpay.QfPayDTO;
-import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.dto.upi.UpiDTO;
 import com.asianwallets.common.dto.vtc.VTCRequestDTO;
@@ -252,7 +251,7 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
-    public BaseResponse thSign(ISO8583DTO iso8583DTO) {
+    public BaseResponse thSign(ThDTO thDTO) {
         return null;
     }
 
