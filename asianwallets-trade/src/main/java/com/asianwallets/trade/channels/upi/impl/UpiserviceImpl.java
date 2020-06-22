@@ -808,7 +808,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 //60.1 消息类型码
                 "22" +
                         //60.2 批次号 自定义
-                        timeStamp.substring(6, 12) +
+                        domain60_2 +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
@@ -924,7 +924,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 //60.1 消息类型码
                 "22" +
                         //60.2 批次号 自定义
-                        timeStamp.substring(6, 12) +
+                        preOrders.getRemark1().substring(0, 6) +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
@@ -1031,8 +1031,19 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-        //自定义域
-        iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
+
+        String str60 =
+                //60.1 消息类型码
+                "22" +
+                        //60.2 批次号 自定义
+                        preOrders.getRemark1().substring(0, 6) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        iso8583DTO.setReservedPrivate_60(str60);
 
         String isoMsg = null;
         //扫码组包
