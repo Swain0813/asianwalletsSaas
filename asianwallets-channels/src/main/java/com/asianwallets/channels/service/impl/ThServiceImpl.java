@@ -108,9 +108,8 @@ public class ThServiceImpl implements ThService {
         String merchantId = merchantReport.getMerchantId();
         String channelCode = merchantReport.getChannelCode();
         log.info("++++++++++++++++++++++商户获取62域缓存信息开始++++++++++++++++++++++");
-        String key = JSON.parseObject(redisService.get(AsianWalletConstant.Th_SIGN_CACHE_KEY.
-                        concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode)),
-                String.class);
+        String key = redisService.get(AsianWalletConstant.Th_SIGN_CACHE_KEY.
+                        concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode));
         if (StringUtils.isEmpty(key)) {
             log.info("++++++++++++++++++++++商户获取62域缓存信息 缓存不存在 调用通华ThSign签到接口++++++++++++++++++++++");
             String timeStamp = System.currentTimeMillis() + "";
