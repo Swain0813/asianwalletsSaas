@@ -74,6 +74,7 @@ asianwallets-message/target/
 asianwallets-eureka/target/classes/application-server1.yml
 asianwallets-eureka/target/
 asianwallets-channels/target/
+asianwallets-rights/target/
 asianwallets-clearing/target/
 asianwallets-trade/target/
 /asianwallets-trade/src/main/resources/rebel.xml
