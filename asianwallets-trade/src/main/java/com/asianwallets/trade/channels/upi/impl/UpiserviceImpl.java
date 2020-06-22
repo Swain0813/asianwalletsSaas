@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.upi.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
@@ -540,7 +542,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 //退款失败调用清结算
-                commonService.orderRefundFailFundChange(orderRefund,channel);
+                commonService.orderRefundFailFundChange(orderRefund, channel);
             }
         } else {
             //请求失败
@@ -737,7 +739,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             log.info("==================【UPI预授权】==================【预授权】iso8583VO:{}", JSONObject.toJSONString(iso8583VO));
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                preOrdersMapper.updatePreStatusById0(preOrders.getId(), iso8583VO.getRetrievalReferenceNumber_37()+iso8583VO.getAuthorizationIdentificationResponse_38(), (byte) 1, null);
+                preOrdersMapper.updatePreStatusById0(preOrders.getId(), iso8583VO.getRetrievalReferenceNumber_37() + iso8583VO.getAuthorizationIdentificationResponse_38(), (byte) 1, null);
             } else {
                 log.info("==================【UPI预授权】==================【预授权失败】preOrders:{}", preOrders.getId());
                 baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
@@ -765,7 +767,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         String domain11 = preOrders.getId().substring(10, 16);
         String domain60_2 = timeStamp.substring(6, 12);
         //保存11域与60.2域
-        preOrders.setRemark1(domain60_2 + domain11+DateToolUtils.SHORT_DATE_FORMAT_T.format(new Date()));
+        preOrders.setRemark1(domain60_2 + domain11 + DateToolUtils.SHORT_DATE_FORMAT_T.format(new Date()));
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
@@ -1013,7 +1015,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //12位,左边填充0
         String formatAmount = String.format("%012d", tradeAmount);
         iso8583DTO.setAmountOfTransactions_4(formatAmount);
-        iso8583DTO.setSystemTraceAuditNumber_11(preOrders.getRemark1().substring(6,12));
+        iso8583DTO.setSystemTraceAuditNumber_11(preOrders.getRemark1().substring(6, 12));
         iso8583DTO.setDateOfExpired_14(preOrders.getValid());
         if (!StringUtils.isEmpty(preOrders.getPin())) {
             iso8583DTO.setPointOfServiceEntryMode_22("021");
@@ -1241,7 +1243,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         BaseResponse baseResponse = new BaseResponse();
         Orders orders = ordersMapper.selectByPrimaryKey(orderRefund.getOrderId());
         UpiDTO upiDTO = this.createCompleteRevokeDTO(orderRefund, channel);
-        log.info("==================【UPI银行卡预授权完成撤销】==================【调用Channels服务】 upiDTO: {}",JSON.toJSONString(upiDTO));
+        log.info("==================【UPI银行卡预授权完成撤销】==================【调用Channels服务】 upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
         log.info("==================【UPI银行卡预授权完成撤销】==================【调用Channels服务返回】channelResponse: {}", JSON.toJSONString(channelResponse));
         if (channelResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
@@ -1257,15 +1259,15 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 commonBusinessService.updateOrderRefundSuccess(orderRefund);
                 //退还分润
                 commonBusinessService.refundShareBinifit(orderRefund);
-            }else{
+            } else {
                 //退款失败
                 baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 log.info("==================【UPI银行卡预授权完成撤销】=================退款失败: {}", JSON.toJSONString(orderRefund));
                 //退款失败调用清结算
-                commonService.orderRefundFailFundChange(orderRefund,channel);
+                commonService.orderRefundFailFundChange(orderRefund, channel);
             }
-        }else{
+        } else {
             //请求失败
             baseResponse.setCode(EResultEnum.REFUNDING.getCode());
             if (rabbitMassage == null) {
@@ -1278,10 +1280,10 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     }
 
     /**
+     * @return
      * @Author YangXu
      * @Date 2020/6/18
      * @Descripate 创建预授权完成撤销DTO
-     * @return
      **/
     private UpiDTO createCompleteRevokeDTO(OrderRefund orderRefund, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
@@ -1402,7 +1404,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 log.info("=================【UPI退款】=================【退款失败】  Order: {} ", orderRefund.getOrderId());
                 baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
                 //退款失败调用清结算
-                commonService.orderRefundFailFundChange(orderRefund,channel);
+                commonService.orderRefundFailFundChange(orderRefund, channel);
             } else if ("0".equals(jsonObject.getString("refund_result")) || "0".equals(jsonObject.getString("pay_result"))) {
                 //退款未处理或撤销情况未知
                 log.info("=================【UPI退款】=================【退款未处理或撤销情况未知】  Order: {} ", orderRefund.getOrderId());
