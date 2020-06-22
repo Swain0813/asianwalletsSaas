@@ -3,4 +3,3 @@
 您好！<br/>
 您于${date}获得优惠券,票券编号是${ticketId}。<br/>
 <br/>
-${content}

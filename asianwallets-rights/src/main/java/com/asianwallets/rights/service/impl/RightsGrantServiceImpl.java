@@ -124,7 +124,6 @@ public class RightsGrantServiceImpl implements RightsGrantService {
                 rightsUserGrant.setEmail(sendCount[i]);
             }
             rightsUserGrant.setSendType(sendReceiptDTO.getSendType());
-            rightsUserGrant.setContent(sendReceiptDTO.getContent());
 
             rightsUserGrant.setSystemName(rightsGrant.getSystemName());
             rightsUserGrant.setBatchNo(rightsGrant.getBatchNo());
