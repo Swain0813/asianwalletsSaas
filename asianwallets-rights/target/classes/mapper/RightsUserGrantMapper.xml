@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.rights.dao.RightsUserGrantMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.RightsUserGrant">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="system_name" property="systemName" jdbcType="VARCHAR"/>
+        <result column="batch_no" property="batchNo" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="rights_type" property="rightsType" jdbcType="BIT"/>
+        <result column="activity_theme" property="activityTheme" jdbcType="VARCHAR"/>
+        <result column="activity_amount" property="activityAmount" jdbcType="INTEGER"/>
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="use_time" property="useTime" jdbcType="TIMESTAMP"/>
+        <result column="unusable_start_time" property="unusableStartTime" jdbcType="TIMESTAMP"/>
+        <result column="unusable_end_time" property="unusableEndTime" jdbcType="TIMESTAMP"/>
+        <result column="deal_id" property="dealId" jdbcType="VARCHAR"/>
+        <result column="system_order_id" property="systemOrderId" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="mobile_no" property="mobileNo" jdbcType="VARCHAR"/>
+        <result column="get_amount" property="getAmount" jdbcType="INTEGER"/>
+        <result column="cancel_verification_amount" property="cancelVerificationAmount" jdbcType="INTEGER"/>
+        <result column="ota_start_time" property="otaStartTime" jdbcType="TIMESTAMP"/>
+        <result column="ota_end_time" property="otaEndTime" jdbcType="TIMESTAMP"/>
+        <result column="surplus_amount" property="surplusAmount" jdbcType="INTEGER"/>
+        <result column="ticket_id" property="ticketId" jdbcType="VARCHAR"/>
+        <result column="ticket_status" property="ticketStatus" jdbcType="BIT"/>
+        <result column="package_value" property="packageValue" jdbcType="DECIMAL"/>
+        <result column="full_reduction_amount" property="fullReductionAmount" jdbcType="DECIMAL"/>
+        <result column="discount" property="discount" jdbcType="DECIMAL"/>
+        <result column="cap_amount" property="capAmount" jdbcType="DECIMAL"/>
+        <result column="deduction_amount" property="deductionAmount" jdbcType="DECIMAL"/>
+        <result column="ticket_buy_price" property="ticketBuyPrice" jdbcType="DECIMAL"/>
+        <result column="ticket_amount" property="ticketAmount" jdbcType="DECIMAL"/>
+        <result column="distribution_price" property="distributionPrice" jdbcType="DECIMAL"/>
+        <result column="overlay" property="overlay" jdbcType="BIT"/>
+        <result column="get_limit" property="getLimit" jdbcType="BIT"/>
+        <result column="shop_addresses" property="shopAddresses" jdbcType="VARCHAR"/>
+        <result column="set_text" property="setText" jdbcType="VARCHAR"/>
+        <result column="set_images" property="setImages" jdbcType="VARCHAR"/>
+        <result column="rule_description" property="ruleDescription" jdbcType="VARCHAR"/>
+        <result column="rights_currency" property="rightsCurrency" jdbcType="VARCHAR"/>
+        <result column="server_url" property="serverUrl" jdbcType="VARCHAR"/>
+        <result column="get_time" property="getTime" jdbcType="TIMESTAMP"/>
+        <result column="cancel_verification_time" property="cancelVerificationTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="ext1" property="ext1" jdbcType="VARCHAR"/>
+        <result column="ext2" property="ext2" jdbcType="VARCHAR"/>
+        <result column="ext3" property="ext3" jdbcType="VARCHAR"/>
+        <result column="ext4" property="ext4" jdbcType="VARCHAR"/>
+        <result column="ext5" property="ext5" jdbcType="VARCHAR"/>
+        <result column="ext6" property="ext6" jdbcType="VARCHAR"/>
+        <result column="ext7" property="ext7" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, system_name, batch_no, institution_id, institution_name, merchant_id, merchant_name,unusable_start_time,unusable_end_time,
+    rights_type, activity_theme, activity_amount, start_time, end_time, use_time,ticket_buy_price,
+    deal_id, system_order_id, user_id, mobile_no, get_amount, cancel_verification_amount, deduction_amount,distribution_price,
+    surplus_amount, ticket_id, ticket_status, package_value, full_reduction_amount, discount,ota_start_time,ota_end_time,
+    cap_amount, ticket_amount, get_limit, shop_addresses, set_text, set_images, rule_description,
+    rights_currency, server_url, get_time, cancel_verification_time, create_time, update_time,overlay,
+    creator, modifier, remark, enabled, ext1, ext2, ext3, ext4, ext5, ext6, ext7
+    </sql>
+    <select id="selectByTicketId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rights_user_grant
+        where ticket_id = #{ticketId}
+    </select>
+
+    <select id="getRightsUserGrantDetail" resultType="com.asianwallets.common.vo.RightsUserGrantDetailVO">
+        select rus.create_time               as createTime,
+               rus.deal_id                   as dealId,
+               rus.ticket_id                 as ticketId,
+               rus.system_name               as systemName,
+               rus.institution_id            as institutionId,
+               rus.institution_name          as institutionName,
+               rus.merchant_id               as merchantId,
+               rus.merchant_name             as merchantName,
+               rus.activity_theme            as activityTheme,
+               rus.rights_type               as rightsType,
+               rus.ticket_status             as ticketStatus,
+               rus.remark                    as remark,
+
+               rus.system_order_id           as systemOrderId,
+               rus.send_type                 as sendType,
+               rus.mobile_no                 as mobileNo,
+               rus.email                     as email,
+               rus.rights_currency           as rightsCurrency,
+               rus.ticket_amount             as ticketAmount,
+               rus.ticket_buy_price          as ticketBuyPrice,
+               rus.batch_no                  as batchNo,
+               rus.deduction_amount          as deductionAmount,
+               rus.package_value             as packageValue,
+               rus.discount,
+               rus.end_time                  as endTime,
+
+               ro.create_time                as verifyTime,
+               ro.id                         as verifyOrderId,
+               ro.cancel_verification_amount as cancelVerificationAmount,
+               ro.rights_currency            as verifyCurrency,
+               ro.status                     as verifyStatus,
+               ro.remark                     as verifyRemark
+        from rights_user_grant rus
+                 left join rights_orders ro on rus.ticket_id = ro.ticket_id
+        where rus.ticket_id = #{ticketId}
+    </select>
+
+    <select id="selectByTicketIds"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rights_user_grant
+        where ticket_id in
+        <foreach collection="list" item="ticketId" open="(" close=")" separator=",">
+            #{ticketId}
+        </foreach>
+
+    </select>
+</mapper>

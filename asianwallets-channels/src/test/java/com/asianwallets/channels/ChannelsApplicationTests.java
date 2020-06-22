@@ -340,7 +340,7 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         iso8583DTO.setCardAcceptorIdentificationCode_42("852999958120501");
         iso8583DTO.setReservedPrivate_60("50" + timeStamp.substring(6, 12) + "003");
         iso8583DTO.setReservedPrivate_63("001");
-        thService.thSignIn(iso8583DTO);
+//        thService.thSignIn(iso8583DTO);
     }
 
     /**
