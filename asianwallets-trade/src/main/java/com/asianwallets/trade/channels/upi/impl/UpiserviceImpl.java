@@ -996,9 +996,53 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         upiDTO.setChannel(channel);
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
-        iso8583DTO.setMessageType("0200");
-        iso8583DTO.setProcessingCode_3("190000");
+        iso8583DTO.setMessageType("0400");
+        //银行卡号
+        iso8583DTO.setProcessingCode_2(AESUtil.aesDecrypt(preOrders.getUserBankCardNo()));
+        iso8583DTO.setProcessingCode_3("030000");
+        //获取交易金额的小数位数
+        int numOfBits = String.valueOf(preOrders.getTradeAmount()).length() - String.valueOf(preOrders.getTradeAmount()).indexOf(".") - 1;
+        int tradeAmount;
+        if (numOfBits == 0) {
+            //整数
+            tradeAmount = preOrders.getTradeAmount().intValue();
+        } else {
+            //小数,扩大对应小数位数
+            tradeAmount = preOrders.getTradeAmount().movePointRight(numOfBits).intValue();
+        }
+        //12位,左边填充0
+        String formatAmount = String.format("%012d", tradeAmount);
+        iso8583DTO.setAmountOfTransactions_4(formatAmount);
+        iso8583DTO.setSystemTraceAuditNumber_11(preOrders.getRemark1().substring(6,12));
+        iso8583DTO.setDateOfExpired_14(preOrders.getValid());
+        if (!StringUtils.isEmpty(preOrders.getPin())) {
+            iso8583DTO.setPointOfServiceEntryMode_22("021");
+        } else {
+            iso8583DTO.setPointOfServiceEntryMode_22("022");
+        }
+        iso8583DTO.setPointOfServiceConditionMode_25("06");
 
+
+        iso8583DTO.setResponseCode_39("96");
+        //受卡机终端标识码 (设备号)
+        iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
+        //受卡方标识码 (商户号)
+        iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        //自定义域
+        iso8583DTO.setReservedPrivate_60("22000001000600");//01000001000000000
+
+        String isoMsg = null;
+        //扫码组包
+        try {
+            isoMsg = UpiIsoUtil.packISO8583DTO(iso8583DTO, makEncryption(channel.getMd5KeyStr()));
+        } catch (Exception e) {
+            log.info("=================【预授权冲正DTO】=================【组包异常】");
+        }
+        String sendMsg = ad3ParamsConfig.getUpiTdpu() + ad3ParamsConfig.getUpiHeader() + isoMsg;
+        String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        sendMsg = strHex2 + sendMsg;
+        upiDTO.setIso8583DTO(sendMsg);
 
         return upiDTO;
     }
