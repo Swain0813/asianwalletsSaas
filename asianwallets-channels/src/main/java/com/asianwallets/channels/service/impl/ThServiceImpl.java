@@ -164,6 +164,7 @@ public class ThServiceImpl implements ThService {
         //业务类型
         String businessTypes = "00000001";
         BaseResponse baseResponse = new BaseResponse();
+        log.info("+++++++++++++THdto --->>> CSB ++++++++++++dto:{}", JSON.toJSONString(thDTO));
         try {
             String sendMsg = tpdu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
                     + ISO8583Util.packISO8583DTO(thDTO.getIso8583DTO(), key);
