@@ -438,7 +438,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
      * 通华签到获取62域
      *
      * @param terminalId 设备号
-     * @param merchantId 商户号
+     * @param merchantId 报备里的二级商户号 2020年6月22日产品确认
      * @param channel
      * @return
      */

@@ -588,7 +588,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      */
     private String getThKey(Orders orders, Channel channel) {
         MerchantReport merchantReport = commonRedisDataService.getMerchantReport(orders.getMerchantId(), channel.getChannelCode());
-        return commonRedisDataService.getThKey(merchantReport.getExtend1(), orders.getMerchantId(), channel);
+        return commonRedisDataService.getThKey(merchantReport.getExtend1(), merchantReport.getSubMerchantCode(), channel);
     }
 
     /**
@@ -600,7 +600,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      */
     private String getThKey(OrderRefund orderRefund, Channel channel) {
         MerchantReport merchantReport = commonRedisDataService.getMerchantReport(orderRefund.getMerchantId(), channel.getChannelCode());
-        return commonRedisDataService.getThKey(merchantReport.getExtend1(), orderRefund.getMerchantId(), channel);
+        return commonRedisDataService.getThKey(merchantReport.getExtend1(), merchantReport.getSubMerchantCode(), channel);
     }
 
     /**

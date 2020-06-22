@@ -105,7 +105,7 @@ public class ThServiceImpl implements ThService {
     public String getThKey(MerchantReport merchantReport, ThDTO thDTO) {
         String institutionId = thDTO.getChannel().getChannelMerchantId();
         String terminalId = merchantReport.getExtend1();
-        String merchantId = merchantReport.getMerchantId();
+        String merchantId = merchantReport.getSubMerchantCode();
         String channelCode = merchantReport.getChannelCode();
         log.info("++++++++++++++++++++++商户获取62域缓存信息开始++++++++++++++++++++++");
         String key = redisService.get(AsianWalletConstant.Th_SIGN_CACHE_KEY.
