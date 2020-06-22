@@ -1093,7 +1093,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             //未签收
             orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
             orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
-            orders.setChannelNumber(iso8583VO.getRetrievalReferenceNumber_37());
+            orders.setChannelNumber(iso8583VO.getRetrievalReferenceNumber_37() + iso8583VO.getAuthorizationIdentificationResponse_38());
             orders.setReportNumber(orders.getReportNumber() + iso8583VO.getDateOfLocalTransaction_13());
             try {
                 channelsOrderMapper.updateStatusById(orders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), TradeConstant.TRADE_SUCCESS);
@@ -1167,7 +1167,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         String domain11 = orders.getId().substring(10, 16);
         String domain60_2 = timeStamp.substring(6, 12);
         //保存11域与60.2域
-        orders.setReportNumber(domain60_2 + domain11);
+        orders.setRemark1(domain60_2 + domain11 + DateToolUtils.SHORT_DATE_FORMAT_T.format(new Date()));
 
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
@@ -1198,7 +1198,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         }
 
         iso8583DTO.setPointOfServiceConditionMode_25("06");
-        iso8583DTO.setAuthorizationIdentificationResponse_38(orders.getChannelNumber().substring(12));
+        String s38 = preOrdersMapper.selectMerchantOrderId(orders.getMerchantOrderId()).getChannelNumber().substring(12);
+        iso8583DTO.setAuthorizationIdentificationResponse_38(s38);
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
         //受卡方标识码 (商户号)
@@ -1209,7 +1210,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                 //60.1 消息类型码
                 "22" +
                         //60.2 批次号 自定义
-                        timeStamp.substring(6, 12) +
+                        domain60_2 +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
