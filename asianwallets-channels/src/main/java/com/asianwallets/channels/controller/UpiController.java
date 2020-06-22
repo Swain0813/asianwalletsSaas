@@ -50,10 +50,10 @@ public class UpiController extends BaseController {
         return upiService.upiCancel(upiDTO);
     }
 
-    @ApiOperation("upiQueery")
-    @PostMapping("/upiQueery")
-    public BaseResponse upiQueery(@RequestBody @ApiParam UpiDTO upiDTO) {
-        return upiService.upiQueery(upiDTO);
+    @ApiOperation("upiQuery")
+    @PostMapping("/upiQuery")
+    public BaseResponse upiQuery(@RequestBody @ApiParam UpiDTO upiDTO) {
+        return upiService.upiQuery(upiDTO);
     }
 
 
