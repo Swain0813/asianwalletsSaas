@@ -27,7 +27,6 @@ public class SendReceiptDTO {
     @ApiModelProperty(value = "邮箱")
     private String email;
 
-    @NotNull(message = "50002")
     @ApiModelProperty(value = "发送内容")
     private String content;
 

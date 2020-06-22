@@ -87,11 +87,9 @@ public class CommonServiceImpl implements CommonService {
             map.put("date", time);
             //票券编号
             map.put("ticketId",rightsUserGrant.getTicketId());
-            //内容
-            map.put("content",rightsUserGrant.getContent());
              if(!StringUtils.isEmpty(rightsUserGrant.getMobileNo())) {
                  //调用发送短信
-                 messageFeign.sendSimple(rightsUserGrant.getMobileNo(),"恭喜你获得优惠券:"+rightsUserGrant.getTicketId()+"/n"+rightsUserGrant.getContent());
+                 messageFeign.sendSimple(rightsUserGrant.getMobileNo(),"恭喜你获得优惠券:"+rightsUserGrant.getTicketId());
              }else {
                  //调用发送邮件
                  messageFeign.sendTemplateMail(rightsUserGrant.getEmail(), auditorProvider.getLanguage(), Status._4, map);
