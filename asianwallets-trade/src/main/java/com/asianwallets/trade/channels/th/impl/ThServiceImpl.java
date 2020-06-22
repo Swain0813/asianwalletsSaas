@@ -671,7 +671,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //受卡机终端标识码 (设备号)
         dto.setCardAcceptorTerminalIdentification_41(merchantReport.getExtend1());
         //受卡方标识码 (商户号)
-        dto.setCardAcceptorIdentificationCode_42(merchantReport.getMerchantId());
+        dto.setCardAcceptorIdentificationCode_42(merchantReport.getSubMerchantCode());
         return dto;
     }
 
