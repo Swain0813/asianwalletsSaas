@@ -1,5 +1,6 @@
 package com.asianwallets.rights.service.impl;
 import com.asianwallets.common.config.AuditorProvider;
+import com.asianwallets.common.constant.RightsConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.Attestation;
 import com.asianwallets.common.entity.RightsUserGrant;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,7 +87,32 @@ public class CommonServiceImpl implements CommonService {
             Map<String,Object> map = new HashMap<String,Object>();
             //获得时间
             String time = DateUtil.getCurrentDate() + " " + DateUtil.getCurrentTime();
-            map.put("date", time);
+            //商户名称
+            map.put("merchantName", rightsUserGrant.getMerchantName());
+            //活动主题
+            map.put("activityTheme", rightsUserGrant.getActivityTheme());
+            //活动内容
+            if(rightsUserGrant.getRightsType()== RightsConstant.FULL_DISCOUNT){
+                //满减的场合
+                if(rightsUserGrant.getCapAmount()!=null && rightsUserGrant.getCapAmount().compareTo(BigDecimal.ZERO)==1){
+                    map.put("content", "满"+rightsUserGrant.getFullReductionAmount()+"减"+rightsUserGrant.getTicketAmount()+","+rightsUserGrant.getCapAmount()+"封顶");
+                }else {
+                    map.put("content", "满"+rightsUserGrant.getFullReductionAmount()+"减"+rightsUserGrant.getTicketAmount()+","+"上不封顶");
+                }
+            }else if(rightsUserGrant.getRightsType()==RightsConstant.DISCOUNT){
+                //折扣的场合
+                if(rightsUserGrant.getDiscount()!=null && rightsUserGrant.getDiscount().compareTo(BigDecimal.ZERO)==1){
+                    map.put("content", rightsUserGrant.getDiscount().multiply(new BigDecimal(10))+"折优惠,"+rightsUserGrant.getCapAmount()+"封顶");
+                }else {
+                    map.put("content", rightsUserGrant.getDiscount().multiply(new BigDecimal(10))+"折优惠,"+rightsUserGrant.getCapAmount()+"上不封顶");
+                }
+            }else if(rightsUserGrant.getRightsType()==RightsConstant.PACKAGE){
+                //套餐的场合
+                map.put("content", rightsUserGrant.getPackageValue()+"套餐");
+            }else {
+               //定额
+                map.put("content", rightsUserGrant.getTicketAmount()+"优惠券");
+            }
             //票券编号
             map.put("ticketId",rightsUserGrant.getTicketId());
              if(!StringUtils.isEmpty(rightsUserGrant.getMobileNo())) {

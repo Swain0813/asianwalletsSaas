@@ -319,6 +319,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             //将用户信息存入Redis
             RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
             redisSysUserVO.setUsername(username);
+            redisSysUserVO.setMerchantName(merchant.getCnName());
             redisSysUserVO.setTradePassword(sysUserVO.getTradePassword());
             redisService.set(response.getToken(), JSON.toJSONString(redisSysUserVO));
         }
