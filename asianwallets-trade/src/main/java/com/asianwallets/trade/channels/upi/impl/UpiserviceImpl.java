@@ -1519,7 +1519,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         upiPayDTO.setOrder_no(orderRefund.getOrderId());
         upiDTO.setUpiPayDTO(upiPayDTO);
         log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-upiQueery】  upiDTO: {}", JSON.toJSONString(upiDTO));
-        BaseResponse channelResponse = channelsFeign.upiQuery(upiDTO);
+        BaseResponse channelResponse = channelsFeign.upiQueery(upiDTO);
         log.info("==================【UPI撤销】==================【调用Channels服务】【UPI-upiQueery】  channelResponse: {}", JSON.toJSONString(channelResponse));
         JSONObject jsonObject = (JSONObject) JSONObject.parse(channelResponse.getData().toString());
         if (channelResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
