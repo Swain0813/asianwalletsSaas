@@ -105,11 +105,10 @@ public class ThServiceImpl implements ThService {
     public String getThKey(MerchantReport merchantReport, ThDTO thDTO) {
         String institutionId = thDTO.getChannel().getChannelMerchantId();
         String terminalId = merchantReport.getExtend1();
-        String merchantId = merchantReport.getMerchantId();
-        String channelCode = merchantReport.getChannelCode();
+        String merchantId = merchantReport.getSubMerchantCode();
         log.info("++++++++++++++++++++++商户获取62域缓存信息开始++++++++++++++++++++++");
         String key = redisService.get(AsianWalletConstant.Th_SIGN_CACHE_KEY.
-                concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode));
+                concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId));
         if (StringUtils.isEmpty(key)) {
             log.info("++++++++++++++++++++++商户获取62域缓存信息 缓存不存在 调用通华ThSign签到接口++++++++++++++++++++++");
             String timeStamp = System.currentTimeMillis() + "";
@@ -124,11 +123,14 @@ public class ThServiceImpl implements ThService {
             iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
             iso8583DTO.setReservedPrivate_60("50" + timeStamp.substring(6, 12) + "003");
             iso8583DTO.setReservedPrivate_63("001");
-            BaseResponse baseResponse = thSignIn(thDTO);
+            ThDTO dto = new ThDTO();
+            dto.setIso8583DTO(iso8583DTO);
+            dto.setChannel(thDTO.getChannel());
+            BaseResponse baseResponse = thSignIn(dto);
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), ISO8583DTO.class);
             key = iso8583VO.getReservedPrivate_62();
             redisService.set(AsianWalletConstant.Th_SIGN_CACHE_KEY.
-                    concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode), key);
+                    concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId), key);
         }
         log.info("++++++++++++++++++++++商户获取62域缓存信息完成++++++++++++++++++++++");
         //截取并解密 获取key
@@ -160,6 +162,7 @@ public class ThServiceImpl implements ThService {
         //业务类型
         String businessTypes = "00000001";
         BaseResponse baseResponse = new BaseResponse();
+        log.info("+++++++++++++THdto --->>> CSB ++++++++++++dto:{}", JSON.toJSONString(thDTO));
         try {
             String sendMsg = tpdu + header + NumberStringUtil.str2HexStr(merchNum + terminalNum + institutionNum + businessTypes + merchNum)
                     + ISO8583Util.packISO8583DTO(thDTO.getIso8583DTO(), key);
