@@ -3,6 +3,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.dto.RightsGrantDTO;
 import com.asianwallets.common.dto.RightsGrantInsertDTO;
 import com.asianwallets.common.dto.SendReceiptDTO;
+import com.asianwallets.common.dto.SendTicketDTO;
 import com.asianwallets.common.entity.RightsGrant;
 import com.asianwallets.common.entity.RightsUserGrant;
 import com.asianwallets.common.vo.ExportRightsGrantVO;
@@ -49,12 +50,19 @@ public interface RightsGrantService {
     int addRightsGrant(String username, RightsGrantInsertDTO rightsGrantInsertDTO);
 
     /**
-     * 发券接口【对外API】
+     * 短信和邮箱发券
      *
      * @param sendReceiptDTO 发券DTO
      * @return
      */
     JSONObject sendReceipt(SendReceiptDTO sendReceiptDTO);
+
+    /**
+     * 发券接口
+     * @param sendTicketDTO
+     * @return
+     */
+    JSONObject sendTicket(SendTicketDTO sendTicketDTO);
 
     /**
      * 分页查询权益票券信息

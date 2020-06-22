@@ -3,6 +3,7 @@ import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.RightsGrantDTO;
 import com.asianwallets.common.dto.RightsGrantInsertDTO;
 import com.asianwallets.common.dto.SendReceiptDTO;
+import com.asianwallets.common.dto.SendTicketDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.ExportRightsGrantVO;
@@ -24,11 +25,18 @@ public class RightsGrantController extends BaseController {
     @Autowired
     private RightsGrantService rightsGrantService;
 
-    @ApiOperation(value = "发券接口【对外API】")
+    @ApiOperation(value = "短信和邮箱发券")
     @PostMapping("/sendReceipt")
     @CrossOrigin
     public BaseResponse sendReceipt(@RequestBody @ApiParam @Valid SendReceiptDTO sendReceiptDTO) {
         return ResultUtil.success(rightsGrantService.sendReceipt(sendReceiptDTO));
+    }
+
+    @ApiOperation(value = "发券接口【对外API】")
+    @PostMapping("/sendTicket")
+    @CrossOrigin
+    public BaseResponse sendReceipt(@RequestBody @ApiParam @Valid SendTicketDTO sendTicketDTO) {
+        return ResultUtil.success(rightsGrantService.sendTicket(sendTicketDTO));
     }
 
     @ApiOperation(value = "分页查询权益票券信息")
