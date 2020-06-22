@@ -235,7 +235,7 @@ public interface ChannelsFeign {
 
     @ApiOperation(value = "upi查询接口")
     @PostMapping("/upi/upiQuery")
-    BaseResponse upiQuery(UpiDTO upiDTO);
+    BaseResponse upiQueery(UpiDTO upiDTO);
 
     @ApiOperation(value = "通华银行卡退款接口")
     @PostMapping("/th/thBankCardRefund")
