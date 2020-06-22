@@ -126,10 +126,11 @@ public class CommonServiceImpl implements CommonService {
                 map.put("content", rightsUserGrant.getTicketAmount()+"优惠券");
             }
             //票券的二维码
-            String imagePath = fileUploadPath.concat(IMAGES_DIR).concat(DateUtil.getCurrentDate()).concat("/").concat(UUID.randomUUID().toString()).concat(".png");
+            String fileName= IMAGES_DIR.concat(DateUtil.getCurrentDate()).concat("/").concat(UUID.randomUUID().toString()).concat(".png");
+            String imagePath = fileUploadPath.concat(fileName);
             createDir(imagePath);
             QrCodeUtil.generateQrCodeAndSave(rightsUserGrant.getTicketId(),"png",350,350,imagePath);
-            map.put("ticketQrCode", fileHttpServer.concat(imagePath));
+            map.put("ticketQrCode", fileHttpServer.concat(fileName));
             //票券编号
             map.put("ticketId",rightsUserGrant.getTicketId());
             //可用时间
