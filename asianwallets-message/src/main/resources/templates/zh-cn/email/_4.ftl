@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title></title>
     <style type="text/css">
         *{margin: 0;
             padding: 0;}
@@ -80,7 +76,7 @@
 <div class="content">
     <p class="topText">恭喜</p>
     <p class="toptitle">【${merchantName}】 ${activityTheme}${content}</p>
-    <div class="imageB">${ticketQrCode}</div>
+    <img class="imageB" src=${ticketQrCode}></img>
     <span class="topspan">${ticketId}</span>
     <div class="list">
         <div><p>【可用时间】</p><span>${startTime}---${endTime}</span></div>
@@ -91,7 +87,6 @@
         </div>
         <div><p>【商家地址】</p><span>${shopAddresses}</span></div>
     </div>
-
 </div>
 </body>
 </html>
