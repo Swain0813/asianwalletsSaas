@@ -1,7 +1,6 @@
 package com.asianwallets.channels.controller;
 import com.asianwallets.channels.service.ThService;
 import com.asianwallets.common.base.BaseController;
-import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
 import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.response.BaseResponse;
 import io.swagger.annotations.Api;
@@ -47,8 +46,8 @@ public class ThController extends BaseController {
 
     @ApiOperation("thSign")
     @PostMapping("/thSign")
-    public BaseResponse thSign(@RequestBody @ApiParam ISO8583DTO iso8583DTO) {
-        return thService.thSignIn(iso8583DTO);
+    public BaseResponse thSign(@RequestBody @ApiParam ThDTO thDTO) {
+        return thService.thSignIn(thDTO);
     }
 
     @ApiOperation("线下银行卡消费")

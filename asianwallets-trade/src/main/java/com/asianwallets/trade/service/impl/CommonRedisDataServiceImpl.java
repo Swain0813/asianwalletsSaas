@@ -3,6 +3,7 @@ package com.asianwallets.trade.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.dto.th.ISO8583.ISO8583DTO;
+import com.asianwallets.common.dto.th.ISO8583.ThDTO;
 import com.asianwallets.common.entity.*;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
@@ -434,16 +435,17 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     }
 
     /**
-     *通华签到获取62域
+     * 通华签到获取62域
      *
-     * @param institutionId 机构号
-     * @param terminalId    设备号
-     * @param merchantId    商户号
-     * @param channelCode   通道编号
+     * @param terminalId 设备号
+     * @param merchantId 商户号
+     * @param channel
      * @return
      */
     @Override
-    public String getThKey(String institutionId, String terminalId, String merchantId, String channelCode) {
+    public String getThKey(String terminalId, String merchantId, Channel channel) {
+        String institutionId = channel.getChannelMerchantId();
+        String channelCode = channel.getChannelCode();
         log.info("++++++++++++++++++++++商户获取62域缓存信息开始++++++++++++++++++++++");
         String key = redisService.get(AsianWalletConstant.Th_SIGN_CACHE_KEY.
                 concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode));
@@ -461,7 +463,9 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
             iso8583DTO.setReservedPrivate_60("50" + timeStamp.substring(6, 12) + "003");
             iso8583DTO.setReservedPrivate_63("001");
-            BaseResponse baseResponse = thService.thSign(iso8583DTO);
+            ThDTO thDTO = new ThDTO();
+            thDTO.setIso8583DTO(iso8583DTO);
+            BaseResponse baseResponse = thService.thSign(thDTO);
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), ISO8583DTO.class);
             key = iso8583VO.getReservedPrivate_62();
             log.info("++++++++++++++++++++++商户获取62域缓存信息++++++++++++++++++++++ iso8583VO:{}", JSON.toJSONString(iso8583VO));
