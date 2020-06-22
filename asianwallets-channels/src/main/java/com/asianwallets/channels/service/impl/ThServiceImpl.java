@@ -109,7 +109,7 @@ public class ThServiceImpl implements ThService {
         String channelCode = merchantReport.getChannelCode();
         log.info("++++++++++++++++++++++商户获取62域缓存信息开始++++++++++++++++++++++");
         String key = redisService.get(AsianWalletConstant.Th_SIGN_CACHE_KEY.
-                concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode));
+                concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId));
         if (StringUtils.isEmpty(key)) {
             log.info("++++++++++++++++++++++商户获取62域缓存信息 缓存不存在 调用通华ThSign签到接口++++++++++++++++++++++");
             String timeStamp = System.currentTimeMillis() + "";
@@ -127,12 +127,11 @@ public class ThServiceImpl implements ThService {
             ThDTO dto = new ThDTO();
             dto.setIso8583DTO(iso8583DTO);
             dto.setChannel(thDTO.getChannel());
-            dto.setMerchantId(thDTO.getMerchantId());
             BaseResponse baseResponse = thSignIn(dto);
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), ISO8583DTO.class);
             key = iso8583VO.getReservedPrivate_62();
             redisService.set(AsianWalletConstant.Th_SIGN_CACHE_KEY.
-                    concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId).concat("_").concat(channelCode), key);
+                    concat("_").concat(institutionId).concat("_").concat(merchantId).concat("_").concat(terminalId), key);
         }
         log.info("++++++++++++++++++++++商户获取62域缓存信息完成++++++++++++++++++++++");
         //截取并解密 获取key
