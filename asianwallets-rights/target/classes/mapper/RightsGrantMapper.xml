@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.rights.dao.RightsGrantMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.RightsGrant">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="system_name" property="systemName" jdbcType="VARCHAR"/>
+        <result column="batch_no" property="batchNo" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="institution_name" property="institutionName" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="merchant_name" property="merchantName" jdbcType="VARCHAR"/>
+        <result column="rights_type" property="rightsType" jdbcType="TINYINT"/>
+        <result column="activity_theme" property="activityTheme" jdbcType="VARCHAR"/>
+        <result column="activity_amount" property="activityAmount" jdbcType="INTEGER"/>
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="ota_start_time" property="otaStartTime" jdbcType="TIMESTAMP"/>
+        <result column="ota_end_time" property="otaEndTime" jdbcType="TIMESTAMP"/>
+        <result column="use_time" property="useTime" jdbcType="TIMESTAMP"/>
+        <result column="unusable_start_time" property="unusableStartTime" jdbcType="TIMESTAMP"/>
+        <result column="unusable_end_time" property="unusableEndTime" jdbcType="TIMESTAMP"/>
+        <result column="deal_id" property="dealId" jdbcType="VARCHAR"/>
+        <result column="system_order_id" property="systemOrderId" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="mobile_no" property="mobileNo" jdbcType="VARCHAR"/>
+        <result column="get_amount" property="getAmount" jdbcType="INTEGER"/>
+        <result column="cancel_verification_amount" property="cancelVerificationAmount" jdbcType="INTEGER"/>
+        <result column="surplus_amount" property="surplusAmount" jdbcType="INTEGER"/>
+        <result column="ticket_id" property="ticketId" jdbcType="VARCHAR"/>
+        <result column="ticket_status" property="ticketStatus" jdbcType="TINYINT"/>
+        <result column="package_value" property="packageValue" jdbcType="DECIMAL"/>
+        <result column="full_reduction_amount" property="fullReductionAmount" jdbcType="DECIMAL"/>
+        <result column="discount" property="discount" jdbcType="DECIMAL"/>
+        <result column="cap_amount" property="capAmount" jdbcType="DECIMAL"/>
+        <result column="deduction_amount" property="deductionAmount" jdbcType="DECIMAL"/>
+        <result column="ticket_amount" property="ticketAmount" jdbcType="DECIMAL"/>
+        <result column="ticket_buy_price" property="ticketBuyPrice" jdbcType="DECIMAL"/>
+        <result column="distribution_price" property="distributionPrice" jdbcType="DECIMAL"/>
+        <result column="overlay" property="overlay" jdbcType="BIT"/>
+        <result column="get_limit" property="getLimit" jdbcType="TINYINT"/>
+        <result column="shop_addresses" property="shopAddresses" jdbcType="VARCHAR"/>
+        <result column="set_text" property="setText" jdbcType="VARCHAR"/>
+        <result column="set_images" property="setImages" jdbcType="VARCHAR"/>
+        <result column="rule_description" property="ruleDescription" jdbcType="VARCHAR"/>
+        <result column="rights_currency" property="rightsCurrency" jdbcType="VARCHAR"/>
+        <result column="server_url" property="serverUrl" jdbcType="VARCHAR"/>
+        <result column="get_time" property="getTime" jdbcType="TIMESTAMP"/>
+        <result column="cancel_verification_time" property="cancelVerificationTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="ext1" property="ext1" jdbcType="VARCHAR"/>
+        <result column="ext2" property="ext2" jdbcType="VARCHAR"/>
+        <result column="ext3" property="ext3" jdbcType="VARCHAR"/>
+        <result column="ext4" property="ext4" jdbcType="VARCHAR"/>
+        <result column="ext5" property="ext5" jdbcType="VARCHAR"/>
+        <result column="ext6" property="ext6" jdbcType="VARCHAR"/>
+        <result column="ext7" property="ext7" jdbcType="VARCHAR"/>
+        <result column="send_type" property="sendType" jdbcType="TINYINT"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, system_name, batch_no, institution_id,institution_name,merchant_id,merchant_name,rights_type, activity_theme, activity_amount, start_time, end_time,
+    use_time, unusable_start_time, unusable_end_time,ticket_id, ticket_status, package_value, full_reduction_amount,deal_id,system_order_id,user_id,mobile_no,deduction_amount,ticket_buy_price,
+    discount, cap_amount, get_limit, shop_addresses, set_text, set_images, rule_description,ticket_amount,get_amount,cancel_verification_amount,surplus_amount,distribution_price,
+    rights_currency, server_url, get_time, cancel_verification_time, create_time, update_time, creator,ota_start_time,ota_end_time,overlay,
+    modifier, remark, enabled, ext1, ext2, ext3, ext4, ext5, ext6, ext7,send_type,email,content
+  </sql>
+
+    <select id="pageFindRightsGrant" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rights_grant
+        <where>
+            <if test="id != null and id != ''">
+                and id=#{id}
+            </if>
+            <if test="dealId != null and dealId != ''">
+                and deal_id=#{dealId}
+            </if>
+            <if test="systemName != null and systemName != ''">
+                AND system_name LIKE CONCAT(CONCAT('%', #{systemName}), '%')
+            </if>
+            <if test="institutionId!=null and institutionId != ''">
+                and institution_id=#{institutionId}
+            </if>
+            <if test="institutionName != null and institutionName != ''">
+                AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+            </if>
+            <if test="merchantId!=null and merchantId != ''">
+                and merchant_id=#{merchantId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+            </if>
+            <if test="rightsType!=null">
+                and rights_type=#{rightsType}
+            </if>
+            <if test="ticketStatus!=null">
+                and ticket_status=#{ticketStatus}
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endDate}
+            </if>
+            <if test="enabled != null">
+                and enabled=#{enabled}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectRightsGrantInfo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rights_grant
+        <where>
+            <if test="id != null and id != ''">
+                and id=#{id}
+            </if>
+            <if test="ticketId != null and ticketId != ''">
+                and ticket_id=#{ticketId}
+            </if>
+            <if test="dealId != null and dealId != ''">
+                and deal_id=#{dealId}
+            </if>
+            <if test="systemName != null and systemName != ''">
+                AND system_name LIKE CONCAT(CONCAT('%', #{systemName}), '%')
+            </if>
+            <if test="institutionId!=null and institutionId != ''">
+                and institution_id=#{institutionId}
+            </if>
+            <if test="institutionName != null and institutionName != ''">
+                AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+            </if>
+            <if test="merchantId!=null and merchantId != ''">
+                and merchant_id=#{merchantId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+            </if>
+            <if test="rightsType!=null">
+                and rights_type=#{rightsType}
+            </if>
+            <if test="ticketStatus!=null">
+                and ticket_status=#{ticketStatus}
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endDate}
+            </if>
+            <if test="enabled != null">
+                and enabled=#{enabled}
+            </if>
+        </where>
+    </select>
+
+    <select id="exportRightsGrants" resultType="com.asianwallets.common.vo.ExportRightsGrantVO">
+        SELECT
+        create_time AS createTime,
+        deal_id AS dealId,
+        system_name AS systemName,
+        institution_name AS institutionName,
+        merchant_id AS merchantId,
+        merchant_name AS merchantName,
+        activity_theme AS activityTheme,
+        rights_type AS rightsType,
+        activity_amount AS activityAmount,
+        get_amount AS getAmount,
+        cancel_verification_amount AS cancelVerificationAmount,
+        surplus_amount AS surplusAmount,
+        concat(start_time, '-',end_time) AS activityTime,
+        remark
+        FROM
+        rights_grant
+        <where>
+            <if test="systemName != null and systemName != ''">
+                AND system_name LIKE CONCAT(CONCAT('%', #{systemName}), '%')
+            </if>
+            <if test="dealId != null and dealId != ''">
+                and deal_id=#{dealId}
+            </if>
+            <if test="institutionName != null and institutionName != ''">
+                AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+            </if>
+            <if test="rightsType!=null">
+                and rights_type=#{rightsType}
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endDate}
+            </if>
+            <if test="enabled != null">
+                and enabled=#{enabled}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+
+    <select id="selectByTicketId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rights_grant
+        where ticket_id = #{ticketId}
+    </select>
+
+
+    <select id="selectByDealId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rights_grant where deal_id = #{dealId}
+    </select>
+
+
+    <select id="pageFindRightsUserGrant" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rights_user_grant
+        <where>
+            <if test="systemName != null and systemName != ''">
+                AND system_name LIKE CONCAT(CONCAT('%', #{systemName}), '%')
+            </if>
+            <if test="ticketId != null and ticketId != ''">
+                and ticket_id=#{ticketId}
+            </if>
+            <if test="rightsType!=null">
+                and rights_type=#{rightsType}
+            </if>
+            <if test="sendType!=null">
+                and send_type=#{sendType}
+            </if>
+            <if test="ticketStatus!=null">
+                and ticket_status=#{ticketStatus}
+            </if>
+            <if test="institutionId!=null and institutionId != ''">
+                and institution_id=#{institutionId}
+            </if>
+            <if test="institutionName != null and institutionName != ''">
+                AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+            </if>
+            <if test="merchantId!=null and merchantId != ''">
+                and merchant_id=#{merchantId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                AND create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND create_time &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="exportRightsUserGrant" resultType="com.asianwallets.common.vo.ExportRightsUserGrantVO">
+        select
+        create_time as createTime,
+        deal_id as dealId,
+        system_order_id as systemOrderId,
+        ticket_id as ticketId,
+        activity_theme as activityTheme,
+        rights_type  as rightsType,
+        case
+        when rights_type = 1 then ticket_amount
+        when rights_type = 2 then discount
+        when rights_type = 3 then package_value
+        when rights_type = 4 then ticket_amount
+        end  as distributionPrice,
+        system_name as systemName,
+        institution_id as institutionId,
+        institution_name as institutionName,
+        merchant_id as  merchantId,
+        merchant_name as merchantName,
+        ticket_status as ticketStatus,
+        send_type as sendType,
+        remark
+        from rights_user_grant
+        <where>
+            <if test="systemName != null and systemName != ''">
+                AND system_name LIKE CONCAT(CONCAT('%', #{systemName}), '%')
+            </if>
+            <if test="ticketId != null and ticketId != ''">
+                and ticket_id=#{ticketId}
+            </if>
+            <if test="rightsType!=null">
+                and rights_type=#{rightsType}
+            </if>
+            <if test="ticketStatus!=null">
+                and ticket_status=#{ticketStatus}
+            </if>
+            <if test="institutionId!=null and institutionId != ''">
+                and institution_id=#{institutionId}
+            </if>
+            <if test="institutionName != null and institutionName != ''">
+                AND institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+            </if>
+            <if test="merchantId!=null and merchantId != ''">
+                and merchant_id=#{merchantId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                AND merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                AND create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND create_time &lt;= #{endDate}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectByBatchNo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rights_grant where batch_no = #{batchNo} order by create_time desc limit 1
+    </select>
+
+</mapper>

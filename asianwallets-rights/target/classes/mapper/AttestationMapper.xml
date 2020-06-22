@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.rights.dao.AttestationMapper">
+    <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.Attestation">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="institution_id" property="institutionId" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="mer_pubkey" property="merPubkey" jdbcType="VARCHAR"/>
+        <result column="md5key" property="md5key" jdbcType="LONGVARCHAR"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="pubkey" property="pubkey" jdbcType="LONGVARCHAR"/>
+        <result column="prikey" property="prikey" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="BaseSql">
+        id, institution_id, merchant_id, pubkey, prikey, md5key, mer_pubkey, enabled, create_time, update_time, creator, modifier, remark
+    </sql>
+    <select id="selectByMerchantId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BaseSql"/>
+        FROM attestation
+        WHERE merchant_id = #{merchantId}
+        AND enabled = 1;
+    </select>
+
+
+</mapper>
