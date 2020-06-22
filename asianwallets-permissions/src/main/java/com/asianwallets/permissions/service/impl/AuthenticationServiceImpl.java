@@ -314,12 +314,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         //封装登录响应实体
         AuthenticationResponse response = getAuthenticationResponse(sysUserVO);
+        response.setMerchantName(merchant.getCnName());
         response.setMd5Key(getPosMd5Key(request.getSysId()));
         if (StringUtils.isNotBlank(response.getToken())) {
             //将用户信息存入Redis
             RedisSysUserVO redisSysUserVO = new RedisSysUserVO();
             redisSysUserVO.setUsername(username);
-            redisSysUserVO.setMerchantName(merchant.getCnName());
             redisSysUserVO.setTradePassword(sysUserVO.getTradePassword());
             redisService.set(response.getToken(), JSON.toJSONString(redisSysUserVO));
         }
