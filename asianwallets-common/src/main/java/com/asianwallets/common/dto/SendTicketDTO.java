@@ -22,9 +22,11 @@ public class SendTicketDTO {
     @ApiModelProperty(value = "平台流水号")
     private String systemOrderId;
 
-    @NotNull(message = "50002")
     @ApiModelProperty(value = "手机号")
     private String mobileNo;
+
+    @ApiModelProperty(value = "邮箱")
+    private String email;
 
     @NotNull(message = "50002")
     @ApiModelProperty(value = "发券数量")
