@@ -124,8 +124,11 @@ public class ThServiceImpl implements ThService {
             iso8583DTO.setCardAcceptorIdentificationCode_42(merchantId);
             iso8583DTO.setReservedPrivate_60("50" + timeStamp.substring(6, 12) + "003");
             iso8583DTO.setReservedPrivate_63("001");
-            thDTO.setIso8583DTO(iso8583DTO);
-            BaseResponse baseResponse = thSignIn(thDTO);
+            ThDTO dto = new ThDTO();
+            dto.setIso8583DTO(iso8583DTO);
+            dto.setChannel(thDTO.getChannel());
+            dto.setMerchantId(thDTO.getMerchantId());
+            BaseResponse baseResponse = thSignIn(dto);
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(baseResponse.getData()), ISO8583DTO.class);
             key = iso8583VO.getReservedPrivate_62();
             redisService.set(AsianWalletConstant.Th_SIGN_CACHE_KEY.
