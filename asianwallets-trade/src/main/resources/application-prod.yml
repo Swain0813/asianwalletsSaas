@@ -99,7 +99,7 @@ custom:
   #给AD3的回调URL
   channelCallbackUrl: https://testsaas.asianwallets.com/tra
   upi:
-    privateKeyPath: /testKey/549440189990001.pem
-    publicKeyPath: /testKey/GHT_ROOT.pem
+    privateKeyPath: /testKey/00001936.pem
+    publicKeyPath: /testKey/GHT_ROOT_PROD.pem
     tdpu: 6000060000
     header: 601410190121
