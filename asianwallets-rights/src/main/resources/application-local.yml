@@ -63,6 +63,6 @@ redis:
 #项目自定义配置
 file:
   http:
-    server: http://localhost:8080/
+    server: http://localhost:8080
   upload:
     path: C:\apache-tomcat-8.5.38\webapps
