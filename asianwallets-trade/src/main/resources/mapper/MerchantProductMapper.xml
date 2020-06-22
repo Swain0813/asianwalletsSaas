@@ -88,16 +88,18 @@
         select p.product_code         as productCode,
                p.trans_type           as transType,
                pt.name                as payTypeName,
-               p.product_img          as productImg,
-               p.product_details_logo as productDetailsLogo,
-               p.product_print_logo   as productPrintLogo,
+               ip.product_img          as productImg,
+               ip.product_details_logo as productDetailsLogo,
+               ip.product_print_logo   as productPrintLogo,
                substring(pt.name, -3) as flag
         from merchant m,
              product p,
+             institution_product ip,
              merchant_product mp,
              pay_type pt
         where m.id = mp.merchant_id
           and p.id = mp.product_id
+          and p.id = ip.product_id
           and p.pay_type = pt.extend1
           and m.id = #{merchantId}
           and p.trade_direction = #{tradeDirection}
