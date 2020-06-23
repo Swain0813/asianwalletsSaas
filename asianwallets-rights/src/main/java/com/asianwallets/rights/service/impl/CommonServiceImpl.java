@@ -12,6 +12,7 @@ import com.asianwallets.rights.feign.message.MessageFeign;
 import com.asianwallets.rights.service.CommonRedisService;
 import com.asianwallets.rights.service.CommonService;
 import com.asianwallets.rights.utils.QrCodeUtil;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 通用方法
@@ -85,7 +83,7 @@ public class CommonServiceImpl implements CommonService {
         log.info("===============【通用签名校验方法】===============【验签结束】");
         return false;
     }
-
+    
     /**
      *权益发送需要的用的短信或者邮件发送
      * @param rightsUserGrant
@@ -133,8 +131,8 @@ public class CommonServiceImpl implements CommonService {
             //票券编号
             map.put("ticketId",rightsUserGrant.getTicketId());
             //可用时间
-            map.put("startTime",rightsUserGrant.getStartTime());
-            map.put("endTime",rightsUserGrant.getEndTime());
+            map.put("startTime",DateToolUtils.formatTimestamp.format(rightsUserGrant.getStartTime()));
+            map.put("endTime",DateToolUtils.formatTimestamp.format(rightsUserGrant.getEndTime()));
             //不可用时间
             map.put("unusableTime",rightsUserGrant.getExt4());
             //使用规则
