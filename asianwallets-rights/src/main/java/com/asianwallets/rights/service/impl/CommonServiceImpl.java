@@ -83,7 +83,7 @@ public class CommonServiceImpl implements CommonService {
         log.info("===============【通用签名校验方法】===============【验签结束】");
         return false;
     }
-    
+
     /**
      *权益发送需要的用的短信或者邮件发送
      * @param rightsUserGrant
