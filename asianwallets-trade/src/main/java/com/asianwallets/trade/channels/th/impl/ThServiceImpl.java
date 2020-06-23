@@ -588,7 +588,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      */
     private String getThKey(Orders orders, Channel channel) {
         MerchantReport merchantReport = commonRedisDataService.getMerchantReport(orders.getMerchantId(), channel.getChannelCode());
-        return commonRedisDataService.getThKey(merchantReport.getExtend1(), orders.getMerchantId(), channel);
+        return commonRedisDataService.getThKey(merchantReport.getExtend1(), merchantReport.getSubMerchantCode(), channel);
     }
 
     /**
@@ -600,7 +600,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      */
     private String getThKey(OrderRefund orderRefund, Channel channel) {
         MerchantReport merchantReport = commonRedisDataService.getMerchantReport(orderRefund.getMerchantId(), channel.getChannelCode());
-        return commonRedisDataService.getThKey(merchantReport.getExtend1(), orderRefund.getMerchantId(), channel);
+        return commonRedisDataService.getThKey(merchantReport.getExtend1(), merchantReport.getSubMerchantCode(), channel);
     }
 
     /**
@@ -671,7 +671,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         //受卡机终端标识码 (设备号)
         dto.setCardAcceptorTerminalIdentification_41(merchantReport.getExtend1());
         //受卡方标识码 (商户号)
-        dto.setCardAcceptorIdentificationCode_42(merchantReport.getMerchantId());
+        log.info("++++++++++++++++++设置41 42信息 +++++++++++++mr:{}", JSON.toJSONString(merchantReport));
+        dto.setCardAcceptorIdentificationCode_42(merchantReport.getSubMerchantCode());
         return dto;
     }
 
