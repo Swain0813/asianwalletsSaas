@@ -838,21 +838,8 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         orders.setReportNumber(domain11 + domain60_2);
         //消息类型
         iso8583DTO.setMessageType("0200");
-        //获取交易金额的小数位数
-        int numOfBits = String.valueOf(orders.getTradeAmount()).length() - String.valueOf(orders.getTradeAmount()).indexOf(".") - 1;
-        int tradeAmount;
-        if (numOfBits == 0) {
-            //整数
-            tradeAmount = orders.getTradeAmount().intValue();
-        } else {
-            //小数,扩大对应小数位数
-            tradeAmount = orders.getTradeAmount().movePointRight(numOfBits).intValue();
-        }
-        //12位,左边填充0
-        String formatAmount = String.format("%012d", tradeAmount);
         iso8583DTO.setProcessingCode_3("009000");
-        //交易金额
-        iso8583DTO.setAmountOfTransactions_4(formatAmount);
+        setFiled4(iso8583DTO, orders.getTradeAmount());
         //受卡方系统跟踪号
         iso8583DTO.setSystemTraceAuditNumber_11(domain11);
         //服务点条件码
@@ -1297,7 +1284,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         BaseResponse baseResponse = new BaseResponse();
         ISO8583DTO iso8583DTO = createPreAuthReverseDto(preOrders, channel);
         log.info("==================【 通华预授权冲正】==================【调用Channels服务】【通华- 通华预授权冲正接口】  DTO: {}", JSON.toJSONString(iso8583DTO));
-        BaseResponse channelResponse = channelsFeign.preAuth(new ThDTO(iso8583DTO, channel, preOrders.getMerchantId()));
+        BaseResponse channelResponse = channelsFeign.preAuthReverse(new ThDTO(iso8583DTO, channel, preOrders.getMerchantId()));
         log.info("==================【 通华预授权冲正】==================【调用Channels服务】【通华- 通华预授权冲正接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         //请求失败
         preOrders.setChannelCallbackTime(new Date());
@@ -1311,21 +1298,19 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             log.info("==================【 通华预授权冲正】==================【预授权】iso8583VO:{}", com.alibaba.fastjson.JSONObject.toJSONString(iso8583VO));
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                preOrders.setRemark2(iso8583VO.getDateOfLocalTransaction_13());
-                preOrders.setRemark3(iso8583VO.getRetrievalReferenceNumber_37());
-                preOrders.setRemark4(iso8583VO.getAuthorizationIdentificationResponse_38());
+                preOrders.setChannelNumber(iso8583VO.getRetrievalReferenceNumber_37());
                 preOrders.setOrderStatus((byte) 4);
             } else {
                 log.info("==================【 通华预授权冲正】==================【预授权失败】preOrders:{}", preOrders.getId());
-                baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
+                baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
                 preOrders.setRemark(iso8583VO.getResponseCode_39());
             }
         } else {
             //请求失败
             log.info("==================【 通华预授权冲正】==================【请求状态码异常】preOrders:{}", preOrders.getId());
-            baseResponse.setCode(EResultEnum.ORDER_CREATION_FAILED.getCode());
-            preOrdersMapper.updatePreStatusById0(preOrders.getId(), null, (byte) 2, null);
+            baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
         }
+        preOrdersMapper.updateByExampleSelective(preOrders, example);
         return baseResponse;
     }
 
@@ -1399,7 +1384,106 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      */
     @Override
     public BaseResponse preAuthRevoke(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
-        return super.preAuthRevoke(channel, preOrders, rabbitMassage);
+        BaseResponse baseResponse = new BaseResponse();
+        ISO8583DTO iso8583DTO = createPreAuthRevokeDto(preOrders, channel);
+        log.info("==================【 通华预授权撤销】==================【调用Channels服务】【通华- 通华预授权撤销接口】  DTO: {}", JSON.toJSONString(iso8583DTO));
+        BaseResponse channelResponse = channelsFeign.preAuthRevoke(new ThDTO(iso8583DTO, channel, preOrders.getMerchantId()));
+        log.info("==================【 通华预授权撤销】==================【调用Channels服务】【通华- 通华预授权撤销接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        //请求失败
+        preOrders.setChannelCallbackTime(new Date());
+        Example example = new Example(PreOrders.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orderStatus", "1");
+        criteria.andEqualTo("id", preOrders.getId());
+        if (TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            //请求成功
+            ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
+            log.info("==================【 通华预授权撤销】==================【通华预授权撤销】iso8583VO:{}", com.alibaba.fastjson.JSONObject.toJSONString(iso8583VO));
+            if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+                preOrders.setChannelNumber(iso8583VO.getRetrievalReferenceNumber_37());
+                preOrders.setOrderStatus((byte) 4);
+            } else {
+                log.info("==================【 通华预授权撤销】==================【通华预授权撤销失败】preOrders:{}", preOrders.getId());
+                baseResponse.setCode(EResultEnum.ONLINE_ORDER_IS_NOT_ALLOW_UNDO.getCode());
+                preOrders.setRemark(iso8583VO.getResponseCode_39());
+            }
+        } else {
+            //请求失败
+            log.info("==================【 通华预授权撤销】==================【请求状态码异常】preOrders:{}", preOrders.getId());
+            baseResponse.setCode(EResultEnum.ONLINE_ORDER_IS_NOT_ALLOW_UNDO.getCode());
+            preOrdersMapper.updatePreStatusById0(preOrders.getId(), null, (byte) 2, null);
+        }
+        return baseResponse;
+    }
+
+    /**
+     * 通华预授权撤销 dto
+     *
+     * @param preOrders
+     * @param channel
+     * @return
+     */
+    private ISO8583DTO createPreAuthRevokeDto(PreOrders preOrders, Channel channel) {
+        ISO8583DTO dto = new ISO8583DTO();
+        String filed11 = preOrders.getRemark1().substring(0, 6);
+        String filed60_2 = preOrders.getRemark1().substring(6, 12);
+        String filed61_3 = preOrders.getRemark2();
+        //当前时间戳
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        //11 域需要在冲正的时候使用
+        String domain11 = preOrders.getId().substring(10, 16);
+        String domain60_2 = timeStamp.substring(6, 12);
+        //暂存
+        preOrders.setRemark5(domain11 + domain60_2);
+        //消息类型
+        dto.setMessageType("0100");
+        dto.setProcessingCode_3("200000");
+        //设置4域金额
+        setFiled4(dto, preOrders.getTradeAmount());
+        //受卡方系统跟踪号
+        dto.setSystemTraceAuditNumber_11(domain11);
+        //服务点条件码
+        dto.setPointOfServiceConditionMode_25("06");
+        //38域
+        dto.setAuthorizationIdentificationResponse_38(preOrders.getRemark4());
+        //对 pin 相关参数进行封装
+        setFiled22And26And52And53(preOrders, dto, channel);
+        //受理方标识码 (机构号)
+        dto.setAcquiringInstitutionIdentificationCode_32(channel.getChannelMerchantId());
+        //设置41域和42域信息
+        setFiled41And42(preOrders.getMerchantId(), channel.getChannelCode(), dto);
+        //交易货币代码
+        dto.setCurrencyCodeOfTransaction_49("344");
+        // 60 自定义域
+        String str60 =
+                //60.1 消息类型码
+                "11" +
+                        //60.2 批次号
+                        domain60_2 +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        dto.setReservedPrivate_60(str60);
+        // 61 自定义域
+        String str61 =
+                //61.1 原批次号
+                filed60_2 +
+                        //61.2 原交易流水号 11域
+                        filed11 +
+                        //61.3 原交易日期 由预授权返回的13域中获取
+                        filed61_3;
+        dto.setOriginalMessage_61(str61);
+        //获取62域信息
+        String thKey = getThKey(channel, preOrders.getMerchantId());
+        //银行卡号
+        dto.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(preOrders.getUserBankCardNo()), thKey, channel.getMd5KeyStr()));
+        //磁道2 信息
+        dto.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(preOrders.getTrackData()), thKey, channel.getMd5KeyStr()));
+        return dto;
     }
 
     /**
@@ -1411,7 +1495,162 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      */
     @Override
     public BaseResponse preAuthComplete(Orders orders, Channel channel) {
-        return super.preAuthComplete(orders, channel);
+        BaseResponse baseResponse = new BaseResponse();
+        ISO8583DTO dto = createPreAuthCompleteDTO(orders, channel);
+        log.info("==================【通华预授权完成】==================【调用Channels服务】【通华预授权完成接口】  dto: {}", JSON.toJSONString(dto));
+        BaseResponse channelResponse = channelsFeign.preAuthComplete(new ThDTO(dto, channel, orders.getMerchantId()));
+        log.info("==================【通华预授权完成】==================【调用Channels服务】【通华预授权完成接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        //请求失败
+        if (!TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
+            log.info("==================【通华预授权完成】==================【调用Channels服务】【通华预授权完成接口】-【请求状态码异常】");
+            throw new BusinessException(EResultEnum.PAYMENT_ABNORMAL.getCode());
+        }
+        ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
+        log.info("==================【通华预授权完成】==================【调用Channels服务】【通华线下银行卡下单接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
+        ordersMapper.updateByPrimaryKeySelective(orders);
+        orders.setUpdateTime(new Date());
+        orders.setChannelCallbackTime(new Date());
+        Example example = new Example(Orders.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("tradeStatus", "2");
+        criteria.andEqualTo("id", orders.getId());
+        BaseResponse response = new BaseResponse();
+        if ("00".equals(iso8583VO.getResponseCode_39())) {
+            //支付成功
+            log.info("==================【通华预授权完成】==================【支付成功】orderId: {}", orders.getId());
+            //未发货
+            orders.setDeliveryStatus(TradeConstant.UNSHIPPED);
+            //未签收
+            orders.setReceivedStatus(TradeConstant.NO_RECEIVED);
+            orders.setTradeStatus((TradeConstant.ORDER_PAY_SUCCESS));
+            orders.setChannelNumber(iso8583VO.getRetrievalReferenceNumber_37() + iso8583VO.getAuthorizationIdentificationResponse_38());
+            orders.setReportNumber(orders.getReportNumber() + iso8583VO.getDateOfLocalTransaction_13());
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), TradeConstant.TRADE_SUCCESS);
+            } catch (Exception e) {
+                log.error("=================【通华预授权完成】=================【更新通道订单异常】", e);
+            }
+            //更新订单信息
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                if (preOrdersMapper.updatePreStatusByMerchantOrderId(orders.getMerchantOrderId(), orders.getOrderAmount(), null, (byte) 5) == 1) {
+                    log.info("=================【通华预授权完成】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
+                    //计算支付成功时的通道网关手续费
+                    commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
+                    //TODO 添加日交易限额与日交易笔数
+                    //commonBusinessService.quota(orders.getMerchantId(), orders.getProductCode(), orders.getTradeAmount());
+                    //支付成功后向用户发送邮件
+                    commonBusinessService.sendEmail(orders);
+                    try {
+                        //账户信息不存在的场合创建对应的账户信息
+                        if (commonRedisDataService.getAccountByMerchantIdAndCurrency(orders.getMerchantId(), orders.getOrderCurrency()) == null) {
+                            log.info("=================【通华预授权完成】=================【上报清结算前线下下单创建账户信息】");
+                            commonBusinessService.createAccount(orders);
+                        }
+                        //分润
+                        if (!StringUtils.isEmpty(orders.getAgentCode()) || !StringUtils.isEmpty(orders.getRemark8())) {
+                            rabbitMQSender.send(AD3MQConstant.SAAS_FR_DL, orders.getId());
+                        }
+                        //更新成功,上报清结算
+                        commonService.fundChangePlaceOrderSuccess(orders);
+                    } catch (Exception e) {
+                        log.error("=================【通华预授权完成】=================【上报清结算异常,上报队列】 【MQ_PLACE_ORDER_FUND_CHANGE_FAIL】", e);
+                        RabbitMassage rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orders));
+                        rabbitMQSender.send(AD3MQConstant.MQ_PLACE_ORDER_FUND_CHANGE_FAIL, JSON.toJSONString(rabbitMassage));
+                    }
+                } else {
+                    log.info("=================【通华预授权完成】=================【订单支付成功后更新原订单失败】 MerchantOrderId: {}", orders.getMerchantOrderId());
+                }
+            } else {
+                log.info("=================【通华预授权完成】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        } else {
+            //支付失败
+            log.info("==================【通华预授权完成】==================【支付失败】orderId: {}", orders.getId());
+            orders.setTradeStatus(TradeConstant.ORDER_PAY_FAILD);
+            orders.setRemark5(iso8583VO.getResponseCode_39());
+            try {
+                channelsOrderMapper.updateStatusById(orders.getId(), orders.getChannelNumber(), TradeConstant.TRADE_FALID);
+            } catch (Exception e) {
+                log.error("=================【通华预授权完成】=================【更新通道订单异常】", e);
+            }
+            //计算支付失败时的通道网关手续费
+            commonBusinessService.calcCallBackGatewayFeeFailed(orders);
+            if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
+                log.info("=================【通华预授权完成】=================【订单支付失败后更新数据库成功】 orderId: {}", orders.getId());
+            } else {
+                log.info("=================【通华预授权完成】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
+            }
+        }
+        return baseResponse;
+    }
+
+    /**
+     * 创建通华预授权完成 dto
+     *
+     * @param orders
+     * @param channel
+     * @return
+     */
+    private ISO8583DTO createPreAuthCompleteDTO(Orders orders, Channel channel) {
+        ISO8583DTO dto = new ISO8583DTO();
+        String filed11 = orders.getPreRemark().substring(0, 6);
+        String filed60_2 = orders.getPreRemark().substring(6, 12);
+        String filed61_3 = orders.getRemark2();
+        //当前时间戳
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        //11 域需要在冲正的时候使用
+        String domain11 = orders.getId().substring(10, 16);
+        String domain60_2 = timeStamp.substring(6, 12);
+        //暂存
+        orders.setRemark5(domain11 + domain60_2);
+        //消息类型
+        dto.setMessageType("0100");
+        dto.setProcessingCode_3("200000");
+        //设置4域金额
+        setFiled4(dto, orders.getTradeAmount());
+        //受卡方系统跟踪号
+        dto.setSystemTraceAuditNumber_11(domain11);
+        //服务点条件码
+        dto.setPointOfServiceConditionMode_25("06");
+        //38域
+        dto.setAuthorizationIdentificationResponse_38(orders.getRemark4());
+        //对 pin 相关参数进行封装
+        setFiled22And26And52And53(orders, dto, channel);
+        //受理方标识码 (机构号)
+        dto.setAcquiringInstitutionIdentificationCode_32(channel.getChannelMerchantId());
+        //设置41域和42域信息
+        setFiled41And42(orders.getMerchantId(), channel.getChannelCode(), dto);
+        //交易货币代码
+        dto.setCurrencyCodeOfTransaction_49("344");
+        // 60 自定义域
+        String str60 =
+                //60.1 消息类型码
+                "11" +
+                        //60.2 批次号
+                        domain60_2 +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        dto.setReservedPrivate_60(str60);
+        // 61 自定义域
+        String str61 =
+                //61.1 原批次号
+                filed60_2 +
+                        //61.2 原交易流水号 11域
+                        filed11 +
+                        //61.3 原交易日期 由预授权返回的13域中获取
+                        filed61_3;
+        dto.setOriginalMessage_61(str61);
+        //获取62域信息
+        String thKey = getThKey(channel, orders.getMerchantId());
+        //银行卡号
+        dto.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orders.getUserBankCardNo()), thKey, channel.getMd5KeyStr()));
+        //磁道2 信息
+        dto.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orders.getTrackData()), thKey, channel.getMd5KeyStr()));
+        return dto;
     }
 
     /**
