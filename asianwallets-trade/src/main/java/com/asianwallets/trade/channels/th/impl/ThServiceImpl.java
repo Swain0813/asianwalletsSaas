@@ -674,6 +674,34 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
     /**
      * ISO8583 中与 pin 银行卡密码相关的域赋值
      *
+     * @param orderRefund the orderRefund
+     * @param iso8583DTO  the iso 8583 dto
+     * @param channels    the channels
+     * @return filed 22 and 26 and 52 and 53
+     */
+    private ISO8583DTO setFiled22And26And52And53(OrderRefund orderRefund, ISO8583DTO iso8583DTO, Channel channels) {
+        //个人PIN
+        if (StringUtils.isEmpty(orderRefund.getPin())) {
+            log.info("***************************银行卡pin不存在***************************");
+            //服务点输入方式码 022：刷卡，无PIN
+            iso8583DTO.setPointOfServiceEntryMode_22("022");
+            return iso8583DTO;
+        }
+        log.info("***************************银行卡pin存在***************************");
+        //服务点输入方式码 021 刷卡，且PIN可输入
+        iso8583DTO.setPointOfServiceEntryMode_22("021");
+        //密码长度
+        iso8583DTO.setPointOfServicePINCaptureCode_26("06");
+        //获取62域信息
+        String thKey = getThKey(channels, orderRefund.getMerchantId());
+        iso8583DTO.setPINData_52(pinEncryption(AESUtil.aesDecrypt(orderRefund.getPin()), AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()).substring(3, 15), thKey, channels.getMd5KeyStr()));
+        iso8583DTO.setSecurityRelatedControlInformation_53("2600000000000000");
+        return iso8583DTO;
+    }
+
+    /**
+     * ISO8583 中与 pin 银行卡密码相关的域赋值
+     *
      * @param preOrders  the preOrders
      * @param iso8583DTO the iso 8583 dto
      * @param channels   the channels
@@ -1663,7 +1691,106 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
      */
     @Override
     public BaseResponse preAuthCompleteRevoke(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage) {
-        return super.preAuthCompleteRevoke(channel, orderRefund, rabbitMassage);
+        log.info("==================【通华预授权完成撤销】==================orderId: {}", orderRefund.getOrderId());
+        BaseResponse baseResponse = new BaseResponse();
+        ISO8583DTO upiDTO = createCompleteRevokeDTO(orderRefund, channel);
+        log.info("==================【通华预授权完成撤销】==================【调用Channels服务】 upiDTO: {}", JSON.toJSONString(upiDTO));
+        BaseResponse channelResponse = channelsFeign.preAuthCompleteRevoke(new ThDTO(upiDTO, channel, orderRefund.getMerchantId()));
+        log.info("==================【通华预授权完成撤销】==================【调用Channels服务返回】channelResponse: {}", JSON.toJSONString(channelResponse));
+        if (channelResponse.getCode().equals(TradeConstant.HTTP_SUCCESS)) {
+            //请求成功
+            net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(channelResponse.getData());
+            ISO8583DTO vo = JSON.parseObject(String.valueOf(jsonObject), ISO8583DTO.class);
+            //请求成功
+            if ("00".equals(vo.getResponseCode_39())) {
+                baseResponse.setCode(EResultEnum.SUCCESS.getCode());
+                //退款成功
+                orderRefundMapper.updateStatuts(orderRefund.getId(), TradeConstant.REFUND_SUCCESS, vo.getRetrievalReferenceNumber_37() + vo.getAuthorizationIdentificationResponse_38(), vo.getResponseCode_39());
+                //改原订单状态
+                commonBusinessService.updateOrderRefundSuccess(orderRefund);
+                //退还分润
+                commonBusinessService.refundShareBinifit(orderRefund);
+            } else {
+                //退款失败
+                baseResponse.setCode(EResultEnum.REFUND_FAIL.getCode());
+                baseResponse.setMsg(EResultEnum.REFUND_FAIL.getCode());
+                log.info("==================【通华预授权完成撤销】=================退款失败: {}", JSON.toJSONString(orderRefund));
+                //退款失败调用清结算
+                commonService.orderRefundFailFundChange(orderRefund, channel);
+            }
+        } else {
+            //请求失败
+            baseResponse.setCode(EResultEnum.REFUNDING.getCode());
+            if (rabbitMassage == null) {
+                rabbitMassage = new RabbitMassage(AsianWalletConstant.THREE, JSON.toJSONString(orderRefund));
+            }
+            log.info("===============【通华预授权完成撤销】===============【请求失败 上报队列 SAAS_YSQWC_CCQQSB_DL】 rabbitMassage: {} ", JSON.toJSONString(rabbitMassage));
+            rabbitMQSender.send(AD3MQConstant.SAAS_YSQWC_CCQQSB_DL, JSON.toJSONString(rabbitMassage));
+        }
+        return baseResponse;
+    }
+
+    /**
+     * 设置通华预授权完成撤销 DTO
+     *
+     * @param orderRefund
+     * @param channel
+     * @return
+     */
+    private ISO8583DTO createCompleteRevokeDTO(OrderRefund orderRefund, Channel channel) {
+        ISO8583DTO iso8583DTO = new ISO8583DTO();
+        iso8583DTO.setMessageType("0200");
+        //获取62域信息
+        String thKey = getThKey(channel, orderRefund.getMerchantId());
+        iso8583DTO.setProcessingCode_2(trkEncryption(AESUtil.aesDecrypt(orderRefund.getUserBankCardNo()), thKey, channel.getMd5KeyStr()));
+        iso8583DTO.setProcessingCode_3("200000");
+        //当前时间戳
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        //11 域需要在冲正的时候使用
+        String domain11 = timeStamp.substring(10, 16);
+        String domain60_2 = timeStamp.substring(6, 12);
+        //获取交易金额的小数位数
+        setFiled4(iso8583DTO, orderRefund.getTradeAmount());
+        //受卡方系统跟踪号
+        iso8583DTO.setSystemTraceAuditNumber_11(orderRefund.getId().substring(9, 15));
+        //服务点条件码
+        iso8583DTO.setPointOfServiceConditionMode_25("00");
+        //对 22域 26域 52域 53域 相关参数进行封装
+        setFiled22And26And52And53(orderRefund, iso8583DTO, channel);
+        //机构号
+        iso8583DTO.setAcquiringInstitutionIdentificationCode_32(channel.getChannelMerchantId());
+        //磁道2 信息
+        iso8583DTO.setTrack2Data_35(trkEncryption(AESUtil.aesDecrypt(orderRefund.getTrackData()), thKey, channel.getMd5KeyStr()));
+        //37 域
+        iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getRemark3());
+        //设置41域 42域信息
+        setFiled41And42(orderRefund.getMerchantId(), channel.getChannelCode(), iso8583DTO);
+        //交易货币代码
+        iso8583DTO.setCurrencyCodeOfTransaction_49("344");
+        //自定义域
+        String str60 =
+                //60.1 消息类型码
+                "23" +
+                        //60.2 批次号
+                        orderRefund.getReportNumber().substring(6, 12) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        iso8583DTO.setReservedPrivate_60(str60);
+        // 61 自定义域
+        String str = DateUtil.format(orderRefund.getCreateTime(), "MMdd");
+        String str61 =
+                //61.1 原批次号
+                orderRefund.getReportNumber().substring(6, 12) +
+                        //61.2 原交易流水号 11域
+                        orderRefund.getId().substring(10, 16) +
+                        //61.3 原交易日期
+                        str;
+        iso8583DTO.setOriginalMessage_61(str61);
+        return iso8583DTO;
     }
 }
 
