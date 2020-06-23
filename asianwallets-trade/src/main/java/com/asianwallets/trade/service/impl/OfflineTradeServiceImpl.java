@@ -1114,7 +1114,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setBankName(preOrders.getBankName());
         orders.setServerUrl(preOrders.getServerUrl());
         orders.setLanguage(preOrders.getLanguage());
-        orders.setRemark1(preOrders.getRemark1());
+        orders.setRemark1(preOrders.getId().substring(6,18)+DateToolUtils.SHORT_DATE_FORMAT_T.format(preOrders.getCreateTime()));
         orders.setRemark2(preOrders.getRemark2());
         orders.setRemark3(preOrders.getRemark3());
         orders.setRemark8(channel.getChannelAgentId());
