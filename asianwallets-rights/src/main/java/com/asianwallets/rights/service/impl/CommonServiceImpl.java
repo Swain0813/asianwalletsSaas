@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.Base64;
@@ -144,7 +143,7 @@ public class CommonServiceImpl implements CommonService {
             map.put("shopAddresses",rightsUserGrant.getShopAddresses());
              if(!StringUtils.isEmpty(rightsUserGrant.getMobileNo())) {
                  //调用发送短信
-                 messageFeign.sendSimple(rightsUserGrant.getMobileNo(),"恭喜你获得优惠券:"+rightsUserGrant.getTicketId());
+                 messageFeign.sendSimpleTemplate(auditorProvider.getLanguage(),Status._0,rightsUserGrant.getMobileNo(),map);
              }else {
                  //调用发送邮件
                  messageFeign.sendTemplateMail(rightsUserGrant.getEmail(), auditorProvider.getLanguage(), Status._4, map);

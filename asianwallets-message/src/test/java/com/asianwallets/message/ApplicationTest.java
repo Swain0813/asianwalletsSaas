@@ -78,18 +78,17 @@ public class ApplicationTest {
     public void sendTemplateMail(){
         String code = IDS.getStringRandom(6);
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("draweeName", "龙哥");
-        map.put("channelCallbackTime", "111111");
-        map.put("reqIp", "111111");
-        map.put("institutionOrderId", "111111");
-        map.put("institutionName", "111111");
-        map.put("orderCurrency", "111111");
-        map.put("amount", "111111");
-        map.put("goodsDescription", "111111");
-        map.put("issuerId", "111111");
-        map.put("invoiceNo", "111111");
-        map.put("referenceNo", "111111");
-        emailService.sendTemplateMail("842505302@qq.com","zh-cn",Status._1,map);
+        map.put("merchantName", "龙哥商户");
+        map.put("activityTheme", "双十一活动");
+        map.put("content", "八折活动,上不封顶");
+        map.put("ticketQrCode", "http://192.168.124.27:8080/imagesaas/2020-06-22/38919e1a-eab8-46f0-a5e1-cab9fa16ff29.png");
+        map.put("ticketId", "123456789");
+        map.put("startTime", "2020-11-11 00:00:00");
+        map.put("endTime", "2020-11-15 23:59:59");
+        map.put("unusableTime", "2020-11-12,2020-11-13");
+        map.put("ruleDescription", "每人只能使用一张");
+        map.put("shopAddresses", "上海金科路店");
+        emailService.sendTemplateMail("842505302@qq.com","zh-cn",Status._4,map);
     }
 
     /**

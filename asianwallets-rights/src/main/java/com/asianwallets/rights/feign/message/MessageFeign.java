@@ -25,6 +25,16 @@ public interface MessageFeign {
     @PostMapping("/sms/sendInternation")
     BaseResponse sendInternation(@RequestParam(value = "mobile") @ApiParam String mobile,@RequestParam(value = "content") @ApiParam String content);
 
+    @ApiOperation(value = "国内普通短信模板")
+    @PostMapping("/sms/sendSimpleTemplate")
+    BaseResponse sendSimpleTemplate(@RequestParam(value = "language") @ApiParam String language,@RequestParam(value = "num") @ApiParam
+            Status num,@RequestParam(value = "mobile") @ApiParam String mobile, @RequestBody Map<String, Object> content);
+
+    @ApiOperation(value = "国际短信模板")
+    @PostMapping("/sms/sendIntTemplate")
+    BaseResponse sendIntTemplate(@RequestParam(value = "language") @ApiParam String language,@RequestParam(value = "num") @ApiParam
+            Status num,@RequestParam(value = "mobile") @ApiParam String mobile, @RequestBody Map<String, Object> content);
+
     @ApiOperation(value = "发送简单邮件")
     @PostMapping("/email/sendSimpleMail")
     BaseResponse sendSimpleMail(@RequestParam(value = "sendTo") @ApiParam String sendTo,

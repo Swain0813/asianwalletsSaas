@@ -37,6 +37,32 @@ public class MessageFeignImpl implements MessageFeign {
     }
 
     /**
+     * 国内普通短信模板
+     * @param language
+     * @param num
+     * @param mobile
+     * @param content
+     * @return
+     */
+    @Override
+    public BaseResponse sendSimpleTemplate(String language, Status num, String mobile, Map<String, Object> content) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
+     * 国际短信模板
+     * @param language
+     * @param num
+     * @param mobile
+     * @param content
+     * @return
+     */
+    @Override
+    public BaseResponse sendIntTemplate(String language, Status num, String mobile, Map<String, Object> content) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+    /**
      * 发送简单邮件
      * @param sendTo
      * @param title
