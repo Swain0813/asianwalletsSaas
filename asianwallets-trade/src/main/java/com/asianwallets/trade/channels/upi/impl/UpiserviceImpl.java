@@ -839,31 +839,31 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
      * @return
      * @Author YangXu
      * @Date 2020/6/18
-     * @Descripate 预授权撤销接口
+     * @Descripate UPI预授权冲正
      **/
     @Override
     public BaseResponse preAuthReverse(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
-        UpiDTO upiDTO = this.createPreAuthhReverseDTO(preOrders, channel);
-        log.info("==================【UPI预授权撤销】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+        UpiDTO upiDTO = this.createPreAuthhRevokeDTO(preOrders, channel);
+        log.info("==================【UPI预授权冲正】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
-        log.info("==================【UPI预授权撤销】==================【调用Channels服务】【UPI-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        log.info("==================【UPI预授权冲正】==================【调用Channels服务】【UPI-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         //请求失败
         if (TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             //请求成功
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
-            log.info("==================【UPI预授权撤销】==================【预授权撤销】iso8583VO:{}", JSONObject.toJSONString(iso8583VO));
+            log.info("==================【UPI预授权冲正】==================【预授权冲正】iso8583VO:{}", JSONObject.toJSONString(iso8583VO));
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 preOrdersMapper.updatePreStatusById1(preOrders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), (byte) 4, null);
             } else {
-                log.info("==================【UPI预授权撤销】==================【预授权撤销失败】preOrders:{}", preOrders.getId());
-                baseResponse.setCode(EResultEnum.ONLINE_ORDER_IS_NOT_ALLOW_UNDO.getCode());
+                log.info("==================【UPI预授权冲正】==================【预授权冲正失败】preOrders:{}", preOrders.getId());
+                baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
             }
         } else {
             //请求失败
-            log.info("==================【UPI预授权撤销】==================【请求状态码异常】preOrders:{}", preOrders.getId());
-            baseResponse.setCode(EResultEnum.ONLINE_ORDER_IS_NOT_ALLOW_UNDO.getCode());
+            log.info("==================【UPI预授权冲正】==================【请求状态码异常】preOrders:{}", preOrders.getId());
+            baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
         }
         return baseResponse;
     }
@@ -952,31 +952,32 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
      * @return
      * @Author YangXu
      * @Date 2020/6/18
-     * @Descripate 预授权冲正接口
+     * @Descripate UPI预授权撤销
      **/
     @Override
     public BaseResponse preAuthRevoke(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
+
         BaseResponse baseResponse = new BaseResponse();
-        UpiDTO upiDTO = this.createPreAuthhRevokeDTO(preOrders, channel);
-        log.info("==================【UPI预授权冲正】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
+        UpiDTO upiDTO = this.createPreAuthhReverseDTO(preOrders, channel);
+        log.info("==================【UPI预授权撤销】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
-        log.info("==================【UPI预授权冲正】==================【调用Channels服务】【UPI-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
+        log.info("==================【UPI预授权撤销】==================【调用Channels服务】【UPI-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
         //请求失败
         if (TradeConstant.HTTP_SUCCESS.equals(channelResponse.getCode())) {
             //请求成功
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
-            log.info("==================【UPI预授权冲正】==================【预授权冲正】iso8583VO:{}", JSONObject.toJSONString(iso8583VO));
+            log.info("==================【UPI预授权撤销】==================【预授权撤销】iso8583VO:{}", JSONObject.toJSONString(iso8583VO));
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 preOrdersMapper.updatePreStatusById1(preOrders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), (byte) 4, null);
             } else {
-                log.info("==================【UPI预授权冲正】==================【预授权冲正失败】preOrders:{}", preOrders.getId());
-                baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
+                log.info("==================【UPI预授权撤销】==================【预授权撤销失败】preOrders:{}", preOrders.getId());
+                baseResponse.setCode(EResultEnum.ONLINE_ORDER_IS_NOT_ALLOW_UNDO.getCode());
             }
         } else {
             //请求失败
-            log.info("==================【UPI预授权冲正】==================【请求状态码异常】preOrders:{}", preOrders.getId());
-            baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
+            log.info("==================【UPI预授权撤销】==================【请求状态码异常】preOrders:{}", preOrders.getId());
+            baseResponse.setCode(EResultEnum.ONLINE_ORDER_IS_NOT_ALLOW_UNDO.getCode());
         }
         return baseResponse;
     }
