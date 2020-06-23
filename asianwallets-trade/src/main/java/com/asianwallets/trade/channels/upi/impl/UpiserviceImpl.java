@@ -844,7 +844,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     @Override
     public BaseResponse preAuthReverse(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
-        UpiDTO upiDTO = this.createPreAuthhRevokeDTO(preOrders, channel);
+        UpiDTO upiDTO = this.createPreAuthReverseDTO(preOrders, channel);
         log.info("==================【UPI预授权冲正】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
         log.info("==================【UPI预授权冲正】==================【调用Channels服务】【UPI-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -874,7 +874,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
      * @Date 2020/6/18
      * @Descripate 创建预授权撤销DTO
      **/
-    private UpiDTO createPreAuthhReverseDTO(PreOrders preOrders, Channel channel) {
+    private UpiDTO createPreAuthRevokeDTO(PreOrders preOrders, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
 
@@ -958,7 +958,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     public BaseResponse preAuthRevoke(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
 
         BaseResponse baseResponse = new BaseResponse();
-        UpiDTO upiDTO = this.createPreAuthhReverseDTO(preOrders, channel);
+        UpiDTO upiDTO = this.createPreAuthRevokeDTO(preOrders, channel);
         log.info("==================【UPI预授权撤销】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
         log.info("==================【UPI预授权撤销】==================【调用Channels服务】【UPI-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -988,7 +988,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
      * @Date 2020/6/18
      * @Descripate 预授权冲正DTO
      **/
-    private UpiDTO createPreAuthhRevokeDTO(PreOrders preOrders, Channel channel) {
+    private UpiDTO createPreAuthReverseDTO(PreOrders preOrders, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
 
