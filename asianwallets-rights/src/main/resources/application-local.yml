@@ -61,4 +61,8 @@ redis:
     max-wait-millis: -1
 
 #项目自定义配置
-custom:
+file:
+  http:
+    server: http://192.168.124.27:8080
+  upload:
+    path: C:\apache-tomcat-8.5.38\webapps

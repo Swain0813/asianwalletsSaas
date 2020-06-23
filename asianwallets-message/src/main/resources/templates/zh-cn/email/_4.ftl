@@ -1,7 +1,8 @@
-<div style="background: darkorange">
-<span>优惠券已经到账啦</span>
-亲爱的用户：<br/>
-您好！<br/>
-您于${date}获得优惠券,票券编号是${ticketId}。<br/>
-<br/>
-</div>
+<span>恭喜!</span>
+<b>【${merchantName}】 ${activityTheme}${content}</b><br/>
+<b>【券码地址】 ${ticketQrCode}</b><br/>
+<b>【券码】 ${ticketId}</b><br/>
+<b>【可用时间】   ${startTime}---${endTime}</b><br/>
+<b>【不可用时间】 ${unusableTime}</b><br/>
+<b>【使用规则】  ${ruleDescription}</b><br/>
+<b>【商家地址】   ${shopAddresses}</b><br/>

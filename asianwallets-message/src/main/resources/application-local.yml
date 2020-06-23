@@ -19,15 +19,15 @@ sms:
   send:
     api:
       inter:
-        account: I5404708
-        pwd: 6Sos0QFKRP0e3c
-        intapi: http://intapi.253.com/send/json
+        account: N6611753
+        pwd: R4VljTqHwr51ec
+        intapi: https://smssh1.253.com/msg/send/json
 
       ###普通短信配置
       simple:
-        account: N5845811
-        pwd: FaqX6U3WPBe208
-        batchSendSM: http://zapi.253.com/msg/HttpBatchSendSM
+        account: I3041456
+        pwd: 1f5SgI6rK77d4e
+        batchSendSM: https://intapi.253.com/send/json
 
 ###邮箱配置
 msg:

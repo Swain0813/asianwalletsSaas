@@ -951,7 +951,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 log.info("=========================【预授权撤销接口】========================= Exception:【{}】", e);
             }
             //返回结果
-            baseResponse = channelsAbstract.preAuthReverse(channel, preOrders, null);
+            baseResponse = channelsAbstract.preAuthRevoke(channel, preOrders, null);
 
         } else if (preOrders.getOrderStatus() == 0) {
             //调用预授权的冲正接口
@@ -964,7 +964,7 @@ public class RefundTradeServiceImpl implements RefundTradeService {
                 log.info("=========================【预授权冲正接口】========================= Exception:【{}】", e);
             }
             //返回结果
-            baseResponse = channelsAbstract.preAuthRevoke(channel, preOrders, null);
+            baseResponse = channelsAbstract.preAuthReverse(channel, preOrders, null);
         }
         return baseResponse;
     }
