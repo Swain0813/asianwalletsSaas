@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @Api(description = "获取长连接")
 @RestController
 @RequestMapping("/c")
@@ -18,13 +21,16 @@ public class ShortUrlController {
     @ApiOperation(value = "返回长连接")
     @GetMapping("/s")
     @CrossOrigin
-    public String getOriginUrl(@RequestParam @ApiParam String shortUrl) {
+    public void getOriginUrl(@RequestParam @ApiParam String shortUrl, HttpServletResponse response) {
         if(!StringUtils.isEmpty(shortUrl)){
             String originUrl = shortUrlMapper.getUrl(shortUrl);
             if(originUrl!=null){
-                return "redirect:" + originUrl;
+                try {
+                    response.sendRedirect(originUrl);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-        return "";
     }
 }
