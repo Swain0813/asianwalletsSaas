@@ -18,7 +18,7 @@ public class ShortUrlController {
     @ApiOperation(value = "返回长连接")
     @GetMapping("/s")
     @CrossOrigin
-    public String getTradeDetail(@RequestParam @ApiParam String shortUrl) {
+    public String getOriginUrl(@RequestParam @ApiParam String shortUrl) {
         if(!StringUtils.isEmpty(shortUrl)){
             String originUrl = shortUrlMapper.getUrl(shortUrl);
             if(originUrl!=null){
