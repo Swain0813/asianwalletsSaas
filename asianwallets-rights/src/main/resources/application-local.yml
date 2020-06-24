@@ -64,6 +64,6 @@ redis:
 file:
   http:
     server: http://192.168.124.27:8080
-    rghServer: http://192.168.124.27:5006/c/s
+    rghServer: http://192.168.124.27:5006/c/s?shortUrl=
   upload:
     path: C:\apache-tomcat-8.5.38\webapps

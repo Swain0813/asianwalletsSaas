@@ -64,6 +64,6 @@ redis:
 file:
   http:
     server: https://psg.asianwallets.com
-    rghServer: https://psg.alldebitpay.com/rgh/c/s
+    rghServer: https://psg.alldebitpay.com/rgh/c/s?shortUrl=
   upload:
     path: /usr/local/tomcat/apache-tomcat-8.5.38/webapps
