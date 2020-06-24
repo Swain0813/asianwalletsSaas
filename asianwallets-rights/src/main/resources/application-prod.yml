@@ -63,6 +63,6 @@ redis:
 #项目自定义配置
 file:
   http:
-    server: https://testsaas.asianwallets.com
+    server: https://psg.asianwallets.com
   upload:
     path: /usr/local/tomcat/apache-tomcat-8.5.38/webapps
