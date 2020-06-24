@@ -217,6 +217,26 @@ public interface ChannelsFeign {
     @PostMapping("/th/thSign")
     BaseResponse thSign(ThDTO thDTO);
 
+    @ApiOperation("通华预授权")
+    @PostMapping("/th/preAuth")
+    BaseResponse preAuth(@RequestBody @ApiParam ThDTO thDTO);
+
+    @ApiOperation("通华预授权冲正")
+    @PostMapping("/th/preAuthReverse")
+    BaseResponse preAuthReverse(@RequestBody @ApiParam ThDTO thDTO);
+
+    @ApiOperation("通华预授权撤销")
+    @PostMapping("/th/preAuthRevoke")
+    BaseResponse preAuthRevoke(@RequestBody @ApiParam ThDTO thDTO);
+
+    @ApiOperation("通华预授权完成")
+    @PostMapping("/th/preAuthComplete")
+    BaseResponse preAuthComplete(@RequestBody @ApiParam ThDTO thDTO);
+
+    @ApiOperation("通华预授权完成撤销")
+    @PostMapping("/th/preAuthCompleteRevoke")
+    BaseResponse preAuthCompleteRevoke(@RequestBody @ApiParam ThDTO thDTO);
+
     @ApiOperation(value = "upi付款接口")
     @PostMapping("/upi/upiPay")
     BaseResponse upiPay(UpiDTO upiDTO);
