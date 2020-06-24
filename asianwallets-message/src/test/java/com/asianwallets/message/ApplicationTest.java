@@ -91,6 +91,23 @@ public class ApplicationTest {
         emailService.sendTemplateMail("842505302@qq.com","zh-cn",Status._4,map);
     }
 
+
+    @Test
+    public void sendTemplateMsg(){
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("merchantName", "龙哥商户");
+        map.put("activityTheme", "双十一活动");
+        map.put("content", "八折活动,上不封顶");
+        map.put("ticketQrCode", "http://192.168.124.27:8080/imagesaas/2020-06-22/38919e1a-eab8-46f0-a5e1-cab9fa16ff29.png");
+        map.put("ticketId", "123456789");
+        map.put("startTime", "2020-11-11 00:00:00");
+        map.put("endTime", "2020-11-15 23:59:59");
+        map.put("unusableTime", "2020-11-12,2020-11-13");
+        map.put("ruleDescription", "每人只能使用一张");
+        map.put("shopAddresses", "上海金科路店");
+        smsService.sendIntTemplate("zh-cn", Status._4, "8618800330943", map);
+    }
+
     /**
      * 开户邮件的测试
      */

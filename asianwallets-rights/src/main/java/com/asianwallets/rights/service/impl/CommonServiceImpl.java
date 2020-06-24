@@ -141,7 +141,7 @@ public class CommonServiceImpl implements CommonService {
             map.put("shopAddresses",rightsUserGrant.getShopAddresses());
              if(!StringUtils.isEmpty(rightsUserGrant.getMobileNo())) {
                  //调用发送短信
-                 messageFeign.sendSimpleTemplate(auditorProvider.getLanguage(),Status._0,rightsUserGrant.getMobileNo(),map);
+                 messageFeign.sendSimpleTemplate(auditorProvider.getLanguage(),Status._4,rightsUserGrant.getMobileNo(),map);
              }else {
                  //调用发送邮件
                  messageFeign.sendTemplateMail(rightsUserGrant.getEmail(), auditorProvider.getLanguage(), Status._4, map);
