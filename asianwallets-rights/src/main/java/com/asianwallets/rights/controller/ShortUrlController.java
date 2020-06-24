@@ -6,8 +6,6 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Api(description = "获取长连接")
 @RestController
@@ -20,16 +18,13 @@ public class ShortUrlController {
     @ApiOperation(value = "返回长连接")
     @GetMapping("/s")
     @CrossOrigin
-    public void getTradeDetail(@RequestParam @ApiParam String shortUrl, HttpServletResponse response) {
+    public String getTradeDetail(@RequestParam @ApiParam String shortUrl) {
         if(!StringUtils.isEmpty(shortUrl)){
             String originUrl = shortUrlMapper.getUrl(shortUrl);
             if(originUrl!=null){
-                try {
-                    response.sendRedirect(originUrl);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                return "redirect:" + originUrl;
             }
         }
+        return "";
     }
 }
