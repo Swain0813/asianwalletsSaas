@@ -17,13 +17,9 @@ import java.util.*;
  */
 @Slf4j
 public class DateToolUtils extends DateUtils {
-
-    public static final String TIME_WITH_MINUTE_PATTERN = "HH:mm";
-
     public static final long DAY_MILLI = 24 * 60 * 60 * 1000; // 一天的MilliSecond
 
-// 取值范围：就是临界点包不包含等于
-
+    // 取值范围：就是临界点包不包含等于
     public final static int LEFT_OPEN_RIGHT_OPEN = 1;
     public final static int LEFT_CLOSE_RIGHT_OPEN = 2;
     public final static int LEFT_OPEN_RIGHT_CLOSE = 3;

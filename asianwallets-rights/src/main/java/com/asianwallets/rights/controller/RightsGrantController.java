@@ -83,4 +83,5 @@ public class RightsGrantController extends BaseController {
     public BaseResponse addRightsGrant(@RequestBody @ApiParam @Valid RightsGrantInsertDTO rightsGrantInsertDTO) {
         return ResultUtil.success(rightsGrantService.addRightsGrant(getSysUserVO().getUsername(), rightsGrantInsertDTO));
     }
+
 }
