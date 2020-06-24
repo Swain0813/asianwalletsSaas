@@ -2,6 +2,7 @@ package com.asianwallets.rights.controller;
 import com.asianwallets.rights.dao.ShortUrlMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class ShortUrlController {
     @ApiOperation(value = "返回长连接")
     @GetMapping("/s")
     @CrossOrigin
-    public void getTradeDetail(@PathVariable String shortUrl, HttpServletResponse response) {
+    public void getTradeDetail(@RequestParam @ApiParam String shortUrl, HttpServletResponse response) {
         if(!StringUtils.isEmpty(shortUrl)){
             String originUrl = shortUrlMapper.getUrl(shortUrl);
             if(originUrl!=null){
