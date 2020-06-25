@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.th.impl;
-
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
@@ -35,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
@@ -1542,7 +1540,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("tradeStatus", "2");
         criteria.andEqualTo("id", orders.getId());
-        BaseResponse response = new BaseResponse();
         if ("00".equals(iso8583VO.getResponseCode_39())) {
             //支付成功
             log.info("==================【通华预授权完成】==================【支付成功】orderId: {}", orders.getId());

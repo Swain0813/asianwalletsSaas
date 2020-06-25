@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.upi.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -25,7 +24,6 @@ import com.asianwallets.trade.config.AD3ParamsConfig;
 import com.asianwallets.trade.dao.*;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
-import com.asianwallets.trade.service.ClearingService;
 import com.asianwallets.trade.service.CommonBusinessService;
 import com.asianwallets.trade.service.CommonRedisDataService;
 import com.asianwallets.trade.service.CommonService;
@@ -36,7 +34,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
@@ -242,7 +239,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("tradeStatus", "2");
         criteria.andEqualTo("id", orders.getId());
-        BaseResponse response = new BaseResponse();
         if ("00".equals(iso8583VO.getResponseCode_39())) {
             //支付成功
             log.info("==================【UPI银行卡下单】==================【支付成功】orderId: {}", orders.getId());
@@ -956,7 +952,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
      **/
     @Override
     public BaseResponse preAuthRevoke(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
-
         BaseResponse baseResponse = new BaseResponse();
         UpiDTO upiDTO = this.createPreAuthhReverseDTO(preOrders, channel);
         log.info("==================【UPI预授权撤销】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
@@ -991,7 +986,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     private UpiDTO createPreAuthhRevokeDTO(PreOrders preOrders, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
-
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0400");
         //银行卡号
@@ -1018,15 +1012,12 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             iso8583DTO.setPointOfServiceEntryMode_22("022");
         }
         iso8583DTO.setPointOfServiceConditionMode_25("06");
-
-
         iso8583DTO.setResponseCode_39("96");
         //受卡机终端标识码 (设备号)
         iso8583DTO.setCardAcceptorTerminalIdentification_41(channel.getExtend1());
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-
         String str60 =
                 //60.1 消息类型码
                 "22" +
@@ -1039,7 +1030,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
                         //60. 5，6，7 缺省
                         "00";
         iso8583DTO.setReservedPrivate_60(str60);
-
         String isoMsg = null;
         //扫码组包
         try {
@@ -1051,7 +1041,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         String strHex2 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
         sendMsg = strHex2 + sendMsg;
         upiDTO.setIso8583DTO(sendMsg);
-
         return upiDTO;
     }
 
@@ -1082,7 +1071,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("tradeStatus", "2");
         criteria.andEqualTo("id", orders.getId());
-        BaseResponse response = new BaseResponse();
         if ("00".equals(iso8583VO.getResponseCode_39())) {
             //支付成功
             log.info("==================【UPI预授权完成】==================【支付成功】orderId: {}", orders.getId());
@@ -1202,7 +1190,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-
         String str60 =
                 //60.1 消息类型码
                 "22" +
@@ -1296,7 +1283,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         String domain11 = orderRefund.getId().substring(6, 12);
         String domain60_2 = orderRefund.getId().substring(12, 18);
         //保存11域与60.2域
-
         ISO8583DTO iso8583DTO = new ISO8583DTO();
         iso8583DTO.setMessageType("0200");
         iso8583DTO.setProcessingCode_3("200000");
@@ -1324,7 +1310,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         } else {
             iso8583DTO.setPointOfServiceEntryMode_22("012");
         }
-
         iso8583DTO.setPointOfServiceConditionMode_25("06");
         iso8583DTO.setRetrievalReferenceNumber_37(orderRefund.getChannelNumber().substring(0, 12));
         iso8583DTO.setAuthorizationIdentificationResponse_38(orderRefund.getChannelNumber().substring(12));
@@ -1333,7 +1318,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         //受卡方标识码 (商户号)
         iso8583DTO.setCardAcceptorIdentificationCode_42(channel.getChannelMerchantId());
         iso8583DTO.setCurrencyCodeOfTransaction_49("344");
-
         String str60 =
                 //60.1 消息类型码
                 "22" +
@@ -1506,7 +1490,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         BaseResponse baseResponse = new BaseResponse();
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
-
         UpiPayDTO upiPayDTO = new UpiPayDTO();
         upiPayDTO.setVersion("2.0.0");
         upiPayDTO.setTrade_code("SEARCH");
@@ -1630,7 +1613,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             upiRefundDTO.setRefund_amount(orderRefund.getTradeAmount().toString());
             upiRefundDTO.setCurrency_type(orderRefund.getTradeCurrency());
             upiRefundDTO.setSett_currency_type(orderRefund.getTradeCurrency());
-
             upiRefundDTO.setRefund_no(orderRefund.getId());
             upiRefundDTO.setOrder_no(orderRefund.getOrderId());
         } else {
@@ -1703,11 +1685,8 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     public String upiServerCallback(JSONObject jsonObject) {
         JSONObject json;
         try {
-
             final PublicKey yhPubKey = CryptoUtil.getRSAPublicKeyByFileSuffix(ad3ParamsConfig.getUpiPublicKeyPath(), "pem", "RSA");
             final PrivateKey hzfPriKey = CryptoUtil.getRSAPrivateKeyByFileSuffix(ad3ParamsConfig.getUpiPrivateKeyPath(), "pem", null, "RSA");
-
-
             String result = CryptoUtil.respDecryption(jsonObject, hzfPriKey, yhPubKey);
             log.info("===============【upi回调】===============【返回】 result: {}", result);
             json = (JSONObject) JSONObject.parse(result);
@@ -1777,7 +1756,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             } else {
                 log.info("=================【upi回调】=================【订单支付成功后更新数据库失败】 orderId: {}", orders.getId());
             }
-
         } else if ("2".equals(json.get("pay_result").toString())) {
             //支付失败
             log.info("=================【upi回调】=================【订单已支付失败】 orderId: {}", orders.getId());
@@ -1795,12 +1773,10 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             } else {
                 log.info("=================【upi回调】=================【订单支付失败后更新数据库失败】 orderId: {}", orders.getId());
             }
-
         } else {
             log.info("=================【upi回调】=================【订单是交易中】 orderId: {}", orders.getId());
             return "success";
         }
-
         try {
             //商户服务器回调地址不为空,回调商户服务器
             if (!StringUtils.isEmpty(orders.getServerUrl())) {
@@ -1809,8 +1785,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         } catch (Exception e) {
             log.error("=================【QfPay服务器回调】=================【回调商户异常】", e);
         }
-
-
         return "success";
     }
 }
