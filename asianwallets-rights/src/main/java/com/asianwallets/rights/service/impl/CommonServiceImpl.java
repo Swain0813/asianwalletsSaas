@@ -13,7 +13,6 @@ import com.asianwallets.rights.dao.ShortUrlMapper;
 import com.asianwallets.rights.feign.message.MessageFeign;
 import com.asianwallets.rights.service.CommonRedisService;
 import com.asianwallets.rights.service.CommonService;
-import com.asianwallets.rights.utils.QrCodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
