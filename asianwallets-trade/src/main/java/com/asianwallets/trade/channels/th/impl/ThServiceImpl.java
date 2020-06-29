@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.th.impl;
+
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
@@ -1325,7 +1327,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 preOrders.setChannelNumber(iso8583VO.getRetrievalReferenceNumber_37());
-                preOrders.setOrderStatus((byte) 4);
+                preOrders.setOrderStatus((byte) 3);
             } else {
                 log.info("==================【 通华预授权冲正】==================【预授权失败】preOrders:{}", preOrders.getId());
                 baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
@@ -1533,7 +1535,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         }
         ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
         log.info("==================【通华预授权完成】==================【调用Channels服务】【通华线下银行卡下单接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
-        ordersMapper.updateByPrimaryKeySelective(orders);
         orders.setUpdateTime(new Date());
         orders.setChannelCallbackTime(new Date());
         Example example = new Example(Orders.class);
