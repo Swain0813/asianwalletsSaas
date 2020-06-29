@@ -18,4 +18,9 @@ public interface MerchantCardCodeFeign {
     @ApiOperation(value = "查询商户码牌详情信息")
     @PostMapping("/cardCode/getMerchantCardCode")
     BaseResponse getMerchantCardCode(@RequestBody @ApiParam MerchantCardCodeDTO merchantCardCodeDTO);
+
+
+    @ApiOperation(value = "修改商户码牌信息")
+    @PostMapping("/cardCode/updateMerchantCardCode")
+    BaseResponse updateMerchantCardCode(@RequestBody @ApiParam MerchantCardCodeDTO merchantCardCodeDTO);
 }

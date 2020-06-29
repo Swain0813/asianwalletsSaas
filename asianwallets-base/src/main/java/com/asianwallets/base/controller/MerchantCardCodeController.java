@@ -1,5 +1,6 @@
 package com.asianwallets.base.controller;
 import com.asianwallets.base.service.MerchantCardCodeService;
+import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.MerchantCardCodeDTO;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/cardCode")
 @Api(description = "码牌管理接口")
-public class MerchantCardCodeController {
+public class MerchantCardCodeController extends BaseController {
 
     @Autowired
     private MerchantCardCodeService merchantCardCodeService;
@@ -30,5 +31,11 @@ public class MerchantCardCodeController {
     @PostMapping("/getMerchantCardCode")
     public BaseResponse getMerchantCardCode(@RequestBody @ApiParam MerchantCardCodeDTO merchantCardCodeDTO) {
         return ResultUtil.success(merchantCardCodeService.getMerchantCardCode(merchantCardCodeDTO));
+    }
+
+    @ApiOperation(value = "修改商户码牌信息")
+    @PostMapping("/updateMerchantCardCode")
+    public BaseResponse updateMerchantCardCode(@RequestBody @ApiParam MerchantCardCodeDTO merchantCardCodeDTO){
+        return ResultUtil.success(merchantCardCodeService.updateMerchantCardCode(this.getSysUserVO().getUsername(),merchantCardCodeDTO));
     }
 }

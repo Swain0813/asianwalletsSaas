@@ -30,4 +30,14 @@ public class MerchantCardCodeFeignImpl implements MerchantCardCodeFeign {
     public BaseResponse getMerchantCardCode(MerchantCardCodeDTO merchantCardCodeDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    /**
+     * 修改商户码牌信息
+     * @param merchantCardCodeDTO
+     * @return
+     */
+    @Override
+    public BaseResponse updateMerchantCardCode(MerchantCardCodeDTO merchantCardCodeDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
 }

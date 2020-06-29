@@ -20,4 +20,12 @@ public interface MerchantCardCodeService {
      */
     MerchantCardCode getMerchantCardCode(MerchantCardCodeDTO merchantCardCodeDTO);
 
+    /**
+     * 修改商户码牌信息
+     * @param userName
+     * @param merchantCardCodeDTO
+     * @return
+     */
+    int updateMerchantCardCode(String userName, MerchantCardCodeDTO merchantCardCodeDTO);
+
 }
