@@ -5,6 +5,7 @@ import com.asianwallets.common.dto.MerchantCardCodeDTO;
 import com.asianwallets.common.entity.MerchantCardCode;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
+import com.asianwallets.common.vo.MerchantCardCodeVO;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,11 @@ public class MerchantCardCodeServiceImpl implements MerchantCardCodeService {
         merchantCardCode.setModifier(userName);//修改人
         merchantCardCode.setId(merchantCardCodeDTO.getId());//公告id
         return merchantCardCodeMapper.updateByPrimaryKeySelective(merchantCardCode);
+    }
+
+    @Override
+    public MerchantCardCodeVO selectMerchantCardCode(MerchantCardCodeDTO merchantCardCodeDTO) {
+        return null;
     }
 
 

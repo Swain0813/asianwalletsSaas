@@ -53,7 +53,9 @@
         <result column="modifier" property="modifier"/>
         <result column="remark" property="remark"/>
         <result column="enabled" property="enabled"/>
+        <result column="merchant_logo" property="merchantLogo"/>
     </resultMap>
+
     <select id="pageFindMerchantAudit" resultMap="BaseResultMap">
         select
         m.institution_id,
@@ -134,13 +136,13 @@
 		co.area_code as country_code,m.institution_adress,m.legal_passport_img,m.institution_contract,m.company_articles,m.business_certificate,m.institution_phone,
 		m.legal_name,m.business_category,m.business_license,m.industry_category,m.merchant_postal_code,m.merchant_email,m.merchant_web_url,
 		m.contact_address,m.contact_people,m.contact_phone,m.audit_status,m.ext7,m.ext6,m.ext5,m.ext4,m.ext3,m.ext2,m.ext1,m.create_time,m.update_time,
-		m.creator,m.modifier,m.remark,m.enabled
+		m.creator,m.modifier,m.remark,m.enabled,m.merchant_logo
 		from merchant_audit m
 		left join institution i on m.institution_id = i.id
 		left join merchant m1 on m.agent_id = m1.id
         left join merchant m2 on m.parent_id = m2.id
 		left join country co on m.country = co.extend1 and co.language = #{language}
-		   left join country c1 on m.region = c1.extend1 and c1.language = #{language}
+		left join country c1 on m.region = c1.extend1 and c1.language = #{language}
 		where
 		m.id=#{id}
 	</select>

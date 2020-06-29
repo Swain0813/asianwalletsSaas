@@ -265,5 +265,9 @@ public class MerchantHistory extends BaseEntity {
 	@Column(name = "enabled")
 	private Boolean enabled;
 
+	@ApiModelProperty(value = "商户logo")
+	@Column(name = "merchant_logo")
+	private String merchantLogo;
+
 
 }
