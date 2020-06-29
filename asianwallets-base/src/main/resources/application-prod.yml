@@ -89,4 +89,10 @@ custom:
 
 #项目自定义配置
 file:
+  http:
+    server: https://psg.asianwallets.com
+    basServer: https://psg.alldebitpay.com/bas/qr/forward?id=
+    frontPage: https://psg.asianwallets.com/saascheckstandweb/#/Success
+  upload:
+    path: /usr/local/tomcat/apache-tomcat-8.5.38/webapps
   tmpfile: /usr/local/tomcat/apache-tomcat-8.5.38/webapps/tmp

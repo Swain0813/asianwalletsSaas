@@ -82,10 +82,10 @@ custom:
   ad3ItsUrl: http://119.23.136.80/ITSBoss/v1/
 
   #收银台url
-  cashierDeskUrl: http://192.168.124.32:8087/checkstandweb/#/main
+  cashierDeskUrl: http://192.168.124.32:8087/saascheckstandweb/#/main
 
   #亚洲钱包的支付页面的url
-  paySuccessUrl: http://192.168.124.32:8087/checkstandweb/#/Success
+  paySuccessUrl: http://192.168.124.32:8087/saascheckstandweb/#/Success
 
   #AD3提供的测试参数
   #url
