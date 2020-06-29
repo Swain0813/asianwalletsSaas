@@ -1324,7 +1324,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
             //请求成功
             ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
             log.info("==================【 通华预授权冲正】==================【预授权】iso8583VO:{}", com.alibaba.fastjson.JSONObject.toJSONString(iso8583VO));
-            if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
+            if (iso8583VO.getResponseCode_39() != null && "00".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
                 preOrders.setChannelNumber(iso8583VO.getRetrievalReferenceNumber_37());
                 preOrders.setOrderStatus((byte) 3);
