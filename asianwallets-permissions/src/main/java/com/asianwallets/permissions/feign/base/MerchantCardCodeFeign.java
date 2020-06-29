@@ -13,7 +13,7 @@ public interface MerchantCardCodeFeign {
 
     @ApiOperation(value = "分页查询商户码牌信息信息")
     @PostMapping("/cardCode/pageFindMerchantCardCode")
-    BaseResponse pageFindPreOrders(@RequestBody @ApiParam MerchantCardCodeDTO merchantCardCodeDTO);
+    BaseResponse pageFindMerchantCardCode(@RequestBody @ApiParam MerchantCardCodeDTO merchantCardCodeDTO);
 
     @ApiOperation(value = "查询商户码牌详情信息")
     @PostMapping("/cardCode/getMerchantCardCode")
@@ -23,4 +23,8 @@ public interface MerchantCardCodeFeign {
     @ApiOperation(value = "修改商户码牌信息")
     @PostMapping("/cardCode/updateMerchantCardCode")
     BaseResponse updateMerchantCardCode(@RequestBody @ApiParam MerchantCardCodeDTO merchantCardCodeDTO);
+
+    @ApiOperation(value = "查看商户静态码")
+    @PostMapping("/cardCode/selectMerchantCardCode")
+    BaseResponse selectMerchantCardCode(@RequestBody @ApiParam MerchantCardCodeDTO merchantCardCodeDTO);
 }

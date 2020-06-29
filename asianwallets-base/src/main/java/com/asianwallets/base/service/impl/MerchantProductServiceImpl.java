@@ -294,6 +294,12 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                    merchantCardCode.setModifier(username);
                    merchantCardCode.setUpdateTime(new Date());
                    merchantCardCodeMapper.updateByPrimaryKeySelective(merchantCardCode);
+                   try {
+                       //更新商户码牌信息后添加的redis里
+                       redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(merchantCardCodeDTO.getId()), JSON.toJSONString(merchantCardCode));
+                   } catch (Exception e) {
+                       throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+                   }
                }
            }
         }else{
@@ -333,6 +339,12 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             newMerchantCardCode.setCreateTime(new Date());
             newMerchantCardCode.setCreator(username);
             merchantCardCodeMapper.insert(newMerchantCardCode);
+            try {
+                //更新商户码牌信息后添加的redis里
+                redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(merchantCardCodeDTO.getId()), JSON.toJSONString(newMerchantCardCode));
+            } catch (Exception e) {
+                throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+            }
         }
 
     }
