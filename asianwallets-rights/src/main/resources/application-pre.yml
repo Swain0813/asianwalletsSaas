@@ -64,5 +64,6 @@ redis:
 file:
   http:
     server: https://cashier.alldebitpay.com
+    rghServer: https://cashier.alldebitpay.com/rgh/c/s?shortUrl=
   upload:
     path: /usr/local/tomcat/apache-tomcat-8.5.51/webapps

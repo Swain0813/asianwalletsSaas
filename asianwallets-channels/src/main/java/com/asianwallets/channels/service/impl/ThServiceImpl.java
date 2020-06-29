@@ -590,7 +590,6 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-
         String key = getThKey(merchantReport, thDTO);
         log.info("----------------key----------------key:{}", key);
         //业务类型
@@ -786,7 +785,6 @@ public class ThServiceImpl implements ThService {
         //机构号
         String institutionNum = "0000000" + thDTO.getChannel().getChannelMerchantId();
         //加密key
-
         String key = getThKey(merchantReport, thDTO);
         log.info("----------------key----------------key:{}", key);
         //业务类型

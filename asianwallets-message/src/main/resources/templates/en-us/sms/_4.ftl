@@ -1,0 +1,1 @@
+恭喜!【${merchantName}】 ${activityTheme}${content},券码:${ticketId},券码地址:${ticketQrCode}。

@@ -2,7 +2,6 @@ package com.asianwallets.base.controller;
 import com.asianwallets.base.service.PreOrdersService;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.PreOrdersDTO;
-import com.asianwallets.common.entity.PreOrders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.vo.ExportPreOrdersVO;

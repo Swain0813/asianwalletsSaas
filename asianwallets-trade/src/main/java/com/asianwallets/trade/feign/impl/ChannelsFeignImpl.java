@@ -256,6 +256,31 @@ public class ChannelsFeignImpl implements ChannelsFeign {
     }
 
     @Override
+    public BaseResponse preAuth(ThDTO thDTO) {
+        return null;
+    }
+
+    @Override
+    public BaseResponse preAuthReverse(ThDTO thDTO) {
+        return null;
+    }
+
+    @Override
+    public BaseResponse preAuthRevoke(ThDTO thDTO) {
+        return null;
+    }
+
+    @Override
+    public BaseResponse preAuthComplete(ThDTO thDTO) {
+        return null;
+    }
+
+    @Override
+    public BaseResponse preAuthCompleteRevoke(ThDTO thDTO) {
+        return null;
+    }
+
+    @Override
     public BaseResponse thBankCardRefund(ThDTO thDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }

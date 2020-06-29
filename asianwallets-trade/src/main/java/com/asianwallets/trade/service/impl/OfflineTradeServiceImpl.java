@@ -1117,8 +1117,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setRemark1(preOrders.getId().substring(6,18)+DateToolUtils.SHORT_DATE_FORMAT_T.format(preOrders.getCreateTime()));
         orders.setRemark2(preOrders.getRemark2());
         orders.setRemark3(preOrders.getRemark3());
+        orders.setRemark4(preOrders.getRemark4());
         orders.setRemark8(channel.getChannelAgentId());
-        orders.setPreRemark("预授权");
+        orders.setPreRemark(preOrders.getRemark1());
         orders.setCreateTime(new Date());
         orders.setCreator(preOrders.getMerchantName());
         return orders;

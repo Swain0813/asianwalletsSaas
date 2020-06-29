@@ -1,11 +1,9 @@
 package com.asianwallets.common.entity;
-
 import com.asianwallets.common.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -431,5 +429,9 @@ public class Orders extends BaseEntity {
     @ApiModelProperty(value = "预授权订单的备注")
     @Column(name = "pre_remark")
     private String preRemark;
+
+    @ApiModelProperty(value = "商户聚合码编号")
+    @Column(name = "merchant_card_code")
+    private String merchantCardCode;
 
 }

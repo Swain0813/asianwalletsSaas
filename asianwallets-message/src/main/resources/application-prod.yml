@@ -34,8 +34,8 @@ msg:
   send:
     api:
       simple:
-        account: asianwallets_test_o4fkUZ
-        key: FpCvIVQtQsRSd32A
-        name: asianwallets
+        account: vnbig_noreply
+        key: N7IvBFVcNBjx4gUS
+        name: www
         url: http://api.sendcloud.net/apiv2/mail/send
-      emailFrom: info@asianwallets.com
+      emailFrom: jack@www.com

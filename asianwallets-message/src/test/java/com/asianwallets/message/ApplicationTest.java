@@ -1,6 +1,7 @@
 package com.asianwallets.message;
 import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.utils.ShortUrlUtil;
 import com.asianwallets.message.service.EmailService;
 import com.asianwallets.message.service.SmsService;
 import org.junit.Test;
@@ -49,7 +50,7 @@ public class ApplicationTest {
         String code = IDS.getStringRandom(6);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("verificationcode", code);
-        smsService.sendSimpleTemplate("zh-cn", Status._0, "18270654875", map);
+        smsService.sendSimpleTemplate("zh-cn", Status._0, "18800330943", map);
     }
 
     /**
@@ -82,13 +83,30 @@ public class ApplicationTest {
         map.put("activityTheme", "双十一活动");
         map.put("content", "八折活动,上不封顶");
         map.put("ticketQrCode", "http://192.168.124.27:8080/imagesaas/2020-06-22/38919e1a-eab8-46f0-a5e1-cab9fa16ff29.png");
-        map.put("ticketId", "123456789");
+        map.put("ticketId", "1042598912928546816");
         map.put("startTime", "2020-11-11 00:00:00");
         map.put("endTime", "2020-11-15 23:59:59");
         map.put("unusableTime", "2020-11-12,2020-11-13");
         map.put("ruleDescription", "每人只能使用一张");
         map.put("shopAddresses", "上海金科路店");
         emailService.sendTemplateMail("842505302@qq.com","zh-cn",Status._4,map);
+    }
+
+
+    @Test
+    public void sendTemplateMsg(){
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("merchantName", "龙哥商户");
+        map.put("activityTheme", "双十一活动");
+        map.put("content", "八折活动,上不封顶");
+        map.put("ticketQrCode", "http://192.168.124.27:8080/imagesaas/2020-06-22/38919e1a-eab8-46f0-a5e1-cab9fa16ff29.png");
+        map.put("ticketId", "1042598912928546816");
+        map.put("startTime", "2020-11-11 00:00:00");
+        map.put("endTime", "2020-11-15 23:59:59");
+        map.put("unusableTime", "2020-11-12,2020-11-13");
+        map.put("ruleDescription", "每人只能使用一张");
+        map.put("shopAddresses", "上海金科路店");
+        smsService.sendIntTemplate("zh-cn", Status._4, "8618800330943", map);
     }
 
     /**
@@ -101,6 +119,10 @@ public class ApplicationTest {
         map.put("institutionName", "111111");
         map.put("institutionCode", "111111");
         emailService.sendTemplateMail("842505302@qq.com,965508875@qq.com","en-us",Status._3,map);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(ShortUrlUtil.getShortUrl("http://192.168.124.27:8080/imagesaas/2020-06-22/38919e1a-eab8-46f0-a5e1-cab9fa16ff29.png"));
     }
 }
 

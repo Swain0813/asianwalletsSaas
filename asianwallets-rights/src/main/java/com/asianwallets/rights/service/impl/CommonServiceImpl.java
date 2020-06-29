@@ -4,15 +4,15 @@ import com.asianwallets.common.constant.RightsConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.entity.Attestation;
 import com.asianwallets.common.entity.RightsUserGrant;
+import com.asianwallets.common.entity.ShortUrl;
 import com.asianwallets.common.enums.Status;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.utils.*;
+import com.asianwallets.rights.dao.ShortUrlMapper;
 import com.asianwallets.rights.feign.message.MessageFeign;
 import com.asianwallets.rights.service.CommonRedisService;
 import com.asianwallets.rights.service.CommonService;
-import com.asianwallets.rights.utils.QrCodeUtil;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +46,13 @@ public class CommonServiceImpl implements CommonService {
 
     @Value("${file.upload.path}")
     private String fileUploadPath;
+
+
+    @Value("${file.http.rghServer}")
+    private String rghServer;
+
+    @Autowired
+    private ShortUrlMapper shortUrlMapper;
 
     /**
      * 通用签名校验
@@ -94,8 +101,6 @@ public class CommonServiceImpl implements CommonService {
         log.info("*********************发邮件和短信 Start*************************************");
         try {
             Map<String,Object> map = new HashMap<String,Object>();
-            //获得时间
-            String time = DateUtil.getCurrentDate() + " " + DateUtil.getCurrentTime();
             //商户名称
             map.put("merchantName", rightsUserGrant.getMerchantName());
             //活动主题
@@ -127,7 +132,8 @@ public class CommonServiceImpl implements CommonService {
             String imagePath = fileUploadPath.concat(fileName);
             createDir(imagePath);
             QrCodeUtil.generateQrCodeAndSave(rightsUserGrant.getTicketId(),"png",350,350,imagePath);
-            map.put("ticketQrCode", fileHttpServer.concat(fileName));
+            //票券的二维码真正存放的服务器地址
+            String qrCodeUrl= fileHttpServer.concat(fileName);
             //票券编号
             map.put("ticketId",rightsUserGrant.getTicketId());
             //可用时间
@@ -140,10 +146,24 @@ public class CommonServiceImpl implements CommonService {
             //商家地址
             map.put("shopAddresses",rightsUserGrant.getShopAddresses());
              if(!StringUtils.isEmpty(rightsUserGrant.getMobileNo())) {
-                 //调用发送短信
-                 messageFeign.sendSimpleTemplate(auditorProvider.getLanguage(),Status._0,rightsUserGrant.getMobileNo(),map);
+                 //长链接和短链接的存库
+                 ShortUrl shortUrl = new  ShortUrl();
+                 shortUrl.setId(IDS.uniqueID().toString());
+                 //长链接
+                 shortUrl.setUrl(qrCodeUrl);
+                 String ss = ShortUrlUtil.getShortUrl(qrCodeUrl);
+                 String sUrl = rghServer.concat(ss);
+                 shortUrl.setShortUrl(ss);
+                 shortUrl.setCreateTime(new Date());
+                 int result = shortUrlMapper.insert(shortUrl);
+                 if(result>0){
+                     //调用发送短信
+                     map.put("ticketQrCode",sUrl);
+                     messageFeign.sendSimpleTemplate(auditorProvider.getLanguage(),Status._4,rightsUserGrant.getMobileNo(),map);
+                 }
              }else {
                  //调用发送邮件
+                 map.put("ticketQrCode", qrCodeUrl);
                  messageFeign.sendTemplateMail(rightsUserGrant.getEmail(), auditorProvider.getLanguage(), Status._4, map);
              }
         }catch (Exception e){

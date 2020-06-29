@@ -22,9 +22,10 @@ public class Demo2 {
     private static String merchantId = "852999958120501";
     private static String terminalId = "00018644";
     private static String checkValue = "58B815045DC19B19";
-    private static String key = "CDB437D90F1F1DFC";
-    private static String _2 = "84B6DE23BB7B1776366C11540AA006F8";
-    private static String _35 = "40F70D264C74C732288930F068C275179FE28F1D58D2A21E";
+    //********************************************************//
+    private static String key = "FAFFA223E2A9062D";
+    private static String _2 = "CA7C441D3B9A7BC6266553E08DFBE8CD";
+    private static String _35 = "3874655169CBFB45CAF93EE8E0CB83EED075F40AB46692B2";
 
 
     public static void abc() throws Exception {
@@ -537,27 +538,28 @@ public class Demo2 {
         dto.setProcessingCode_3("200000");
         //金额
         dto.setAmountOfTransactions_4("000000001000");
-        // 11域 todo
-        dto.setSystemTraceAuditNumber_11("785147");
+        String l = String.valueOf(System.currentTimeMillis());
+        // 11域 TODO
+        dto.setSystemTraceAuditNumber_11(l.substring(6, 12));
 
         //022 磁条
         dto.setPointOfServiceEntryMode_22("022");
-        dto.setPointOfServiceConditionMode_25("00");
+        dto.setPointOfServiceConditionMode_25("06");
         //机构号 给的测试数据
         dto.setAcquiringInstitutionIdentificationCode_32("08600005");
 
         // 38域 同返回的数据 授权标识应答码 TODO
-        dto.setAuthorizationIdentificationResponse_38("");
+        dto.setAuthorizationIdentificationResponse_38("181797");
         dto.setCardAcceptorTerminalIdentification_41(terminalId);
         dto.setCardAcceptorIdentificationCode_42(merchantId);
         // 156 人民币币种
         dto.setCurrencyCodeOfTransaction_49("344");
         // 60 自定义域
         String str60 =
-                //60.1 交易类型码
+                //60.1 交易类型码 TODO
                 "11" +
-                        //60.2 原批次号
-                        "453269" +
+                        //60.2 批次号
+                        l.substring(7, 13) +
                         //60.3 网络管理信息码
                         "000" +
                         //60.4 终端读取能力
@@ -571,12 +573,156 @@ public class Demo2 {
         dto.setTrack2Data_35(_35);
         // 61 自定义域
         String str61 =
-                //61.1 原批次号
-                "453269" +
+                //61.1 原批次号 todo
+                "853250" +
                         //61.2 原交易流水号 11域
-                        "785147" +
+                        "532508" +
                         //61.3 原交易日期 由消费返回的13域中获取
-                        "0616";
+                        "0623";
+        dto.setOriginalMessage_61(str61);
+        dto.setReservedPrivate_63("000");
+        System.out.println("JSON.toJSONString(dto) = " + JSON.toJSONString(dto));
+        String msg = ISO8583Util.packISO8583DTO(dto, key);
+        String sendMsg = "6006090000"
+                + "800100000000"
+                + NumberStringUtil.str2HexStr(merchantId + terminalId + institutionId + "00000001" + merchantId)
+                + msg;
+        String s1 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        sendMsg = s1 + sendMsg;
+        System.out.println("请求报文 = " + sendMsg);
+        Map<String, String> requestMap = ISO8583Util.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
+
+        String result = requestMap.get("respData");
+        System.out.println("返回报文 = " + result);
+        ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
+        System.out.println("解析结果:" + JSON.toJSONString(iso8583DTO1281));
+    }
+
+    /**
+     * 预授权完成
+     *
+     * @throws Exception
+     */
+    public static void preAuthComplete() throws Exception {
+        ISO8583DTO dto = new ISO8583DTO();
+        //
+        dto.setMessageType("0200");
+        dto.setProcessingCode_3("000000");
+        //金额
+        dto.setAmountOfTransactions_4("000000001000");
+        // 11域
+        String l = String.valueOf(System.currentTimeMillis());
+        dto.setSystemTraceAuditNumber_11(l.substring(7, 13));
+        //022 磁条 无pin
+        dto.setPointOfServiceEntryMode_22("022");
+        dto.setPointOfServiceConditionMode_25("06");
+        //机构号 给的测试数据
+        dto.setAcquiringInstitutionIdentificationCode_32("08600005");
+        // 38域 同返回的数据 授权标识应答码 TODO
+        dto.setAuthorizationIdentificationResponse_38("181818");
+        dto.setCardAcceptorTerminalIdentification_41(terminalId);
+        dto.setCardAcceptorIdentificationCode_42(merchantId);
+        // 156 人民币币种
+        dto.setCurrencyCodeOfTransaction_49("344");
+        // 60 自定义域
+        String str60 =
+                //60.1 交易类型码TODO
+                "20" +
+                        //60.2 批次号
+                        l.substring(6, 12) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        dto.setReservedPrivate_60(str60);
+        // 61 自定义域
+        String str61 =
+                //61.1 原批次号 todo
+                "187677" +
+                        //61.2 原交易流水号 11域
+                        "876779" +
+                        //61.3 原交易日期 由消费返回的13域中获取
+                        "0623";
+        dto.setOriginalMessage_61(str61);
+        //银行卡
+        dto.setProcessingCode_2(_2);
+        dto.setTrack2Data_35(_35);
+        System.out.println("JSON.toJSONString(dto) = " + JSON.toJSONString(dto));
+        String msg = ISO8583Util.packISO8583DTO(dto, key);
+        String sendMsg = "6006090000"
+                + "800100000000"
+                + NumberStringUtil.str2HexStr(merchantId + terminalId + institutionId + "00000001" + merchantId)
+                + msg;
+        String s1 = String.format("%04x", sendMsg.length() / 2).toUpperCase();
+        sendMsg = s1 + sendMsg;
+        System.out.println("请求报文 = " + sendMsg);
+        Map<String, String> requestMap = ISO8583Util.sendTCPRequest(ip, port, NumberStringUtil.str2Bcd(sendMsg));
+
+        String result = requestMap.get("respData");
+        System.out.println("返回报文 = " + result);
+        ISO8583DTO iso8583DTO1281 = ISO8583Util.unpackISO8583DTO(result);
+        System.out.println("解析结果:" + JSON.toJSONString(iso8583DTO1281));
+        String[] split = iso8583DTO1281.getAdditionalData_46().split("02");
+        System.out.println(Arrays.toString(split));
+
+    }
+
+    /**
+     * 预授权完成撤销
+     *
+     * @throws Exception
+     */
+    public static void preAuthCompleteRevoke() throws Exception {
+        ISO8583DTO dto = new ISO8583DTO();
+        dto.setMessageType("0200");
+        dto.setProcessingCode_3("208000");
+        //金额
+        dto.setAmountOfTransactions_4("000000001000");
+        String l = String.valueOf(System.currentTimeMillis());
+        // 11域 TODO
+        dto.setSystemTraceAuditNumber_11(l.substring(6, 12));
+
+        //022 磁条
+        dto.setPointOfServiceEntryMode_22("022");
+        dto.setPointOfServiceConditionMode_25("06");
+        //机构号 给的测试数据
+        dto.setAcquiringInstitutionIdentificationCode_32("08600005");
+
+        //37 域
+        dto.setRetrievalReferenceNumber_37("000000181819");
+        // 38域 同返回的数据 授权标识应答码 TODO
+        dto.setAuthorizationIdentificationResponse_38("181819");
+        dto.setCardAcceptorTerminalIdentification_41(terminalId);
+        dto.setCardAcceptorIdentificationCode_42(merchantId);
+        // 156 人民币币种
+        dto.setCurrencyCodeOfTransaction_49("344");
+        // 60 自定义域
+        String str60 =
+                //60.1 交易类型码 TODO
+                "21" +
+                        //60.2 批次号
+                        l.substring(7, 13) +
+                        //60.3 网络管理信息码
+                        "000" +
+                        //60.4 终端读取能力
+                        "6" +
+                        //60. 5，6，7 缺省
+                        "00";
+        dto.setReservedPrivate_60(str60);
+
+        //银行卡
+        dto.setProcessingCode_2(_2);
+        dto.setTrack2Data_35(_35);
+        // 61 自定义域
+        String str61 =
+                //61.1 原批次号 todo
+                "195857" +
+                        //61.2 原交易流水号 11域
+                        "958574" +
+                        //61.3 原交易日期 由消费返回的13域中获取
+                        "0623";
         dto.setOriginalMessage_61(str61);
         dto.setReservedPrivate_63("000");
         System.out.println("JSON.toJSONString(dto) = " + JSON.toJSONString(dto));
@@ -604,7 +750,9 @@ public class Demo2 {
 //      refund();
 //        preAuth();
 //        preAuthReverse();
-
+//        preAuthRevoke();
+//        preAuthComplete();
+        preAuthCompleteRevoke();
 /*
         String l = String.valueOf(System.currentTimeMillis());
         System.out.println("l.substring(5,11) = " + l.substring(5, 11));
@@ -614,7 +762,7 @@ public class Demo2 {
     }
 
     public static void decode() throws DesCryptionException {
-        String msg = "6972BD7A34FE6C36C64D03EF0CA5994E9CD241E00773978B72FDEFBF0000000000000000F729CDAC97F8B8A1B7464BE74CDC961676E9D5FEC0F466DB";
+        String msg = "1B9E51E257FD2A568CCEC0EC4FEC6144739B18DD0CF2E84AB03F1BF500000000000000008778A357866D5517FE2FC365CFDB474E108090BEE87FBBDD";
         String substring = msg.substring(80, 112);
         String trk = EcbDesUtil.decode3DEA("38D57B7C1979CF7910677DE5BB6A56DF", substring).toUpperCase();
         System.out.println("trk = " + trk);

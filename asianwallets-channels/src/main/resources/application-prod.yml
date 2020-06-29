@@ -71,7 +71,7 @@ custom:
     offlineQuery: https://pgw.alldebitpay.com/terminalQueryOrder.json
     offlineRefund: https://pgw.alldebitpay.com/posRefund.json
   local:
-    eNets-jumpurl: https://testsaas.asianwallets.com/cha/enets/sendToeNetsDebitPay/
+    eNets-jumpurl: https://psg.asianwallets.com/cha/enets/sendToeNetsDebitPay/
   eghl:
     pay-url: https://securepay.e-ghl.com/IPG/Payment.aspx
   megaPay:
