@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.upi.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.constant.AD3MQConstant;
@@ -11,7 +12,10 @@ import com.asianwallets.common.dto.upi.UpiPayDTO;
 import com.asianwallets.common.dto.upi.UpiRefundDTO;
 import com.asianwallets.common.dto.upi.iso.UpiIsoUtil;
 import com.asianwallets.common.dto.upi.utils.CryptoUtil;
-import com.asianwallets.common.entity.*;
+import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.OrderRefund;
+import com.asianwallets.common.entity.Orders;
+import com.asianwallets.common.entity.PreOrders;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -21,7 +25,10 @@ import com.asianwallets.common.utils.IDS;
 import com.asianwallets.trade.channels.ChannelsAbstractAdapter;
 import com.asianwallets.trade.channels.upi.Upiservice;
 import com.asianwallets.trade.config.AD3ParamsConfig;
-import com.asianwallets.trade.dao.*;
+import com.asianwallets.trade.dao.ChannelsOrderMapper;
+import com.asianwallets.trade.dao.OrderRefundMapper;
+import com.asianwallets.trade.dao.OrdersMapper;
+import com.asianwallets.trade.dao.PreOrdersMapper;
 import com.asianwallets.trade.feign.ChannelsFeign;
 import com.asianwallets.trade.rabbitmq.RabbitMQSender;
 import com.asianwallets.trade.service.CommonBusinessService;
@@ -34,6 +41,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
@@ -840,7 +848,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     @Override
     public BaseResponse preAuthReverse(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
-        UpiDTO upiDTO = this.createPreAuthhRevokeDTO(preOrders, channel);
+        UpiDTO upiDTO = this.createPreAuthReverseDTO(preOrders, channel);
         log.info("==================【UPI预授权冲正】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
         log.info("==================【UPI预授权冲正】==================【调用Channels服务】【UPI-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -851,7 +859,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             log.info("==================【UPI预授权冲正】==================【预授权冲正】iso8583VO:{}", JSONObject.toJSONString(iso8583VO));
             if (iso8583VO.getResponseCode_39() != null && "00 ".equals(iso8583VO.getResponseCode_39())) {
                 baseResponse.setCode(EResultEnum.SUCCESS.getCode());
-                preOrdersMapper.updatePreStatusById1(preOrders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), (byte) 4, null);
+                preOrdersMapper.updatePreStatusById1(preOrders.getId(), iso8583VO.getRetrievalReferenceNumber_37(), (byte) 3, null);
             } else {
                 log.info("==================【UPI预授权冲正】==================【预授权冲正失败】preOrders:{}", preOrders.getId());
                 baseResponse.setCode(EResultEnum.ORDER_NOT_SUPPORT_REVERSE.getCode());
@@ -870,7 +878,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
      * @Date 2020/6/18
      * @Descripate 创建预授权撤销DTO
      **/
-    private UpiDTO createPreAuthhReverseDTO(PreOrders preOrders, Channel channel) {
+    private UpiDTO createPreAuthRevokeDTO(PreOrders preOrders, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
 
@@ -953,7 +961,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
     @Override
     public BaseResponse preAuthRevoke(Channel channel, PreOrders preOrders, RabbitMassage rabbitMassage) {
         BaseResponse baseResponse = new BaseResponse();
-        UpiDTO upiDTO = this.createPreAuthhReverseDTO(preOrders, channel);
+        UpiDTO upiDTO = this.createPreAuthRevokeDTO(preOrders, channel);
         log.info("==================【UPI预授权撤销】==================【调用Channels服务】【UPI-预授权接口】  upiDTO: {}", JSON.toJSONString(upiDTO));
         BaseResponse channelResponse = channelsFeign.upiBankPay(upiDTO);
         log.info("==================【UPI预授权撤销】==================【调用Channels服务】【UPI-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
@@ -983,7 +991,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
      * @Date 2020/6/18
      * @Descripate 预授权冲正DTO
      **/
-    private UpiDTO createPreAuthhRevokeDTO(PreOrders preOrders, Channel channel) {
+    private UpiDTO createPreAuthReverseDTO(PreOrders preOrders, Channel channel) {
         UpiDTO upiDTO = new UpiDTO();
         upiDTO.setChannel(channel);
         ISO8583DTO iso8583DTO = new ISO8583DTO();
@@ -1064,7 +1072,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         }
         ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
         log.info("==================【UPI预授权完成】==================【调用Channels服务】【通华线下银行卡下单接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
-        ordersMapper.updateByPrimaryKeySelective(orders);
         orders.setUpdateTime(new Date());
         orders.setChannelCallbackTime(new Date());
         Example example = new Example(Orders.class);
