@@ -1,4 +1,5 @@
 package com.asianwallets.trade.controller;
+
 import com.alibaba.fastjson.JSONObject;
 import com.asianwallets.common.base.BaseController;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.validation.Valid;
 
 @RestController
@@ -64,6 +66,12 @@ public class OfflineTradeController extends BaseController {
         return ResultUtil.success(offlineTradeService.preAuthComplete(offlinePreTradeDTO));
     }
 
+    @ApiOperation(value = "码牌交易")
+    @PostMapping("codeTrading")
+    public BaseResponse codeTrading(@RequestBody @ApiParam @Valid OfflineCodeTradeDTO offlineCodeTradeDTO) {
+        return ResultUtil.success(offlineTradeService.codeTrading(offlineCodeTradeDTO));
+    }
+
     @ApiOperation(value = "线下查询订单列表【对外API】")
     @PostMapping("checkOrder")
     public BaseResponse checkOrder(@RequestBody @ApiParam @Valid OfflineCheckOrdersDTO offlineCheckOrdersDTO) {
@@ -102,6 +110,5 @@ public class OfflineTradeController extends BaseController {
         posSearchDTO.setLanguage(this.getLanguage());
         return ResultUtil.success(offlineTradeService.posGetOrders(posSearchDTO));
     }
-
 }
 

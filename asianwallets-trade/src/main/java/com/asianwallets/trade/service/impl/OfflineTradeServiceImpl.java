@@ -1180,4 +1180,16 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         basicsInfoVO.setMerchantProduct(merchantProduct);
         return basicsInfoVO;
     }
+
+
+    /**
+     * 码拍交易
+     *
+     * @param offlineCodeTradeDTO
+     * @return
+     */
+    @Override
+    public BaseResponse codeTrading(OfflineCodeTradeDTO offlineCodeTradeDTO) {
+        return null;
+    }
 }

@@ -1,6 +1,7 @@
 package com.asianwallets.trade.service;
 import com.asianwallets.common.dto.PosQueryOrderListDTO;
 import com.asianwallets.common.dto.PosSearchDTO;
+import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.vo.PosSearchVO;
 import com.asianwallets.trade.dto.*;
 import com.asianwallets.trade.vo.*;
@@ -97,8 +98,17 @@ public interface OfflineTradeService {
 
     /**
      * 预授权完成
+     *
      * @param offlinePreTradeDTO
      * @return
      */
     BscDynamicScanVO preAuthComplete(OfflinePreTradeDTO offlinePreTradeDTO);
+
+    /**
+     * 码拍交易
+     *
+     * @param offlineCodeTradeDTO
+     * @return
+     */
+    BaseResponse codeTrading(OfflineCodeTradeDTO offlineCodeTradeDTO);
 }
