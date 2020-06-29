@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asianwallets.base.dao.MerchantCardCodeMapper" >
+  <resultMap id="BaseResultMap" type="com.asianwallets.common.entity.MerchantCardCode" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="institution_id" property="institutionId" jdbcType="VARCHAR" />
+    <result column="institution_name" property="institutionName" jdbcType="VARCHAR" />
+    <result column="merchant_id" property="merchantId" jdbcType="VARCHAR" />
+    <result column="merchant_name" property="merchantName" jdbcType="VARCHAR" />
+    <result column="shop_id" property="shopId" jdbcType="VARCHAR" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="product_code" property="productCode" jdbcType="VARCHAR" />
+    <result column="product_name" property="productName" jdbcType="VARCHAR" />
+    <result column="qrcode_url" property="qrcodeUrl" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="enabled" property="enabled" jdbcType="BIT" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
+    <result column="ext3" property="ext3" jdbcType="VARCHAR" />
+    <result column="ext4" property="ext4" jdbcType="VARCHAR" />
+    <result column="ext5" property="ext5" jdbcType="VARCHAR" />
+    <result column="ext6" property="ext6" jdbcType="VARCHAR" />
+    <result column="ext7" property="ext7" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, institution_id, institution_name, merchant_id, merchant_name, shop_id, shop_name, 
+    product_code, product_name, qrcode_url, create_time, update_time, creator, modifier, 
+    remark, enabled, ext1, ext2, ext3, ext4, ext5, ext6, ext7
+  </sql>
+
+  <select id="pageFindMerchantCardCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from merchant_card_code
+    <where>
+      <if test="id != null and id != ''">
+        and id = #{id}
+      </if>
+      <if test="institutionId != null and institutionId != ''">
+        and institution_id = #{institutionId}
+      </if>
+      <if test="merchantId != null and merchantId != ''">
+        and merchant_id = #{merchantId}
+      </if>
+      <if test="institutionName != null and institutionName != ''">
+        and institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+      </if>
+      <if test="merchantName != null and merchantName != ''">
+        and merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+      </if>
+      <if test="startDate != null and startDate !=''">
+        AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startDate}
+      </if>
+      <if test="endDate != null and endDate !=''">
+        AND DATE_FORMAT(create_time,'%Y-%m-%d')&lt;= #{endDate}
+      </if>
+    </where>
+  </select>
+
+  <select id="getMerchantCardCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from merchant_card_code
+    <where>
+      <if test="id != null and id != ''">
+        and id = #{id}
+      </if>
+    </where>
+  </select>
+
+</mapper>
