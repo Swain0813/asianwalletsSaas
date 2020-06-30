@@ -333,7 +333,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             newMerchantCardCode.setMerchantId(merProDTO.getMerchantId());
             newMerchantCardCode.setMerchantName(merchant.getCnName());
             newMerchantCardCode.setInstitutionId(institution.getId());
-            newMerchantCardCode.setMerchantName(institution.getCnName());
+            newMerchantCardCode.setInstitutionName(institution.getCnName());
             newMerchantCardCode.setProductCode(productCodes);
             newMerchantCardCode.setProductName(productNames);
             String fileName= IMAGES_DIR.concat(DateUtil.getCurrentDate()).concat("/").concat(UUID.randomUUID().toString()).concat(".png");
