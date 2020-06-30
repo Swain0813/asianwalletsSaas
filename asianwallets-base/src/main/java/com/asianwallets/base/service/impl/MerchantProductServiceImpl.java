@@ -307,7 +307,8 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             String productNames=null;
             for(ProdChannelDTO prodChannelDTO : merProDTO.getProductList()){
                 Product product = productMapper.selectByPrimaryKey(prodChannelDTO.getProductId());
-                if(product.getTradeDirection()==TradeConstant.PRODUCT_OFFLINE && product.getProductName().equals("静态码支付")){
+                if(product.getTradeDirection()==TradeConstant.PRODUCT_OFFLINE &&
+                        (product.getProductName().contains("静态码支付")||product.getProductName().contains("Alipay-Static"))){
                     //产品编号
                     if(productCodes==null){
                         productCodes=product.getProductCode().toString();
