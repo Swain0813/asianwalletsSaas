@@ -275,6 +275,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
      * @param merProDTO
      */
     private  void  createOrUpdateMerchantCardCode(String username, MerProDTO merProDTO){
+        int result=0;
         //根据商户编号判断码牌信息存不存在
         MerchantCardCodeDTO merchantCardCodeDTO = new MerchantCardCodeDTO();
         merchantCardCodeDTO.setMerchantId(merProDTO.getMerchantId());
@@ -293,12 +294,14 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                    merchantCardCode.setId(merchantCardCode.getId());
                    merchantCardCode.setModifier(username);
                    merchantCardCode.setUpdateTime(new Date());
-                   merchantCardCodeMapper.updateByPrimaryKeySelective(merchantCardCode);
-                   try {
-                       //更新商户码牌信息后添加的redis里
-                       redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(merchantCardCodeDTO.getId()), JSON.toJSONString(merchantCardCode));
-                   } catch (Exception e) {
-                       throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+                   result= merchantCardCodeMapper.updateByPrimaryKeySelective(merchantCardCode);
+                   if(result>0){
+                       try {
+                           //更新商户码牌信息后添加的redis里
+                           redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(merchantCardCodeDTO.getId()), JSON.toJSONString(merchantCardCode));
+                       } catch (Exception e) {
+                           throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+                       }
                    }
                }
            }
@@ -337,14 +340,17 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
             createDir(imagePath);
             QrCodeUtil.generateQrCodeAndSave(basServer.concat(newMerchantCardCode.getId()),"png",450,450,imagePath);
             newMerchantCardCode.setQrcodeUrl(fileHttpServer.concat(fileName));
+            newMerchantCardCode.setEnabled(true);
             newMerchantCardCode.setCreateTime(new Date());
             newMerchantCardCode.setCreator(username);
-            merchantCardCodeMapper.insert(newMerchantCardCode);
-            try {
-                //更新商户码牌信息后添加的redis里
-                redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(merchantCardCodeDTO.getId()), JSON.toJSONString(newMerchantCardCode));
-            } catch (Exception e) {
-                throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+            result=merchantCardCodeMapper.insert(newMerchantCardCode);
+            if(result>0){
+                try {
+                    //更新商户码牌信息后添加的redis里
+                    redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(merchantCardCodeDTO.getId()), JSON.toJSONString(newMerchantCardCode));
+                } catch (Exception e) {
+                    throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+                }
             }
         }
 
