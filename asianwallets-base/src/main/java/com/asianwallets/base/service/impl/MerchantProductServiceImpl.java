@@ -300,6 +300,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                            //更新商户码牌信息后添加的redis里
                            redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(merchantCardCode.getId()), JSON.toJSONString(merchantCardCode));
                        } catch (Exception e) {
+                           log.error("商户码牌信息存在的场合将数据更新后存redis里：", e);
                            throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
                        }
                    }
@@ -349,6 +350,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                     //更新商户码牌信息后添加的redis里
                     redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(newMerchantCardCode.getId()), JSON.toJSONString(newMerchantCardCode));
                 } catch (Exception e) {
+                    log.error("商户码牌信息不存在新增的场合将数据新增到redis里：", e);
                     throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
                 }
             }
