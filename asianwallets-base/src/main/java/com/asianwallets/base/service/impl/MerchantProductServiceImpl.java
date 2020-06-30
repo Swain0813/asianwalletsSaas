@@ -232,7 +232,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                 redisService.set(AsianWalletConstant.MERCHANTCHANNEL_CACHE_KEY.concat("_").concat(merchantChannel.getMerProId()),
                         JSON.toJSONString(chaBanIds));
             } catch (Exception e) {
-                log.error("审核通过后将新增和修改的通道信息添加的redis里：", e.getMessage());
+                log.error("审核通过后将新增和修改的通道信息添加的redis里：", e);
                 throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
             }
         }
