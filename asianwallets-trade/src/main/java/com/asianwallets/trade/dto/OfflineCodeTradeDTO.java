@@ -32,28 +32,10 @@ public class OfflineCodeTradeDTO {
     @ApiModelProperty(value = "商户订单时间")
     private String orderTime;
 
-    @NotNull(message = "50002")
-    @ApiModelProperty(value = "产品编号")
-    private Integer productCode;
-
-    @ApiModelProperty(value = "设备编号")
-    private String imei;
-
-    @ApiModelProperty(value = "设备操作员")
-    private String operatorId;
-
-    @ApiModelProperty(value = "Token")
-    private String token;
-
     @ApiModelProperty(value = "聚合码")
     private String merchantCardCode;
 
-    @ApiModelProperty(value = "签名")
-    private String sign;
-
-    @ApiModelProperty(value = "签名方式 1为RSA 2为MD5")
-    private String signType;
-
+/*
     //----------------【非必填参数】---------------------
 
     @ApiModelProperty(value = "银行机构号")
@@ -93,5 +75,5 @@ public class OfflineCodeTradeDTO {
     private String remark2;
 
     @ApiModelProperty(value = "remark3")
-    private String remark3;
+    private String remark3;*/
 }

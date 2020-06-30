@@ -6,6 +6,7 @@ import com.asianwallets.common.vo.PosSearchVO;
 import com.asianwallets.trade.dto.*;
 import com.asianwallets.trade.vo.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface OfflineTradeService {
@@ -105,10 +106,11 @@ public interface OfflineTradeService {
     BscDynamicScanVO preAuthComplete(OfflinePreTradeDTO offlinePreTradeDTO);
 
     /**
-     * 码拍交易
+     * 码牌交易
      *
      * @param offlineCodeTradeDTO
+     * @param request
      * @return
      */
-    BaseResponse codeTrading(OfflineCodeTradeDTO offlineCodeTradeDTO);
+    BaseResponse codeTrading(OfflineCodeTradeDTO offlineCodeTradeDTO, HttpServletRequest request);
 }

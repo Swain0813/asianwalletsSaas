@@ -114,4 +114,20 @@ public class OfflineTradeDTO {
 
     @ApiModelProperty(value = "remark3")
     private String remark3;
+
+    @ApiModelProperty(value = "聚合码")
+    private String merchantCardCode;
+
+
+    public OfflineTradeDTO(OfflineCodeTradeDTO offlineCodeTradeDTO) {
+        this.merchantId = offlineCodeTradeDTO.getMerchantId();
+        this.orderNo = offlineCodeTradeDTO.getOrderNo();
+        this.orderCurrency = offlineCodeTradeDTO.getOrderCurrency();
+        this.orderAmount = offlineCodeTradeDTO.getOrderAmount();
+        this.orderTime = offlineCodeTradeDTO.getOrderTime();
+        this.merchantCardCode = offlineCodeTradeDTO.getMerchantCardCode();
+    }
+
+    public OfflineTradeDTO() {
+    }
 }

@@ -1,11 +1,15 @@
 package com.asianwallets.trade.channels.alipay.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3MQConstant;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.constant.TradeConstant;
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.dto.alipay.*;
-import com.asianwallets.common.entity.*;
+import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.ChannelsOrder;
+import com.asianwallets.common.entity.OrderRefund;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
@@ -33,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -736,4 +741,26 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
         }
     }
 
+    /**
+     * 支付宝码牌
+     *
+     * @return
+     */
+    @Override
+    public BaseResponse codeTrading(Orders orders, Channel channel) {
+        return null;
+    }
+
+
+    /**
+     * 支付宝码牌回调
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @Override
+    public String aliPayCodePayCallback(HttpServletRequest request, HttpServletResponse response) {
+        return null;
+    }
 }
