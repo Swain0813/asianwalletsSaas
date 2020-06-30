@@ -748,6 +748,8 @@ public class AlipayServiceImpl extends ChannelsAbstractAdapter implements Alipay
      */
     @Override
     public BaseResponse codeTrading(Orders orders, Channel channel) {
+
+
         return null;
     }
 
