@@ -1198,6 +1198,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         MerchantCardCode merchantCardCode = commonRedisDataService.getMerchantCardCode(offlineCodeTradeDTO.getMerchantCardCode());
         //TODO 将传过来的参数构造线下dto，用来复用逻辑
         OfflineTradeDTO offlineTradeDTO = new OfflineTradeDTO(offlineCodeTradeDTO);
+        Product product = commonRedisDataService.getProductByCode(offlineTradeDTO.getProductCode());
+        //订单币种为产品币种
+        offlineTradeDTO.setOrderCurrency(product.getCurrency());
+
         log.info("==================【线下码牌动态扫码】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
         //重复请求
         if (!commonBusinessService.repeatedRequests(offlineTradeDTO.getMerchantId(), offlineTradeDTO.getOrderNo())) {
