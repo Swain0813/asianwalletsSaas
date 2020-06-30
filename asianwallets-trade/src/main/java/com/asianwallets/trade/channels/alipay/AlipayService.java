@@ -1,4 +1,5 @@
 package com.asianwallets.trade.channels.alipay;
+
 import com.asianwallets.common.dto.RabbitMassage;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.OrderRefund;
@@ -6,6 +7,7 @@ import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.trade.dto.AplipayBrowserCallbackDTO;
 import com.asianwallets.trade.dto.AplipayServerCallbackDTO;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -80,8 +82,23 @@ public interface AlipayService {
 
     /**
      * 支付宝线上下单浏览器回调
+     *
      * @param aplipayBrowserCallbackDTO
      * @param response
      */
     void aplipayBrowserCallback(AplipayBrowserCallbackDTO aplipayBrowserCallbackDTO, HttpServletResponse response);
+
+    /**
+     * 支付宝码牌
+     *
+     * @return
+     */
+    BaseResponse codeTrading(Orders orders, Channel channel);
+
+    /**
+     * 支付宝码牌回调
+     *
+     * @return
+     */
+    String aliPayCodePayCallback(HttpServletRequest request, HttpServletResponse response);
 }

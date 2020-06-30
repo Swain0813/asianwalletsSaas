@@ -89,5 +89,15 @@ public class ChannelsAbstractAdapter extends ChannelsAbstract {
         return null;
     }
 
-
+    /**
+     * 码牌交易
+     *
+     * @param orders
+     * @param channel
+     * @return
+     */
+    @Override
+    public BaseResponse codeTrading(Orders orders, Channel channel) {
+        return null;
+    }
 }

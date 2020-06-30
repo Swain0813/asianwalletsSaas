@@ -144,4 +144,12 @@ public interface CommonRedisDataService {
      * @return
      */
     String getThKey(String terminalId, String merchantId, Channel channel);
+
+    /**
+     * 获取商户码牌信息
+     *
+     * @param id
+     * @return
+     */
+    MerchantCardCode getMerchantCardCode(String id);
 }

@@ -140,10 +140,18 @@ public abstract class ChannelsAbstract {
 
     /**
      * 预授权完成撤销
+     *
      * @param channel
      * @param orderRefund
      * @param rabbitMassage
      * @return
      */
-    public abstract BaseResponse preAuthCompleteRevoke(Channel channel,OrderRefund orderRefund, RabbitMassage rabbitMassage);
+    public abstract BaseResponse preAuthCompleteRevoke(Channel channel, OrderRefund orderRefund, RabbitMassage rabbitMassage);
+
+    /**
+     * 码牌交易
+     *
+     * @return
+     */
+    public abstract BaseResponse codeTrading(Orders orders, Channel channel);
 }

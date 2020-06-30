@@ -75,6 +75,9 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
     @Autowired
     private ThServiceImpl thService;
 
+    @Autowired
+    private MerchantCardCodeMapper merchantCardCodeMapper;
+
     /**
      * 根据币种编码获取币种信息
      *
@@ -476,5 +479,25 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
         }
         log.info("++++++++++++++++++++++商户获取62域缓存信息完成++++++++++++++++++++++");
         return key;
+    }
+
+    /**
+     * 获取商户码牌信息
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public MerchantCardCode getMerchantCardCode(String id) {
+        MerchantCardCode merchantCardCode = JSON.parseObject(redisService.get(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(id)), MerchantCardCode.class);
+        if (merchantCardCode == null) {
+            merchantCardCode = merchantCardCodeMapper.selectById(id);
+            if (merchantCardCode == null) {
+                log.info("==================【根据码牌id查询商户码牌信息】==================【码牌信息对象不存在】 id: {}", id);
+                throw new BusinessException(EResultEnum.CODE_CARD_INFORMATION_DOES_NOT_EXIST.getCode());
+            }
+            redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(merchantCardCode.getId()), JSON.toJSONString(merchantCardCode));
+        }
+        return merchantCardCode;
     }
 }
