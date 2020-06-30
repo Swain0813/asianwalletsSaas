@@ -1204,12 +1204,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             log.info("==================【线下码牌动态扫码】==================【重复请求】");
             throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
         }
-        //验签
-        if (!commonBusinessService.checkUniversalSign(offlineTradeDTO)) {
-            log.info("==================【线下码牌动态扫码】==================【签名不匹配】");
-            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
-        }
-
         //获取收单基础信息并校验 TODO 需要从缓存中获取该商户的信息 码牌信息
         BasicInfoVO basicInfoVO = getBasicAndCheck(offlineTradeDTO);
         //设置订单属性
@@ -1238,10 +1232,6 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
             throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
         }
         csbDynamicScanVO.setOrderNo(orders.getMerchantOrderId());
-     /*   //Enets通道需要Base64解码
-        if (AD3Constant.ENETS.equalsIgnoreCase(basicInfoVO.getChannel().getIssuerId())) {
-            csbDynamicScanVO.setDecodeType(TradeConstant.BASE_64);
-        }*/
         log.info("==================【线下码牌动态扫码】==================【下单结束】");
         return response;
     }
