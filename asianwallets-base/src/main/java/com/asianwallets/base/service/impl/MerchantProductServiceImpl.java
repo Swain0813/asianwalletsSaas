@@ -226,13 +226,13 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
         }
         merchantChannelMapper.insertList(list);
         for (MerchantChannel merchantChannel : list) {
-            //审核通过后将新增和修改的通道信息添加的redis里
+            //将新增和修改的通道信息添加的redis里
             List<String> chaBanIds = merchantChannelMapper.selectChannelCodeByMerProId(merchantChannel.getMerProId());
             try {
                 redisService.set(AsianWalletConstant.MERCHANTCHANNEL_CACHE_KEY.concat("_").concat(merchantChannel.getMerProId()),
                         JSON.toJSONString(chaBanIds));
             } catch (Exception e) {
-                log.error("审核通过后将新增和修改的通道信息添加的redis里：", e.getMessage());
+                log.error("审核通过后将新增和修改的通道信息添加的redis里：", e);
                 throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
             }
         }
