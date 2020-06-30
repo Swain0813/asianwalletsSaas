@@ -45,4 +45,11 @@ public interface ProductMapper extends  BaseMapper<Product> {
      **/
     @Select("select  p.id as id ,concat(pt.name,'-',p.currency) as payType from product p, pay_type pt where p.pay_type = #{payType} and p.pay_type = pt.extend1  and pt.language =#{language} ")
     List<Product> selectProductByPayType(@Param("payType") String payType, @Param("language") String language);
+
+   /**
+    * 根据产品编号获取产品信息
+    * @param productCode
+    * @return
+    */
+   Product selectByProductCode(Integer productCode);
 }

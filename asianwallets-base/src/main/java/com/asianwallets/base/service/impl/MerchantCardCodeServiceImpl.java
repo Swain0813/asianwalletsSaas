@@ -1,6 +1,7 @@
 package com.asianwallets.base.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.MerchantCardCodeMapper;
+import com.asianwallets.base.dao.ProductMapper;
 import com.asianwallets.base.service.CommonService;
 import com.asianwallets.base.service.MerchantCardCodeService;
 import com.asianwallets.common.constant.AsianWalletConstant;
@@ -30,6 +31,10 @@ public class MerchantCardCodeServiceImpl implements MerchantCardCodeService {
 
     @Autowired
     private CommonService commonService;
+
+
+    @Autowired
+    private ProductMapper productMapper;
 
     /**
      * 分页查询商户码牌信息信息
@@ -117,7 +122,7 @@ public class MerchantCardCodeServiceImpl implements MerchantCardCodeService {
         String [] productCodes = merchantCardCode.getProductCode().split(",");
         String productImgs=null;
         for (String productCode:productCodes){
-            Product product = JSON.parseObject(redisService.get(AsianWalletConstant.PRODUCT_CACHE_CODE_KEY.concat("_") + productCode), Product.class);
+            Product product = productMapper.selectByProductCode(new Integer(productCode));
             if(productImgs==null){
                 productImgs=product.getProductImg();
             }else {
