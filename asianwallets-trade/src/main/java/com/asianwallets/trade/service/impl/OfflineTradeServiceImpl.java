@@ -1195,7 +1195,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
         //进行判断
         String serviceName = request.getHeader("User-Agent");
-
+        MerchantCardCode merchantCardCode = commonRedisDataService.getMerchantCardCode(offlineCodeTradeDTO.getMerchantCardCode());
         //TODO 将传过来的参数构造线下dto，用来复用逻辑
         OfflineTradeDTO offlineTradeDTO = new OfflineTradeDTO(offlineCodeTradeDTO);
         log.info("==================【线下码牌动态扫码】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
