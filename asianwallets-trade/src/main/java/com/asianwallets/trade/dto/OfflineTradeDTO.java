@@ -122,7 +122,8 @@ public class OfflineTradeDTO {
     public OfflineTradeDTO(OfflineCodeTradeDTO offlineCodeTradeDTO) {
         this.merchantId = offlineCodeTradeDTO.getMerchantId();
         this.orderNo = offlineCodeTradeDTO.getOrderNo();
-        this.orderCurrency = offlineCodeTradeDTO.getOrderCurrency();
+        //币种为产品币种
+//        this.orderCurrency = offlineCodeTradeDTO.getOrderCurrency();
         this.orderAmount = offlineCodeTradeDTO.getOrderAmount();
         this.orderTime = offlineCodeTradeDTO.getOrderTime();
         this.merchantCardCode = offlineCodeTradeDTO.getMerchantCardCode();
