@@ -182,6 +182,7 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
      * @Descripate 商户分配通道
      **/
     @Override
+    @Transactional
     public int allotMerProductChannel(String username, MerProDTO merProDTO) {
         log.info("----------------- 商户分配通道 ---------------- username : {},merProDTO : {} ", username, JSONObject.toJSONString(merProDTO));
         //必填的check
