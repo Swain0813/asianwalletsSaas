@@ -2,6 +2,7 @@ package com.asianwallets.base.service;
 
 import com.asianwallets.common.dto.MerchantCardCodeDTO;
 import com.asianwallets.common.entity.MerchantCardCode;
+import com.asianwallets.common.vo.MerchantCardCodeVO;
 import com.github.pagehelper.PageInfo;
 
 public interface MerchantCardCodeService {
@@ -27,5 +28,12 @@ public interface MerchantCardCodeService {
      * @return
      */
     int updateMerchantCardCode(String userName, MerchantCardCodeDTO merchantCardCodeDTO);
+
+    /**
+     * 查看商户静态码
+     * @param merchantCardCodeDTO
+     * @return
+     */
+    MerchantCardCodeVO selectMerchantCardCode(MerchantCardCodeDTO merchantCardCodeDTO);
 
 }

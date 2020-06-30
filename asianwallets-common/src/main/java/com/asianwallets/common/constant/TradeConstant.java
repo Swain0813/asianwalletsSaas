@@ -35,7 +35,6 @@ public class TradeConstant {
     //------------产品交易方向
     public static final Byte PRODUCT_ONLINE = 1; //线上
     public static final Byte PRODUCT_OFFLINE = 2; //线下
-    public static final Byte PRODUCT_UPLINE_MOVE = 3; //线下移动端
 
     //------------费率类型------------
     public static final String FEE_TYPE_RATE = "dic_7_1"; //单笔费率

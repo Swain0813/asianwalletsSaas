@@ -17,7 +17,7 @@ public class MerchantCardCodeFeignImpl implements MerchantCardCodeFeign {
      * @return
      */
     @Override
-    public BaseResponse pageFindPreOrders(MerchantCardCodeDTO merchantCardCodeDTO) {
+    public BaseResponse pageFindMerchantCardCode(MerchantCardCodeDTO merchantCardCodeDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
 
@@ -40,4 +40,16 @@ public class MerchantCardCodeFeignImpl implements MerchantCardCodeFeign {
     public BaseResponse updateMerchantCardCode(MerchantCardCodeDTO merchantCardCodeDTO) {
         throw new BusinessException(EResultEnum.ERROR.getCode());
     }
+
+    /**
+     * 查看商户静态码
+     * @param merchantCardCodeDTO
+     * @return
+     */
+    @Override
+    public BaseResponse selectMerchantCardCode(MerchantCardCodeDTO merchantCardCodeDTO) {
+        throw new BusinessException(EResultEnum.ERROR.getCode());
+    }
+
+
 }

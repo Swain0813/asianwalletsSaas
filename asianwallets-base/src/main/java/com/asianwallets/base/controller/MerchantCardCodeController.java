@@ -38,4 +38,10 @@ public class MerchantCardCodeController extends BaseController {
     public BaseResponse updateMerchantCardCode(@RequestBody @ApiParam MerchantCardCodeDTO merchantCardCodeDTO){
         return ResultUtil.success(merchantCardCodeService.updateMerchantCardCode(this.getSysUserVO().getUsername(),merchantCardCodeDTO));
     }
+
+    @ApiOperation(value = "查看商户静态码")
+    @PostMapping("/selectMerchantCardCode")
+    public BaseResponse selectMerchantCardCode(@RequestBody @ApiParam MerchantCardCodeDTO merchantCardCodeDTO) {
+        return ResultUtil.success(merchantCardCodeService.selectMerchantCardCode(merchantCardCodeDTO));
+    }
 }
