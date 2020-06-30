@@ -58,7 +58,7 @@ public class AliPayCardDTO {
     @ApiModelProperty(value = "签名值")
     private String sign;
 
-    //#######以下是extend_params参数值
+    //#######以下是extend_params内的参数值 需要组装成JSON格式
 
     @ApiModelProperty(value = "合作伙伴分配的唯一ID，用于标识辅助商家。ID可以包含字母，数字和下划线。")
     private String secondary_merchant_id;
