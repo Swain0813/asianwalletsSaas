@@ -494,7 +494,7 @@ public class CommonRedisDataServiceImpl implements CommonRedisDataService {
             merchantCardCode = merchantCardCodeMapper.selectByPrimaryKey(id);
             if (merchantCardCode == null) {
                 log.info("==================【根据码牌id查询商户码牌信息】==================【码牌信息对象不存在】 id: {}", id);
-                throw new BusinessException(EResultEnum.DEFALUT_BANK_ACCOUT_CODE_IS_EXISTS.getCode());
+                throw new BusinessException(EResultEnum.CODE_CARD_INFORMATION_DOES_NOT_EXIST.getCode());
             }
             redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(merchantCardCode.getId()), JSON.toJSONString(merchantCardCode));
         }

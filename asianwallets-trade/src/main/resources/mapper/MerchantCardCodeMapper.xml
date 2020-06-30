@@ -32,47 +32,5 @@
     remark, enabled, ext1, ext2, ext3, ext4, ext5, ext6, ext7
     </sql>
 
-    <select id="pageFindMerchantCardCode" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"></include>
-        from merchant_card_code
-        <where>
-            <if test="id != null and id != ''">
-                and id = #{id}
-            </if>
-            <if test="institutionId != null and institutionId != ''">
-                and institution_id = #{institutionId}
-            </if>
-            <if test="merchantId != null and merchantId != ''">
-                and merchant_id = #{merchantId}
-            </if>
-            <if test="institutionName != null and institutionName != ''">
-                and institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
-            </if>
-            <if test="merchantName != null and merchantName != ''">
-                and merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
-            </if>
-            <if test="startDate != null and startDate !=''">
-                AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startDate}
-            </if>
-            <if test="endDate != null and endDate !=''">
-                AND DATE_FORMAT(create_time,'%Y-%m-%d')&lt;= #{endDate}
-            </if>
-        </where>
-    </select>
-
-    <select id="getMerchantCardCode" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"></include>
-        from merchant_card_code
-        <where>
-            <if test="id != null and id != ''">
-                and id = #{id}
-            </if>
-            <if test="merchantId != null and merchantId != ''">
-                and merchant_id = #{merchantId}
-            </if>
-        </where>
-    </select>
 
 </mapper>
