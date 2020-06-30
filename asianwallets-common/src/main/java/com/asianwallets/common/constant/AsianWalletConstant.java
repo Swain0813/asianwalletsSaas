@@ -113,6 +113,8 @@ public class AsianWalletConstant {
     // merchantReportCacheKey_M202003024032_999120127946039296
     public static final String MERCHANT_REPORT_CACHE_KEY = "merchantReportCacheKey";//机构表的缓存key
 
+    public static final String MERCHANT_CARD_CODE = "merchantCardCodeCacheKey";//机构表的缓存key
+
     /************************通化签到62域缓存*************************/
     // Th_SIGN_CACHE_KEY_通华机构号_商户报备二级商户号_设备号
     public static final String Th_SIGN_CACHE_KEY = "ThSignCacheKey";//机构表的缓存key

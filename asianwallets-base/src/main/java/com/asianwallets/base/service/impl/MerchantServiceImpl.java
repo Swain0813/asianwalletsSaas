@@ -115,8 +115,6 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant> implements Me
             }
         }
         if (merchantMapper.insert(merchant) > 0) {
-
-
             Attestation attestation = new Attestation();
             attestation.setId(IDS.uuid2());//id
             Map<String, String> rsaMap;

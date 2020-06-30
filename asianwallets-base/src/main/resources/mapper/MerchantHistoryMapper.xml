@@ -54,6 +54,7 @@
 		<result column="modifier" property="modifier" />
 		<result column="remark" property="remark" />
 		<result column="enabled" property="enabled" />
+		<result column="merchant_logo" property="merchantLogo"/>
 	</resultMap>
 
 </mapper>

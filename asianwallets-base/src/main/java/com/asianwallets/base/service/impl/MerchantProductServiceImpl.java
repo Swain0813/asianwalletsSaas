@@ -18,7 +18,9 @@ import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.response.ResultUtil;
 import com.asianwallets.common.utils.DateToolUtils;
+import com.asianwallets.common.utils.DateUtil;
 import com.asianwallets.common.utils.IDS;
+import com.asianwallets.common.utils.QrCodeUtil;
 import com.asianwallets.common.vo.*;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -26,14 +28,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * 商户产品的实现类
@@ -90,6 +92,10 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
 
     @Autowired
     private InstitutionProductMapper institutionProductMapper;
+
+    @Autowired
+    private MerchantCardCodeMapper merchantCardCodeMapper;
+
 
     /**
      * @return
@@ -244,7 +250,115 @@ public class MerchantProductServiceImpl extends BaseServiceImpl<MerchantProduct>
                 }
             }
         }
+        //创建或者修改码牌信息
+        this.createOrUpdateMerchantCardCode(username,merProDTO);
         return 0;
+    }
+
+    private static final String IMAGES_DIR = "/imagesaas/";
+
+    @Value("${file.http.server}")
+    private String fileHttpServer;
+
+    @Value("${file.upload.path}")
+    private String fileUploadPath;
+
+    /**
+     * 二维码里面的url
+     */
+    @Value("${file.http.basServer}")
+    private String basServer;
+
+    /**
+     * 创建或者修改码牌信息
+     * @param username
+     * @param merProDTO
+     */
+    private  void  createOrUpdateMerchantCardCode(String username, MerProDTO merProDTO){
+        //根据商户编号判断码牌信息存不存在
+        MerchantCardCodeDTO merchantCardCodeDTO = new MerchantCardCodeDTO();
+        merchantCardCodeDTO.setMerchantId(merProDTO.getMerchantId());
+        MerchantCardCode  merchantCardCode = merchantCardCodeMapper.getMerchantCardCode(merchantCardCodeDTO);
+        //商户信息
+        Merchant merchant = commonService.getMerchant(merProDTO.getMerchantId());
+        //机构信息
+        Institution institution = commonService.getInstitutionInfo(merchant.getInstitutionId());
+        if(merchantCardCode!=null){
+           for(ProdChannelDTO prodChannelDTO : merProDTO.getProductList()){
+               Product product = productMapper.selectByPrimaryKey(prodChannelDTO.getProductId());
+               if(!merchantCardCode.getProductCode().contains(product.getProductCode().toString())){
+                   //把新的产品编号放进去
+                   merchantCardCode.setProductCode(merchantCardCode.getProductCode().concat(",").concat(product.getProductCode().toString()));
+                   merchantCardCode.setProductName(merchantCardCode.getProductName().concat(",").concat(product.getProductName()));
+                   merchantCardCode.setId(merchantCardCode.getId());
+                   merchantCardCode.setModifier(username);
+                   merchantCardCode.setUpdateTime(new Date());
+                   merchantCardCodeMapper.updateByPrimaryKeySelective(merchantCardCode);
+                   try {
+                       //更新商户码牌信息后添加的redis里
+                       redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(merchantCardCodeDTO.getId()), JSON.toJSONString(merchantCardCode));
+                   } catch (Exception e) {
+                       throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+                   }
+               }
+           }
+        }else{
+            String productCodes=null;
+            String productNames=null;
+            for(ProdChannelDTO prodChannelDTO : merProDTO.getProductList()){
+                Product product = productMapper.selectByPrimaryKey(prodChannelDTO.getProductId());
+                if(product.getTradeDirection()==TradeConstant.PRODUCT_OFFLINE &&
+                        (product.getProductName().contains("静态码支付")||product.getProductName().contains("Alipay-Static"))){
+                    //产品编号
+                    if(productCodes==null){
+                        productCodes=product.getProductCode().toString();
+                    }else {
+                        productCodes=productCodes.concat(",").concat(product.getProductCode().toString());
+                    }
+                    //产品名称
+                    if(productNames==null){
+                        productNames = product.getProductName();
+                    }else {
+                        productNames= productNames.concat(",").concat(product.getProductName());
+                    }
+                }
+            }
+            //创建商户码牌对象
+            MerchantCardCode newMerchantCardCode = new MerchantCardCode();
+            newMerchantCardCode.setId(IDS.uniqueID().toString());
+            newMerchantCardCode.setMerchantId(merProDTO.getMerchantId());
+            newMerchantCardCode.setMerchantName(merchant.getCnName());
+            newMerchantCardCode.setInstitutionId(institution.getId());
+            newMerchantCardCode.setMerchantName(institution.getCnName());
+            newMerchantCardCode.setProductCode(productCodes);
+            newMerchantCardCode.setProductName(productNames);
+            String fileName= IMAGES_DIR.concat(DateUtil.getCurrentDate()).concat("/").concat(UUID.randomUUID().toString()).concat(".png");
+            String imagePath = fileUploadPath.concat(fileName);
+            createDir(imagePath);
+            QrCodeUtil.generateQrCodeAndSave(basServer.concat(newMerchantCardCode.getId()),"png",450,450,imagePath);
+            newMerchantCardCode.setQrcodeUrl(fileHttpServer.concat(fileName));
+            newMerchantCardCode.setCreateTime(new Date());
+            newMerchantCardCode.setCreator(username);
+            merchantCardCodeMapper.insert(newMerchantCardCode);
+            try {
+                //更新商户码牌信息后添加的redis里
+                redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(merchantCardCodeDTO.getId()), JSON.toJSONString(newMerchantCardCode));
+            } catch (Exception e) {
+                throw new BusinessException(EResultEnum.ERROR_REDIS_UPDATE.getCode());
+            }
+        }
+
+    }
+
+    /**
+     * 创建目录
+     * @param path
+     */
+    private void createDir(String path) {
+        File fileDir = new File(path);
+        if (!fileDir.exists() && !fileDir.isDirectory()) {
+            fileDir.mkdirs();
+        }
     }
 
     /**

@@ -39,7 +39,7 @@ public class CommonServiceImpl implements CommonService {
     @Autowired
     private AuditorProvider auditorProvider;
 
-    public static final String IMAGES_DIR = "/imagesaas/";
+    private static final String IMAGES_DIR = "/imagesaas/";
 
     @Value("${file.http.server}")
     private String fileHttpServer;

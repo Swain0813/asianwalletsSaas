@@ -82,10 +82,10 @@ custom:
   ad3ItsUrl: https://its.alldebitpay.com/v1/
 
   #收银台url
-  cashierDeskUrl: https://psg.asianwallets.com/checkstandweb/#/main
+  cashierDeskUrl: https://psg.asianwallets.com/saascheckstandweb/#/main
 
   #亚洲钱包的支付页面的url
-  paySuccessUrl: https://psg.asianwallets.com/checkstandweb/#/Success
+  paySuccessUrl: https://psg.asianwallets.com/saascheckstandweb/#/Success
   #AD3提供的生产环境地址
   #url
   ad3Url: https://pgw.alldebitpay.com

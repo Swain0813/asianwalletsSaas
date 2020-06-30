@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1179,5 +1180,59 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         basicsInfoVO.setCurrency(currency);
         basicsInfoVO.setMerchantProduct(merchantProduct);
         return basicsInfoVO;
+    }
+
+
+    /**
+     * 码牌交易
+     *
+     * @param offlineCodeTradeDTO
+     * @param request
+     * @return
+     */
+    @Override
+    public BaseResponse codeTrading(OfflineCodeTradeDTO offlineCodeTradeDTO, HttpServletRequest request) {
+
+        //进行判断
+        String serviceName = request.getHeader("User-Agent");
+        MerchantCardCode merchantCardCode = commonRedisDataService.getMerchantCardCode(offlineCodeTradeDTO.getMerchantCardCode());
+        //TODO 将传过来的参数构造线下dto，用来复用逻辑
+        OfflineTradeDTO offlineTradeDTO = new OfflineTradeDTO(offlineCodeTradeDTO);
+        log.info("==================【线下码牌动态扫码】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
+        //重复请求
+        if (!commonBusinessService.repeatedRequests(offlineTradeDTO.getMerchantId(), offlineTradeDTO.getOrderNo())) {
+            log.info("==================【线下码牌动态扫码】==================【重复请求】");
+            throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
+        }
+        //获取收单基础信息并校验 TODO 需要从缓存中获取该商户的信息 码牌信息
+        BasicInfoVO basicInfoVO = getBasicAndCheck(offlineTradeDTO);
+        //设置订单属性
+        Orders orders = setAttributes(offlineTradeDTO, basicInfoVO);
+        //换汇
+        commonBusinessService.swapRateByPayment(basicInfoVO, orders);
+        //校验商户产品与通道的限额
+        commonBusinessService.checkQuota(orders, basicInfoVO.getMerchantProduct(), basicInfoVO.getChannel());
+        //截取币种默认值
+        commonBusinessService.interceptDigit(orders, basicInfoVO.getCurrency());
+        //计算手续费
+        commonBusinessService.calculateCost(basicInfoVO, orders);
+        orders.setReportChannelTime(new Date());
+        orders.setTradeStatus(TradeConstant.ORDER_PAYING);
+        log.info("==================【线下码牌动态扫码】==================【落地订单信息】 orders:{}", JSON.toJSONString(orders));
+        ordersMapper.insert(orders);
+        CsbDynamicScanVO csbDynamicScanVO = new CsbDynamicScanVO();
+        BaseResponse response = new BaseResponse();
+        try {
+            //上报通道
+            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark().split("_")[0]);
+            BaseResponse baseResponse = channelsAbstract.codeTrading(orders, basicInfoVO.getChannel());
+            csbDynamicScanVO.setQrCodeUrl(String.valueOf(baseResponse.getData()));
+        } catch (Exception e) {
+            log.info("==================【线下码牌动态扫码】==================【上报通道异常】", e);
+            throw new BusinessException(EResultEnum.ORDER_CREATION_FAILED.getCode());
+        }
+        csbDynamicScanVO.setOrderNo(orders.getMerchantOrderId());
+        log.info("==================【线下码牌动态扫码】==================【下单结束】");
+        return response;
     }
 }

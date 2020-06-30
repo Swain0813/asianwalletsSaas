@@ -112,6 +112,7 @@
   "10112": "Channel bank information does not exist",
   "10113": "Not a Group Merchant",
   "10114": "reversal failed",
+  "10115": "Code card information does not exist",
   "20001": "The announcement id cannot be empty",
   "20002": "The announcement category cannot be empty",
   "20003": "The announcement language cannot be empty",

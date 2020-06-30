@@ -36,6 +36,9 @@ public class MerchantDTO extends BasePageHelper {
 
     @ApiModelProperty(value = "商户中文名称")
     private String cnName;
+
+    @ApiModelProperty(value = "商户logo")
+    private String merchantLogo;
     /**
      * 商户英文名称
      */
