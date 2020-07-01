@@ -58,6 +58,7 @@
     <result column="valid" property="valid" jdbcType="VARCHAR" />
     <result column="track_data" property="trackData" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="cancel_time" property="cancelTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="creator" property="creator" jdbcType="VARCHAR" />
     <result column="modifier" property="modifier" jdbcType="VARCHAR" />
@@ -73,7 +74,7 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, institution_id,institution_name,trade_type, trade_direction, merchant_id, merchant_name, merchant_type, second_merchant_code,
-    second_merchant_name, group_merchant_code, group_merchant_name, agent_code, agent_name, 
+    second_merchant_name, group_merchant_code, group_merchant_name, agent_code, agent_name, cancel_time,
     merchant_order_id, merchant_order_time, order_currency, order_amount, complete_amount, 
     imei, operator_id, order_for_trade_rate, trade_for_order_rate, exchange_rate, exchange_time, 
     exchange_status, product_code, product_name, product_description, channel_code, channel_name, 
@@ -152,13 +153,86 @@
   </select>
 
 
-  <select id="getPreOrdersDetail" resultMap="BaseResultMap">
+  <select id="getPreOrdersDetail" resultType="com.asianwallets.common.vo.PreOrdersVO">
     select
-    <include refid="Base_Column_List"></include>
-    from pre_orders
+    pre.id,
+    pre.institution_id,
+    pre.institution_name,
+    pre.trade_type,
+    pre.trade_direction,
+    pre.merchant_id,
+    pre.merchant_name,
+    pre.merchant_type,
+    pre.second_merchant_code,
+    pre.second_merchant_name,
+    pre.group_merchant_code,
+    pre.group_merchant_name,
+    pre.agent_code,
+    pre.agent_name,
+    pre.cancel_time,
+    pre.merchant_order_id,
+    pre.merchant_order_time,
+    pre.order_currency,
+    pre.order_amount,
+    pre.complete_amount,
+    pre.imei,
+    pre.operator_id,
+    pre.order_for_trade_rate,
+    pre.trade_for_order_rate,
+    pre.exchange_rate,
+    pre.exchange_time,
+    pre.exchange_status,
+    pre.product_code,
+    pre.product_name,
+    pre.product_description,
+    pre.channel_code,
+    pre.channel_name,
+    pre.trade_currency,
+    pre.trade_amount,
+    pre.debit_amount,
+    pre.order_status,
+    pre.channel_number,
+    concat(p.name,'-',pre.trade_currency) as payMethod,
+    pre.req_ip,
+    pre.report_channel_time,
+    pre.channel_callback_time,
+    pre.payer_name,
+    pre.payer_account,
+    pre.payer_bank,
+    pre.payer_email,
+    pre.payer_phone,
+    pre.payer_address,
+    pre.issuer_id,
+    pre.bank_name,
+    pre.browser_url,
+    pre.server_url,
+    pre.LANGUAGE,
+    pre.user_bank_card_no,
+    pre.cvv2,
+    pre.valid,
+    pre.track_data,
+    pre.create_time,
+    pre.update_time,
+    pre.creator,
+    pre.modifier,
+    pre.remark,
+    pre.remark1,
+    pre.remark2,
+    pre.remark3,
+    pre.remark4,
+    pre.remark5,
+    pre.remark6,
+    pre.remark7,
+    pre.remark8,
+    o.id as orderId,
+    o.fee,
+    o.add_value,
+    o.trade_status
+    from pre_orders pre LEFT JOIN pay_type p on pre.pay_method = p.extend1 AND p.`language`= #{language}
+    LEFT JOIN orders o on o.merchant_order_id=pre.merchant_order_id
     <where>
       <if test="id != null and id != ''">
-        and id = #{id}
+        and pre.id = #{id}
       </if>
     </where>
   </select>

@@ -2,6 +2,7 @@ package com.asianwallets.base.service;
 import com.asianwallets.common.dto.PreOrdersDTO;
 import com.asianwallets.common.entity.PreOrders;
 import com.asianwallets.common.vo.ExportPreOrdersVO;
+import com.asianwallets.common.vo.PreOrdersVO;
 import com.github.pagehelper.PageInfo;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface PreOrdersService {
      * @param preOrdersDTO
      * @return
      */
-    PreOrders getPreOrdersDetail(PreOrdersDTO preOrdersDTO);
+    PreOrdersVO getPreOrdersDetail(PreOrdersDTO preOrdersDTO);
 
     /**
      * 预授权订单导出
