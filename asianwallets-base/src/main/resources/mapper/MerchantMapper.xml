@@ -259,10 +259,12 @@
                cn_name,
                enabled,
                institution_id,
+               merchant_logo,
                merchant_type
         from merchant
         WHERE id = #{code}
     </select>
+
     <select id="getAllAgent" resultMap="BaseResultMap">
         select id as id ,en_name as enName,cn_name as cnName,agent_type as agentType ,institution_id from merchant
         <where>

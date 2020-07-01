@@ -2,12 +2,14 @@ package com.asianwallets.base.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.base.dao.ChannelMapper;
 import com.asianwallets.base.dao.InstitutionMapper;
+import com.asianwallets.base.dao.MerchantCardCodeMapper;
 import com.asianwallets.base.dao.MerchantMapper;
 import com.asianwallets.base.service.CommonService;
 import com.asianwallets.common.constant.AsianWalletConstant;
 import com.asianwallets.common.entity.Channel;
 import com.asianwallets.common.entity.Institution;
 import com.asianwallets.common.entity.Merchant;
+import com.asianwallets.common.entity.MerchantCardCode;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.redis.RedisService;
 import com.asianwallets.common.response.EResultEnum;
@@ -33,6 +35,9 @@ public class CommonServiceImpl implements CommonService {
 
     @Autowired
     private ChannelMapper channelMapper;
+
+    @Autowired
+    private MerchantCardCodeMapper merchantCardCodeMapper;
 
     /**
      * 根据机构code获取机构名称
@@ -107,5 +112,31 @@ public class CommonServiceImpl implements CommonService {
         }
         log.info("==================【根据通道ID查询通道信息】==================【通道信息】 channel: {}", JSON.toJSONString(channel));
         return channel;
+    }
+
+    /**
+     * 根据静态码编号获取静态码信息
+     * @param id
+     * @return
+     */
+    @Override
+    public MerchantCardCode getMerchantCardCode(String id) {
+        //查询静态码信息,先从redis获取
+        MerchantCardCode merchantCardCode = JSON.parseObject(redisService.get(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(id)), MerchantCardCode.class);
+        if (merchantCardCode == null) {
+            //redis不存在,从数据库获取
+            merchantCardCode = merchantCardCodeMapper.getMerchantCardCode(id);
+            if (merchantCardCode == null) {
+                //静态码信息不存在
+                throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
+            }
+            if(!merchantCardCode.getEnabled()){
+                log.info("***********************静态码信息已被禁用**************************");
+                throw new BusinessException(EResultEnum.MERCHANT_CARD_CODE_IS_ENABLE.getCode());
+            }
+            //同步redis
+            redisService.set(AsianWalletConstant.MERCHANT_CARD_CODE.concat("_").concat(id), JSON.toJSONString(merchantCardCode));
+        }
+        return merchantCardCode;
     }
 }

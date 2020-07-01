@@ -1,8 +1,11 @@
 package com.asianwallets.base.controller;
+import com.asianwallets.base.service.CommonService;
+import com.asianwallets.common.entity.MerchantCardCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,6 +24,9 @@ public class QrCodeForwardController {
     @Value("${file.http.frontPage}")
     private String frontPage;
 
+    @Autowired
+    private CommonService commonService;
+
     @ApiOperation(value = "静态码跳转功能")
     @GetMapping("/forward")
     @CrossOrigin
@@ -30,6 +36,9 @@ public class QrCodeForwardController {
         ModelAndView mv=new ModelAndView();
         mv.addObject("id",id);
         mv.addObject("userAgent",userAgent);
+        MerchantCardCode merchantCardCode = commonService.getMerchantCardCode(id);
+        mv.addObject("merchantLogo",commonService.getMerchant(merchantCardCode.getMerchantId()).getMerchantLogo());
+        mv.addObject("merchantName",merchantCardCode.getMerchantName());
         if(userAgent!=null){
             try {
                 response.sendRedirect(frontPage);
