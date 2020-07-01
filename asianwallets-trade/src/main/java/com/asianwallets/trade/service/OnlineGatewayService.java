@@ -7,6 +7,7 @@ import com.asianwallets.trade.dto.CalcRateDTO;
 import com.asianwallets.trade.dto.OnlineCheckOrdersDTO;
 import com.asianwallets.trade.dto.OnlineOrderQueryDTO;
 import com.asianwallets.trade.dto.OnlineTradeDTO;
+import com.asianwallets.trade.vo.MerchantVO;
 import com.asianwallets.trade.vo.MockOrdersVO;
 import com.asianwallets.trade.vo.OnlineCheckOrdersVO;
 import com.asianwallets.trade.vo.OnlineMerchantVO;
@@ -84,4 +85,11 @@ public interface OnlineGatewayService {
      * @return List<OrdersVOaa>
      */
     PageInfo<MockOrdersVO> getByMultipleConditions(MockOrdersDTO ordersDTO);
+
+    /**
+     * 静态码输入金额页面需要的信息
+     * @param id
+     * @return
+     */
+    MerchantVO getMerchantCode(String id);
 }

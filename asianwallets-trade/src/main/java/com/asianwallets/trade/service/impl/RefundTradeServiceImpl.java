@@ -940,6 +940,9 @@ public class RefundTradeServiceImpl implements RefundTradeService {
             log.info("**************** 预授权冲正接口 预授权撤销接口 订单信息不存在**************** preOrders : {}", JSON.toJSON(bankCardUndoDTO));
             throw new BusinessException(EResultEnum.ORDER_NOT_EXIST.getCode());
         }
+        //设置冲正或撤销请求时间
+        preOrders.setCancelTime(new Date());
+        preOrdersMapper.updateByPrimaryKeySelective(preOrders);
         if (preOrders.getOrderStatus() == 1) {
             //调用预授权的撤销接口
             ChannelsAbstract channelsAbstract = null;

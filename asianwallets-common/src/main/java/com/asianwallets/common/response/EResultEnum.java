@@ -50,7 +50,7 @@ public enum EResultEnum {
     ONLINE_ORDER_IS_NOT_ALLOW_UNDO("10022"),//撤销请求失败
     AUDIT_INFO_EXIENT("10023"),//记录已存在，等待审核中
     INSTITUTION_AND_MERCHANT_NOT_RELATED("10024"),//机构和商户未关联
-    CANCEL_ORDER_RUNNING_IS_NOT_UNDO("10025"),//撤销中的订单不能再撤销
+    MERCHANT_CARD_CODE_IS_ENABLE("10025"),//静态码已禁用
     EFFECTTIME_IS_NULL("10026"),//生效时间不能为空
     MERCHANT_ACCOUNT_CURRENCY_IS_NOT_EXIST("10027"),//当前商户不存在该币种的账户
     BANLANCE_NOT_FOOL("10028"),//账户余额不足

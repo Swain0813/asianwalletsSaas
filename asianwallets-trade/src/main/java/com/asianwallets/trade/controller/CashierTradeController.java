@@ -65,5 +65,13 @@ public class CashierTradeController extends BaseController {
     public BaseResponse onlineOrderQuerying(@RequestBody @ApiParam @Valid OnlineOrderQueryDTO OnlineOrderQueryDTO) {
         return onlineGatewayService.onlineOrderQuery(OnlineOrderQueryDTO);
     }
+
+    @ApiOperation(value = "静态码输入金额页面需要的信息")
+    @GetMapping("/getMerchantCode")
+    @CrossOrigin
+    public BaseResponse getMerchantCode(@RequestParam("id") @ApiParam String id) {
+        return ResultUtil.success(onlineGatewayService.getMerchantCode(id));
+    }
+
 }
 
