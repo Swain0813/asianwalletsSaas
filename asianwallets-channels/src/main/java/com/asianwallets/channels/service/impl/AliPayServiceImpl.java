@@ -632,7 +632,7 @@ public class AliPayServiceImpl implements AliPayService {
                 // 注解方式xml转换为map对象
                 Map<String, String> map = XMLUtil.parseAlipayXML(respstr);
                 if (null != map) {
-                    String is_success = map.get("is_success").toString();//通信结果
+                    String is_success = map.get("is_success");//通信结果
                     String error = null;
                     String qrcode = null;
                     if (org.apache.commons.lang3.StringUtils.equals("T", is_success)) {
@@ -896,6 +896,137 @@ public class AliPayServiceImpl implements AliPayService {
      */
     @Override
     public BaseResponse alipayCard(AliPayCardDTO aliPayCardDTO) {
-        return null;
+        log.info("=================【AliPay码牌】=====================【请求参数】 aliPayCardDTO:{}", JSON.toJSONString(aliPayCardDTO));
+        Orders orders = aliPayCardDTO.getOrders();
+        ChannelsOrder channelsOrder = new ChannelsOrder();
+        channelsOrder.setId(aliPayCardDTO.getOut_trade_no());
+        channelsOrder.setMerchantOrderId(orders.getMerchantOrderId());
+        channelsOrder.setTradeCurrency(aliPayCardDTO.getTrans_currency());
+        channelsOrder.setTradeAmount(new BigDecimal(aliPayCardDTO.getTotal_fee()));
+        channelsOrder.setReqIp(orders.getReqIp());
+        channelsOrder.setPayerPhone(orders.getPayerPhone());
+        channelsOrder.setPayerName(orders.getPayerName());
+        channelsOrder.setPayerBank(orders.getPayerBank());
+        channelsOrder.setPayerEmail(orders.getPayerEmail());
+        channelsOrder.setTradeStatus(TradeConstant.TRADE_WAIT);
+        channelsOrder.setIssuerId(orders.getIssuerId());
+        channelsOrder.setMd5KeyStr(aliPayCardDTO.getChannel().getMd5KeyStr());
+        channelsOrder.setOrderType(AD3Constant.TRADE_ORDER);
+        channelsOrder.setCreateTime(new Date());
+        channelsOrder.setCreator(orders.getCreator());
+        channelsOrderMapper.insert(channelsOrder);
+
+        BaseResponse baseResponse = new BaseResponse();
+        //把请求参数打包成数组
+        Map<String, String> reqmap = new HashMap<>();
+        String extend_params = null;//扩展参数，json
+        String sign = null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");//json格式开始
+        sb.append("\"secondary_merchant_industry\":\"").append(aliPayCardDTO.getSecondary_merchant_industry()).append("\"");
+        sb.append(",");
+        sb.append("\"secondary_merchant_id\":\"").append(aliPayCardDTO.getSecondary_merchant_id()).append("\"");
+        sb.append(",");
+        sb.append("\"secondary_merchant_name\":\"").append(aliPayCardDTO.getSecondary_merchant_name()).append("\"");
+        sb.append(",");
+        sb.append("\"store_id\":\"").append(aliPayCardDTO.getStore_id()).append("\"");
+        sb.append(",");
+        sb.append("\"store_name\":\"").append(aliPayCardDTO.getStore_name()).append("\"");
+//        sb.append(",");
+       /* if (aliPayCardDTO.getTerminal_id() != null && !aliPayCardDTO.getTerminal_id().equals("")) {
+            sb.append("\"terminal_id\":\"").append(aliPayCardDTO.getTerminal_id()).append("\"");
+            sb.append(",");
+        }
+        if (aliPayCardDTO.getSys_service_provider_id() != null && !aliPayCardDTO.getSys_service_provider_id().equals("")) {
+            sb.append("\"sys_service_provider_id\":\"").append(aliPayCardDTO.getSys_service_provider_id()).append("\"");
+            sb.append(",");
+        }*/
+//        sb.deleteCharAt(sb.lastIndexOf(","));//删除最后一个分号
+        sb.append("}");//json格式结尾
+        extend_params = sb.toString().trim();//要去掉空格
+        log.info("=================【AliPay码牌】=====================【extend_params】 extend_params:{}", extend_params);
+        reqmap.put("service", aliPayCardDTO.getService());
+        reqmap.put("partner", aliPayCardDTO.getPartner());
+        reqmap.put("_input_charset", aliPayCardDTO.get_input_charset());
+        reqmap.put("notify_url", aliPayCardDTO.getNotify_url());
+        reqmap.put("timestamp", aliPayCardDTO.getTimestamp());
+//        reqmap.put("terminal_timestamp", aliPayCardDTO.getTerminal_timestamp());
+        reqmap.put("out_trade_no", aliPayCardDTO.getOut_trade_no());
+        reqmap.put("subject", aliPayCardDTO.getSubject());
+        reqmap.put("product_code", aliPayCardDTO.getProduct_code());
+        reqmap.put("total_fee", aliPayCardDTO.getTotal_fee());
+        reqmap.put("seller_id", aliPayCardDTO.getSeller_id());
+//        reqmap.put("seller_email", aliPayCardDTO.getSeller_email());
+//        reqmap.put("body", aliPayCardDTO.getBody());
+//        reqmap.put("show_url", aliPayCardDTO.getShow_url());
+        reqmap.put("currency", aliPayCardDTO.getCurrency());
+        reqmap.put("trans_currency", aliPayCardDTO.getTrans_currency());
+//        reqmap.put("quantity", aliPayCardDTO.getQuantity());
+//        reqmap.put("goods_detail", aliPayCardDTO.getGoods_detail());
+        reqmap.put("extend_params", extend_params);
+//        reqmap.put("it_b_pay", aliPayCardDTO.getIt_b_pay());
+//        reqmap.put("passback_parameters", aliPayCardDTO.getPassback_parameters());
+        log.info("=================【AliPay码牌】=====================【接口请求参数】 reqmap:{}", JSON.toJSONString(reqmap));
+        //请求参数处理和签名
+        Map<String, String> signMap = AlipayCore.buildRequestPara(reqmap, aliPayCardDTO.getChannel().getMd5KeyStr());
+        sign = signMap.get("sign");
+        log.info("=================【AliPay码牌】=====================  sign: {}", sign);
+        NameValuePair[] param = CreateAlipayHttpPostParams(signMap);
+        //建立请求
+        String url = channelsConfig.getAliPayCSBUrl() + "_input_charset=" + aliPayCardDTO.get_input_charset();
+        try {
+            PostMethod post = new PostMethod(url);
+            post.setRequestBody(param);
+            HttpClient httpclient = new HttpClient();
+            //设置编码
+            httpclient.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, aliPayCardDTO.get_input_charset());
+            int stats = 0;
+            stats = httpclient.executeMethod(post);
+            String respstr = post.getResponseBodyAsString();
+            log.info("=================【AliPay码牌】=====================【接口返回参数】  respstr: {}", respstr);
+            if (stats == 200) {
+                // 注解方式xml转换为map对象
+                Map<String, String> map = XMLUtil.parseAlipayXML(respstr);
+                String is_success = map.get("is_success");//通信结果
+                String error = null;
+                String qrcode = null;
+                if (org.apache.commons.lang3.StringUtils.equals("T", is_success)) {
+                    //表示请求通信成功
+                    String result_code = map.get("result_code");//业务结果
+                    if (org.apache.commons.lang3.StringUtils.equals("SUCCESS", result_code)) {
+                        //表示业务处理成功
+                        qrcode = map.get("qr_code");
+                        if (!StringUtils.isEmpty(qrcode)) {
+                            baseResponse.setMsg(TradeConstant.HTTP_SUCCESS_MSG);
+                            baseResponse.setCode(TradeConstant.HTTP_SUCCESS);
+                            baseResponse.setData(qrcode);
+                        } else {
+                            //支付宝返回订单详情解析失败
+                            baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                            baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                        }
+                    } else {
+                        //请求失败
+                        error = map.get("detail_error_code");
+                        baseResponse.setMsg(error);
+                        baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                    }
+                } else {
+                    //请求失败
+                    error = map.get("detail_error_code");
+                    baseResponse.setMsg(error);
+                    baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                }
+            } else {
+                baseResponse.setCode(TradeConstant.HTTP_FAIL);
+                baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+                log.info("=================【AliPay码牌】=====================【alipay接口状态码异常】 stats: {}", stats);
+            }
+        } catch (Exception e) {
+            baseResponse.setCode(TradeConstant.HTTP_FAIL);
+            baseResponse.setMsg(TradeConstant.HTTP_FAIL_MSG);
+            log.info("=================【AliPay码牌】=====================【接口异常】", e);
+        }
+        return baseResponse;
     }
 }

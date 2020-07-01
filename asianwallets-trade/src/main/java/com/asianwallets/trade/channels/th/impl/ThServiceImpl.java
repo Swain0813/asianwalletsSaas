@@ -1211,7 +1211,7 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         log.info("==================【通华预授权】==================【调用Channels服务】【通华-预授权接口】  DTO: {}", JSON.toJSONString(iso8583DTO));
         BaseResponse channelResponse = channelsFeign.preAuth(new ThDTO(iso8583DTO, channel, preOrders.getMerchantId()));
         log.info("==================【通华预授权】==================【调用Channels服务】【通华-预授权接口】  channelResponse: {}", JSON.toJSONString(channelResponse));
-        preOrders.setChannelCallbackTime(new Date());
+        preOrders.setUpdateTime(new Date());
         Example example = new Example(PreOrders.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orderStatus", "0");
@@ -1535,7 +1535,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         }
         ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
         log.info("==================【通华预授权完成】==================【调用Channels服务】【通华线下银行卡下单接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
-        orders.setUpdateTime(new Date());
         orders.setChannelCallbackTime(new Date());
         Example example = new Example(Orders.class);
         Example.Criteria criteria = example.createCriteria();

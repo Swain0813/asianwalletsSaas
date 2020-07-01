@@ -81,9 +81,13 @@ public class AliPayCardDTO {
     @ApiModelProperty(value = "合作伙伴分配的用于标识商人商店的唯一ID")
     private String store_id;
 
+    private Channel channel;
+
+    private Orders orders;
+
     public AliPayCardDTO(Orders orders, Channel channel, String returnUrl) {
         this.service = "alipay.acquire.precreate";
-        this.partner = partner;
+//        this.partner = partner;
         this._input_charset = "UTF-8";
         // 加密方式 MD5
         this.sign_type = "MD5";
@@ -93,10 +97,9 @@ public class AliPayCardDTO {
         this.currency = orders.getTradeCurrency();
         this.trans_currency = orders.getTradeCurrency();
         this.out_trade_no = orders.getId();
-        //todo 交易的简要说明 此字段暂为 GOODS
-        this.subject = "GOODS";
+        this.subject = orders.getProductName() == null ? "Commodity" : orders.getProductName();
         this.total_fee = orders.getChannelAmount().toPlainString();
-        this.seller_id = seller_id;
+//        this.seller_id = seller_id;
 //        this.extend_params = extend_params;  单独设置 此参数为JSON字符串
         this.notify_url = returnUrl;
 //        this.sign = sign;
@@ -105,5 +108,7 @@ public class AliPayCardDTO {
         this.secondary_merchant_industry = orders.getMerchantIndustry();
         this.store_name = StringUtils.isEmpty(orders.getShopName()) ? orders.getSubMerchantName() : orders.getShopName();
         this.store_id = StringUtils.isEmpty(orders.getShopCode()) ? orders.getSubMerchantCode() : orders.getShopCode();
+        this.channel = channel;
+        this.orders = orders;
     }
 }
