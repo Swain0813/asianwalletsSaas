@@ -105,7 +105,7 @@ file:
   http:
     server: http://192.168.124.27:8080
     basServer: http://192.168.124.27:5001/qr/forward?id=
-    frontPage: http://192.168.124.33:8087/appPay
+    frontPage: http://192.168.124.33:8087/appPay?id=
   upload:
     path: C:\apache-tomcat-8.5.38\webapps
   tmpfile: C:\apache-tomcat-8.5.38\webapps\tmp
