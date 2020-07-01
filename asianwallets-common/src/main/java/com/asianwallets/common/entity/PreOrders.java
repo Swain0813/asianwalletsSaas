@@ -149,6 +149,11 @@ public class PreOrders extends BaseEntity {
     @Column(name = "debit_amount")
     private BigDecimal debitAmount;
 
+    @ApiModelProperty(value = "冲正或撤销请求时间")
+    @Column(name = "cancel_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date cancelTime;
+
     @ApiModelProperty(value = "订单状态")//0-预授权中 1-预授权成功 2-预授权失败 3-冲正成功 4-撤销成功  5-预授权完成
     @Column(name = "order_status")
     private Byte orderStatus;

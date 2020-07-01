@@ -87,47 +87,66 @@
 
   <select id="pageFindPreOrders" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List"></include>
-    from pre_orders
+    pre.id,
+    pre.create_time,
+    pre.institution_id,
+    pre.institution_name,
+    pre.merchant_id,
+    pre.merchant_name,
+    pre.merchant_order_id,
+    concat(p.name,'-',pre.trade_currency) as pay_method,
+    pre.order_currency,
+    pre.order_amount,
+    pre.trade_currency,
+    pre.trade_amount,
+    pre.order_status,
+    pre.update_time
+    from pre_orders pre  LEFT JOIN pay_type p on pre.pay_method = p.extend1 AND p.`language`= #{language}
     <where>
       <if test="id != null and id != ''">
-        and id = #{id}
+        and pre.id = #{id}
       </if>
       <if test="merchantOrderId != null and merchantOrderId != ''">
-        and merchant_order_id = #{merchantOrderId}
+        and pre.merchant_order_id = #{merchantOrderId}
       </if>
       <if test="institutionId != null and institutionId != ''">
-        and institution_id = #{institutionId}
+        and pre.institution_id = #{institutionId}
       </if>
       <if test="institutionName != null and institutionName != ''">
-        and institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+        and pre.institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
       </if>
       <if test="merchantId != null and merchantId != ''">
-        and merchant_id = #{merchantId}
+        and pre.merchant_id = #{merchantId}
       </if>
       <if test="merchantName != null and merchantName != ''">
-        and merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+        and pre.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
       </if>
       <if test="orderCurrency != null and orderCurrency != ''">
-        and order_currency=#{orderCurrency}
+        and pre.order_currency=#{orderCurrency}
       </if>
       <if test="orderStatus != null">
-        and order_status=#{orderStatus}
+        and pre.order_status=#{orderStatus}
       </if>
       <if test="productCode != null">
-        AND product_code = #{productCode}
+        AND pre.product_code = #{productCode}
       </if>
       <if test="startDate != null and startDate !=''">
-        AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startDate}
+        AND DATE_FORMAT(pre.create_time,'%Y-%m-%d') &gt;= #{startDate}
       </if>
       <if test="endDate != null and endDate !=''">
-        AND DATE_FORMAT(create_time,'%Y-%m-%d')&lt;= #{endDate}
+        AND DATE_FORMAT(pre.create_time,'%Y-%m-%d')&lt;= #{endDate}
+      </if>
+      <if test="startPreTime != null and startPreTime !=''">
+        AND DATE_FORMAT(pre.update_time,'%Y-%m-%d') &gt;= #{startPreTime}
+      </if>
+      <if test="endPreTime != null and endPreTime !=''">
+        AND DATE_FORMAT(pre.update_time,'%Y-%m-%d')&lt;= #{endPreTime}
       </if>
     <if test="startPayFinishTime != null and startPayFinishTime !=''">
-      AND DATE_FORMAT(channel_callback_time,'%Y-%m-%d') &gt;= #{startPayFinishTime}
+      AND DATE_FORMAT(pre.channel_callback_time,'%Y-%m-%d') &gt;= #{startPayFinishTime}
     </if>
     <if test="endPayFinishTime != null and endPayFinishTime !=''">
-      AND DATE_FORMAT(channel_callback_time,'%Y-%m-%d') &lt;= #{endPayFinishTime}
+      AND DATE_FORMAT(pre.channel_callback_time,'%Y-%m-%d') &lt;= #{endPayFinishTime}
     </if>
     </where>
   </select>
@@ -148,7 +167,7 @@
   <select id="exportPreOrders" resultType="com.asianwallets.common.vo.ExportPreOrdersVO">
     SELECT
     o.create_time as createTime,
-    o.channel_callback_time as channelCallbackTime,
+    o.update_time as channelCallbackTime,
     o.id as orderId,
     o.merchant_order_id as merchantOrderId,
     o.merchant_id as merchantId,
@@ -201,6 +220,12 @@
       </if>
       <if test="productCode != null">
         AND o.product_code = #{productCode}
+      </if>
+      <if test="startPreTime != null and startPreTime !=''">
+        AND DATE_FORMAT(o.update_time,'%Y-%m-%d') &gt;= #{startPreTime}
+      </if>
+      <if test="endPreTime != null and endPreTime !=''">
+        AND DATE_FORMAT(o.update_time,'%Y-%m-%d')&lt;= #{endPreTime}
       </if>
       <if test="startDate != null and startDate !=''">
         AND DATE_FORMAT(o.create_time,'%Y-%m-%d') &gt;= #{startDate}

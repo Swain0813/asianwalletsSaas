@@ -15,7 +15,7 @@ public class ExportPreOrdersVO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     public Date createTime;
 
-    @ApiModelProperty(value = "预授权完成时间")
+    @ApiModelProperty(value = "预授权时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date channelCallbackTime;
 
@@ -58,10 +58,10 @@ public class ExportPreOrdersVO {
     @ApiModelProperty(value = "换汇汇率")
     private BigDecimal exchangeRate;
 
-    @ApiModelProperty(value = "交易币种")
+    @ApiModelProperty(value = "预授权币种")
     private String tradeCurrency;
 
-    @ApiModelProperty(value = "交易金额")
+    @ApiModelProperty(value = "预授权金额")
     private BigDecimal tradeAmount;
 
     @ApiModelProperty(value = "订单状态")//1-预授权成功 2-预授权失败 3-冲正成功 4-撤销成功  5-预授权完成

@@ -73,10 +73,16 @@ public class PreOrdersDTO extends BasePageHelper {
     @ApiModelProperty(value = "订单创建结束时间")
     private String endDate;
 
-    @ApiModelProperty(value = "预授权开始完成时间")
+    @ApiModelProperty(value = "预授权开始时间")
+    private String startPreTime;
+
+    @ApiModelProperty(value = "预授权结束时间")
+    private String endPreTime;
+
+    @ApiModelProperty(value = "预授权完成开始时间")
     private String startPayFinishTime;
 
-    @ApiModelProperty(value = "预授权结束完成时间")
+    @ApiModelProperty(value = "预授权完成结束时间")
     private String endPayFinishTime;
 
     @ApiModelProperty(value = "支付方式")
