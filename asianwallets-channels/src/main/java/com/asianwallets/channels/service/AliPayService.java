@@ -67,4 +67,12 @@ public interface AliPayService {
 
 
     NameValuePair[] CreateAlipayHttpPostParams(Map<String, String> signMap);
+
+    /**
+     * 支付宝码牌
+     *
+     * @param aliPayCardDTO
+     * @return
+     */
+    BaseResponse alipayCard(AliPayCardDTO aliPayCardDTO);
 }

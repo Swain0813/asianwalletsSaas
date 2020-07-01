@@ -81,7 +81,7 @@ public class AliPayOfflineBSCDTO {
         this.trans_name = StringUtils.isEmpty(orders.getProductName()) ? "Commodity" : orders.getProductName();//产品名称
         this.partner_trans_id = orders.getId();//订单号
         this.currency = orders.getTradeCurrency();//币种
-        this.trans_amount = String.valueOf(orders.getChannelAmount());
+        this.trans_amount = orders.getChannelAmount().toPlainString();
         this.buyer_identity_code = buyer_identity_code;//支付宝条码
         this.identity_code_type = "barcode";
         this.biz_product = "OVERSEAS_MBARCODE_PAY";

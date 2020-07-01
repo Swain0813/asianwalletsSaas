@@ -63,4 +63,12 @@ public class AliPayController extends BaseController {
     public BaseResponse alipayQuery(@RequestBody @ApiParam @Valid AliPayQueryDTO aliPayQueryDTO) {
         return aliPayService.aliPayQuery(aliPayQueryDTO);
     }
+
+    @ApiOperation(value = "支付宝码牌")
+    @PostMapping("alipayCard")
+    public BaseResponse alipayCard(@RequestBody @ApiParam @Valid AliPayCardDTO aliPayCardDTO) {
+        return aliPayService.alipayCard(aliPayCardDTO);
+    }
+
+
 }
