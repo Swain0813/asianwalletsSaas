@@ -1,5 +1,4 @@
 package com.asianwallets.trade.channels.th.impl;
-
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.common.constant.AD3Constant;
@@ -35,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
@@ -1743,9 +1741,6 @@ public class ThServiceImpl extends ChannelsAbstractAdapter implements ThService 
         iso8583DTO.setProcessingCode_3("200000");
         //当前时间戳
         String timeStamp = String.valueOf(System.currentTimeMillis());
-        //11 域需要在冲正的时候使用
-        String domain11 = timeStamp.substring(10, 16);
-        String domain60_2 = timeStamp.substring(6, 12);
         //获取交易金额的小数位数
         setFiled4(iso8583DTO, orderRefund.getTradeAmount());
         //受卡方系统跟踪号
