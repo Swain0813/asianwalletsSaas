@@ -4,14 +4,12 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
 @ApiModel(value = "线下码牌交易输入实体", description = "线下码牌交易输入实体")
 public class OfflineCodeTradeDTO {
 
-    @NotNull(message = "50002")
     @ApiModelProperty(value = "订单金额")
     private BigDecimal orderAmount;
 
