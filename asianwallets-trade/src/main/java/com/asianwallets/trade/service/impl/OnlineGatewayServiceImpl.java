@@ -960,6 +960,10 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         }
         //获取静态码信息
         MerchantCardCode merchantCardCode = commonRedisDataService.getMerchantCardCode(id);
+        if(!merchantCardCode.getEnabled()){
+            log.info("****************静态码输入金额页面需要的信息*******静态码信息已被禁用**************************");
+            throw new BusinessException(EResultEnum.MERCHANT_CARD_CODE_IS_ENABLE.getCode());
+        }
         //获取商户信息
         Merchant merchant = commonRedisDataService.getMerchantById(merchantCardCode.getMerchantId());
         //返回参数
