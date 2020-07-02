@@ -12,6 +12,9 @@ import java.util.Date;
 @ApiModel(value = "预授权订单详情输出参数", description = "预授权订单详情输出参数")
 public class PreOrdersVO {
 
+    @ApiModelProperty(value = "预授权订单号")
+    public String id;
+
     @ApiModelProperty(value = "机构编号")
     private String institutionId;
 
@@ -183,6 +186,23 @@ public class PreOrdersVO {
 
     @ApiModelProperty(value = "pin")
     private String pin;
+
+    @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    public Date createTime;
+
+    @ApiModelProperty(value = "修改时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateTime;
+
+    @ApiModelProperty(value = "创建者")
+    private String creator;
+
+    @ApiModelProperty(value = "更改者")
+    private String modifier;
+
+    @ApiModelProperty(value = "备注")
+    private String remark;
 
     @ApiModelProperty(value = "批次号+流水号+日期")
     private String remark1;
