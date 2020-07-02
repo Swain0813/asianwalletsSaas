@@ -36,7 +36,6 @@
         <include refid="Base_Column_List"/>
         from merchant_card_code
         where id = #{id}
-        and enabled = 1;
     </select>
 
 
