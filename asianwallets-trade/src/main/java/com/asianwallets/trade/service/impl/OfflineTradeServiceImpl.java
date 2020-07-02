@@ -1196,6 +1196,10 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         String serviceName = request.getHeader("User-Agent");
         //进行判断
         MerchantCardCode merchantCardCode = commonRedisDataService.getMerchantCardCode(offlineCodeTradeDTO.getMerchantCardCode());
+        if (!merchantCardCode.getEnabled()) {
+            log.info("****************交易服务*******静态码信息已被禁用**************************");
+            throw new BusinessException(EResultEnum.MERCHANT_CARD_CODE_IS_ENABLE.getCode());
+        }
         //TODO 将传过来的参数构造线下dto，用来复用逻辑
         OfflineTradeDTO offlineTradeDTO = new OfflineTradeDTO(offlineCodeTradeDTO);
         Product product = commonRedisDataService.getProductByCode(Integer.valueOf(merchantCardCode.getProductCode()));

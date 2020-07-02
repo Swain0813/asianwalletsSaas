@@ -35,7 +35,7 @@
         select
         <include refid="Base_Column_List"/>
         from merchant_card_code
-        where id = #{id}
+        where id = #{id};
     </select>
 
 
