@@ -57,7 +57,7 @@ public class CommonServiceImpl implements CommonService {
                 throw new BusinessException(EResultEnum.INSTITUTION_NOT_EXIST.getCode());
             }
             if(!institution.getEnabled()){
-                log.info("***********************机构已被禁用**************************");
+                log.info("***********基础服务************机构已被禁用**************************");
                 throw new BusinessException(EResultEnum.INSTITUTION_IS_DISABLE.getCode());
             }
             //同步redis
@@ -83,7 +83,7 @@ public class CommonServiceImpl implements CommonService {
                 throw new BusinessException(EResultEnum.MERCHANT_DOES_NOT_EXIST.getCode());
             }
             if(!merchant.getEnabled()){
-               log.info("************************商户已被禁用*************************");
+               log.info("******************基础服务******商户已被禁用*************************");
                 throw new BusinessException(EResultEnum.MERCHANT_IS_DISABLED.getCode());
             }
             //同步redis
@@ -104,13 +104,13 @@ public class CommonServiceImpl implements CommonService {
         if (channel == null) {
             channel = channelMapper.selectByPrimaryKey(channelId);
             if (channel == null) {
-                log.info("==================【根据通道ID查询通道信息】==================【通道对象不存在】 channelId: {}", channelId);
+                log.info("==================基础服务【根据通道ID查询通道信息】==================【通道对象不存在】 channelId: {}", channelId);
                 return null;
             }
             redisService.set(AsianWalletConstant.CHANNEL_CACHE_KEY.concat("_").concat(channel.getId()), JSON.toJSONString(channel));
             redisService.set(AsianWalletConstant.CHANNEL_CACHE_CODE_KEY.concat("_").concat(channel.getChannelCode()), JSON.toJSONString(channel));
         }
-        log.info("==================【根据通道ID查询通道信息】==================【通道信息】 channel: {}", JSON.toJSONString(channel));
+        log.info("==================基础服务【根据通道ID查询通道信息】==================【通道信息】 channel: {}", JSON.toJSONString(channel));
         return channel;
     }
 
@@ -131,7 +131,7 @@ public class CommonServiceImpl implements CommonService {
                 throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
             }
             if(!merchantCardCode.getEnabled()){
-                log.info("***********************静态码信息已被禁用**************************");
+                log.info("****************基础服务*******静态码信息已被禁用**************************");
                 throw new BusinessException(EResultEnum.MERCHANT_CARD_CODE_IS_ENABLE.getCode());
             }
             //同步redis
