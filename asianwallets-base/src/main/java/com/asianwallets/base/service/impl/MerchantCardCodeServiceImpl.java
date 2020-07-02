@@ -17,7 +17,6 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.BeanUtils;
 import java.util.Date;
 
 @Service
@@ -77,14 +76,16 @@ public class MerchantCardCodeServiceImpl implements MerchantCardCodeService {
         }
         int num;
         //创建商户码牌对象
-        MerchantCardCode merchantCardCode = new MerchantCardCode();
-        BeanUtils.copyProperties(merchantCardCodeDTO,merchantCardCode);
+        MerchantCardCode merchantCardCode = merchantCardCodeMapper.selectByPrimaryKey(merchantCardCodeDTO.getId());
+        if (merchantCardCode == null) {
+            throw new BusinessException(EResultEnum.DATA_IS_NOT_EXIST.getCode());
+        }
         //修改时间
         merchantCardCode.setUpdateTime(new Date());
         //修改人
         merchantCardCode.setModifier(userName);
-        //码牌id
-        merchantCardCode.setId(merchantCardCodeDTO.getId());
+        //启用禁用
+        merchantCardCode.setEnabled(merchantCardCodeDTO.getEnabled());
         num=merchantCardCodeMapper.updateByPrimaryKeySelective(merchantCardCode);
         try {
             //更新商户码牌信息后添加的redis里
