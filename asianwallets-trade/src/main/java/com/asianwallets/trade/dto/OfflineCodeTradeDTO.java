@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -12,27 +11,14 @@ import java.math.BigDecimal;
 @ApiModel(value = "线下码牌交易输入实体", description = "线下码牌交易输入实体")
 public class OfflineCodeTradeDTO {
 
-    @NotBlank(message = "50002")
-    @ApiModelProperty(value = "商户编号")
-    private String merchantId;
-
-    @NotBlank(message = "50002")
-    @ApiModelProperty(value = "商户订单号")
-    private String orderNo;
-
-    @NotBlank(message = "50002")
-    @ApiModelProperty(value = "订单币种")
-    private String orderCurrency;
-
     @NotNull(message = "50002")
     @ApiModelProperty(value = "订单金额")
     private BigDecimal orderAmount;
 
-    @NotBlank(message = "50002")
-    @ApiModelProperty(value = "商户订单时间")
-    private String orderTime;
+    @ApiModelProperty(value = "扫码标志")
+    private String userAgent;
 
-    @ApiModelProperty(value = "聚合码")
+    @ApiModelProperty(value = "聚合码id")
     private String merchantCardCode;
 
 /*

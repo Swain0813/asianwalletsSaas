@@ -1,5 +1,6 @@
 package com.asianwallets.trade.dto;
 
+import com.asianwallets.common.entity.MerchantCardCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -119,13 +120,13 @@ public class OfflineTradeDTO {
     private String merchantCardCode;
 
 
-    public OfflineTradeDTO(OfflineCodeTradeDTO offlineCodeTradeDTO) {
-        this.merchantId = offlineCodeTradeDTO.getMerchantId();
-        this.orderNo = offlineCodeTradeDTO.getOrderNo();
+    public OfflineTradeDTO(OfflineCodeTradeDTO offlineCodeTradeDTO, MerchantCardCode merchantCardCode) {
+        this.merchantId = merchantCardCode.getMerchantId();
+//        this.orderNo = offlineCodeTradeDTO.getOrderNo();
         //币种为产品币种
 //        this.orderCurrency = offlineCodeTradeDTO.getOrderCurrency();
         this.orderAmount = offlineCodeTradeDTO.getOrderAmount();
-        this.orderTime = offlineCodeTradeDTO.getOrderTime();
+//        this.orderTime = offlineCodeTradeDTO.getOrderTime();
         this.merchantCardCode = offlineCodeTradeDTO.getMerchantCardCode();
     }
 
