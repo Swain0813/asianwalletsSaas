@@ -1072,7 +1072,6 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
         }
         ISO8583DTO iso8583VO = JSON.parseObject(JSON.toJSONString(channelResponse.getData()), ISO8583DTO.class);
         log.info("==================【UPI预授权完成】==================【调用Channels服务】【通华线下银行卡下单接口解析结果】  iso8583VO: {}", JSON.toJSONString(iso8583VO));
-        orders.setUpdateTime(new Date());
         orders.setChannelCallbackTime(new Date());
         Example example = new Example(Orders.class);
         Example.Criteria criteria = example.createCriteria();

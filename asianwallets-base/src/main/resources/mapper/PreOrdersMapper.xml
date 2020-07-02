@@ -58,6 +58,7 @@
     <result column="valid" property="valid" jdbcType="VARCHAR" />
     <result column="track_data" property="trackData" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="cancel_time" property="cancelTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="creator" property="creator" jdbcType="VARCHAR" />
     <result column="modifier" property="modifier" jdbcType="VARCHAR" />
@@ -73,7 +74,7 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, institution_id,institution_name,trade_type, trade_direction, merchant_id, merchant_name, merchant_type, second_merchant_code,
-    second_merchant_name, group_merchant_code, group_merchant_name, agent_code, agent_name, 
+    second_merchant_name, group_merchant_code, group_merchant_name, agent_code, agent_name, cancel_time,
     merchant_order_id, merchant_order_time, order_currency, order_amount, complete_amount, 
     imei, operator_id, order_for_trade_rate, trade_for_order_rate, exchange_rate, exchange_time, 
     exchange_status, product_code, product_name, product_description, channel_code, channel_name, 
@@ -87,59 +88,152 @@
 
   <select id="pageFindPreOrders" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List"></include>
-    from pre_orders
+    pre.id,
+    pre.create_time,
+    pre.institution_id,
+    pre.institution_name,
+    pre.merchant_id,
+    pre.merchant_name,
+    pre.merchant_order_id,
+    concat(p.name,'-',pre.trade_currency) as pay_method,
+    pre.order_currency,
+    pre.order_amount,
+    pre.trade_currency,
+    pre.trade_amount,
+    pre.order_status,
+    pre.update_time
+    from pre_orders pre  LEFT JOIN pay_type p on pre.pay_method = p.extend1 AND p.`language`= #{language}
     <where>
       <if test="id != null and id != ''">
-        and id = #{id}
+        and pre.id = #{id}
       </if>
       <if test="merchantOrderId != null and merchantOrderId != ''">
-        and merchant_order_id = #{merchantOrderId}
+        and pre.merchant_order_id = #{merchantOrderId}
       </if>
       <if test="institutionId != null and institutionId != ''">
-        and institution_id = #{institutionId}
+        and pre.institution_id = #{institutionId}
       </if>
       <if test="institutionName != null and institutionName != ''">
-        and institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
+        and pre.institution_name LIKE CONCAT(CONCAT('%', #{institutionName}), '%')
       </if>
       <if test="merchantId != null and merchantId != ''">
-        and merchant_id = #{merchantId}
+        and pre.merchant_id = #{merchantId}
       </if>
       <if test="merchantName != null and merchantName != ''">
-        and merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
+        and pre.merchant_name LIKE CONCAT(CONCAT('%', #{merchantName}), '%')
       </if>
       <if test="orderCurrency != null and orderCurrency != ''">
-        and order_currency=#{orderCurrency}
+        and pre.order_currency=#{orderCurrency}
       </if>
       <if test="orderStatus != null">
-        and order_status=#{orderStatus}
+        and pre.order_status=#{orderStatus}
       </if>
       <if test="productCode != null">
-        AND product_code = #{productCode}
+        AND pre.product_code = #{productCode}
       </if>
       <if test="startDate != null and startDate !=''">
-        AND DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startDate}
+        AND DATE_FORMAT(pre.create_time,'%Y-%m-%d') &gt;= #{startDate}
       </if>
       <if test="endDate != null and endDate !=''">
-        AND DATE_FORMAT(create_time,'%Y-%m-%d')&lt;= #{endDate}
+        AND DATE_FORMAT(pre.create_time,'%Y-%m-%d')&lt;= #{endDate}
+      </if>
+      <if test="startPreTime != null and startPreTime !=''">
+        AND DATE_FORMAT(pre.update_time,'%Y-%m-%d') &gt;= #{startPreTime}
+      </if>
+      <if test="endPreTime != null and endPreTime !=''">
+        AND DATE_FORMAT(pre.update_time,'%Y-%m-%d')&lt;= #{endPreTime}
       </if>
     <if test="startPayFinishTime != null and startPayFinishTime !=''">
-      AND DATE_FORMAT(channel_callback_time,'%Y-%m-%d') &gt;= #{startPayFinishTime}
+      AND DATE_FORMAT(pre.channel_callback_time,'%Y-%m-%d') &gt;= #{startPayFinishTime}
     </if>
     <if test="endPayFinishTime != null and endPayFinishTime !=''">
-      AND DATE_FORMAT(channel_callback_time,'%Y-%m-%d') &lt;= #{endPayFinishTime}
+      AND DATE_FORMAT(pre.channel_callback_time,'%Y-%m-%d') &lt;= #{endPayFinishTime}
     </if>
     </where>
   </select>
 
 
-  <select id="getPreOrdersDetail" resultMap="BaseResultMap">
+  <select id="getPreOrdersDetail" resultType="com.asianwallets.common.vo.PreOrdersVO">
     select
-    <include refid="Base_Column_List"></include>
-    from pre_orders
+    pre.id,
+    pre.institution_id as institutionId,
+    pre.institution_name as institutionName,
+    pre.trade_type as tradeType,
+    pre.trade_direction as tradeDirection,
+    pre.merchant_id as merchantId,
+    pre.merchant_name as merchantName,
+    pre.merchant_type as merchantType,
+    pre.second_merchant_code as secondMerchantCode,
+    pre.second_merchant_name as secondMerchantName,
+    pre.group_merchant_code as groupMerchantCode,
+    pre.group_merchant_name as groupMerchantName,
+    pre.agent_code as agentCode,
+    pre.agent_name as agentName,
+    pre.cancel_time as cancelTime,
+    pre.merchant_order_id as merchantOrderId,
+    pre.merchant_order_time as merchantOrderTime,
+    pre.order_currency as orderCurrency,
+    pre.order_amount as orderAmount,
+    pre.complete_amount as completeAmount,
+    pre.imei,
+    pre.operator_id as operatorId,
+    pre.order_for_trade_rate as orderForTradeRate,
+    pre.trade_for_order_rate as tradeForOrderRate,
+    pre.exchange_rate as exchangeRate,
+    pre.exchange_time as exchangeTime,
+    pre.exchange_status as exchangeStatus,
+    pre.product_code as productCode,
+    pre.product_name as productName,
+    pre.product_description as productDescription,
+    pre.channel_code as channelCode,
+    pre.channel_name as channelName,
+    pre.trade_currency as tradeCurrency,
+    pre.trade_amount as tradeAmount,
+    pre.debit_amount as debitAmount,
+    pre.order_status as orderStatus,
+    pre.channel_number as channelNumber,
+    concat(p.name,'-',pre.trade_currency) as payMethod,
+    pre.req_ip as reqIp,
+    pre.report_channel_time as reportChannelTime,
+    pre.channel_callback_time as channelCallbackTime,
+    pre.payer_name as payerName,
+    pre.payer_account as payerAccount,
+    pre.payer_bank as payerBank,
+    pre.payer_email as payerEmail,
+    pre.payer_phone as payerPhone,
+    pre.payer_address as payerAddress,
+    pre.issuer_id as issuerId,
+    pre.bank_name as bankName,
+    pre.browser_url as browserUrl,
+    pre.server_url as serverUrl,
+    pre.LANGUAGE as language,
+    pre.user_bank_card_no as userBankCardNo,
+    pre.cvv2,
+    pre.valid,
+    pre.pin,
+    pre.track_data as trackData,
+    pre.create_time as createTime,
+    pre.update_time as updateTime,
+    pre.creator,
+    pre.modifier,
+    pre.remark,
+    pre.remark1,
+    pre.remark2,
+    pre.remark3,
+    pre.remark4,
+    pre.remark5,
+    pre.remark6,
+    pre.remark7,
+    pre.remark8,
+    o.id as orderId,
+    o.fee,
+    o.add_value,
+    o.trade_status
+    from pre_orders pre LEFT JOIN pay_type p on pre.pay_method = p.extend1 AND p.`language`= #{language}
+    LEFT JOIN orders o on o.merchant_order_id=pre.merchant_order_id
     <where>
       <if test="id != null and id != ''">
-        and id = #{id}
+        and pre.id = #{id}
       </if>
     </where>
   </select>
@@ -148,7 +242,7 @@
   <select id="exportPreOrders" resultType="com.asianwallets.common.vo.ExportPreOrdersVO">
     SELECT
     o.create_time as createTime,
-    o.channel_callback_time as channelCallbackTime,
+    o.update_time as channelCallbackTime,
     o.id as orderId,
     o.merchant_order_id as merchantOrderId,
     o.merchant_id as merchantId,
@@ -201,6 +295,12 @@
       </if>
       <if test="productCode != null">
         AND o.product_code = #{productCode}
+      </if>
+      <if test="startPreTime != null and startPreTime !=''">
+        AND DATE_FORMAT(o.update_time,'%Y-%m-%d') &gt;= #{startPreTime}
+      </if>
+      <if test="endPreTime != null and endPreTime !=''">
+        AND DATE_FORMAT(o.update_time,'%Y-%m-%d')&lt;= #{endPreTime}
       </if>
       <if test="startDate != null and startDate !=''">
         AND DATE_FORMAT(o.create_time,'%Y-%m-%d') &gt;= #{startDate}

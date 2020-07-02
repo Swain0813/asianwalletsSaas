@@ -23,7 +23,7 @@
   "10022": "Cancellation request failed",
   "10023": "The record exists and is awaiting review",
   "10024": "There is no association between the organization and the Merchant",
-  "10025": "A cancelled order cannot be cancelled any more",
+  "10025": "Static code disabled",
   "10026": "The effective time cannot be empty",
   "10027": "The current merchant does not have an account in this currency",
   "10029": "The device number is not correct",

@@ -946,4 +946,26 @@ public class OnlineGatewayServiceImpl implements OnlineGatewayService {
         response.setCode(TradeConstant.HTTP_SUCCESS);
         return response;
     }
+
+    /**
+     * 静态码输入金额页面需要的信息
+     * @param id
+     * @return
+     */
+    @Override
+    public MerchantVO getMerchantCode(String id) {
+        //输入参数不能为空
+        if(StringUtils.isEmpty(id)){
+            throw new BusinessException(EResultEnum.PARAMETER_IS_NOT_PRESENT.getCode());
+        }
+        //获取静态码信息
+        MerchantCardCode merchantCardCode = commonRedisDataService.getMerchantCardCode(id);
+        //获取商户信息
+        Merchant merchant = commonRedisDataService.getMerchantById(merchantCardCode.getMerchantId());
+        //返回参数
+        MerchantVO merchantVO = new MerchantVO();
+        merchantVO.setMerchantName(merchantCardCode.getMerchantName());
+        merchantVO.setMerchantLogo(merchant.getMerchantLogo());
+        return merchantVO;
+    }
 }

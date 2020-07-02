@@ -30,6 +30,7 @@ public class PreOrdersController extends BaseController {
     @ApiOperation(value = "查询预授权订单详情信息")
     @PostMapping("/getPreOrdersDetail")
     public BaseResponse getPreOrdersDetail(@RequestBody @ApiParam PreOrdersDTO preOrdersDTO) {
+        preOrdersDTO.setLanguage(this.getLanguage());
         return ResultUtil.success(preOrdersService.getPreOrdersDetail(preOrdersDTO));
     }
 

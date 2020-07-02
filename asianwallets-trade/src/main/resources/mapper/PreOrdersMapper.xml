@@ -70,6 +70,7 @@
     <result column="remark6" property="remark6" jdbcType="VARCHAR" />
     <result column="remark7" property="remark7" jdbcType="VARCHAR" />
     <result column="remark8" property="remark8" jdbcType="VARCHAR" />
+    <result column="cancel_time" property="cancelTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, institution_id,institution_name,trade_type, trade_direction, merchant_id, merchant_name, merchant_type, second_merchant_code,
@@ -81,7 +82,7 @@
     req_ip, report_channel_time, channel_callback_time, payer_name, payer_account, payer_bank, 
     payer_email, payer_phone, payer_address, issuer_id, bank_name, browser_url, server_url, 
     language, user_bank_card_no, cvv2, valid, track_data, create_time, update_time, creator, 
-    modifier, remark, remark1, remark2, remark3, remark4, remark5, remark6, remark7, 
+    modifier, remark, remark1, remark2, remark3, remark4, remark5, remark6, remark7,cancel_time,
     remark8
   </sql>
 

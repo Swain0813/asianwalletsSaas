@@ -7,6 +7,7 @@ import com.asianwallets.common.entity.PreOrders;
 import com.asianwallets.common.exception.BusinessException;
 import com.asianwallets.common.response.EResultEnum;
 import com.asianwallets.common.vo.ExportPreOrdersVO;
+import com.asianwallets.common.vo.PreOrdersVO;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +43,12 @@ public class PreOrdersServiceImpl implements PreOrdersService {
      * @return
      */
     @Override
-    public PreOrders getPreOrdersDetail(PreOrdersDTO preOrdersDTO) {
+    public PreOrdersVO getPreOrdersDetail(PreOrdersDTO preOrdersDTO) {
         //id不能为空
         if(StringUtils.isEmpty(preOrdersDTO.getId())){
             throw new BusinessException(EResultEnum.NOTICE_ID_IS_NOT_NULL.getCode());
         }
-        PreOrders preOrders = preOrdersMapper.getPreOrdersDetail(preOrdersDTO);
+        PreOrdersVO preOrders = preOrdersMapper.getPreOrdersDetail(preOrdersDTO);
         return preOrders;
     }
 

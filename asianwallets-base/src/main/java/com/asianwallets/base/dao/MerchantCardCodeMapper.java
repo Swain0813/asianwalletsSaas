@@ -23,4 +23,11 @@ public interface MerchantCardCodeMapper extends BaseMapper<MerchantCardCode> {
      */
     MerchantCardCode getMerchantCardCode(MerchantCardCodeDTO merchantCardCodeDTO);
 
+    /**
+     * 根据静态码编号获取静态码信息
+     * @param id
+     * @return
+     */
+    MerchantCardCode getMerchantCardCode(String id);
+
 }
