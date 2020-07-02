@@ -69,8 +69,8 @@ public class OfflineTradeController extends BaseController {
 
     @ApiOperation(value = "码牌交易")
     @PostMapping("codeTrading")
-    public BaseResponse codeTrading(@RequestBody @ApiParam @Valid OfflineCodeTradeDTO offlineCodeTradeDTO, HttpServletRequest request) {
-        return ResultUtil.success(offlineTradeService.codeTrading(offlineCodeTradeDTO, request));
+    public BaseResponse codeTrading(@RequestBody @ApiParam @Valid OfflineCodeTradeDTO offlineCodeTradeDTO) {
+        return ResultUtil.success(offlineTradeService.codeTrading(offlineCodeTradeDTO));
     }
 
     @ApiOperation(value = "线下查询订单列表【对外API】")
