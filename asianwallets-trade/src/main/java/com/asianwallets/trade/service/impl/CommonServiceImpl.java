@@ -131,7 +131,7 @@ public class CommonServiceImpl implements CommonService {
                 log.info("=================【人工回调】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
                 if(orders.getPreRemark().equals("预授权")){
                     //如果订单是预授权的订单要去更新预授权订单表--->预授权完成以及完成金额
-                    preOrdersMapper.updatePreStatusByMerchantOrderId(orders.getMerchantOrderId(),orders.getOrderAmount(),
+                    preOrdersMapper.updatePreStatusByMerchantOrderId(orders.getMerchantOrderId(),orders.getOrderAmount(),orders.getTradeAmount(),
                             artificialDTO.getUserName(),TradeConstant.PRE_ORDER_COMPLETE_SUCCESS);
                 }
                 //计算支付成功时的通道网关手续费
