@@ -1185,15 +1185,11 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     /**
      * 码牌交易
-     *
      * @param offlineCodeTradeDTO
-     * @param request
      * @return
      */
     @Override
-    public BaseResponse codeTrading(OfflineCodeTradeDTO offlineCodeTradeDTO, HttpServletRequest request) {
-        //获取扫码工具名称
-        String serviceName = request.getHeader("User-Agent");
+    public BaseResponse codeTrading(OfflineCodeTradeDTO offlineCodeTradeDTO) {
         //进行判断
         MerchantCardCode merchantCardCode = commonRedisDataService.getMerchantCardCode(offlineCodeTradeDTO.getMerchantCardCode());
         if (!merchantCardCode.getEnabled()) {

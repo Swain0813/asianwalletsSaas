@@ -107,10 +107,8 @@ public interface OfflineTradeService {
 
     /**
      * 码牌交易
-     *
      * @param offlineCodeTradeDTO
-     * @param request
      * @return
      */
-    BaseResponse codeTrading(OfflineCodeTradeDTO offlineCodeTradeDTO, HttpServletRequest request);
+    BaseResponse codeTrading(OfflineCodeTradeDTO offlineCodeTradeDTO);
 }
