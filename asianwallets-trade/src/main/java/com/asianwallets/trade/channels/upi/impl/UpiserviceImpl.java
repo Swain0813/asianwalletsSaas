@@ -1095,7 +1095,7 @@ public class UpiserviceImpl extends ChannelsAbstractAdapter implements Upiservic
             }
             //更新订单信息
             if (ordersMapper.updateByExampleSelective(orders, example) == 1) {
-                if (preOrdersMapper.updatePreStatusByMerchantOrderId(orders.getMerchantOrderId(), orders.getOrderAmount(), null, (byte) 5) == 1) {
+                if (preOrdersMapper.updatePreStatusByMerchantOrderId(orders.getMerchantOrderId(), orders.getOrderAmount(), orders.getTradeAmount(),null, (byte) 5) == 1) {
                     log.info("=================【UPI预授权完成】=================【订单支付成功后更新数据库成功】 orderId: {}", orders.getId());
                     //计算支付成功时的通道网关手续费
                     commonBusinessService.calcCallBackGatewayFeeSuccess(orders);
