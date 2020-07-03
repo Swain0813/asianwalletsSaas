@@ -108,6 +108,10 @@ public class PreOrders extends BaseEntity {
     @Column(name = "exchange_rate")
     private BigDecimal exchangeRate;
 
+    @ApiModelProperty(value = "浮动率")
+    @Column(name = "float_rate")
+    private BigDecimal floatRate = BigDecimal.ZERO;
+
     @ApiModelProperty(value = "换汇时间")
     @Column(name = "exchange_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

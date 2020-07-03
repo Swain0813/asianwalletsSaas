@@ -980,6 +980,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         Merchant merchant = basicInfoVO.getMerchant();
         Product product = basicInfoVO.getProduct();
         Channel channel = basicInfoVO.getChannel();
+        MerchantProduct merchantProduct = basicInfoVO.getMerchantProduct();
         PreOrders preOrders = new PreOrders();
         preOrders.setId("Y" + IDS.uniqueID().toString().substring(0, 15));
         preOrders.setInstitutionId(institution.getId());
@@ -1035,6 +1036,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         commonBusinessService.getPreUrl(offlineTradeDTO.getServerUrl(), preOrders);
         //预授权请求通道时间
         preOrders.setReportChannelTime(new Date());
+        preOrders.setFloatRate(merchantProduct.getFloatRate());
         preOrders.setPayerName(offlineTradeDTO.getPayerName());
         preOrders.setPayerBank(offlineTradeDTO.getPayerBank());
         preOrders.setPayerEmail(offlineTradeDTO.getPayerEmail());

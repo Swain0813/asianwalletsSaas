@@ -81,6 +81,9 @@ public class PreOrdersVO {
     @ApiModelProperty(value = "交易币种转订单币种汇率")
     private BigDecimal tradeForOrderRate;
 
+    @ApiModelProperty(value = "浮动率")
+    private BigDecimal floatRate;
+
     @ApiModelProperty(value = "换汇汇率")
     private BigDecimal exchangeRate;
 
@@ -232,9 +235,6 @@ public class PreOrdersVO {
 
     @ApiModelProperty(value = "订单流水号")
     private String orderId;
-
-    @ApiModelProperty(value = "浮动率")
-    private BigDecimal floatRate;
 
     @ApiModelProperty(value = "手续费")
     private BigDecimal fee;
