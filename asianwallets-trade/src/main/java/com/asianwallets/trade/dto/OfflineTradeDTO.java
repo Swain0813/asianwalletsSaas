@@ -1,10 +1,7 @@
 package com.asianwallets.trade.dto;
-
-import com.asianwallets.common.entity.MerchantCardCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -115,21 +112,4 @@ public class OfflineTradeDTO {
 
     @ApiModelProperty(value = "remark3")
     private String remark3;
-
-    @ApiModelProperty(value = "聚合码")
-    private String merchantCardCode;
-
-
-    public OfflineTradeDTO(OfflineCodeTradeDTO offlineCodeTradeDTO, MerchantCardCode merchantCardCode) {
-        this.merchantId = merchantCardCode.getMerchantId();
-//        this.orderNo = offlineCodeTradeDTO.getOrderNo();
-        //币种为产品币种
-//        this.orderCurrency = offlineCodeTradeDTO.getOrderCurrency();
-        this.orderAmount = offlineCodeTradeDTO.getOrderAmount();
-//        this.orderTime = offlineCodeTradeDTO.getOrderTime();
-        this.merchantCardCode = offlineCodeTradeDTO.getMerchantCardCode();
-    }
-
-    public OfflineTradeDTO() {
-    }
 }

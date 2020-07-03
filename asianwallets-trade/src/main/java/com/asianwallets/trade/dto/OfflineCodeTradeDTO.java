@@ -12,6 +12,14 @@ import java.math.BigDecimal;
 public class OfflineCodeTradeDTO {
 
     @NotBlank(message = "50002")
+    @ApiModelProperty(value = "商户订单号")
+    private String orderNo;
+
+    @NotBlank(message = "50002")
+    @ApiModelProperty(value = "商户订单时间")
+    private String orderTime;
+
+    @NotBlank(message = "50002")
     @ApiModelProperty(value = "订单金额")
     private BigDecimal orderAmount;
 
@@ -21,13 +29,17 @@ public class OfflineCodeTradeDTO {
 
     @NotBlank(message = "50002")
     @ApiModelProperty(value = "聚合码编号")
-    private String merchantCardCode;
+    private String merchantCardId;
 
-    @NotBlank(message = "50002")
     @ApiModelProperty(value = "签名方式 1为RSA 2为MD5")
     private String signType;
 
-    @NotBlank(message = "52008")
     @ApiModelProperty(value = "签名")
     private String sign;
+
+    @ApiModelProperty(value = "语言")
+    private String language;
+
+    @ApiModelProperty(value = "服务器回调地址")
+    private String serverUrl;
 }
