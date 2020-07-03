@@ -111,4 +111,33 @@ public class AliPayCardDTO {
         this.channel = channel;
         this.orders = orders;
     }
+
+
+    static class ExtendPar {
+        @ApiModelProperty(value = "合作伙伴分配的唯一ID，用于标识辅助商家。ID可以包含字母，数字和下划线。")
+        private String secondary_merchant_id;
+
+        @ApiModelProperty(value = " 辅助商家的注册法定名称，显示在“支付宝钱包”和对帐文件中以标识辅助商家")
+        private String secondary_merchant_name;
+
+        @ApiModelProperty(value = "次要商家的行业分类标识符，由支付宝分配 MCC")
+        private String secondary_merchant_industry;
+
+        @ApiModelProperty(value = "商店名称")
+        private String store_name;
+
+        @ApiModelProperty(value = "合作伙伴分配的用于标识商人商店的唯一ID")
+        private String store_id;
+
+        public ExtendPar(String secondary_merchant_id, String secondary_merchant_name, String secondary_merchant_industry, String store_name, String store_id) {
+            this.secondary_merchant_id = secondary_merchant_id;
+            this.secondary_merchant_name = secondary_merchant_name;
+            this.secondary_merchant_industry = secondary_merchant_industry;
+            this.store_name = store_name;
+            this.store_id = store_id;
+        }
+
+        public ExtendPar() {
+        }
+    }
 }

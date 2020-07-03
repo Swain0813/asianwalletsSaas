@@ -1,7 +1,9 @@
 package com.asianwallets.channels;
 
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.asianwallets.channels.service.*;
+import com.asianwallets.common.dto.alipay.AliPayCardDTO;
 import com.asianwallets.common.dto.doku.DOKUReqDTO;
 import com.asianwallets.common.dto.doku.DOKURequestDTO;
 import com.asianwallets.common.dto.help2pay.Help2PayOutDTO;
@@ -10,6 +12,7 @@ import com.asianwallets.common.dto.th.ISO8583.*;
 import com.asianwallets.common.dto.wechat.WechaRefundDTO;
 import com.asianwallets.common.dto.wechat.WechatQueryDTO;
 import com.asianwallets.common.entity.Channel;
+import com.asianwallets.common.entity.Orders;
 import com.asianwallets.common.response.BaseResponse;
 import com.asianwallets.common.utils.DateToolUtils;
 import com.asianwallets.common.utils.IDS;
@@ -43,6 +46,9 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
 
     @Autowired
     private ThService thService;
+
+    @Autowired
+    private AliPayService aliPayService;
 
 
     @Test
@@ -619,6 +625,43 @@ public class ChannelsApplicationTests extends SpringBootServletInitializer {
         }
         byte[] bcd = NumberStringUtil.str2Bcd(newStr);
         return Objects.requireNonNull(EcbDesUtil.encode3DEA(trk, cn.hutool.core.util.HexUtil.encodeHexStr(bcd))).toUpperCase();
+    }
+
+
+    @Test
+    public void aliPayCard() {
+        AliPayCardDTO aliPayCardDTO = new AliPayCardDTO();
+        aliPayCardDTO.setService("alipay.acquire.precreate");
+        aliPayCardDTO.setPartner("");
+        aliPayCardDTO.set_input_charset("UTF-8");
+        aliPayCardDTO.setSign_type("MD5");
+        aliPayCardDTO.setTimestamp(DateUtil.formatDateTime(new Date()));
+        aliPayCardDTO.setProduct_code("OVERSEAS_MBARCODE_PAY");
+        aliPayCardDTO.setCurrency("USD");
+        aliPayCardDTO.setTrans_currency("USD");
+        aliPayCardDTO.setOut_trade_no(IDS.uuid2());
+        aliPayCardDTO.setSubject("Goods");
+        aliPayCardDTO.setTotal_fee("1");
+        aliPayCardDTO.setSeller_id("");
+        aliPayCardDTO.setExtend_params("");
+        aliPayCardDTO.setNotify_url("");
+        aliPayCardDTO.setSign("");
+
+        //#########################
+        aliPayCardDTO.setSecondary_merchant_id("");
+        aliPayCardDTO.setSecondary_merchant_name("");
+        aliPayCardDTO.setSecondary_merchant_industry("");
+        aliPayCardDTO.setStore_name("");
+        aliPayCardDTO.setStore_id("");
+
+//       new AliPayCardDTO().
+        //#########################
+
+        Channel channel = new Channel();
+        aliPayCardDTO.setChannel(channel);
+        Orders orders = new Orders();
+        aliPayCardDTO.setOrders(orders);
+        aliPayService.alipayCard(aliPayCardDTO);
     }
 
 }
