@@ -244,4 +244,7 @@ public class PreOrdersVO {
 
     @ApiModelProperty(value = "订单状态")
     private Byte tradeStatus;
+
+    @ApiModelProperty(value = "通道返回的错误原因")
+    private String orderRemark5;
 }
