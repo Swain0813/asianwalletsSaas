@@ -225,9 +225,11 @@
     pre.remark6,
     pre.remark7,
     pre.remark8,
+    pre.float_rate as floatRate,
     o.id as orderId,
     o.fee,
     o.add_value,
+    o.remark5 as orderRemark5,
     o.trade_status
     from pre_orders pre LEFT JOIN pay_type p on pre.pay_method = p.extend1 AND p.`language`= #{language}
     LEFT JOIN orders o on o.merchant_order_id=pre.merchant_order_id

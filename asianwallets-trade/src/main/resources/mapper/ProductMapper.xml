@@ -47,4 +47,11 @@
         and p.product_code = #{productCode}
         and p.enabled = true
     </select>
+
+    <select id="selectByProductName" resultMap="BaseResultMap">
+        select
+        <include refid="BaseSql"/>
+        from product
+        where product_name LIKE CONCAT(CONCAT('%', #{productName}), '%')
+    </select>
 </mapper>

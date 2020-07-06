@@ -75,6 +75,9 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
     @Autowired
     private PreOrdersMapper preOrdersMapper;
 
+    @Autowired
+    private ProductMapper productMapper;
+
 
     /**
      * 线下登录
@@ -331,6 +334,75 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         return basicsInfoVO;
     }
 
+    /**
+     * 线下静态扫码下单获取收单基础信息并校验
+     * @param merchantId
+     * @param productCode
+     * @param orderCurrency
+     * @param orderAmount
+     * @return
+     */
+    private BasicInfoVO getBasicByCode(String merchantId,Integer productCode,String orderCurrency,BigDecimal orderAmount) {
+        Merchant merchant = commonRedisDataService.getMerchantById(merchantId);
+        Institution institution = commonRedisDataService.getInstitutionById(merchant.getInstitutionId());
+        //校验订单金额
+        if (orderAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            log.info("==================【线下码牌动态扫码】==================【订单金额不合法】");
+            throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
+        }
+        //获取币种信息
+        Currency currency = commonRedisDataService.getCurrencyByCode(orderCurrency);
+        //校验币种信息
+        if (!commonBusinessService.checkOrderCurrency(orderCurrency, orderAmount, currency)) {
+            log.info("==================【线下码牌动态扫码】==================【订单金额不符合币种默认值】");
+            throw new BusinessException(EResultEnum.REFUND_AMOUNT_NOT_LEGAL.getCode());
+        }
+        Product product = commonRedisDataService.getProductByCode(productCode);
+        MerchantProduct merchantProduct = commonRedisDataService.getMerProByMerIdAndProId(merchantId, product.getId());
+        List<String> chaBankIdList = commonRedisDataService.getChaBankIdByMerProId(merchantProduct.getId());
+        List<ChannelBank> channelBankList = new ArrayList<>();
+        for (String chaBankId : chaBankIdList) {
+            ChannelBank channelBank = commonRedisDataService.getChaBankById(chaBankId);
+            if (channelBank != null) {
+                channelBankList.add(channelBank);
+            }
+        }
+        Channel channel = null;
+        BankIssuerId bankIssuerId = null;
+        for (ChannelBank channelBank : channelBankList) {
+            channel = commonRedisDataService.getChannelById(channelBank.getChannelId());
+            if (channel != null && channel.getEnabled()) {
+                bankIssuerId = bankIssuerIdMapper.selectByChannelCode(channel.getChannelCode());
+                if (bankIssuerId != null) {
+                    log.info("==================【线下码牌动态扫码】==================【通道】  channel: {}", JSON.toJSONString(channel));
+                    log.info("==================【线下码牌动态扫码】==================【银行机构映射】  bankIssuerId: {}", JSON.toJSONString(bankIssuerId));
+                    break;
+                }
+            }
+        }
+        if (channel == null) {
+            log.info("==================【线下码牌动态扫码】==================【通道信息不合法】");
+            throw new BusinessException(EResultEnum.CHANNEL_IS_NOT_EXISTS.getCode());
+        }
+        if (!channel.getEnabled()) {
+            log.info("==================【线下码牌动态扫码】==================【通道信息不合法】");
+            throw new BusinessException(EResultEnum.CHANNEL_STATUS_ABNORMAL.getCode());
+        }
+        if (bankIssuerId == null) {
+            log.info("==================【线下码牌动态扫码】==================【银行机构映射信息不存在】");
+            throw new BusinessException(EResultEnum.BANK_MAPPING_NO_EXIST.getCode());
+        }
+        BasicInfoVO basicsInfoVO = new BasicInfoVO();
+        channel.setIssuerId(bankIssuerId.getIssuerId());
+        basicsInfoVO.setBankName(bankIssuerId.getBankName());
+        basicsInfoVO.setMerchant(merchant);
+        basicsInfoVO.setProduct(product);
+        basicsInfoVO.setChannel(channel);
+        basicsInfoVO.setMerchantProduct(merchantProduct);
+        basicsInfoVO.setInstitution(institution);
+        basicsInfoVO.setCurrency(currency);
+        return basicsInfoVO;
+    }
 
     /**
      * 设置订单属性
@@ -908,6 +980,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         Merchant merchant = basicInfoVO.getMerchant();
         Product product = basicInfoVO.getProduct();
         Channel channel = basicInfoVO.getChannel();
+        MerchantProduct merchantProduct = basicInfoVO.getMerchantProduct();
         PreOrders preOrders = new PreOrders();
         preOrders.setId("Y" + IDS.uniqueID().toString().substring(0, 15));
         preOrders.setInstitutionId(institution.getId());
@@ -963,6 +1036,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         commonBusinessService.getPreUrl(offlineTradeDTO.getServerUrl(), preOrders);
         //预授权请求通道时间
         preOrders.setReportChannelTime(new Date());
+        preOrders.setFloatRate(merchantProduct.getFloatRate());
         preOrders.setPayerName(offlineTradeDTO.getPayerName());
         preOrders.setPayerBank(offlineTradeDTO.getPayerBank());
         preOrders.setPayerEmail(offlineTradeDTO.getPayerEmail());
@@ -1115,7 +1189,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         orders.setBankName(preOrders.getBankName());
         orders.setServerUrl(preOrders.getServerUrl());
         orders.setLanguage(preOrders.getLanguage());
-        orders.setRemark1(preOrders.getId().substring(6,18)+DateToolUtils.SHORT_DATE_FORMAT_T.format(preOrders.getCreateTime()));
+        orders.setRemark1(preOrders.getId().substring(6, 18) + DateToolUtils.SHORT_DATE_FORMAT_T.format(preOrders.getCreateTime()));
         orders.setRemark2(preOrders.getRemark2());
         orders.setRemark3(preOrders.getRemark3());
         orders.setRemark4(preOrders.getRemark4());
@@ -1185,34 +1259,29 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
 
     /**
      * 码牌交易
-     *
      * @param offlineCodeTradeDTO
-     * @param request
      * @return
      */
     @Override
-    public BaseResponse codeTrading(OfflineCodeTradeDTO offlineCodeTradeDTO, HttpServletRequest request) {
-        //获取扫码工具名称
-        String serviceName = request.getHeader("User-Agent");
-        //进行判断
-        MerchantCardCode merchantCardCode = commonRedisDataService.getMerchantCardCode(offlineCodeTradeDTO.getMerchantCardCode());
-        //TODO 将传过来的参数构造线下dto，用来复用逻辑
-        OfflineTradeDTO offlineTradeDTO = new OfflineTradeDTO(offlineCodeTradeDTO);
-        Product product = commonRedisDataService.getProductByCode(Integer.valueOf(merchantCardCode.getProductCode()));
-        //订单币种为产品币种
-        offlineTradeDTO.setOrderCurrency(product.getCurrency());
-        offlineTradeDTO.setProductCode(product.getProductCode());
-
-        log.info("==================【线下码牌动态扫码】==================【请求参数】 offlineTradeDTO: {}", JSON.toJSONString(offlineTradeDTO));
-        //重复请求
-        if (!commonBusinessService.repeatedRequests(offlineTradeDTO.getMerchantId(), offlineTradeDTO.getOrderNo())) {
-            log.info("==================【线下码牌动态扫码】==================【重复请求】");
-            throw new BusinessException(EResultEnum.REPEAT_ORDER_REQUEST.getCode());
+    public BaseResponse codeTrading(OfflineCodeTradeDTO offlineCodeTradeDTO) {
+        log.info("==================【线下码牌动态扫码】==================【请求参数】 offlineCodeTradeDTO: {}", JSON.toJSONString(offlineCodeTradeDTO));
+//        //验签
+//        if (!commonBusinessService.checkUniversalSign(offlineCodeTradeDTO)) {
+//            log.info("==================【线下码牌动态扫码】==================【签名不匹配】");
+//            throw new BusinessException(EResultEnum.DECRYPTION_ERROR.getCode());
+//        }
+        //获取商户码牌信息
+        MerchantCardCode merchantCardCode = commonRedisDataService.getMerchantCardCode(offlineCodeTradeDTO.getMerchantCardId());
+        if (!merchantCardCode.getEnabled()) {
+            log.info("****************【线下码牌动态扫码】*******静态码信息已被禁用**************************");
+            throw new BusinessException(EResultEnum.MERCHANT_CARD_CODE_IS_ENABLE.getCode());
         }
-        //获取收单基础信息并校验 TODO 需要从缓存中获取该商户的信息 码牌信息
-        BasicInfoVO basicInfoVO = getBasicAndCheck(offlineTradeDTO);
+        //根据扫码标志判断是使用的哪个产品,获取到产品编号
+        Product product = this.getProduct(offlineCodeTradeDTO.getUserAgent());
+        //获取收单基础信息并校验
+        BasicInfoVO basicInfoVO = getBasicByCode(merchantCardCode.getMerchantId(),product.getProductCode(),product.getCurrency(),offlineCodeTradeDTO.getOrderAmount());
         //设置订单属性
-        Orders orders = setAttributes(offlineTradeDTO, basicInfoVO);
+        Orders orders = setAttributesCardCode(offlineCodeTradeDTO,basicInfoVO);
         //换汇
         commonBusinessService.swapRateByPayment(basicInfoVO, orders);
         //校验商户产品与通道的限额
@@ -1229,7 +1298,7 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         BaseResponse response = new BaseResponse();
         try {
             //上报通道
-            ChannelsAbstract channelsAbstract = handlerContext.getInstance(basicInfoVO.getChannel().getServiceNameMark().split("_")[0]);
+            ChannelsAbstract channelsAbstract = handlerContext.getInstance(offlineCodeTradeDTO.getUserAgent());
             BaseResponse baseResponse = channelsAbstract.codeTrading(orders, basicInfoVO.getChannel());
             csbDynamicScanVO.setQrCodeUrl(String.valueOf(baseResponse.getData()));
         } catch (Exception e) {
@@ -1239,5 +1308,85 @@ public class OfflineTradeServiceImpl implements OfflineTradeService {
         csbDynamicScanVO.setOrderNo(orders.getMerchantOrderId());
         log.info("==================【线下码牌动态扫码】==================【下单结束】");
         return response;
+    }
+
+    /**
+     * 根据扫码标志
+     * @param userAgent
+     * @return
+     */
+    private Product getProduct(String userAgent){
+      String productName=null;
+      if(userAgent.equals(TradeConstant.ALIPAY)){
+          productName ="支付宝-静态码支付";
+      }else if(userAgent.equals(TradeConstant.WECHAT)){
+          productName ="微信-静态码支付";
+      }else {
+          productName=userAgent;
+      }
+        Product  product =productMapper.selectByProductName(productName);
+        return  product;
+    }
+
+    /**
+     * 线下码牌交易设置订单属性
+     * @param offlineCodeTradeDTO
+     * @param basicInfoVO
+     * @return
+     */
+    private Orders setAttributesCardCode(OfflineCodeTradeDTO offlineCodeTradeDTO,BasicInfoVO basicInfoVO) {
+        Institution institution = basicInfoVO.getInstitution();
+        Merchant merchant = basicInfoVO.getMerchant();
+        Product product = basicInfoVO.getProduct();
+        Channel channel = basicInfoVO.getChannel();
+        MerchantProduct merchantProduct = basicInfoVO.getMerchantProduct();
+        Orders orders = new Orders();
+        orders.setId("O" + IDS.uniqueID().toString().substring(0, 15));
+        orders.setInstitutionId(institution.getId());
+        orders.setInstitutionName(institution.getCnName());
+        orders.setMerchantId(merchant.getId());
+        orders.setMerchantName(merchant.getCnName());
+        if (!StringUtils.isEmpty(merchant.getAgentId())) {
+            Merchant agentMerchant = commonRedisDataService.getMerchantById(merchant.getAgentId());
+            orders.setAgentCode(agentMerchant.getId());
+            orders.setAgentName(agentMerchant.getCnName());
+        }
+        if (!StringUtils.isEmpty(merchant.getGroupMasterAccount())) {
+            orders.setGroupMerchantCode(merchant.getGroupMasterAccount());
+            orders.setGroupMerchantName(commonRedisDataService.getMerchantById(merchant.getGroupMasterAccount()).getCnName());
+        }
+        orders.setTradeType(TradeConstant.GATHER_TYPE);
+        orders.setTradeDirection(TradeConstant.TRADE_UPLINE);
+        orders.setMerchantOrderTime(DateToolUtils.getReqDateG(offlineCodeTradeDTO.getOrderTime()));
+        orders.setMerchantOrderId(offlineCodeTradeDTO.getOrderNo());
+        orders.setMerchantType(merchant.getMerchantType());
+        orders.setOrderAmount(offlineCodeTradeDTO.getOrderAmount());
+        orders.setOrderCurrency(product.getCurrency());
+        orders.setTradeCurrency(channel.getCurrency());
+        orders.setProductCode(product.getProductCode());
+        orders.setProductName(product.getProductName());
+        orders.setChannelCode(channel.getChannelCode());
+        orders.setChannelName(channel.getChannelCnName());
+        orders.setPayMethod(product.getPayType());
+        orders.setFloatRate(merchantProduct.getFloatRate());
+        orders.setMaxTate(merchantProduct.getMaxTate());
+        orders.setMinTate(merchantProduct.getMinTate());
+        orders.setReportChannelTime(new Date());
+        //判断结算周期类型
+        if (TradeConstant.DELIVERED.equals(merchantProduct.getSettleCycle())) {
+            //妥投结算
+            orders.setProductSettleCycle(TradeConstant.FUTURE_TIME);
+        } else {
+            //产品结算周期
+            orders.setProductSettleCycle(SettleDateUtil.getSettleDate(merchantProduct.getSettleCycle()));
+        }
+        orders.setIssuerId(channel.getIssuerId());
+        orders.setBankName(basicInfoVO.getBankName());
+        orders.setServerUrl(offlineCodeTradeDTO.getServerUrl());
+        orders.setLanguage(offlineCodeTradeDTO.getLanguage());
+        orders.setRemark8(channel.getChannelAgentId());
+        orders.setCreateTime(new Date());
+        orders.setCreator(merchant.getCnName());
+        return orders;
     }
 }

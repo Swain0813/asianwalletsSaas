@@ -31,12 +31,11 @@
     product_code, product_name, qrcode_url, create_time, update_time, creator, modifier, 
     remark, enabled, ext1, ext2, ext3, ext4, ext5, ext6, ext7
     </sql>
-    <select id="selectById" resultType="com.asianwallets.common.entity.MerchantCardCode">
+    <select id="selectById" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from merchant_card_code
-        where id = #{id}
-        and enabled = 1;
+        where id = #{id};
     </select>
 
 
