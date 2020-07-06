@@ -32,30 +32,35 @@
         <dependency>
             <groupId>com.asianwallets</groupId>
             <artifactId>asianwallets-channels</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/lib/bcpkix-jdk15on-158.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.asianwallets</groupId>
             <artifactId>asianwallets-channels</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/lib/bcprov-jdk15on-158.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.asianwallets</groupId>
             <artifactId>asianwallets-channels</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/lib/oos-mls-1.0.5.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.asianwallets</groupId>
             <artifactId>asianwallets-channels</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/lib/oos-xml-1.0.2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.asianwallets</groupId>
             <artifactId>asianwallets-channels</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/lib/oos-xml-transaction-1.6.2.jar</systemPath>
         </dependency>
